@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+   	xmlns:android="http://schemas.android.com/apk/res/android"
+   	android:id="@+id/midpstringitem"
+   	android:layout_width="fill_parent" 
+   	android:layout_height="wrap_content"
+   	android:orientation="vertical">
+   	<!--  TODO : styles -->
+	<TextView
+   		android:id="@+id/midpstringitem_label"
+   		android:singleLine="true"
+       	android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+       	/>
+   	
+	<TextView
+   		android:id="@+id/midpstringitem_value"
+   		android:singleLine="true"
+       	android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+       	/>
+	    
+</LinearLayout>

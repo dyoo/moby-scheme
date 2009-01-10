@@ -1,0 +1,26 @@
+This depends on two packages, Antenna and ProGuard:
+
+
+Antenna: http://antenna.sourceforge.net/
+Antenna provides nice ant support to build j2me applications.
+Antenna is under the LGPL.
+
+
+ProGuard: http://proguard.sourceforge.net/
+ProGuard does the optimization and obfuscation of java bytecode.
+ProGuard is under the GPL.
+
+
+These two libraries are only used as part of the build system: they
+are not incoporated into the binaries we produce.
+
+
+
+FPLib: http://www.beartronics.com/bearlib.sourceforge.net/
+FPLib is a fixed-point library.
+FPLib is under the Artistic License.
+
+
+microfloat: http://www.dclausen.net/projects/microfloat/
+microfloat is a floating point library
+microfloat is under the GPL.

@@ -1,0 +1,40 @@
+<project default="test">
+
+<path id="test.classpath">
+  <pathelement location="build" />
+  <pathelement location="junit-4.5.jar" />
+</path>
+
+
+<target name="init">
+  <mkdir dir="build"/>
+</target>
+
+
+<target name="compile" depends="init">
+  <javac srcdir="../support" destdir="build">
+    <classpath refid="test.classpath"/>
+    <exclude name="plt/gui/**/*"/>
+    <exclude name="plt/Kernel.java"/>
+  </javac>
+
+  <javac srcdir="test-support" destdir="build">
+    <classpath refid="test.classpath"/>
+  </javac>
+</target>
+
+
+<target name="test" depends="compile">
+  <junit fork="yes" haltonfailure="yes">
+    <test name="plt.TestMath"/>
+    <formatter type="plain" usefile="false"/>
+    <classpath refid="test.classpath" />
+  </junit>
+</target>
+
+
+<target name="clean">
+  <delete dir="build"/>
+</target>
+
+</project>

@@ -1,0 +1,124 @@
+Android/J2ME bridge notes.
+
+
+Here are the projects that might be relevant to the Android/J2ME
+bridge.
+
+Emulators:
+
+    MicroEmulator
+    (http://microemu.blogspot.com/2008/11/running-java-me-applications-on-android.html)
+
+    Android J2ME MIDP Runner (http://www.netmite.com/android/)
+
+
+Cross-compilers:
+
+    Assembla J2ME Android Bridge
+    (http://www.assembla.com/wiki/show/aJB8AqlQqr3z5uab7jnrAJ)
+
+    ME4Android (http://www.poliplus.com/android.htm)
+
+
+
+
+----------------------------------------------------------------------
+
+MicroEmulator
+
+Dependencies: asm (http://forge.objectweb.org/projects/asm/)
+
+
+Installation:
+
+######################################################################
+$ svn co https://microemulator.svn.sourceforge.net/svnroot/microemulator/trunk/microemulator microemulator
+
+$ cd microemulator
+
+# Build it
+$ mvn
+
+
+;; Edit microemu-android/build.xml to point to the android sdk and asm
+<property name="sdk-folder" value="$HOME/android-sdk-linux_x86-1.0_r1"/>
+<property name="asm.jar" value="$HOME/asm/asm-3.1.jar"/>
+
+
+# Edit the build.xml to point to the right j2me jar.
+# For example, with Cowabunga:
+
+<property name="midlet.name" value="Cowabunga"/>
+<property name="midlet.package" value="Cowawbunga.apk"/>
+<property name="midlet.icon" value="bin/assets/5ud0ku-icon.png"/>
+<property name="midlet.class" value="de.wintermute.sudoku.SudokuMidlet"/>
+<property name="midlet.jar" value="../Cowabunga.jar"/>
+
+# Run ant, which will generate an apk file that bundles the jar with
+the emulator.
+
+$ adb install bin/Cowabunga.apk
+
+
+# To delete it from the emulator, do 
+$ adb shell
+cd /data/app
+ls
+rm ***.apk
+######################################################################
+
+
+
+We can easily automate this conversion from j2me jars to Android apk
+files.
+
+Advantage: little additional work needed to deploy.  There are some
+holes in microemulator that need to be filled i.e. no support for
+activity pausing as far as I can tell.
+
+Disadvantage: common denominator API: we can't take advantage of any
+Android-specific behavior like location services.
+
+
+
+----------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------
+Android J2ME MIDP Runner
+
+
+Looks like a commercial product; doesn't looks as easy to extend as
+microemulator.  Does not allow single jar->adk bundling without
+purchase.
+
+
+
+----------------------------------------------------------------------
+
+ME4Android
+
+Appears to be a dead project: I can't find source code or anythng
+newer that 2007 references to it.
+
+
+----------------------------------------------------------------------
+
+Assembla J2ME Android bridge
+
+$ svn checkout http://svn.assembla.com/svn/j2ab/trunk j2ab
+
+Appears to contain adaptors for many of the j2me classes for Android.
+I haven't had success compiling things yet.  I'll continue hammering
+on this tonight.
+
+
+----------------------------------------------------------------------
+
+From Android to iPhone
+
+    http://www.xmlvm.org/android/
+
+If we can get the j2me->android thing working, then we can then go one
+step further and do android -> iphone.  Wow.

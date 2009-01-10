@@ -1,0 +1,21 @@
+[rough notes: cleanup]
+
+big bang width/height arguments are superfluous.
+
+The same redundancy in the arguments to big-bang applies both to the
+gui-world and the cellphone-world.
+
+In the cellphone situation, we do need to get the dimensions of the
+scenes in order to determine portrait-vs-landscape layout at runtime.
+If we assume that the scenes produced by the world->scene function all
+are the same size, we can take the scene produced by (world->scene
+world0) to determine the appropriate layout.
+
+
+----------------------------------------------------------------------
+
+Deviations from Beginner Level scheme.
+
+
+Currently, rationals are implemented as fixnums.  We need to switch
+over to bignums eventually to avoid problems.

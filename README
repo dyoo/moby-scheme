@@ -1,0 +1,90 @@
+Notes for new developers.
+
+
+What is it?
+
+    A compiler from Beginner Scheme programs to j2me applications.
+
+
+
+Prerequisites:
+
+    Java 1.6
+    Apache Ant
+    Sun Wireless Toolkit
+    PLT Scheme 1.4.3
+
+
+Installation:
+
+    The system currently has hardcoded paths to Apache Ant and the Sun
+    Wireless Toolkit embedded as the two variables within compile-world.ss:
+
+        current-j2me-home         ;; default: /usr/local/WTK2.5.2
+        current-ant-bin-runtime   ;; default: /usr/bin/ant
+
+    Just to get started, you can change those paths to the ones on
+    your system.
+
+
+Trying it out:
+
+    Try running the test suite in test-compile-world.ss under
+    DrScheme.  The directory t/ contains a set of test programs that
+    are compiled by test-compile-world.ss; the end produce
+    applications are written to the directory t-app/.  If everything
+    runs successfully, every subdirectory in t-app will each contain a
+    compiled application.
+
+    Each application that's produces will have an ant file that you
+    can use to install the application into Sun's emulator.
+
+----------------------------------------------------------------------
+
+Example:
+
+
+## Compiling everything through MrEd (running throught DrScheme will
+## also work.)
+
+dyoo@mithril:~/Dropbox/j2me-world$ mred test-compile-world.ss
+
+## This should take some time.
+
+dyoo@mithril:~/Dropbox/j2me-world$
+
+## Let's try out the falling-ball example.
+
+dyoo@mithril:~/Dropbox/j2me-world$ cd t-app/falling-ball
+
+## Each directory has a convenient 'run' target in the build script
+## to start up the emulator on the program.
+
+dyoo@mithril:~/Dropbox/j2me-world/t-app/falling-ball$ ant run
+
+## The emulator should pop up, and a red falling ball should descend
+## down the screen of the cellphone.
+ 
+
+
+----------------------------------------------------------------------
+        
+
+Porting to Android
+
+    The runtime is currently hardcoded to code against j2me.  Can you
+    start by looking at compile-world.ss?  There's some embedded java
+    code there that you can look at to see how we tie into the rest of
+    the runtime.
+
+
+    The core of the runtime, on the Java side, lives in the
+    support/plt directories.  It makes sense to look at the
+    support/plt/gui classes and try porting these to the Android
+    primitives.
+
+
+
+We should also take a look at:
+
+    http://per.bothner.com/blog/2008/AndroidHelloScheme/

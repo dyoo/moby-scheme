@@ -1,0 +1,151 @@
+Implementation of more of the Beginner Scheme primitives in the runtime.
+
+Add gui-world primitives to the runtime.
+
+Add android platform as target.
+
+    * Extend compile-world with a function that produces programs for
+      android.
+
+    * Remove unnecessary classes like Microfloat.
+
+    * Expose android-specific functionality.
+
+Add web service to access the compiler from network clients.
+
+    * Add DrScheme tool to hook into the web service.
+
+Handle resolution independence by automatically scaling images to the
+size of the device.
+
+
+----------------------------------------------------------------------
+
+
+For the web service: I just want something network accessible.  Basically, I want to be able to call the generate-j2me-application function from a network client.
+
+Actually, the signature's going to be slightly different: it should be:
+
+;; make-fresh-j2me-application: string bytes -> bytes
+;; Given the name of the application and the bytes 
+;; of the beginner-level program, produce the bytes
+;; of the jar.
+
+and I'd like this to be network accessible.  A very thin xmlrpc hook would be a simple way to do this.  Then we could add a DrScheme tool to invoke the compiler from a menu option so that we integrate really well into the existing environment as an item just like "Create Executable."  
+
+
+
+----------------------------------------------------------------------
+
+Primitives that need implementation:
+
+(angle
+ complex?
+ conjugate
+ cosh
+ current-seconds
+ denominator
+ even?
+ exact->inexact
+ exact?
+ exp
+ expt
+ gcd
+ imag-part
+ inexact->exact
+ inexact?
+ integer->char
+ integer?
+ lcm
+ log
+ magnitude
+ make-polar
+ negative?
+ number?
+ numerator
+ odd?
+ positive?
+ quotient
+ rational?
+ real-part
+ real?
+ remainder
+ round
+ sgn
+ sinh
+ tan
+ boolean=?
+ boolean?
+ false?
+ symbol?
+ append
+ assq
+ cons?
+ length
+ list
+ list*
+ list-ref
+ member
+ memq
+ memv
+ null
+ null?
+ pair?
+ char->integer
+ char-alphabetic?
+ char-ci<=?
+ char-ci<?
+ char-ci=?
+ char-ci>=?
+ char-ci>?
+ char-downcase
+ char-lower-case?
+ char-numeric?
+ char-upcase
+ char-upper-case?
+ char-whitespace?
+ char<=?
+ char<?
+ char=?
+ char>=?
+ char>?
+ char?
+ format
+ list->string
+ make-string
+ string
+ string->list
+ string->number
+ string->symbol
+ string-append
+ string-ci<=?
+ string-ci<?
+ string-ci=?
+ string-ci>=?
+ string-ci>?
+ string-copy
+ string-length
+ string-ref
+ string<=?
+ string<?
+ string>=?
+ string>?
+ string?
+ substring
+ image=?
+ image?
+ eof
+ eof-object?
+ eq?
+ equal~?
+ eqv?
+ exit)
+
+
+You can look at the code in support/plt/Kernel.java for
+implementations of the primitives we support so far.  Any primitive
+you write also needs to be registered in the
+IMPLEMENTED-JAVA-KERNEL-SYMBOLS in beginner-to-java.ss.
+
+
+----------------------------------------------------------------------

@@ -1,0 +1,86 @@
+package org.plt.<<PROGRAM-NAME>>;
+
+import javax.microedition.midlet.*;
+import javax.microedition.lcdui.*;
+
+// This is stub code.
+// The following things must be plugged in:
+// 
+// PROGRAM-NAME
+// PROGRAM-DEFINITIONS
+// INITIAL-WORLD-EXPRESSION
+// DELAY-EXPRESSION
+// STOP-WHEN-EXPRESSION
+// ON-TICK-EXPPRESSION
+// ON-REDRAW-EXPRESSION
+// ON-KEY-EVENT-EXPRESSION
+
+
+public class <<PROGRAM-NAME>> extends MIDlet {
+    <<PROGRAM-DEFINITIONS>>
+
+    // #0 big-bang's world0
+    Object world = <<INITIAL-WORLD-EXPRESSION>>;
+
+    // When a program is paused, we'll restart the world.
+    public void pauseApp() {
+	world = <<INITIAL-WORLD-EXPRESSION>>;
+    }
+
+    public void destroyApp(boolean unconditional) {}
+
+    public void startApp() {
+	MyCanvas canvas = new MyCanvas();
+	Display.getDisplay(this).setCurrent(canvas);
+	new Thread(canvas).start();
+    }
+
+    class MyCanvas extends Canvas implements Runnable {
+	boolean stopped = false;
+	public void run() {
+	    // #1 delay expression
+	    long delay = (long) ((<<DELAY-EXPRESSION>>).toInt());
+	    while(! stopped) {
+		repaint();
+		if(((plt.types.Logic) <<STOP-WHEN-EXPRESSION>>).isTrue()) {
+		    //  #2 stop-when expression
+		    stopped = true;
+		} else {
+		    try {
+			Thread.sleep(delay);
+		    } catch (InterruptedException e) {}
+		    synchronized(world) {
+			//  #3 on-tick expression
+			world = <<ON-TICK-EXPRESSION>>;
+		    }
+		}
+	    }
+	}
+
+	public void paint(Graphics g) {
+	    // #4,5,6 on-redraw expression
+	    ((plt.gui.Scene) <<ON-REDRAW-EXPRESSION>>).draw(g, 0, 0);
+	}
+
+	protected void keyPressed(int keyCode) {
+	    Object aKey;
+	    if (stopped) { return; }
+	    if (keyCode > 0) {
+		aKey = new Character((char)keyCode);
+	    } else {
+		String action;
+		switch(getGameAction(keyCode)) {
+		case Canvas.LEFT: aKey = "left"; break;
+		case Canvas.RIGHT: aKey = "right"; break;
+		case Canvas.UP: aKey = "up"; break;
+		case Canvas.DOWN: aKey = "down"; break;
+		default: aKey= "";
+		}
+	    }
+	    synchronized(world) {
+		world = <<ON-KEY-EVENT-EXPRESSION>>;
+	    }
+	    repaint();
+	}
+    }
+}
