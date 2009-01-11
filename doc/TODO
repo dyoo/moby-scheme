@@ -1,26 +1,58 @@
 Implementation of more of the Beginner Scheme primitives in the runtime.
 
+
+
 Add gui-world primitives to the runtime.
 
-Add android platform as target.
 
-    * Extend compile-world with a function that produces programs for
-      android.
 
-    * Remove unnecessary classes like Microfloat.
+Android
+
+    * Remove unnecessary classes like Microfloat from Android platform.
+
+
 
     * Expose android-specific functionality.
 
+
+
 Add web service to access the compiler from network clients.
 
+
+
     * Add DrScheme tool to hook into the web service.
+
+
+
 
 Handle resolution independence by automatically scaling images to the
 size of the device.
 
 
-----------------------------------------------------------------------
 
+
+Add test cases for the functions in org.plt.Kernel.
+
+
+Fix the deviations listed in DESIGN.
+
+
+Make the numeric tower less of a hack.
+
+
+
+
+----------------------------------------------------------------------
+Details on Unit Testing TODO
+
+The unit test cases need work.  The nonexistent tests should be in
+src/test/java-src/org/plt/TestKernel.java, exercising code that's in
+support/common/src/org/plt/Kernel.java.
+
+
+
+----------------------------------------------------------------------
+Details on web Service TODO
 
 For the web service: I just want something network accessible.  Basically, I want to be able to call the generate-j2me-application function from a network client.
 
@@ -36,6 +68,9 @@ and I'd like this to be network accessible.  A very thin xmlrpc hook would be a 
 
 
 ----------------------------------------------------------------------
+
+Details on Beginner Scheme primitives:
+
 
 Primitives that need implementation:
 
@@ -142,10 +177,10 @@ Primitives that need implementation:
  exit)
 
 
-You can look at the code in support/plt/Kernel.java for
+You can look at the code in support/src/org/plt/Kernel.java for
 implementations of the primitives we support so far.  Any primitive
 you write also needs to be registered in the
-IMPLEMENTED-JAVA-KERNEL-SYMBOLS in beginner-to-java.ss.
+IMPLEMENTED-JAVA-KERNEL-SYMBOLS in src/beginner-to-java.ss.
 
 
 ----------------------------------------------------------------------
