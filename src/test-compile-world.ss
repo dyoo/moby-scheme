@@ -76,5 +76,5 @@
     (test g w)))
 
 
-#;(test-all generate-j2me-application test-app-j2me-path)
+(test-all generate-j2me-application test-app-j2me-path)
 (test-all generate-android-application test-app-android-path)

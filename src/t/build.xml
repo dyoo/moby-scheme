@@ -2,7 +2,7 @@
 
 <path id="test.classpath">
   <pathelement location="build" />
-  <pathelement location="junit-4.5.jar" />
+  <pathelement location="../../support/common/externals/junit-4.5.jar" />
 </path>
 
 
@@ -12,7 +12,7 @@
 
 
 <target name="compile" depends="init">
-  <javac srcdir="../support" destdir="build">
+  <javac srcdir="../../support/common/src" destdir="build">
     <classpath refid="test.classpath"/>
     <exclude name="plt/gui/**/*"/>
     <exclude name="plt/Kernel.java"/>
@@ -26,7 +26,7 @@
 
 <target name="test" depends="compile">
   <junit fork="yes" haltonfailure="yes">
-    <test name="plt.TestMath"/>
+    <test name="org.plt.TestMath"/>
     <formatter type="plain" usefile="false"/>
     <classpath refid="test.classpath" />
   </junit>
