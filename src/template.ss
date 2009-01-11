@@ -24,7 +24,20 @@
   (regexp-replace* #px"\\<\\<([-A-Za-z]+)\\>\\>" 
                    a-template
                    (lambda (_ hole-name)
-                     (hash-ref mappings hole-name))))
+                     (stringify
+                      (hash-ref mappings hole-name)))))
+
+
+;; stringify: X -> string
+;; Just make sure we turn something into a string.
+(define (stringify thing)
+  (cond
+    [(string? thing)
+     thing]
+    [(path? thing)
+     (path->string thing)]
+    [else
+     (format "~a" thing)]))
 
 
 ;; fill-template-file: path path mappings -> void

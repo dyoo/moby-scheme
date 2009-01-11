@@ -14,16 +14,13 @@
 (define current-ant-bin-path (make-parameter (build-path "/usr/bin/ant")))
 
 
-;; FIXME: be consistent in use of either path or string!
-
-
-;; current-android-sdk-path: (parameterof string)
+;; current-android-sdk-path: (parameterof path)
 ;; Where the Google Android SDK is installed.
-(define current-android-sdk-path (make-parameter "/usr/local/android"))
+(define current-android-sdk-path (make-parameter (build-path "/usr/local/android")))
 
-;; current-android-sdk-tools-path: (parameterof string)
+;; current-android-sdk-tools-path: (parameterof path)
 ;; Where the Google Android SDK tools are installed.
-(define current-android-sdk-tools-path (make-parameter "/usr/local/android/tools"))
+(define current-android-sdk-tools-path (make-parameter (build-path "/usr/local/android/tools")))
 
 
 
