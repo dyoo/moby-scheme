@@ -14,11 +14,11 @@
 <target name="compile" depends="init">
   <javac srcdir="../../support/common/src" destdir="build">
     <classpath refid="test.classpath"/>
-    <exclude name="plt/gui/**/*"/>
-    <exclude name="plt/Kernel.java"/>
+    <exclude name="org/plt/gui/**/*"/>
+    <exclude name="org/plt/Kernel.java"/>
   </javac>
 
-  <javac srcdir="test-support" destdir="build">
+  <javac srcdir="java-src" destdir="build">
     <classpath refid="test.classpath"/>
   </javac>
 </target>

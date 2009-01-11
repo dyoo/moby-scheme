@@ -1,5 +1,5 @@
-package plt;
-import plt.types.*;
+package org.plt;
+import org.plt.types.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
