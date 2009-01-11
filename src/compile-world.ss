@@ -33,16 +33,23 @@
 ;; current-ant-bin-path: (parameterof path)
 (define current-ant-bin-path (make-parameter (build-path "/usr/bin/ant")))
 
+;; current-android-sdk-path: (parameterof path)
+(define current-android-sdk-path (make-parameter "/usr/local/android"))
 
-(define-runtime-path common-support-src-path "../support/common/src")
+;; current-android-sdk-tools-path: (parameterof path)
+(define current-android-sdk-tools-path (make-parameter "/usr/local/android/tools"))
+
+
+
 (define-runtime-path antenna.jar "../support/common/externals/antenna-bin-1.1.0-beta.jar")
 (define-runtime-path proguard-home "../support/common/externals/proguard4.2")
+
+(define-runtime-path common-support-src-path "../support/common/src")
+(define-runtime-path j2me-support-src-path "../support/j2me/src")
 (define-runtime-path stub-path "../support/common/MidletStub.java.template")
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
 
-(define-runtime-path android-sdk-path "/usr/local/android")
-(define-runtime-path android-sdk-tools-path "/usr/local/android/tools")
 
 
 
@@ -115,6 +122,7 @@
 (define (write-j2me-resources a-text name dest-dir)
   (lift-images-to-directory a-text (build-path dest-dir "res"))
   (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
+  (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
   (write-j2me-ant-buildfile name dest-dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -132,16 +140,18 @@
   (when (directory-exists? dest-dir)
     (delete-directory/files dest-dir))
   (make-directory* dest-dir)
+  ;; At the moment, we use j2me bridge classes.
   (copy-directory/files* android-skeleton-path dest-dir)
   (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
+  (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
   (make-directory* (build-path dest-dir "libs")))
 
 
 (define (write-android-resources a-text a-name dest-dir)
   (lift-images-to-directory a-text (build-path dest-dir "src"))
   (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
-                                  (ANDROID-SDK-PATH (path->string android-sdk-path))
-                                  (ANDROID-TOOLS-PATH (path->string android-sdk-tools-path)))])
+                                  (ANDROID-SDK-PATH (path->string (current-android-sdk-path)))
+                                  (ANDROID-TOOLS-PATH (path->string (current-android-sdk-tools-path))))])
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
     (replace-template-file dest-dir "AndroidManifest.xml" mappings)
     (replace-template-file dest-dir "build.xml" mappings)
