@@ -29,7 +29,7 @@
 
 (define-runtime-path common-support-src-path "../support/common/src")
 (define-runtime-path j2me-support-src-path "../support/j2me/src")
-(define-runtime-path stub-path "../support/common/MidletStub.java.template")
+(define-runtime-path stub-path "../support/j2me/MidletStub.java.template")
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
