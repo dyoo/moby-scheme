@@ -14,8 +14,6 @@
 <target name="compile" depends="init">
   <javac srcdir="../../support/common/src" destdir="build">
     <classpath refid="test.classpath"/>
-    <exclude name="org/plt/gui/**/*"/>
-    <exclude name="org/plt/Kernel.java"/>
   </javac>
 
   <javac srcdir="java-src" destdir="build">

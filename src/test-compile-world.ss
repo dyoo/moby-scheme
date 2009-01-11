@@ -16,12 +16,13 @@
     receiver))
 (define receiver (start-up-debug-printing))
 
-;; Test programs live in t.
-(define-runtime-path test-path "t")
+;; The regressing test programs live here:
+(define-runtime-path test-path "test")
 
-;; Applications will be written to t-app.
-(define-runtime-path test-app-j2me-path "bin-j2me")
-(define-runtime-path test-app-android-path "bin-android")
+
+;; Applications will be written to bin.
+(define-runtime-path test-app-j2me-path "bin/j2me")
+(define-runtime-path test-app-android-path "bin/android")
 
 
 ;; make-test: string -> void

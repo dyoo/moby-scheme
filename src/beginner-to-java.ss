@@ -377,7 +377,9 @@
             (implemented-java-kernel-id? an-id))
        (string->symbol
         (string-append 
-         "org.plt.Kernel."
+         (if (world-primitive-id? an-id)
+             "org.plt.WorldKernel."
+             "org.plt.Kernel.")
          (symbol->string translated-id)))]
       [else
        translated-id])))
@@ -673,12 +675,28 @@
     
     ))
 
+(define WORLD-PRIMITIVE-SYMBOLS
+  '(empty-scene
+    place-image
+    circle
+    nw:rectangle
+    rectangle
+    key=?
+    text
+    -kernel-create-image     
+    image-width
+    image-height))
+
 
 
 ;; java-kernel-id?: symbol -> boolean
 ;; Returns true if the java-identifier should be treated as part of the Kernel.
 (define (implemented-java-kernel-id? an-id)
   (and (member an-id IMPLEMENTED-JAVA-KERNEL-SYMBOLS)
+       #t))
+
+(define (world-primitive-id? an-id)
+  (and (member an-id WORLD-PRIMITIVE-SYMBOLS)
        #t))
 
 
