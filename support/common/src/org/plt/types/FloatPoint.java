@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 
 import net.dclausen.microfloat.MicroDouble;
 

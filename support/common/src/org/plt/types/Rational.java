@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 
 public class Rational implements Number {
     int n, d;

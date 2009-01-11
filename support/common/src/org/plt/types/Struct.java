@@ -1,3 +1,3 @@
-package plt.types;
+package org.plt.types;
 
 public interface Struct {}

@@ -1,4 +1,4 @@
-package plt.gui;
+package org.plt.gui;
 
 public class Color {
     private int _r, _g, _b;

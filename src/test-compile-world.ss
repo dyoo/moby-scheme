@@ -20,8 +20,8 @@
 (define-runtime-path test-path "t")
 
 ;; Applications will be written to t-app.
-(define-runtime-path test-app-j2me-path "t-app-j2me")
-(define-runtime-path test-app-android-path "t-app-android")
+(define-runtime-path test-app-j2me-path "bin-j2me")
+(define-runtime-path test-app-android-path "bin-android")
 
 
 ;; make-test: string -> void
@@ -76,5 +76,5 @@
     (test g w)))
 
 
-(test-all generate-j2me-application test-app-j2me-path)
+#;(test-all generate-j2me-application test-app-j2me-path)
 (test-all generate-android-application test-app-android-path)

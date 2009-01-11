@@ -143,7 +143,7 @@
 
 ;; struct-definition->java-string: symbol (listof symbol) -> string
 (define (struct-definition->java-string id fields)
-  (format "static public class ~a implements plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
+  (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
           (identifier->java-identifier id (list id))
           (string-join (map (lambda (a-field)
                               (format "public Object ~a;"
@@ -224,7 +224,7 @@
            [(empty? questions)
             (expression->java-string answer-last bound-ids)]
            [else
-            (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
                     (expression->java-string (first questions) bound-ids)
                     (expression->java-string (first answers) bound-ids)
                     (loop (rest questions) (rest answers)))]))]
@@ -235,17 +235,17 @@
                   [answers answers])
          (cond
            [(empty? questions)
-            (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : plt.Kernel.error(plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
+            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
                     (expression->java-string question-last bound-ids)
                     (expression->java-string answer-last bound-ids))]
            [else
-            (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
                     (expression->java-string (first questions) bound-ids)
                     (expression->java-string (first answers) bound-ids)
                     (loop (rest questions) (rest answers)))]))]
       
       [(list 'if test consequent alternative)
-       (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+       (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
                (expression->java-string test bound-ids)
                (expression->java-string consequent bound-ids)
                (expression->java-string alternative bound-ids))]
@@ -253,31 +253,31 @@
       [(list 'and expr ...)
        (string-append "(("
                       (string-join (map (lambda (e)
-                                          (format "(((plt.types.Logic)~a).isTrue())"
+                                          (format "(((org.plt.types.Logic)~a).isTrue())"
                                                   (expression->java-string e bound-ids)))
                                         expr) 
                                    "&&")
-                      ") ? plt.types.Logic.TRUE : plt.types.Logic.FALSE)")]
+                      ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
       
       [(list 'or expr ...)
        (string-append "(("
                       (string-join  (map (lambda (e)
-                                           (format "(((plt.types.Logic)~a).isTrue())"
+                                           (format "(((org.plt.types.Logic)~a).isTrue())"
                                                    (expression->java-string e bound-ids)))
                                          expr) 
                                     "||")
-                      ") ? plt.types.Logic.TRUE : plt.types.Logic.FALSE)")]
+                      ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
       
       ['empty
-       (format "plt.types.Empty.EMPTY")]
+       (format "org.plt.types.Empty.EMPTY")]
       
       ;; Boolean true
       ['true
-       "(plt.types.Logic.TRUE)"]
+       "(org.plt.types.Logic.TRUE)"]
       
       ;; Boolean false
       ['false
-       "(plt.types.Logic.FALSE)"]
+       "(org.plt.types.Logic.FALSE)"]
             
       ;; Numbers
       [(? number?)
@@ -300,7 +300,7 @@
       
       ;; Symbols
       [(list 'quote datum)
-       (format "(plt.types.Symbol.makeInstance(\"~a\"))"
+       (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
                datum)]
       
       ;; Function call/primitive operation call
@@ -328,12 +328,12 @@
   (cond [(integer? a-num)
          ;; Fixme: we need to handle exact/vs/inexact issue.
          ;; We probably need the numeric tower.
-         (format "(new plt.types.Rational(~a, 1))" (inexact->exact a-num))]
+         (format "(new org.plt.types.Rational(~a, 1))" (inexact->exact a-num))]
         [(and (inexact? a-num)
               (real? a-num))
-         (format "(plt.types.FloatPoint.fromString(\"~s\"))" a-num)]
+         (format "(org.plt.types.FloatPoint.fromString(\"~s\"))" a-num)]
         [(rational? a-num)
-         (format "(new plt.types.Rational(~s, ~s))" 
+         (format "(new org.plt.types.Rational(~s, ~s))" 
                  (numerator a-num) 
                  (denominator a-num))]
         [else
@@ -377,7 +377,7 @@
             (implemented-java-kernel-id? an-id))
        (string->symbol
         (string-append 
-         "plt.Kernel."
+         "org.plt.Kernel."
          (symbol->string translated-id)))]
       [else
        translated-id])))

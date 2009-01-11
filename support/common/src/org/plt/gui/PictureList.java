@@ -1,4 +1,4 @@
-package plt.gui;
+package org.plt.gui;
 
 // Simple linked list.  No abstractions.
 public class PictureList {

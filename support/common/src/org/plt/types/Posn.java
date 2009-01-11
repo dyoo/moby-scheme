@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 
 public class Posn implements Struct {
     private Object x, y;

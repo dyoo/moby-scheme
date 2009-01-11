@@ -1,4 +1,4 @@
-package plt.world;
+package org.plt.world;
 
 public class World {
     private Object world;

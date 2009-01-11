@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 public class Logic {
     boolean val;
     public static Logic TRUE = new Logic(true);    

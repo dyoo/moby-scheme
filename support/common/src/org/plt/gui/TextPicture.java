@@ -1,4 +1,4 @@
-package plt.gui;
+package org.plt.gui;
 import javax.microedition.lcdui.*;
 
 public class TextPicture extends BasicPicture {

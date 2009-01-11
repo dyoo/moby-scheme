@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 public class Empty implements List {
     private Empty() {}
 

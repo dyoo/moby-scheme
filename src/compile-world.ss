@@ -34,11 +34,13 @@
 (define current-ant-bin-path (make-parameter (build-path "/usr/bin/ant")))
 
 
-(define-runtime-path support-files-path "support")
-(define-runtime-path antenna.jar "externals/antenna-bin-1.1.0-beta.jar")
-(define-runtime-path proguard-home "externals/proguard4.2")
-(define-runtime-path stub-path "MidletStub.java.template")
-(define-runtime-path android-skeleton-path "android/skeleton")
+(define-runtime-path common-support-src-path "../support/common/src")
+(define-runtime-path antenna.jar "../support/common/externals/antenna-bin-1.1.0-beta.jar")
+(define-runtime-path proguard-home "../support/common/externals/proguard4.2")
+(define-runtime-path stub-path "../support/common/MidletStub.java.template")
+(define-runtime-path android-skeleton-path "../support/android/skeleton")
+
+
 (define-runtime-path android-sdk-path "/usr/local/android")
 (define-runtime-path android-sdk-tools-path "/usr/local/android/tools")
 
@@ -112,7 +114,7 @@
 ;; Writes out all the external resources we need.
 (define (write-j2me-resources a-text name dest-dir)
   (lift-images-to-directory a-text (build-path dest-dir "res"))
-  (copy-directory/files* support-files-path (build-path dest-dir "src"))
+  (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
   (write-j2me-ant-buildfile name dest-dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,6 +133,7 @@
     (delete-directory/files dest-dir))
   (make-directory* dest-dir)
   (copy-directory/files* android-skeleton-path dest-dir)
+  (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
   (make-directory* (build-path dest-dir "libs")))
 
 
@@ -192,22 +195,22 @@
                    (if (world-handlers-stop-when a-world-handlers)
                        (expression->java-string
                         `(,(world-handlers-stop-when a-world-handlers) world) '())
-                       "plt.Kernel.no_op_stopWhen(world)"))
+                       "org.plt.Kernel.no_op_stopWhen(world)"))
                   (ON-TICK-EXPRESSION
                    (if (world-handlers-on-tick-event a-world-handlers)
                        (expression->java-string
                         `(,(world-handlers-on-tick-event a-world-handlers) world) '())
-                       "plt.Kernel.no_op_worldEvent(world)"))
+                       "org.plt.Kernel.no_op_worldEvent(world)"))
                   (ON-REDRAW-EXPRESSION
                    (if (world-handlers-on-redraw a-world-handlers)
                        (expression->java-string
                         `(,(world-handlers-on-redraw a-world-handlers) world) '())
-                       "plt.types.Scene.emptyScene(this.getWidth(), this.getHeight())"))
+                       "org.plt.types.Scene.emptyScene(this.getWidth(), this.getHeight())"))
                   (ON-KEY-EVENT-EXPRESSION
                    (if (world-handlers-on-key-event a-world-handlers)
                        (expression->java-string
                         `(,(world-handlers-on-key-event a-world-handlers) world aKey) '())
-                       "plt.Kernel.no_op_keyEvent(world, aKey)"))))
+                       "org.plt.Kernel.no_op_keyEvent(world, aKey)"))))
 
 
 

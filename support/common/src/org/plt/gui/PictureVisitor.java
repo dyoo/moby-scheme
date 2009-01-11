@@ -1,4 +1,4 @@
-package plt.gui;
+package org.plt.gui;
 
 
 public interface PictureVisitor {

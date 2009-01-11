@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 
 // Fixme: Symbols should be kept in a hashtable so we can do quick
 // pointer equality.

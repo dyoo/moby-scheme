@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 public class Pair implements List{
     private Object f;
     private List r;

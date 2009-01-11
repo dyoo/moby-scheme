@@ -1,4 +1,4 @@
-package plt.types;
+package org.plt.types;
 
 // Kludge: I really should take advantage of the tower structure
 // rather than hardcode the if/then statements...
