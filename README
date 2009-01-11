@@ -1,10 +1,11 @@
-Notes for new developers.
+world-compiler
+------
 
 
 What is it?
 
-    A compiler from Beginner Scheme programs to j2me applications.
-
+    A compiler from Beginner Scheme programs that use the world.ss
+    teachpack to j2me and android applications.
 
 
 Prerequisites:
@@ -12,6 +13,7 @@ Prerequisites:
     Java 1.6
     Apache Ant
     Sun Wireless Toolkit
+    Google Android SDK
     PLT Scheme 4.1.3
 
 
