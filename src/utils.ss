@@ -16,9 +16,12 @@
            (copy-file (build-path from-path entry)
                       (build-path dest-path entry))]
           [else
+           ;; Directory
+           ;; Degenerate case: if there's a plain file with the same name, wipe
+           ;; it out.
            (when (file-exists? (build-path dest-path entry))
              (delete-file (build-path dest-path entry)))
-           ;; Directory
+           ;; Otherwise, recur by going into that directory.
            (when (not (directory-exists? (build-path dest-path entry)))
              (make-directory (build-path dest-path entry)))
            (copy-directory/files* (build-path from-path entry)
@@ -32,5 +35,5 @@
 ;; Given a string name, perform an UpperCamelCasing of the name.
 (define (upper-camel-case name)
   (apply string-append
-         (map string-titlecase (regexp-split #px"\\s+" 
-                                             (regexp-replace* #px"[^\\s\\w]+" name "")))))
+         (map string-titlecase (regexp-split #px"[\\s]+" 
+                                             (regexp-replace* #px"[^\\s\\w]+" name " ")))))
