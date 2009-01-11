@@ -64,7 +64,6 @@
                                  (syntax->list #'(k ...)))])
        (syntax/loc stx 
          (let ([ht (make-hash)])
-           ;; fixme: make sure v is a string value
            (hash-set! ht k v) ...
            ht)))]
     [(_ (k v) ...)
