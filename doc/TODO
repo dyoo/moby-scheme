@@ -1,41 +1,32 @@
+Here are the TODOs:
+
+----------------------------------------------------------------------
+
 Implementation of more of the Beginner Scheme primitives in the runtime.
 
-
-
 Add gui-world primitives to the runtime.
-
-
 
 Android
 
     * Remove unnecessary classes like Microfloat from Android platform.
 
-
-
-    * Expose android-specific functionality.
+    * Expose android-specific functionality (location services).
 
 
 
 Add web service to access the compiler from network clients.
 
-
-
     * Add DrScheme tool to hook into the web service.
-
-
 
 
 Handle resolution independence by automatically scaling images to the
 size of the device.
 
-
-
+Fix the graphical deviations in the Android-J2ME bridge classes.
 
 Add test cases for the functions in org.plt.Kernel.
 
-
 Fix the deviations listed in DESIGN.
-
 
 Make the numeric tower less of a hack.
 
@@ -43,6 +34,8 @@ Make the numeric tower less of a hack.
 
 
 ----------------------------------------------------------------------
+
+
 Details on Unit Testing TODO
 
 The unit test cases need work.  The nonexistent tests should be in
@@ -52,6 +45,7 @@ support/common/src/org/plt/Kernel.java.
 
 
 ----------------------------------------------------------------------
+
 Details on web Service TODO
 
 For the web service: I just want something network accessible.  Basically, I want to be able to call the generate-j2me-application function from a network client.
