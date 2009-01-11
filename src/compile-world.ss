@@ -10,12 +10,10 @@
          "image-lift.ss"
          "beginner-to-java.ss"
          "utils.ss"
-         "template.ss")
+         "template.ss"
+         "config.ss")
 
-(provide/contract [current-j2me-home parameter?]
-                  [current-ant-bin-path parameter?]
-
-                  [generate-j2me-application
+(provide/contract [generate-j2me-application
                    (string? path-string? path-string? . -> . any)]
                   
                   [generate-android-application
@@ -24,22 +22,7 @@
 
 ;; A program is a (listof sexp).
 
-
-;; These parameters may need to be adjusted.
-
-;; current-j2me-home: (parameterof path)
-(define current-j2me-home (make-parameter (build-path "/usr/local/WTK2.5.2")))
-
-;; current-ant-bin-path: (parameterof path)
-(define current-ant-bin-path (make-parameter (build-path "/usr/bin/ant")))
-
-;; current-android-sdk-path: (parameterof path)
-(define current-android-sdk-path (make-parameter "/usr/local/android"))
-
-;; current-android-sdk-tools-path: (parameterof path)
-(define current-android-sdk-tools-path (make-parameter "/usr/local/android/tools"))
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-runtime-path antenna.jar "../support/common/externals/antenna-bin-1.1.0-beta.jar")
 (define-runtime-path proguard-home "../support/common/externals/proguard4.2")
@@ -49,6 +32,7 @@
 (define-runtime-path stub-path "../support/common/MidletStub.java.template")
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
