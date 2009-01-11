@@ -1,6 +1,6 @@
 world-compiler
 ------
-dyoo@cs.wpi.edu
+Danny Yoo (dyoo@cs.wpi.edu)
 
 
 ----------------------------------------------------------------------
@@ -37,10 +37,8 @@ system.
 
 ----------------------------------------------------------------------
 
-Testing
-
 Regression tests
-======
+
 
 We've got the beginnings of a regression test suite in
 src/test-compile-world.ss.  The regression suite compiled the Scheme
@@ -110,9 +108,9 @@ dyoo@mithril:~/work/world-compiler/src/bin/android/falling-ball$ ant install
 
 
 
+----------------------------------------------------------------------
 
 Unit tests
-======
 
 Minimal unit tests live in src/test.  To run the unit tests, run the
 build.xml in src/test with ant.  Here's an example run of the test
@@ -149,8 +147,6 @@ test:
 BUILD SUCCESSFUL
 Total time: 1 second
 ######################################################################
-
-We need more tests.
 
 
 
