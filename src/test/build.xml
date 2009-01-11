@@ -24,7 +24,15 @@
 
 <target name="test" depends="compile">
   <junit fork="yes" haltonfailure="yes">
-    <test name="org.plt.TestMath"/>
+
+
+    <batchtest fork="yes">
+      <fileset dir="java-src">
+        <include name="**/Test*.java" />
+      </fileset>
+    </batchtest>
+
+
     <formatter type="plain" usefile="false"/>
     <classpath refid="test.classpath" />
   </junit>
