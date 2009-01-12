@@ -21,7 +21,7 @@ functional flafor of the world primitives.
 Add web service to access the compiler from network clients.  An
 XMLRPC hook to the compiler functions in compile-world.ss is necessary
 if we want to provide a network service to folks who don't want to go
-through the SDK installation procedure.
+through the SDK installation procedure.  Details below.
 
     * Add DrScheme tool to hook into the web service.  This depends on
       the presence of the web-service.  Once the service is available,
@@ -35,9 +35,9 @@ Add unit test cases for the functions in org.plt.Kernel.  Details below.
 Fix the deviations listed in DESIGN.
 
 Improve the design of the numeric support.  At the moment, the kernel
-code manually reproduces the behavior of the numeric tower with a
-bunch of if statements, so it's not truly doing the numeric tower
-right.
+code reproduces the behavior of the numeric tower with a bunch of
+hardcoded if statements.  This code doesn't feel as robust as it
+should be.
 
 
 ----------------------------------------------------------------------
@@ -53,9 +53,11 @@ support/common/src/org/plt/Kernel.java.
 
 ----------------------------------------------------------------------
 
-Details on web Service TODO
+Details on Web Service TODO
 
-For the web service: I just want something network accessible.  Basically, I want to be able to call the generate-j2me-application function from a network client.
+For the web service: I just want something network accessible.
+Basically, I want to be able to call the generate-j2me-application
+function from a network client.
 
 Actually, the signature's going to be slightly different: it should be:
 
