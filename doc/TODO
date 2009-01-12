@@ -187,13 +187,3 @@ IMPLEMENTED-JAVA-KERNEL-SYMBOLS in src/beginner-to-java.ss.
 
 
 ----------------------------------------------------------------------
-
-
-
-
-Private
-
-Handle resolution independence by automatically scaling images to the
-size of the device.
-
-Add gui-world primitives to the runtime.
