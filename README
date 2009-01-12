@@ -7,24 +7,29 @@ Danny Yoo (dyoo@cs.wpi.edu)
 
 What is it?
 
-A compiler from Beginner Scheme programs that uses the world.ss
-teachpack.  We target both j2me and android application backends.
-This is still very much a work-in-progress.
+A compiler that consumes Beginner Language Scheme programs and
+produces applications for the J2ME and Android platforms.  The
+Beginner Language programs can use the primitives provided by the
+World Teachpack, whose functionality we provide for the respective
+platforms.  This is still very much a work-in-progress.
 
 
 ----------------------------------------------------------------------
 
 How does it work?
 
-The basic compiler takes a Beginner Language program and translates it
-down to Java code; Beginner Language Scheme is simple enough that's
-it's fairly easy to do this.
+The compiler takes a Beginner Language program and translates it to
+Java code; Beginner Language Scheme is simple enough that's it's
+fairly easy to do this.  Many of the Beginner Language primitives have
+been reimplemented in a Java runtime library that's included with the
+compiled application.
 
-For the world side: we use the graphical components on the j2me
-platform to implement the world-specific kernel functions.  But
-because we also want to support Android, we use adapter classes to
-bridge between our j2me code and Android.  In this way, we should be
-able to support both platforms with a lot of code reuse.
+To implement the world primitives, we use the graphical components in
+the J2ME platform to implement the functionality of the world
+Teachpack.  But because we also want to support Android, we use
+adapter classes to bridge between our J2ME code and Android.  In this
+way, we should be able to support both platforms with a lot of code
+reuse.
 
 
 ----------------------------------------------------------------------
@@ -37,11 +42,14 @@ The following are required:
   Apache Ant
   PLT Scheme >=4.1.3
 
-Furthermore, you need at least one of these (preferably both):
 
-    Sun Wireless Toolkit (http://java.sun.com/products/sjwtoolkit/)
+Furthermore, you need at least one of these to produce applications
+for the respective platforms:
 
-    Google Android SDK
+    Sun Wireless Toolkit (http://java.sun.com/products/sjwtoolkit/),
+    which provides J2ME application support.
+
+    Google Android SDK (http://code.google.com/android/).
 
 ----------------------------------------------------------------------
 
@@ -53,14 +61,27 @@ See doc/TODO.
 
 Installation
 
-The system currently has hardcoded paths to Apache Ant, the Sun
-Wireless Toolkit, and Android SDK embedded as the parameters within
-src/config.ss.  You should change those paths to the ones on your
-system.
+
+To install:
+
+    1.  Grab our sources:
+
+        $ svn checkout \
+          http://svn.plt-scheme.org/usr/dyoo/world-compiler/trunk \
+          world-compiler
+
+    2.  Edit config.ss.  The system currently has hardcoded paths to
+        Apache Ant, the Sun Wireless Toolkit, and Android SDK embedded
+        as the parameters within src/config.ss.  You should change
+        those paths to the ones on your system.
+
+    3.  Run the regression test suite.  Instructions on running the
+        test suite are in the next section.
+
 
 ----------------------------------------------------------------------
 
-Regression tests
+Regression test suite
 
 
 We've got the beginnings of a regression test suite in
@@ -71,14 +92,14 @@ manual inspection.
 To run the regression test suite, run the src/test-compile-world.ss
 program.  If everything runs successfully, every sub-subdirectory in
 src/bin will each contain a compiled application, for both J2ME and
-Android targets.  Each application that's produces will have an ant
+Android targets.  Each application that's produced will have an ant
 file that you can use to install the application into Sun's emulator.
 
 For the J2ME binaries, use
 
     ant run
 
-to kick start the emulator.
+to start the emulator.
 
 
 For Android, first start the emulator, then either use
@@ -90,7 +111,7 @@ For Android, first start the emulator, then either use
 Example
 ======
 
-## Compiling everything through MrEd (running throught DrScheme will
+## Compile everything through MrEd.  Running throught DrScheme will
 ## also work.)
 
 dyoo@mithril:~/Dropbox/j2me-world/src$ mred test-compile-world.ss
@@ -107,20 +128,20 @@ dyoo@mithril:~/work/world-compiler/src$ cd bin
 dyoo@mithril:~/work/world-compiler/src/bin$ ls
 android  j2me
 
-## We have binaries for both the android and j2me platforms.
+## We have binaries for both the Android and J2ME platforms.
 
 dyoo@mithril:~/Dropbox/j2me-world/src/bin$ cd j2me/falling-ball
 
-## The j2me build scripts have a convenient 'run' target to start up
+## The J2ME build scripts have a convenient 'run' target to start
 ## the emulator on the program.
 
 dyoo@mithril:~/Dropbox/j2me-world/src/bin/j2me/falling-ball$ ant run
 
-## The emulator should pop up, and a red falling ball should descend
-## down the screen of the cellphone.
+## The emulator should show a red falling ball descending
+## the screen of the cellphone.
  
 
-## Let's test the android binary.  If you haven't started up the
+## Let's test the Android binary.  If you haven't started up the
 ## emulator, do so now.
 
 dyoo@mithril:~/work/world-compiler/src/bin/j2me/falling-ball$ cd ../../android/falling-ball
