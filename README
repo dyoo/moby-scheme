@@ -111,8 +111,8 @@ For Android, first start the emulator, then either use
 Example
 ======
 
-## Compile everything through MrEd.  Running throught DrScheme will
-## also work.)
+## Compile everything through MrEd.  Running through DrScheme will
+## also work.
 
 dyoo@mithril:~/Dropbox/j2me-world/src$ mred test-compile-world.ss
 

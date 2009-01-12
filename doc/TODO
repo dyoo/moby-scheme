@@ -25,7 +25,7 @@ functional flavor of the world primitives.
 * Currently, anyone who wants to use the compiler needs to install the
 dependencies, and this is a hassle.  We would like people to use this
 package directly from DrScheme without having to install these
-packages.  An XMLRPC hook to the compiler functions in
+SDKs.  An XMLRPC hook to the compiler functions in
 compile-world.ss seems to be the simplest route to expose the
 compiler.
 
