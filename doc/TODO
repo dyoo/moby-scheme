@@ -67,22 +67,23 @@ support/common/src/org/plt/Kernel.java.
 
 Details on Web Service TODO
 
-For the web service: I just want something network accessible.
-Basically, I want to be able to call the generate-j2me-application
-function from a network client.
-
-Actually, the signature's going to be slightly different: it should be:
+We want to be able to call the generate-j2me-application and
+generate-android-application functions from a network client.
+Actually, the signatures should be slightly different.  There should
+be a wrapper function for generate-j2me-application (similarly for
+generate-android-application) that takes in bytes rather than a
+filename:
 
 ;; make-fresh-j2me-application: string bytes -> bytes
 ;; Given the name of the application and the bytes 
 ;; of the beginner-level program, produce the bytes
 ;; of the jar.
 
-and I'd like this to be network accessible.  A very thin XMLRPC hook
-would be a simple way to do this.  Then we could add a DrScheme tool
-to invoke the compiler from a menu option so that we integrate really
-well into the existing environment as an item just like "Create
-Executable."
+
+A thin XMLRPC hook would then be a simple way to access this function
+from the network.  Then we could add a DrScheme tool to invoke the
+compiler from a menu option so that we integrate really well into the
+existing environment as an item just like "Create Executable."
 
 
 
