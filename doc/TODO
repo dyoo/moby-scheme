@@ -7,18 +7,18 @@ consult on the design of solutions.
 
 ----------------------------------------------------------------------
 
-Implement more of the Beginner Scheme primitives in the runtime.  The
-list of primitives comes at the end of this file.
+* Implement more of the Beginner Scheme primitives in the runtime.
+The list of primitives comes at the end of this file.
 
-Remove unnecessary classes like Microfloat from Android platform.
+* Remove unnecessary classes like Microfloat from Android platform.
 Android guarantees a floating-point unit; our current implementation
 uses the MicroFloat fixed-point library even though we don't need it.
 
-Expose android-specific functionality.  Definitely talk to us before
+* Expose android-specific functionality.  Definitely talk to us before
 tackling this one: we want to make sure the design matches the
 functional flafor of the world primitives.
 
-Add web service to access the compiler from network clients.  An
+* Add web service to access the compiler from network clients.  An
 XMLRPC hook to the compiler functions in compile-world.ss is necessary
 if we want to provide a network service to folks who don't want to go
 through the SDK installation procedure.  Details below.
@@ -28,15 +28,16 @@ through the SDK installation procedure.  Details below.
       we'd like a menu option similar to "Create Executable" that
       makes the world compiler available to users.
 
-Fix the graphical deviations in the Android-J2ME bridge classes.
+* Fix the graphical deviations in the Android-J2ME bridge classes.
 
-Add unit test cases for the functions in org.plt.Kernel.  Details below.
+* Add unit test cases for the functions in org.plt.Kernel.  Details
+  below.
 
-Fix the deviations listed in DESIGN.
+* Fix the deviations listed in DESIGN.
 
-Improve the design of the numeric support.  At the moment, the kernel
-code reproduces the behavior of the numeric tower with a bunch of
-hardcoded if statements.  This code doesn't feel as robust as it
+* Improve the design of the numeric support.  At the moment, the
+kernel code reproduces the behavior of the numeric tower with a bunch
+of hardcoded if statements.  This code doesn't feel as robust as it
 should be.
 
 
