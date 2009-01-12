@@ -40,8 +40,12 @@ compiler.
   the graphical output of the J2ME and Android applications in the
   regression test suite and note the differences.
 
-* Add unit test cases for the functions in org.plt.Kernel.  Details
-  are later in this file.
+* Add unit test cases for the functions in org.plt.Kernel.  There are
+  very few tests at this point.  Any new primitives should have tests
+  written for them.  These tests should be in
+  src/test/java-src/org/plt/TestKernel.java, exercising code that's in
+  support/common/src/org/plt/Kernel.java.
+
 
 * Fix the deviations listed in DESIGN.
 
@@ -50,17 +54,6 @@ compiler.
   bunch of hardcoded if statements.  We want to look existing
   implementations of the numeric tower from other Java Scheme systems
   like SISC and adopt one of them.
-
-
-----------------------------------------------------------------------
-
-
-Details on Unit Testing TODO
-
-The unit test cases need work.  The nonexistent tests should be in
-src/test/java-src/org/plt/TestKernel.java, exercising code that's in
-support/common/src/org/plt/Kernel.java.
-
 
 
 ----------------------------------------------------------------------
