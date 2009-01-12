@@ -7,8 +7,25 @@ Danny Yoo (dyoo@cs.wpi.edu)
 
 What is it?
 
-A compiler from Beginner Scheme programs that use the world.ss
-teachpack to j2me and android applications.
+A compiler from Beginner Scheme programs that uses the world.ss
+teachpack.  We target both j2me and android application backends.
+This is still very much a work-in-progress.
+
+
+----------------------------------------------------------------------
+
+How does it work?
+
+The basic compiler takes a Beginner Language program and translates it
+down to Java code; Beginner Language Scheme is simple enough that's
+it's fairly easy to do this.
+
+For the world side: we use the graphical components on the j2me
+platform to implement the world-specific kernel functions.  But
+because we also want to support Android, we use adapter classes to
+bridge between our j2me code and Android.  In this way, we should be
+able to support both platforms with a lot of code reuse.
+
 
 ----------------------------------------------------------------------
 
@@ -25,6 +42,12 @@ Furthermore, you need at least one of these (preferably both):
     Sun Wireless Toolkit (http://java.sun.com/products/sjwtoolkit/)
 
     Google Android SDK
+
+----------------------------------------------------------------------
+
+What needs to be implemented?
+
+See doc/TODO.
 
 ----------------------------------------------------------------------
 
@@ -150,8 +173,3 @@ Total time: 1 second
 
 
 
-----------------------------------------------------------------------
-
-What needs to be done?
-
-See doc/TODO.
