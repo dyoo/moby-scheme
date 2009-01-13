@@ -46,7 +46,7 @@
 (define test-hello-world (make-test "hello-world.ss"))
 (define test-approx-equal (make-test "approx-equal.ss"))
 (define test-struct-question (make-test "struct-question.ss"))
-
+(define test-move-ball (make-test "move-ball.ss"))
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -59,7 +59,7 @@
 
 ;; Exercises the application generator.
 (define (test-all g w)
-  (for ([test (list test-hello-world
+  (for ([test (list #;test-hello-world
                     #;test-falling-ball 
                     #;test-falling-cow 
                     #;test-falling-ball-posn 
@@ -68,6 +68,7 @@
                     #;test-rectangles 
                     #;test-approx-equal 
                     #;test-struct-question 
+                    test-move-ball
                     
                     #;test-cowabunga 
                     #;test-flight-lander
@@ -83,5 +84,5 @@
 
 
 ;; If you do not have the Android SDK, change the value in config.ss.
-#;(when (current-has-android-sdk?)
+(when (current-has-android-sdk?)
   (test-all generate-android-application test-app-android-path))

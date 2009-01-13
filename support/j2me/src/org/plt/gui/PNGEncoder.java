@@ -7,11 +7,17 @@
  *
  * 09/22/08: Fixed Adler checksum calculation and byte order
  *           for storing length of zlib deflate block. Thanks
- *           to Miloslav R?ži?ka for noting this.
+ *           to Miloslav Rika for noting this.
  *
  * www.chrfr.de
  *
  */
+
+
+// dyoo: note: this package came from http://www.chrfr.de/software/midp_png.html.
+// We're using it because MIDP 1.0 doesn't have sane access to the ARGB array that
+// we need.
+
 
 package org.plt.gui;
 

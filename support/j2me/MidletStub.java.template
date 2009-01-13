@@ -66,18 +66,20 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	protected void keyPressed(int keyCode) {
 	    Object aKey;
 	    if (stopped) { return; }
-	    if (keyCode > 0) {
-		aKey = new Character((char)keyCode);
-	    } else {
-		String action;
-		switch(getGameAction(keyCode)) {
-		case Canvas.LEFT: aKey = "left"; break;
-		case Canvas.RIGHT: aKey = "right"; break;
-		case Canvas.UP: aKey = "up"; break;
-		case Canvas.DOWN: aKey = "down"; break;
-		default: aKey= "";
+	    switch(getGameAction(keyCode)) {
+	    case Canvas.LEFT: aKey = "left"; break;
+	    case Canvas.RIGHT: aKey = "right"; break;
+	    case Canvas.UP: aKey = "up"; break;
+	    case Canvas.DOWN: aKey = "down"; break;
+	    default:
+		if (keyCode > 0) {
+		    aKey = new Character((char)keyCode);
+		} else {
+		    aKey= "";
 		}
+		break;
 	    }
+	    
 	    synchronized(world) {
 		world = <<ON-KEY-EVENT-EXPRESSION>>;
 	    }
