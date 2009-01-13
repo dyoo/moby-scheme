@@ -470,5 +470,7 @@ public class Kernel {
 		return toLogic(((org.plt.types.Logic) n1).isTrue() == ((org.plt.types.Logic) n2)
 				.isTrue());
 	}
+	
+	public
 
 }
