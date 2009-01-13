@@ -1,3 +1,28 @@
+We have two problem statements that diverge:
+
+   1.  Given existing world program, port it to the cell-phone,
+preserving as much as we can.  The original world program is written
+with a particular hard-coded screen size in mind, and we want to
+translate the intent of that screen size to these smaller devices.
+
+   2.  Provide an environment for creating new programs that use the
+world paradigm, but with an aim specifically for cell-phone app
+development.  We want to make it easy to write new programs for J2ME
+and Android, using world.ss as a starting point, but not necessarily
+limiting ourselves only to world.ss.  In essence, we're making a new
+programming environment for cell phones, so worrying about the scaling
+issue isn't even an issue, since users will be targetting the right
+screen size in the first place.
+
+We've been working on problem #1, but #2 is the direction for future
+development. We want to expose location-service and other android
+behavior, which implies extending the world teachpack toward
+cell-phone development.
+
+
+
+----------------------------------------------------------------------
+
 [rough notes: cleanup]
 
 big bang width/height arguments are superfluous.
