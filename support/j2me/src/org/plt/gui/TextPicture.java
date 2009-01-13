@@ -1,5 +1,7 @@
 package org.plt.gui;
-import javax.microedition.lcdui.*;
+
+import javax.microedition.lcdui.Font;
+
 
 public class TextPicture extends BasicPicture {
     String text;
@@ -34,11 +36,10 @@ public class TextPicture extends BasicPicture {
 
     public void draw(Graphics g, int x, int y) {
 	g.setFont(this.font);
-	g.setColor(this.color.getRGB());
+	g.setColor(this.color.r(), this.color.g(), this.color.b());
 	g.drawString(this.text,
 		     x - this.getPinholeX(), 
-		     y - this.getPinholeY(),
-		     g.TOP | g.LEFT); 
+		     y - this.getPinholeY()); 
     }	
 
 

@@ -1,7 +1,5 @@
 package org.plt.gui;
 
-import javax.microedition.lcdui.*;
-import javax.microedition.midlet.*;
 
 public class Scene implements Picture {
     int width;

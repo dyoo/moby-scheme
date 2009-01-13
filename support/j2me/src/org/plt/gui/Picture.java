@@ -1,7 +1,5 @@
 package org.plt.gui;
 
-import javax.microedition.lcdui.*;
-import javax.microedition.midlet.*;
 
 public interface Picture {
     public int getPinholeX();

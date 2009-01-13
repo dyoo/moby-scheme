@@ -6,8 +6,8 @@
 
 (define (start-up-debug-printing)
   (let ([receiver (make-log-receiver (current-logger) 
-                                     #;'debug
-                                     'error)])
+                                     'debug
+                                     #;'error)])
     (thread (lambda ()
                (let loop ()
                  (let ([v (sync receiver)])
@@ -59,22 +59,21 @@
 
 ;; Exercises the application generator.
 (define (test-all g w)
-  (for ([test (list 
-               test-hello-world
-               test-falling-ball 
-               test-falling-cow 
-               test-falling-ball-posn 
-               test-falling-ball-pair 
-               test-pinholes 
-               test-rectangles 
-               test-approx-equal 
-               test-struct-question 
-               
-               test-cowabunga 
-               test-flight-lander
-               test-chicken
-               test-fire-fighter
-               test-spaceflight)])
+  (for ([test (list test-hello-world
+                    #;test-falling-ball 
+                    #;test-falling-cow 
+                    #;test-falling-ball-posn 
+                    #;test-falling-ball-pair 
+                    #;test-pinholes 
+                    #;test-rectangles 
+                    #;test-approx-equal 
+                    #;test-struct-question 
+                    
+                    #;test-cowabunga 
+                    #;test-flight-lander
+                    #;test-chicken
+                    #;test-fire-fighter
+                    #;test-spaceflight)])
     (test g w)))
 
 
@@ -84,5 +83,5 @@
 
 
 ;; If you do not have the Android SDK, change the value in config.ss.
-(when (current-has-android-sdk?)
+#;(when (current-has-android-sdk?)
   (test-all generate-android-application test-app-android-path))

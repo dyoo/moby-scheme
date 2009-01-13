@@ -1,5 +1,4 @@
 package org.plt.gui;
-import javax.microedition.lcdui.*;
 
 public class CirclePicture extends BasicPicture {
     int r;

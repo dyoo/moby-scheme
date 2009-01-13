@@ -1,11 +1,10 @@
 package org.plt.gui;
-import javax.microedition.lcdui.*;
 
 public class FilePicture extends BasicPicture {
-    Image img;
+    javax.microedition.lcdui.Image img;
     public FilePicture(String filename) {
 	try {
-	    this.img = Image.createImage(filename);
+	    this.img = javax.microedition.lcdui.Image.createImage(filename);
 	} catch (java.io.IOException e) {
 	    throw new RuntimeException("Can't find image " + filename);
 	}
@@ -24,8 +23,7 @@ public class FilePicture extends BasicPicture {
     public void draw(Graphics g, int x, int y) {
 	g.drawImage(img,
 		    x - this.getPinholeX(),
-		    y - this.getPinholeY(),
-		    g.TOP | g.LEFT);
+		    y - this.getPinholeY());
     }	
 
     public void accept(PictureVisitor visitor, int x, int y) {

@@ -1,5 +1,4 @@
 package org.plt.gui;
-import javax.microedition.lcdui.*;
 
 public class RectanglePicture extends BasicPicture {
     int width;
