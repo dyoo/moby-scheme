@@ -585,6 +585,4 @@ public class Kernel {
 		
 		return ((org.plt.types.List) lst).first();
 	}
-	
-//	public static org.plt.types.List list()
 }
