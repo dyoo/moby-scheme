@@ -379,11 +379,11 @@ public class Kernel {
 	// ////////////////////////////////////////////////////////////////////
 
 	public static Object error(Object s, Object msg) {
-		throw new RuntimeException(s + ": " + msg);
+		throw new SchemeException(s + ": " + msg);
 	}
 
 	public static Object error(Object s) {
-		throw new RuntimeException("" + s);
+		throw new SchemeException("" + s);
 	}
 
 	// ////////////////////////////////////////////////////////////////////
@@ -406,11 +406,15 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic even_question_(Object n) {
+	    if (integer_question_(n).isTrue()) {
 		while (_equal_(n, Rational.ZERO).isFalse()
-				&& _equal_(abs(n), Rational.ONE).isFalse())
-			n = _dash_(abs(n), TWO);
+		       && _equal_(abs(n), Rational.ONE).isFalse())
+		    n = _dash_(abs(n), TWO);
 
 		return _equal_(n, Rational.ZERO);
+	    } else {
+		throw new SchemeException("not an integer");
+	    }
 	}
 
 	public static org.plt.types.Logic odd_question_(Object n) {
