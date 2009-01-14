@@ -471,6 +471,6 @@ public class Kernel {
 				.isTrue());
 	}
 	
-	public
+	
 
 }
