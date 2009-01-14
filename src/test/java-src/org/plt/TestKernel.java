@@ -78,4 +78,8 @@ public class TestKernel {
     @Test public void testLCM(){
     	assertTrue(Kernel._equal_(Kernel.lcm(Kernel.TWO, Kernel.THREE), Kernel.SIX).isTrue());
     }
+    
+    @Test public void testPair_question_(){
+    	assertTrue(Kernel.pair_question_(Rational.ONE).isFalse());
+    }
 }

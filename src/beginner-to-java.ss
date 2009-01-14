@@ -660,6 +660,7 @@
     eighth
     rest
     cons
+    pair?
     
     reverse
     

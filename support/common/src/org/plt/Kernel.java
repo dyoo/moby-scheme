@@ -473,8 +473,8 @@ public class Kernel {
 				.isTrue());
 	}
 	
-	public static org.plt.types.Logic symbol_question_(Object n1){
-		return toLogic(n1 instanceof org.plt.types.Symbol);
+	public static org.plt.types.Logic symbol_question_(Object n){
+		return toLogic(n instanceof org.plt.types.Symbol);
 	}
 	
 	public static org.plt.types.Number gcd(Object a, Object b){
@@ -508,6 +508,10 @@ public class Kernel {
 		}
 		
 		return _star_(acc, _star_(a, b));
+	}
+	
+	public static org.plt.types.Logic pair_question_(Object n){
+		return toLogic(n instanceof org.plt.types.Pair);
 	}
 
 }
