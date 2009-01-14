@@ -1,0 +1,22 @@
+* The font used in the text image constructor produces larger text in
+  Android than in J2ME.  hello-world is an example that shows the
+  problem.  See images/hello.png, which shows a screenshot of both.
+
+
+* In Cowabunga, the frame rate on Android seems to be running faster
+  than in J2ME.  The controls are also slightly less responsive:
+  sometimes pressing left doesn't register quickly enough.  This might
+  be a side effect of the fast frame rate.
+
+
+* Falling cow: the frame rate of the cow falling in android seems
+  choppier than that of j2me.
+
+
+* Firefighter: the animation of Firefighter slows down tremendously
+  when there are a lot of images in Android.  Pressing down a lot
+  makes the animation chunk up, with very bad latency on controls.
+  This isn't a problem in J2ME.
+
+* Flightlander: the animation is much too fast in Android.
+  Thread.sleep isn't performing the same?
