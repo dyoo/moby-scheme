@@ -11,6 +11,8 @@ public class Kernel {
 
 	static public org.plt.types.Number TWO = _plus_(Rational.ONE, Rational.ONE);
 	static public org.plt.types.Number THREE = _plus_(Rational.ONE, TWO);
+	static public org.plt.types.Number FOUR = _plus_(Rational.ONE, THREE);
+	static public org.plt.types.Number FIVE = _plus_(Rational.ONE, FOUR);
 	static public org.plt.types.Number SIX = _star_(TWO, THREE);
 
 	// no-op: void -> void
@@ -472,57 +474,69 @@ public class Kernel {
 		return toLogic(((org.plt.types.Logic) n1).isTrue() == ((org.plt.types.Logic) n2)
 				.isTrue());
 	}
-	
-	public static org.plt.types.Logic symbol_question_(Object n){
+
+	public static org.plt.types.Logic symbol_question_(Object n) {
 		return toLogic(n instanceof org.plt.types.Symbol);
 	}
-	
-	public static org.plt.types.Number gcd(Object a, Object b){
+
+	public static org.plt.types.Number gcd(Object a, Object b) {
 		if (negative_question_(a).isTrue())
 			a = _dash_(Rational.ZERO, a);
 		if (negative_question_(b).isTrue())
 			b = _dash_(Rational.ZERO, b);
-		
-		while (_equal_(b, Rational.ZERO).isFalse()){
-			org.plt.types.Number t = (org.plt.types.Number)b;
-			b = ((org.plt.types.Number)a).modulo((org.plt.types.Number)b);
+
+		while (_equal_(b, Rational.ZERO).isFalse()) {
+			org.plt.types.Number t = (org.plt.types.Number) b;
+			b = ((org.plt.types.Number) a).modulo((org.plt.types.Number) b);
 			a = t;
 		}
-		
-		return (org.plt.types.Number)a;
+
+		return (org.plt.types.Number) a;
 	}
-	
-	public static org.plt.types.Number lcm(Object a, Object b){
+
+	public static org.plt.types.Number lcm(Object a, Object b) {
 		if (negative_question_(a).isTrue())
 			a = _dash_(Rational.ZERO, a);
 		if (negative_question_(b).isTrue())
 			b = _dash_(Rational.ZERO, b);
-		
+
 		org.plt.types.Number acc = Rational.ONE;
-		org.plt.types.Number cd; 
-		
-		while (_equal_(cd = gcd(a, b), Rational.ONE).isFalse()){
+		org.plt.types.Number cd;
+
+		while (_equal_(cd = gcd(a, b), Rational.ONE).isFalse()) {
 			acc = _star_(acc, cd);
 			a = _slash_(a, cd);
 			b = _slash_(b, cd);
 		}
-		
+
 		return _star_(acc, _star_(a, b));
 	}
-	
-	public static org.plt.types.Logic pair_question_(Object n){
+
+	public static org.plt.types.Logic pair_question_(Object n) {
 		return toLogic(n instanceof org.plt.types.Pair);
 	}
+	
+	public static org.plt.types.Logic cons_question_(Object n) {
+		return toLogic(n instanceof org.plt.types.List);
+	}
 
-	public static org.plt.types.Logic number_question_(Object n){
+	public static org.plt.types.Logic number_question_(Object n) {
 		return toLogic(n instanceof org.plt.types.Number);
 	}
-	
-	public static org.plt.types.Logic rational_question_(Object n){
+
+	public static org.plt.types.Logic rational_question_(Object n) {
 		return toLogic(n instanceof org.plt.types.Rational);
 	}
-	
-	public static org.plt.types.Number quotient(Object a, Object b){
+
+	public static org.plt.types.Number quotient(Object a, Object b) {
 		return _slash_(a, b);
+	}
+
+	public static org.plt.types.Number numerator(Object n) {
+		return new Rational(((org.plt.types.Rational) n).numerator(), 1);
+	}
+
+	public static org.plt.types.Number denominator(Object n) {
+		return new Rational(((org.plt.types.Rational) n).denominator(), 1);
 	}
 }

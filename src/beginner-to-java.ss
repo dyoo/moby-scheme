@@ -588,6 +588,8 @@
     number?
     rational?
     quotient
+    numerator
+    denominator
     
     abs
     acos

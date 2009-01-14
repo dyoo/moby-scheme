@@ -112,6 +112,11 @@ public class TestKernel {
 	public void testPair_question_() {
 		assertTrue(Kernel.pair_question_(Rational.ONE).isFalse());
 	}
+	
+	@Test
+	public void testCons_question_() {
+		assertTrue(Kernel.cons_question_(Rational.ONE).isFalse());
+	}
 
 	@Test
 	public void testNumber_question_() {
@@ -127,5 +132,17 @@ public class TestKernel {
 	public void testQuotient() {
 		assertTrue(Kernel._equal_(Kernel.quotient(Kernel.SIX, Kernel.TWO),
 				Kernel.THREE).isTrue());
+	}
+
+	@Test
+	public void testNumerator() {
+		assertTrue(Kernel._equal_(Kernel.numerator(new Rational(12, 10)),
+				Kernel.SIX).isTrue());
+	}
+
+	@Test
+	public void testDenominator() {
+		assertTrue(Kernel._equal_(Kernel.denominator(new Rational(12, 10)),
+				Kernel.FIVE).isTrue());
 	}
 }
