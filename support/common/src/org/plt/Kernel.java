@@ -565,13 +565,13 @@ public class Kernel {
 
 	public static Object list_dash_ref(Object lst, Object i) {
 		if (negative_question_(i).isTrue())
-			error(0,
+			error(Rational.ZERO,
 					"list-ref: expects type <non-negative exact integer> as 2nd argument, given: "
 							+ i + ";  other arguments were: " + lst);
 
 		org.plt.types.Number len = length(lst);
 		if (_greaterthan__equal_(i, len).isTrue())
-			error(0, "list-ref: index " + i + " too large for " + lst);
+			error(Rational.ZERO, "list-ref: index " + i + " too large for " + lst);
 		
 		org.plt.types.Number index = Rational.ZERO;
 		while (_lessthan_(index, i).isTrue()){
