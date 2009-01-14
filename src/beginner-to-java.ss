@@ -588,8 +588,10 @@
     number?
     rational?
     quotient
+    remainder
     numerator
     denominator
+    integer?
     
     abs
     acos
@@ -666,6 +668,10 @@
     rest
     cons
     pair?
+    cons?
+    null?
+    length
+    list-ref
     
     reverse
     

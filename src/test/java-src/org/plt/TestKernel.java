@@ -112,7 +112,7 @@ public class TestKernel {
 	public void testPair_question_() {
 		assertTrue(Kernel.pair_question_(Rational.ONE).isFalse());
 	}
-	
+
 	@Test
 	public void testCons_question_() {
 		assertTrue(Kernel.cons_question_(Rational.ONE).isFalse());
@@ -130,8 +130,14 @@ public class TestKernel {
 
 	@Test
 	public void testQuotient() {
-		assertTrue(Kernel._equal_(Kernel.quotient(Kernel.SIX, Kernel.TWO),
-				Kernel.THREE).isTrue());
+		assertTrue(Kernel._equal_(Kernel.quotient(Kernel.SIX, Kernel.FOUR),
+				Rational.ONE).isTrue());
+	}
+
+	@Test
+	public void testRemainder() {
+		assertTrue(Kernel._equal_(Kernel.remainder(Kernel.SIX, Kernel.FOUR),
+				Kernel.TWO).isTrue());
 	}
 
 	@Test
@@ -145,4 +151,29 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(Kernel.denominator(new Rational(12, 10)),
 				Kernel.FIVE).isTrue());
 	}
+
+	@Test
+	public void testInteger_question_() {
+		assertTrue(Kernel.integer_question_(new Rational(12, 10)).isFalse());
+	}
+
+	@Test
+	public void testNull_question_() {
+		assertTrue(Kernel.null_question_(Empty.EMPTY).isTrue());
+	}
+
+	@Test
+	public void testLength() {
+		assertTrue(Kernel._equal_(
+				Kernel.length(Kernel.cons(Kernel.THREE, Empty.EMPTY)),
+				Rational.ONE).isTrue());
+	}
+
+	@Test
+	public void testList_ref_() {
+		assertTrue(Kernel._equal_(
+				Kernel.list_dash_ref(Kernel.cons(Kernel.THREE, Empty.EMPTY),
+						Rational.ZERO), Kernel.THREE).isTrue());
+	}
+
 }

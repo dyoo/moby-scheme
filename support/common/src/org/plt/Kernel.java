@@ -513,9 +513,9 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic pair_question_(Object n) {
-		return toLogic(n instanceof org.plt.types.Pair);
+		return toLogic(n instanceof org.plt.types.List);
 	}
-	
+
 	public static org.plt.types.Logic cons_question_(Object n) {
 		return toLogic(n instanceof org.plt.types.List);
 	}
@@ -529,7 +529,11 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number quotient(Object a, Object b) {
-		return _slash_(a, b);
+		return floor(_slash_(a, b));
+	}
+
+	public static org.plt.types.Number remainder(Object a, Object b) {
+		return _dash_(a, _star_(quotient(a, b), b));
 	}
 
 	public static org.plt.types.Number numerator(Object n) {
@@ -539,4 +543,44 @@ public class Kernel {
 	public static org.plt.types.Number denominator(Object n) {
 		return new Rational(((org.plt.types.Rational) n).denominator(), 1);
 	}
+
+	public static org.plt.types.Logic integer_question_(Object n) {
+		return Kernel._equal_(Kernel.denominator(n), Rational.ONE);
+	}
+
+	public static org.plt.types.Logic null_question_(Object n) {
+		return toLogic(((org.plt.types.List) n).isEmpty());
+	}
+
+	public static org.plt.types.Number length(Object n) {
+		org.plt.types.Number len = Rational.ZERO;
+
+		while (((org.plt.types.List) n).isEmpty() == false) {
+			len = add1(len);
+			n = ((org.plt.types.List) n).rest();
+		}
+
+		return len;
+	}
+
+	public static Object list_dash_ref(Object lst, Object i) {
+		if (negative_question_(i).isTrue())
+			error(0,
+					"list-ref: expects type <non-negative exact integer> as 2nd argument, given: "
+							+ i + ";  other arguments were: " + lst);
+
+		org.plt.types.Number len = length(lst);
+		if (_greaterthan__equal_(i, len).isTrue())
+			error(0, "list-ref: index " + i + " too large for " + lst);
+		
+		org.plt.types.Number index = Rational.ZERO;
+		while (_lessthan_(index, i).isTrue()){
+			index = add1(index);
+			lst = ((org.plt.types.List) lst).rest();
+		}
+		
+		return ((org.plt.types.List) lst).first();
+	}
+	
+//	public static org.plt.types.List list()
 }
