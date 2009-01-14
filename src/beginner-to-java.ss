@@ -581,6 +581,10 @@
     =~
     equal?
     number->string
+    even?
+    odd?
+    positive?
+    negative?
     
     abs
     acos
@@ -595,6 +599,11 @@
     add1
     sub1
     zero?
+    exp
+    expt
+    sgn
+    log
+    
     
     pi
     e
@@ -602,9 +611,15 @@
     ceiling
     sin
     cos
+    tan
+    sinh
+    cosh
     
     ;; Logic
     not
+    false?
+    boolean?
+    boolean=?
     
     ;; Symbols
     symbol=?
@@ -645,7 +660,7 @@
     cons
     
     reverse
-   
+    
     caaar
     caadr
     caar
@@ -671,7 +686,7 @@
     
     ;; Misc
     error
-
+    
     
     ))
 
