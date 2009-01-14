@@ -603,7 +603,8 @@
     expt
     sgn
     log
-    
+    gcd
+    lcm
     
     pi
     e
@@ -626,6 +627,7 @@
     symbol->string
     ;; Strings
     string=?
+    symbol?
     
     ;; World
     empty-scene

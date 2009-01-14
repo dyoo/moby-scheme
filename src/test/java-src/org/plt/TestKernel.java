@@ -66,4 +66,16 @@ public class TestKernel {
     @Test public void testBoolean_equal__question_(){
     	assertTrue(Kernel.boolean_equal__question_(Logic.FALSE, Logic.FALSE).isTrue());
     }
+    
+    @Test public void testSymbol_question_(){
+    	assertTrue(Kernel.symbol_question_(1).isFalse());
+    }
+    
+    @Test public void testGCD(){
+    	assertTrue(Kernel._equal_(Kernel.gcd(Kernel.TWO, Kernel.THREE), Rational.ONE).isTrue());
+    }
+    
+    @Test public void testLCM(){
+    	assertTrue(Kernel._equal_(Kernel.lcm(Kernel.TWO, Kernel.THREE), Kernel.SIX).isTrue());
+    }
 }

@@ -10,6 +10,8 @@ public class Kernel {
 	static private java.util.Random randgen = new java.util.Random();
 
 	static public org.plt.types.Number TWO = _plus_(Rational.ONE, Rational.ONE);
+	static public org.plt.types.Number THREE = _plus_(Rational.ONE, TWO);
+	static public org.plt.types.Number SIX = _star_(TWO, THREE);
 
 	// no-op: void -> void
 	public static Object no_op() {
@@ -471,6 +473,41 @@ public class Kernel {
 				.isTrue());
 	}
 	
+	public static org.plt.types.Logic symbol_question_(Object n1){
+		return toLogic(n1 instanceof org.plt.types.Symbol);
+	}
 	
+	public static org.plt.types.Number gcd(Object a, Object b){
+		if (negative_question_(a).isTrue())
+			a = _dash_(Rational.ZERO, a);
+		if (negative_question_(b).isTrue())
+			b = _dash_(Rational.ZERO, b);
+		
+		while (_equal_(b, Rational.ZERO).isFalse()){
+			org.plt.types.Number t = (org.plt.types.Number)b;
+			b = ((org.plt.types.Number)a).modulo((org.plt.types.Number)b);
+			a = t;
+		}
+		
+		return (org.plt.types.Number)a;
+	}
+	
+	public static org.plt.types.Number lcm(Object a, Object b){
+		if (negative_question_(a).isTrue())
+			a = _dash_(Rational.ZERO, a);
+		if (negative_question_(b).isTrue())
+			b = _dash_(Rational.ZERO, b);
+		
+		org.plt.types.Number acc = Rational.ONE;
+		org.plt.types.Number cd; 
+		
+		while (_equal_(cd = gcd(a, b), Rational.ONE).isFalse()){
+			acc = _star_(acc, cd);
+			a = _slash_(a, cd);
+			b = _slash_(b, cd);
+		}
+		
+		return _star_(acc, _star_(a, b));
+	}
 
 }
