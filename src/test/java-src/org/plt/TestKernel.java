@@ -36,6 +36,15 @@ public class TestKernel {
 		assertTrue(Kernel.even_question_(Rational.ZERO).isTrue());
 	}
 
+
+        @Test
+	    public void testEvenHuhTerminatesOnBadInput() {
+	    try {
+		Kernel.even_question_(new Rational(1, 2));
+		fail();
+	    } catch (SchemeException e) {}
+	}
+
 	@Test
 	public void testOdd_question_() {
 		assertTrue(Kernel.odd_question_(Rational.ONE).isTrue());
