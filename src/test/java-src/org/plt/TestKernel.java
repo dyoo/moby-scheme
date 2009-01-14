@@ -23,9 +23,47 @@ public class TestKernel {
     	assertTrue(Kernel._equal_(Kernel.cosh(Rational.ZERO), Rational.ONE).isTrue());
     }
     
+    @Test public void testEven_question_(){
+    	assertTrue(Kernel.even_question_(Rational.ZERO).isTrue());
+    }
+    
+    @Test public void testOdd_question_(){
+    	assertTrue(Kernel.odd_question_(Rational.ONE).isTrue());
+    }
+    
+    @Test public void testExpt(){
+    	assertTrue(Kernel._equal_(Kernel.expt(Kernel.TWO, Rational.ONE), Kernel.TWO).isTrue());
+    }
+    
+    @Test public void testExp(){
+    	assertTrue(Kernel._equal_(Kernel.exp(Rational.ZERO), Rational.ONE).isTrue());
+    }
+    
+    @Test public void testLog(){
+    	assertTrue(Kernel._equal_(Kernel.log(FloatPoint.fromInt(1)), FloatPoint.fromInt(0)).isTrue());
+    }
+    
+    @Test public void testPositive_question_(){
+    	assertTrue(Kernel.positive_question_(Rational.ONE).isTrue());
+    }
+    
+    @Test public void testNegative_question_(){
+    	assertTrue(Kernel.negative_question_(Rational.ONE).isFalse());
+    }
+    
+    @Test public void testSgn(){
+    	assertTrue(Kernel._equal_(Kernel.sgn(Rational.ONE), Rational.ONE).isTrue());
+    }
+    
     @Test public void testBoolean_question_(){
     	assertTrue(Kernel.boolean_question_(Logic.TRUE).isTrue());
     }
     
+    @Test public void testFalse_question_(){
+    	assertTrue(Kernel.false_question_(Logic.FALSE).isTrue());
+    }
     
+    @Test public void testBoolean_equal__question_(){
+    	assertTrue(Kernel.boolean_equal__question_(Logic.FALSE, Logic.FALSE).isTrue());
+    }
 }

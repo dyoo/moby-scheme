@@ -9,7 +9,7 @@ public class Kernel {
 
 	static private java.util.Random randgen = new java.util.Random();
 
-	static private org.plt.types.Number TWO = _plus_(Rational.ONE, Rational.ONE);
+	static public org.plt.types.Number TWO = _plus_(Rational.ONE, Rational.ONE);
 
 	// no-op: void -> void
 	public static Object no_op() {
