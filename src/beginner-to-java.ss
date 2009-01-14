@@ -268,6 +268,9 @@
                                     "||")
                       ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
       
+      ['null
+       (format "org.plt.types.Empty.EMPTY")]
+      
       ['empty
        (format "org.plt.types.Empty.EMPTY")]
       
@@ -671,6 +674,10 @@
     cons?
     null?
     length
+    list
+    list*
+    empty
+    null
     list-ref
     
     reverse
