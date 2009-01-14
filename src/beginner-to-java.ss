@@ -585,6 +585,9 @@
     odd?
     positive?
     negative?
+    number?
+    rational?
+    quotient
     
     abs
     acos

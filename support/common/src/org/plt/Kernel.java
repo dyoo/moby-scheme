@@ -514,4 +514,15 @@ public class Kernel {
 		return toLogic(n instanceof org.plt.types.Pair);
 	}
 
+	public static org.plt.types.Logic number_question_(Object n){
+		return toLogic(n instanceof org.plt.types.Number);
+	}
+	
+	public static org.plt.types.Logic rational_question_(Object n){
+		return toLogic(n instanceof org.plt.types.Rational);
+	}
+	
+	public static org.plt.types.Number quotient(Object a, Object b){
+		return _slash_(a, b);
+	}
 }
