@@ -87,58 +87,27 @@ Details on Beginner Scheme primitives:
 
 Primitives that need implementation:
 
+
 (angle
  complex?
  conjugate
- cosh
  current-seconds
- denominator
- even?
  exact->inexact
  exact?
- exp
- expt
- gcd
  imag-part
  inexact->exact
  inexact?
  integer->char
- integer?
- lcm
- log
  magnitude
  make-polar
- negative?
- number?
- numerator
- odd?
- positive?
- quotient
- rational?
  real-part
  real?
- remainder
  round
- sgn
- sinh
- tan
- boolean=?
- boolean?
- false?
- symbol?
  append
  assq
- cons?
- length
- list
- list*
- list-ref
  member
  memq
  memv
- null
- null?
- pair?
  char->integer
  char-alphabetic?
  char-ci<=?
@@ -188,7 +157,6 @@ Primitives that need implementation:
  equal~?
  eqv?
  exit)
-
 
 You can look at the code in support/src/org/plt/Kernel.java for
 implementations of the primitives we support so far.  Any primitive
