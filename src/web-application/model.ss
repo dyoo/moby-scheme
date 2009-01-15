@@ -26,7 +26,11 @@
 ;; email assumed to be unique.
 (define-persistent-struct user ([name type:string] 
                                 [email type:string]))
-(define-persistent-struct program (;; name used to identify the program
+(define-persistent-struct source ([name type:string]
+                                  #;[code type:bytes]
+                                  [date type:time-utc]))
+
+#;(define-persistent-struct program (;; name used to identify the program
                                    [name type:string]
                                    ;; source-code-path should be relative to
                                    ;; data-dir
@@ -88,7 +92,7 @@
    (lambda ()
      (unless (table-exists? entity:user)
        (create-table entity:user))
-     (unless (table-exists? entity:program)
+     #;(unless (table-exists? entity:program)
        (create-table entity:program)))))
 
 
@@ -192,6 +196,9 @@
 
 #;(define (get-package-jad program)
   ...)
+
+#;(define (get-package-apk program)
+    ...)
 
 
 ;; close-model: model -> void

@@ -1,8 +1,10 @@
 #lang scheme/base
-(require scheme/contract)
+(require scheme/contract
+         scheme/file)
 
 (provide/contract [copy-directory/files* (path-string? path-string? . -> . any)]
-                  [upper-camel-case (string? . -> . string?)])
+                  [upper-camel-case (string? . -> . string?)]
+                  [make-temporary-directory (() (#:directory path?) . ->* . path?)])
 
 
 ;; copy-directory/files*: path path -> void
@@ -27,6 +29,14 @@
            (copy-directory/files* (build-path from-path entry)
                                   (build-path dest-path entry))])))
 
+
+;; make-temporary-directory: -> path
+;; Creates a temporary directory, and returns its path.
+(define (make-temporary-directory #:directory (directory #f))
+  (let ([f (make-temporary-file "tmp~a" #f directory)])
+    (delete-file f)
+    (make-directory f)
+    f))
 
 
 

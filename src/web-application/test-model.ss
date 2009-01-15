@@ -1,6 +1,7 @@
 #lang scheme/base
 (require "model.ss"
          scheme/file
+         "../utils.ss"
          (planet schematics/schemeunit:3)
          (planet schematics/schemeunit:3/text-ui)
          scheme/stxparam)
@@ -22,9 +23,7 @@
             (syntax-parameterize 
              ([M (make-rename-transformer #'model)])             
              (dynamic-wind (lambda ()
-                             (let ([filename (make-temporary-file)])
-                               (delete-file filename)
-                               (set! model (make-model filename))))
+                             (set! model (make-model (make-temporary-directory))))
                            (lambda ()
                              body ...)
                            (lambda ()
