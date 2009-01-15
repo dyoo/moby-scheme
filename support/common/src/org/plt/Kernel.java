@@ -663,7 +663,7 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number round(Object n) {
-		if (number_question_(n).isFalse())
+		if (real_question_(n).isFalse())
 			throw new SchemeException(
 					"round: expects argument of type <real number>; given: "
 							+ n);
@@ -676,5 +676,9 @@ public class Kernel {
 		} else {
 			return _dash_(ZERO, round(abs(n)));
 		}
+	}
+
+	public static org.plt.types.Logic real_question_(Object n) {
+		return toLogic(n instanceof FloatPoint || n instanceof Rational);
 	}
 }
