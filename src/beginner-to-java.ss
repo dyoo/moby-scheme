@@ -615,6 +615,7 @@
     log
     gcd
     lcm
+    round
     
     pi
     e
@@ -679,6 +680,7 @@
     empty
     null
     list-ref
+    append
     
     
     reverse
