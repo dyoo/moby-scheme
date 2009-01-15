@@ -10,7 +10,7 @@
   (require-for-syntax "valid-types-helper.ss")
   
   (require "xml-core.ss"
-           (lib "unit.ss"))
+           (lib "unit200.ss"))
   
   (provide stylesheet->expander
            stylesheet
