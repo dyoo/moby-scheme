@@ -22,17 +22,11 @@ don't need it.
 tackling this one: we want to make sure the design matches the
 functional flavor of the world primitives.
 
-* Currently, anyone who wants to use the compiler needs to install the
-dependencies, and this is a hassle.  We would like people to use this
-package directly from DrScheme without having to install these
-SDKs.  An XMLRPC hook to the compiler functions in
-compile-world.ss seems to be the simplest route to expose the
-compiler.
 
-    * Once the XMLRPC hook is available, we want a DrScheme tool that
-      talks to it.  A menu option similar to "Create Executable"
-      should be available from DrScheme that takes the user's program
-      to the network-available compiler to get the application.
+* We want a DrScheme tool that talks to our compiler web-service.  A
+  menu option similar to "Create Executable" should be available from
+  DrScheme that takes the user's program to the network-available
+  compiler to get the application.
 
 * The bridge classes we've adopted for the J2ME-Android bridge are not
   reproducing correct behavior.  We need someone to catalog the
@@ -59,24 +53,20 @@ compiler.
 
 Details on Web Service TODO
 
-We want to be able to call the generate-j2me-application and
-generate-android-application functions from a network client.
-Actually, the signatures should be slightly different.  There should
-be a wrapper function for generate-j2me-application (similarly for
-generate-android-application) that takes in bytes rather than a
-filename:
+src/web-application contains a XMLRPC web service that exposes the
+compiler to the network (start-service.ss), and a client for access
+(client.ss).  We want to integrate the service into DrScheme.  That
+tool should invoke the compiler from a menu option so that we
+integrate into the existing environment as an item just like "Create
+Executable."
 
-;; make-fresh-j2me-application: string bytes -> bytes
-;; Given the name of the application and the bytes 
-;; of the beginner-level program, produce the bytes
-;; of the jar.
+The dialog window should allow the user to specify:
 
+    Name of application
 
-A thin XMLRPC hook would then be a simple way to access this function
-from the network.  Then we could add a DrScheme tool to invoke the
-compiler from a menu option so that we integrate really well into the
-existing environment as an item just like "Create Executable."
+    Target platform (drop/down)
 
+    Options for that platform (None so far)
 
 
 ----------------------------------------------------------------------
