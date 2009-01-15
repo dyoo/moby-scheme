@@ -71,7 +71,8 @@ public class TestKernel {
 
 	@Test
 	public void testLog() {
-		assertTrue(Kernel._equal_(Kernel.log(Rational.ONE), FloatPoint.fromInt(0)).isTrue());
+		assertTrue(Kernel._equal_(Kernel.log(Rational.ONE),
+				FloatPoint.fromInt(0)).isTrue());
 	}
 
 	@Test
@@ -191,4 +192,16 @@ public class TestKernel {
 						Rational.ZERO), Kernel.THREE).isTrue());
 	}
 
+	@Test
+	public void testRound() {
+		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("3.1")),
+				FloatPoint.fromString("3")).isTrue());
+		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("3.5")),
+				FloatPoint.fromString("4")).isTrue());
+		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("-3.5")),
+				FloatPoint.fromString("-4")).isTrue());
+		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("-3.1")),
+				FloatPoint.fromString("-3")).isTrue());
+	}
+	
 }

@@ -10,10 +10,13 @@ public class Kernel {
 
 	static private java.util.Random randgen = new java.util.Random();
 
-	static public org.plt.types.Number TWO = _plus_(Rational.ONE, Rational.ONE);
-	static public org.plt.types.Number THREE = _plus_(Rational.ONE, TWO);
-	static public org.plt.types.Number FOUR = _plus_(Rational.ONE, THREE);
-	static public org.plt.types.Number FIVE = _plus_(Rational.ONE, FOUR);
+	static public org.plt.types.Number ZERO = Rational.ZERO;
+	static public org.plt.types.Number ONE = Rational.ONE;
+	static public org.plt.types.Number TWO = _plus_(ONE, ONE);
+	static public org.plt.types.Number HALF = _slash_(ONE, TWO);
+	static public org.plt.types.Number THREE = _plus_(ONE, TWO);
+	static public org.plt.types.Number FOUR = _plus_(ONE, THREE);
+	static public org.plt.types.Number FIVE = _plus_(ONE, FOUR);
 	static public org.plt.types.Number SIX = _star_(TWO, THREE);
 
 	// no-op: void -> void
@@ -543,8 +546,6 @@ public class Kernel {
 	public static org.plt.types.Number numerator(Object n) {
 		return new Rational(((org.plt.types.Rational) n).numerator(), 1);
 	}
-	
-	
 
 	public static org.plt.types.Number denominator(Object n) {
 		return new Rational(((org.plt.types.Rational) n).denominator(), 1);
@@ -592,5 +593,21 @@ public class Kernel {
 		}
 
 		return ((org.plt.types.List) lst).first();
+	}
+
+	public static org.plt.types.Number round(Object n) {
+		if (number_question_(n).isFalse())
+			throw new SchemeException(
+					"round: expects argument of type <real number>; given: "
+							+ n);
+
+		if (positive_question_(n).isTrue()) {
+			if (_lessthan_(_dash_(n, floor(n)), HALF).isTrue())
+				return floor(n);
+			else
+				return ceiling(n);
+		} else {
+			return _dash_(Rational.ZERO, round(abs(n)));
+		}
 	}
 }
