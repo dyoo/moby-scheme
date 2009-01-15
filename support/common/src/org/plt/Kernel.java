@@ -4,6 +4,7 @@ package org.plt;
 // primitives, which lives under the j2me tree.
 
 import org.plt.types.*;
+import net.dclausen.microfloat.*;
 
 public class Kernel {
 
@@ -406,38 +407,45 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic even_question_(Object n) {
-	    if (integer_question_(n).isTrue()) {
-		while (_equal_(n, Rational.ZERO).isFalse()
-		       && _equal_(abs(n), Rational.ONE).isFalse())
-		    n = _dash_(abs(n), TWO);
+		if (integer_question_(n).isFalse())
+			throw new SchemeException(
+					"even?: expects argument of type <integer>; given " + n);
 
-		return _equal_(n, Rational.ZERO);
-	    } else {
-		throw new SchemeException("not an integer");
-	    }
+		return zero_question_(modulo(n, TWO));
 	}
 
 	public static org.plt.types.Logic odd_question_(Object n) {
 		return not(even_question_(n));
 	}
 
-	public static org.plt.types.Number expt(Object base, Object exponent) {
-		if (_greaterthan__equal_(exponent, Rational.ZERO).isTrue()) {
-			if (_equal_(exponent, Rational.ZERO).isTrue())
-				return Rational.ONE;
+	public static org.plt.types.Number expt(Object n1, Object n2) {
+		long m1 = MicroDouble.parseDouble(((org.plt.types.Rational) n1)
+				.toString());
+		long m2 = MicroDouble.parseDouble(((org.plt.types.Rational) n2)
+				.toString());
 
-			if (even_question_(exponent).isTrue()) {
-				org.plt.types.Number half = expt(base, _slash_(exponent, TWO));
-				return _star_(half, half);
-			} else {
-				org.plt.types.Number half = expt(base, _slash_(sub1(exponent),
-						TWO));
-				return _star_(base, _star_(half, half));
-			}
-		} else {
-			return _slash_(Rational.ONE, expt(base, abs(exponent)));
-		}
+		long result = MicroDouble.pow(m1, m2);
+
+		return FloatPoint.fromString(MicroDouble.toString(result));
 	}
+
+//	 public static org.plt.types.Number expt(Object base, Object exponent) {
+//		if (_greaterthan__equal_(exponent, Rational.ZERO).isTrue()) {
+//			if (_equal_(exponent, Rational.ZERO).isTrue())
+//				return Rational.ONE;
+//
+//			if (even_question_(exponent).isTrue()) {
+//				org.plt.types.Number half = expt(base, _slash_(exponent, TWO));
+//				return _star_(half, half);
+//			} else {
+//				org.plt.types.Number half = expt(base, _slash_(sub1(exponent),
+//						TWO));
+//				return _star_(base, _star_(half, half));
+//			}
+//		} else {
+//			return _slash_(Rational.ONE, expt(base, abs(exponent)));
+//		}
+//	}
 
 	public static org.plt.types.Number exp(Object exponent) {
 		return expt(e, exponent);
@@ -575,14 +583,15 @@ public class Kernel {
 
 		org.plt.types.Number len = length(lst);
 		if (_greaterthan__equal_(i, len).isTrue())
-			error(Rational.ZERO, "list-ref: index " + i + " too large for " + lst);
-		
+			error(Rational.ZERO, "list-ref: index " + i + " too large for "
+					+ lst);
+
 		org.plt.types.Number index = Rational.ZERO;
-		while (_lessthan_(index, i).isTrue()){
+		while (_lessthan_(index, i).isTrue()) {
 			index = add1(index);
 			lst = ((org.plt.types.List) lst).rest();
 		}
-		
+
 		return ((org.plt.types.List) lst).first();
 	}
 }

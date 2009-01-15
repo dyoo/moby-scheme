@@ -36,21 +36,21 @@ public class TestKernel {
 		assertTrue(Kernel.even_question_(Rational.ZERO).isTrue());
 	}
 
-
-        @Test
-        public void testEvenHuhTerminatesOnBadInput() {
-	    try {
-		Kernel.even_question_(new Rational(1, 2));
-		fail();
-	    } catch (SchemeException e) {}
+	@Test
+	public void testEvenHuhTerminatesOnBadInput() {
+		try {
+			Kernel.even_question_(new Rational(1, 2));
+			fail();
+		} catch (SchemeException e) {
+		}
 	}
 
-        public void testEvenHuhTerminatesOnNegativeNumbers() {
-	    try {
-		assertFalse(Kernel.even_question_(new Rational(-5, 1)).isTrue());
-	    } catch (SchemeException e) {}
+	public void testEvenHuhTerminatesOnNegativeNumbers() {
+		try {
+			assertFalse(Kernel.even_question_(new Rational(-5, 1)).isTrue());
+		} catch (SchemeException e) {
+		}
 	}
-
 
 	@Test
 	public void testOdd_question_() {
