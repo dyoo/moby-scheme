@@ -419,33 +419,9 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number expt(Object n1, Object n2) {
-		long m1 = MicroDouble.parseDouble(((org.plt.types.Rational) n1)
-				.toString());
-		long m2 = MicroDouble.parseDouble(((org.plt.types.Rational) n2)
-				.toString());
-
-		long result = MicroDouble.pow(m1, m2);
-
-		return FloatPoint.fromString(MicroDouble.toString(result));
+		return (FloatPoint.fromNumber((org.plt.types.Number) n1))
+				.expt((org.plt.types.Number) n2);
 	}
-
-//	 public static org.plt.types.Number expt(Object base, Object exponent) {
-//		if (_greaterthan__equal_(exponent, Rational.ZERO).isTrue()) {
-//			if (_equal_(exponent, Rational.ZERO).isTrue())
-//				return Rational.ONE;
-//
-//			if (even_question_(exponent).isTrue()) {
-//				org.plt.types.Number half = expt(base, _slash_(exponent, TWO));
-//				return _star_(half, half);
-//			} else {
-//				org.plt.types.Number half = expt(base, _slash_(sub1(exponent),
-//						TWO));
-//				return _star_(base, _star_(half, half));
-//			}
-//		} else {
-//			return _slash_(Rational.ONE, expt(base, abs(exponent)));
-//		}
-//	}
 
 	public static org.plt.types.Number exp(Object exponent) {
 		return expt(e, exponent);
