@@ -767,7 +767,7 @@ public class Kernel {
 					+ " out of range [0, " + sub1(string_dash_length(s))
 					+ "] for string: " + s);
 
-		return ((String) s).charAt(((Rational) i).toInt());
+		return new Character(((String) s).charAt(((Rational) i).toInt()));
 	}
 
 	public static org.plt.types.Number string_dash_length(Object s) {
