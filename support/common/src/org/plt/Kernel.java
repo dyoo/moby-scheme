@@ -543,6 +543,8 @@ public class Kernel {
 	public static org.plt.types.Number numerator(Object n) {
 		return new Rational(((org.plt.types.Rational) n).numerator(), 1);
 	}
+	
+	
 
 	public static org.plt.types.Number denominator(Object n) {
 		return new Rational(((org.plt.types.Rational) n).denominator(), 1);
