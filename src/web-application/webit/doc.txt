@@ -1,0 +1,1300 @@
+_WebIt!_ Reference Manual
+=========================
+
+Version: WebIt! 2.0
+Last update: 24 April 2005
+
+WebIt! is a framework for manipulating XML in Scheme. The main features of WebIt! 
+are: an XML pattern matching system based on that of Scheme's syntax-rules and 
+syntax-case macro systems, and a macro-style transformation system. An Abstract 
+Data Type (ADT) for manipulating the XML Infoset is also provided. (The concrete 
+representation of XML used by WebIt!, internally, is SXML.) Lastly, an embedding 
+in Scheme of Cascading Stylesheets (CSS) is provided.
+
+
+Part I
+
+Module "xml.ss"
+
+1 Defining XML Element and Attribute Types
+------------------------------------------
+
+1.1 _define-element_
+--------------------
+
+syntax
+
+The grammar for the define-element syntax is:
+  element-definition ::= (define-element (element-tag namespace-uri))
+                       | (define-element (element-tag #f))
+                       | (define-element element-tag)
+
+element-tag must be a symbol. If present, namespace uri is a string 
+containing a uri.
+
+define-element introduces the following bindings:
+  - element-tag: a constructor function for the element type defined by define-element.
+  - element-tag?: a predicate function for the element type defined by define-element.
+
+The example below defines an element 'group':
+  (define-element group)
+
+The code fragment below illustrates the use of both the constructor group and 
+the predicate group.
+  (group? "test") ; ==> #f
+  (group? (group "body")) ; ==> #t
+
+1.2 _define-attribute_
+----------------------
+
+syntax
+
+The grammar for the define-attribute syntax is:
+  attribute-definition ::= (define-attribute (attribute-tag namespace-uri))
+                         | (define-attribute (attribute-tag #f))
+                         | (define-attribute attribute-tag)
+
+attribute-tag must be a symbol. If present, namespace uri is a string containing a uri.
+
+define-attribute introduces the following bindings:
+  - attribute-tag:: a keyword used for construction of the the attribute
+    defined by define-attribute.
+  - attribute-tag?: a predicate function, taking an element as its argument. 
+    If the element contains the attribute 'attribute-tag', the value of the 
+    attribute is returned. Otherwise #f.
+
+The example below defines an attribute 'label':
+  (define-attribute label)
+
+The code fragment below illustrates the use of both the constructor label: 
+and the predicate label?.
+  (label? (group "body")) ; ==> #f
+  (label? (group label: "a" "body")) ; ==> "a"
+
+2 Pattern Matching of XML
+-------------------------
+
+2.1 _xml-match_
+---------------
+
+syntax
+
+xml-match provides pattern matching of XML nodes. The pattern notation is 
+based on that of Scheme's syntax-rules/syntax-case macro systems.
+
+The grammar for the xml-match syntax is given below:
+  match-form ::= (xml-match input-expression
+                   clause+)
+
+  clause ::= [node-pattern action-expression+]
+           | [node-pattern (guard expression*) action-expression+]
+
+  node-pattern ::= literal-pattern
+                 | pat-var-or-cata
+                 | element-pattern
+                 | list-pattern
+
+  literal-pattern ::= string
+                    | character
+                    | number
+                    | #t
+                    | #f
+
+  attribute-pattern ::= attribute-keyword attr-val-pattern
+
+  attr-val-pattern ::= literal-pattern
+                     | pat-var-or-cata
+                     | (pat-var-or-cata default-value-expr)
+
+  element-pattern ::= (tag-symbol attribute-pattern*)
+                    | (tag-symbol attribute-pattern* nodeset-pattern)
+                    | (tag-symbol attribute-pattern*
+                                  nodeset-pattern . pat-var-or-cata)
+
+  list-pattern ::= (list nodeset-pattern)
+                 | (list nodeset-pattern . pat-var-or-cata)
+                 | (list)
+
+  nodeset-pattern ::= node-pattern
+                    | node-pattern ...
+                    | node-pattern nodeset-pattern
+                    | node-pattern ... nodeset-pattern
+
+  pat-var-or-cata ::= (unquote var-symbol)
+                    | (unquote [var-symbol*])
+                    | (unquote [cata-expression -> var-symbol*])
+
+
+Within a list or element body pattern, ellipses may appear only once, but may 
+be followed by zero or more node patterns.
+
+Guard expressions cannot refer to the return values of catamorphisms.
+
+Ellipses in the output expressions must appear only in an expression context; 
+ellipses are not allowed in a syntactic form.
+
+The sections below illustrate specific aspects of the xml-match pattern matcher.
+
+Matching XML Elements
+---------------------
+
+The example below illustrates the pattern matching of an XML element:
+(xml-match (e i: 1 3 4 5)
+  [(e i: ,d ,a ,b ,c) (list d a b c)]
+  [,otherwise #f])
+
+
+The element and attribute tags used in patterns are the element and attribute 
+constructors created by define-element and define-attribute. Each clause in 
+xml-match contains two parts: a pattern and one or more expressions which are 
+evaluated if the pattern is successfully match.
+
+Pattern variables are must be "unquoted" in the pattern. The above expression 
+binds d to 1, a to 3, b to 4, and c to 5.
+
+Matching Nodesets
+-----------------
+
+A nodeset pattern is designated by a list in the pattern, beginning the 
+identifier list. The example below illustrates matching a nodeset.
+(xml-match '("i" "j" "k" "l" "m")
+  [(list ,a ,b ,c ,d ,e)
+   (list (h4:p a) (h4:p b) (h4:p c) (h4:p d) (h4:p e))])
+
+
+This example wraps each nodeset item in an HTML paragraph element.
+
+Matching the 'Rest' of a Nodeset
+
+Matching the 'rest' of a nodeset is achieved by using a ". rest)" pattern at 
+the end of an element or nodeset pattern.
+
+This is illustrated in the example below:
+(xml-match (e 3 (f 4 5 6) 7)
+  [(e ,a (f . ,y) ,d)
+   (list a y d)])
+
+
+The above expression returns (3 (4 5 6) 7).
+
+Ellipses in Patterns
+--------------------
+
+As in syntax-rules, ellipses may be used to specify a repeated pattern. Note 
+that the pattern "item ..." specifies zero-or-more matches of the pattern "item".
+
+The use of ellipses in a pattern is illustrated in the code fragment below, 
+where nested ellipses are used to match the children of repeated instances 
+of an 'a' element, within an element 'd'.
+(define x (d (a 1 2 3) (a 4 5) (a 6 7 8) (a 9 10)))
+
+(xml-match x
+  [(d (a ,b ...) ...)
+   (list (list b ...) ...)])
+
+
+The above expression returns a value of ((1 2 3) (4 5) (6 7 8) (9 10)).
+
+Default Values in Attribute Patterns
+------------------------------------
+
+It is possible to specify a default value for an attribute which is used 
+if the attribute is not present in the element being matched. This is 
+illustrated in the following example:
+(xml-match (e 3 4 5)
+  [(e z: (,d 1) ,a ,b ,c) (list d a b c)])
+
+
+The value 1 is used when the attribute 'z' is absent from the element 'e'.
+
+Guards in Patterns
+------------------
+
+Guards may be added to a pattern clause via the guard keyword. A guard 
+expression may include zero or more expressions which are evaluated 
+only if the pattern is matched. The body of the clause is only evaluated 
+if the guard expressions evaluate to #t.
+
+The use of guard expressions is illustrated below:
+(xml-match '(a 2 3)
+  ((a ,n) (guard (number? n)) n)
+  ((a ,m ,n) (guard (number? m) (number? n)) (+ m n)))
+
+Catamorphisms
+-------------
+
+The example below illustrates the use of explicit recursion within an 
+xml-match form. This example implements a simple calculator for the basic 
+arithmetic operations, which are represented by the XML elements plus, 
+minus, times, and div.
+(define simple-eval
+  (lambda (x)
+    (xml-match x
+      [,i (guard (integer? i)) i]
+      [(plus ,x ,y) (+ (simple-eval x) (simple-eval y))]
+      [(times ,x ,y) (* (simple-eval x) (simple-eval y))]
+      [(minus ,x ,y) (- (simple-eval x) (simple-eval y))]
+      [(div ,x ,y) (/ (simple-eval x) (simple-eval y))]
+      [,otherwise (error "simple-eval: invalid expression" x)])))
+
+
+Using the catamorphism feature of xml-match , a more concise version of 
+simple-eval can be written. The pattern ,[x] recusively invokes the 
+pattern matcher on the value bound in this position.
+(define simple-eval
+  (lambda (x)
+    (xml-match x
+      [,i (guard (integer? i)) i]
+      [(plus ,[x] ,[y]) (+ x y)]
+      [(times ,[x] ,[y]) (* x y)]
+      [(minus ,[x] ,[y]) (- x y)]
+      [(div ,[x] ,[y]) (/ x y)]
+      [,otherwise (error "simple-eval: invalid expression" x)])))
+
+
+Named-Catamorphisms
+-------------------
+
+It is also possible to explicitly name the operator in the 'cata' 
+position. Where ,[id*] recurs to the top of the current xml-match, 
+,[cata -> id*] recurs to cata. cata must evaluate to a procedure which 
+takes one argument, and returns as many values as there are 
+identifiers following ->.
+
+Named catamorphism patterns allow processing to be split into 
+multiple, mutually recursive procedures. This is illustrated in the 
+example below: a transformation that formats a "TV Guide" into HTML.
+(define (tv-guide->html g)
+  (define (cast-list cl)
+    (xml-match cl
+      [(CastList (CastMember (Character (Name ,ch)) (Actor (Name ,a))) ...)
+       (h4:div (h4:ul (h4:li ch ": " a) ...))]))
+  (define (prog p)
+    (xml-match p
+      [(Program (Start ,start-time) (Duration ,dur) (Series ,series-title)
+                (Description . ,desc))
+       (h4:div (h4:p start-time
+                     (h4:br) series-title
+                     (h4:br) desc))]
+      [(Program (Start ,start-time) (Duration ,dur) (Series ,series-title)
+                (Description . ,desc)
+                ,[cast-list -> cl])
+       (h4:div (h4:p start-time
+                     (h4:br) series-title
+                     (h4:br) desc)
+               cl)]))
+  (xml-match g
+    [(TVGuide start: ,start-date
+              end: ,end-date
+              (Channel (Name ,nm) ,[prog -> p] ...) ...)
+     (h4:html (h4:head (h4:title "TV Guide"))
+              (h4:body (h4:h1 "TV Guide")
+                       (h4:div (h4:h2 nm) p ...) ...))]))
+
+
+Ellipses in Quasiquote'd Output
+-------------------------------
+
+Within the body of an xml-match form, a slightly extended version of 
+quasiquote is provided, which allows the use of ellipses. This is 
+illustrated in the example below.
+(xml-match '(e 3 4 5 6 7)
+  [(e ,i ... 6 7) `("start" ,(list 'wrap i) ... "end")]
+  [,otherwise #f])
+
+
+The general pattern is that `(something ,i ...) is rewritten as `(something ,@i).
+
+2.2 _xml-match-let_ and _xml-match-let*_
+----------------------------------------
+
+syntax
+
+The xml-match-let and xml-match-let* forms generalize the let and let* 
+forms of Scheme to allow an XML pattern in the binding position, rather 
+than a simple variable.
+
+For example, the expression below:
+(xml-match-let ([(a ,i ,j) '(a 1 2)])
+  (+ i j))
+
+
+binds the variables i and j to 1 and 2 in the XML value given.
+
+The syntax for these forms is given below:
+(xml-match-let ([pat expr] ...) expression0 expression ...)
+(xml-match-let* ([pat expr] ...) expression0 expression ...)
+
+
+3 XML Transformation
+--------------------
+
+3.1 _stylesheet_
+----------------
+
+syntax
+
+A stylesheet is a set of rules for transformation of XML. The 
+stylesheet syntax allows one to intermix a sequence of xml-micro's, 
+xml-macro's, and top-level Scheme expressions.
+
+The grammar for stylesheet is given below:
+stylesheet-form ::= (stylesheet body-item*)
+
+body-item ::= xml-micro-form
+            | xml-macro-form
+            | top-level-sceheme-expression
+
+
+A stylesheet form evaluates to a stylesheet object.
+
+The semantics of top-level definitions within a stylesheet is identical 
+to that of PLT Scheme's units.
+
+3.2 _xml-micro_
+---------------
+
+syntax
+
+An xml-micro performs a single transformation of its argument. The result of 
+this transformation is not further "expanded".
+
+The grammar for xml-micro is:
+micro-form ::= (xml-micro trigger-tag
+                 expression)
+
+trigger-tag ::= element-tag
+              | *text*
+              | *data*
+
+The expression in an xml-micro must evaluate to a function of which 
+takes an XML node as its argument, and (generally) returns a node or 
+nodeset.
+
+3.3 _xml-macro_
+---------------
+
+syntax
+
+An xml-macro performs a transformation of its argument; the result 
+of this transformation further "expanded" until no further 
+transformations are possible.
+
+The grammar for xml-macro is:
+macro-form ::= (xml-macro trigger-tag
+                 expression)
+
+trigger-tag ::= element-tag
+              | *text*
+              | *data*
+
+The expression in an xml-macro must evaluate to a function of which 
+takes an XML node as its argument, and returns a node or nodeset.
+
+No further transformations of a node are possible when no more xml-micros 
+or xml-macros are triggered by that node under the stylesheet being applied.
+
+3.4 stylesheet->expander
+------------------------
+
+function
+> _stylesheet->expander_ :: stylesheet -> (function node -> node))
+
+This function converts a stylesheet to an expander function. The 
+return-result may be applied to an XML node to apply the stylesheet's 
+transformations.
+
+3.5 _compound-stylesheet_
+-------------------------
+
+syntax
+
+This form is used to combine multiple stylesheets. The result of 
+evaluating a compound-stylesheet is a new stylesheet object.
+
+The grammar for a compound-stylesheet is given below:
+compound-ss-form ::= (compound-stylesheet expression+)
+
+Each expression must evaluate to a stylesheet object.
+
+3.6 Example
+-----------
+
+The example below is a complete working stylesheet which translates a 
+collection of poetry into HTML. The 'micro' for the poem element 
+formats a poem into HTML. The 'macro' for the book element creates a 
+skeletal HTML document, with a new contents element which contains 
+both a table of contents element and the poems to be formatted. The 
+'micro' for the contents element formats the table of contents and 
+uses xml-expand to invoke the expander on each of the poems.
+
+poetry->html is bound to the result of applying stylesheet->expander 
+to the stylesheet, producing a function which takes a single argument: 
+the poetry book element.
+
+(define poetry->html
+  (stylesheet->expander
+   (stylesheet
+     
+     (define-element toc)
+     (define-element contents)
+     
+     (xml-micro poem
+       (lambda (x)
+         (xml-match x
+           [(poem title: ,t poet: ,a tag: ,m
+                  (stanza (line ,l1) (line ,l) ...) ...)
+            (h4:div (h4:p) (h4:a h4:name: m) (h4:strong t) (h4:br) (h4:em a)
+                    (list (h4:p) l1 (list (h4:br) l) ...) ...)])))
+     
+     (xml-micro contents
+       (lambda (x)
+         (xml-match x
+           [(contents (toc (poem title: ,t poet: ,a tag: ,m . ,rest) ...) ,p* ...)
+            (h4:div (h4:p) "Table of Contents:"
+                    (h4:ul
+                     (h4:li (h4:a h4:href: (string-append "#" m) t)) ...)
+                    (xml-expand p*) ...)])))
+     
+     (xml-macro book
+       (lambda (x)
+         (xml-match x
+           [(book title: ,bt ,p* ...)
+            (h4:html
+             (h4:head (h4:title bt))
+             (h4:body
+              (h4:h1 bt)
+              (contents (toc p* ...)
+                        p* ...)))])))
+     
+     )))
+
+
+4 Output Functions
+------------------
+
+4.1 write-xml
+-------------
+
+function
+> _write-xml_ :: node [port] -> void
+
+This function is used to write XML nodes to port, if given, or to 
+current-output-port.
+
+4.2 display-xml
+---------------
+
+function
+> _display-xml_ :: node [port] -> void
+
+This function is used to write XML nodes to port, if given, or 
+to current-output-port. Unlike write-xml, this function introduces 
+additional whitespace indentation for nested elements. The primary 
+purpose is debugging. For correct XML output, write-xml should be used.
+
+4.3 servlet-result
+------------------
+
+function
+> _servlet-result_ :: node -> list-of-strings
+
+This function may be used in servlets to convert XML to a 
+list-of-strings for sending to a web browser.
+
+5 XML Infoset Mapping
+---------------------
+
+WebIt! implements an abstract datatype for the XML Infoset, in 
+terms of the API described in this section. The concrete datatype 
+used by this API is SXML.
+
+5.1 Normalized and Non-Normalized SXML
+--------------------------------------
+
+5.1.1 _normalized-sxml_
+-----------------------
+
+parameter
+
+By default, WebIt! functions and syntax can process non-normalized 
+SXML. However, there is a performance penalty for this. normalized-sxml 
+may be used to restrict WebIt! to processing a particular style of 
+normalized SXML. The default value of #f enables processing of 
+non-normalized SXML. Set this parameter to #t to restrict WebIt! 
+to normalized SXML.
+
+5.2 Constructing and Analyzing XML Document Nodes
+-------------------------------------------------
+
+5.2.1 make-xml-document
+-----------------------
+
+function
+> _make-xml-document_ :: list-of-nodes -> xml-document
+
+This function construction a document node from a list of nodes. The 
+list should include exactly one xml-element node.
+
+5.2.2 xml-document?
+-------------------
+
+function
+> _xml-document?_ :: node -> boolean
+
+Returns #t if its argument is an xml-document node, otherwise #f.
+
+5.2.3 xml-document-dtd-info
+---------------------------
+
+function
+> _xml-document-dtd-info_ :: xml-document -> xml-dtd-info
+
+Returns the document's xml-dtd-info, if one is present, otherwise #f.
+
+5.2.4 xml-document-content
+--------------------------
+
+function
+> _xml-document-content_ :: xml-document -> xml-element
+
+Returns the document's root element.
+
+5.2.5 xml-document-body
+-----------------------
+
+function
+> _xml-document-content_ :: xml-document -> nodeset
+
+Returns a list of the document's body nodes.
+
+5.3 Constructing and Analyzing XML Element Nodes
+------------------------------------------------
+
+5.3.1 make-xml-element
+----------------------
+
+function
+> _make-xml-element_ :: tag attribute-list node-list -> xml-element
+
+The element tag is a symbol.
+
+The attribute-list is a list of attribute nodes: a list of an 
+attribute tag and a string, number or boolean.
+
+A node-list is a (possibly null) list of XML nodes.
+
+5.3.2 make-xml-element/ns
+-------------------------
+
+function
+> _make-xml-element/ns_ :: tag ns-list attribute-list node-list -> xml-element
+
+The element tag, tag, is a symbol.
+
+ns-list is a list of namespace bindings. Each namespace binding 
+is a list of a namespace uri (string) and a prefix (symbol).
+
+The attribute-list is a list of attribute nodes: a list of 
+an attribute tag and a string, number or boolean.
+
+A node-list is a (possibly null) list of XML nodes.
+
+5.3.3 xml-element?
+------------------
+
+function
+> _xml-element?_ :: node -> boolean
+
+Returns #t if its argument is an xml-element node, otherwise #f.
+
+5.3.4 xml-element-tag
+---------------------
+
+function
+> _xml-element-tag_ :: xml-element -> symbol
+
+Returns the tag (symbol) of an element node. This tag is either 
+the local name of the element (for locally named element), or 
+the concatenation of the namespace URI to which the element belongs 
+and the element's local name, separated by a colon.
+
+5.3.5 xml-element-local-name
+----------------------------
+
+function
+> _xml-element-local-name_ :: xml-element -> symbol
+
+Returns the local-name (symbol) of an element node.
+
+5.3.6 xml-element-ns-uri
+------------------------
+
+function
+> _xml-element-local-name_ :: xml-element -> symbol
+
+Returns the namespace URI to which the element belongs, #f.
+
+5.3.7 xml-element-ns-list
+-------------------------
+
+function
+> _xml-element-ns-list_ :: xml-element -> (listof xml-namespace-binding)
+
+Returns a list of namespace prefix bindings associated with this element.
+
+5.3.8 xml-element-attributes
+----------------------------
+
+function
+> _xml-element-attributes_ :: xml-element -> (listof xml-attribute)
+
+Returns a list of attributes of this element.
+
+5.3.9 xml-element-contents
+--------------------------
+
+function
+> _xml-element-contents_ :: xml-element -> (listof node)
+
+Returns a nodeset of the children of this element.
+
+5.4 Constructing and Analyzing XML Attribute Nodes
+--------------------------------------------------
+
+5.4.1 make-xml-attribute
+------------------------
+
+function
+> _make-xml-attribute_ :: tag value -> (list-of symbol string|number|boolean)
+
+The attribute tag is a symbol.
+
+The value of an attribute may be a string, number or boolean.
+
+5.4.2 xml-attribute-tag
+-----------------------
+
+function
+> _xml-attribute-tag_ :: xml-attribute -> symbol
+
+Returns the tag (symbol) of an attribute node. This tag is either 
+the local name of the attribute (for locally named attributes), or 
+the concatenation of the namespace URI to which the attribute 
+belongs and the attribute's local name, separated by a colon.
+
+5.4.3 xml-attribute-local-name
+------------------------------
+
+function
+> _xml-attribute-local-name_ :: xml-attribute -> symbol
+
+Returns the local-name (symbol) of an attribute node.
+
+5.4.4 xml-attribute-ns-uri
+--------------------------
+
+function
+> _xml-attribute-local-name_ :: xml-attribute -> symbol
+
+Returns the namespace URI to which the attribute belongs, #f.
+
+5.4.5 xml-attribute-value
+-------------------------
+
+function
+> _xml-attribute-value_ :: xml-attribute -> string|number|boolean
+
+Returns the value of an attribute node.
+
+5.5 Constructing and Analyzing XML Comment Nodes
+------------------------------------------------
+
+5.5.1 make-xml-comment
+----------------------
+
+function
+> _make-xml-comment_ :: string -> xml-comment
+
+This function constructs an xml-comment object with its 
+argument as the comment text.
+
+5.5.2 xml-comment?
+------------------
+
+function
+> _xml-comment?_ :: node -> boolean
+
+This function returns #t if its argument is an xml-comment, 
+otherwise #f.
+
+5.5.3 xml-comment-text
+----------------------
+
+function
+> _xml-comment-text_ :: xml-comment -> string
+
+Returns the text of an xml-comment node.
+
+5.6 Constructing and Analyzing XML Processing Instruction Nodes
+---------------------------------------------------------------
+
+5.6.1 make-xml-pi
+-----------------
+
+function
+> _make-xml-pi_ :: symbol string -> xml-pi
+
+This function has to arguments: a PI target (symbol) and PI text 
+(a string). Returns a new xml-pi object.
+
+5.6.2 xml-pi?
+-------------
+
+function
+> _xml-pi?_ :: node -> boolean
+
+This function returns #t if its argument is an xml-comment, otherwise #f.
+
+5.6.3 xml-pi-target
+-------------------
+
+function
+> _xml-pi-target_ :: xml-pi -> symbol
+
+This function returns it's argument's PI target.
+
+5.6.4 xml-pi-text
+-----------------
+
+function
+> _xml-pi-text_ :: xml-pi -> symbol
+
+This function returns it's argument's PI text.
+
+5.7 Constructing and Analyzing XML Entity Nodes
+-----------------------------------------------
+
+5.7.1 make-xml-entity
+---------------------
+
+function
+> _make-xml-entity_ :: string string -> xml-entity
+
+This function takes two arguments of type string: a public-id and 
+a system-id, and a returns a new xml-entity object.
+
+5.7.2 xml-entity?
+-----------------
+
+function
+> _xml-entity?_ :: node -> boolean
+
+This function returns #t if its argument is an xml-entity, otherwise #f.
+
+5.7.3 xml-entity-public-id
+--------------------------
+
+function
+> _xml-entity-public-id_ :: xml-entity -> string
+
+This function returns it's argument's public-id.
+
+5.7.4 xml-entity-system-id
+--------------------------
+
+function
+> _xml-entity-system-id_ :: xml-entity -> string
+
+This function returns it's argument's system-id.
+
+5.8 Constructing and Analyzing XML Namespace Binding Nodes
+----------------------------------------------------------
+
+5.8.1 make-xml-ns-binding
+-------------------------
+
+function
+> _make-xml-ns-binding_ :: symbol string -> (list symbol string)
+
+This function takes two arguments: a namespace prefix (symbol) 
+and a namespace URI (string), and returns a new namespace prefix 
+binding.
+
+5.8.2 xml-ns-binding-prefix
+---------------------------
+
+function
+> _xml-ns-binding-prefix_ :: (list symbol string) -> symbol
+
+This function returns the namespace prefix from its argument.
+
+5.8.3 xml-ns-binding-ns-url
+---------------------------
+
+function
+> _xml-ns-binding-ns-url_ :: (list symbol string) -> string
+
+This function returns the namespace URI from its argument.
+
+5.9 Constructing and Analyzing DTD Information Nodes
+----------------------------------------------------
+
+5.9.1 make-xml-dtd-info
+-----------------------
+
+function
+> _make-xml-dtd-info_ :: symbol string -> xml-dtd-info
+
+This function takes two arguments: a name (symbol) and a system 
+(string). Returns a new xml-dtd-info object.
+
+5.9.2 xml-dtd-info?
+-------------------
+
+function
+> _xml-dtd-info?_ :: node -> boolean
+
+This function returns #t if its argument is an xml-dtd-info or 
+xml-dtd-info/public object, otherwise #f.
+
+5.9.3 xml-dtd-info-name
+-----------------------
+
+function
+> _xml-dtd-info-name_ :: xml-dtd-info -> symbol
+
+This function returns it's argument's name field.
+
+5.9.4 xml-dtd-info-system
+-------------------------
+
+function
+> _xml-dtd-info-system_ :: xml-dtd-info -> string
+
+This function returns it's argument's system field.
+
+5.9.5 make-xml-dtd-info/public
+------------------------------
+
+function
+> _make-xml-dtd-info/public_ :: symbol string string -> xml-dtd-info/public
+
+This function takes three arguments: a name (symbol), a system 
+(string), and a public (string). Returns a new xml-dtd-info/public 
+object.
+
+5.9.6 xml-dtd-info/public?
+--------------------------
+
+function
+> _xml-dtd-info/public?_ :: node -> boolean
+
+This function returns #t if its argument is an xml-dtd-info/public, 
+otherwise #f.
+
+5.9.7 xml-dtd-info/public-public
+--------------------------------
+
+function
+> _xml-dtd-info/public-public_ :: xml-dtd-info/public -> string
+
+This function returns it's argument's public field.
+
+5.10 Miscellaneous
+------------------
+
+5.10.1 nodeset?
+---------------
+
+function
+> _nodeset?_ :: any -> boolean
+
+This function returns #t if its argument is a list which does not 
+begin with a symbol, otherwise #f.
+
+5.10.2 has-attribute?
+---------------------
+
+function
+> _has-attribute?_ :: symbol (listof xml-attribute) -> (xml-attribute | #f)
+
+This function searches a list of attributes for the for the requested 
+attribute. Returns the matching attribute, otherwise #f.
+
+5.10.3 _bind-namespaces_
+------------------------
+
+syntax
+
+This form is used to introduce namespace prefix bindings, and to 
+attach these bindings to an xml-element object.
+
+The grammar for bind-namespaces is:
+(bind-namespaces ([prefix-symbol uri-string] ...)
+   expression)
+
+Expression must evaluate to an xml-element. bind-namespaces returns 
+a new xml-element object, with the new namespace prefix bindings.
+
+6 Deprecated Functions and Syntax
+---------------------------------
+
+The following functions and syntax are deprecated as of WebIt! 2.0. 
+These are still available in the current build, but will be removed 
+in a future release.
+ - xml-rules: use xml-match, xml-match-let, xml-match-let* instead.
+ - xml-case: use xml-match, xml-match-let, xml-match-let* instead.
+ - xml-element-print-tag: use xml-element-local-name instead.
+ - xml-element-target-ns: use xml-element-ns-uri instead.
+ - xml-attribute-print-tag: use xml-attribute-local-name instead.
+ - xml-attribute-target-ns: use xml-attribute-ns-uri instead.
+
+Part II
+
+Module "css.html"
+
+7 _css_
+-------
+
+syntax
+
+Below is the grammar for the css form:
+ external-css-stylesheet ::= (css import-clause* rule+)
+ internal-css-stylesheet ::= (css/html import-clause* rule+)
+ 
+ import-clause ::= ( import string )
+ 
+ rule ::= ( complex-selector css-avp+ )
+ 
+ complex-selector ::= single-selector |
+                      grouping-selector
+ 
+ simple-selector ::= symbol |
+                     (class symbol) |
+                     (class symbol symbol) | -- (class <type> <class>)
+                     (pclass symbol) |
+                     (pclass symbol symbol) | -- (pclass <type> <pseudo-class>)
+                     (id symbol) | 
+                     (id symbol symbol) -- (id <type> <id>)
+ 
+ path-selector ::= ( // simple-selector+ )
+ 
+ single-selector ::= simple-selector |
+                     path-selector
+ 
+ grouping-selector ::= ( single-selector+ )
+ 
+ css-avp ::= ( symbol scheme-expression ) |
+             (! (symbol scheme-expression))
+
+Note 1: scheme-expression must evaluate to a string
+
+Note 2: internal-css-stylesheet translates to
+( style  type:  "text/css"  ( css  import-clause*  rule+ ))
+
+
+What follows is a basic example illustrating webIt!'s embedding 
+off CSS in Scheme. this example creates a simple HTML document 
+which uses an external CSS stylesheet. The CSS stylesheet is used 
+to color the background navy, and set different text fragments 
+yellow, white, and red.
+
+(require (lib "xml.ss" "webit") (lib "html.ss" "webit") (lib "css.ss" "webit"))
+
+The css syntax creates a CSS stylesheet. Informally, css takes a 
+list of rules, each of which consists of a selector and a property 
+list. In the first rule, for example, the selector is body, and the 
+property list includes settings for font-family, font-size, and 
+background-color.
+
+(define ex-css
+  (css
+   (body
+    (font-family "sans-serif")
+    (font-size "12pt")
+    (background-color "navy"))
+   (p (color "white"))
+   (p.ex (color "red"))
+   (h1 (color "yellow"))))
+
+
+This creates the following stylesheet:
+  body {
+    font-family: sans-serif;
+    font-size: 12pt;
+    background-color: navy;
+  }
+  p {
+    color: white;
+  }
+  p.ex {
+    color: red;
+  }
+  h1 {
+    color: yellow;
+  }
+(define ex
+  (h4:html
+    (h4:head (css-link "a.css") (h4:title "Stylesheet Example"))
+    (h4:body
+      (h4:h1 "Stylesheet Example; this text is yellow")
+      (h4:p "This text is white")
+      (h4:p h4:class: "ex" "This text is red"))))
+
+(write-xml ex-css (open-output-port "a.css"))
+
+(write-xml ex (open-output-port "a.html"))
+
+
+In the HTML above, we can see the use of the css-link form, which takes 
+a single argument, the URL of the external stylesheeet. This form is 
+simply shorthand for the construction of the following HTML:
+(h4:link h4:rel: "stylesheet" h4:href: "a.css" h4:type: "text/css")
+
+
+The sections below describe in more detail the construction of CSS 
+stylesheets in Webit!.
+
+Simple selectors, Classes, and Pseudo-classes
+---------------------------------------------
+
+The simplest form is the simple selector:
+   p { color: white; }
+
+The simple selector is just a symbol that is the element type to which  
+this style property applies. This is written as:
+(css (p (color "white")))
+
+
+Classes
+-------
+
+Elements can also be selected by "class", that is, by the value of the  
+HTML "class" attribute:
+   .ex {color: red;}
+
+This is written as:
+(css (.ex (color "red")))
+
+
+This is a convenient notation--and one which is supported  by PLT. But not 
+all Scheme's support symbols which begin with a ".".  This example can 
+also be written in a more verbose form:
+(css ((class ex) (color "red")))
+
+
+A selector can also be written with both an element type and a class.
+   p.ex {color: red; }
+
+This is written as:
+(css (p.ex (color "red")))
+
+
+or, in the verbose notation:
+(css ((class p ex) (color "red")))
+
+
+Using PLT's "infix" notation, this last can also be written as:
+(css ((p . class . ex) (color "red"))))
+
+if that is to one's taste.
+
+Pseudo-classes
+--------------
+
+Pseudo-classes are supported in a similar manner.  One can color a 
+visited link "lime":
+   a:visited { color: lime; }
+
+which is written as:
+(css (a:visited (color "lime")))
+
+
+or, in the verbose notation:
+(css ((pclass a visited) (color "lime")))
+
+
+or
+(css ((a . pclass . visited) (color "lime"))))
+
+As with classes, a selector may include only a pseudo-class:
+   :visited { color: lime; }
+
+which is written as:
+(css (:visited (color "lime")))
+
+
+or as
+(css ((pclass visited) (color "lime")))
+
+
+Combining Classes and Pseudo-classes
+------------------------------------
+
+Lastly, classes and pseudo-classes can be combined:
+   a.external:visited { color: blue; }
+
+which is written as:
+(css (a.external:visited (color "blue")))
+
+
+or
+(css ((pclass (class a external) visited) (color "blue")))
+
+
+This selector, without the element type, can also be used:
+   .external:visited { color: blue; }
+
+which is written as:
+(css (.external:visited (color "blue")))
+
+
+or
+(css ((pclass (class external) visited) (color "blue")))
+
+
+Id as a Selector
+----------------
+
+One may attach unique "identifiers" to HTML elements, using the id  
+attribute. The value of an id attribute may be used as a selector as well.
+
+To match the following paragraph tag:
+   <p id=z98y>Wide text</p>
+
+the following style rule can be defined:
+   #z98y { letter-spacing: 0.3em; }
+
+This would be written as:
+(css ((id z98y) (letter-spacing "0.3em")))
+
+
+(In principle, "(id z98y)" can also be written as the symbol "|#z98y|".)
+
+Id's may also be combined with an element type in a selector:
+   h1#z98y {letter-spacing: 0.5em; }
+
+written as:
+(css ((id h1 z98y) (letter-spacing "0.5em")))
+
+
+or
+(css ((id h1 z98y) (letter-spacing "0.5em")))
+
+
+Contextual Selectors
+--------------------
+
+CSS allows one to specify that a "style" applies only to selected  
+elements, in a _context_. For example, if I want to color emphasized  
+text red, but only within an h1 element, this can be written as:
+   h1 em { color: red; }
+
+which, in the WebIt! embedding, is given as:
+(css ((// h1 em) (color "red")))
+
+
+The keyword "//" is used to suggest a similarity of a contextual  
+specifier with a "path expression" (as in XPath/SXPath).
+
+The "steps" in a contextual specifier can be an element type, class,  
+pseudo-class, an id, or a combination of these.
+
+Grouping Selectors
+------------------
+
+To avoid duplicating style descriptions, selectors may be grouped  
+together. Any of the above kinds of selectors may be grouped, as  
+shown below, where a simple selector (an element type) and a contextual  
+selector are grouped:
+    h1, h2 b, h2, em { color: red; }
+
+The grouping "operator" is just a list:
+(css ((h1 (// h2 b) (// h2 em)) (color "red")))
+
+
+Importing a stylesheet
+----------------------
+
+A stylesheet may import another stylesheet:
+    @import url(http://somewhere/a.css)
+
+This is written as
+(css (import "http://somewhere/a.css") ...)
+
+
+Any such import forms must appear at the beginning of a CSS stylesheet,  
+before any "style rules".
+
+Marking a Property "Important"
+------------------------------
+
+CSS allows designers to increase the "weights" of some property 
+declarations:
+    p { font-size: 12pt ! important;
+        font-style: italic;
+      }
+
+This can be written in Scheme as:
+(css (p (! (font-size "12pt")) (font-style "italic")))
+
+
+Part III
+
+Module "scm-markup.html"
+
+8 scm->html
+-----------
+
+function
+> _scm->html_ :: string -> xml-element
+
+This function is used to perform syntax coloring of a Scheme expression 
+to be included inline within a paragraph. The string argument is parsed 
+into tokens and marked up in HTML. CSS is used to control font selection 
+and coloring. Returns a an xml-element consisting of the HTML markup.
+
+9 scm-prog->html
+----------------
+
+function
+> _scm-prog->html_ :: string -> xml-element
+
+This function is used to perform syntax coloring of a Scheme program which 
+is included as the body of an HTML "pre" tag. The string argument is parsed 
+into tokens and marked up in HTML. CSS is used to control font selection 
+and coloring. Returns a an xml-element consisting of the HTML markup.
+
+10 Controlling Font Selection and Coloring
+------------------------------------------
+
+This section describes the CSS selectors used to control font and color 
+styling of marked-up Scheme code.
+
+The CSS selectors used for syntax coloring are:
+
+.scheme
+The base style for Scheme code
+
+.scheme .keyword
+Scheme syntactic keywords
+
+.scheme .builtin
+Scheme built-in functions
+
+.scheme .variable
+Scheme variables
+
+.scheme .global
+Scheme global variables
+
+.scheme .selfeval
+Self-evaluating expressions
+
+.scheme .comment
+Scheme comments
+
+.scheme .schemeresponse
+Scheme REPL responses
+

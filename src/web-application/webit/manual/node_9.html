@@ -1,0 +1,106 @@
+<html><head><title>WebIt! Reference Manual</title><meta name="generator" content="WebIt!" /><meta name="robots" content="index,follow" /><link rel="stylesheet" href="./default.css" type="text/css" /></head><body><p /><div align="right" class="navigation">[Go to <a href="./index.html">first</a>, <a href="./node_8.html">previous</a>, <a href="./node_10.html">next</a> page; <a href="./index.html#toc_start">contents</a>]</div><div><a name="container_293" /><h1><a href="./index.html#toc_container_293">7&nbsp;<code class="scheme"><span class="keyword">css</span></code></a></h1><p><em>syntax</em></p><p>Below is the grammar for the css form:</p><div class="figure"><pre> external-css-stylesheet ::= (css import-clause* rule+)
+ internal-css-stylesheet ::= (css/html import-clause* rule+)
+ 
+ import-clause ::= ( import string )
+ 
+ rule ::= ( complex-selector css-avp+ )
+ 
+ complex-selector ::= single-selector |
+                      grouping-selector
+ 
+ simple-selector ::= symbol |
+                     (class symbol) |
+                     (class symbol symbol) | -- (class &lt;type&gt; &lt;class&gt;)
+                     (pclass symbol) |
+                     (pclass symbol symbol) | -- (pclass &lt;type&gt; &lt;pseudo-class&gt;)
+                     (id symbol) | 
+                     (id symbol symbol) -- (id &lt;type&gt; &lt;id&gt;)
+ 
+ path-selector ::= ( // simple-selector+ )
+ 
+ single-selector ::= simple-selector |
+                     path-selector
+ 
+ grouping-selector ::= ( single-selector+ )
+ 
+ css-avp ::= ( symbol scheme-expression ) |
+             (! (symbol scheme-expression))</pre></div><p>Note 1: scheme-expression must evaluate to a string</p><p>Note 2: internal-css-stylesheet translates to </p><pre class="scheme">(<span class="variable">style</span> <span class="variable">type:</span> <span class="selfeval">"text/css"</span> (<span class="keyword">css</span> <span class="variable">import-clause*</span> <span class="variable">rule+</span>))
+</pre><p>What follows is a basic example illustrating webIt!'s embedding off CSS in Scheme.
+this example creates a simple HTML document which uses an external CSS stylesheet.
+The CSS stylesheet is used to color the background navy, and set 
+different text fragments yellow, white, and red.</p><pre class="scheme">(<span class="keyword">require</span> (<span class="keyword">lib</span> <span class="selfeval">"xml.ss"</span> <span class="selfeval">"webit"</span>) (<span class="keyword">lib</span> <span class="selfeval">"html.ss"</span> <span class="selfeval">"webit"</span>) (<span class="keyword">lib</span> <span class="selfeval">"css.ss"</span> <span class="selfeval">"webit"</span>))
+</pre><p>The <code class="scheme"><span class="keyword">css</span></code> syntax creates a CSS stylesheet. Informally, <code class="scheme"><span class="keyword">css</span></code> takes a list of rules, each of which consists of a 
+selector and a property list. In the first rule, for example, the selector is body, 
+and the property list includes settings for font-family, font-size, and 
+background-color.</p><pre class="scheme">(<span class="keyword">define</span> <span class="variable">ex-css</span>
+  (<span class="keyword">css</span>
+   (<span class="variable">body</span>
+    (<span class="variable">font-family</span> <span class="selfeval">"sans-serif"</span>)
+    (<span class="variable">font-size</span> <span class="selfeval">"12pt"</span>)
+    (<span class="variable">background-color</span> <span class="selfeval">"navy"</span>))
+   (<span class="variable">p</span> (<span class="variable">color</span> <span class="selfeval">"white"</span>))
+   (<span class="variable">p.ex</span> (<span class="variable">color</span> <span class="selfeval">"red"</span>))
+   (<span class="variable">h1</span> (<span class="variable">color</span> <span class="selfeval">"yellow"</span>))))
+</pre><p>This creates the following stylesheet:</p><pre>  body {
+    font-family: sans-serif;
+    font-size: 12pt;
+    background-color: navy;
+  }
+  p {
+    color: white;
+  }
+  p.ex {
+    color: red;
+  }
+  h1 {
+    color: yellow;
+  }</pre><pre class="scheme">(<span class="keyword">define</span> <span class="variable">ex</span>
+  (<span class="variable">h4:html</span>
+    (<span class="variable">h4:head</span> (<span class="variable">css-link</span> <span class="selfeval">"a.css"</span>) (<span class="variable">h4:title</span> <span class="selfeval">"Stylesheet Example"</span>))
+    (<span class="variable">h4:body</span>
+      (<span class="variable">h4:h1</span> <span class="selfeval">"Stylesheet Example; this text is yellow"</span>)
+      (<span class="variable">h4:p</span> <span class="selfeval">"This text is white"</span>)
+      (<span class="variable">h4:p</span> <span class="variable">h4:class:</span> <span class="selfeval">"ex"</span> <span class="selfeval">"This text is red"</span>))))
+</pre><pre class="scheme">(<span class="variable">write-xml</span> <span class="variable">ex-css</span> (<span class="variable">open-output-port</span> <span class="selfeval">"a.css"</span>))
+</pre><pre class="scheme">(<span class="variable">write-xml</span> <span class="variable">ex</span> (<span class="variable">open-output-port</span> <span class="selfeval">"a.html"</span>))
+</pre><p>In the HTML above, we can see the use of the css-link form, which
+takes a single argument, the URL of the external stylesheeet. This
+form is simply shorthand for the construction of the following HTML:</p><pre class="scheme">(<span class="variable">h4:link</span> <span class="variable">h4:rel:</span> <span class="selfeval">"stylesheet"</span> <span class="variable">h4:href:</span> <span class="selfeval">"a.css"</span> <span class="variable">h4:type:</span> <span class="selfeval">"text/css"</span>)
+</pre><p>The sections below describe in more detail the construction of CSS stylesheets in Webit!.</p><div><a name="container_294" /><h2>Simple selectors, Classes, and Pseudo-classes</h2><p>The simplest form is the simple selector:</p><pre>   p { color: white; }</pre><p>The simple selector is just a symbol that is the element type to which
+ this style property applies. This is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">p</span> (<span class="variable">color</span> <span class="selfeval">"white"</span>)))
+</pre><div><a name="container_295" /><h3>Classes</h3><p>Elements can also be selected by "class", that is, by the value of the
+ HTML "class" attribute:</p><pre>   .ex {color: red;}</pre><p>This is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">.ex</span> (<span class="variable">color</span> <span class="selfeval">"red"</span>)))
+</pre><p>This is a convenient notation--and one which is supported
+ by PLT. But not all Scheme's support symbols which begin with a ".".
+ This example can also be written in a more verbose form:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">class</span> <span class="variable">ex</span>) (<span class="variable">color</span> <span class="selfeval">"red"</span>)))
+</pre><p>A selector can also be written with both an element type and a class.</p><pre>   p.ex {color: red; }</pre><p>This is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">p.ex</span> (<span class="variable">color</span> <span class="selfeval">"red"</span>)))
+</pre><p>or, in the verbose notation:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">class</span> <span class="variable">p</span> <span class="variable">ex</span>) (<span class="variable">color</span> <span class="selfeval">"red"</span>)))
+</pre><p>Using PLT's "infix" notation, this last can also be written as:</p><pre>(css ((p . class . ex) (color "red"))))</pre><p>if that is to one's taste.</p></div><div><a name="container_296" /><h3>Pseudo-classes</h3><p>Pseudo-classes are supported in a similar manner.
+ One can color a visited link "lime":</p><pre>   a:visited { color: lime; }</pre><p>which is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">a:visited</span> (<span class="variable">color</span> <span class="selfeval">"lime"</span>)))
+</pre><p>or, in the verbose notation:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">pclass</span> <span class="variable">a</span> <span class="variable">visited</span>) (<span class="variable">color</span> <span class="selfeval">"lime"</span>)))
+</pre><p>or</p><pre>(css ((a . pclass . visited) (color "lime"))))</pre><p>As with classes, a selector may include only a pseudo-class:</p><pre>   :visited { color: lime; }</pre><p>which is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">:visited</span> (<span class="variable">color</span> <span class="selfeval">"lime"</span>)))
+</pre><p>or as</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">pclass</span> <span class="variable">visited</span>) (<span class="variable">color</span> <span class="selfeval">"lime"</span>)))
+</pre></div><div><a name="container_297" /><h3>Combining Classes and Pseudo-classes</h3><p>Lastly, classes and pseudo-classes can be combined:</p><pre>   a.external:visited { color: blue; }</pre><p>which is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">a.external:visited</span> (<span class="variable">color</span> <span class="selfeval">"blue"</span>)))
+</pre><p>or</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">pclass</span> (<span class="variable">class</span> <span class="variable">a</span> <span class="variable">external</span>) <span class="variable">visited</span>) (<span class="variable">color</span> <span class="selfeval">"blue"</span>)))
+</pre><p>This selector, without the element type, can also be used:</p><pre>   .external:visited { color: blue; }</pre><p>which is written as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">.external:visited</span> (<span class="variable">color</span> <span class="selfeval">"blue"</span>)))
+</pre><p>or</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">pclass</span> (<span class="variable">class</span> <span class="variable">external</span>) <span class="variable">visited</span>) (<span class="variable">color</span> <span class="selfeval">"blue"</span>)))
+</pre></div></div><div><a name="container_298" /><h2>Id as a Selector</h2><p>One may attach unique "identifiers" to HTML elements, using the id
+ attribute. The value of an id attribute may be used as a selector
+ as well.</p><p>To match the following paragraph tag:</p><pre>   &lt;p id=z98y&gt;Wide text&lt;/p&gt;</pre><p>the following style rule can be defined:</p><pre>   #z98y { letter-spacing: 0.3em; }</pre><p>This would be written as:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">id</span> <span class="variable">z98y</span>) (<span class="variable">letter-spacing</span> <span class="selfeval">"0.3em"</span>)))
+</pre><p>(In principle, "(id z98y)" can also be written as the symbol "|#z98y|".)</p><p>Id's may also be combined with an element type in a selector:</p><pre>   h1#z98y {letter-spacing: 0.5em; }</pre><p>written as:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">id</span> <span class="variable">h1</span> <span class="variable">z98y</span>) (<span class="variable">letter-spacing</span> <span class="selfeval">"0.5em"</span>)))
+</pre><p>or</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">id</span> <span class="variable">h1</span> <span class="variable">z98y</span>) (<span class="variable">letter-spacing</span> <span class="selfeval">"0.5em"</span>)))
+</pre></div><div><a name="container_299" /><h2>Contextual Selectors</h2><p>CSS allows one to specify that a "style" applies only to selected
+ elements, in a _context_. For example, if I want to color emphasized
+ text red, but only within an h1 element, this can be written as:</p><pre>   h1 em { color: red; }</pre><p>which, in the WebIt! embedding, is given as:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">//</span> <span class="variable">h1</span> <span class="variable">em</span>) (<span class="variable">color</span> <span class="selfeval">"red"</span>)))
+</pre><p>The keyword "//" is used to suggest a similarity of a contextual
+ specifier with a "path expression" (as in XPath/SXPath).</p><p>The "steps" in a contextual specifier can be an element type, class,
+ pseudo-class, an id, or a combination of these.</p></div><div><a name="container_300" /><h2>Grouping Selectors</h2><p>To avoid duplicating style descriptions, selectors may be grouped
+ together. Any of the above kinds of selectors may be grouped, as
+ shown below, where a simple selector (an element type) and a contextual
+ selector are grouped:</p><pre>    h1, h2 b, h2, em { color: red; }</pre><p>The grouping "operator" is just a list:</p><pre class="scheme">(<span class="keyword">css</span> ((<span class="variable">h1</span> (<span class="variable">//</span> <span class="variable">h2</span> <span class="variable">b</span>) (<span class="variable">//</span> <span class="variable">h2</span> <span class="variable">em</span>)) (<span class="variable">color</span> <span class="selfeval">"red"</span>)))
+</pre></div><div><a name="container_301" /><h2>Importing a stylesheet</h2><p>A stylesheet may import another stylesheet:</p><pre>    @import url(http://somewhere/a.css)</pre><p>This is written as</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">import</span> <span class="selfeval">"http://somewhere/a.css"</span>) <span class="variable">...</span>)
+</pre><p>Any such import forms must appear at the beginning of a CSS stylesheet,
+ before any "style rules".</p></div><div><a name="container_302" /><h2>Marking a Property "Important"</h2><p>CSS allows designers to increase the "weights" of some property declarations:</p><pre>    p { font-size: 12pt ! important;
+        font-style: italic;
+      }</pre><p>This can be written in Scheme as:</p><pre class="scheme">(<span class="keyword">css</span> (<span class="variable">p</span> (<span class="variable">!</span> (<span class="variable">font-size</span> <span class="selfeval">"12pt"</span>)) (<span class="variable">font-style</span> <span class="selfeval">"italic"</span>)))
+</pre></div></div><p style="margin-top:24pt;">&nbsp;</p><p /><div align="right" class="navigation">[Go to <a href="./index.html">first</a>, <a href="./node_8.html">previous</a>, <a href="./node_10.html">next</a> page; <a href="./index.html#toc_start">contents</a>]</div><p>&nbsp;</p><div class="collophon" align="right">Last modified: Sunday, April 24th, 2005 2:52:27pm<br />HTML generated using <a href="http://celtic.benderweb.net/webit/">WebIt!</a>.</div></body></html>

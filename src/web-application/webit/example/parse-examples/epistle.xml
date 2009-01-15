@@ -1,0 +1,145 @@
+<collection>
+  <author>
+    <name>Robert Burns</name>
+    <bio>
+      Robert Burns was born on January 25, 1759 in Alloway, Ayrshire, Scotland.
+      He is the national poet of Scotland, revered for his rakish spirit and 
+      for his preservation of Scots language and song. Burns published his first
+      volume of poems in 1786. A year later he began a project to collect and
+      write songs of Scotland.  The most famous of these songs is Auld Lang Syne,
+      a perennial on New Year's Eve. Burns died in 1796, only 37 years old.  He wrote,
+      <q>Lord, grant that we may lead a gude life; for a gude life makes a gude end;
+      at least it helps weel!</q>
+    </bio>
+  </author>
+  <poem>
+    <title>Epistle to a Young Friend</title>
+    <note>
+      Burns wrote this poem to Andrew Hunter Aitken, 
+      who became a merchant in Liverpool and then a British consul in
+      Riga.  Aitken died in 1831.
+    </note>
+    <stanza>
+      <line>I lang hae thought, my youthfu friend, </line>
+      <line>A something to have sent you,</line>
+      <line>Tho it should serve nae ither end</line>
+      <line>Than just a kind memento:</line>
+      <line>But how the subject-theme may gang,</line>
+      <line>Let time and chance determine:</line>
+      <line>Perhaps it may turn out a sang;</line>
+      <line>Perhaps, turn out a sermon.</line>
+    </stanza><stanza>
+      <line>Ye'll try the world soon, my lad;</line>
+      <line>And, Andrew dear, believe me,</line>
+      <line>Ye'll find mankind an unco squad,</line>
+      <line>And muckle they may grieve ye:</line>
+      <line>For care and trouble set your thought,</line>
+      <line>Ev'n when your end's attained;</line>
+      <line>And a' your views may come to nought,</line>
+      <line>Where ev'ry nerve is strained.</line>
+    </stanza><stanza>
+      <line>I'll no say, men are villains a':</line>
+      <line>The real, harden'd wicked,</line>
+      <line>Wha hae nae check but human law,</line>
+      <line>Are to a few restricked;</line>
+      <line>But, och! mankind are unco weak,</line>
+      <line>An little to be trusted;</line>
+      <line>If self the wavering balance shake,</line>
+      <line>It's rarely right adjusted!</line>
+    </stanza><stanza>
+      <line>Yet they wha fa' in Fortune's strife,</line>
+      <line>Their fate we should na censure;</line>
+      <line>For still, th' important end of life</line>
+      <line>They equally may answer:</line>
+      <line>A man may hae an honest heart,</line>
+      <line>Tho poortith hourly stare him;</line>
+      <line>A man may tak a neebor's part,</line>
+      <line>Yet hae nae cash to spare him.</line>
+    </stanza><stanza>
+      <line>Ay free, aff han', your story tell,</line>
+      <line>When wi a bosom cronie;</line>
+      <line>But still keep something to yoursel</line>
+      <line>Ye scarcely tell to onie:</line>
+      <line>Conceal yoursel as weel's ye can</line>
+      <line>Frae critical dissection:</line>
+      <line>But keek thro ev'ry other man,</line>
+      <line>Wi sharpen'd, sly inspection.</line>
+    </stanza><stanza>
+      <line>The scared lowe o weel-plac'd love,</line>
+      <line>Luxuriantly indulge it;</line>
+      <line>But never tempt th' illicit rove,</line>
+      <line>Tho naething should divulge it:</line>
+      <line>I waive the quantum o the sin,</line>
+      <line>The hazard of concealing;</line>
+      <line>But, och! it hardens a' within,</line>
+      <line>And petrifies the feeling!</line>
+    </stanza><stanza>
+      <line>To catch Dame Fortune's golden smile,</line>
+      <line>Assiduous wait upon her;</line>
+      <line>And gather gear by ev'ry wile</line>
+      <line>That's justify'd by honor:</line>
+      <line>Not for to hide it in a hedge,</line>
+      <line>Nor for a train-attendant;</line>
+      <line>But for the glorious privilege</line>
+      <line>Of being independent.</line>
+    </stanza><stanza>
+      <line>The fear o Hell's a hangman's whip</line>
+      <line>To haud the wretch in order;</line>
+      <line>But where ye feel your honour grip,</line>
+      <line>Let that ay be your border:</line>
+      <line>Its slightest touches, instant pause -</line>
+      <line>Debar a' side-pretences;</line>
+      <line>And resolutely keep its laws,</line>
+      <line>Uncaring consequences.</line>
+    </stanza><stanza>
+      <line>The great Creator to revere,</line>
+      <line>Must sure become the creature;</line>
+      <line>But still the preaching cant forbear,</line>
+      <line>An ev'n the rigid feature:</line>
+      <line>Yet ne'er with wits profane to range</line>
+      <line>Be complaisance extended;</line>
+      <line>An atheist-laugh's a poor exchange</line>
+      <line>For Deity offended!</line>
+    </stanza><stanza>
+      <line>When ranting round in Pleasure's ring,</line>
+      <line>Religion may be blinded;</line>
+      <line>Or if she gie a random sting,</line>
+      <line>It may be little minded;</line>
+      <line>But when on Life we're tempest-driv'n -</line>
+      <line>A conscience but a canker -</line>
+      <line>A correspondence fix'd wi' Heav'n,</line>
+      <line>Is sure a noble anchor!</line>
+    </stanza><stanza>
+      <line>Adieu, dear, amiable youth!</line>
+      <line>Your heart can ne'er be wanting!</line>
+      <line>May prudence, fortitude, and truth,</line>
+      <line>Erect your brow undaunting!</line>
+      <line>In ploughman phrase, 'God send you speed,'</line>
+      <line>Still daily to grow wiser;</line>
+      <line>And may ye better reck the rede,</line>
+      <line>Than ever did th' adviser!</line>
+    </stanza>
+  </poem>
+  <definitions>
+    <def>
+      <phrase>unco</phrase>
+      <translation>extremely, mightily</translation>
+    </def>
+    <def>
+      <phrase>poortith</phrase>
+      <translation>poverty, misfortune</translation>
+    </def>
+    <def>
+      <phrase>reck the reed</phrase>
+      <translation>play the tune</translation>
+    </def>
+    <def>
+      <phrase>lowe</phrase>
+      <translation>calling, flame</translation>
+    </def>
+    <def>
+      <phrase>squad</phrase>
+      <translation>strange</translation>
+    </def>
+  </definitions>
+</collection>
