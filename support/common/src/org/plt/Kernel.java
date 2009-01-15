@@ -713,8 +713,8 @@ public class Kernel {
 
 	public static org.plt.types.Logic string_greaterthan__equal__question_(
 			Object s1, Object s2) {
-		return toLogic(string_equal__question_(s1, s2).isTrue() || string_greaterthan__question_(
-				s1, s2).isTrue());
+		return toLogic(string_equal__question_(s1, s2).isTrue()
+				|| string_greaterthan__question_(s1, s2).isTrue());
 	}
 
 	public static org.plt.types.Logic string_lessthan__question_(Object s1,
@@ -725,5 +725,56 @@ public class Kernel {
 	public static org.plt.types.Logic string_lessthan__equal__question_(
 			Object s1, Object s2) {
 		return toLogic(string_greaterthan__question_(s1, s2).isFalse());
+	}
+
+	private static org.plt.types.Logic natural_question_(Object n) {
+		return toLogic(integer_question_(n).isTrue()
+				&& negative_question_(n).isFalse());
+	}
+
+	public static Object substring(Object s, Object begin, Object end) {
+		if (string_question_(s).isFalse())
+			throw new SchemeException(
+					"substring: expects type <string> as 1st argument, given: "
+							+ s + "; other arguments were: " + begin + " "
+							+ end);
+		if (natural_question_(begin).isFalse())
+			throw new SchemeException(
+					"substring: expects type <non-negative exact integer> as 2nd argument, given: "
+							+ begin + "; other arguments were: " + s + " "
+							+ end);
+		if (natural_question_(end).isFalse())
+			throw new SchemeException(
+					"substring: expects type <non-negative exact integer> as 3rd argument, given: "
+							+ end + "; other arguments were: " + s + " "
+							+ begin);
+
+		return ((String) s).substring(((Rational) begin).toInt(),
+				((Rational) end).toInt());
+	}
+
+	public static Object string_dash_ref(Object s, Object i) {
+		if (string_question_(s).isFalse())
+			throw new SchemeException(
+					"string-ref: expects type <string> as 1st argument, given: "
+							+ s + "; other arguments were: " + i);
+		if (natural_question_(i).isFalse())
+			throw new SchemeException(
+					"string-ref: expects type <non-negative exact integer> as 2nd argument, given: "
+							+ i + "; other arguments were: " + s);
+		if (_greaterthan_(i, sub1(string_dash_length(s))).isTrue())
+			throw new SchemeException("string-ref: index " + i
+					+ " out of range [0, " + sub1(string_dash_length(s))
+					+ "] for string: " + s);
+
+		return ((String) s).charAt(((Rational) i).toInt());
+	}
+
+	public static org.plt.types.Number string_dash_length(Object s) {
+		if (string_question_(s).isFalse())
+			throw new SchemeException(
+					"string-length: expects argument of type <string>; given "
+							+ s);
+		return new Rational(((String) s).length(), 1);
 	}
 }

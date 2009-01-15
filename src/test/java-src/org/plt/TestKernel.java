@@ -219,9 +219,12 @@ public class TestKernel {
 
 	@Test
 	public void testString_greaterthan__equal__question_() {
-		assertTrue(Kernel.string_greaterthan__equal__question_("b", "a").isTrue());
-		assertTrue(Kernel.string_greaterthan__equal__question_("a", "a").isTrue());
-		assertTrue(Kernel.string_greaterthan__equal__question_("a", "b").isFalse());
+		assertTrue(Kernel.string_greaterthan__equal__question_("b", "a")
+				.isTrue());
+		assertTrue(Kernel.string_greaterthan__equal__question_("a", "a")
+				.isTrue());
+		assertTrue(Kernel.string_greaterthan__equal__question_("a", "b")
+				.isFalse());
 	}
 
 	@Test
@@ -236,6 +239,25 @@ public class TestKernel {
 		assertTrue(Kernel.string_lessthan__equal__question_("b", "a").isFalse());
 		assertTrue(Kernel.string_lessthan__equal__question_("a", "a").isTrue());
 		assertTrue(Kernel.string_lessthan__equal__question_("a", "b").isTrue());
+	}
+
+	@Test
+	public void testSubstring() {
+		assertTrue(Kernel.string_equal__question_(
+				Kernel.substring("world", Kernel.ZERO, Kernel.TWO), "wo")
+				.isTrue());
+	}
+
+	// @Test
+	// public void testString_dash_ref() {
+	// assertTrue(Kernel.char_equal__question_('w',
+	// Kernel.string_dash_ref("world", Kernel.ZERO)).isTrue());
+	// }
+
+	@Test
+	public void testString_dash_length() {
+		assertTrue(Kernel._equal_(Kernel.FIVE,
+				Kernel.string_dash_length("world")).isTrue());
 	}
 
 }

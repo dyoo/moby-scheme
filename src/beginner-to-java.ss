@@ -644,6 +644,9 @@
     string>=?
     string<?
     string<=?
+    substring
+    string-length
+    string-ref
     
     ;; World
     empty-scene

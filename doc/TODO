@@ -140,9 +140,6 @@ Primitives that need implementation:
  string-ci>=?
  string-ci>?
  string-copy
- string-length
- string-ref
- substring
  image=?
  image?
  eof
