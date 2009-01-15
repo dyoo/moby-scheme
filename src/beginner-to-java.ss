@@ -81,8 +81,9 @@
                                       "I don't know how to handle require")]
                               [(expr? (first program))
                                (string-append 
+                                "static { org.plt.Kernel.identity("
                                 (expression->java-string (first program) '()) 
-                                ";")])
+                                "); }")])
                         "\n"
                         (program->java-string (rest program)))]))
 

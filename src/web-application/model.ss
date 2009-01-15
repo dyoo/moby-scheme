@@ -137,7 +137,6 @@
             (lambda (op)
               (write-bytes (source-code a-source) op)))
           (printf "filename: ~s~n" program-path)
-          (read)
           (printf "hello again~n")
           (generate-j2me-application name program-path dir)
           (let ([bin (make-binary
@@ -151,8 +150,9 @@
         (void)]))))
 
 (define (jar-path? a-path)
+  (printf "looking at ~s~n" a-path)
   (and (filename-extension a-path)
-       (regexp-match #rx".jar" (filename-extension a-path))))
+       (bytes=? #"jar" (filename-extension a-path))))
 
 
 

@@ -199,7 +199,7 @@
                    (if (world-handlers-on-redraw a-world-handlers)
                        (expression->java-string
                         `(,(world-handlers-on-redraw a-world-handlers) world) '())
-                       "org.plt.types.Scene.emptyScene(this.getWidth(), this.getHeight())"))
+                       "org.plt.gui.Scene.emptyScene(this.getWidth(), this.getHeight())"))
                   (ON-KEY-EVENT-EXPRESSION
                    (if (world-handlers-on-key-event a-world-handlers)
                        (expression->java-string
