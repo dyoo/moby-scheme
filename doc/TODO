@@ -142,11 +142,6 @@ Primitives that need implementation:
  string-copy
  string-length
  string-ref
- string<=?
- string<?
- string>=?
- string>?
- string?
  substring
  image=?
  image?

@@ -113,8 +113,8 @@ public class TestKernel {
 
 	@Test
 	public void testGCD() {
-		assertTrue(Kernel._equal_(Kernel.gcd(Kernel.TWO, Kernel.THREE), Kernel.ONE)
-				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.gcd(Kernel.TWO, Kernel.THREE),
+				Kernel.ONE).isTrue());
 	}
 
 	@Test
@@ -204,10 +204,38 @@ public class TestKernel {
 	}
 
 	@Test
-	public void testReal_question_(){
+	public void testReal_question_() {
 		assertTrue(Kernel.real_question_(FloatPoint.fromString("3.1")).isTrue());
 		assertTrue(Kernel.real_question_(Kernel.ONE).isTrue());
 		assertTrue(Kernel.real_question_(Empty.EMPTY).isFalse());
+	}
+
+	@Test
+	public void testString_greaterthan__question_() {
+		assertTrue(Kernel.string_greaterthan__question_("b", "a").isTrue());
+		assertTrue(Kernel.string_greaterthan__question_("a", "a").isFalse());
+		assertTrue(Kernel.string_greaterthan__question_("a", "b").isFalse());
+	}
+
+	@Test
+	public void testString_greaterthan__equal__question_() {
+		assertTrue(Kernel.string_greaterthan__equal__question_("b", "a").isTrue());
+		assertTrue(Kernel.string_greaterthan__equal__question_("a", "a").isTrue());
+		assertTrue(Kernel.string_greaterthan__equal__question_("a", "b").isFalse());
+	}
+
+	@Test
+	public void testString_lessthan__question_() {
+		assertTrue(Kernel.string_lessthan__question_("b", "a").isFalse());
+		assertTrue(Kernel.string_lessthan__question_("a", "a").isFalse());
+		assertTrue(Kernel.string_lessthan__question_("a", "b").isTrue());
+	}
+
+	@Test
+	public void testString_lessthan__equal__question_() {
+		assertTrue(Kernel.string_lessthan__equal__question_("b", "a").isFalse());
+		assertTrue(Kernel.string_lessthan__equal__question_("a", "a").isTrue());
+		assertTrue(Kernel.string_lessthan__equal__question_("a", "b").isTrue());
 	}
 
 }

@@ -639,6 +639,11 @@
     ;; Strings
     string=?
     symbol?
+    string?
+    string>?
+    string>=?
+    string<?
+    string<=?
     
     ;; World
     empty-scene

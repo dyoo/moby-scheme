@@ -215,6 +215,15 @@ public class Kernel {
 
 	// ////////////////////////////////////////////////////////////////////
 	public static Logic string_equal__question_(Object s1, Object s2) {
+		if (string_question_(s1).isFalse())
+			throw new SchemeException(
+					"string=?: expects type <string> as 1st argument, given: "
+							+ s1 + "; other arguments were: " + s2);
+		if (string_question_(s1).isFalse())
+			throw new SchemeException(
+					"string=?: expects type <string> as 2nd argument, given: "
+							+ s2 + "; other arguments were: " + s1);
+
 		return toLogic(((String) s1).equals(s2));
 	}
 
@@ -680,5 +689,41 @@ public class Kernel {
 
 	public static org.plt.types.Logic real_question_(Object n) {
 		return toLogic(n instanceof FloatPoint || n instanceof Rational);
+	}
+
+	public static org.plt.types.Logic string_question_(Object n) {
+		return toLogic(n instanceof String);
+	}
+
+	public static org.plt.types.Logic string_greaterthan__question_(Object s1,
+			Object s2) {
+		if (string_question_(s1).isFalse())
+			throw new SchemeException(
+					"string>?: expects type <string> as 1st argument, given: "
+							+ s1 + "; other arguments were: " + s2);
+		if (string_question_(s1).isFalse())
+			throw new SchemeException(
+					"string>?: expects type <string> as 2nd argument, given: "
+							+ s2 + "; other arguments were: " + s1);
+		if (((String) s1).compareTo((String) s2) > 0)
+			return Logic.TRUE;
+		else
+			return Logic.FALSE;
+	}
+
+	public static org.plt.types.Logic string_greaterthan__equal__question_(
+			Object s1, Object s2) {
+		return toLogic(string_equal__question_(s1, s2).isTrue() || string_greaterthan__question_(
+				s1, s2).isTrue());
+	}
+
+	public static org.plt.types.Logic string_lessthan__question_(Object s1,
+			Object s2) {
+		return toLogic(string_greaterthan__equal__question_(s1, s2).isFalse());
+	}
+
+	public static org.plt.types.Logic string_lessthan__equal__question_(
+			Object s1, Object s2) {
+		return toLogic(string_greaterthan__question_(s1, s2).isFalse());
 	}
 }
