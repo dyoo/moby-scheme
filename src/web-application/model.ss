@@ -123,34 +123,39 @@
 
 ;; compile-source: model source platform -> binary              
 (define (compile-source a-model a-source a-platform)
-  (with-serializing 
-   a-model
-   (lambda ()
-     (printf "Here I am~n")
-     (match a-platform
-       [(struct platform:j2me ())
-        (let* ([name (source-program-name a-source)]
+  (define (do-platform-compilation generate binary-find)
+    (let* ([name (source-program-name a-source)]
                [dir (make-temporary-directory #:parent-directory (model-data-dir a-model))]
                [program-path (build-path dir (string-append name ".ss"))])
-          (printf "about to write bytes~n")
           (call-with-output-file program-path 
             (lambda (op)
               (write-bytes (source-code a-source) op)))
-          (printf "filename: ~s~n" program-path)
-          (printf "hello again~n")
-          (generate-j2me-application name program-path dir)
+          (generate name program-path dir)
           (let ([bin (make-binary
                       name 
-                      (get-file-bytes (first (find-files jar-path? (build-path dir "bin")))))])
+                      (get-file-bytes 
+                       (first (find-files binary-find (build-path dir "bin")))))])
             #;(delete-directory/files dir)
-            (display bin)
-            (newline)
-            bin))]
+            bin)))
+  
+  (with-serializing 
+   a-model
+   (lambda ()
+     (match a-platform
+       [(struct platform:j2me ())
+        (do-platform-compilation generate-j2me-application jar-path?)]
        [(struct platform:android ())
-        (void)]))))
+        (do-platform-compilation generate-android-application apk-path?)]))))
+
+
+
+
+
+(define (apk-path? a-path)
+  (and (filename-extension a-path)
+       (bytes=? #"apk" (filename-extension a-path))))
 
 (define (jar-path? a-path)
-  (printf "looking at ~s~n" a-path)
   (and (filename-extension a-path)
        (bytes=? #"jar" (filename-extension a-path))))
 
