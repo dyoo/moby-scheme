@@ -4,7 +4,9 @@
 
 (provide/contract [copy-directory/files* (path-string? path-string? . -> . any)]
                   [upper-camel-case (string? . -> . string?)]
-                  [make-temporary-directory (() (#:directory path?) . ->* . path?)])
+                  [make-temporary-directory (() (#:parent-directory path?) . ->* . path?)]
+                  [get-file-bytes (path? . -> . bytes?)]
+                  [now (-> date?)])
 
 
 ;; copy-directory/files*: path path -> void
@@ -30,15 +32,35 @@
                                   (build-path dest-path entry))])))
 
 
+;; get-file-bytes: path -> bytes
+;; Sucks all the bytes out of a file
+(define (get-file-bytes a-path)
+  (call-with-input-file a-path
+    (lambda (ip)
+      (let loop ([b (bytes)])
+        (let ([chunk (read-bytes 8196 ip)])
+          (cond
+            [(eof-object? chunk)
+             b]
+            [else
+             (loop (bytes-append b chunk))]))))))
+
+
+
 ;; make-temporary-directory: -> path
 ;; Creates a temporary directory, and returns its path.
-(define (make-temporary-directory #:directory (directory #f))
-  (let ([f (make-temporary-file "tmp~a" #f directory)])
+(define (make-temporary-directory #:parent-directory (parent-dir #f))
+  (let ([f (make-temporary-file "tmp~a" #f parent-dir)])
     (delete-file f)
     (make-directory f)
     f))
 
 
+
+;; now: ->date
+;; Returns the current date.
+(define (now)
+  (seconds->date (current-seconds)))
 
 
 ;; upper-camel-case: string -> string

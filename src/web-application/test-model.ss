@@ -33,12 +33,21 @@
    
 (define test-module
   (test-suite
-   "test-model.ss"   
+   "test-model.ss"
+
    (test-case
     "Create and delete"
     (with-test-model
-     (void)))))
-
+     (void)))
+   
+   (test-case
+    "compilation"
+    (with-test-model
+     (let ([binary
+            (compile-source M 
+                            (make-source "id" "hello" #"\n\n\n\"hello world\"" (now) #f)
+                            (make-platform:android))])
+       (check-true (binary? binary)))))))
 
 
 (run-tests test-module)

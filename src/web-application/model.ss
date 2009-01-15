@@ -3,7 +3,10 @@
 (require scheme/contract
          scheme/match
          scheme/path
-         scheme/file)
+         scheme/file
+         scheme/list
+         "../compile-world.ss"
+         "../utils.ss")
 
 
 ;; The model we maintain has a maintenance thread, a request channel, and a response channel.
@@ -29,13 +32,21 @@
                        date-submitted ;; date
                        approved?      ;; boolean
                        ))
+
+
+(define-struct binary (name ;; string
+                       bytes ;; bytes
+                       ))
+
 ;;;;
 
 
 
+(define-struct platform ())
+(define-struct (platform:j2me platform) ())
+(define-struct (platform:android platform) ())
 
-
-
+;;;;;;
 
 
 
@@ -57,20 +68,12 @@
 
 
 (define (install-tables!)
-  (void)
-  #;(call-with-connection
-     (lambda ()
-       (unless (table-exists? entity:user)
-         (create-table entity:user))
-       #;(unless (table-exists? entity:program)
-           (create-table entity:program)))))
+  (void))
 
 
 
 ;; Request types:
-(define-struct req:add-user! (name email))
-(define-struct req:find-users ())
-(define-struct req:find-user/email (email))
+(define-struct req:thunk (thunk))
 (define-struct req:quit ())
 
 
@@ -86,15 +89,13 @@
                                    ;; Throw exceptions back up as values.
                                    values])
                     (match req 
-                      [(struct req:add-user! (name email))
-                       (-add-user! a-model name email)
-                       (loop)]
-                      [(struct req:find-users ())
-                       (-find-users a-model)
-                       (loop)]
-                      [(struct req:find-user/email (email))
-                       (-find-user/email a-model email)
-                       (loop)]
+                      [(struct req:thunk (thunk))
+                       (let ([result
+                              (with-handlers ([void (lambda (exn)
+                                                      exn)])
+                                (thunk))])
+                         (channel-put res-ch result)
+                         (loop))]
                       [(struct req:quit ()) 
                        (void)]))])
         (channel-put res-ch res)))))
@@ -108,75 +109,54 @@
   (thread-resume (model-th a-model) (current-thread))
   (channel-put (model-req-ch a-model) a-req)
   (let ([response (channel-get (model-res-ch a-model))])
-    (when (exn:fail? response)
+    (when (exn? response)
       (raise response))
     response))
 
 
-;; add-user! model string string -> user
-;; Adds a user to the system.
-(define (add-user! a-model name email)
-  (when (find-user/email a-model email)
-    (error 'add-user "User with email address ~s already exists" email))
-  (send-request a-model (make-req:add-user! name email)))
 
-;; Internal.
-(define (-add-user! a-model name email)
-  (void)
-  #;(call-with-connection 
-     (lambda () 
-       (save! (make-user name email)))))
-
-
-;; find-users: model -> (listof user)
-;; Finds all of the users.
-(define (find-users a-model)
-  (send-request a-model (make-req:find-users)))
-;; Internal.
-(define (-find-users a-model)
-  (void)
-  #;(call-with-connection 
-     (lambda () 
-       (find-all 
-        (let-alias ([U user]) (sql:select #:from U))))))
-
-
-;; find-user/email: model string -> (or/c user #f)
-;; Looks for a user by unique email.
-(define (find-user/email a-model email)
-  (send-request a-model (make-req:find-user/email email)))
-
-(define (-find-user/email a-model email)
-  (void)
-  #;(call-with-connection
-     (lambda ()
-       (find-one
-        (let-alias ([P user])
-                   (sql:select #:from P
-                               #:where (sql:= P-email email)))))))
-
-
-;; add-program!: user string bytes -> program
-;; Adds a program.
-#;(define (add-program! user name source-code)
-  ...)
+;; with-serializing: model thunk -> X
+(define (with-serializing a-model a-thunk)
+  (send-request a-model (make-req:thunk a-thunk)))
 
 
 
-#;(define (get-package-jar program)
-  ...)
+;; compile-source: model source platform -> binary              
+(define (compile-source a-model a-source a-platform)
+  (with-serializing 
+   a-model
+   (lambda ()
+     (match a-platform
+       [(struct platform:j2me ())
+        (let* ([name (source-program-name a-source)]
+               [dir (make-temporary-directory #:parent-directory (model-data-dir a-model))]
+               [program-path (build-path dir name)])
+          (call-with-output-file program-path 
+            (lambda (op)
+              (write-bytes (source-code a-source) op)))
+          (generate-j2me-application name program-path dir)
+          (let ([bin (make-binary
+                      name 
+                      (get-file-bytes (first (find-files jar-path? (build-path dir "bin")))))])
+            (delete-directory/files dir)
+            (display bin)
+            (newline)
+            bin))]
+       [(struct platform:android ())
+        (void)]))))
 
-#;(define (get-package-jad program)
-  ...)
+(define (jar-path? a-path)
+  (regexp-match #rx".jar" (filename-extension a-path)))
 
-#;(define (get-package-apk program)
-    ...)
+
+
 
 
 ;; close-model: model -> void
 ;; Turns off the model.
 (define (close-model a-model)
   (send-request a-model (make-req:quit)))
+
 
 
 ;; delete-model: model -> void
@@ -187,10 +167,23 @@
 
 
 
+
 (provide/contract [rename -make-model make-model (path-string? . -> . model?)]
                   [close-model (model? . -> . any)]
-                  [delete-model! (model? . -> . any)]
+                  [delete-model! (model? . -> . any)]                  
+                  [compile-source (model? source? platform? . -> . binary?)]
                   
-                  [add-user! (model? string? string? . -> . user?)]
-                  [find-users (model? . -> . (listof user?))]
-                  [find-user/email (model? string? . -> . (or/c user? false/c))])
+                  
+
+                  [struct source ((id string?)
+                                  (program-name string?)
+                                  (code bytes?)
+                                  (date-submitted date?)
+                                  (approved? boolean?))]
+
+                  [struct binary ((name string?)
+                                  (bytes bytes?))]
+                  
+                  [struct platform ()]
+                  [struct (platform:j2me platform) ()]
+                  [struct (platform:android platform) ()])
