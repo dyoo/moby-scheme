@@ -97,6 +97,7 @@
 (define-struct req:add-user! (name email))
 (define-struct req:find-users ())
 (define-struct req:find-user/email (email))
+(define-struct req:quit ())
 
 
 ;; request-loop: model -> void
@@ -105,19 +106,24 @@
 (define (request-loop a-model)
   (let ([req-ch (model-req-ch a-model)]
         [res-ch (model-res-ch a-model)])
-    (forever
-     (let* ([req (channel-get req-ch)]
-            [res (with-handlers ([exn:fail? 
-                                  ;; Throw exceptions back up as values.
-                                  values])
-                   (match req 
-                     [(struct req:add-user! (name email))
-                      (-add-user! a-model name email)]
-                     [(struct req:find-users ())
-                      (-find-users a-model)]
-                     [(struct req:find-user/email (email))
-                      (-find-user/email a-model email)]))])
-       (channel-put res-ch res)))))
+    (let loop ()
+      (let* ([req (channel-get req-ch)]
+             [res (with-handlers ([exn:fail? 
+                                   ;; Throw exceptions back up as values.
+                                   values])
+                    (match req 
+                      [(struct req:add-user! (name email))
+                       (-add-user! a-model name email)
+                       (loop)]
+                      [(struct req:find-users ())
+                       (-find-users a-model)
+                       (loop)]
+                      [(struct req:find-user/email (email))
+                       (-find-user/email a-model email)
+                       (loop)]
+                      [(struct req:quit ()) 
+                       (void)]))])
+        (channel-put res-ch res)))))
 
 
 
@@ -188,21 +194,24 @@
   ...)
 
 
+;; close-model: model -> void
+;; Turns off the model.
+(define (close-model a-model)
+  (send-request a-model (make-req:quit)))
 
 
-;; forever: syntax
-(define-syntax (forever stx)
-  (syntax-case stx ()
-    [(_ e ...)
-     (syntax/loc stx
-       (let loop ()
-         e ...
-         (loop)))]))
-
+;; delete-model: model -> void
+;; Destroys the model.
+(define (delete-model! a-model)
+  (send-request a-model (make-req:quit))
+  (delete-directory/files (model-data-dir a-model)))
 
 
 
 (provide/contract [rename -make-model make-model (path-string? . -> . model?)]
+                  [close-model (model? . -> . any)]
+                  [delete-model! (model? . -> . any)]
+                  
                   [add-user! (model? string? string? . -> . user?)]
                   [find-users (model? . -> . (listof user?))]
                   [find-user/email (model? string? . -> . (or/c user? false/c))])
