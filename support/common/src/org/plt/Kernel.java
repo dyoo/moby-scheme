@@ -124,11 +124,11 @@ public class Kernel {
 		org.plt.types.Number n1 = (org.plt.types.Number) _n1;
 		org.plt.types.Number n2 = (org.plt.types.Number) _n2;
 
-		if (NumberTower.coerseLeft(n1, Rational.ONE) != null) {
-			n1 = NumberTower.coerseLeft(n1, Rational.ONE);
+		if (NumberTower.coerseLeft(n1, ONE) != null) {
+			n1 = NumberTower.coerseLeft(n1, ONE);
 		}
-		if (NumberTower.coerseLeft(n2, Rational.ONE) != null) {
-			n2 = NumberTower.coerseLeft(n2, Rational.ONE);
+		if (NumberTower.coerseLeft(n2, ONE) != null) {
+			n2 = NumberTower.coerseLeft(n2, ONE);
 		}
 
 		return n1.modulo(n2);
@@ -206,11 +206,11 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number add1(Object n) {
-		return _plus_(n, Rational.ONE);
+		return _plus_(n, ONE);
 	}
 
 	public static org.plt.types.Number sub1(Object n) {
-		return _dash_(n, Rational.ONE);
+		return _dash_(n, ONE);
 	}
 
 	// ////////////////////////////////////////////////////////////////////
@@ -402,11 +402,11 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number sinh(Object _n1) {
-		return _slash_(_dash_(exp(_n1), exp(_dash_(Rational.ZERO, _n1))), TWO);
+		return _slash_(_dash_(exp(_n1), exp(_dash_(ZERO, _n1))), TWO);
 	}
 
 	public static org.plt.types.Number cosh(Object _n1) {
-		return _slash_(_plus_(exp(_n1), exp(_dash_(Rational.ZERO, _n1))), TWO);
+		return _slash_(_plus_(exp(_n1), exp(_dash_(ZERO, _n1))), TWO);
 	}
 
 	public static org.plt.types.Logic even_question_(Object n) {
@@ -418,38 +418,72 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic odd_question_(Object n) {
+		if (integer_question_(n).isFalse())
+			throw new SchemeException(
+					"odd?: expects argument of type <integer>; given: " + n);
+
 		return not(even_question_(n));
 	}
 
 	public static org.plt.types.Number expt(Object n1, Object n2) {
+		if (number_question_(n1).isFalse())
+			throw new SchemeException(
+					"expt: expects type <number> as 1st argument, given: " + n1
+							+ "; other arguments were: " + n2);
+		if (number_question_(n2).isFalse())
+			throw new SchemeException(
+					"expt: expects type <number> as 2nd argument, given: " + n2
+							+ "; other arguments were: " + n1);
+
 		return (FloatPoint.fromNumber((org.plt.types.Number) n1))
 				.expt((org.plt.types.Number) n2);
 	}
 
 	public static org.plt.types.Number exp(Object exponent) {
+		if (number_question_(exponent).isFalse())
+			throw new SchemeException(
+					"exp: expects argument of type <number>; given " + exponent);
+
 		return expt(e, exponent);
 	}
 
 	public static org.plt.types.Number log(Object n1) {
+		if (number_question_(n1).isFalse())
+			throw new SchemeException(
+					"log: expects argument of type <number>; given: " + n1);
+
 		return (FloatPoint.fromNumber((org.plt.types.Number) n1)).log();
 	}
 
 	public static org.plt.types.Logic positive_question_(Object n1) {
-		return _greaterthan_(n1, Rational.ZERO);
+		if (number_question_(n1).isFalse())
+			throw new SchemeException(
+					"positive?: expects argument of type <real number>; given: "
+							+ n1);
+
+		return _greaterthan_(n1, ZERO);
 	}
 
 	public static org.plt.types.Logic negative_question_(Object n1) {
-		return _lessthan_(n1, Rational.ZERO);
+		if (number_question_(n1).isFalse())
+			throw new SchemeException(
+					"negative?: expects argument of type <real number>; given: "
+							+ n1);
+
+		return _lessthan_(n1, ZERO);
 	}
 
 	public static org.plt.types.Number sgn(Object n1) {
+		if (number_question_(n1).isFalse())
+			throw new SchemeException("sgn: expects argument of type <number>");
+
 		if (positive_question_(n1).isTrue())
-			return (org.plt.types.Number) Rational.ONE;
+			return (org.plt.types.Number) ONE;
 
 		if (negative_question_(n1).isTrue())
-			return (org.plt.types.Number) (_dash_(Rational.ZERO, Rational.ONE));
+			return (org.plt.types.Number) (_dash_(ZERO, ONE));
 
-		return Rational.ZERO;
+		return ZERO;
 	}
 
 	public static org.plt.types.Logic boolean_question_(Object n1) {
@@ -462,6 +496,15 @@ public class Kernel {
 
 	public static org.plt.types.Logic boolean_equal__question_(Object n1,
 			Object n2) {
+		if (boolean_question_(n1).isFalse())
+			throw new SchemeException(
+					"boolean=?: expects type <boolean> as 1st argument, given: "
+							+ n1 + "; other arguments were: " + n2);
+		if (boolean_question_(n2).isFalse())
+			throw new SchemeException(
+					"boolean=?: expects type <boolean> as 2nt argument, given: "
+							+ n2 + "; other arguments were: " + n1);
+
 		return toLogic(((org.plt.types.Logic) n1).isTrue() == ((org.plt.types.Logic) n2)
 				.isTrue());
 	}
@@ -479,11 +522,11 @@ public class Kernel {
 					"gcd: expects type <integer> as 2nd argument; giving: " + b);
 
 		if (negative_question_(a).isTrue())
-			a = _dash_(Rational.ZERO, a);
+			a = _dash_(ZERO, a);
 		if (negative_question_(b).isTrue())
-			b = _dash_(Rational.ZERO, b);
+			b = _dash_(ZERO, b);
 
-		while (_equal_(b, Rational.ZERO).isFalse()) {
+		while (_equal_(b, ZERO).isFalse()) {
 			org.plt.types.Number t = (org.plt.types.Number) b;
 			b = ((org.plt.types.Number) a).modulo((org.plt.types.Number) b);
 			a = t;
@@ -493,15 +536,21 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number lcm(Object a, Object b) {
+		if (integer_question_(a).isFalse())
+			throw new SchemeException(
+					"lcm: expects type <integer> as 1st argument; giving: " + a);
+		if (integer_question_(b).isFalse())
+			throw new SchemeException(
+					"lcm: expects type <integer> as 2nd argument; giving: " + b);
 		if (negative_question_(a).isTrue())
-			a = _dash_(Rational.ZERO, a);
+			a = _dash_(ZERO, a);
 		if (negative_question_(b).isTrue())
-			b = _dash_(Rational.ZERO, b);
+			b = _dash_(ZERO, b);
 
-		org.plt.types.Number acc = Rational.ONE;
+		org.plt.types.Number acc = ONE;
 		org.plt.types.Number cd;
 
-		while (_equal_(cd = gcd(a, b), Rational.ONE).isFalse()) {
+		while (_equal_(cd = gcd(a, b), ONE).isFalse()) {
 			acc = _star_(acc, cd);
 			a = _slash_(a, cd);
 			b = _slash_(b, cd);
@@ -540,19 +589,37 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number remainder(Object a, Object b) {
+		if (integer_question_(a).isFalse())
+			throw new SchemeException(
+					"remainder: expects type <integer> as 1st argument, given: "
+							+ a);
+		if (integer_question_(b).isFalse())
+			throw new SchemeException(
+					"remainder: expects type <integer> as 2nd argument, given: "
+							+ b);
+
 		return _dash_(a, _star_(quotient(a, b), b));
 	}
 
 	public static org.plt.types.Number numerator(Object n) {
+		if (rational_question_(n).isFalse())
+			throw new SchemeException(
+					"numerator: expects argument of type <rational number>, giving: "
+							+ n);
 		return new Rational(((org.plt.types.Rational) n).numerator(), 1);
 	}
 
 	public static org.plt.types.Number denominator(Object n) {
+		if (rational_question_(n).isFalse())
+			throw new SchemeException(
+					"denominator: expects argument of type <rational number>, giving: "
+							+ n);
+
 		return new Rational(((org.plt.types.Rational) n).denominator(), 1);
 	}
 
 	public static org.plt.types.Logic integer_question_(Object n) {
-		return Kernel._equal_(Kernel.denominator(n), Rational.ONE);
+		return Kernel._equal_(Kernel.denominator(n), ONE);
 	}
 
 	public static org.plt.types.Logic null_question_(Object n) {
@@ -565,7 +632,7 @@ public class Kernel {
 					"length: expects argument of type <proper list>; given: "
 							+ n);
 
-		org.plt.types.Number len = Rational.ZERO;
+		org.plt.types.Number len = ZERO;
 
 		while (((org.plt.types.List) n).isEmpty() == false) {
 			len = add1(len);
@@ -586,7 +653,7 @@ public class Kernel {
 			throw new SchemeException("list-ref: index " + i
 					+ " too large for " + lst);
 
-		org.plt.types.Number index = Rational.ZERO;
+		org.plt.types.Number index = ZERO;
 		while (_lessthan_(index, i).isTrue()) {
 			index = add1(index);
 			lst = ((org.plt.types.List) lst).rest();
@@ -607,7 +674,7 @@ public class Kernel {
 			else
 				return ceiling(n);
 		} else {
-			return _dash_(Rational.ZERO, round(abs(n)));
+			return _dash_(ZERO, round(abs(n)));
 		}
 	}
 }
