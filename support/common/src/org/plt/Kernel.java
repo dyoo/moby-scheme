@@ -803,4 +803,14 @@ public class Kernel {
 			}
 		}
 	}
+
+	public static org.plt.types.Logic eq_question_(Object n1, Object n2) {
+		// (eq? (string->number "3") (string->number (string-copy "3")))
+		// returns true. However, (eq? (string->number "3.1") (string->number
+		// "3.1")) returns false
+		if (n1 instanceof Rational && n2 instanceof Rational)
+			return equal_question_((Rational) n1, (Rational) n2);
+		else
+			return toLogic(n1 == n2);
+	}
 }

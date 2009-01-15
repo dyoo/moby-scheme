@@ -142,7 +142,6 @@ Primitives that need implementation:
  image?
  eof
  eof-object?
- eq?
  equal~?
  eqv?
  exit)

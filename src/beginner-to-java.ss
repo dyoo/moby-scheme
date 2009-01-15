@@ -633,6 +633,7 @@
     false?
     boolean?
     boolean=?
+    eq?
     
     ;; Symbols
     symbol=?

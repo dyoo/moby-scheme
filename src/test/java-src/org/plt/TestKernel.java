@@ -273,6 +273,22 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(
 				Kernel.string_dash__greaterthan_number("3.1"),
 				FloatPoint.fromString("3.1")).isTrue());
-		assertTrue(((Logic)(Kernel.string_dash__greaterthan_number("3.1a"))).isFalse());
+		assertTrue(((Logic) (Kernel.string_dash__greaterthan_number("3.1a")))
+				.isFalse());
+	}
+
+	@Test
+	public void testEq_question_() {
+		assertTrue(Kernel.eq_question_(Kernel.ONE, Kernel.ONE).isTrue());
+		assertTrue(Kernel.eq_question_(Kernel.ONE, Kernel.TWO).isFalse());
+		assertTrue(Kernel.eq_question_(
+				Kernel.string_dash__greaterthan_number("3"),
+				Kernel.string_dash__greaterthan_number("3")).isTrue());
+		assertTrue(Kernel.eq_question_(
+				Kernel.string_dash__greaterthan_number("3.1"),
+				Kernel.string_dash__greaterthan_number("3.1")).isFalse());
+		assertTrue(Kernel.eq_question_("3", Kernel.string_dash_copy("3"))
+				.isFalse());
+		assertTrue(Kernel.eq_question_("3", "3").isTrue());
 	}
 }
