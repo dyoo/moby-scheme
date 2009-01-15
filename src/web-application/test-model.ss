@@ -23,11 +23,12 @@
             (syntax-parameterize 
              ([M (make-rename-transformer #'model)])             
              (dynamic-wind (lambda ()
-                             (set! model (make-model (make-temporary-directory))))
+                             (set! model (make-model "tmp-model")))
                            (lambda ()
                              body ...)
                            (lambda ()
-                             (delete-model! model)))))))]))
+                             (void)
+                             #;(delete-model! model)))))))]))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
    
@@ -35,7 +36,7 @@
   (test-suite
    "test-model.ss"
 
-   (test-case
+   #;(test-case
     "Create and delete"
     (with-test-model
      (void)))
@@ -44,9 +45,9 @@
     "compilation"
     (with-test-model
      (let ([binary
-            (compile-source M 
-                            (make-source "id" "hello" #"\n\n\n\"hello world\"" (now) #f)
-                            (make-platform:android))])
+            (compile-source M
+                            (make-source "id" "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) #f)
+                            (make-platform:j2me))])
        (check-true (binary? binary)))))))
 
 

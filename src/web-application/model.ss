@@ -126,19 +126,24 @@
   (with-serializing 
    a-model
    (lambda ()
+     (printf "Here I am~n")
      (match a-platform
        [(struct platform:j2me ())
         (let* ([name (source-program-name a-source)]
                [dir (make-temporary-directory #:parent-directory (model-data-dir a-model))]
-               [program-path (build-path dir name)])
+               [program-path (build-path dir (string-append name ".ss"))])
+          (printf "about to write bytes~n")
           (call-with-output-file program-path 
             (lambda (op)
               (write-bytes (source-code a-source) op)))
+          (printf "filename: ~s~n" program-path)
+          (read)
+          (printf "hello again~n")
           (generate-j2me-application name program-path dir)
           (let ([bin (make-binary
                       name 
                       (get-file-bytes (first (find-files jar-path? (build-path dir "bin")))))])
-            (delete-directory/files dir)
+            #;(delete-directory/files dir)
             (display bin)
             (newline)
             bin))]
@@ -146,7 +151,8 @@
         (void)]))))
 
 (define (jar-path? a-path)
-  (regexp-match #rx".jar" (filename-extension a-path)))
+  (and (filename-extension a-path)
+       (regexp-match #rx".jar" (filename-extension a-path))))
 
 
 
