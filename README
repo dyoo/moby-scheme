@@ -1,18 +1,18 @@
-moby
+Moby
 ------
 Danny Yoo (dyoo@cs.wpi.edu)
 
 
 ----------------------------------------------------------------------
 
-What is it?
+What is Moby?
 
-A compiler that consumes Beginner Language Scheme programs and
+Moby is a compiler that consumes Beginner Language Scheme programs and
 produces applications for mobile platforms.  The current prototype
 supports the J2ME and Android platforms.  The Beginner Language
 programs can use the primitives provided by the World Teachpack.  Our
-goal is to make Scheme the premiere reactive scripting languages for
-mobile phones.
+long-term goal is to make Scheme the premiere reactive scripting
+language for mobile phones.
 
 
 ----------------------------------------------------------------------
@@ -40,7 +40,7 @@ Dependencies
 The following are required:
 
   Java >=1.6
-  Apache Ant
+  Apache Ant >=1.7.1
   PLT Scheme >=4.1.3
 
 
