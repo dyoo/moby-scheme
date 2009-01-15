@@ -3,12 +3,7 @@
 (require scheme/contract
          scheme/match
          scheme/path
-         scheme/file
-         scheme/class
-         (planet untyped/snooze:2:1/snooze)
-         (planet untyped/snooze:2:1/sqlite3/sqlite3))
-
-(require (for-syntax scheme/base))
+         scheme/file)
 
 
 ;; The model we maintain has a maintenance thread, a request channel, and a response channel.
@@ -23,45 +18,24 @@
 
 
 
-;; email assumed to be unique.
-(define-persistent-struct user ([name type:string] 
-                                [email type:string]))
-(define-persistent-struct source ([name type:string]
-                                  #;[code type:bytes]
-                                  [date type:time-utc]))
+(define-struct user (name  ;; string
+                     email ;; string
+                     ))
 
-#;(define-persistent-struct program (;; name used to identify the program
-                                   [name type:string]
-                                   ;; source-code-path should be relative to
-                                   ;; data-dir
-                                   [source-code-path type:string]
-                                   [jar-path type:string]
-                                   [jad-path type:string]
-                                   [date type:time-utc]
-                                   ;; References user
-                                   [owner-id type:integer]))
 
-;; Snooze helpers
-(define current-snooze (make-parameter #f))
-
-(define (call-with-connection thunk)
-  (send (current-snooze) call-with-connection thunk))
-
-(define (save! thing)
-  (send (current-snooze) save! thing))
-
-(define (find-one query)
-  (send (current-snooze) find-one query))
-
-(define (find-all query)
-  (send (current-snooze) find-all query))
-
-(define (table-exists? a-table)
-  (send (current-snooze) table-exists? a-table))
-
-(define (create-table a-table)
-  (send (current-snooze) create-table a-table))
+(define-struct source (id             ;; string
+                       program-name   ;; string
+                       code           ;; bytes
+                       date-submitted ;; date
+                       approved?      ;; boolean
+                       ))
 ;;;;
+
+
+
+
+
+
 
 
 
@@ -70,30 +44,26 @@
 (define (-make-model data-path)  
   (let* ([data-path (normalize-path data-path)]
          [a-model (make-model #f
-                             (make-channel) 
-                             (make-channel) 
-                             data-path
-                             #f)])
+                              (make-channel) 
+                              (make-channel) 
+                              data-path
+                              #f)])
     (make-directory* data-path)
-    (set-model-snooze! a-model 
-                       (make-snooze 
-                        (make-database 
-                         (build-path data-path "model.sqlite"))))
-    (parameterize ([current-snooze (model-snooze a-model)])
-      (install-tables!)
-      (set-model-th! a-model 
-                     (thread (lambda () 
-                               (request-loop a-model)))))
+    (install-tables!)
+    (set-model-th! a-model 
+                   (thread (lambda () 
+                             (request-loop a-model))))
     a-model))
 
 
 (define (install-tables!)
-  (call-with-connection
-   (lambda ()
-     (unless (table-exists? entity:user)
-       (create-table entity:user))
-     #;(unless (table-exists? entity:program)
-       (create-table entity:program)))))
+  (void)
+  #;(call-with-connection
+     (lambda ()
+       (unless (table-exists? entity:user)
+         (create-table entity:user))
+       #;(unless (table-exists? entity:program)
+           (create-table entity:program)))))
 
 
 
@@ -137,10 +107,10 @@
 (define (send-request a-model a-req)
   (thread-resume (model-th a-model) (current-thread))
   (channel-put (model-req-ch a-model) a-req)
-  (let ([res (channel-get (model-res-ch a-model))])
-    (when (exn:fail? res)
-      (raise res))
-    res))
+  (let ([response (channel-get (model-res-ch a-model))])
+    (when (exn:fail? response)
+      (raise response))
+    response))
 
 
 ;; add-user! model string string -> user
@@ -149,12 +119,13 @@
   (when (find-user/email a-model email)
     (error 'add-user "User with email address ~s already exists" email))
   (send-request a-model (make-req:add-user! name email)))
+
 ;; Internal.
 (define (-add-user! a-model name email)
-  (call-with-connection 
-   (lambda () 
-     (save! (make-user name email)))))
-
+  (void)
+  #;(call-with-connection 
+     (lambda () 
+       (save! (make-user name email)))))
 
 
 ;; find-users: model -> (listof user)
@@ -163,24 +134,26 @@
   (send-request a-model (make-req:find-users)))
 ;; Internal.
 (define (-find-users a-model)
-  (call-with-connection 
-   (lambda () 
-     (find-all 
-      (let-alias ([U user]) (sql:select #:from U))))))
+  (void)
+  #;(call-with-connection 
+     (lambda () 
+       (find-all 
+        (let-alias ([U user]) (sql:select #:from U))))))
 
 
 ;; find-user/email: model string -> (or/c user #f)
 ;; Looks for a user by unique email.
 (define (find-user/email a-model email)
   (send-request a-model (make-req:find-user/email email)))
-(define (-find-user/email a-model email)
-  (call-with-connection
-   (lambda ()
-     (find-one
-      (let-alias ([P user])
-         (sql:select #:from P
-                     #:where (sql:= P-email email)))))))
 
+(define (-find-user/email a-model email)
+  (void)
+  #;(call-with-connection
+     (lambda ()
+       (find-one
+        (let-alias ([P user])
+                   (sql:select #:from P
+                               #:where (sql:= P-email email)))))))
 
 
 ;; add-program!: user string bytes -> program
@@ -192,7 +165,6 @@
 
 #;(define (get-package-jar program)
   ...)
-
 
 #;(define (get-package-jad program)
   ...)
