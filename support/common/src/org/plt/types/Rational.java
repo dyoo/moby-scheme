@@ -180,6 +180,9 @@ public class Rational implements Number {
     
 
     public String toString() {
+	if (d == 1) {
+	    return "" + n;
+	}
 	return "" + n + "/" + d;
     }
 

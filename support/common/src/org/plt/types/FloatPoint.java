@@ -117,11 +117,13 @@ public class FloatPoint implements Number {
 	}
 
 	public Number floor() {
-		return new FloatPoint(MicroDouble.floor(this.f));
+	    return new Rational(MicroDouble.intValue(MicroDouble.floor(this.f)),
+				1);
 	}
 
 	public Number ceiling() {
-		return new FloatPoint(MicroDouble.ceil(this.f));
+	    return new Rational(MicroDouble.intValue(MicroDouble.ceil(this.f)),
+				1);
 	}
 
 	public String toString() {
