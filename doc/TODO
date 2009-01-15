@@ -131,7 +131,6 @@ Primitives that need implementation:
  make-string
  string
  string->list
- string->number
  string->symbol
  string-append
  string-ci<=?
@@ -139,7 +138,6 @@ Primitives that need implementation:
  string-ci=?
  string-ci>=?
  string-ci>?
- string-copy
  image=?
  image?
  eof

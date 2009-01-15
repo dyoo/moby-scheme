@@ -648,6 +648,8 @@
     substring
     string-length
     string-ref
+    string-copy
+    string->number
     
     ;; World
     empty-scene

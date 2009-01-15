@@ -260,4 +260,19 @@ public class TestKernel {
 				Kernel.string_dash_length("world")).isTrue());
 	}
 
+	@Test
+	public void testString_dash_copy() {
+		assertTrue(Kernel.string_equal__question_(
+				Kernel.string_dash_copy("hi"), "hi").isTrue());
+	}
+
+	@Test
+	public void testString_dash__greaterthan_number() {
+		assertTrue(Kernel._equal_(Kernel.string_dash__greaterthan_number("3"),
+				Kernel.THREE).isTrue());
+		assertTrue(Kernel._equal_(
+				Kernel.string_dash__greaterthan_number("3.1"),
+				FloatPoint.fromString("3.1")).isTrue());
+		assertTrue(((Logic)(Kernel.string_dash__greaterthan_number("3.1a"))).isFalse());
+	}
 }

@@ -777,4 +777,30 @@ public class Kernel {
 							+ s);
 		return new Rational(((String) s).length(), 1);
 	}
+
+	public static Object string_dash_copy(Object s) {
+		if (string_question_(s).isFalse())
+			throw new SchemeException(
+					"string-copy: expects argument of type <string>; given "
+							+ s);
+
+		return new String((String) s);
+	}
+
+	public static Object string_dash__greaterthan_number(Object s) {
+		if (string_question_(s).isFalse())
+			throw new SchemeException(
+					"string->number: expects argument of type <string>; given "
+							+ s);
+
+		try {
+			return new Rational(Integer.parseInt((String) s), 1);
+		} catch (NumberFormatException e1) {
+			try {
+				return FloatPoint.fromString((String) s);
+			} catch (NumberFormatException e2) {
+				return Logic.FALSE;
+			}
+		}
+	}
 }
