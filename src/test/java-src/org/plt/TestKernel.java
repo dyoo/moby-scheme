@@ -15,25 +15,25 @@ public class TestKernel {
 	// Fill me in with more test cases!
 	@Test
 	public void testTan() {
-		assertTrue(Kernel._equal_(Kernel.tan(Rational.ZERO), Rational.ZERO)
+		assertTrue(Kernel._equal_(Kernel.tan(Kernel.ZERO), Kernel.ZERO)
 				.isTrue());
 	}
 
 	@Test
 	public void testSinh() {
-		assertTrue(Kernel._equal_(Kernel.sinh(Rational.ZERO), Rational.ZERO)
+		assertTrue(Kernel._equal_(Kernel.sinh(Kernel.ZERO), Kernel.ZERO)
 				.isTrue());
 	}
 
 	@Test
 	public void testCosh() {
-		assertTrue(Kernel._equal_(Kernel.cosh(Rational.ZERO), Rational.ONE)
+		assertTrue(Kernel._equal_(Kernel.cosh(Kernel.ZERO), Kernel.ONE)
 				.isTrue());
 	}
 
 	@Test
 	public void testEven_question_() {
-		assertTrue(Kernel.even_question_(Rational.ZERO).isTrue());
+		assertTrue(Kernel.even_question_(Kernel.ZERO).isTrue());
 	}
 
 	@Test
@@ -54,41 +54,40 @@ public class TestKernel {
 
 	@Test
 	public void testOdd_question_() {
-		assertTrue(Kernel.odd_question_(Rational.ONE).isTrue());
+		assertTrue(Kernel.odd_question_(Kernel.ONE).isTrue());
 	}
 
 	@Test
 	public void testExpt() {
-		assertTrue(Kernel._equal_(Kernel.expt(Kernel.TWO, Rational.ONE),
+		assertTrue(Kernel._equal_(Kernel.expt(Kernel.TWO, Kernel.ONE),
 				Kernel.TWO).isTrue());
 	}
 
 	@Test
 	public void testExp() {
-		assertTrue(Kernel._equal_(Kernel.exp(Rational.ZERO), Rational.ONE)
-				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.exp(Kernel.ZERO), Kernel.ONE).isTrue());
 	}
 
 	@Test
 	public void testLog() {
-		assertTrue(Kernel._equal_(Kernel.log(Rational.ONE),
-				FloatPoint.fromInt(0)).isTrue());
+		assertTrue(Kernel
+				._equal_(Kernel.log(Kernel.ONE), FloatPoint.fromInt(0))
+				.isTrue());
 	}
 
 	@Test
 	public void testPositive_question_() {
-		assertTrue(Kernel.positive_question_(Rational.ONE).isTrue());
+		assertTrue(Kernel.positive_question_(Kernel.ONE).isTrue());
 	}
 
 	@Test
 	public void testNegative_question_() {
-		assertTrue(Kernel.negative_question_(Rational.ONE).isFalse());
+		assertTrue(Kernel.negative_question_(Kernel.ONE).isFalse());
 	}
 
 	@Test
 	public void testSgn() {
-		assertTrue(Kernel._equal_(Kernel.sgn(Rational.ONE), Rational.ONE)
-				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.sgn(Kernel.ONE), Kernel.ONE).isTrue());
 	}
 
 	@Test
@@ -114,8 +113,8 @@ public class TestKernel {
 
 	@Test
 	public void testGCD() {
-		assertTrue(Kernel._equal_(Kernel.gcd(Kernel.TWO, Kernel.THREE),
-				Rational.ONE).isTrue());
+		assertTrue(Kernel._equal_(Kernel.gcd(Kernel.TWO, Kernel.THREE), Kernel.ONE)
+				.isTrue());
 	}
 
 	@Test
@@ -126,12 +125,12 @@ public class TestKernel {
 
 	@Test
 	public void testPair_question_() {
-		assertTrue(Kernel.pair_question_(Rational.ONE).isFalse());
+		assertTrue(Kernel.pair_question_(Kernel.ONE).isFalse());
 	}
 
 	@Test
 	public void testCons_question_() {
-		assertTrue(Kernel.cons_question_(Rational.ONE).isFalse());
+		assertTrue(Kernel.cons_question_(Kernel.ONE).isFalse());
 	}
 
 	@Test
@@ -147,7 +146,7 @@ public class TestKernel {
 	@Test
 	public void testQuotient() {
 		assertTrue(Kernel._equal_(Kernel.quotient(Kernel.SIX, Kernel.FOUR),
-				Rational.ONE).isTrue());
+				Kernel.ONE).isTrue());
 	}
 
 	@Test
@@ -182,14 +181,14 @@ public class TestKernel {
 	public void testLength() {
 		assertTrue(Kernel._equal_(
 				Kernel.length(Kernel.cons(Kernel.THREE, Empty.EMPTY)),
-				Rational.ONE).isTrue());
+				Kernel.ONE).isTrue());
 	}
 
 	@Test
 	public void testList_ref_() {
 		assertTrue(Kernel._equal_(
 				Kernel.list_dash_ref(Kernel.cons(Kernel.THREE, Empty.EMPTY),
-						Rational.ZERO), Kernel.THREE).isTrue());
+						Kernel.ZERO), Kernel.THREE).isTrue());
 	}
 
 	@Test
@@ -203,5 +202,5 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("-3.1")),
 				FloatPoint.fromString("-3")).isTrue());
 	}
-	
+
 }
