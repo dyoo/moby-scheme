@@ -203,4 +203,11 @@ public class TestKernel {
 				FloatPoint.fromString("-3")).isTrue());
 	}
 
+	@Test
+	public void testReal_question_(){
+		assertTrue(Kernel.real_question_(FloatPoint.fromString("3.1")).isTrue());
+		assertTrue(Kernel.real_question_(Kernel.ONE).isTrue());
+		assertTrue(Kernel.real_question_(Empty.EMPTY).isFalse());
+	}
+
 }
