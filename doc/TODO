@@ -102,8 +102,6 @@ Primitives that need implementation:
  make-polar
  real-part
  real?
- round
- append
  assq
  member
  memq
