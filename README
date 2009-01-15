@@ -1,4 +1,4 @@
-Mobilizer
+moby
 ------
 Danny Yoo (dyoo@cs.wpi.edu)
 
@@ -8,10 +8,11 @@ Danny Yoo (dyoo@cs.wpi.edu)
 What is it?
 
 A compiler that consumes Beginner Language Scheme programs and
-produces applications for the J2ME and Android platforms.  The
-Beginner Language programs can use the primitives provided by the
-World Teachpack, whose functionality we provide for the respective
-platforms.  This is still very much a work-in-progress.
+produces applications for mobile platforms.  The current prototype
+supports the J2ME and Android platforms.  The Beginner Language
+programs can use the primitives provided by the World Teachpack.  Our
+goal is to make Scheme the premiere reactive scripting languages for
+mobile phones.
 
 
 ----------------------------------------------------------------------
@@ -67,8 +68,8 @@ To install:
     1.  Grab our sources:
 
         $ svn checkout \
-          http://svn.plt-scheme.org/usr/dyoo/mobilizer/trunk \
-          mobilizer
+          http://svn.plt-scheme.org/usr/dyoo/moby/trunk \
+          moby
 
     2.  Edit config.ss.  The system currently has hardcoded paths to
         Apache Ant, the Sun Wireless Toolkit, and Android SDK embedded
@@ -114,38 +115,38 @@ Example
 ## Compile everything through MrEd.  Running through DrScheme will
 ## also work.
 
-dyoo@mithril:~/mobilizer/src$ mred test-compile-world.ss
+dyoo@mithril:~/moby/src$ mred test-compile-world.ss
 
 ## This should take some time.
 
-dyoo@mithril:~/mobilizer/src$
+dyoo@mithril:~/moby/src$
 
 ## Let's try out the falling-ball example.  The source for the 
 ## falling ball example is in test/falling-ball.ss.
 
 
-dyoo@mithril:~/mobilizer/src$ cd bin
-dyoo@mithril:~/mobilizer/src/bin$ ls
+dyoo@mithril:~/moby/src$ cd bin
+dyoo@mithril:~/moby/src/bin$ ls
 android  j2me
 
 ## We have binaries for both the Android and J2ME platforms.
 
-dyoo@mithril:~/mobilizer/src/bin$ cd j2me/falling-ball
+dyoo@mithril:~/moby/src/bin$ cd j2me/falling-ball
 
 ## The J2ME build scripts have a convenient 'run' target to start
 ## the emulator on the program.
 
-dyoo@mithril:~/mobilizer/src/bin/j2me/falling-ball$ ant run
+dyoo@mithril:~/moby/src/bin/j2me/falling-ball$ ant run
 
 ## The emulator should show a red falling ball descending
-## the screen of the cellphone.
+## the screen of the mobile phone.
  
 
 ## Let's test the Android binary.  If you haven't started up the
 ## emulator, do so now.
 
-dyoo@mithril:~/mobilizer/src/bin/j2me/falling-ball$ cd ../../android/falling-ball
-dyoo@mithril:~/mobilizer/src/bin/android/falling-ball$ ant install
+dyoo@mithril:~/moby/src/bin/j2me/falling-ball$ cd ../../android/falling-ball
+dyoo@mithril:~/moby/src/bin/android/falling-ball$ ant install
 
 ## The application should deploy into the emulator.
 
@@ -161,14 +162,14 @@ build.xml in src/test with ant.  Here's an example run of the test
 suite:
 
 ######################################################################
-dyoo@mithril:~/mobilizer cd src/test
-dyoo@mithril:~/mobilizer/src/test$ ant
+dyoo@mithril:~/moby cd src/test
+dyoo@mithril:~/moby/src/test$ ant
 Buildfile: build.xml
 
 init:
 
 compile:
-    [javac] Compiling 1 source file to /home/dyoo/mobilizer/src/test/build
+    [javac] Compiling 1 source file to /home/dyoo/moby/src/test/build
 
 test:
     [junit] Testsuite: org.plt.TestKernel
