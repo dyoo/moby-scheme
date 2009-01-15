@@ -1,4 +1,4 @@
-world-compiler
+Mobilizer
 ------
 Danny Yoo (dyoo@cs.wpi.edu)
 
@@ -67,8 +67,8 @@ To install:
     1.  Grab our sources:
 
         $ svn checkout \
-          http://svn.plt-scheme.org/usr/dyoo/world-compiler/trunk \
-          world-compiler
+          http://svn.plt-scheme.org/usr/dyoo/mobilizer/trunk \
+          mobilizer
 
     2.  Edit config.ss.  The system currently has hardcoded paths to
         Apache Ant, the Sun Wireless Toolkit, and Android SDK embedded
@@ -114,28 +114,28 @@ Example
 ## Compile everything through MrEd.  Running through DrScheme will
 ## also work.
 
-dyoo@mithril:~/Dropbox/j2me-world/src$ mred test-compile-world.ss
+dyoo@mithril:~/mobilizer/src$ mred test-compile-world.ss
 
 ## This should take some time.
 
-dyoo@mithril:~/Dropbox/j2me-world/src$
+dyoo@mithril:~/mobilizer/src$
 
 ## Let's try out the falling-ball example.  The source for the 
 ## falling ball example is in test/falling-ball.ss.
 
 
-dyoo@mithril:~/work/world-compiler/src$ cd bin
-dyoo@mithril:~/work/world-compiler/src/bin$ ls
+dyoo@mithril:~/mobilizer/src$ cd bin
+dyoo@mithril:~/mobilizer/src/bin$ ls
 android  j2me
 
 ## We have binaries for both the Android and J2ME platforms.
 
-dyoo@mithril:~/Dropbox/j2me-world/src/bin$ cd j2me/falling-ball
+dyoo@mithril:~/mobilizer/src/bin$ cd j2me/falling-ball
 
 ## The J2ME build scripts have a convenient 'run' target to start
 ## the emulator on the program.
 
-dyoo@mithril:~/Dropbox/j2me-world/src/bin/j2me/falling-ball$ ant run
+dyoo@mithril:~/mobilizer/src/bin/j2me/falling-ball$ ant run
 
 ## The emulator should show a red falling ball descending
 ## the screen of the cellphone.
@@ -144,8 +144,8 @@ dyoo@mithril:~/Dropbox/j2me-world/src/bin/j2me/falling-ball$ ant run
 ## Let's test the Android binary.  If you haven't started up the
 ## emulator, do so now.
 
-dyoo@mithril:~/work/world-compiler/src/bin/j2me/falling-ball$ cd ../../android/falling-ball
-dyoo@mithril:~/work/world-compiler/src/bin/android/falling-ball$ ant install
+dyoo@mithril:~/mobilizer/src/bin/j2me/falling-ball$ cd ../../android/falling-ball
+dyoo@mithril:~/mobilizer/src/bin/android/falling-ball$ ant install
 
 ## The application should deploy into the emulator.
 
@@ -161,14 +161,14 @@ build.xml in src/test with ant.  Here's an example run of the test
 suite:
 
 ######################################################################
-dyoo@mithril:~/work/world-compiler$ cd src/test
-dyoo@mithril:~/work/world-compiler/src/test$ ant
+dyoo@mithril:~/mobilizer cd src/test
+dyoo@mithril:~/mobilizer/src/test$ ant
 Buildfile: build.xml
 
 init:
 
 compile:
-    [javac] Compiling 1 source file to /home/dyoo/work/world-compiler/src/test/build
+    [javac] Compiling 1 source file to /home/dyoo/mobilizer/src/test/build
 
 test:
     [junit] Testsuite: org.plt.TestKernel
