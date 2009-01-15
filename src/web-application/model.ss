@@ -125,18 +125,17 @@
 (define (compile-source a-model a-source a-platform)
   (define (do-platform-compilation generate binary-find)
     (let* ([name (source-program-name a-source)]
-               [dir (make-temporary-directory #:parent-directory (model-data-dir a-model))]
-               [program-path (build-path dir (string-append name ".ss"))])
-          (call-with-output-file program-path 
-            (lambda (op)
-              (write-bytes (source-code a-source) op)))
-          (generate name program-path dir)
-          (let ([bin (make-binary
-                      name 
-                      (get-file-bytes 
-                       (first (find-files binary-find (build-path dir "bin")))))])
-            #;(delete-directory/files dir)
-            bin)))
+           [dir (make-temporary-directory #:parent-directory (model-data-dir a-model))]
+           [program-path (build-path dir (string-append name ".ss"))])
+      (call-with-output-file program-path 
+        (lambda (op)
+          (write-bytes (source-code a-source) op)))
+      (generate name program-path dir)
+      
+      (let* ([bin-path (first (find-files binary-find (build-path dir "bin")))]
+             [bin (make-binary (path->string (file-name-from-path bin-path)) (get-file-bytes bin-path))])
+        #;(delete-directory/files dir)
+        bin)))
   
   (with-serializing 
    a-model
