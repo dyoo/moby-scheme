@@ -1,6 +1,8 @@
-Image transparency isn't being done during image lifting.  This might
-be a problem in DrScheme itself, as pure white is being treated as the
-transparent color, which is the wrong approach: we should be using
-alpha transparency throughout.
+* Image transparency isn't being done during image lifting.  This
+might be a problem in DrScheme itself, as pure white is being treated
+as the transparent color, which is the wrong approach: we should be
+using alpha transparency throughout.
 
-Spaceflight: the number is being shown as a rational rather than an exact integer.
+
+* The J2ME-Android bridge has some deviations that need to be
+corrected.  See j2me-android-differences.txt.

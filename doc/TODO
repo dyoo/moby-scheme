@@ -40,14 +40,13 @@ compiler.
   the graphical output of the J2ME and Android applications in the
   regression test suite and note the differences.
 
-* Add unit test cases for the functions in org.plt.Kernel.  There are
-  very few tests at this point.  Any new primitives should have tests
-  written for them.  These tests should be in
+* Add more unit test cases for the functions in org.plt.Kernel.  There
+  are very few tests at this point.  Any new primitives should have
+  tests written for them.  These tests should be in
   src/test/java-src/org/plt/TestKernel.java, exercising code that's in
   support/common/src/org/plt/Kernel.java.
 
-
-* Fix the deviations listed in DESIGN.
+* Fix the bugs listed in BUGS.
 
 * Improve the design of the numeric support.  For expediency, the
   kernel code reproduced the behavior of the numeric tower with a
@@ -102,6 +101,8 @@ Primitives that need implementation:
  make-polar
  real-part
  real?
+ round
+ append
  assq
  member
  memq

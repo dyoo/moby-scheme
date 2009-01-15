@@ -1,4 +1,4 @@
-We have two problem statements that diverge:
+We have two problem statements:
 
    1.  Given existing world program, port it to the cell-phone,
 preserving as much as we can.  The original world program is written
@@ -38,9 +38,3 @@ world0) to determine the appropriate layout.
 
 
 ----------------------------------------------------------------------
-
-Deviations from Beginner Level scheme.
-
-
-Currently, rationals are implemented as fixnums.  We need to switch
-over to bignums eventually to avoid problems.

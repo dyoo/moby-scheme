@@ -1,3 +1,6 @@
+Catalog of differences we see in the J2ME-Android bridge.
+
+
 * The font used in the text image constructor produces larger text in
   Android than in J2ME.  hello-world is an example that shows the
   problem.  See images/hello.png, which shows a screenshot of both.
