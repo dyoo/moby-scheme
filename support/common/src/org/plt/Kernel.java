@@ -428,7 +428,7 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number log(Object n1) {
-		return ((org.plt.types.FloatPoint) n1).log();
+		return (FloatPoint.fromNumber((org.plt.types.Number) n1)).log();
 	}
 
 	public static org.plt.types.Logic positive_question_(Object n1) {
@@ -468,6 +468,13 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number gcd(Object a, Object b) {
+		if (integer_question_(a).isFalse())
+			throw new SchemeException(
+					"gcd: expects type <integer> as 1st argument; giving: " + a);
+		if (integer_question_(b).isFalse())
+			throw new SchemeException(
+					"gcd: expects type <integer> as 2nd argument; giving: " + b);
+
 		if (negative_question_(a).isTrue())
 			a = _dash_(Rational.ZERO, a);
 		if (negative_question_(b).isTrue())
@@ -517,6 +524,15 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number quotient(Object a, Object b) {
+		if (integer_question_(a).isFalse())
+			throw new SchemeException(
+					"quotient: expects type <integer> as 1st argument, given: "
+							+ a);
+		if (integer_question_(b).isFalse())
+			throw new SchemeException(
+					"quotient: expects type <integer> as 2nd argument, given: "
+							+ b);
+
 		return floor(_slash_(a, b));
 	}
 
@@ -541,6 +557,11 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number length(Object n) {
+		if (cons_question_(n).isFalse())
+			throw new SchemeException(
+					"length: expects argument of type <proper list>; given: "
+							+ n);
+
 		org.plt.types.Number len = Rational.ZERO;
 
 		while (((org.plt.types.List) n).isEmpty() == false) {
@@ -553,14 +574,14 @@ public class Kernel {
 
 	public static Object list_dash_ref(Object lst, Object i) {
 		if (negative_question_(i).isTrue())
-			error(Rational.ZERO,
+			throw new SchemeException(
 					"list-ref: expects type <non-negative exact integer> as 2nd argument, given: "
 							+ i + ";  other arguments were: " + lst);
 
 		org.plt.types.Number len = length(lst);
 		if (_greaterthan__equal_(i, len).isTrue())
-			error(Rational.ZERO, "list-ref: index " + i + " too large for "
-					+ lst);
+			throw new SchemeException("list-ref: index " + i
+					+ " too large for " + lst);
 
 		org.plt.types.Number index = Rational.ZERO;
 		while (_lessthan_(index, i).isTrue()) {

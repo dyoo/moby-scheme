@@ -71,8 +71,7 @@ public class TestKernel {
 
 	@Test
 	public void testLog() {
-		assertTrue(Kernel._equal_(Kernel.log(FloatPoint.fromInt(1)),
-				FloatPoint.fromInt(0)).isTrue());
+		assertTrue(Kernel._equal_(Kernel.log(Rational.ONE), FloatPoint.fromInt(0)).isTrue());
 	}
 
 	@Test
