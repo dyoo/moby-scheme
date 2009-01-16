@@ -11,17 +11,16 @@ first to consult on the design of solutions.
 ----------------------------------------------------------------------
 
 * Implement more of the Beginner Scheme primitives in the runtime.
-The list of primitives comes at the end of this file.
+  The list of primitives comes at the end of this file.
 
 * Remove unnecessary classes like MicroFloat from Android platform
-compilation.  Android guarantees a floating-point unit; our current
-implementation uses the MicroFloat fixed-point library even though we
-don't need it.
+  compilation.  Android guarantees a floating-point unit; our current
+  implementation uses the MicroFloat fixed-point library even though
+  we don't need it.
 
 * Expose Android-specific functionality.  Definitely talk to us before
-tackling this one: we want to make sure the design matches the
-functional flavor of the world primitives.
-
+  tackling this one: we want to make sure the design matches the
+  functional flavor of the world primitives.
 
 * We want a DrScheme tool that talks to our compiler web-service.  A
   menu option similar to "Create Executable" should be available from
@@ -29,10 +28,8 @@ functional flavor of the world primitives.
   compiler to get the application.
 
 * The bridge classes we've adopted for the J2ME-Android bridge are not
-  reproducing correct behavior.  We need someone to catalog the
-  graphical deviations in the Android-J2ME bridge classes.  Compare
-  the graphical output of the J2ME and Android applications in the
-  regression test suite and note the differences.
+  reproducing correct behavior.  We need someone to investigate and
+  fix the differences described in j2me-android-gui-differences.txt.
 
 * Add more unit test cases for the functions in org.plt.Kernel.  There
   are very few tests at this point.  Any new primitives should have
@@ -67,6 +64,9 @@ The dialog window should allow the user to specify:
     Target platform (drop/down)
 
     Options for that platform (None so far)
+
+The beginnings of this tool are in src/moby-tool.
+
 
 
 ----------------------------------------------------------------------
