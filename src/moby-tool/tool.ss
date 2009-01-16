@@ -96,6 +96,8 @@
                                    (new path-dialog% 
                                         [label "Save application"]
                                         [message "Choose where to download the application to"]
+                                        [put? #t]
+                                        [new? #t]
                                         [parent this]
                                         [filename filename])])
                              (cond [(send path-dialog run) 
@@ -117,6 +119,7 @@
              [label "Close"]
              [callback (lambda (b e)
                          (send this show #f))])))))
+
 
 
 
