@@ -16,4 +16,4 @@
   (c "android" "Hiya" #"\n\n\n(big-bang 100 100 0 false)"))
 
 
-(provide/contract [get-moby-compile (string? . -> . (string? string? bytes? . -> . bytes?))])
+(provide/contract [get-moby-compile (string? . -> . (string? string? bytes? . -> . (list/c string? bytes?)))])
