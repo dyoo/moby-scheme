@@ -1,8 +1,6 @@
 #lang scheme/base
 
-(require "../web-application/client.ss"
-         "../utils.ss"
-         scheme/unit
+(require scheme/unit
          scheme/list
          scheme/gui/base
          scheme/class
@@ -121,6 +119,17 @@
                          (send this show #f))])))))
 
 
+;; get-input-port-bytes: input-port -> bytes
+(define (get-input-port-bytes ip)
+  (let loop ([b (bytes)])
+    (let ([chunk (read-bytes 8196 ip)])
+      (cond
+        [(eof-object? chunk)
+         b]
+        [else
+         (loop (bytes-append b chunk))]))))
+  
+
 
 
 ;; find-scheme-menu: menu-bar -> (U menu #f)
@@ -133,3 +142,12 @@
         (return item)))
     (return #f)))
           
+
+(require (planet schematics/xmlrpc/xmlrpc)
+         net/url)
+
+(define (get-moby-compile server-url-string)
+  (define server (xmlrpc-server (string->url server-url-string)))
+  (define moby-compile (server "moby.compile"))
+  moby-compile)
+
