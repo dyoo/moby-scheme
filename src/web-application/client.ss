@@ -5,8 +5,6 @@
          net/url)
 
 
-(define current-moby-server-url (make-parameter (string->url "http://localhost:8000/servlets/standalone.ss")))
-
 (define (get-moby-compile server-url-string)
   (define server (xmlrpc-server (string->url server-url-string)))
   (define moby-compile (server "moby.compile"))
@@ -14,7 +12,7 @@
 
 
 (define (test)
-  (define c (get-moby-compile (current-moby-server-url)))
+  (define c (get-moby-compile "http://localhost:8000/servlets/standalone.ss"))
   (c "android" "Hiya" #"\n\n\n(big-bang 100 100 0 false)"))
 
 

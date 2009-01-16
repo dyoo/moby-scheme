@@ -1,12 +1,14 @@
-#lang web-server/insta
+#lang scheme/base
 (require "model.ss"
          "../utils.ss"
-         "xmlrpc/server-core.ss")
+         "xmlrpc/server-core.ss"
+         scheme/match
+         web-server/servlet
+         web-server/servlet-env)
 
 
 (define model (make-model "data"))
 
-(no-web-browser)
 
 (define (make-id)
   ;; fixme
@@ -36,3 +38,8 @@
 
 (define (start request)
   (handle-xmlrpc-servlet-request* request))
+
+
+(serve/servlet start 
+               #:listen-ip #f
+               #:launch-browser? #f)
