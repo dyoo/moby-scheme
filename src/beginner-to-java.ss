@@ -1,6 +1,6 @@
 #lang scheme/base
 
-;; This program tries to translate beginner-level languages into Java source.
+;; This program translates beginner-level languages into Java source.
 ;; We pattern match against the language given by:
 ;;
 ;; http://docs.plt-scheme.org/htdp-langs/beginner.html
@@ -12,17 +12,27 @@
          scheme/contract)
 
 
-(provide/contract [program->java-string (any/c . -> . string?)]
-                  [expression->java-string (any/c (listof symbol?) . -> . string?)]
-                  [defn? (any/c . -> . boolean?)]
-                  [expr? (any/c . -> . boolean?)])
+;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 
 
+;; program: any -> boolean
+;; Returns true if the datum is a program.
+(define (program? datum)
+  (and (list? datum)
+       (andmap (lambda (x) 
+                 (or (defn? x)
+                     (expression? x)
+                     (test-case? x)
+                     (library-require? x)))
+               datum)))
 
 
-
-;; A program is a (listof (or/c defn? expr?))
-
+;; expression?: any -> boolean
+;; Returns true if the datum is an expression.
+(define (expression? an-expr)
+  (and (not (defn? an-expr))
+       (not (test-case? an-expr))
+       (not (library-require? an-expr))))
 
 
 ;; defn?: s-expression -> boolean
@@ -56,13 +66,6 @@
      #f]))
 
 
-;; expr?: s-expression -> boolean
-(define (expr? an-expr)
-  (and (not (defn? an-expr))
-       (not (test-case? an-expr))
-       (not (library-require? an-expr))))
-
-
 
 
 ;; program->java-string: program -> string
@@ -79,7 +82,7 @@
                               [(library-require? (first program))
                                (error 'program->java-string 
                                       "I don't know how to handle require")]
-                              [(expr? (first program))
+                              [(expression? (first program))
                                (string-append 
                                 "static { org.plt.Kernel.identity("
                                 (expression->java-string (first program) '()) 
@@ -862,3 +865,11 @@
 
 
 
+
+
+
+
+(provide/contract [program->java-string (program? . -> . string?)]
+                  [expression->java-string (expression? (listof symbol?) . -> . string?)]
+                  [defn? (any/c . -> . boolean?)]
+                  [expression? (any/c . -> . boolean?)])
