@@ -1,10 +1,13 @@
 #lang scheme/base
 
 (require "../web-application/client.ss"
+         "../utils.ss"
          scheme/unit
+         scheme/list
          scheme/gui/base
          scheme/class
-         drscheme/tool)
+         drscheme/tool
+         mrlib/path-dialog)
 
 (provide tool@)
 
@@ -48,23 +51,69 @@
         (super-new)
 
         (define -editor editor)
-        (define panel (new group-box-panel% [parent this] [label "Options"]))
-        (new message% [parent panel] [label "Command me!"])
+        (define options-panel (new group-box-panel% [parent this] [label "Options"]))
+        (define application-name
+          (new text-field%
+               [parent options-panel]
+               [label "Application name"]
+               [init-value "hello world"]))
+        
+        (define platform-box
+          (new radio-box% 
+               [parent options-panel]
+               [label "Platform"]
+               [choices (list "J2ME" "Android")]))
+
+ 
+        (define other-options-panel (new group-box-panel% [parent this] [label "Other options"]))
+        (new message%
+             [parent other-options-panel]
+             [label "You probably do not need to touch these options."])        
+        (define server-url
+          (new text-field% 
+               [parent other-options-panel]
+               [label "Server URL"]
+               [init-value "http://kfisler-ra1.wpi.edu:8000/servlets/standalone.ss"]))
+
         
         (define button-panel (new horizontal-panel% [parent this]))
+
         (new button% [parent button-panel]
-             [label "Create Application"]
+             [label "Download Application Locally"]
              [callback (lambda (b e)
-                         (display "Create me!")
-                         (newline))])
+                         (let ([app-name (send application-name get-value)]
+                               [platform (string-downcase (send platform-box get-item-plain-label
+                                                                (send platform-box get-selection)))]
+                               [source-code (get-input-port-bytes (open-input-text-editor editor))])
+                           (let* ([moby-compile (get-moby-compile (send server-url get-value))]
+                                  [name&app-bytes (moby-compile platform app-name source-code)]
+                                  [filename (first name&app-bytes)]
+                                  [app-bytes (second name&app-bytes)]
+                                  [path-dialog
+                                   (new path-dialog% 
+                                        [label "Save application"]
+                                        [message "Choose where to download the application to"]
+                                        [parent this]
+                                        [filename filename])])
+                             (cond [(send path-dialog run) 
+                                    => 
+                                    (lambda (a-path) 
+                                      (call-with-output-file a-path (lambda (op) 
+                                                                      (write-bytes app-bytes op)))
+                                      
+                                                                                                      
+                                      (message-box "Application created" 
+                                                   (format "Application ~a has been saved to ~a" 
+                                                           app-name
+                                                           (path->string a-path))))]
+                                   [else
+                                    (void)]))))])
+
         
         (new button% [parent button-panel]
              [label "Close"]
              [callback (lambda (b e)
-                         (send this show #f))])
-
-        ))))
-
+                         (send this show #f))])))))
 
 
 

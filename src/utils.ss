@@ -6,6 +6,7 @@
                   [upper-camel-case (string? . -> . string?)]
                   [make-temporary-directory (() (#:parent-directory path?) . ->* . path?)]
                   [get-file-bytes (path? . -> . bytes?)]
+                  [get-input-port-bytes (input-port? . -> . bytes?)]
                   [now (-> date?)])
 
 
@@ -36,14 +37,18 @@
 ;; Sucks all the bytes out of a file
 (define (get-file-bytes a-path)
   (call-with-input-file a-path
-    (lambda (ip)
-      (let loop ([b (bytes)])
-        (let ([chunk (read-bytes 8196 ip)])
-          (cond
-            [(eof-object? chunk)
-             b]
-            [else
-             (loop (bytes-append b chunk))]))))))
+    get-input-port-bytes))
+
+;; get-input-port-bytes: input-port -> bytes
+(define (get-input-port-bytes ip)
+  (let loop ([b (bytes)])
+    (let ([chunk (read-bytes 8196 ip)])
+      (cond
+        [(eof-object? chunk)
+         b]
+        [else
+         (loop (bytes-append b chunk))]))))
+  
 
 
 
