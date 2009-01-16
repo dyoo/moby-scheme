@@ -35,8 +35,35 @@
                  [label "Create Moby Application"]
                  [parent scheme-menu]
                  [callback (lambda (i e)
-                             (display "Command me!")
-                             (newline))])))))))
+                             (send (new my-frame% 
+                                        [label "Create Moby Application"]
+                                        [parent this]
+                                        [editor (send this get-editor)])
+                                   show #t))])))))
+    
+    (define my-frame%
+      (class frame%
+        (init editor)
+
+        (super-new)
+
+        (define -editor editor)
+        (define panel (new group-box-panel% [parent this] [label "Options"]))
+        (new message% [parent panel] [label "Command me!"])
+        
+        (define button-panel (new horizontal-panel% [parent this]))
+        (new button% [parent button-panel]
+             [label "Create Application"]
+             [callback (lambda (b e)
+                         (display "Create me!")
+                         (newline))])
+        
+        (new button% [parent button-panel]
+             [label "Close"]
+             [callback (lambda (b e)
+                         (send this show #f))])
+
+        ))))
 
 
 
