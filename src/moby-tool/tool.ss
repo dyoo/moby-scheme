@@ -84,7 +84,10 @@
                          (let ([app-name (send application-name get-value)]
                                [platform (string-downcase (send platform-box get-item-plain-label
                                                                 (send platform-box get-selection)))]
-                               [source-code (get-input-port-bytes (open-input-text-editor editor))])
+                               [source-code 
+                                (bytes-append
+                                 #"\n\n\n"
+                                 (get-input-port-bytes (open-input-text-editor editor)))])
                            (let* ([moby-compile (get-moby-compile (send server-url get-value))]
                                   [name&app-bytes (moby-compile platform app-name source-code)]
                                   [filename (first name&app-bytes)]
