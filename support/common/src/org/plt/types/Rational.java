@@ -1,6 +1,7 @@
 package org.plt.types;
 
 import org.plt.types.Bignum;
+import org.plt.SchemeException;
 
 public class Rational implements Number {
     Bignum n, d;
@@ -108,11 +109,11 @@ public class Rational implements Number {
 
     public Number modulo(Number other) {
 	if (!this.isInteger()) {
-	    throw new RuntimeException
+	    throw new SchemeException
 		("modulo expects integer as first argument");
 	}
 	if (!(other.isInteger()) || !(other instanceof Rational)) {
-	    throw new RuntimeException
+	    throw new SchemeException
 		("modulo expects integer as second argument");
 	}
         Bignum result = this.n.mod(((Rational)other).numerator());
