@@ -54,7 +54,6 @@ public class TestKernel {
 
 	@Test
 	public void testOdd_question_() {
-	    System.out.println("Odd of ONE: " + Kernel.odd_question_(Kernel.ONE));
 		assertTrue(Kernel.odd_question_(Kernel.ONE).isTrue());
 	}
 
