@@ -8,7 +8,7 @@ License: GPL 3
 
 BigInteger implementation: http://www.bouncycastle.org/java.html
 (support/common/src/java/math/BigInteger)
-License: Bounce Castle License (appears to be BSD)
+License: Bouncy Castle License (appears to be BSD)
 
 
 Antenna: http://antenna.sourceforge.net/
