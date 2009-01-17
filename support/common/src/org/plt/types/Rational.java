@@ -1,36 +1,36 @@
 package org.plt.types;
 
-import java.math.BigInteger;
+import org.plt.types.Bignum;
 
 public class Rational implements Number {
-    BigInteger n, d;
+    Bignum n, d;
 
     public static Rational ZERO = new Rational(0, 1);
     public static Rational ONE = new Rational(1, 1);
 
     public Rational(int n, int d) {
-	this(BigInteger.valueOf(n), BigInteger.valueOf(d));
+	this(Bignum.valueOf(n), Bignum.valueOf(d));
     }
 
-    public Rational(BigInteger n, BigInteger d) {
-	if (d.equals(BigInteger.ZERO)) {
+    public Rational(Bignum n, Bignum d) {
+	if (d.equals(Bignum.ZERO)) {
 	    throw new IllegalArgumentException("denominator can't be zero.");
 	}
-	if (d.compareTo(BigInteger.ZERO) < 0) {
+	if (d.compareTo(Bignum.ZERO) < 0) {
 	    n = n.negate();
 	    d = d.negate();
 	}
 
-	BigInteger divisor = n.gcd(d);
+	Bignum divisor = n.gcd(d);
 	this.n = n.divide(divisor);
 	this.d = d.divide(divisor);
     }
 
-    public BigInteger numerator() {
+    public Bignum numerator() {
 	return this.n;
     }
 
-    public BigInteger denominator() {
+    public Bignum denominator() {
 	return this.d;
     }
     
@@ -66,17 +66,17 @@ public class Rational implements Number {
 
     public Number numericPlus(Number _other) {
 	Rational other = (Rational) _other;
-	BigInteger newNumerator =
+	Bignum newNumerator =
 	    n.multiply(other.denominator()).add(d.multiply(other.numerator()));
-	BigInteger newDenominator = d.multiply(other.denominator());
+	Bignum newDenominator = d.multiply(other.denominator());
 	return new Rational(newNumerator, newDenominator);
     }
 
     public Number numericMinus(Number _other) {
 	Rational other = (Rational) _other;
-	BigInteger newNumerator =
+	Bignum newNumerator =
 	    n.multiply(other.denominator()).subtract(d.multiply(other.numerator()));
-	BigInteger newDenominator = d.multiply(other.denominator());
+	Bignum newDenominator = d.multiply(other.denominator());
 
 
 	return new Rational(newNumerator, newDenominator);
@@ -115,47 +115,47 @@ public class Rational implements Number {
 	    throw new RuntimeException
 		("modulo expects integer as second argument");
 	}
-        BigInteger result = this.n.mod(((Rational)other).numerator());
-	if (result.compareTo(BigInteger.ZERO) < 0) {
+        Bignum result = this.n.mod(((Rational)other).numerator());
+	if (result.compareTo(Bignum.ZERO) < 0) {
 	    return new Rational(result.add(((Rational)other).numerator()),
-				BigInteger.ONE);
+				Bignum.ONE);
 	} else {
-	    return new Rational(result, BigInteger.ONE);
+	    return new Rational(result, Bignum.ONE);
 	}
     }
 
 
     public boolean isInteger() {
-	return this.d.equals(BigInteger.ONE);
+	return this.d.equals(Bignum.ONE);
     }
 
 
     public boolean isZero() {
-	return this.n.equals(BigInteger.ZERO);
+	return this.n.equals(Bignum.ZERO);
     }
 
 
     public Number floor() {
-	if (this.n.mod(this.d).equals(BigInteger.ZERO)) {
-	    return new Rational(this.n.divide(this.d), BigInteger.ONE);
+	if (this.n.mod(this.d).equals(Bignum.ZERO)) {
+	    return new Rational(this.n.divide(this.d), Bignum.ONE);
 	}
-	else if (this.n.compareTo(BigInteger.ZERO) > 0) {
-	    return new Rational(this.n.divide(this.d), BigInteger.ONE);
+	else if (this.n.compareTo(Bignum.ZERO) > 0) {
+	    return new Rational(this.n.divide(this.d), Bignum.ONE);
 	} else {
-	    return new Rational(this.n.divide(this.d).subtract(BigInteger.ONE),
-				BigInteger.ONE);
+	    return new Rational(this.n.divide(this.d).subtract(Bignum.ONE),
+				Bignum.ONE);
 	}
     }
 
     public Number ceiling() {
-	if (this.n.mod(this.d).equals(BigInteger.ZERO)) {
-	    return new Rational(this.n.divide(this.d), BigInteger.ONE);
+	if (this.n.mod(this.d).equals(Bignum.ZERO)) {
+	    return new Rational(this.n.divide(this.d), Bignum.ONE);
 	}
-	else if (this.n.compareTo(BigInteger.ZERO) > 0) {
+	else if (this.n.compareTo(Bignum.ZERO) > 0) {
 	    return new Rational((this.n.add(this.d)).divide(this.d), 
-				BigInteger.ONE);
+				Bignum.ONE);
 	} else {
-	    return new Rational(this.n.divide(this.d), BigInteger.ONE);
+	    return new Rational(this.n.divide(this.d), Bignum.ONE);
 	}
     }
 
@@ -196,7 +196,7 @@ public class Rational implements Number {
     
 
     public String toString() {
-	if (d.equals(BigInteger.ONE)) {
+	if (d.equals(Bignum.ONE)) {
 	    return "" + n;
 	}
 	return "" + n + "/" + d;

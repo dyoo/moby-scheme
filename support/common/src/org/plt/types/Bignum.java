@@ -1,9 +1,9 @@
-package java.math;
+package org.plt.types;
 
 import java.util.Random;
 import java.util.Stack;
 
-public class BigInteger
+public class Bignum
 {
     // The primes b/w 2 and ~2^10
     /*
@@ -100,10 +100,10 @@ public class BigInteger
 
     private static final int[] ZERO_MAGNITUDE = new int[0];
 
-    public static final BigInteger ZERO = new BigInteger(0, ZERO_MAGNITUDE);
-    public static final BigInteger ONE = valueOf(1);
-    private static final BigInteger TWO = valueOf(2);
-    private static final BigInteger THREE = valueOf(3);
+    public static final Bignum ZERO = new Bignum(0, ZERO_MAGNITUDE);
+    public static final Bignum ONE = valueOf(1);
+    private static final Bignum TWO = valueOf(2);
+    private static final Bignum THREE = valueOf(3);
 
     static
     {
@@ -131,11 +131,11 @@ public class BigInteger
     private int nBitLength = -1; // cache bitLength() value
     private long mQuote = -1L; // -m^(-1) mod b, b = 2^32 (see Montgomery mult.)
     
-    private BigInteger()
+    private Bignum()
     {
     }
 
-    private BigInteger(int signum, int[] mag)
+    private Bignum(int signum, int[] mag)
     {
         if (mag.length > 0)
         {
@@ -167,16 +167,16 @@ public class BigInteger
         }
     }
 
-    public BigInteger(String sval) throws NumberFormatException
+    public Bignum(String sval) throws NumberFormatException
     {
         this(sval, 10);
     }
 
-    public BigInteger(String sval, int rdx) throws NumberFormatException
+    public Bignum(String sval, int rdx) throws NumberFormatException
     {
         if (sval.length() == 0)
         {
-            throw new NumberFormatException("Zero length BigInteger");
+            throw new NumberFormatException("Zero length Bignum");
         }
 
         if (rdx < Character.MIN_RADIX || rdx > Character.MAX_RADIX)
@@ -191,7 +191,7 @@ public class BigInteger
         {
             if (sval.length() == 1)
             {
-                throw new NumberFormatException("Zero length BigInteger");
+                throw new NumberFormatException("Zero length Bignum");
             }
 
             sign = -1;
@@ -218,8 +218,8 @@ public class BigInteger
         // storage in one hit?, then generate the magnitude in one hit too?
         //////
 
-        BigInteger b = ZERO;
-        BigInteger r = valueOf(rdx);
+        Bignum b = ZERO;
+        Bignum r = valueOf(rdx);
         while (index < sval.length())
         {
             // (optimise this by taking chunks of digits instead?)
@@ -231,11 +231,11 @@ public class BigInteger
         return;
     }
 
-    public BigInteger(byte[] bval) throws NumberFormatException
+    public Bignum(byte[] bval) throws NumberFormatException
     {
         if (bval.length == 0)
         {
-            throw new NumberFormatException("Zero length BigInteger");
+            throw new NumberFormatException("Zero length Bignum");
         }
 
         sign = 1;
@@ -407,7 +407,7 @@ public class BigInteger
     
     
 
-    public BigInteger(int sign, byte[] mag) throws NumberFormatException
+    public Bignum(int sign, byte[] mag) throws NumberFormatException
     {
         if (sign < -1 || sign > 1)
         {
@@ -426,7 +426,7 @@ public class BigInteger
         this.sign = sign;
     }
 
-//     public BigInteger(int numBits, Random rnd) throws IllegalArgumentException
+//     public Bignum(int numBits, Random rnd) throws IllegalArgumentException
 //     {
 //         if (numBits < 0)
 //         {
@@ -494,7 +494,7 @@ public class BigInteger
 
 //     private static final byte[] rndMask = {(byte)255, 127, 63, 31, 15, 7, 3, 1};
 
-//     public BigInteger(int bitLength, int certainty, Random rnd) throws ArithmeticException
+//     public Bignum(int bitLength, int certainty, Random rnd) throws ArithmeticException
 //     {
 //         if (bitLength < 2)
 //         {
@@ -557,7 +557,7 @@ public class BigInteger
 //         }
 //     }
 
-    public BigInteger abs()
+    public Bignum abs()
     {
         return (sign >= 0) ? this : this.negate();
     }
@@ -610,7 +610,7 @@ public class BigInteger
         return a;
     }
 
-    public BigInteger add(BigInteger val) throws ArithmeticException
+    public Bignum add(Bignum val) throws ArithmeticException
     {
         if (val.sign == 0 || val.magnitude.length == 0)
             return this;
@@ -631,7 +631,7 @@ public class BigInteger
         return addToMagnitude(val.magnitude);
     }
 
-    private BigInteger addToMagnitude(
+    private Bignum addToMagnitude(
         int[] magToAdd)
     {
         int[] big, small;
@@ -659,11 +659,11 @@ public class BigInteger
 
         bigCopy = add(bigCopy, small);
 
-        return new BigInteger(this.sign, bigCopy);
+        return new Bignum(this.sign, bigCopy);
     }
 
-    public BigInteger and(
-        BigInteger value)
+    public Bignum and(
+        Bignum value)
     {
         if (this.sign == 0 || value.sign == 0)
         {
@@ -708,7 +708,7 @@ public class BigInteger
             }
         }
 
-        BigInteger result = new BigInteger(1, resultMag);
+        Bignum result = new Bignum(1, resultMag);
 
         // TODO Optimise this case
         if (resultNeg)
@@ -719,8 +719,8 @@ public class BigInteger
         return result;
     }
 
-    public BigInteger andNot(
-        BigInteger value)
+    public Bignum andNot(
+        Bignum value)
     {
         return and(value.not());
     }
@@ -853,7 +853,7 @@ public class BigInteger
 
     public int compareTo(Object o)
     {
-        return compareTo((BigInteger)o);
+        return compareTo((Bignum)o);
     }
 
     /**
@@ -900,7 +900,7 @@ public class BigInteger
         return 0;
     }
 
-    public int compareTo(BigInteger val)
+    public int compareTo(Bignum val)
     {
         if (sign < val.sign)
             return -1;
@@ -1032,7 +1032,7 @@ public class BigInteger
         return count;
     }
 
-    public BigInteger divide(BigInteger val) throws ArithmeticException
+    public Bignum divide(Bignum val) throws ArithmeticException
     {
         if (val.sign == 0)
         {
@@ -1041,10 +1041,10 @@ public class BigInteger
 
         if (sign == 0)
         {
-            return BigInteger.ZERO;
+            return Bignum.ZERO;
         }
 
-        if (val.compareTo(BigInteger.ONE) == 0)
+        if (val.compareTo(Bignum.ONE) == 0)
         {
             return this;
         }
@@ -1052,29 +1052,29 @@ public class BigInteger
         int[] mag = new int[this.magnitude.length];
         System.arraycopy(this.magnitude, 0, mag, 0, mag.length);
 
-        return new BigInteger(this.sign * val.sign, divide(mag, val.magnitude));
+        return new Bignum(this.sign * val.sign, divide(mag, val.magnitude));
     }
 
-    public BigInteger[] divideAndRemainder(BigInteger val) throws ArithmeticException
+    public Bignum[] divideAndRemainder(Bignum val) throws ArithmeticException
     {
         if (val.sign == 0)
         {
             throw new ArithmeticException("Divide by zero");
         }
 
-        BigInteger biggies[] = new BigInteger[2];
+        Bignum biggies[] = new Bignum[2];
 
         if (sign == 0)
         {
-            biggies[0] = biggies[1] = BigInteger.ZERO;
+            biggies[0] = biggies[1] = Bignum.ZERO;
 
             return biggies;
         }
 
-        if (val.compareTo(BigInteger.ONE) == 0)
+        if (val.compareTo(Bignum.ONE) == 0)
         {
             biggies[0] = this;
-            biggies[1] = BigInteger.ZERO;
+            biggies[1] = Bignum.ZERO;
 
             return biggies;
         }
@@ -1084,8 +1084,8 @@ public class BigInteger
 
         int[] quotient = divide(remainder, val.magnitude);
 
-        biggies[0] = new BigInteger(this.sign * val.sign, quotient);
-        biggies[1] = new BigInteger(this.sign, remainder);
+        biggies[0] = new Bignum(this.sign * val.sign, quotient);
+        biggies[1] = new Bignum(this.sign, remainder);
 
         return biggies;
     }
@@ -1095,9 +1095,9 @@ public class BigInteger
         if (val == this)
             return true;
 
-        if (!(val instanceof BigInteger))
+        if (!(val instanceof Bignum))
             return false;
-        BigInteger biggie = (BigInteger)val;
+        Bignum biggie = (Bignum)val;
 
         if (biggie.sign != sign || biggie.magnitude.length != magnitude.length)
             return false;
@@ -1111,16 +1111,16 @@ public class BigInteger
         return true;
     }
 
-    public BigInteger gcd(BigInteger val)
+    public Bignum gcd(Bignum val)
     {
         if (val.sign == 0)
             return this.abs();
         else if (sign == 0)
             return val.abs();
 
-        BigInteger r;
-        BigInteger u = this;
-        BigInteger v = val;
+        Bignum r;
+        Bignum u = this;
+        Bignum v = val;
 
         while (v.sign != 0)
         {
@@ -1172,7 +1172,7 @@ public class BigInteger
     }
 
 //     /**
-//      * return whether or not a BigInteger is probably prime with a
+//      * return whether or not a Bignum is probably prime with a
 //      * probability of 1 - (1/2)**certainty.
 //      * <p>
 //      * From Knuth Vol 2, pg 395.
@@ -1185,7 +1185,7 @@ public class BigInteger
 //         if (sign == 0)
 //             return false;
 
-//         BigInteger n = this.abs();
+//         Bignum n = this.abs();
 
 //         if (!n.testBit(0))
 //             return n.equals(TWO);
@@ -1216,22 +1216,22 @@ public class BigInteger
 //         //
 //         // let n = 1 + 2^kq
 //         //
-//         BigInteger nMinusOne = n.subtract(ONE);
+//         Bignum nMinusOne = n.subtract(ONE);
 //         int s = nMinusOne.getLowestSetBit();
-//         BigInteger r = nMinusOne.shiftRight(s);
+//         Bignum r = nMinusOne.shiftRight(s);
 
 //         Random random = new Random();
 //         do
 //         {
-//             BigInteger a;
+//             Bignum a;
 
 //             do
 //             {
-//                 a = new BigInteger(n.bitLength(), random);
+//                 a = new Bignum(n.bitLength(), random);
 //             }
 //             while (a.compareTo(ONE) <= 0 || a.compareTo(nMinusOne) >= 0);
 
-//             BigInteger y = a.modPow(r, n);
+//             Bignum y = a.modPow(r, n);
 
 //             if (!y.equals(ONE))
 //             {
@@ -1288,44 +1288,44 @@ public class BigInteger
         }
     }
 
-    public BigInteger max(BigInteger val)
+    public Bignum max(Bignum val)
     {
         return (compareTo(val) > 0) ? this : val;
     }
 
-    public BigInteger min(BigInteger val)
+    public Bignum min(Bignum val)
     {
         return (compareTo(val) < 0) ? this : val;
     }
 
-    public BigInteger mod(BigInteger m) throws ArithmeticException
+    public Bignum mod(Bignum m) throws ArithmeticException
     {
         if (m.sign <= 0)
         {
-            throw new ArithmeticException("BigInteger: modulus is not positive");
+            throw new ArithmeticException("Bignum: modulus is not positive");
         }
 
-        BigInteger biggie = this.remainder(m);
+        Bignum biggie = this.remainder(m);
 
         return (biggie.sign >= 0 ? biggie : biggie.add(m));
     }
 
-    public BigInteger modInverse(BigInteger m) throws ArithmeticException
+    public Bignum modInverse(Bignum m) throws ArithmeticException
     {
         if (m.sign != 1)
         {
             throw new ArithmeticException("Modulus must be positive");
         }
 
-        BigInteger x = new BigInteger();
-        BigInteger gcd = BigInteger.extEuclid(this, m, x, null);
+        Bignum x = new Bignum();
+        Bignum gcd = Bignum.extEuclid(this, m, x, null);
 
-        if (!gcd.equals(BigInteger.ONE))
+        if (!gcd.equals(Bignum.ONE))
         {
             throw new ArithmeticException("Numbers not relatively prime.");
         }
 
-        if (x.compareTo(BigInteger.ZERO) < 0)
+        if (x.compareTo(Bignum.ZERO) < 0)
         {
             x = x.add(m);
         }
@@ -1350,19 +1350,19 @@ public class BigInteger
      * @param u2Out      the return object for the u2 value
      * @return     The greatest common divisor of a and b
      */
-    private static BigInteger extEuclid(BigInteger a, BigInteger b, BigInteger u1Out,
-            BigInteger u2Out)
+    private static Bignum extEuclid(Bignum a, Bignum b, Bignum u1Out,
+            Bignum u2Out)
     {
-        BigInteger u1 = BigInteger.ONE;
-        BigInteger u3 = a;
-        BigInteger v1 = BigInteger.ZERO;
-        BigInteger v3 = b;
+        Bignum u1 = Bignum.ONE;
+        Bignum u3 = a;
+        Bignum v1 = Bignum.ZERO;
+        Bignum v3 = b;
 
         while (v3.sign > 0)
         {
-            BigInteger[] q = u3.divideAndRemainder(v3);
+            Bignum[] q = u3.divideAndRemainder(v3);
 
-            BigInteger tn = u1.subtract(v1.multiply(q[0]));
+            Bignum tn = u1.subtract(v1.multiply(q[0]));
             u1 = v1;
             v1 = tn;
 
@@ -1378,7 +1378,7 @@ public class BigInteger
 
         if (u2Out != null)
         {
-            BigInteger res = u3.subtract(u1.multiply(a)).divide(b);
+            Bignum res = u3.subtract(u1.multiply(a)).divide(b);
             u2Out.sign = res.sign;
             u2Out.magnitude = res.magnitude;
         }
@@ -1397,7 +1397,7 @@ public class BigInteger
         }
     }
 
-    public BigInteger modPow(BigInteger exponent, BigInteger m) throws ArithmeticException
+    public Bignum modPow(Bignum exponent, Bignum m) throws ArithmeticException
     {
         if (m.sign < 1)
         {
@@ -1431,7 +1431,7 @@ public class BigInteger
             mQ = m.getMQuote();
 
             // tmp = this * R mod m
-            BigInteger tmp = this.shiftLeft(32 * m.magnitude.length).mod(m);
+            Bignum tmp = this.shiftLeft(32 * m.magnitude.length).mod(m);
             zVal = tmp.magnitude;
 
             useMonty = (zVal.length <= m.magnitude.length);
@@ -1463,7 +1463,7 @@ public class BigInteger
                 //
                 // in normal practice we'll never see this...
                 //
-                BigInteger tmp = this.remainder(m);
+                Bignum tmp = this.remainder(m);
 
                 //zAccum = new int[m.magnitude.length * 2];
                 zVal = new int[m.magnitude.length];
@@ -1564,7 +1564,7 @@ public class BigInteger
             multiplyMonty(yAccum, yVal, zVal, m.magnitude, mQ);
         }
 
-        BigInteger result = new BigInteger(1, yVal);
+        Bignum result = new Bignum(1, yVal);
 
         return exponent.sign > 0
             ?   result
@@ -1754,7 +1754,7 @@ public class BigInteger
 
 /*
         byte[] bytes = {1, 0, 0, 0, 0};
-        BigInteger b = new BigInteger(1, bytes); // 2^32
+        Bignum b = new Bignum(1, bytes); // 2^32
         mQuote = this.negate().mod(b).modInverse(b).longValue();
 */
         long v = (((~this.magnitude[this.magnitude.length - 1]) | 1) & 0xffffffffL);
@@ -1826,10 +1826,10 @@ public class BigInteger
         System.arraycopy(a, 1, x, 0, n);
     }
 
-    public BigInteger multiply(BigInteger val)
+    public Bignum multiply(Bignum val)
     {
         if (sign == 0 || val.sign == 0)
-            return BigInteger.ZERO;
+            return Bignum.ZERO;
 
         int maxBitLength = this.bitLength() + val.bitLength();
         int resLength = (maxBitLength + 31) / 32;
@@ -1845,34 +1845,34 @@ public class BigInteger
             multiply(res, this.magnitude, val.magnitude);
         }
 
-        return new BigInteger(sign * val.sign, res);
+        return new Bignum(sign * val.sign, res);
     }
 
-    public BigInteger negate()
+    public Bignum negate()
     {
         if (sign == 0)
         {
             return this;
         }
 
-        return new BigInteger( -sign, magnitude);
+        return new Bignum( -sign, magnitude);
     }
 
-    public BigInteger not()
+    public Bignum not()
     {
         return add(ONE).negate();
     }
 
-    public BigInteger pow(int exp) throws ArithmeticException
+    public Bignum pow(int exp) throws ArithmeticException
     {
         if (exp < 0)
             throw new ArithmeticException("Negative exponent");
         if (sign == 0)
-            return (exp == 0 ? BigInteger.ONE : this);
+            return (exp == 0 ? Bignum.ONE : this);
 
-        BigInteger y, 
+        Bignum y, 
         z;
-        y = BigInteger.ONE;
+        y = Bignum.ONE;
         z = this;
 
         while (exp != 0)
@@ -1891,11 +1891,11 @@ public class BigInteger
         return y;
     }
 
-//     public static BigInteger probablePrime(
+//     public static Bignum probablePrime(
 //         int bitLength,
 //         Random random)
 //     {
-//         return new BigInteger(bitLength, 100, random);
+//         return new Bignum(bitLength, 100, random);
 //     }
 
     private int remainder(int m)
@@ -2007,16 +2007,16 @@ public class BigInteger
         return x;
     }
 
-    public BigInteger remainder(BigInteger n) throws ArithmeticException
+    public Bignum remainder(Bignum n) throws ArithmeticException
     {
         if (n.sign == 0)
         {
-            throw new ArithmeticException("BigInteger: Divide by zero");
+            throw new ArithmeticException("Bignum: Divide by zero");
         }
 
         if (sign == 0)
         {
-            return BigInteger.ZERO;
+            return Bignum.ZERO;
         }
 
         // For small values, use fast remainder method
@@ -2033,7 +2033,7 @@ public class BigInteger
 
                 return rem == 0
                     ?   ZERO
-                    :   new BigInteger(sign, new int[]{ rem });
+                    :   new Bignum(sign, new int[]{ rem });
             }
         }
 
@@ -2053,7 +2053,7 @@ public class BigInteger
             res = remainder(res, n.magnitude);
         }
 
-        return new BigInteger(sign, res);
+        return new Bignum(sign, res);
     }
 
     private int[] lastNBits(
@@ -2125,7 +2125,7 @@ public class BigInteger
         return newMag;
     }
 
-    public BigInteger shiftLeft(int n)
+    public Bignum shiftLeft(int n)
     {
         if (sign == 0 || magnitude.length == 0)
         {
@@ -2142,7 +2142,7 @@ public class BigInteger
             return shiftRight( -n);
         }
 
-        BigInteger result = new BigInteger(sign, shiftLeft(magnitude, n));
+        Bignum result = new Bignum(sign, shiftLeft(magnitude, n));
 
         if (this.nBits != -1)
         {
@@ -2223,7 +2223,7 @@ public class BigInteger
         return mag;
     }
 
-    public BigInteger shiftRight(int n)
+    public Bignum shiftRight(int n)
     {
         if (n == 0)
         {
@@ -2237,14 +2237,14 @@ public class BigInteger
 
         if (n >= bitLength())
         {
-            return (this.sign < 0 ? valueOf( -1) : BigInteger.ZERO);
+            return (this.sign < 0 ? valueOf( -1) : Bignum.ZERO);
         }
 
         int[] res = new int[this.magnitude.length];
 
         System.arraycopy(this.magnitude, 0, res, 0, res.length);
 
-        return new BigInteger(this.sign, shiftRightInPlace(0, res, n));
+        return new Bignum(this.sign, shiftRightInPlace(0, res, n));
 
         // TODO Port C# version's optimisations...
     }
@@ -2284,7 +2284,7 @@ public class BigInteger
         return x;
     }
 
-    public BigInteger subtract(BigInteger val)
+    public Bignum subtract(Bignum val)
     {
         if (val.sign == 0 || val.magnitude.length == 0)
         {
@@ -2305,7 +2305,7 @@ public class BigInteger
             return ZERO;
         }
 
-        BigInteger bigun, littlun;
+        Bignum bigun, littlun;
         if (compare < 0)
         {
             bigun = val;
@@ -2321,7 +2321,7 @@ public class BigInteger
 
         System.arraycopy(bigun.magnitude, 0, res, 0, res.length);
 
-        return new BigInteger(this.sign * compare, subtract(0, res, 0, littlun.magnitude));
+        return new Bignum(this.sign * compare, subtract(0, res, 0, littlun.magnitude));
     }
 
     public byte[] toByteArray()
@@ -2401,7 +2401,7 @@ public class BigInteger
         return bytes;
     }
 
-    public BigInteger xor(BigInteger val) 
+    public Bignum xor(Bignum val) 
     {
         if (this.sign == 0)
         {
@@ -2451,7 +2451,7 @@ public class BigInteger
             }
         }
 
-        BigInteger result = new BigInteger(1, resultMag);
+        Bignum result = new Bignum(1, resultMag);
 
         if (resultNeg)
         {
@@ -2461,8 +2461,8 @@ public class BigInteger
         return result;
     }
 
-    public BigInteger or(
-        BigInteger value)
+    public Bignum or(
+        Bignum value)
     {
         if (this.sign == 0)
         {
@@ -2512,7 +2512,7 @@ public class BigInteger
             }
         }
 
-        BigInteger result = new BigInteger(1, resultMag);
+        Bignum result = new Bignum(1, resultMag);
 
         if (resultNeg)
         {
@@ -2522,7 +2522,7 @@ public class BigInteger
         return result;
     }
     
-    public BigInteger setBit(int n) 
+    public Bignum setBit(int n) 
         throws ArithmeticException 
     {
         if (n < 0)
@@ -2544,7 +2544,7 @@ public class BigInteger
         return or(ONE.shiftLeft(n));
     }
     
-    public BigInteger clearBit(int n) 
+    public Bignum clearBit(int n) 
         throws ArithmeticException 
     {
         if (n < 0)
@@ -2566,7 +2566,7 @@ public class BigInteger
         return andNot(ONE.shiftLeft(n));
     }
 
-    public BigInteger flipBit(int n) 
+    public Bignum flipBit(int n) 
         throws ArithmeticException 
     {
         if (n < 0)
@@ -2583,13 +2583,13 @@ public class BigInteger
         return xor(ONE.shiftLeft(n));
     }
 
-    private BigInteger flipExistingBit(int n)
+    private Bignum flipExistingBit(int n)
     {
         int[] mag = new int[this.magnitude.length];
         System.arraycopy(this.magnitude, 0, mag, 0, mag.length);
         mag[mag.length - 1 - (n >>> 5)] ^= (1 << (n & 31)); // Flip 0 bit to 1
         //mag[mag.Length - 1 - (n / 32)] |= (1 << (n % 32));
-        return new BigInteger(this.sign, mag);
+        return new Bignum(this.sign, mag);
     }
 
     private int[] createResult(int wordNum)
@@ -2649,21 +2649,21 @@ public class BigInteger
         {
             // This is algorithm 1a from chapter 4.4 in Seminumerical Algorithms, slow but it works
             Stack S = new Stack();
-            BigInteger base = new BigInteger(Integer.toString(rdx, rdx), rdx);
+            Bignum base = new Bignum(Integer.toString(rdx, rdx), rdx);
             // The sign is handled separatly.
             // Notice however that for this to work, radix 16 _MUST_ be a special case,
             // unless we want to enter a recursion well. In their infinite wisdom, why did not 
-            // the Sun engineers made a c'tor for BigIntegers taking a BigInteger as parameter?
+            // the Sun engineers made a c'tor for Bignums taking a Bignum as parameter?
             // (Answer: Becuase Sun's BigIntger is clonable, something bouncycastle's isn't.)
-//            BigInteger u = new BigInteger(this.abs().toString(16), 16);
-            BigInteger u = this.abs();
-            BigInteger b;
+//            Bignum u = new Bignum(this.abs().toString(16), 16);
+            Bignum u = this.abs();
+            Bignum b;
 
             // For speed, maye these test should look directly a u.magnitude.length?
-            while (!u.equals(BigInteger.ZERO))
+            while (!u.equals(Bignum.ZERO))
             {
                 b = u.mod(base);
-                if (b.equals(BigInteger.ZERO))
+                if (b.equals(Bignum.ZERO))
                     S.push("0");
                 else
                     S.push(Integer.toString(b.magnitude[0], rdx));
@@ -2690,11 +2690,11 @@ public class BigInteger
         return s;
     }
 
-    public static BigInteger valueOf(long val)
+    public static Bignum valueOf(long val)
     {
         if (val == 0)
         {
-            return BigInteger.ZERO;
+            return Bignum.ZERO;
         }
 
         if (val < 0)
@@ -2715,7 +2715,7 @@ public class BigInteger
             val >>= 8;
         }
 
-        return new BigInteger(b);
+        return new Bignum(b);
     }
 
     public int getLowestSetBit()

@@ -5,7 +5,7 @@ package org.plt;
 
 import org.plt.types.*;
 import net.dclausen.microfloat.*;
-import java.math.BigInteger;
+import org.plt.types.Bignum;
 
 public class Kernel {
 
@@ -622,7 +622,7 @@ public class Kernel {
 					"numerator: expects argument of type <rational number>, giving: "
 							+ n);
 		return new Rational(((org.plt.types.Rational) n).numerator(),
-				    BigInteger.ONE);
+				    Bignum.ONE);
 	}
 
 	public static org.plt.types.Number denominator(Object n) {
@@ -632,7 +632,7 @@ public class Kernel {
 							+ n);
 
 		return new Rational(((org.plt.types.Rational) n).denominator(),
-				    BigInteger.ONE);
+				    Bignum.ONE);
 	}
 
 	public static org.plt.types.Logic integer_question_(Object n) {
