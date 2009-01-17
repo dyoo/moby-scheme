@@ -3,3 +3,5 @@
   treated as the transparent color, which is the wrong approach: we
   should be using alpha transparency throughout.
 
+* The test case org.plt.TestKernel.testBigExp is failing because
+  our current approach always converts to floating point.
