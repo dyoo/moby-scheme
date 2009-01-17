@@ -15,10 +15,10 @@ public class TestMath {
 		     Symbol.makeInstance("x"));
     }
 
-    @Test public void testModulo() {
+    @Test public void testNegativeModulo() {
 	// In Scheme, modulo is positive regardless of the dividend.
-	assertEquals(new Rational(1, 1),
-		     new Rational(-5, 1).modulo(new Rational(2, 1)));
+	assertEquals(new Rational(-5, 1).modulo(new Rational(2, 1)), 
+		     new Rational(1, 1));
     }
 
     @Test public void testModuloMore() {

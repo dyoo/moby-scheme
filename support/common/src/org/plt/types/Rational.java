@@ -115,7 +115,7 @@ public class Rational implements Number {
 	    throw new RuntimeException
 		("modulo expects integer as second argument");
 	}
-        BigInteger result = this.n.mod(this.d);
+        BigInteger result = this.n.mod(((Rational)other).numerator());
 	if (result.compareTo(BigInteger.ZERO) < 0) {
 	    return new Rational(result.add(((Rational)other).numerator()),
 				BigInteger.ONE);

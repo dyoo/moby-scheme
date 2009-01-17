@@ -12,11 +12,11 @@
 
 
 <target name="compile" depends="init">
-  <javac srcdir="../../support/common/src" destdir="build">
+  <javac srcdir="../../support/common/src" destdir="build" debug="true">
     <classpath refid="test.classpath"/>
   </javac>
 
-  <javac srcdir="java-src" destdir="build">
+  <javac srcdir="java-src" destdir="build" debug="true">
     <classpath refid="test.classpath"/>
   </javac>
 </target>
