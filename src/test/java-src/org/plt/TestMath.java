@@ -21,6 +21,30 @@ public class TestMath {
 		     new Rational(-5, 1).modulo(new Rational(2, 1)));
     }
 
+    @Test public void testModuloMore() {
+	assertEquals(new Rational(5, 1).modulo(new Rational(5, 1)),
+		     new Rational(0, 1));
+
+	assertEquals(new Rational(5, 1).modulo(new Rational(2, 1)),
+		     new Rational(1, 1));
+
+	assertTrue(new Rational(5, 1).modulo(new Rational(1, 1)).isZero());
+
+	assertEquals(new Rational(2, 1).modulo(new Rational(3, 1)),
+		     new Rational(2, 1));
+
+	assertEquals(new Rational(1, 1).modulo(new Rational(2, 1)),
+		     new Rational(1, 1));
+
+    }
+
+
+    @Test public void testAddition() {
+	assertEquals(Rational.ONE.numericPlus(Rational.ONE),
+		     new Rational(2, 1));
+    }
+
+
 
     @Test public void testCeiling() {
 	// ceiling(1/2) ==> 1
@@ -100,5 +124,6 @@ public class TestMath {
 	assertEquals(new Rational(0, 1),
 		     Rational.ZERO.atan());
     }
+
 
 }

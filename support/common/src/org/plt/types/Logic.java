@@ -23,4 +23,13 @@ public class Logic {
 	    return TRUE;
 	}
     }
+
+    public String toString() {
+	if (this == TRUE) { 
+	    return "true"; 
+	}
+	else {
+	    return "false"; 
+	}
+    }
 }

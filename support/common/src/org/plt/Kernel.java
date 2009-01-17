@@ -183,6 +183,8 @@ public class Kernel {
 	}
 
 	public static Logic zero_question_(java.lang.Object n) {
+	    System.out.println("zero_question of " + n);
+	    System.out.println("is " + toLogic(((org.plt.types.Number) n).isZero()));
 		return toLogic(((org.plt.types.Number) n).isZero());
 	}
 
@@ -423,6 +425,8 @@ public class Kernel {
 		if (integer_question_(n).isFalse())
 			throw new SchemeException(
 					"even?: expects argument of type <integer>; given " + n);
+		System.out.println("modulo of " + n + " and " + TWO + " is " +
+				   modulo(n, TWO));
 
 		return zero_question_(modulo(n, TWO));
 	}
@@ -431,6 +435,7 @@ public class Kernel {
 		if (integer_question_(n).isFalse())
 			throw new SchemeException(
 					"odd?: expects argument of type <integer>; given: " + n);
+		System.out.println("Even of " + n + " is " + even_question_(n));
 
 		return not(even_question_(n));
 	}
