@@ -5,6 +5,7 @@ package org.plt;
 
 import org.plt.types.*;
 import net.dclausen.microfloat.*;
+import java.math.BigInteger;
 
 public class Kernel {
 
@@ -615,7 +616,8 @@ public class Kernel {
 			throw new SchemeException(
 					"numerator: expects argument of type <rational number>, giving: "
 							+ n);
-		return new Rational(((org.plt.types.Rational) n).numerator(), 1);
+		return new Rational(((org.plt.types.Rational) n).numerator(),
+				    BigInteger.ONE);
 	}
 
 	public static org.plt.types.Number denominator(Object n) {
@@ -624,7 +626,8 @@ public class Kernel {
 					"denominator: expects argument of type <rational number>, giving: "
 							+ n);
 
-		return new Rational(((org.plt.types.Rational) n).denominator(), 1);
+		return new Rational(((org.plt.types.Rational) n).denominator(),
+				    BigInteger.ONE);
 	}
 
 	public static org.plt.types.Logic integer_question_(Object n) {
