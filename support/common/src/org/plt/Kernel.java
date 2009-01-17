@@ -814,4 +814,6 @@ public class Kernel {
 		else
 			return toLogic(n1 == n2);
 	}
+	
+	//
 }
