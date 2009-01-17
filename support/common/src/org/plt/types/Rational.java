@@ -1,61 +1,77 @@
 package org.plt.types;
 
+import java.math.BigInteger;
+
 public class Rational implements Number {
-    int n, d;
+    BigInteger n, d;
 
     public static Rational ZERO = new Rational(0, 1);
     public static Rational ONE = new Rational(1, 1);
 
     public Rational(int n, int d) {
-	if (d == 0) {
-	    throw new IllegalArgumentException("denominator can't be zero.");
-	}
-	if (d < 0) {
-	    n = -n;
-	    d = -d;
-	}
-
-	int divisor = gcd(n, d);
-	this.n = n / divisor;
-	this.d = d / divisor;
+	this(new BigInteger(n), new BigInteger(d));
     }
 
-    public int numerator() {
+    public Rational(BigInteger n, BigInteger d) {
+	if (d.equals(BigInteger.ZERO)) {
+	    throw new IllegalArgumentException("denominator can't be zero.");
+	}
+	if (d.compareTo(BitInteger.ZERO) < 0) {
+	    n = n.negate();
+	    d = d.negate();
+	}
+
+	BigInteger divisor = n.gcd(d);
+	this.n = n.divide(divisor);
+	this.d = d.divide(divisor);
+    }
+
+    public BigInteger numerator() {
 	return this.n;
     }
 
-    public int denominator() {
+    public BigInteger denominator() {
 	return this.d;
     }
     
     public int toInt() {
-	return n/d;
+	return (this.n.divide(this.d)).intValue();
     }
 
     public FloatPoint toFloatPoint() {
-	return (FloatPoint) FloatPoint.fromInt(n).numericDivide(FloatPoint.fromInt(d));
+	// FIXME: if we overflow here, we have to do something smarter!
+	return (FloatPoint) FloatPoint.fromInt(n.intValue()).numericDivide(FloatPoint.fromInt(d.intValue()));
     }
 
     public boolean numericGreaterThan(Number _other) {
 	Rational other = (Rational) _other;
-	return n * other.denominator() > d * other.numerator();
+	return ((n.multiply(other.denominator()))
+		.compareTo(d.multiply(other.numerator()))
+		> 0);
     }
 
     public boolean numericLessThan(Number _other) {
 	Rational other = (Rational) _other;
-	return n * other.denominator() < d * other.numerator();
+	return ((n.multiply(other.denominator()))
+		.compareTo(d.multiply(other.numerator())) 
+		< 0);
     }
 
     public boolean numericEqual(Number _other) {
 	Rational other = (Rational) _other;
-	return n * other.denominator() == d * other.numerator();
+	return ((n.multiply(other.denominator()))
+		.compareTo(d.multiply(other.numerator())) 
+		== 0);
     }
 
     public Number numericPlus(Number _other) {
 	Rational other = (Rational) _other;
-	return new Rational(n * other.denominator() + d * other.numerator(),
-			    d * other.denominator());
+	BigInteger newNumerator =
+	    n.multiply(other.denominator()).add(d.multiply(other.numerator()));
+	BigInteger newDenominator = d.multiply(other.denominator());
+	return new Rational(newNumerator, newDenominator);
     }
+
 
     public Number numericMinus(Number _other) {
 	Rational other = (Rational) _other;
