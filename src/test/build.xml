@@ -23,7 +23,7 @@
 
 
 <target name="test" depends="compile">
-  <junit fork="yes" haltonfailure="no">
+  <junit fork="yes" haltonfailure="true">
 
 
     <batchtest fork="yes">

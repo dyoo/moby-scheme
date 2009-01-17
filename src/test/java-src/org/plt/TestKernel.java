@@ -68,6 +68,14 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(Kernel.exp(Kernel.ZERO), Kernel.ONE).isTrue());
 	}
 
+        @Test
+        public void testBigExp() {
+	    assertEquals(Kernel.expt(new Rational(2, 1),
+				     new Rational(128, 1)).toString(),
+			 "340282366920938463463374607431768211456");
+	}
+
+
 	@Test
 	public void testLog() {
 		assertTrue(Kernel
