@@ -426,136 +426,136 @@ public class BigInteger
         this.sign = sign;
     }
 
-    public BigInteger(int numBits, Random rnd) throws IllegalArgumentException
-    {
-        if (numBits < 0)
-        {
-            throw new IllegalArgumentException("numBits must be non-negative");
-        }
+//     public BigInteger(int numBits, Random rnd) throws IllegalArgumentException
+//     {
+//         if (numBits < 0)
+//         {
+//             throw new IllegalArgumentException("numBits must be non-negative");
+//         }
 
-        this.nBits = -1;
-        this.nBitLength = -1;
+//         this.nBits = -1;
+//         this.nBitLength = -1;
 
-        if (numBits == 0)
-        {
-//          this.sign = 0;
-            this.magnitude = ZERO_MAGNITUDE;
-            return;
-        }
+//         if (numBits == 0)
+//         {
+// //          this.sign = 0;
+//             this.magnitude = ZERO_MAGNITUDE;
+//             return;
+//         }
 
-        int nBytes = (numBits + 7) / 8;
+//         int nBytes = (numBits + 7) / 8;
 
-        byte[] b = new byte[nBytes];
-        nextRndBytes(rnd, b);
+//         byte[] b = new byte[nBytes];
+//         nextRndBytes(rnd, b);
 
-        // strip off any excess bits in the MSB
-        b[0] &= rndMask[8 * nBytes - numBits];
+//         // strip off any excess bits in the MSB
+//         b[0] &= rndMask[8 * nBytes - numBits];
 
-        this.magnitude = makeMagnitude(b, 1);
-        this.sign = this.magnitude.length < 1 ? 0 : 1;
-    }
+//         this.magnitude = makeMagnitude(b, 1);
+//         this.sign = this.magnitude.length < 1 ? 0 : 1;
+//     }
 
     private static final int BITS_PER_BYTE = 8;
     private static final int BYTES_PER_INT = 4;
 
-    /**
-     * strictly speaking this is a little dodgey from a compliance
-     * point of view as it forces people to be using SecureRandom as
-     * well, that being said - this implementation is for a crypto
-     * library and you do have the source!
-     */
-    private void nextRndBytes(Random rnd, byte[] bytes)
-    {
-        int numRequested = bytes.length;
-        int numGot = 0, 
-        r = 0;
+//     /**
+//      * strictly speaking this is a little dodgey from a compliance
+//      * point of view as it forces people to be using SecureRandom as
+//      * well, that being said - this implementation is for a crypto
+//      * library and you do have the source!
+//      */
+//     private void nextRndBytes(Random rnd, byte[] bytes)
+//     {
+//         int numRequested = bytes.length;
+//         int numGot = 0, 
+//         r = 0;
 
-        if (rnd instanceof java.security.SecureRandom)
-        {
-            ((java.security.SecureRandom)rnd).nextBytes(bytes);
-        }
-        else
-        {
-            for (; ; )
-            {
-                for (int i = 0; i < BYTES_PER_INT; i++)
-                {
-                    if (numGot == numRequested)
-                    {
-                        return;
-                    }
+//         if (rnd instanceof java.security.SecureRandom)
+//         {
+//             ((java.security.SecureRandom)rnd).nextBytes(bytes);
+//         }
+//         else
+//         {
+//             for (; ; )
+//             {
+//                 for (int i = 0; i < BYTES_PER_INT; i++)
+//                 {
+//                     if (numGot == numRequested)
+//                     {
+//                         return;
+//                     }
 
-                    r = (i == 0 ? rnd.nextInt() : r >> BITS_PER_BYTE);
-                    bytes[numGot++] = (byte)r;
-                }
-            }
-        }
-    }
+//                     r = (i == 0 ? rnd.nextInt() : r >> BITS_PER_BYTE);
+//                     bytes[numGot++] = (byte)r;
+//                 }
+//             }
+//         }
+//     }
 
-    private static final byte[] rndMask = {(byte)255, 127, 63, 31, 15, 7, 3, 1};
+//     private static final byte[] rndMask = {(byte)255, 127, 63, 31, 15, 7, 3, 1};
 
-    public BigInteger(int bitLength, int certainty, Random rnd) throws ArithmeticException
-    {
-        if (bitLength < 2)
-        {
-            throw new ArithmeticException("bitLength < 2");
-        }
+//     public BigInteger(int bitLength, int certainty, Random rnd) throws ArithmeticException
+//     {
+//         if (bitLength < 2)
+//         {
+//             throw new ArithmeticException("bitLength < 2");
+//         }
 
-        this.sign = 1;
-        this.nBitLength = bitLength;
+//         this.sign = 1;
+//         this.nBitLength = bitLength;
 
-        if (bitLength == 2)
-        {
-            this.magnitude = rnd.nextInt() < 0
-                ?   TWO.magnitude
-                :   THREE.magnitude;
-            return;
-        }
+//         if (bitLength == 2)
+//         {
+//             this.magnitude = rnd.nextInt() < 0
+//                 ?   TWO.magnitude
+//                 :   THREE.magnitude;
+//             return;
+//         }
 
-        int nBytes = (bitLength + 7) / BITS_PER_BYTE;
-        int xBits = BITS_PER_BYTE * nBytes - bitLength;
-        byte mask = rndMask[xBits];
+//         int nBytes = (bitLength + 7) / BITS_PER_BYTE;
+//         int xBits = BITS_PER_BYTE * nBytes - bitLength;
+//         byte mask = rndMask[xBits];
 
-        byte[] b = new byte[nBytes];
+//         byte[] b = new byte[nBytes];
 
-        for (;;)
-        {
-            nextRndBytes(rnd, b);
+//         for (;;)
+//         {
+//             nextRndBytes(rnd, b);
 
-            // strip off any excess bits in the MSB
-            b[0] &= mask;
+//             // strip off any excess bits in the MSB
+//             b[0] &= mask;
 
-            // ensure the leading bit is 1 (to meet the strength requirement)
-            b[0] |= (byte)(1 << (7 - xBits));
+//             // ensure the leading bit is 1 (to meet the strength requirement)
+//             b[0] |= (byte)(1 << (7 - xBits));
 
-            // ensure the trailing bit is 1 (i.e. must be odd)
-            b[nBytes - 1] |= (byte)1;
+//             // ensure the trailing bit is 1 (i.e. must be odd)
+//             b[nBytes - 1] |= (byte)1;
 
-            this.magnitude = makeMagnitude(b, 1);
-            this.nBits = -1;
-            this.mQuote = -1L;
+//             this.magnitude = makeMagnitude(b, 1);
+//             this.nBits = -1;
+//             this.mQuote = -1L;
 
-            if (certainty < 1)
-                break;
+//             if (certainty < 1)
+//                 break;
 
-            if (this.isProbablePrime(certainty))
-                break;
+//             if (this.isProbablePrime(certainty))
+//                 break;
 
-            if (bitLength > 32)
-            {
-                for (int rep = 0; rep < 10000; ++rep)
-                {
-                    int n = 33 + (rnd.nextInt() >>> 1) % (bitLength - 2);
-                    this.magnitude[this.magnitude.length - (n >>> 5)] ^= (1 << (n & 31));
-                    this.magnitude[this.magnitude.length - 1] ^= (rnd.nextInt() << 1);
-                    this.mQuote = -1L;
+//             if (bitLength > 32)
+//             {
+//                 for (int rep = 0; rep < 10000; ++rep)
+//                 {
+//                     int n = 33 + (rnd.nextInt() >>> 1) % (bitLength - 2);
+//                     this.magnitude[this.magnitude.length - (n >>> 5)] ^= (1 << (n & 31));
+//                     this.magnitude[this.magnitude.length - 1] ^= (rnd.nextInt() << 1);
+//                     this.mQuote = -1L;
 
-                    if (this.isProbablePrime(certainty))
-                        return;
-                }
-            }
-        }
-    }
+//                     if (this.isProbablePrime(certainty))
+//                         return;
+//                 }
+//             }
+//         }
+//     }
 
     public BigInteger abs()
     {
@@ -1171,93 +1171,93 @@ public class BigInteger
         return (byte)intValue();
     }
 
-    /**
-     * return whether or not a BigInteger is probably prime with a
-     * probability of 1 - (1/2)**certainty.
-     * <p>
-     * From Knuth Vol 2, pg 395.
-     */
-    public boolean isProbablePrime(int certainty)
-    {
-        if (certainty <= 0)
-            return true;
+//     /**
+//      * return whether or not a BigInteger is probably prime with a
+//      * probability of 1 - (1/2)**certainty.
+//      * <p>
+//      * From Knuth Vol 2, pg 395.
+//      */
+//     public boolean isProbablePrime(int certainty)
+//     {
+//         if (certainty <= 0)
+//             return true;
 
-        if (sign == 0)
-            return false;
+//         if (sign == 0)
+//             return false;
 
-        BigInteger n = this.abs();
+//         BigInteger n = this.abs();
 
-        if (!n.testBit(0))
-            return n.equals(TWO);
+//         if (!n.testBit(0))
+//             return n.equals(TWO);
 
-        if (n.equals(ONE))
-            return false;
+//         if (n.equals(ONE))
+//             return false;
 
-        // Try to reduce the penalty for really small numbers
-        int numLists = Math.min(n.bitLength() - 1, primeLists.length);
+//         // Try to reduce the penalty for really small numbers
+//         int numLists = Math.min(n.bitLength() - 1, primeLists.length);
 
-        for (int i = 0; i < numLists; ++i)
-        {
-            int test = n.remainder(primeProducts[i]);
+//         for (int i = 0; i < numLists; ++i)
+//         {
+//             int test = n.remainder(primeProducts[i]);
 
-            int[] primeList = primeLists[i];
-            for (int j = 0; j < primeList.length; ++j)
-            {
-                int prime = primeList[j];
-                int qRem = test % prime;
-                if (qRem == 0)
-                {
-                    // We may find small numbers in the list
-                    return n.bitLength() < 16 && n.intValue() == prime;
-                }
-            }
-        }
+//             int[] primeList = primeLists[i];
+//             for (int j = 0; j < primeList.length; ++j)
+//             {
+//                 int prime = primeList[j];
+//                 int qRem = test % prime;
+//                 if (qRem == 0)
+//                 {
+//                     // We may find small numbers in the list
+//                     return n.bitLength() < 16 && n.intValue() == prime;
+//                 }
+//             }
+//         }
 
-        //
-        // let n = 1 + 2^kq
-        //
-        BigInteger nMinusOne = n.subtract(ONE);
-        int s = nMinusOne.getLowestSetBit();
-        BigInteger r = nMinusOne.shiftRight(s);
+//         //
+//         // let n = 1 + 2^kq
+//         //
+//         BigInteger nMinusOne = n.subtract(ONE);
+//         int s = nMinusOne.getLowestSetBit();
+//         BigInteger r = nMinusOne.shiftRight(s);
 
-        Random random = new Random();
-        do
-        {
-            BigInteger a;
+//         Random random = new Random();
+//         do
+//         {
+//             BigInteger a;
 
-            do
-            {
-                a = new BigInteger(n.bitLength(), random);
-            }
-            while (a.compareTo(ONE) <= 0 || a.compareTo(nMinusOne) >= 0);
+//             do
+//             {
+//                 a = new BigInteger(n.bitLength(), random);
+//             }
+//             while (a.compareTo(ONE) <= 0 || a.compareTo(nMinusOne) >= 0);
 
-            BigInteger y = a.modPow(r, n);
+//             BigInteger y = a.modPow(r, n);
 
-            if (!y.equals(ONE))
-            {
-                int j = 0;
-                while (!y.equals(nMinusOne))
-                {
-                    if (++j == s)
-                    {
-                        return false;
-                    }
+//             if (!y.equals(ONE))
+//             {
+//                 int j = 0;
+//                 while (!y.equals(nMinusOne))
+//                 {
+//                     if (++j == s)
+//                     {
+//                         return false;
+//                     }
 
-                    y = y.modPow(TWO, n);
+//                     y = y.modPow(TWO, n);
 
-                    if (y.equals(ONE))
-                    {
-                        return false;
-                    }
-                }
-            }
+//                     if (y.equals(ONE))
+//                     {
+//                         return false;
+//                     }
+//                 }
+//             }
 
-            certainty -= 2; // composites pass for only 1/4 possible 'a'
-        }
-        while (certainty > 0);
+//             certainty -= 2; // composites pass for only 1/4 possible 'a'
+//         }
+//         while (certainty > 0);
 
-        return true;
-    }
+//         return true;
+//     }
 
     public long longValue()
     {
@@ -1891,12 +1891,12 @@ public class BigInteger
         return y;
     }
 
-    public static BigInteger probablePrime(
-        int bitLength,
-        Random random)
-    {
-        return new BigInteger(bitLength, 100, random);
-    }
+//     public static BigInteger probablePrime(
+//         int bitLength,
+//         Random random)
+//     {
+//         return new BigInteger(bitLength, 100, random);
+//     }
 
     private int remainder(int m)
     {
