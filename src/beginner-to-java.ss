@@ -324,7 +324,7 @@
      (error 'expression->java-string "Function ~s hasn't yet been implemented in this compiler."
             id)]
     [else
-     (format "(~a(~a))"
+     (format "(~a(new Object[] {~a}))"
              (identifier->java-identifier id bound-ids)
              (string-join (map (lambda (e) (expression->java-string e bound-ids)) exprs) ","))]))
 
