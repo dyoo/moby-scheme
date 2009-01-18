@@ -20,6 +20,33 @@ public class Kernel {
 	static public org.plt.types.Number FIVE = _plus_(ONE, FOUR);
 	static public org.plt.types.Number SIX = _star_(TWO, THREE);
 
+	private static void arrayTypeCheck(Object[] args, String desiredType,
+			String funName) {
+		try {
+			Class cl = Class.forName(desiredType);
+			for (int i = 0; i < args.length; i++) {
+				if (cl.isInstance(args[i]) == false) {
+					String err = funName + ": expects type <" + desiredType
+							+ "> as argument number " + (i + 1) + ", given: "
+							+ args[i] + "; other arguments were ";
+					for (int j = 0; j < args.length; j++)
+						if (j != i)
+							err += (args[j] + " ");
+					throw new SchemeException(err);
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void arraySizeCheck(Object[] args, int sizeLowerBound,
+			String funName) {
+		if (args.length < sizeLowerBound)
+			throw new SchemeException(funName + ": expects at least "
+					+ sizeLowerBound + " arguments, given " + args.length);
+	}
+
 	// no-op: void -> void
 	public static Object no_op() {
 		return null;
@@ -615,7 +642,7 @@ public class Kernel {
 					"numerator: expects argument of type <rational number>, giving: "
 							+ n);
 		return new Rational(((org.plt.types.Rational) n).numerator(),
-				    Bignum.ONE);
+				Bignum.ONE);
 	}
 
 	public static org.plt.types.Number denominator(Object n) {
@@ -625,7 +652,7 @@ public class Kernel {
 							+ n);
 
 		return new Rational(((org.plt.types.Rational) n).denominator(),
-				    Bignum.ONE);
+				Bignum.ONE);
 	}
 
 	public static org.plt.types.Logic integer_question_(Object n) {
@@ -814,6 +841,21 @@ public class Kernel {
 		else
 			return toLogic(n1 == n2);
 	}
-	
-	//
+
+	public static org.plt.types.Logic char_question_(Object n) {
+		return toLogic(n instanceof Character);
+	}
+
+	public static org.plt.types.Logic char_equal__question_(Object[] arr) {
+		arraySizeCheck(arr, 2, "char=?");
+		arrayTypeCheck(arr, "java.lang.Character", "char=?");
+
+		Character first = (Character) arr[0];
+
+		for (int i = 1; i < arr.length; i++)
+			if (((Character) arr[i]).compareTo(first) != 0)
+				return Logic.FALSE;
+
+		return Logic.TRUE;
+	}
 }
