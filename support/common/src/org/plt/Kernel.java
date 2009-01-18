@@ -858,4 +858,62 @@ public class Kernel {
 
 		return Logic.TRUE;
 	}
+
+	public static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
+		arraySizeCheck(arr, 2, "char<?");
+		arrayTypeCheck(arr, "java.lang.Character", "char<?");
+
+		Character prev = (Character) arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (((Character) arr[i]).compareTo(prev) <= 0)
+				return Logic.FALSE;
+			prev = (Character) arr[i];
+		}
+
+		return Logic.TRUE;
+	}
+
+	public static org.plt.types.Logic char_lessthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "char<=?");
+		arrayTypeCheck(arr, "java.lang.Character", "char<=?");
+
+		Character prev = (Character) arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (((Character) arr[i]).compareTo(prev) < 0)
+				return Logic.FALSE;
+			prev = (Character) arr[i];
+		}
+
+		return Logic.TRUE;
+	}
+
+	public static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
+		arraySizeCheck(arr, 2, "char>?");
+		arrayTypeCheck(arr, "java.lang.Character", "char>?");
+
+		Character prev = (Character) arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (((Character) arr[i]).compareTo(prev) >= 0)
+				return Logic.FALSE;
+			prev = (Character) arr[i];
+		}
+
+		return Logic.TRUE;
+	}
+
+	public static org.plt.types.Logic char_greaterthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "char>=?");
+		arrayTypeCheck(arr, "java.lang.Character", "char>=?");
+
+		Character prev = (Character) arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (((Character) arr[i]).compareTo(prev) > 0)
+				return Logic.FALSE;
+			prev = (Character) arr[i];
+		}
+
+		return Logic.TRUE;
+	}
 }

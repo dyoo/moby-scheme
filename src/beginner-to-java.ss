@@ -638,6 +638,14 @@
     boolean=?
     eq?
     
+    ;; Characters
+    char?
+    char=?
+    char<?
+    char<=?
+    char>?
+    char>=?
+    
     ;; Symbols
     symbol=?
     symbol->string

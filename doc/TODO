@@ -91,7 +91,6 @@ Primitives that need implementation:
  make-polar
  real-part
  real?
- round
  append
  assq
  member
@@ -110,12 +109,6 @@ Primitives that need implementation:
  char-upcase
  char-upper-case?
  char-whitespace?
- char<=?
- char<?
- char=?
- char>=?
- char>?
- char?
  format
  list->string
  make-string
