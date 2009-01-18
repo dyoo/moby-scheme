@@ -678,7 +678,7 @@ public class Kernel {
 					"round: expects argument of type <real number>; given: "
 							+ n);
 
-		if (positive_question_(n).isTrue()) {
+		if (negative_question_(n).isFalse()) {
 			if (_lessthan_(_dash_(n, floor(n)), HALF).isTrue())
 				return floor(n);
 			else
