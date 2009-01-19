@@ -1330,9 +1330,4 @@ public class Kernel {
 		return new String(ret);
 	}
 
-	public static org.plt.types.Symbol string_dash_greaterthan_symbol(Object n) {
-		itemTypeCheck(n, "java.lang.String", "string->symbol");
-
-		return Symbol.makeInstance((String) n);
-	}
 }
