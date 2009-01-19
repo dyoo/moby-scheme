@@ -101,9 +101,9 @@ Primitives that need implementation:
  list->string
  make-string
  string
- string->list
- string->symbol
- string-append
+ string->list 
+ string->symbol 
+ string-append (need acc)
  image=?
  image?
  eof
