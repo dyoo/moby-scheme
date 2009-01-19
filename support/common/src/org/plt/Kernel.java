@@ -20,19 +20,18 @@ public class Kernel {
 	static public org.plt.types.Number FIVE = _plus_(ONE, FOUR);
 	static public org.plt.types.Number SIX = _star_(TWO, THREE);
 
-	private static void arrayTypeCheck(Object[] args, Class cl,
-			String funName) {
-	    for (int i = 0; i < args.length; i++) {
-		if (cl.isInstance(args[i]) == false) {
-		    String err = funName + ": expects type <" + cl.getName()
-			+ "> as argument number " + (i + 1) + ", given: "
-			+ args[i] + "; other arguments were ";
-		    for (int j = 0; j < args.length; j++)
-			if (j != i)
-			    err += (args[j] + " ");
-		    throw new SchemeException(err);
+	private static void arrayTypeCheck(Object[] args, Class cl, String funName) {
+		for (int i = 0; i < args.length; i++) {
+			if (cl.isInstance(args[i]) == false) {
+				String err = funName + ": expects type <" + cl.getName()
+						+ "> as argument number " + (i + 1) + ", given: "
+						+ args[i] + "; other arguments were ";
+				for (int j = 0; j < args.length; j++)
+					if (j != i)
+						err += (args[j] + " ");
+				throw new SchemeException(err);
+			}
 		}
-	    }
 
 	}
 
@@ -1042,13 +1041,15 @@ public class Kernel {
 	public static org.plt.types.Logic char_dash_whitespace_question_(Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-whitespace?");
 
-		return toLogic(Character.isWhitespace(((Character) n).charValue()));
+		return toLogic(((Character) n).charValue() == ' ');
 	}
 
 	public static org.plt.types.Logic char_dash_alphabetic_question_(Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-alphabetic?");
 
-		return toLogic(Character.isLetter(((Character) n).charValue()));
+		char v = ((Character) n).charValue();
+
+		return toLogic((v >= 'a' && v <= 'z') || (v >= 'A' && v <= 'Z'));
 	}
 
 	private static org.plt.types.Logic char_dash_ci_equal__question_(
@@ -1058,8 +1059,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-			    return (Character.toLowerCase(((Character) n1).charValue()) == 
-				    Character.toLowerCase(((Character) n2).charValue()));
+				return (Character.toLowerCase(((Character) n1).charValue()) == Character
+						.toLowerCase(((Character) n2).charValue()));
 			}
 		}));
 	}
@@ -1077,8 +1078,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-			    return (Character.toLowerCase(((Character) n1).charValue()) > Character
-				    .toLowerCase(((Character) n2).charValue()));
+				return (Character.toLowerCase(((Character) n1).charValue()) > Character
+						.toLowerCase(((Character) n2).charValue()));
 			}
 		}));
 	}
@@ -1096,8 +1097,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-			    return (Character.toLowerCase(((Character) n1).charValue()) >= Character
-				    .toLowerCase(((Character) n2).charValue()));
+				return (Character.toLowerCase(((Character) n1).charValue()) >= Character
+						.toLowerCase(((Character) n2).charValue()));
 			}
 		}));
 	}
@@ -1115,8 +1116,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-			    return (Character.toLowerCase(((Character) n1).charValue()) < Character
-				    .toLowerCase(((Character) n2).charValue()));
+				return (Character.toLowerCase(((Character) n1).charValue()) < Character
+						.toLowerCase(((Character) n2).charValue()));
 			}
 		}));
 	}
@@ -1134,8 +1135,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-			    return (Character.toLowerCase(((Character) n1).charValue()) <= Character
-				    .toLowerCase(((Character) n2).charValue()));
+				return (Character.toLowerCase(((Character) n1).charValue()) <= Character
+						.toLowerCase(((Character) n2).charValue()));
 			}
 		}));
 	}
@@ -1253,7 +1254,7 @@ public class Kernel {
 		Character[] ret = new Character[((String) n).length()];
 
 		for (int i = 0; i < ((String) n).length(); i++)
-		    ret[i] = new Character(((String) n).charAt(i));
+			ret[i] = new Character(((String) n).charAt(i));
 
 		return ret;
 	}
@@ -1262,10 +1263,10 @@ public class Kernel {
 		arrayTypeCheck(arr, java.lang.String.class, "string-append");
 
 		StringBuffer buf = new StringBuffer();
-                for (int i = 0; i < arr.length; i++) {
-		    buf.append(arr[i]);
-                }
-                return buf.toString();
+		for (int i = 0; i < arr.length; i++) {
+			buf.append(arr[i]);
+		}
+		return buf.toString();
 	}
 
 	public static Object string_dash_append(Object n1, Object n2) {
@@ -1278,7 +1279,7 @@ public class Kernel {
 
 		char[] ret = new char[arr.length];
 		for (int i = 0; i < arr.length; i++)
-		    ret[i] = ((Character) arr[i]).charValue();
+			ret[i] = ((Character) arr[i]).charValue();
 
 		return new String(ret);
 	}
@@ -1295,7 +1296,7 @@ public class Kernel {
 
 		char[] ret = new char[((org.plt.types.Number) n1).toInt()];
 		for (int i = 0; i < ret.length; i++)
-		    ret[i] = ((Character) n2).charValue();
+			ret[i] = ((Character) n2).charValue();
 
 		return new String(ret);
 	}
@@ -1306,7 +1307,7 @@ public class Kernel {
 		char[] ret = new char[arr.length];
 
 		for (int i = 0; i < ret.length; i++)
-		    ret[i] = ((Character) arr[i]).charValue();
+			ret[i] = ((Character) arr[i]).charValue();
 
 		return new String(ret);
 	}
