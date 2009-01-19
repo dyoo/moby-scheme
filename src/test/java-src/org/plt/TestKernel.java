@@ -131,12 +131,12 @@ public class TestKernel {
 
 	@Test
 	public void testPair_question_() {
-		assertTrue(Kernel.pair_question_(Kernel.ONE).isFalse());
+		assertTrue(Kernel.pair_question_(Empty.EMPTY).isFalse());
 	}
 
 	@Test
 	public void testCons_question_() {
-		assertTrue(Kernel.cons_question_(Kernel.ONE).isFalse());
+		assertTrue(Kernel.cons_question_(Empty.EMPTY).isFalse());
 	}
 
 	@Test
