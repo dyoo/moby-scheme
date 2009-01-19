@@ -1330,4 +1330,9 @@ public class Kernel {
 		return new String(ret);
 	}
 
+	public static org.plt.types.Number char_dash__greaterthan_integer(Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char->integer");
+
+		return new Rational((int) ((Character) n).charValue(), 1);
+	}
 }
