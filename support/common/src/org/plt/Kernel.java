@@ -9,187 +9,193 @@ import org.plt.types.Bignum;
 
 public class Kernel {
 
-    static private java.util.Random randgen = new java.util.Random();
+	static private java.util.Random randgen = new java.util.Random();
 
-    static public org.plt.types.Number ZERO = Rational.ZERO;
-    static public org.plt.types.Number ONE = Rational.ONE;
-    static public org.plt.types.Number TWO = _plus_(ONE, ONE);
-    static public org.plt.types.Number HALF = _slash_(ONE, TWO);
-    static public org.plt.types.Number THREE = _plus_(ONE, TWO);
-    static public org.plt.types.Number FOUR = _plus_(ONE, THREE);
-    static public org.plt.types.Number FIVE = _plus_(ONE, FOUR);
-    static public org.plt.types.Number SIX = _star_(TWO, THREE);
+	static public org.plt.types.Number ZERO = Rational.ZERO;
+	static public org.plt.types.Number ONE = Rational.ONE;
+	static public org.plt.types.Number TWO = _plus_(ONE, ONE);
+	static public org.plt.types.Number HALF = _slash_(ONE, TWO);
+	static public org.plt.types.Number THREE = _plus_(ONE, TWO);
+	static public org.plt.types.Number FOUR = _plus_(ONE, THREE);
+	static public org.plt.types.Number FIVE = _plus_(ONE, FOUR);
+	static public org.plt.types.Number SIX = _star_(TWO, THREE);
 
-    private static void arrayTypeCheck(Object[] args, String desiredType,
-				       String funName) {
-	try {
-	    Class cl = Class.forName(desiredType);
-	    for (int i = 0; i < args.length; i++) {
-		if (cl.isInstance(args[i]) == false) {
-		    String err = funName + ": expects type <" + desiredType
-			+ "> as argument number " + (i + 1) + ", given: "
-			+ args[i] + "; other arguments were ";
-		    for (int j = 0; j < args.length; j++)
-			if (j != i)
-			    err += (args[j] + " ");
-		    throw new SchemeException(err);
+	private static void arrayTypeCheck(Object[] args, String desiredType,
+			String funName) {
+		try {
+			Class cl = Class.forName(desiredType);
+			for (int i = 0; i < args.length; i++) {
+				if (cl.isInstance(args[i]) == false) {
+					String err = funName + ": expects type <" + desiredType
+							+ "> as argument number " + (i + 1) + ", given: "
+							+ args[i] + "; other arguments were ";
+					for (int j = 0; j < args.length; j++)
+						if (j != i)
+							err += (args[j] + " ");
+					throw new SchemeException(err);
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
-	    }
-	} catch (ClassNotFoundException e) {
-	    e.printStackTrace();
 	}
-    }
 
-    private static void arraySizeCheck(Object[] args, int sizeLowerBound,
-				       String funName) {
-	if (args.length < sizeLowerBound)
-	    throw new SchemeException(funName + ": expects at least "
-				      + sizeLowerBound + " arguments, given " + args.length);
-    }
+	private static void arraySizeCheck(Object[] args, int sizeLowerBound,
+			String funName) {
+		if (args.length < sizeLowerBound)
+			throw new SchemeException(funName + ": expects at least "
+					+ sizeLowerBound + " arguments, given " + args.length);
+	}
 
-    // no-op: void -> void
-    public static Object no_op(Object[] args) {
-	return null;
-    }
+	private static void itemTypeCheck(Object n, String desiredType,
+			String funName) {
+		try {
+			Class cl = Class.forName(desiredType);
+			if (cl.isInstance(n) == false) {
+				String err = funName + ": expects argument of type <"
+						+ desiredType + ">; given " + n;
+				throw new SchemeException(err);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public static Object no_op_worldEvent(Object[] args) {
-	return args[0];
-    }
+	// no-op: void -> void
+	public static Object no_op(Object[] args) {
+		return null;
+	}
 
-    public static Object no_op_stopWhen(Object[] x) {
-	return Logic.FALSE;
-    }
+	public static Object no_op_worldEvent(Object[] args) {
+		return args[0];
+	}
 
-    public static Object no_op_keyEvent(Object[] args) {
-	return args[0];
-    }
+	public static Object no_op_stopWhen(Object[] x) {
+		return Logic.FALSE;
+	}
 
-    // ////////////////////////////////////////////////////////////////////
+	public static Object no_op_keyEvent(Object[] args) {
+		return args[0];
+	}
 
-    public static org.plt.types.Number pi = FloatPoint.PI;
-    public static org.plt.types.Number e = FloatPoint.E;
+	// ////////////////////////////////////////////////////////////////////
 
-    public static Object identity(Object[] args) {
-	return args[0];
-    }
+	public static org.plt.types.Number pi = FloatPoint.PI;
+	public static org.plt.types.Number e = FloatPoint.E;
 
-    // Numerics
+	public static Object identity(Object[] args) {
+		return args[0];
+	}
 
-    // >=
-    public static Logic  _greaterthan__equal_(Object[] args) {
-	return _greaterthan__equal_(args[0], args[1]);
-    } 
+	// Numerics
 
-    private static Logic _greaterthan__equal_(Object _n1, Object _n2) {
-	return toLogic(NumberTower.greaterThanEqual((org.plt.types.Number) _n1,
-						    (org.plt.types.Number) _n2));
-    }
+	// >=
+	public static Logic _greaterthan__equal_(Object[] args) {
+		return _greaterthan__equal_(args[0], args[1]);
+	}
 
+	private static Logic _greaterthan__equal_(Object _n1, Object _n2) {
+		return toLogic(NumberTower.greaterThanEqual((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2));
+	}
 
-    // >
-    public static Logic _greaterthan_(Object[] args) {
-	return _greaterthan_(args[0], args[1]);
-    }
-    private static Logic _greaterthan_(Object _n1, Object _n2) {
-	return toLogic(NumberTower.greaterThan((org.plt.types.Number) _n1,
-					       (org.plt.types.Number) _n2));
-    }
+	// >
+	public static Logic _greaterthan_(Object[] args) {
+		return _greaterthan_(args[0], args[1]);
+	}
 
+	private static Logic _greaterthan_(Object _n1, Object _n2) {
+		return toLogic(NumberTower.greaterThan((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2));
+	}
 
-    // <=
-    public static Logic _lessthan__equal_(Object[] args) {
-	return _lessthan__equal_(args[0], args[1]);
-    }
-    private static Logic _lessthan__equal_(Object _n1, Object _n2) {
-	return toLogic(NumberTower.lessThanEqual((org.plt.types.Number) _n1,
-						 (org.plt.types.Number) _n2));
-    }
+	// <=
+	public static Logic _lessthan__equal_(Object[] args) {
+		return _lessthan__equal_(args[0], args[1]);
+	}
 
+	private static Logic _lessthan__equal_(Object _n1, Object _n2) {
+		return toLogic(NumberTower.lessThanEqual((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2));
+	}
 
-    public static Logic _lessthan_(Object[] args) {
-	return _lessthan_(args[0], args[1]);
-    }
+	public static Logic _lessthan_(Object[] args) {
+		return _lessthan_(args[0], args[1]);
+	}
 
-    // <
-    private static Logic _lessthan_(Object _n1, Object _n2) {
-	return toLogic(NumberTower.lessThan((org.plt.types.Number) _n1,
-					    (org.plt.types.Number) _n2));
-    }
+	// <
+	private static Logic _lessthan_(Object _n1, Object _n2) {
+		return toLogic(NumberTower.lessThan((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2));
+	}
 
+	// =
+	public static Logic _equal_(Object[] args) {
+		return _equal_(args[0], args[1]);
+	}
 
-
-    // =
-    public static Logic _equal_(Object[] args) {
-	return _equal_(args[0], args[1]);
-    }
-
-    private static Logic _equal_(Object _n1, Object _n2) {
-	return toLogic(NumberTower.equal((org.plt.types.Number) _n1,
-					 (org.plt.types.Number) _n2));
-    }
+	private static Logic _equal_(Object _n1, Object _n2) {
+		return toLogic(NumberTower.equal((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2));
+	}
 
 	// =~
-    public static Logic _equal__tilde_(Object[] args) {
-	return _equal__tilde_(args[0], args[1], args[2]);
-    }
+	public static Logic _equal__tilde_(Object[] args) {
+		return _equal__tilde_(args[0], args[1], args[2]);
+	}
 
-    private static Logic _equal__tilde_(Object _n1, Object _n2, Object _n3) {
-	return toLogic(NumberTower.approxEqual
-		       ((org.plt.types.Number) _n1,
-			(org.plt.types.Number) _n2, 
-			(org.plt.types.Number) _n3));
-    }
+	private static Logic _equal__tilde_(Object _n1, Object _n2, Object _n3) {
+		return toLogic(NumberTower.approxEqual((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2, (org.plt.types.Number) _n3));
+	}
 
+	// +
+	public static org.plt.types.Number _plus_(Object[] args) {
+		return _plus_(args[0], args[1]);
+	}
 
-    // +
-    public static org.plt.types.Number _plus_(Object[] args) {
-	return _plus_(args[0], args[1]);
-    }
-    private static org.plt.types.Number _plus_(Object _n1, Object _n2) {
-	return NumberTower.plus((org.plt.types.Number) _n1,
+	private static org.plt.types.Number _plus_(Object _n1, Object _n2) {
+		return NumberTower.plus((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2);
-    }
+	}
 
+	// -
+	public static org.plt.types.Number _dash_(Object[] args) {
+		return _dash_(args[0], args[1]);
+	}
 
+	private static org.plt.types.Number _dash_(Object _n1, Object _n2) {
+		return NumberTower.minus((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2);
+	}
 
-    // -
-    public static org.plt.types.Number _dash_(Object[] args) {
-	return _dash_(args[0], args[1]);
-    }
-    private static org.plt.types.Number _dash_(Object _n1, Object _n2) {
-	return NumberTower.minus((org.plt.types.Number) _n1,
-				 (org.plt.types.Number) _n2);
-    }
+	// *
+	public static org.plt.types.Number _star_(Object[] args) {
+		return _star_(args[0], args[1]);
+	}
 
+	private static org.plt.types.Number _star_(Object _n1, Object _n2) {
+		return NumberTower.multiply((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2);
+	}
 
-    // *
-    public  static org.plt.types.Number _star_(Object[] args) {
-	return _star_(args[0], args[1]);
-    }
-    private static org.plt.types.Number _star_(Object _n1, Object _n2) {
-	return NumberTower.multiply((org.plt.types.Number) _n1,
-				    (org.plt.types.Number) _n2);
-    }
+	// /
+	public static org.plt.types.Number _slash_(Object[] args) {
+		return _slash_(args[0], args[1]);
+	}
 
+	private static org.plt.types.Number _slash_(Object _n1, Object _n2) {
+		return NumberTower.divide((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2);
+	}
 
-    // /
-    public static org.plt.types.Number _slash_(Object[] args) {
-	return _slash_(args[0], args[1]);
-    }
-    private static org.plt.types.Number _slash_(Object _n1, Object _n2) {
-	return NumberTower.divide((org.plt.types.Number) _n1,
-				  (org.plt.types.Number) _n2);
-    }
+	public static org.plt.types.Number abs(Object[] args) {
+		return abs(args[0]);
+	}
 
-
-    public static org.plt.types.Number abs(Object[] args) {
-	return abs(args[0]);
-    }
-    private static org.plt.types.Number abs(Object n) {
-	return ((org.plt.types.Number) n).abs();
-    }
-
-
+	private static org.plt.types.Number abs(Object n) {
+		return ((org.plt.types.Number) n).abs();
+	}
 
 	public static org.plt.types.Number acos(Object n) {
 		return ((org.plt.types.Number) n).acos();
@@ -968,4 +974,38 @@ public class Kernel {
 
 		return Logic.TRUE;
 	}
+
+	public static org.plt.types.Logic char_dash_upper_dash_case_question_(
+			Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-upper-case?");
+
+		return toLogic(Character.isUpperCase((Character) n));
+	}
+
+	public static org.plt.types.Logic char_dash_lower_dash_case_question_(
+			Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-lower-case?");
+
+		return toLogic(Character.isLowerCase((Character) n));
+	}
+
+	public static org.plt.types.Logic char_dash_numeric_question_(Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-numeric?");
+
+		return toLogic(Character.isDigit((Character) n));
+	}
+
+	public static Object char_dash_upcase(Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-upcase");
+
+		return Character.toUpperCase((Character) n);
+	}
+
+	public static Object char_dash_downcase(Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-downcase");
+
+		return Character.toLowerCase((Character) n);
+	}
+	
+	
 }
