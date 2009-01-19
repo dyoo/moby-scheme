@@ -1015,38 +1015,38 @@ public class Kernel {
 			Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-upper-case?");
 
-		return toLogic(Character.isUpperCase((Character) n));
+		return toLogic(Character.isUpperCase(((Character) n).charValue()));
 	}
 
 	public static org.plt.types.Logic char_dash_lower_dash_case_question_(
 			Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-lower-case?");
 
-		return toLogic(Character.isLowerCase((Character) n));
+		return toLogic(Character.isLowerCase(((Character) n).charValue()));
 	}
 
 	public static org.plt.types.Logic char_dash_numeric_question_(Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-numeric?");
 
-		return toLogic(Character.isDigit((Character) n));
+		return toLogic(Character.isDigit(((Character) n).charValue()));
 	}
 
 	public static Object char_dash_upcase(Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-upcase");
 
-		return Character.toUpperCase((Character) n);
+		return new Character(Character.toUpperCase(((Character) n).charValue()));
 	}
 
 	public static Object char_dash_downcase(Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-downcase");
 
-		return Character.toLowerCase((Character) n);
+		return new Character(Character.toLowerCase(((Character) n).charValue()));
 	}
 
 	public static org.plt.types.Logic char_dash_whitespace_question_(Object n) {
 		itemTypeCheck(n, "java.lang.Character", "char-whitespace?");
 
-		return toLogic(Character.isWhitespace((Character) n));
+		return toLogic(Character.isWhitespace(((Character) n).charValue()));
 	}
 
 	public static org.plt.types.Logic char_dash_alphabetic_question_(Object n) {
@@ -1265,12 +1265,11 @@ public class Kernel {
 	private static Object string_dash_append(Object[] arr) {
 		arrayTypeCheck(arr, "java.lang.String", "string-append");
 
-		String ret = "";
-
-		for (Object a : arr)
-			ret = ret.concat((String) a);
-
-		return ret;
+		StringBuffer buf = new StringBuffer();
+                for (int i = 0; i < arr.length; i++) {
+		    buf.append(arr[i]);
+                }
+                return buf.toString();
 	}
 
 	public static Object string_dash_append(Object n1, Object n2) {
