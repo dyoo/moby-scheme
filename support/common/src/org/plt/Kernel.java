@@ -1277,4 +1277,42 @@ public class Kernel {
 		Object[] arr = { n1, n2 };
 		return string_dash_append(arr);
 	}
+
+	public static Object string(Object[] arr) {
+		arrayTypeCheck(arr, "java.lang.Character", "string");
+
+		char[] ret = new char[arr.length];
+		for (int i = 0; i < arr.length; i++)
+			ret[i] = (Character) arr[i];
+
+		return new String(ret);
+	}
+
+	public static Object make_dash_string(Object n1, Object n2) {
+		if (natural_question_(n1).isFalse())
+			throw new SchemeException(
+					"make-string: expects type <non-negative exact integer> as 1st argument, given: "
+							+ n1 + "; other arguments were: " + n2);
+		if (char_question_(n2).isFalse())
+			throw new SchemeException(
+					"make-string: expects type <character> as 2nd argument, given: "
+							+ n2 + "; other arguments were: " + n1);
+
+		char[] ret = new char[((org.plt.types.Number) n1).toInt()];
+		for (int i = 0; i < ret.length; i++)
+			ret[i] = (Character) n2;
+
+		return new String(ret);
+	}
+
+	public static Object list_dash__greaterthan_string(Object[] arr) {
+		arrayTypeCheck(arr, "java.lang.Character", "list->string");
+
+		char[] ret = new char[arr.length];
+
+		for (int i = 0; i < ret.length; i++)
+			ret[i] = (Character) arr[i];
+
+		return new String(ret);
+	}
 }

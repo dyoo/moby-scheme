@@ -98,9 +98,6 @@ Primitives that need implementation:
  memv
  char->integer
  format
- list->string
- make-string
- string
  image=?
  image?
  eof

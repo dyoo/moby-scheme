@@ -511,4 +511,24 @@ public class TestKernel {
 		assertTrue(Kernel.string_equal__question_("hello world",
 				Kernel.string_dash_append("hello", " world")).isTrue());
 	}
+
+	@Test
+	public void testString() {
+		Object[] arr = { 'h', 'i' };
+		assertTrue(Kernel.string_equal__question_("hi", Kernel.string(arr))
+				.isTrue());
+	}
+
+	@Test
+	public void testMake_dash_string() {
+		assertTrue(Kernel.string_equal__question_("hh",
+				Kernel.make_dash_string(Kernel.TWO, 'h')).isTrue());
+	}
+
+	@Test
+	public void testList_dash__greaterthan_string() {
+		Object[] arr = { 'h', 'e', 'l', 'l', 'o' };
+		assertTrue(Kernel.string_equal__question_(
+				Kernel.list_dash__greaterthan_string(arr), "hello").isTrue());
+	}
 }

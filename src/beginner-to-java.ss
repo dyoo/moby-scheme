@@ -682,6 +682,9 @@
     string->list
     string->symbol 
     string-append 
+    list->string 
+    make-string 
+    string 
     
     ;; World
     empty-scene
