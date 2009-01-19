@@ -85,20 +85,20 @@ public class Kernel {
 	}
 	
 	// no-op: void -> void
-	public static Object no_op(Object[] args) {
+	public static Object no_op() {
 		return null;
 	}
 
-	public static Object no_op_worldEvent(Object[] args) {
-		return args[0];
+	public static Object no_op_worldEvent(Object world) {
+		return world;
 	}
 
-	public static Object no_op_stopWhen(Object[] x) {
+	public static Object no_op_stopWhen(Object world) {
 		return Logic.FALSE;
 	}
 
-	public static Object no_op_keyEvent(Object[] args) {
-		return args[0];
+	public static Object no_op_keyEvent(Object world, Object key) {
+		return world;
 	}
 
 	// ////////////////////////////////////////////////////////////////////
@@ -106,117 +106,75 @@ public class Kernel {
 	public static org.plt.types.Number pi = FloatPoint.PI;
 	public static org.plt.types.Number e = FloatPoint.E;
 
-	public static Object identity(Object[] args) {
-		return args[0];
+	public static Object identity(Object x) {
+		return x;
 	}
 
 	// Numerics
 
 	// >=
-	public static Logic _greaterthan__equal_(Object[] args) {
-		return _greaterthan__equal_(args[0], args[1]);
-	}
 
-	private static Logic _greaterthan__equal_(Object _n1, Object _n2) {
+	public static Logic _greaterthan__equal_(Object _n1, Object _n2) {
 		return toLogic(NumberTower.greaterThanEqual((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2));
 	}
 
 	// >
-	public static Logic _greaterthan_(Object[] args) {
-		return _greaterthan_(args[0], args[1]);
-	}
-
-	private static Logic _greaterthan_(Object _n1, Object _n2) {
+	public static Logic _greaterthan_(Object _n1, Object _n2) {
 		return toLogic(NumberTower.greaterThan((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2));
 	}
 
 	// <=
-	public static Logic _lessthan__equal_(Object[] args) {
-		return _lessthan__equal_(args[0], args[1]);
-	}
 
-	private static Logic _lessthan__equal_(Object _n1, Object _n2) {
+	public static Logic _lessthan__equal_(Object _n1, Object _n2) {
 		return toLogic(NumberTower.lessThanEqual((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2));
 	}
 
-	public static Logic _lessthan_(Object[] args) {
-		return _lessthan_(args[0], args[1]);
-	}
-
 	// <
-	private static Logic _lessthan_(Object _n1, Object _n2) {
+	public static Logic _lessthan_(Object _n1, Object _n2) {
 		return toLogic(NumberTower.lessThan((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2));
 	}
 
 	// =
-	public static Logic _equal_(Object[] args) {
-		return _equal_(args[0], args[1]);
-	}
-
-	private static Logic _equal_(Object _n1, Object _n2) {
+	public static Logic _equal_(Object _n1, Object _n2) {
 		return toLogic(NumberTower.equal((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2));
 	}
 
 	// =~
-	public static Logic _equal__tilde_(Object[] args) {
-		return _equal__tilde_(args[0], args[1], args[2]);
-	}
-
-	private static Logic _equal__tilde_(Object _n1, Object _n2, Object _n3) {
+	public static Logic _equal__tilde_(Object _n1, Object _n2, Object _n3) {
 		return toLogic(NumberTower.approxEqual((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2, (org.plt.types.Number) _n3));
 	}
 
 	// +
-	public static org.plt.types.Number _plus_(Object[] args) {
-		return _plus_(args[0], args[1]);
-	}
-
-	private static org.plt.types.Number _plus_(Object _n1, Object _n2) {
+        public static org.plt.types.Number _plus_(Object _n1, Object _n2) {
 		return NumberTower.plus((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2);
 	}
 
 	// -
-	public static org.plt.types.Number _dash_(Object[] args) {
-		return _dash_(args[0], args[1]);
-	}
-
-	private static org.plt.types.Number _dash_(Object _n1, Object _n2) {
+	public static org.plt.types.Number _dash_(Object _n1, Object _n2) {
 		return NumberTower.minus((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2);
 	}
 
 	// *
-	public static org.plt.types.Number _star_(Object[] args) {
-		return _star_(args[0], args[1]);
-	}
-
-	private static org.plt.types.Number _star_(Object _n1, Object _n2) {
+	public static org.plt.types.Number _star_(Object _n1, Object _n2) {
 		return NumberTower.multiply((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2);
 	}
 
 	// /
-	public static org.plt.types.Number _slash_(Object[] args) {
-		return _slash_(args[0], args[1]);
-	}
-
-	private static org.plt.types.Number _slash_(Object _n1, Object _n2) {
+	public static org.plt.types.Number _slash_(Object _n1, Object _n2) {
 		return NumberTower.divide((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2);
 	}
 
-	public static org.plt.types.Number abs(Object[] args) {
-		return abs(args[0]);
-	}
-
-	private static org.plt.types.Number abs(Object n) {
+	public static org.plt.types.Number abs(Object n) {
 		return ((org.plt.types.Number) n).abs();
 	}
 
