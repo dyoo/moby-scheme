@@ -97,11 +97,6 @@ Primitives that need implementation:
  memq
  memv
  char->integer
- char-ci<=?
- char-ci<?
- char-ci=?
- char-ci>=?
- char-ci>?
  format
  list->string
  make-string

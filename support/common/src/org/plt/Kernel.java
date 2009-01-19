@@ -80,10 +80,6 @@ public class Kernel {
 		return true;
 	}
 
-	private static interface DoWith {
-		public void process(Object n);
-	}
-	
 	// no-op: void -> void
 	public static Object no_op() {
 		return null;
@@ -151,7 +147,7 @@ public class Kernel {
 	}
 
 	// +
-        public static org.plt.types.Number _plus_(Object _n1, Object _n2) {
+	public static org.plt.types.Number _plus_(Object _n1, Object _n2) {
 		return NumberTower.plus((org.plt.types.Number) _n1,
 				(org.plt.types.Number) _n2);
 	}
@@ -891,7 +887,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-				return (((Character) n1).compareTo((Character) n2) == 0);
+				return (((Character) n1).charValue() == ((Character) n2)
+						.charValue());
 			}
 		}));
 	}
@@ -902,7 +899,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-				return (((Character) n1).compareTo((Character) n2) < 0);
+				return (((Character) n1).charValue() < ((Character) n2)
+						.charValue());
 			}
 		}));
 	}
@@ -914,7 +912,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-				return (((Character) n1).compareTo((Character) n2) <= 0);
+				return (((Character) n1).charValue() <= ((Character) n2)
+						.charValue());
 			}
 		}));
 	}
@@ -925,7 +924,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-				return (((Character) n1).compareTo((Character) n2) > 0);
+				return (((Character) n1).charValue() > ((Character) n2)
+						.charValue());
 			}
 		}));
 	}
@@ -937,7 +937,8 @@ public class Kernel {
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
-				return (((Character) n1).compareTo((Character) n2) >= 0);
+				return (((Character) n1).charValue() >= ((Character) n2)
+						.charValue());
 			}
 		}));
 	}
@@ -986,8 +987,67 @@ public class Kernel {
 		return toLogic(Character.isLetter((Character) n));
 	}
 
-	// public static org.plt.types.Logic char_dash_ci_equal__question_(Object[]
-	// arr) {
-	// arraySizeCheck(arr, 2, "char-ci=?");
-	// }
+	public static org.plt.types.Logic char_dash_ci_equal__question_(Object[] arr) {
+		arraySizeCheck(arr, 2, "char-ci=?");
+		arrayTypeCheck(arr, "java.lang.Character", "char-ci=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (Character.toLowerCase((Character) n1) == Character
+						.toLowerCase((Character) n2));
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic char_dash_ci_greaterthan__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "char-ci>?");
+		arrayTypeCheck(arr, "java.lang.Character", "char-ci>?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (Character.toLowerCase((Character) n1) > Character
+						.toLowerCase((Character) n2));
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "char-ci>=?");
+		arrayTypeCheck(arr, "java.lang.Character", "char-ci>=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (Character.toLowerCase((Character) n1) >= Character
+						.toLowerCase((Character) n2));
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic char_dash_ci_lessthan__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "char-ci<?");
+		arrayTypeCheck(arr, "java.lang.Character", "char-ci<?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (Character.toLowerCase((Character) n1) < Character
+						.toLowerCase((Character) n2));
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "char-ci<=?");
+		arrayTypeCheck(arr, "java.lang.Character", "char-ci<=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (Character.toLowerCase((Character) n1) <= Character
+						.toLowerCase((Character) n2));
+			}
+		}));
+	}
 }

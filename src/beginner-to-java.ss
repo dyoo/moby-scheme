@@ -198,7 +198,7 @@
                   (identifier->java-identifier id (list id))
                   (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
                                ","))
-
+          
           ;; accessors
           (string-join 
            (map (lambda (a-field)
@@ -285,11 +285,11 @@
       ;; Boolean false
       ['false
        "(org.plt.types.Logic.FALSE)"]
-            
+      
       ;; Numbers
       [(? number?)
        (number->java-string expr)]
-            
+      
       ;; Strings
       [(? string?)
        (format "(~s)" expr)]
@@ -566,8 +566,8 @@
     exit
     identity
     struct?
-
-        
+    
+    
     ))
 
 
@@ -652,6 +652,11 @@
     char-upper-case?
     char-whitespace?
     char-alphabetic?
+    char-ci<=?
+    char-ci<?
+    char-ci=?
+    char-ci>=?
+    char-ci>?
     
     ;; Symbols
     symbol=?
