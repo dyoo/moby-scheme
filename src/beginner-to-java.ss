@@ -657,6 +657,7 @@
     char-ci=?
     char-ci>=?
     char-ci>?
+    char->integer
     
     ;; Symbols
     symbol=?

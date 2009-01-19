@@ -96,7 +96,6 @@ Primitives that need implementation:
  member
  memq
  memv
- char->integer
  format
  image=?
  image?
