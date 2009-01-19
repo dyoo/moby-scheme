@@ -97,7 +97,6 @@ Primitives that need implementation:
  memq
  memv
  char->integer
- char-alphabetic?
  char-ci<=?
  char-ci<?
  char-ci=?

@@ -80,6 +80,10 @@ public class Kernel {
 		return true;
 	}
 
+	private static interface DoWith {
+		public void process(Object n);
+	}
+	
 	// no-op: void -> void
 	public static Object no_op(Object[] args) {
 		return null;

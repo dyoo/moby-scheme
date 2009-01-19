@@ -651,6 +651,7 @@
     char-upcase
     char-upper-case?
     char-whitespace?
+    char-alphabetic?
     
     ;; Symbols
     symbol=?

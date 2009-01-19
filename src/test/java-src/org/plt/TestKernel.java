@@ -315,9 +315,11 @@ public class TestKernel {
 	public void testChar_equal__question_() {
 		Object[] arr1 = { 'a', 'a', 'a' };
 		Object[] arr2 = { 'a', 'a', 'b' };
+		Object[] arr3 = { 'a', 'a', 'A' };
 
 		assertTrue(Kernel.char_equal__question_(arr1).isTrue());
 		assertTrue(Kernel.char_equal__question_(arr2).isFalse());
+		assertTrue(Kernel.char_equal__question_(arr3).isFalse());
 	}
 
 	@Test
@@ -409,4 +411,11 @@ public class TestKernel {
 		assertTrue(Kernel.char_dash_whitespace_question_(' ').isTrue());
 		assertTrue(Kernel.char_dash_whitespace_question_('a').isFalse());
 	}
+
+	@Test
+	public void testChar_dash_alphabetic_question_() {
+		assertTrue(Kernel.char_dash_alphabetic_question_('1').isFalse());
+		assertTrue(Kernel.char_dash_alphabetic_question_('a').isTrue());
+	}
+
 }
