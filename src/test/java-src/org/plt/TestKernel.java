@@ -539,4 +539,10 @@ public class TestKernel {
 		assertTrue(Kernel.string_equal__question_(
 				Kernel.list_dash__greaterthan_string(lst), "hi").isTrue());
 	}
+
+	@Test
+	public void testChar_dash__greaterthan_integer() {
+		assertTrue(Kernel._equal_(Kernel.char_dash__greaterthan_integer('1'),
+				new Rational(49, 1)).isTrue());
+	}
 }
