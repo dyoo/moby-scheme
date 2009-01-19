@@ -758,36 +758,75 @@ public class Kernel {
 		return toLogic(n instanceof String);
 	}
 
-	public static org.plt.types.Logic string_greaterthan__question_(Object s1,
-			Object s2) {
-		if (string_question_(s1).isFalse())
-			throw new SchemeException(
-					"string>?: expects type <string> as 1st argument, given: "
-							+ s1 + "; other arguments were: " + s2);
-		if (string_question_(s1).isFalse())
-			throw new SchemeException(
-					"string>?: expects type <string> as 2nd argument, given: "
-							+ s2 + "; other arguments were: " + s1);
-		if (((String) s1).compareTo((String) s2) > 0)
-			return Logic.TRUE;
-		else
-			return Logic.FALSE;
+	private static org.plt.types.Logic string_greaterthan__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string>?");
+		arrayTypeCheck(arr, "java.lang.String", "string>?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).compareTo((String) n2) > 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_greaterthan__question_(Object n1,
+			Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_greaterthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic string_greaterthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string>=?");
+		arrayTypeCheck(arr, "java.lang.String", "string>=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).compareTo((String) n2) >= 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic string_greaterthan__equal__question_(
-			Object s1, Object s2) {
-		return toLogic(string_equal__question_(s1, s2).isTrue()
-				|| string_greaterthan__question_(s1, s2).isTrue());
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_greaterthan__equal__question_(arr);
 	}
 
-	public static org.plt.types.Logic string_lessthan__question_(Object s1,
-			Object s2) {
-		return toLogic(string_greaterthan__equal__question_(s1, s2).isFalse());
+	private static org.plt.types.Logic string_lessthan__question_(Object[] arr) {
+		arraySizeCheck(arr, 2, "string<?");
+		arrayTypeCheck(arr, "java.lang.String", "string<?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).compareTo((String) n2) < 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_lessthan__question_(Object n1,
+			Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_lessthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic string_lessthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string<=?");
+		arrayTypeCheck(arr, "java.lang.String", "string<=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).compareTo((String) n2) <= 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic string_lessthan__equal__question_(
-			Object s1, Object s2) {
-		return toLogic(string_greaterthan__question_(s1, s2).isFalse());
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_lessthan__equal__question_(arr);
 	}
 
 	private static org.plt.types.Logic natural_question_(Object n) {
