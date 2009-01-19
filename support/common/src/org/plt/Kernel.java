@@ -8,6 +8,20 @@ import net.dclausen.microfloat.*;
 import org.plt.types.Bignum;
 
 public class Kernel {
+    static private Class stringClass;
+    static private Class characterClass;
+    static { 
+	// Workaround bug in CLDC 1.0.  Bug 4313427 doesn't allow us to use
+	// java.lang.String.class directly.
+	// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4313427
+	try {
+	    stringClass = Class.forName("java.lang.String");
+	    characterClass = Class.forName("java.lang.Character");
+	} catch (ClassNotFoundException e) {
+	    throw new SchemeException(e);
+	}
+    }
+
 
 	static private java.util.Random randgen = new java.util.Random();
 
@@ -771,7 +785,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_greaterthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string>?");
-		arrayTypeCheck(arr, java.lang.String.class, "string>?");
+		arrayTypeCheck(arr, stringClass, "string>?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -789,7 +803,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_greaterthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string>=?");
-		arrayTypeCheck(arr, java.lang.String.class, "string>=?");
+		arrayTypeCheck(arr, stringClass, "string>=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -806,7 +820,7 @@ public class Kernel {
 
 	private static org.plt.types.Logic string_lessthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "string<?");
-		arrayTypeCheck(arr, java.lang.String.class, "string<?");
+		arrayTypeCheck(arr, stringClass, "string<?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -824,7 +838,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_lessthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string<=?");
-		arrayTypeCheck(arr, java.lang.String.class, "string<=?");
+		arrayTypeCheck(arr, stringClass, "string<=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -932,7 +946,7 @@ public class Kernel {
 
 	private static org.plt.types.Logic char_equal__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char=?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char=?");
+		arrayTypeCheck(arr, characterClass, "char=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -949,7 +963,7 @@ public class Kernel {
 
 	private static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char<?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char<?");
+		arrayTypeCheck(arr, characterClass, "char<?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -968,7 +982,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_lessthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char<=?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char<=?");
+		arrayTypeCheck(arr, characterClass, "char<=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -986,7 +1000,7 @@ public class Kernel {
 
 	private static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char>?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char>?");
+		arrayTypeCheck(arr, characterClass, "char>?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1005,7 +1019,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_greaterthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char>=?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char>=?");
+		arrayTypeCheck(arr, characterClass, "char>=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1070,7 +1084,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_dash_ci_equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci=?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char-ci=?");
+		arrayTypeCheck(arr, characterClass, "char-ci=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1089,7 +1103,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_dash_ci_greaterthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci>?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char-ci>?");
+		arrayTypeCheck(arr, characterClass, "char-ci>?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1108,7 +1122,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci>=?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char-ci>=?");
+		arrayTypeCheck(arr, characterClass, "char-ci>=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1127,7 +1141,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_dash_ci_lessthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci<?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char-ci<?");
+		arrayTypeCheck(arr, characterClass, "char-ci<?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1146,7 +1160,7 @@ public class Kernel {
 	private static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci<=?");
-		arrayTypeCheck(arr, java.lang.Character.class, "char-ci<=?");
+		arrayTypeCheck(arr, characterClass, "char-ci<=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1165,7 +1179,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_dash_ci_equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string-ci=?");
-		arrayTypeCheck(arr, java.lang.String.class, "string-ci=?");
+		arrayTypeCheck(arr, stringClass, "string-ci=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1184,7 +1198,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_dash_ci_greaterthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string-ci>?");
-		arrayTypeCheck(arr, java.lang.String.class, "string-ci>?");
+		arrayTypeCheck(arr, stringClass, "string-ci>?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1203,7 +1217,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string-ci>=?");
-		arrayTypeCheck(arr, java.lang.String.class, "string-ci>=?");
+		arrayTypeCheck(arr, stringClass, "string-ci>=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1222,7 +1236,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_dash_ci_lessthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string-ci<?");
-		arrayTypeCheck(arr, java.lang.String.class, "string-ci<?");
+		arrayTypeCheck(arr, stringClass, "string-ci<?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1241,7 +1255,7 @@ public class Kernel {
 	private static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "string-ci<=?");
-		arrayTypeCheck(arr, java.lang.String.class, "string-ci<=?");
+		arrayTypeCheck(arr, stringClass, "string-ci<=?");
 
 		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
 			public boolean satisfied(Object n1, Object n2) {
@@ -1275,7 +1289,7 @@ public class Kernel {
 	}
 
 	private static Object string_dash_append(Object[] arr) {
-		arrayTypeCheck(arr, java.lang.String.class, "string-append");
+		arrayTypeCheck(arr, stringClass, "string-append");
 
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < arr.length; i++) {
@@ -1290,7 +1304,7 @@ public class Kernel {
 	}
 
 	public static Object string(Object[] arr) {
-		arrayTypeCheck(arr, java.lang.Character.class, "string");
+		arrayTypeCheck(arr, characterClass, "string");
 
 		char[] ret = new char[arr.length];
 		for (int i = 0; i < arr.length; i++)
