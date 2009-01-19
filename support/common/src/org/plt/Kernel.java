@@ -8,20 +8,19 @@ import net.dclausen.microfloat.*;
 import org.plt.types.Bignum;
 
 public class Kernel {
-    static private Class stringClass;
-    static private Class characterClass;
-    static { 
-	// Workaround bug in CLDC 1.0.  Bug 4313427 doesn't allow us to use
-	// java.lang.String.class directly.
-	// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4313427
-	try {
-	    stringClass = Class.forName("java.lang.String");
-	    characterClass = Class.forName("java.lang.Character");
-	} catch (ClassNotFoundException e) {
-	    throw new SchemeException(e);
+	static private Class stringClass;
+	static private Class characterClass;
+	static {
+		// Workaround bug in CLDC 1.0. Bug 4313427 doesn't allow us to use
+		// java.lang.String.class directly.
+		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4313427
+		try {
+			stringClass = Class.forName("java.lang.String");
+			characterClass = Class.forName("java.lang.Character");
+		} catch (ClassNotFoundException e) {
+			throw new SchemeException(e);
+		}
 	}
-    }
-
 
 	static private java.util.Random randgen = new java.util.Random();
 
@@ -652,11 +651,11 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic pair_question_(Object n) {
-		return toLogic(n instanceof org.plt.types.List);
+		return toLogic(n instanceof org.plt.types.Pair);
 	}
 
 	public static org.plt.types.Logic cons_question_(Object n) {
-		return toLogic(n instanceof org.plt.types.List);
+		return toLogic(n instanceof org.plt.types.Pair);
 	}
 
 	public static org.plt.types.Logic number_question_(Object n) {
@@ -1349,4 +1348,8 @@ public class Kernel {
 
 		return new Rational((int) ((Character) n).charValue(), 1);
 	}
+
+	// private static org.plt.types.List append(Object[] n) {
+	// arrayTypeCheck(n, org.plt.types.List.class, "append");
+	// }
 }
