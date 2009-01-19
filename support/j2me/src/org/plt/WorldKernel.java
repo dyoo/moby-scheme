@@ -65,8 +65,8 @@ public class WorldKernel {
     // Loads up the image resource named by filename.
     // FIXME: we still don't have a good way to prevent the user from
     // colliding with this name accidently...
-    public static Picture _dash_kernel_dash_create_dash_image(Object[] args) {
-	return new FilePicture((String) args[0]);
+    public static Picture _dash_kernel_dash_create_dash_image(Object pathString) {
+	return new FilePicture((String) pathString);
     }
 
 
