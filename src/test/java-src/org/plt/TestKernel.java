@@ -535,9 +535,6 @@ public class TestKernel {
 
 	@Test
 	public void testList_dash__greaterthan_string() {
-		// Object[] arr = { 'h', 'e', 'l', 'l', 'o' };
-		// assertTrue(Kernel.string_equal__question_(
-		// Kernel.list_dash__greaterthan_string(arr), "hello").isTrue());
 		org.plt.types.List lst = new Pair('h', new Pair('i', Empty.EMPTY));
 		assertTrue(Kernel.string_equal__question_(
 				Kernel.list_dash__greaterthan_string(lst), "hi").isTrue());

@@ -1321,15 +1321,4 @@ public class Kernel {
 
 		return new String(ret);
 	}
-
-	// public static Object list_dash__greaterthan_string(Object[] arr) {
-	// arrayTypeCheck(arr, java.lang.Character.class, "list->string");
-	//
-	// char[] ret = new char[arr.length];
-	//
-	// for (int i = 0; i < ret.length; i++)
-	// ret[i] = ((Character) arr[i]).charValue();
-	//
-	// return new String(ret);
-	// }
 }
