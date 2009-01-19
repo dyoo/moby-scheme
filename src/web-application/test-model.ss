@@ -27,8 +27,8 @@
                            (lambda ()
                              body ...)
                            (lambda ()
-                             #;(void)
-                             (delete-model! model)))))))]))
+                             (void)
+                             #;(delete-model! model)))))))]))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
    

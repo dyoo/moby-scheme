@@ -309,6 +309,8 @@ public class TestKernel {
 		assertTrue(Kernel.char_equal__question_('a', 'a').isTrue());
 		assertTrue(Kernel.char_equal__question_('a', 'A').isFalse());
 		assertTrue(Kernel.char_equal__question_('a', 'b').isFalse());
+		assertTrue(Kernel.char_equal__question_(new Character('a'),
+                                                        new Character('a')).isTrue());
 	}
 
 	@Test
@@ -395,6 +397,8 @@ public class TestKernel {
 		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'a').isTrue());
 		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'A').isTrue());
 		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'b').isFalse());
+		assertTrue(Kernel.char_dash_ci_equal__question_(new Character('a'),
+                                                                new Character('a')).isTrue());
 	}
 
 	@Test

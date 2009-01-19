@@ -6,7 +6,8 @@
          scheme/file
          scheme/list
          "../compile-world.ss"
-         "../utils.ss")
+         "../utils.ss"
+         (planet jaymccarthy/sqlite:3))
 
 
 ;; The model we maintain has a maintenance thread, a request channel, and a response channel.
@@ -16,7 +17,7 @@
                       req-ch   ;; request channel
                       res-ch   ;; response channel
                       data-dir ;; absolute path
-                      snooze
+                      db
                       ) #:mutable)
 
 
@@ -49,6 +50,20 @@
 ;;;;;;
 
 
+;; model-scratch-dir: model -> path
+;; Returns the scratch directory used for compilation.
+(define (model-scratch-directory a-model)
+  (let ([p (build-path (model-data-dir a-model) "scratch")])
+    (make-directory* p)
+    p))
+  
+
+;; model-db-path: model -> path
+;; Returns the path of the database.
+(define (model-db-path a-model)
+  (build-path (model-data-dir a-model) "db.sqlite"))
+
+
 
 ;; make-model: path-string -> model
 ;; Creates a new model.
@@ -60,14 +75,18 @@
                               data-path
                               #f)])
     (make-directory* data-path)
-    (install-tables!)
+    (set-model-db! a-model (open (model-db-path a-model)))
+    (install-tables! a-model)
     (set-model-th! a-model 
                    (thread (lambda () 
                              (request-loop a-model))))
     a-model))
 
 
-(define (install-tables!)
+
+;; install-tables!: model -> void
+;; Installs the necessary tables if they don't already exist.
+(define (install-tables! a-model)
   (void))
 
 
@@ -125,7 +144,7 @@
 (define (compile-source a-model a-source a-platform)
   (define (do-platform-compilation generate binary-find)
     (let* ([name (source-program-name a-source)]
-           [dir (make-temporary-directory #:parent-directory (model-data-dir a-model))]
+           [dir (make-temporary-directory #:parent-directory (model-scratch-directory a-model))]
            [program-path (build-path dir (string-append name ".ss"))])
       (call-with-output-file program-path 
         (lambda (op)
@@ -136,7 +155,6 @@
              [bin (make-binary (path->string (file-name-from-path bin-path)) (get-file-bytes bin-path))])
         #;(delete-directory/files dir)
         bin)))
-  
   (with-serializing 
    a-model
    (lambda ()
@@ -149,16 +167,18 @@
 
 
 
-
+;; apk-path?: path -> boolean
+;; Returns true if the path looks like an Android package.
 (define (apk-path? a-path)
   (and (filename-extension a-path)
        (bytes=? #"apk" (filename-extension a-path))))
 
+
+;; jar-path?: path -> boolean
+;; Returns true if the path looks like a jar package.
 (define (jar-path? a-path)
   (and (filename-extension a-path)
        (bytes=? #"jar" (filename-extension a-path))))
-
-
 
 
 
@@ -181,9 +201,9 @@
 (provide/contract [rename -make-model make-model (path-string? . -> . model?)]
                   [close-model (model? . -> . any)]
                   [delete-model! (model? . -> . any)]                  
+                  
                   [compile-source (model? source? platform? . -> . binary?)]
-                  
-                  
+                  ;[save-binary-link (model? binary? . -> . string?)]
 
                   [struct source ((id string?)
                                   (program-name string?)
