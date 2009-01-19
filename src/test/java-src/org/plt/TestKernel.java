@@ -15,12 +15,13 @@ public class TestKernel {
 	// Fill me in with more test cases!
 	@Test
 	public void testTan() {
-		assertTrue(Kernel._equal_(Kernel.tan(Kernel.ZERO), Kernel.ZERO)
-				.isTrue());
+		Object[] arr = { Kernel.tan(Kernel.ZERO), Kernel.ZERO };
+		assertTrue(Kernel._equal_(arr).isTrue());
 	}
 
 	@Test
 	public void testSinh() {
+		Object[] arr
 		assertTrue(Kernel._equal_(Kernel.sinh(Kernel.ZERO), Kernel.ZERO)
 				.isTrue());
 	}
@@ -356,4 +357,10 @@ public class TestKernel {
 		assertTrue(Kernel.char_greaterthan__equal__question_(arr2).isFalse());
 		assertTrue(Kernel.char_greaterthan__equal__question_(arr3).isTrue());
 	}
+
+	// @Test
+	// public void testChar_dash_upper_dash_case_question_() {
+	// assertTrue(Kernel.char_dash_upper_dash_case_question_('a').isFalse());
+	// assertTrue(Kernel.char_dash_upper_dash_case_question_('A').isTrue());
+	// }
 }
