@@ -1006,6 +1006,10 @@ public class Kernel {
 
 		return Character.toLowerCase((Character) n);
 	}
-	
-	
+
+	public static org.plt.types.Logic char_dash_whitespace_question_(Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-whitespace?");
+
+		return toLogic(Character.isWhitespace((Character) n));
+	}
 }

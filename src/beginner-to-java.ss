@@ -645,6 +645,12 @@
     char<=?
     char>?
     char>=?
+    char-downcase
+    char-lower-case?
+    char-numeric?
+    char-upcase
+    char-upper-case?
+    char-whitespace?
     
     ;; Symbols
     symbol=?

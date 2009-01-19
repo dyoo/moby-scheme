@@ -103,12 +103,6 @@ Primitives that need implementation:
  char-ci=?
  char-ci>=?
  char-ci>?
- char-downcase
- char-lower-case?
- char-numeric?
- char-upcase
- char-upper-case?
- char-whitespace?
  format
  list->string
  make-string

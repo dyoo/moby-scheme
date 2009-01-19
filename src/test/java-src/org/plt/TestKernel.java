@@ -364,9 +364,49 @@ public class TestKernel {
 		assertTrue(Kernel.char_greaterthan__equal__question_(arr3).isTrue());
 	}
 
-	// @Test
-	// public void testChar_dash_upper_dash_case_question_() {
-	// assertTrue(Kernel.char_dash_upper_dash_case_question_('a').isFalse());
-	// assertTrue(Kernel.char_dash_upper_dash_case_question_('A').isTrue());
-	// }
+	@Test
+	public void testChar_dash_upper_dash_case_question_() {
+		assertTrue(Kernel.char_dash_upper_dash_case_question_('a').isFalse());
+		assertTrue(Kernel.char_dash_upper_dash_case_question_('A').isTrue());
+	}
+
+	@Test
+	public void testChar_dash_lower_dash_case_question_() {
+		assertTrue(Kernel.char_dash_lower_dash_case_question_('A').isFalse());
+		assertTrue(Kernel.char_dash_lower_dash_case_question_('a').isTrue());
+	}
+
+	@Test
+	public void testChar_dash_numeric_question_() {
+		assertTrue(Kernel.char_dash_numeric_question_('a').isFalse());
+		assertTrue(Kernel.char_dash_numeric_question_('1').isTrue());
+	}
+
+	@Test
+	public void testChar_dash_upcase() {
+		Object[] arr1 = { Kernel.char_dash_upcase('1'), '1' };
+		Object[] arr2 = { Kernel.char_dash_upcase('A'), 'A' };
+		Object[] arr3 = { Kernel.char_dash_upcase('a'), 'A' };
+
+		assertTrue(Kernel.char_equal__question_(arr1).isTrue());
+		assertTrue(Kernel.char_equal__question_(arr2).isTrue());
+		assertTrue(Kernel.char_equal__question_(arr3).isTrue());
+	}
+
+	@Test
+	public void testChar_dash_downcase() {
+		Object[] arr1 = { Kernel.char_dash_downcase('1'), '1' };
+		Object[] arr2 = { Kernel.char_dash_downcase('a'), 'a' };
+		Object[] arr3 = { Kernel.char_dash_downcase('A'), 'a' };
+
+		assertTrue(Kernel.char_equal__question_(arr1).isTrue());
+		assertTrue(Kernel.char_equal__question_(arr2).isTrue());
+		assertTrue(Kernel.char_equal__question_(arr3).isTrue());
+	}
+
+	@Test
+	public void testChar_dash_whitespace_question_() {
+		assertTrue(Kernel.char_dash_whitespace_question_(' ').isTrue());
+		assertTrue(Kernel.char_dash_whitespace_question_('a').isFalse());
+	}
 }
