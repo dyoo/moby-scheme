@@ -545,4 +545,11 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(Kernel.char_dash__greaterthan_integer('1'),
 				new Rational(49, 1)).isTrue());
 	}
+
+	@Test
+	public void testMember() {
+		org.plt.types.List lst = new Pair('h', new Pair('i', Empty.EMPTY));
+		assertTrue(Kernel.member('i', lst).isTrue());
+		assertTrue(Kernel.member('a', lst).isFalse());
+	}
 }
