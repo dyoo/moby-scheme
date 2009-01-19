@@ -61,6 +61,25 @@ public class Kernel {
 		}
 	}
 
+	private static interface RelationChecker {
+		public boolean satisfied(Object n1, Object n2);
+	}
+
+	/**
+	 * assumption: arr.length >= 2
+	 */
+	private static boolean arrayRelationCheck(Object[] arr, RelationChecker rc) {
+		Object prev = arr[0];
+
+		for (int i = 1; i < arr.length; i++) {
+			if (rc.satisfied(prev, arr[i]) == false)
+				return false;
+			prev = arr[i];
+		}
+
+		return true;
+	}
+
 	// no-op: void -> void
 	public static Object no_op(Object[] args) {
 		return null;
@@ -908,27 +927,22 @@ public class Kernel {
 		arraySizeCheck(arr, 2, "char=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char=?");
 
-		Character first = (Character) arr[0];
-
-		for (int i = 1; i < arr.length; i++)
-			if (((Character) arr[i]).compareTo(first) != 0)
-				return Logic.FALSE;
-
-		return Logic.TRUE;
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((Character) n1).compareTo((Character) n2) == 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char<?");
 		arrayTypeCheck(arr, "java.lang.Character", "char<?");
 
-		Character prev = (Character) arr[0];
-		for (int i = 1; i < arr.length; i++) {
-			if (((Character) arr[i]).compareTo(prev) <= 0)
-				return Logic.FALSE;
-			prev = (Character) arr[i];
-		}
-
-		return Logic.TRUE;
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((Character) n1).compareTo((Character) n2) < 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic char_lessthan__equal__question_(
@@ -936,28 +950,22 @@ public class Kernel {
 		arraySizeCheck(arr, 2, "char<=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char<=?");
 
-		Character prev = (Character) arr[0];
-		for (int i = 1; i < arr.length; i++) {
-			if (((Character) arr[i]).compareTo(prev) < 0)
-				return Logic.FALSE;
-			prev = (Character) arr[i];
-		}
-
-		return Logic.TRUE;
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((Character) n1).compareTo((Character) n2) <= 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char>?");
 		arrayTypeCheck(arr, "java.lang.Character", "char>?");
 
-		Character prev = (Character) arr[0];
-		for (int i = 1; i < arr.length; i++) {
-			if (((Character) arr[i]).compareTo(prev) >= 0)
-				return Logic.FALSE;
-			prev = (Character) arr[i];
-		}
-
-		return Logic.TRUE;
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((Character) n1).compareTo((Character) n2) > 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic char_greaterthan__equal__question_(
@@ -965,14 +973,11 @@ public class Kernel {
 		arraySizeCheck(arr, 2, "char>=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char>=?");
 
-		Character prev = (Character) arr[0];
-		for (int i = 1; i < arr.length; i++) {
-			if (((Character) arr[i]).compareTo(prev) > 0)
-				return Logic.FALSE;
-			prev = (Character) arr[i];
-		}
-
-		return Logic.TRUE;
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((Character) n1).compareTo((Character) n2) >= 0);
+			}
+		}));
 	}
 
 	public static org.plt.types.Logic char_dash_upper_dash_case_question_(
@@ -1012,4 +1017,15 @@ public class Kernel {
 
 		return toLogic(Character.isWhitespace((Character) n));
 	}
+
+	public static org.plt.types.Logic char_dash_alphabetic_question_(Object n) {
+		itemTypeCheck(n, "java.lang.Character", "char-alphabetic?");
+
+		return toLogic(Character.isLetter((Character) n));
+	}
+
+	// public static org.plt.types.Logic char_dash_ci_equal__question_(Object[]
+	// arr) {
+	// arraySizeCheck(arr, 2, "char-ci=?");
+	// }
 }
