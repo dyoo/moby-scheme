@@ -306,57 +306,38 @@ public class TestKernel {
 
 	@Test
 	public void testChar_equal__question_() {
-		Object[] arr1 = { 'a', 'a', 'a' };
-		Object[] arr2 = { 'a', 'a', 'b' };
-		Object[] arr3 = { 'a', 'a', 'A' };
-
-		assertTrue(Kernel.char_equal__question_(arr1).isTrue());
-		assertTrue(Kernel.char_equal__question_(arr2).isFalse());
-		assertTrue(Kernel.char_equal__question_(arr3).isFalse());
+		assertTrue(Kernel.char_equal__question_('a', 'a').isTrue());
+		assertTrue(Kernel.char_equal__question_('a', 'A').isFalse());
+		assertTrue(Kernel.char_equal__question_('a', 'b').isFalse());
 	}
 
 	@Test
 	public void testChar_lessthan__question_() {
-		Object[] arr1 = { 'a', 'b', 'c' };
-		Object[] arr2 = { 'a', 'c', 'b' };
-		Object[] arr3 = { 'a', 'b', 'b' };
-
-		assertTrue(Kernel.char_lessthan__question_(arr1).isTrue());
-		assertTrue(Kernel.char_lessthan__question_(arr2).isFalse());
-		assertTrue(Kernel.char_lessthan__question_(arr3).isFalse());
+		assertTrue(Kernel.char_lessthan__question_('a', 'b').isTrue());
+		assertTrue(Kernel.char_lessthan__question_('a', 'a').isFalse());
+		assertTrue(Kernel.char_lessthan__question_('b', 'a').isFalse());
 	}
 
 	@Test
 	public void testChar_lessthan__equal__question_() {
-		Object[] arr1 = { 'a', 'b', 'b' };
-		Object[] arr2 = { 'a', 'b', 'c' };
-		Object[] arr3 = { 'a', 'c', 'b' };
-
-		assertTrue(Kernel.char_lessthan__equal__question_(arr1).isTrue());
-		assertTrue(Kernel.char_lessthan__equal__question_(arr2).isTrue());
-		assertTrue(Kernel.char_lessthan__equal__question_(arr3).isFalse());
+		assertTrue(Kernel.char_lessthan__equal__question_('a', 'b').isTrue());
+		assertTrue(Kernel.char_lessthan__equal__question_('a', 'a').isTrue());
+		assertTrue(Kernel.char_lessthan__equal__question_('b', 'a').isFalse());
 	}
 
 	@Test
 	public void testChar_greaterthan_question_() {
-		Object[] arr1 = { 'c', 'b', 'a' };
-		Object[] arr2 = { 'c', 'a', 'b' };
-		Object[] arr3 = { 'c', 'b', 'b' };
-
-		assertTrue(Kernel.char_greaterthan__question_(arr1).isTrue());
-		assertTrue(Kernel.char_greaterthan__question_(arr2).isFalse());
-		assertTrue(Kernel.char_greaterthan__question_(arr3).isFalse());
+		assertTrue(Kernel.char_greaterthan__question_('b', 'a').isTrue());
+		assertTrue(Kernel.char_greaterthan__question_('b', 'b').isFalse());
+		assertTrue(Kernel.char_greaterthan__question_('a', 'b').isFalse());
 	}
 
 	@Test
 	public void testChar_greaterthan__equal__question_() {
-		Object[] arr1 = { 'c', 'b', 'a' };
-		Object[] arr2 = { 'c', 'a', 'b' };
-		Object[] arr3 = { 'c', 'b', 'b' };
-
-		assertTrue(Kernel.char_greaterthan__equal__question_(arr1).isTrue());
-		assertTrue(Kernel.char_greaterthan__equal__question_(arr2).isFalse());
-		assertTrue(Kernel.char_greaterthan__equal__question_(arr3).isTrue());
+		assertTrue(Kernel.char_greaterthan__equal__question_('b', 'a').isTrue());
+		assertTrue(Kernel.char_greaterthan__equal__question_('a', 'b')
+				.isFalse());
+		assertTrue(Kernel.char_greaterthan__equal__question_('b', 'b').isTrue());
 	}
 
 	@Test
@@ -379,24 +360,22 @@ public class TestKernel {
 
 	@Test
 	public void testChar_dash_upcase() {
-		Object[] arr1 = { Kernel.char_dash_upcase('1'), '1' };
-		Object[] arr2 = { Kernel.char_dash_upcase('A'), 'A' };
-		Object[] arr3 = { Kernel.char_dash_upcase('a'), 'A' };
-
-		assertTrue(Kernel.char_equal__question_(arr1).isTrue());
-		assertTrue(Kernel.char_equal__question_(arr2).isTrue());
-		assertTrue(Kernel.char_equal__question_(arr3).isTrue());
+		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_upcase('1'),
+				'1').isTrue());
+		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_upcase('A'),
+				'A').isTrue());
+		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_upcase('a'),
+				'A').isTrue());
 	}
 
 	@Test
 	public void testChar_dash_downcase() {
-		Object[] arr1 = { Kernel.char_dash_downcase('1'), '1' };
-		Object[] arr2 = { Kernel.char_dash_downcase('a'), 'a' };
-		Object[] arr3 = { Kernel.char_dash_downcase('A'), 'a' };
-
-		assertTrue(Kernel.char_equal__question_(arr1).isTrue());
-		assertTrue(Kernel.char_equal__question_(arr2).isTrue());
-		assertTrue(Kernel.char_equal__question_(arr3).isTrue());
+		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_downcase('1'),
+				'1').isTrue());
+		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_downcase('a'),
+				'a').isTrue());
+		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_downcase('A'),
+				'a').isTrue());
 	}
 
 	@Test
@@ -413,73 +392,48 @@ public class TestKernel {
 
 	@Test
 	public void testChar_dash_ci_equal__question_() {
-		Object[] arr1 = { 'a', 'A' };
-		Object[] arr2 = { 'A', 'A' };
-		Object[] arr3 = { 'a', 'b', 'A' };
-		assertTrue(Kernel.char_dash_ci_equal__question_(arr1).isTrue());
-		assertTrue(Kernel.char_dash_ci_equal__question_(arr2).isTrue());
-		assertTrue(Kernel.char_dash_ci_equal__question_(arr3).isFalse());
+		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'a').isTrue());
+		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'A').isTrue());
+		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'b').isFalse());
 	}
 
 	@Test
 	public void testChar_dash_ci_greaterthan__question_() {
-		Object[] arr1 = { 'B', 'a' };
-		Object[] arr2 = { 'b', 'A' };
-		Object[] arr3 = { 'a', 'b' };
-		Object[] arr4 = { 'a', 'A' };
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_(arr1).isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_(arr2).isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_(arr3).isFalse());
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_(arr4).isFalse());
+		assertTrue(Kernel.char_dash_ci_greaterthan__question_('B', 'a')
+				.isTrue());
+		assertTrue(Kernel.char_dash_ci_greaterthan__question_('b', 'A')
+				.isTrue());
+		assertTrue(Kernel.char_dash_ci_greaterthan__question_('a', 'b')
+				.isFalse());
+		assertTrue(Kernel.char_dash_ci_greaterthan__question_('a', 'A')
+				.isFalse());
 	}
 
 	@Test
 	public void testChar_dash_ci_greaterthan__equal__question_() {
-		Object[] arr1 = { 'B', 'a' };
-		Object[] arr2 = { 'b', 'A' };
-		Object[] arr3 = { 'a', 'b' };
-		Object[] arr4 = { 'a', 'A' };
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(arr1)
+		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('B', 'a')
 				.isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(arr2)
+		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('b', 'A')
 				.isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(arr3)
+		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('a', 'b')
 				.isFalse());
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(arr4)
+		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('a', 'A')
 				.isTrue());
 	}
 
 	@Test
 	public void testChar_dash_ci_lessthan__question_() {
-		Object[] arr1 = { 'B', 'a' };
-		Object[] arr2 = { 'b', 'A' };
-		Object[] arr3 = { 'a', 'b', 'C' };
-		Object[] arr4 = { 'a', 'B', 'c' };
-		Object[] arr5 = { 'a', 'B', 'b' };
-		assertTrue(Kernel.char_dash_ci_lessthan__question_(arr1).isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__question_(arr2).isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__question_(arr3).isTrue());
-		assertTrue(Kernel.char_dash_ci_lessthan__question_(arr4).isTrue());
-		assertTrue(Kernel.char_dash_ci_lessthan__question_(arr5).isFalse());
+		assertTrue(Kernel.char_dash_ci_lessthan__question_('B', 'a').isFalse());
+		assertTrue(Kernel.char_dash_ci_lessthan__question_('b', 'A').isFalse());
 	}
 
 	@Test
 	public void testChar_dash_ci_lessthan__equal__question_() {
-		Object[] arr1 = { 'B', 'a' };
-		Object[] arr2 = { 'b', 'A' };
-		Object[] arr3 = { 'a', 'b', 'C' };
-		Object[] arr4 = { 'a', 'B', 'c' };
-		Object[] arr5 = { 'a', 'B', 'b' };
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr1)
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_('B', 'a')
 				.isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr2)
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_('b', 'A')
 				.isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr3)
-				.isTrue());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr4)
-				.isTrue());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr5)
-				.isTrue());
+
 	}
 
 	@Test

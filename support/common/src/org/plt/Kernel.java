@@ -920,7 +920,7 @@ public class Kernel {
 		return toLogic(n instanceof Character);
 	}
 
-	public static org.plt.types.Logic char_equal__question_(Object[] arr) {
+	private static org.plt.types.Logic char_equal__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char=?");
 
@@ -932,7 +932,12 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
+	public static org.plt.types.Logic char_equal__question_(Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_equal__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char<?");
 		arrayTypeCheck(arr, "java.lang.Character", "char<?");
 
@@ -944,7 +949,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_lessthan__equal__question_(
+	public static org.plt.types.Logic char_lessthan__question_(Object n1,
+			Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_lessthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_lessthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char<=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char<=?");
@@ -957,7 +968,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
+	public static org.plt.types.Logic char_lessthan__equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_lessthan__equal__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
 		arraySizeCheck(arr, 2, "char>?");
 		arrayTypeCheck(arr, "java.lang.Character", "char>?");
 
@@ -969,7 +986,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_greaterthan__equal__question_(
+	public static org.plt.types.Logic char_greaterthan__question_(Object n1,
+			Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_greaterthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_greaterthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char>=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char>=?");
@@ -980,6 +1003,12 @@ public class Kernel {
 						.charValue());
 			}
 		}));
+	}
+
+	public static org.plt.types.Logic char_greaterthan__equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_greaterthan__equal__question_(arr);
 	}
 
 	public static org.plt.types.Logic char_dash_upper_dash_case_question_(
@@ -1026,7 +1055,8 @@ public class Kernel {
 		return toLogic(Character.isLetter((Character) n));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_equal__question_(Object[] arr) {
+	private static org.plt.types.Logic char_dash_ci_equal__question_(
+			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char-ci=?");
 
@@ -1038,7 +1068,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_greaterthan__question_(
+	public static org.plt.types.Logic char_dash_ci_equal__question_(Object n1,
+			Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_dash_ci_equal__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_dash_ci_greaterthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci>?");
 		arrayTypeCheck(arr, "java.lang.Character", "char-ci>?");
@@ -1051,7 +1087,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
+	public static org.plt.types.Logic char_dash_ci_greaterthan__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_dash_ci_greaterthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci>=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char-ci>=?");
@@ -1064,7 +1106,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_lessthan__question_(
+	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_dash_ci_greaterthan__equal__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_dash_ci_lessthan__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci<?");
 		arrayTypeCheck(arr, "java.lang.Character", "char-ci<?");
@@ -1077,7 +1125,13 @@ public class Kernel {
 		}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
+	public static org.plt.types.Logic char_dash_ci_lessthan__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_dash_ci_lessthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
 			Object[] arr) {
 		arraySizeCheck(arr, 2, "char-ci<=?");
 		arrayTypeCheck(arr, "java.lang.Character", "char-ci<=?");
@@ -1088,6 +1142,12 @@ public class Kernel {
 						.toLowerCase((Character) n2));
 			}
 		}));
+	}
+
+	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return char_dash_ci_lessthan__equal__question_(arr);
 	}
 
 	private static org.plt.types.Logic string_dash_ci_equal__question_(
