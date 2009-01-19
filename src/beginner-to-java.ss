@@ -674,6 +674,11 @@
     string-ref
     string-copy
     string->number
+    string-ci<=?
+    string-ci<?
+    string-ci=?
+    string-ci>=?
+    string-ci>?
     
     ;; World
     empty-scene

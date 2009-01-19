@@ -1050,4 +1050,99 @@ public class Kernel {
 			}
 		}));
 	}
+
+	private static org.plt.types.Logic string_dash_ci_equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string-ci=?");
+		arrayTypeCheck(arr, "java.lang.String", "string-ci=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).toLowerCase().compareTo(
+						((String) n2).toLowerCase()) == 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_dash_ci_equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_dash_ci_equal__question_(arr);
+	}
+
+	private static org.plt.types.Logic string_dash_ci_greaterthan__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string-ci>?");
+		arrayTypeCheck(arr, "java.lang.String", "string-ci>?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).toLowerCase().compareTo(
+						((String) n2).toLowerCase()) > 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_dash_ci_greaterthan__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_dash_ci_greaterthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string-ci>=?");
+		arrayTypeCheck(arr, "java.lang.String", "string-ci>=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).toLowerCase().compareTo(
+						((String) n2).toLowerCase()) >= 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_dash_ci_greaterthan__equal__question_(arr);
+	}
+
+	private static org.plt.types.Logic string_dash_ci_lessthan__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string-ci<?");
+		arrayTypeCheck(arr, "java.lang.String", "string-ci<?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).toLowerCase().compareTo(
+						((String) n2).toLowerCase()) < 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_dash_ci_lessthan__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_dash_ci_lessthan__question_(arr);
+	}
+
+	private static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
+			Object[] arr) {
+		arraySizeCheck(arr, 2, "string-ci<=?");
+		arrayTypeCheck(arr, "java.lang.String", "string-ci<=?");
+
+		return toLogic(arrayRelationCheck(arr, new RelationChecker() {
+			public boolean satisfied(Object n1, Object n2) {
+				return (((String) n1).toLowerCase().compareTo(
+						((String) n2).toLowerCase()) <= 0);
+			}
+		}));
+	}
+
+	public static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
+			Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_dash_ci_lessthan__equal__question_(arr);
+	}
 }

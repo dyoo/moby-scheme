@@ -470,10 +470,60 @@ public class TestKernel {
 		Object[] arr3 = { 'a', 'b', 'C' };
 		Object[] arr4 = { 'a', 'B', 'c' };
 		Object[] arr5 = { 'a', 'B', 'b' };
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr1).isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr2).isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr3).isTrue());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr4).isTrue());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr5).isTrue());
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr1)
+				.isFalse());
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr2)
+				.isFalse());
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr3)
+				.isTrue());
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr4)
+				.isTrue());
+		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(arr5)
+				.isTrue());
+	}
+
+	@Test
+	public void testString_dash_ci_equal__question_() {
+		assertTrue(Kernel.string_dash_ci_equal__question_("Hi", "hI").isTrue());
+		assertTrue(Kernel.string_dash_ci_equal__question_("hi", "hi").isTrue());
+		assertTrue(Kernel.string_dash_ci_equal__question_("hi", "ha").isFalse());
+	}
+
+	@Test
+	public void testString_dash_ci_greaterthan__question_() {
+		assertTrue(Kernel.string_dash_ci_greaterthan__question_("Hi", "hi")
+				.isFalse());
+		assertTrue(Kernel.string_dash_ci_greaterthan__question_("H", "a")
+				.isTrue());
+		assertTrue(Kernel.string_dash_ci_greaterthan__question_("h", "a")
+				.isTrue());
+	}
+
+	@Test
+	public void testString_dash_ci_greaterthan__equal__question_() {
+		assertTrue(Kernel.string_dash_ci_greaterthan__equal__question_("Hi",
+				"hI").isTrue());
+		assertTrue(Kernel
+				.string_dash_ci_greaterthan__equal__question_("H", "a")
+				.isTrue());
+	}
+
+	@Test
+	public void testString_dash_ci_lessthan__question_() {
+		assertTrue(Kernel.string_dash_ci_lessthan__question_("h", "M").isTrue());
+		assertTrue(Kernel.string_dash_ci_lessthan__question_("h", "H")
+				.isFalse());
+		assertTrue(Kernel.string_dash_ci_lessthan__question_("b", "a")
+				.isFalse());
+	}
+
+	@Test
+	public void testString_dash_ci_lessthan__equal__question_() {
+		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("h", "M")
+				.isTrue());
+		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("h", "H")
+				.isTrue());
+		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("b", "a")
+				.isFalse());
 	}
 }

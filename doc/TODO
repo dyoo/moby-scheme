@@ -104,11 +104,6 @@ Primitives that need implementation:
  string->list
  string->symbol
  string-append
- string-ci<=?
- string-ci<?
- string-ci=?
- string-ci>=?
- string-ci>?
  image=?
  image?
  eof
