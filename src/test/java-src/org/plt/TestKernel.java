@@ -539,4 +539,11 @@ public class TestKernel {
 		assertTrue(Kernel.string_equal__question_(
 				Kernel.list_dash__greaterthan_string(lst), "hi").isTrue());
 	}
+
+	@Test
+	public void testString_dash_greaterthan_symbol() {
+		assertTrue(Kernel.equal_question_(
+				Kernel.string_dash_greaterthan_symbol("hi"),
+				Symbol.makeInstance("hi")).isTrue());
+	}
 }
