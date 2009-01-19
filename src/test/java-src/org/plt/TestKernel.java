@@ -504,10 +504,14 @@ public class TestKernel {
 
 	@Test
 	public void testString_dash_greaterthan_list() {
-		Object[] arr1 = { 'h', 'i' };
-		Object[] arr2 = { 'h', 'a' };
-		assertTrue(arrayEqual(Kernel.string_dash__greaterthan_list("hi"), arr1));
-		assertFalse(arrayEqual(Kernel.string_dash__greaterthan_list("hi"), arr2));
+
+		org.plt.types.List lst1 = new Pair('h', new Pair('i', Empty.EMPTY));
+		org.plt.types.List lst2 = new Pair('h', new Pair('a', Empty.EMPTY));
+
+		assertTrue(Kernel.equal_question_(
+				Kernel.string_dash__greaterthan_list("hi"), lst1).isTrue());
+		assertTrue(Kernel.equal_question_(
+				Kernel.string_dash__greaterthan_list("hi"), lst2).isFalse());
 	}
 
 	@Test
