@@ -35,6 +35,19 @@ public class Kernel {
 
 	}
 
+	private static void listTypeCheck(org.plt.types.List lst, Class cl,
+			String funName) {
+		while (lst.isEmpty() == false) {
+			if (cl.isInstance(lst.first()) == false) {
+				String err = funName + ": expects argument of type <list of "
+						+ cl.getName() + ">, given: " + lst;
+				throw new SchemeException(err);
+			}
+
+			lst = lst.rest();
+		}
+	}
+
 	private static void arraySizeCheck(Object[] args, int sizeLowerBound,
 			String funName) {
 		if (args.length < sizeLowerBound)
@@ -1259,13 +1272,6 @@ public class Kernel {
 			ret = new Pair(((String) n).charAt(i), ret);
 
 		return ret;
-		//
-		// Character[] ret = new Character[((String) n).length()];
-		//
-		// for (int i = 0; i < ((String) n).length(); i++)
-		// ret[i] = new Character(((String) n).charAt(i));
-		//
-		// return ret;
 	}
 
 	private static Object string_dash_append(Object[] arr) {
@@ -1312,6 +1318,8 @@ public class Kernel {
 
 	public static Object list_dash__greaterthan_string(Object n) {
 		itemTypeCheck(n, "org.plt.types.List", "list->string");
+		listTypeCheck((org.plt.types.List) n, java.lang.Character.class,
+				"list->string");
 
 		char[] ret = new char[Kernel.length(n).toInt()];
 		for (int i = 0; i < ret.length; i++) {
