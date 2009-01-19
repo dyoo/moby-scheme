@@ -1349,7 +1349,18 @@ public class Kernel {
 		return new Rational((int) ((Character) n).charValue(), 1);
 	}
 
-	// private static org.plt.types.List append(Object[] n) {
-	// arrayTypeCheck(n, org.plt.types.List.class, "append");
-	// }
+	public static org.plt.types.Logic member(Object n1, Object n2) {
+		if ((n2 instanceof org.plt.types.List) == false)
+			throw new SchemeException(
+					"member: second argument must be of type <list>, given: "
+							+ n1 + " and " + n2);
+
+		while (((org.plt.types.List) n2).isEmpty() == false
+				&& Kernel
+						.equal_question_(n1, ((org.plt.types.List) n2).first())
+						.isFalse())
+			n2 = ((org.plt.types.List) n2).rest();
+
+		return toLogic(((org.plt.types.List) n2).isEmpty() == false);
+	}
 }
