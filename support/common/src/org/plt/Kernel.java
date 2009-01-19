@@ -1244,6 +1244,37 @@ public class Kernel {
 		Object[] arr = { n1, n2 };
 		return string_dash_ci_lessthan__equal__question_(arr);
 	}
-	
-	
+
+	public static org.plt.types.Symbol string_dash__greaterthan_symbol(Object n) {
+		itemTypeCheck(n, "java.lang.String", "string->symbol");
+
+		return Symbol.makeInstance((String) n);
+	}
+
+	public static Object[] string_dash__greaterthan_list(Object n) {
+		itemTypeCheck(n, "java.lang.String", "string->list");
+
+		Character[] ret = new Character[((String) n).length()];
+
+		for (int i = 0; i < ((String) n).length(); i++)
+			ret[i] = ((String) n).charAt(i);
+
+		return ret;
+	}
+
+	private static Object string_dash_append(Object[] arr) {
+		arrayTypeCheck(arr, "java.lang.String", "string-append");
+
+		String ret = "";
+
+		for (Object a : arr)
+			ret = ret.concat((String) a);
+
+		return ret;
+	}
+
+	public static Object string_dash_append(Object n1, Object n2) {
+		Object[] arr = { n1, n2 };
+		return string_dash_append(arr);
+	}
 }

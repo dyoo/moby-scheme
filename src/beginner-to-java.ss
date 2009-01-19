@@ -679,6 +679,9 @@
     string-ci=?
     string-ci>=?
     string-ci>?
+    string->list
+    string->symbol 
+    string-append 
     
     ;; World
     empty-scene

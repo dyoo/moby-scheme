@@ -480,4 +480,35 @@ public class TestKernel {
 		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("b", "a")
 				.isFalse());
 	}
+
+	@Test
+	public void testString_dash__greaterthan_symbol() {
+		assertTrue(Symbol.makeInstance("hi").equals(Symbol.makeInstance("hi")));
+		assertTrue(Symbol.makeInstance("hi").equals(Symbol.makeInstance("ha")) == false);
+	}
+
+	private boolean arrayEqual(Object[] arr1, Object[] arr2) {
+		if (arr1.length != arr2.length)
+			return false;
+
+		for (int i = 0; i < arr1.length; i++)
+			if (arr1[i].equals(arr2[i]) == false)
+				return false;
+
+		return true;
+	}
+
+	@Test
+	public void testString_dash_greaterthan_list() {
+		Object[] arr1 = { 'h', 'i' };
+		Object[] arr2 = { 'h', 'a' };
+		assertTrue(arrayEqual(Kernel.string_dash__greaterthan_list("hi"), arr1));
+		assertFalse(arrayEqual(Kernel.string_dash__greaterthan_list("hi"), arr2));
+	}
+
+	@Test
+	public void testString_dash_append() {
+		assertTrue(Kernel.string_equal__question_("hello world",
+				Kernel.string_dash_append("hello", " world")).isTrue());
+	}
 }
