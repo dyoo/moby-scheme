@@ -1,0 +1,121 @@
+Here are the TODOs:
+
+
+If you wish to take any of these on, please contact us
+
+    Danny Yoo <dyoo@cs.wpi.edu>,
+    Shriram Krishnamurthi <sk@cs.brown.edu>
+
+first to consult on the design of solutions.
+
+----------------------------------------------------------------------
+
+* Implement more of the Beginner Scheme primitives in the runtime.
+  The list of primitives comes at the end of this file.
+
+* Remove unnecessary classes like MicroFloat from Android platform
+  compilation.  Android guarantees a floating-point unit; our current
+  implementation uses the MicroFloat fixed-point library even though
+  we don't need it.
+
+* Expose Android-specific functionality.  Definitely talk to us before
+  tackling this one: we want to make sure the design matches the
+  functional flavor of the world primitives.
+
+* We want a DrScheme tool that talks to our compiler web-service.  A
+  menu option similar to "Create Executable" should be available from
+  DrScheme that takes the user's program to the network-available
+  compiler to get the application.
+
+* The bridge classes we've adopted for the J2ME-Android bridge are not
+  reproducing correct behavior.  We need someone to investigate and
+  fix the differences described in j2me-android-gui-differences.txt.
+
+* Add more unit test cases for the functions in org.plt.Kernel.  There
+  are very few tests at this point.  Any new primitives should have
+  tests written for them.  These tests should be in
+  src/test/java-src/org/plt/TestKernel.java, exercising code that's in
+  support/common/src/org/plt/Kernel.java.
+
+* Fix the bugs listed in BUGS.
+
+* Improve the design of the numeric support.  For expediency, the
+  kernel code reproduced the behavior of the numeric tower with a
+  bunch of hardcoded if statements.  We want to look existing
+  implementations of the numeric tower from other Java Scheme systems
+  like SISC and adopt one of them.
+
+
+----------------------------------------------------------------------
+
+Details on Web Service TODO
+
+src/web-application contains a XMLRPC web service that exposes the
+compiler to the network (start-service.ss), and a client for access
+(client.ss).  We want to integrate the service into DrScheme.  That
+tool should invoke the compiler from a menu option so that we
+integrate into the existing environment as an item just like "Create
+Executable."
+
+The dialog window should allow the user to specify:
+
+    Name of application
+
+    Target platform (drop/down)
+
+    Options for that platform (None so far)
+
+The beginnings of this tool are in src/moby-tool.
+
+
+
+----------------------------------------------------------------------
+
+Details on Beginner Scheme primitives:
+
+
+Primitives that need implementation:
+
+
+(angle
+ complex?
+ conjugate
+ current-seconds
+ exact->inexact
+ exact?
+ imag-part
+ inexact->exact
+ inexact?
+ integer->char
+ magnitude
+ make-polar
+ real-part
+ real?
+ append
+ assq
+ member
+ memq
+ memv
+ char->integer
+ format
+ list->string
+ make-string
+ string
+ string->list 
+ string->symbol 
+ string-append (need acc)
+ image=?
+ image?
+ eof
+ eof-object?
+ equal~?
+ eqv?
+ exit)
+
+You can look at the code in support/src/org/plt/Kernel.java for
+implementations of the primitives we support so far.  Any primitive
+you write also needs to be registered in the
+IMPLEMENTED-JAVA-KERNEL-SYMBOLS in src/beginner-to-java.ss.
+
+
+----------------------------------------------------------------------
