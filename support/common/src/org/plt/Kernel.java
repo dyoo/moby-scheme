@@ -694,10 +694,12 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number length(Object n) {
-		if (cons_question_(n).isFalse())
-			throw new SchemeException(
-					"length: expects argument of type <proper list>; given: "
-							+ n);
+		itemTypeCheck(n, "org.plt.types.List", "length");
+
+		// if (cons_question_(n).isFalse())
+		// throw new SchemeException(
+		// "length: expects argument of type <proper list>; given: "
+		// + n);
 
 		org.plt.types.Number len = ZERO;
 
@@ -1248,15 +1250,22 @@ public class Kernel {
 		return Symbol.makeInstance((String) n);
 	}
 
-	public static Object[] string_dash__greaterthan_list(Object n) {
+	public static org.plt.types.List string_dash__greaterthan_list(Object n) {
 		itemTypeCheck(n, "java.lang.String", "string->list");
 
-		Character[] ret = new Character[((String) n).length()];
+		org.plt.types.List ret = Empty.EMPTY;
 
-		for (int i = 0; i < ((String) n).length(); i++)
-			ret[i] = new Character(((String) n).charAt(i));
+		for (int i = ((String) n).length() - 1; i >= 0; i--)
+			ret = new Pair(((String) n).charAt(i), ret);
 
 		return ret;
+		//
+		// Character[] ret = new Character[((String) n).length()];
+		//
+		// for (int i = 0; i < ((String) n).length(); i++)
+		// ret[i] = new Character(((String) n).charAt(i));
+		//
+		// return ret;
 	}
 
 	private static Object string_dash_append(Object[] arr) {
@@ -1301,14 +1310,26 @@ public class Kernel {
 		return new String(ret);
 	}
 
-	public static Object list_dash__greaterthan_string(Object[] arr) {
-		arrayTypeCheck(arr, java.lang.Character.class, "list->string");
+	public static Object list_dash__greaterthan_string(Object n) {
+		itemTypeCheck(n, "org.plt.types.List", "list->string");
 
-		char[] ret = new char[arr.length];
-
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = ((Character) arr[i]).charValue();
+		char[] ret = new char[Kernel.length(n).toInt()];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = ((Character) ((org.plt.types.List) n).first()).charValue();
+			n = ((org.plt.types.List) n).rest();
+		}
 
 		return new String(ret);
 	}
+
+	// public static Object list_dash__greaterthan_string(Object[] arr) {
+	// arrayTypeCheck(arr, java.lang.Character.class, "list->string");
+	//
+	// char[] ret = new char[arr.length];
+	//
+	// for (int i = 0; i < ret.length; i++)
+	// ret[i] = ((Character) arr[i]).charValue();
+	//
+	// return new String(ret);
+	// }
 }

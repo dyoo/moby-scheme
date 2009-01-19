@@ -310,7 +310,7 @@ public class TestKernel {
 		assertTrue(Kernel.char_equal__question_('a', 'A').isFalse());
 		assertTrue(Kernel.char_equal__question_('a', 'b').isFalse());
 		assertTrue(Kernel.char_equal__question_(new Character('a'),
-                                                        new Character('a')).isTrue());
+				new Character('a')).isTrue());
 	}
 
 	@Test
@@ -398,7 +398,7 @@ public class TestKernel {
 		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'A').isTrue());
 		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'b').isFalse());
 		assertTrue(Kernel.char_dash_ci_equal__question_(new Character('a'),
-                                                                new Character('a')).isTrue());
+				new Character('a')).isTrue());
 	}
 
 	@Test
@@ -535,8 +535,11 @@ public class TestKernel {
 
 	@Test
 	public void testList_dash__greaterthan_string() {
-		Object[] arr = { 'h', 'e', 'l', 'l', 'o' };
+		// Object[] arr = { 'h', 'e', 'l', 'l', 'o' };
+		// assertTrue(Kernel.string_equal__question_(
+		// Kernel.list_dash__greaterthan_string(arr), "hello").isTrue());
+		org.plt.types.List lst = new Pair('h', new Pair('i', Empty.EMPTY));
 		assertTrue(Kernel.string_equal__question_(
-				Kernel.list_dash__greaterthan_string(arr), "hello").isTrue());
+				Kernel.list_dash__greaterthan_string(lst), "hi").isTrue());
 	}
 }
