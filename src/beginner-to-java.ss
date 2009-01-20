@@ -637,6 +637,7 @@
     boolean?
     boolean=?
     eq?
+    eqv?
     
     ;; Characters
     char?
