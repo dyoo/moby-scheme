@@ -29,9 +29,9 @@
     "add a user."
     (call-with-test-model
      (lambda (a-model)
-       (model-add-user! "Danny Yoo" "dyoo@cs.wpi.edu")
+       (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")
        (let ([user
-              (model-find-user "dyoo@cs.wpi.edu")])
+              (model-find-user a-model "dyoo@cs.wpi.edu")])
          (check-equal? (user-name user) "Danny Yoo")))))
 
    
@@ -40,8 +40,8 @@
     (call-with-test-model
      (lambda (a-model)
        (let ([binary
-              (compile-source a-model
-                              (make-source "id" "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) #f)
+              (model-compile-source a-model
+                              (make-source 1 "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) #f)
                               (make-platform:j2me))])
          (check-true (binary? binary))))))))
 

@@ -21,10 +21,12 @@
                       ) #:mutable)
 
 
-
-(define-struct user (name  ;; string
+(define-struct user (id ;; number 
+                     name ;; string
                      email ;; string
+                     moderated? ;; boolean
                      ))
+
 
 
 (define-struct source (id             ;; string
@@ -35,8 +37,9 @@
                        ))
 
 
-(define-struct binary (name ;; string
-                       bytes ;; bytes
+(define-struct binary (id 
+                       name ;; string
+                       package ;; bytes
                        ))
 
 ;;;;
@@ -90,7 +93,7 @@
 create table if not exists
              user (id integer primary key,
                    name text not null,
-                   email text not null,
+                   email text not null unique,
                    is_moderated integer not null default 0);
 
 create table if not exists
@@ -166,8 +169,8 @@ EOF
 
 
 
-;; compile-source: model source platform -> binary              
-(define (compile-source a-model a-source a-platform)
+;; model-compile-source: model source platform -> binary              
+(define (model-compile-source a-model a-source a-platform)
   (define (do-platform-compilation generate binary-find)
     (let* ([name (source-program-name a-source)]
            [dir (make-temporary-directory #:parent-directory (model-scratch-directory a-model))]
@@ -178,7 +181,7 @@ EOF
       (generate name program-path dir)
       
       (let* ([bin-path (first (find-files binary-find (build-path dir "bin")))]
-             [bin (make-binary (path->string (file-name-from-path bin-path)) (get-file-bytes bin-path))])
+             [bin (make-binary #f (path->string (file-name-from-path bin-path)) (get-file-bytes bin-path))])
         #;(delete-directory/files dir)
         bin)))
   (with-serializing 
@@ -222,23 +225,54 @@ EOF
   (delete-directory/files (model-data-dir a-model)))
 
 
+;; model-add-user!: model string string -> void
+;; Adds a user to the model.  If the user already exists,
+;; raises an error.
+;; FIXME: do the error trapping.
+
+(define (model-add-user! a-model user-name email)
+  (let ([add-user-stmt 
+         (prepare (model-db a-model) "insert into user (name, email) values (?, ?)")])
+    (run add-user-stmt user-name email)
+    (reset add-user-stmt)
+    #;(finalize add-user-stmt)))
+  
+
+;; model-find-user: model string -> user
+;; Looks up a user in the model.
+(define (model-find-user a-model an-email)
+  (make-user 0 "Danny Yoo" "dyoo@cs.wpi.edu" #f))
+
+
+
+
+
 
 
 (provide/contract [rename -make-model make-model (path-string? . -> . model?)]
                   [close-model (model? . -> . any)]
                   [delete-model! (model? . -> . any)]                  
                   
-                  [compile-source (model? source? platform? . -> . binary?)]
-                  ;[save-binary-link (model? binary? . -> . string?)]
+                  [model-add-user! (model? string? string? . -> . any)]
+                  [model-find-user (model? string? . -> . user?)]
+                  
+                  [model-compile-source (model? source? platform? . -> . binary?)]
 
-                  [struct source ((id string?)
-                                  (program-name string?)
-                                  (code bytes?)
-                                  (date-submitted date?)
-                                  (approved? boolean?))]
-
-                  [struct binary ((name string?)
-                                  (bytes bytes?))]
+                  
+                  [struct user ([id number?]
+                                [name string?]
+                                [email string?]
+                                [moderated? boolean?])]
+                  
+                  [struct source ([id number?]
+                                  [program-name string?]
+                                  [code bytes?]
+                                  [date-submitted date?]
+                                  [approved? boolean?])]
+                  
+                  [struct binary ([id any/c #;number?]
+                                  [name string?]
+                                  [package bytes?])]
                   
                   [struct platform ()]
                   [struct (platform:j2me platform) ()]
