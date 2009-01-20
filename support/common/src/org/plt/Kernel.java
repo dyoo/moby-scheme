@@ -1450,4 +1450,20 @@ public class Kernel {
 	    return new Rational((int)(Calendar.getInstance().getTime().getTime() / 1000), 1);
 
 	}
+
+	public static org.plt.types.Logic complex_question_(Object n) {
+		return number_question_(n);
+	}
+
+	public static org.plt.types.Number real_dash_part(Object n) {
+		itemTypeCheck(n, "org.plt.types.Number", "real_part");
+		// currently all Numbers are Real
+		return (org.plt.types.Number) n;
+	}
+
+	public static org.plt.types.Number imag_dash_part(Object n) {
+		itemTypeCheck(n, "org.plt.types.Number", "imag-part");
+		// currently all Numbers are Real
+		return FloatPoint.fromString("0.0");
+	}
 }

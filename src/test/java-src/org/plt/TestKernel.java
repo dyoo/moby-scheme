@@ -607,10 +607,44 @@ public class TestKernel {
 
 	@Test
 	public void testCurrent_dash_seconds() {
-	    org.plt.types.Number firstTime = Kernel.current_dash_seconds();
-	    try {Thread.sleep(1000); } 
-	    catch (InterruptedException e) {}
-	    org.plt.types.Number secondTime = Kernel.current_dash_seconds();
-	    assertTrue(Kernel._lessthan_(firstTime, secondTime).isTrue());
+		org.plt.types.Number firstTime = Kernel.current_dash_seconds();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		}
+		org.plt.types.Number secondTime = Kernel.current_dash_seconds();
+		assertTrue(Kernel._lessthan_(firstTime, secondTime).isTrue());
+	}
+
+	@Test
+	public void testComplex_question_() {
+		assertTrue(Kernel.complex_question_(Kernel.ONE).isTrue());
+		assertTrue(Kernel.complex_question_(new Rational(4, 3)).isTrue());
+		assertTrue(Kernel.complex_question_(FloatPoint.fromString("4.3"))
+				.isTrue());
+		assertTrue(Kernel.complex_question_("hi").isFalse());
+		assertTrue(Kernel.complex_question_('h').isFalse());
+		assertTrue(Kernel.complex_question_(Logic.FALSE).isFalse());
+		assertTrue(Kernel.complex_question_(Empty.EMPTY).isFalse());
+	}
+
+	@Test
+	public void testReal_dash_part() {
+		assertTrue(Kernel._equal_(Kernel.ONE,
+				Kernel.real_dash_part(FloatPoint.fromString("1.0"))).isTrue());
+		assertTrue(Kernel._equal_(FloatPoint.fromString("1.0"),
+				Kernel.real_dash_part(FloatPoint.fromString("1.0"))).isTrue());
+		assertTrue(Kernel._equal_(Kernel.ONE,
+				Kernel.real_dash_part(FloatPoint.fromString("1.1"))).isFalse());
+	}
+
+	@Test
+	public void testImag_dash_part() {
+		assertTrue(Kernel._equal_(Kernel.ZERO,
+				Kernel.imag_dash_part(FloatPoint.fromString("1.0"))).isTrue());
+		assertTrue(Kernel._equal_(FloatPoint.fromString("0"),
+				Kernel.imag_dash_part(FloatPoint.fromString("1.0"))).isTrue());
+		assertTrue(Kernel._equal_(Kernel.ONE,
+				Kernel.imag_dash_part(FloatPoint.fromString("1.1"))).isFalse());
 	}
 }
