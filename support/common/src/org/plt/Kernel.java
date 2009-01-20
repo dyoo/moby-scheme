@@ -48,16 +48,34 @@ public class Kernel {
 
 	}
 
-	private static void listTypeCheck(org.plt.types.List lst, Class cl,
-			String funName) {
-		while (lst.isEmpty() == false) {
-			if (cl.isInstance(lst.first()) == false) {
-				String err = funName + ": expects argument of type <list of "
-						+ cl.getName() + ">, given: " + lst;
-				throw new SchemeException(err);
-			}
+	private static void listTypeCheck(Object lst, Class cl, String funName) {
+		String err = funName + ": expects argument of type <list of "
+				+ cl.getName() + ">, given: " + lst;
 
-			lst = lst.rest();
+		if (lst instanceof org.plt.types.List == false)
+			throw new SchemeException(err);
+
+		while (((org.plt.types.List) lst).isEmpty() == false) {
+			if (cl.isInstance(((org.plt.types.List) lst).first()) == false)
+				throw new SchemeException(err);
+
+			lst = ((org.plt.types.List) lst).rest();
+		}
+	}
+
+	private static void listTypeCheck(Object lst, Class cl, String funName,
+			int argNum) {
+		String err = funName + ": expects argument number " + argNum
+				+ " of type <list of " + cl.getName() + ">, given: " + lst;
+
+		if (lst instanceof org.plt.types.List == false)
+			throw new SchemeException(err);
+
+		while (((org.plt.types.List) lst).isEmpty() == false) {
+			if (cl.isInstance(((org.plt.types.List) lst).first()) == false)
+				throw new SchemeException(err);
+
+			lst = ((org.plt.types.List) lst).rest();
 		}
 	}
 
@@ -1337,8 +1355,7 @@ public class Kernel {
 	}
 
 	public static Object list_dash__greaterthan_string(Object n) {
-		itemTypeCheck(n, "org.plt.types.List", "list->string");
-		listTypeCheck((org.plt.types.List) n, characterClass, "list->string");
+		listTypeCheck(n, characterClass, "list->string");
 
 		char[] ret = new char[Kernel.length(n).toInt()];
 		for (int i = 0; i < ret.length; i++) {
@@ -1413,7 +1430,22 @@ public class Kernel {
 			n2 = cons(rev.first(), n2);
 			rev = rev.rest();
 		}
-		
+
 		return (org.plt.types.List) n2;
+	}
+
+	public static Object assq(Object n1, Object n2) {
+		listTypeCheck(n2, org.plt.types.Pair.class, "assq", 2);
+		while (((org.plt.types.List) n2).isEmpty() == false
+				&& Kernel.eq_question_(
+						n1,
+						(((org.plt.types.Pair) ((org.plt.types.List) n2)
+								.first())).first()).isFalse())
+			n2 = ((org.plt.types.List) n2).rest();
+
+		if (((org.plt.types.List) n2).isEmpty() == false)
+			return ((org.plt.types.Pair) n2).first();
+		else
+			return Logic.FALSE;
 	}
 }

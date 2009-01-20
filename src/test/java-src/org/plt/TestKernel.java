@@ -587,4 +587,17 @@ public class TestKernel {
 		assertTrue(Kernel.equal_question_(lst3, Kernel.append(lst1, lst2))
 				.isTrue());
 	}
+
+	@Test
+	public void testAssq() {
+		org.plt.types.List lst1 = new Pair(new Pair(Kernel.ONE, Empty.EMPTY),
+				Empty.EMPTY);
+		org.plt.types.List lst2 = new Pair(new Pair("hi", Empty.EMPTY),
+				Empty.EMPTY);
+
+		assertTrue(Kernel.equal_question_(new Pair(Kernel.ONE, Empty.EMPTY),
+				Kernel.assq(Kernel.ONE, lst1)).isTrue());
+
+		assertTrue(((org.plt.types.Logic) (Kernel.assq("hi", lst2))).isFalse());
+	}
 }
