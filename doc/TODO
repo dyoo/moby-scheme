@@ -93,9 +93,6 @@ Primitives that need implementation:
  real?
  append
  assq
- member
- memq
- memv
  format
  image=?
  image?
