@@ -1338,8 +1338,7 @@ public class Kernel {
 
 	public static Object list_dash__greaterthan_string(Object n) {
 		itemTypeCheck(n, "org.plt.types.List", "list->string");
-		listTypeCheck((org.plt.types.List) n, java.lang.Character.class,
-				"list->string");
+		listTypeCheck((org.plt.types.List) n, characterClass, "list->string");
 
 		char[] ret = new char[Kernel.length(n).toInt()];
 		for (int i = 0; i < ret.length; i++) {
@@ -1403,5 +1402,18 @@ public class Kernel {
 			return n2;
 		else
 			return Logic.FALSE;
+	}
+
+	public static org.plt.types.List append(Object n1, Object n2) {
+		Object[] args = { n1, n2 };
+		arrayTypeCheck(args, org.plt.types.List.class, "append");
+
+		org.plt.types.List rev = reverse(n1);
+		while (!rev.isEmpty()) {
+			n2 = cons(rev.first(), n2);
+			rev = rev.rest();
+		}
+		
+		return (org.plt.types.List) n2;
 	}
 }

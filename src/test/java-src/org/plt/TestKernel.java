@@ -553,27 +553,38 @@ public class TestKernel {
 		assertTrue(Kernel.member("a", lst).isFalse());
 	}
 
-	// @Test
-	// public void testMemq() {
-	// org.plt.types.List lst1 = new Pair("h", new Pair("i", Empty.EMPTY));
-	// org.plt.types.List lst2 = new Pair(Kernel.ONE, new Pair(Kernel.TWO,
-	// Empty.EMPTY));
-	// org.plt.types.List lst3 = new Pair(Kernel.TWO, Empty.EMPTY);
-	//
-	// assertTrue(((org.plt.types.Logic)(Kernel.memq("i", lst1))).isFalse());
-	// assertTrue(Kernel.equal_question_(lst3, Kernel.memq(Kernel.TWO, lst2))
-	// .isTrue());
-	// }
-	//
-	// @Test
-	// public void testMemv() {
-	// org.plt.types.List lst1 = new Pair("h", new Pair("i", Empty.EMPTY));
-	// org.plt.types.List lst2 = new Pair(Kernel.ONE, new Pair(Kernel.TWO,
-	// Empty.EMPTY));
-	// org.plt.types.List lst3 = new Pair(Kernel.TWO, Empty.EMPTY);
-	//
-	// assertTrue(((org.plt.types.Logic)(Kernel.memv("i", lst1))).isFalse());
-	// assertTrue(Kernel.equal_question_(lst3, Kernel.memv(Kernel.TWO, lst2))
-	// .isTrue());
-	// }
+	@Test
+	public void testMemq() {
+		org.plt.types.List lst1 = new Pair("h", new Pair("i", Empty.EMPTY));
+		org.plt.types.List lst2 = new Pair(Kernel.ONE, new Pair(Kernel.TWO,
+				Empty.EMPTY));
+		org.plt.types.List lst3 = new Pair(Kernel.TWO, Empty.EMPTY);
+
+		assertTrue(((org.plt.types.Logic) (Kernel.memq("i", lst1))).isFalse());
+		assertTrue(Kernel.equal_question_(lst3, Kernel.memq(Kernel.TWO, lst2))
+				.isTrue());
+	}
+
+	@Test
+	public void testMemv() {
+		org.plt.types.List lst1 = new Pair("h", new Pair("i", Empty.EMPTY));
+		org.plt.types.List lst2 = new Pair(Kernel.ONE, new Pair(Kernel.TWO,
+				Empty.EMPTY));
+		org.plt.types.List lst3 = new Pair(Kernel.TWO, Empty.EMPTY);
+
+		assertTrue(((org.plt.types.Logic) (Kernel.memv("i", lst1))).isFalse());
+		assertTrue(Kernel.equal_question_(lst3, Kernel.memv(Kernel.TWO, lst2))
+				.isTrue());
+	}
+
+	@Test
+	public void testAppend() {
+		org.plt.types.List lst1 = new Pair(1, new Pair(2, Empty.EMPTY));
+		org.plt.types.List lst2 = new Pair(3, new Pair(4, Empty.EMPTY));
+		org.plt.types.List lst3 = new Pair(1, new Pair(2, new Pair(3, new Pair(
+				4, Empty.EMPTY))));
+
+		assertTrue(Kernel.equal_question_(lst3, Kernel.append(lst1, lst2))
+				.isTrue());
+	}
 }
