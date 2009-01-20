@@ -12,8 +12,8 @@ import org.plt.types.Bignum;
 public class Kernel {
 	private static Class stringClass;
 	private static Class characterClass;
-        private static Class listClass; 
-        private static Class pairClass;
+	private static Class listClass;
+	private static Class pairClass;
 	static {
 		// Workaround bug in CLDC 1.0. Bug 4313427 doesn't allow us to use
 		// java.lang.String.class directly.
@@ -21,7 +21,7 @@ public class Kernel {
 		try {
 			stringClass = Class.forName("java.lang.String");
 			characterClass = Class.forName("java.lang.Character");
-                        listClass = Class.forName("org.plt.types.List");
+			listClass = Class.forName("org.plt.types.List");
 			pairClass = Class.forName("org.plt.types.Pair");
 		} catch (ClassNotFoundException e) {
 			throw new SchemeException(e);
@@ -1304,7 +1304,7 @@ public class Kernel {
 		org.plt.types.List ret = Empty.EMPTY;
 
 		for (int i = ((String) n).length() - 1; i >= 0; i--)
-		    ret = new Pair(new Character(((String) n).charAt(i)), ret);
+			ret = new Pair(new Character(((String) n).charAt(i)), ret);
 
 		return ret;
 	}
@@ -1447,7 +1447,8 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number current_dash_seconds() {
-	    return new Rational((int)(Calendar.getInstance().getTime().getTime() / 1000), 1);
+		return new Rational(
+				(int) (Calendar.getInstance().getTime().getTime() / 1000), 1);
 
 	}
 
@@ -1465,5 +1466,9 @@ public class Kernel {
 		itemTypeCheck(n, "org.plt.types.Number", "imag-part");
 		// currently all Numbers are Real
 		return FloatPoint.fromString("0.0");
+	}
+
+	public static void exit() {
+		System.exit(0);
 	}
 }
