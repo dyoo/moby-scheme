@@ -935,8 +935,15 @@ public class Kernel {
 		// "3.1")) returns false
 		if (n1 instanceof Rational && n2 instanceof Rational)
 			return equal_question_((Rational) n1, (Rational) n2);
+		// (eq? "hi" "hi") returns false
+		else if (n1 instanceof String && n2 instanceof String)
+			return toLogic(new String((String) n1) == new String((String) n2));
 		else
 			return toLogic(n1 == n2);
+	}
+
+	public static org.plt.types.Logic eqv_question_(Object n1, Object n2) {
+		return eq_question_(n1, n2);
 	}
 
 	public static org.plt.types.Logic char_question_(Object n) {
@@ -1362,5 +1369,37 @@ public class Kernel {
 			n2 = ((org.plt.types.List) n2).rest();
 
 		return toLogic(((org.plt.types.List) n2).isEmpty() == false);
+	}
+
+	public static Object memq(Object n1, Object n2) {
+		if ((n2 instanceof org.plt.types.List) == false)
+			throw new SchemeException(
+					"memq: second argument must be of type <list>, given: "
+							+ n1 + " and " + n2);
+
+		while (((org.plt.types.List) n2).isEmpty() == false) {
+			if (Kernel.eq_question_(n1, ((org.plt.types.List) n2).first())
+					.isTrue())
+				return n2;
+			n2 = ((org.plt.types.List) n2).rest();
+		}
+
+		return Logic.FALSE;
+	}
+
+	public static Object memv(Object n1, Object n2) {
+		if ((n2 instanceof org.plt.types.List) == false)
+			throw new SchemeException(
+					"memv: second argument must be of type <list>, given: "
+							+ n1 + " and " + n2);
+
+		while (((org.plt.types.List) n2).isEmpty() == false) {
+			if (Kernel.eqv_question_(n1, ((org.plt.types.List) n2).first())
+					.isTrue())
+				return n2;
+			n2 = ((org.plt.types.List) n2).rest();
+		}
+
+		return Logic.FALSE;
 	}
 }
