@@ -1377,14 +1377,15 @@ public class Kernel {
 					"memq: second argument must be of type <list>, given: "
 							+ n1 + " and " + n2);
 
-		while (((org.plt.types.List) n2).isEmpty() == false) {
-			if (Kernel.eq_question_(n1, ((org.plt.types.List) n2).first())
-					.isTrue())
-				return n2;
+		while (((org.plt.types.List) n2).isEmpty() == false
+				&& Kernel.eq_question_(n1, ((org.plt.types.List) n2).first())
+						.isFalse())
 			n2 = ((org.plt.types.List) n2).rest();
-		}
 
-		return Logic.FALSE;
+		if (((org.plt.types.List) n2).isEmpty() == false)
+			return n2;
+		else
+			return Logic.FALSE;
 	}
 
 	public static Object memv(Object n1, Object n2) {
@@ -1393,13 +1394,14 @@ public class Kernel {
 					"memv: second argument must be of type <list>, given: "
 							+ n1 + " and " + n2);
 
-		while (((org.plt.types.List) n2).isEmpty() == false) {
-			if (Kernel.eqv_question_(n1, ((org.plt.types.List) n2).first())
-					.isTrue())
-				return n2;
+		while (((org.plt.types.List) n2).isEmpty() == false
+				&& Kernel.eqv_question_(n1, ((org.plt.types.List) n2).first())
+						.isFalse())
 			n2 = ((org.plt.types.List) n2).rest();
-		}
 
-		return Logic.FALSE;
+		if (((org.plt.types.List) n2).isEmpty() == false)
+			return n2;
+		else
+			return Logic.FALSE;
 	}
 }
