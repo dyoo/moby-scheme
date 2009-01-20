@@ -234,7 +234,7 @@ EOF
   (let ([add-user-stmt 
          (prepare (model-db a-model) "insert into user (name, email) values (?, ?)")])
     (run add-user-stmt user-name email)
-    (reset add-user-stmt)
+    #;(reset add-user-stmt)
     #;(finalize add-user-stmt)))
   
 
