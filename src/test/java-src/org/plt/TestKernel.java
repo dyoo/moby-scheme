@@ -289,13 +289,13 @@ public class TestKernel {
 		assertTrue(Kernel.eq_question_(Kernel.ONE, Kernel.TWO).isFalse());
 		assertTrue(Kernel.eq_question_(
 				Kernel.string_dash__greaterthan_number("3"),
-				Kernel.string_dash__greaterthan_number("3")).isTrue());
+				Kernel.string_dash__greaterthan_number("3")).isFalse());
 		assertTrue(Kernel.eq_question_(
 				Kernel.string_dash__greaterthan_number("3.1"),
 				Kernel.string_dash__greaterthan_number("3.1")).isFalse());
 		assertTrue(Kernel.eq_question_("3", Kernel.string_dash_copy("3"))
 				.isFalse());
-		assertTrue(Kernel.eq_question_("3", "3").isFalse());
+		assertTrue(Kernel.eq_question_("3", "3").isTrue());
 	}
 
 	@Test
@@ -560,7 +560,9 @@ public class TestKernel {
 				Empty.EMPTY));
 		org.plt.types.List lst3 = new Pair(Kernel.TWO, Empty.EMPTY);
 
-		assertTrue(((org.plt.types.Logic) (Kernel.memq("i", lst1))).isFalse());
+		assertTrue(Kernel.equal_question_(lst1, Kernel.memq("h", lst1))
+				.isTrue());
+		assertTrue(((org.plt.types.Logic) (Kernel.memq("a", lst1))).isFalse());
 		assertTrue(Kernel.equal_question_(lst3, Kernel.memq(Kernel.TWO, lst2))
 				.isTrue());
 	}
@@ -572,7 +574,9 @@ public class TestKernel {
 				Empty.EMPTY));
 		org.plt.types.List lst3 = new Pair(Kernel.TWO, Empty.EMPTY);
 
-		assertTrue(((org.plt.types.Logic) (Kernel.memv("i", lst1))).isFalse());
+		assertTrue(Kernel.equal_question_(lst1, Kernel.memv("h", lst1))
+				.isTrue());
+		assertTrue(((org.plt.types.Logic) (Kernel.memv("a", lst1))).isFalse());
 		assertTrue(Kernel.equal_question_(lst3, Kernel.memv(Kernel.TWO, lst2))
 				.isTrue());
 	}
@@ -598,6 +602,6 @@ public class TestKernel {
 		assertTrue(Kernel.equal_question_(new Pair(Kernel.ONE, Empty.EMPTY),
 				Kernel.assq(Kernel.ONE, lst1)).isTrue());
 
-		assertTrue(((org.plt.types.Logic) (Kernel.assq("hi", lst2))).isFalse());
+		assertTrue(((org.plt.types.Logic) (Kernel.assq("ha", lst2))).isFalse());
 	}
 }

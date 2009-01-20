@@ -948,20 +948,11 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic eq_question_(Object n1, Object n2) {
-		// (eq? (string->number "3") (string->number (string-copy "3")))
-		// returns true. However, (eq? (string->number "3.1") (string->number
-		// "3.1")) returns false
-		if (n1 instanceof Rational && n2 instanceof Rational)
-			return equal_question_((Rational) n1, (Rational) n2);
-		// (eq? "hi" "hi") returns false
-		else if (n1 instanceof String && n2 instanceof String)
-			return toLogic(new String((String) n1) == new String((String) n2));
-		else
-			return toLogic(n1 == n2);
+		return toLogic(n1 == n2);
 	}
 
 	public static org.plt.types.Logic eqv_question_(Object n1, Object n2) {
-		return eq_question_(n1, n2);
+		return toLogic(n1 == n2);
 	}
 
 	public static org.plt.types.Logic char_question_(Object n) {
