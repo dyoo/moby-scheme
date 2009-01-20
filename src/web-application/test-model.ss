@@ -9,26 +9,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Small helpers to make the test cases easier to write.
-;; Creates an identifier M.
-(define-syntax-parameter M
-  (lambda (stx)
-    (raise-syntax-error #f "M not bound yet and must be used in the context of a with-test-model form.")))
-
-(define-syntax (with-test-model stx)
-  (syntax-case stx ()
-    [(_ body ...)
-     (with-syntax ([model 'model])
-       (syntax/loc stx
-          (let ([model #f])
-            (syntax-parameterize 
-             ([M (make-rename-transformer #'model)])             
-             (dynamic-wind (lambda ()
-                             (set! model (make-model "tmp-model")))
-                           (lambda ()
-                             body ...)
-                           (lambda ()
-                             (void)
-                             #;(delete-model! model)))))))]))
+(define (call-with-test-model f)
+  (let ([model #f])
+    (dynamic-wind (lambda ()
+                    (set! model (make-model "tmp-model")))
+                  (lambda ()
+                    (f model))
+                  (lambda ()
+                    (void)
+                    #;(delete-model! model)))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
    
@@ -38,17 +27,19 @@
 
    (test-case
     "Create and delete"
-    (with-test-model
-     (void)))
+    (call-with-test-model 
+     (lambda (a-model) (void))))
+
    
    (test-case
     "compilation"
-    (with-test-model
-     (let ([binary
-            (compile-source M
-                            (make-source "id" "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) #f)
-                            (make-platform:j2me))])
-       (check-true (binary? binary)))))))
+    (call-with-test-model
+     (lambda (a-model)
+       (let ([binary
+              (compile-source a-model
+                              (make-source "id" "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) #f)
+                              (make-platform:j2me))])
+         (check-true (binary? binary))))))))
 
 
 (run-tests test-module)
