@@ -16,8 +16,8 @@
                   (lambda ()
                     (f model))
                   (lambda ()
-                    (void)
-                    #;(delete-model! model)))))
+                    #;(void)
+                    (delete-model! model)))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
    
@@ -26,9 +26,13 @@
    "test-model.ss"
 
    (test-case
-    "Create and delete"
-    (call-with-test-model 
-     (lambda (a-model) (void))))
+    "add a user."
+    (call-with-test-model
+     (lambda (a-model)
+       (model-add-user! "Danny Yoo" "dyoo@cs.wpi.edu")
+       (let ([user
+              (model-find-user "dyoo@cs.wpi.edu")])
+         (check-equal? (user-name user) "Danny Yoo")))))
 
    
    (test-case
