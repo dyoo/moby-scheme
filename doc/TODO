@@ -99,7 +99,6 @@ Primitives that need implementation:
  eof
  eof-object?
  equal~?
- eqv?
  exit)
 
 You can look at the code in support/src/org/plt/Kernel.java for
