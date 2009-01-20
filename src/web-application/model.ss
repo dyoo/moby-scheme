@@ -84,10 +84,36 @@
 
 
 
+(define create-statements
+  (regexp-split #rx"\n\n"
+  #<<EOF
+create table if not exists
+             user (id integer primary key,
+                   name text not null,
+                   email text not null,
+                   is_moderated integer not null default 0);
+
+create table if not exists
+             source (id integer primary key,
+                     name text not null,
+                     code blob not null,
+                     date_submitted text not null,
+                     user_id integer not null);
+
+create table if not exists
+             binary (id integer primary key,
+                     name text not null,
+                     package blob not null,
+                     is_visible integer not null default 1,
+                     downloads integer not null default 0,
+                     source_id integer not null)
+EOF
+))
 ;; install-tables!: model -> void
 ;; Installs the necessary tables if they don't already exist.
 (define (install-tables! a-model)
-  (void))
+  (for ([stmt create-statements])
+    (exec/ignore (model-db a-model) stmt)))
 
 
 
