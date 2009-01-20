@@ -10,8 +10,10 @@ import net.dclausen.microfloat.*;
 import org.plt.types.Bignum;
 
 public class Kernel {
-	static private Class stringClass;
-	static private Class characterClass;
+	private static Class stringClass;
+	private static Class characterClass;
+        private static Class listClass; 
+        private static Class pairClass;
 	static {
 		// Workaround bug in CLDC 1.0. Bug 4313427 doesn't allow us to use
 		// java.lang.String.class directly.
@@ -19,6 +21,8 @@ public class Kernel {
 		try {
 			stringClass = Class.forName("java.lang.String");
 			characterClass = Class.forName("java.lang.Character");
+                        listClass = Class.forName("org.plt.types.List");
+			pairClass = Class.forName("org.plt.types.Pair");
 		} catch (ClassNotFoundException e) {
 			throw new SchemeException(e);
 		}
@@ -1300,7 +1304,7 @@ public class Kernel {
 		org.plt.types.List ret = Empty.EMPTY;
 
 		for (int i = ((String) n).length() - 1; i >= 0; i--)
-			ret = new Pair(((String) n).charAt(i), ret);
+		    ret = new Pair(new Character(((String) n).charAt(i)), ret);
 
 		return ret;
 	}
@@ -1416,7 +1420,7 @@ public class Kernel {
 
 	public static org.plt.types.List append(Object n1, Object n2) {
 		Object[] args = { n1, n2 };
-		arrayTypeCheck(args, org.plt.types.List.class, "append");
+		arrayTypeCheck(args, listClass, "append");
 
 		org.plt.types.List rev = reverse(n1);
 		while (!rev.isEmpty()) {
@@ -1428,7 +1432,7 @@ public class Kernel {
 	}
 
 	public static Object assq(Object n1, Object n2) {
-		listTypeCheck(n2, org.plt.types.Pair.class, "assq", 2);
+		listTypeCheck(n2, pairClass, "assq", 2);
 		while (((org.plt.types.List) n2).isEmpty() == false
 				&& Kernel.eq_question_(
 						n1,
@@ -1443,7 +1447,7 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number current_dash_seconds() {
-		return new Rational(((Long) (Calendar.getInstance().getTimeInMillis()))
-				.intValue(), 1);
+	    return FloatPoint.fromString("" + Calendar.getInstance().getTime().getTime() / 1000);
+
 	}
 }
