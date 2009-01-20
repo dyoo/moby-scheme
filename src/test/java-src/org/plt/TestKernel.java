@@ -604,4 +604,10 @@ public class TestKernel {
 
 		assertTrue(((org.plt.types.Logic) (Kernel.assq("ha", lst2))).isFalse());
 	}
+
+	@Test
+	public void testCurrent_dash_seconds() {
+		assertTrue(Kernel._lessthan_(Kernel.current_dash_seconds(), Kernel
+				.current_dash_seconds()).isTrue());
+	}
 }

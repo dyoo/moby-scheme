@@ -3,6 +3,8 @@ package org.plt;
 // The Kernel class contains all of the builtins except for the world
 // primitives, which lives under the j2me tree.
 
+import java.util.Calendar;
+
 import org.plt.types.*;
 import net.dclausen.microfloat.*;
 import org.plt.types.Bignum;
@@ -1438,5 +1440,10 @@ public class Kernel {
 			return ((org.plt.types.Pair) n2).first();
 		else
 			return Logic.FALSE;
+	}
+
+	public static org.plt.types.Number current_dash_seconds() {
+		return new Rational(((Long) (Calendar.getInstance().getTimeInMillis()))
+				.intValue(), 1);
 	}
 }
