@@ -214,14 +214,16 @@ EOF
 ;; close-model: model -> void
 ;; Turns off the model.
 (define (close-model a-model)
-  (send-request a-model (make-req:quit)))
+  (send-request a-model (make-req:quit))
+  (close (model-db a-model)))
+
 
 
 
 ;; delete-model: model -> void
 ;; Destroys the model.
 (define (delete-model! a-model)
-  (send-request a-model (make-req:quit))
+  (close-model a-model)
   (delete-directory/files (model-data-dir a-model)))
 
 
@@ -231,11 +233,12 @@ EOF
 ;; FIXME: do the error trapping.
 
 (define (model-add-user! a-model user-name email)
-  (let ([add-user-stmt 
-         (prepare (model-db a-model) "insert into user (name, email) values (?, ?)")])
-    (run add-user-stmt user-name email)
-    #;(reset add-user-stmt)
-    #;(finalize add-user-stmt)))
+  (with-transaction 
+   ((model-db a-model) abort)
+   (let ([add-user-stmt 
+          (prepare (model-db a-model) "insert into user (name, email) values (?, ?)")])
+     (run add-user-stmt user-name email)
+     (finalize add-user-stmt))))
   
 
 ;; model-find-user: model string -> user
