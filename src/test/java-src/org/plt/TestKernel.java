@@ -607,7 +607,10 @@ public class TestKernel {
 
 	@Test
 	public void testCurrent_dash_seconds() {
-		assertTrue(Kernel._lessthan_(Kernel.current_dash_seconds(), Kernel
-				.current_dash_seconds()).isTrue());
+	    org.plt.types.Number firstTime = Kernel.current_dash_seconds();
+	    try {Thread.sleep(1000); } 
+	    catch (InterruptedException e) {}
+	    org.plt.types.Number secondTime = Kernel.current_dash_seconds();
+	    assertTrue(Kernel._lessthan_(firstTime, secondTime).isTrue());
 	}
 }

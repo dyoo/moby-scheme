@@ -1447,7 +1447,7 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number current_dash_seconds() {
-	    return FloatPoint.fromString("" + Calendar.getInstance().getTime().getTime() / 1000);
+	    return new Rational((int)(Calendar.getInstance().getTime().getTime() / 1000), 1);
 
 	}
 }
