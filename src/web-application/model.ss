@@ -33,13 +33,15 @@
                        program-name   ;; string
                        code           ;; bytes
                        date-submitted ;; date
-                       approved?      ;; boolean
+                       user           ;; user
                        ))
 
 
 (define-struct binary (id 
-                       name ;; string
-                       package ;; bytes
+                       name      ;; string
+                       package   ;; bytes
+                       approved? ;; boolean
+                       source    ;; source
                        ))
 
 ;;;;
@@ -181,7 +183,13 @@ EOF
       (generate name program-path dir)
       
       (let* ([bin-path (first (find-files binary-find (build-path dir "bin")))]
-             [bin (make-binary #f (path->string (file-name-from-path bin-path)) (get-file-bytes bin-path))])
+             [bin (make-binary 
+                   #f 
+                   (path->string (file-name-from-path bin-path))
+                   (get-file-bytes bin-path)
+                   (not (user-moderated? (source-user a-source))) ;; approved?
+                   a-source                                       ;; source
+                   )])
         #;(delete-directory/files dir)
         bin)))
   (with-serializing 
@@ -238,10 +246,12 @@ EOF
    (let ([add-user-stmt 
           (prepare (model-db a-model) "insert into user (name, email) values (?, ?)")])
      (run add-user-stmt user-name email)
-     (finalize add-user-stmt))))
+     (finalize add-user-stmt)))
+  (model-find-user a-model user-name))
+
   
 
-;; model-find-user: model string -> user
+;; model-find-user: model string -> (or/c user #f)
 ;; Looks up a user in the model.
 (define (model-find-user a-model an-email)
   (make-user 0 "Danny Yoo" "dyoo@cs.wpi.edu" #f))
@@ -256,7 +266,7 @@ EOF
                   [close-model (model? . -> . any)]
                   [delete-model! (model? . -> . any)]                  
                   
-                  [model-add-user! (model? string? string? . -> . any)]
+                  [model-add-user! (model? string? string? . -> . user?)]
                   [model-find-user (model? string? . -> . user?)]
                   
                   [model-compile-source (model? source? platform? . -> . binary?)]
@@ -271,11 +281,13 @@ EOF
                                   [program-name string?]
                                   [code bytes?]
                                   [date-submitted date?]
-                                  [approved? boolean?])]
+                                  [user user?])]
                   
                   [struct binary ([id any/c #;number?]
                                   [name string?]
-                                  [package bytes?])]
+                                  [package bytes?]
+                                  [approved? boolean?]
+                                  [source source?])]
                   
                   [struct platform ()]
                   [struct (platform:j2me platform) ()]

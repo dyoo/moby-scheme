@@ -39,10 +39,11 @@
     "compilation"
     (call-with-test-model
      (lambda (a-model)
-       (let ([binary
-              (model-compile-source a-model
-                              (make-source 1 "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) #f)
-                              (make-platform:j2me))])
+       (let* ([a-user (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")]
+              [binary
+               (model-compile-source a-model
+                                     (make-source 1 "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) a-user)
+                                     (make-platform:j2me))])
          (check-true (binary? binary))))))))
 
 
