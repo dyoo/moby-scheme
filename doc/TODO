@@ -90,9 +90,6 @@ Primitives that need implementation:
  magnitude
  make-polar
  real-part
- real?
- append
- assq
  format
  image=?
  image?
