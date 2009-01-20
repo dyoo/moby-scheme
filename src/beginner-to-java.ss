@@ -728,7 +728,9 @@
     null
     list-ref
     append
-    
+    member
+    memq
+    memv
     
     reverse
     
