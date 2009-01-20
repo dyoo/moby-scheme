@@ -142,6 +142,8 @@ public class TestKernel {
 	@Test
 	public void testNumber_question_() {
 		assertTrue(Kernel.number_question_(Kernel.TWO).isTrue());
+		assertTrue(Kernel.number_question_(
+				Kernel.sqrt(FloatPoint.fromString("-1"))).isTrue());
 	}
 
 	@Test
@@ -622,6 +624,8 @@ public class TestKernel {
 		assertTrue(Kernel.complex_question_(new Rational(4, 3)).isTrue());
 		assertTrue(Kernel.complex_question_(FloatPoint.fromString("4.3"))
 				.isTrue());
+		assertTrue(Kernel.complex_question_(
+				Kernel.sqrt(FloatPoint.fromString("-1"))).isTrue());
 		assertTrue(Kernel.complex_question_("hi").isFalse());
 		assertTrue(Kernel.complex_question_('h').isFalse());
 		assertTrue(Kernel.complex_question_(Logic.FALSE).isFalse());
