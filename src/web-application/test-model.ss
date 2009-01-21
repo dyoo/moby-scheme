@@ -50,7 +50,7 @@
         (user-name (model-find-user a-model "dyoo@cs.wpi.edu"))
         "Danny Yoo")
        (check-equal?
-        (user-name (model-find-user a-model "dyoo@cs.wpi.edu"))
+        (user-name (model-find-user a-model "dyoo@hkn.eecs.berkeley.edu"))
         "Daniel Yoo")
        (check-false (model-find-user a-model "dyoo@hashcollision.org")))))
        
