@@ -1519,4 +1519,13 @@ public class Kernel {
 		else
 			return ((Rational) n).toFloatPoint();
 	}
+
+	public static org.plt.types.Number inexact_dash__greaterthan_exact(Object n) {
+		itemTypeCheck(n, "org.plt.types.Number", "inexact->exact");
+
+		if (exact_question_(n).isTrue())
+			return (org.plt.types.Number) n;
+		else
+			return new Rational(((FloatPoint) n).toInt(), 1);
+	}
 }

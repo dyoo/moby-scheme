@@ -691,4 +691,11 @@ public class TestKernel {
 				Kernel.exact_dash__greaterthan_inexact(Kernel.ONE),
 				FloatPoint.fromString("1.0")).isTrue());
 	}
+
+	@Test
+	public void testInexact_dash__greaterthan_exact() {
+		assertTrue(Kernel
+				._equal_(Kernel.inexact_dash__greaterthan_exact(Kernel.pi),
+						Kernel.THREE).isTrue());
+	}
 }
