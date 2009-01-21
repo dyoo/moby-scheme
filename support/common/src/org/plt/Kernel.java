@@ -1498,4 +1498,25 @@ public class Kernel {
 
 		return equal_question_(n1, n2);
 	}
+
+	public static org.plt.types.Logic exact_question_(Object n) {
+		itemTypeCheck(n, "org.plt.types.Number", "exact?");
+
+		return rational_question_(n);
+	}
+
+	public static org.plt.types.Logic inexact_question_(Object n) {
+		itemTypeCheck(n, "org.plt.types.Number", "inexact?");
+
+		return toLogic(n instanceof FloatPoint);
+	}
+
+	public static org.plt.types.Number exact_dash__greaterthan_inexact(Object n) {
+		itemTypeCheck(n, "org.plt.types.Number", "exact->inexact");
+
+		if (inexact_question_(n).isTrue())
+			return (org.plt.types.Number) n;
+		else
+			return ((Rational) n).toFloatPoint();
+	}
 }

@@ -662,4 +662,33 @@ public class TestKernel {
 				.isFalse());
 		assertTrue(Kernel.equal_tilde__question_('a', 'a', Kernel.ONE).isTrue());
 	}
+
+	@Test
+	public void testExact_question_() {
+		assertTrue(Kernel.exact_question_(Kernel.ONE).isTrue());
+		assertTrue(Kernel.exact_question_(FloatPoint.fromString("-1.1"))
+				.isFalse());
+		assertTrue(Kernel.exact_question_(
+				Kernel.sqrt(FloatPoint.fromString("-1"))).isFalse());
+		assertTrue(Kernel.exact_question_(Kernel.pi).isFalse());
+	}
+
+	@Test
+	public void testInexact_question_() {
+		assertTrue(Kernel.inexact_question_(Kernel.ONE).isFalse());
+		assertTrue(Kernel.inexact_question_(FloatPoint.fromString("-1.1"))
+				.isTrue());
+		assertTrue(Kernel.inexact_question_(
+				Kernel.sqrt(FloatPoint.fromString("-1"))).isTrue());
+	}
+
+	@Test
+	public void testExact_dash__greaterthan_inexact() {
+		assertTrue(Kernel._equal_(
+				Kernel.exact_dash__greaterthan_inexact(Kernel.pi), Kernel.pi)
+				.isTrue());
+		assertTrue(Kernel._equal_(
+				Kernel.exact_dash__greaterthan_inexact(Kernel.ONE),
+				FloatPoint.fromString("1.0")).isTrue());
+	}
 }
