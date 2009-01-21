@@ -26,6 +26,12 @@
    "test-model.ss"
 
    (test-case
+    "Unknown user"
+    (call-with-test-model
+     (lambda (a-model)
+       (check-false (model-find-user a-model "no-such-user@invisible.com")))))
+   
+   (test-case
     "add a user."
     (call-with-test-model
      (lambda (a-model)

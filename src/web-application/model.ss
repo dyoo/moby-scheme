@@ -237,19 +237,29 @@ EOF
   (delete-directory/files (model-data-dir a-model)))
 
 
+(define in-transaction? (make-parameter #f))
+
 ;; Syntax do handle both transactions and prepared statements.
+;; Also handles nested in-transaction.
 (define-syntax (with-transaction/stmts stx)
   (syntax-case stx ()
     [(_ (db abort (prep-id prep-stmt-string) ...)
         body ...)
      (syntax/loc stx
-       (with-transaction 
-        (db abort)
-        (let ([prep-id (prepare db prep-stmt-string)] ...)
-          (dynamic-wind
-           (lambda () (void))
-           (lambda () body ...)
-           (lambda () (finalize prep-id) ...)))))]))
+       (let ([thunk (lambda () 
+                      (let ([prep-id (prepare db prep-stmt-string)] ...)
+                        (dynamic-wind
+                         (lambda () (void))
+                         (lambda () body ...)
+                         (lambda () (finalize prep-id) ...))))])
+         (cond [(in-transaction?)
+                (thunk)]
+               [else
+                (parameterize ([in-transaction? #t])
+                  (with-transaction 
+                   (db abort)
+                   (thunk)))])))]))
+
 
 
 
@@ -263,10 +273,8 @@ EOF
    ((model-db a-model) 
     abort 
     [add-user-stmt "insert into user (name, email) values (?, ?)"])
-   (run add-user-stmt user-name email))
-  (model-find-user a-model user-name))
-
-  
+   (run add-user-stmt user-name email)
+   (model-find-user a-model user-name)))
 
 
 ;; model-find-user: model string -> (or/c user #f)
@@ -297,7 +305,7 @@ EOF
                   [delete-model! (model? . -> . any)]                  
                   
                   [model-add-user! (model? string? string? . -> . user?)]
-                  [model-find-user (model? string? . -> . user?)]
+                  [model-find-user (model? string? . -> . (or/c user? false/c))]
                   
                   [model-compile-source (model? source? platform? . -> . binary?)]
 
