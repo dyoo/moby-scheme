@@ -34,6 +34,22 @@
               (model-find-user a-model "dyoo@cs.wpi.edu")])
          (check-equal? (user-name user) "Danny Yoo")))))
 
+   (test-case
+    "add a few more users."
+    (call-with-test-model
+     (lambda (a-model)
+       (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")
+       (model-add-user! a-model "Daniel Yoo" "dyoo@hkn.eecs.berkeley.edu")
+       (check-equal?
+        (user-name (model-find-user a-model "dyoo@cs.wpi.edu"))
+        "Danny Yoo")
+       (check-equal?
+        (user-name (model-find-user a-model "dyoo@cs.wpi.edu"))
+        "Daniel Yoo")
+       (check-false (model-find-user a-model "dyoo@hashcollision.org")))))
+       
+   
+
    
    (test-case
     "compilation"
