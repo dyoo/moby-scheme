@@ -95,25 +95,25 @@
   (regexp-split #rx"\n\n"
   #<<EOF
 create table if not exists
-             user (id integer primary key,
-                   name text not null,
-                   email text not null unique,
-                   is_moderated integer not null default 0);
+             user (id INTEGER primary key,
+                   name TEXT not null,
+                   email TEXT not null unique,
+                   is_moderated INTEGER not null default 0);
 
 create table if not exists
-             source (id integer primary key,
-                     name text not null,
-                     code blob not null,
-                     date_submitted text not null,
-                     user_id integer not null);
+             source (id INTEGER primary key,
+                     name TEXT not null,
+                     code BLOB not null,
+                     date_submitted TEXT not null,
+                     user_id INTEGER not null);
 
 create table if not exists
-             binary (id integer primary key,
-                     name text not null,
-                     package blob not null,
-                     is_visible integer not null default 1,
-                     downloads integer not null default 0,
-                     source_id integer not null)
+             binary (id INTEGER primary key,
+                     name TEXT not null,
+                     package BLOB not null,
+                     is_visible INTEGER not null default 1,
+                     downloads INTEGER not null default 0,
+                     source_id INTEGER not null)
 EOF
 ))
 ;; install-tables!: model -> void
@@ -268,13 +268,13 @@ EOF
 ;; raises an error.
 ;; FIXME: do the error trapping.
 
-(define (model-add-user! a-model user-name email)
+(define (model-add-user! a-model name email)
   (with-transaction/stmts
    ((model-db a-model) 
     abort 
     [add-user-stmt "insert into user (name, email) values (?, ?)"])
-   (run add-user-stmt user-name email)
-   (model-find-user a-model user-name)))
+   (run add-user-stmt name email)
+   (model-find-user a-model email)))
 
 
 ;; model-find-user: model string -> (or/c user #f)
