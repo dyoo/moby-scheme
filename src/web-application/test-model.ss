@@ -65,7 +65,9 @@
                                          #"\n\n\nBlah" user)])
          (check-equal? (source-name source) "Happy Days")
          (check-true (bytes=? (source-code source) #"\n\n\nBlah"))
-         (check-equal? (source-user source) user)))))
+         (check-equal? (source-user source) user)
+         
+         (check-equal? (model-user-sources a-model user) (list source))))))
    
    
 
@@ -80,7 +82,7 @@
                (model-add-source! 
                 a-model 
                 "hello" 
-                #"\n\n\n \"hello world\" (big-bang 0 0 1 false)"
+                #"\n\n\n\"hello world\" (big-bang 0 0 1 false)"
                 a-user)]
               [binary
                (model-compile-source! a-model a-source j2me)])

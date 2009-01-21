@@ -342,7 +342,31 @@ EOF
                         (model-find-user a-model #:id user-id))]))]
      [else
       #f])))
-  
+
+;; model-user-sources: model user -> (listof source)
+(define (model-user-sources a-model a-user)
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort
+    [find-source-stmt 
+     "select id, name, code, date_submitted, user_id from source where user_id=?"])
+   (load-params find-source-stmt (user-id a-user))
+   (let loop ()
+     (cond
+       [(step find-source-stmt)
+        =>
+        (lambda (v)
+          (match v
+            [(vector id name code date-submitted-string user-id)
+             (cons 
+              (make-source id
+                           name
+                           code
+                           (string->date date-submitted-string)
+                           a-user)
+              (loop))]))]
+       [else
+        empty]))))
 
 
 (define j2me (make-platform:j2me))
@@ -362,6 +386,8 @@ EOF
                   
                   [model-add-source! (model? string? bytes? user? . -> . source?)]
                   [model-find-source (model? number? . -> . (or/c source? false/c))]
+                  [model-user-sources (model? user? . -> . (listof source?))]
+                  
                   [model-compile-source! (model? source? platform? . -> . binary?)]
 
                   
