@@ -7,7 +7,7 @@
          scheme/list
          "../compile-world.ss"
          "../utils.ss"
-         (planet jaymccarthy/sqlite:3))
+         (planet jaymccarthy/sqlite:3:7))
 
 (require (for-syntax scheme/base))
 

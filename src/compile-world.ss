@@ -212,7 +212,6 @@
 ;; parse-text-as-program: text -> program
 ;; Given a text, returns a program as well.
 (define (parse-text-as-program a-text)
-  (printf "I see: ~s~n" (send a-text get-text))
   (let* ([ip (open-input-text-editor a-text)]
          [s-exp
           (parameterize ([read-accept-reader #t])
