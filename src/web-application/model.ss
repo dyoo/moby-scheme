@@ -44,7 +44,8 @@
 (define-struct binary (id 
                        name      ;; string
                        package   ;; bytes
-                       approved? ;; boolean
+                       visible?  ;; boolean
+                       downloads ;; number
                        source    ;; source
                        )
   #:transparent)
@@ -180,23 +181,30 @@ EOF
 (define (model-compile-source! a-model a-source a-platform)
   (define (do-platform-compilation generate binary-find)
     (let* ([name (source-name a-source)]
-           [dir (make-temporary-directory #:parent-directory (model-scratch-directory a-model))]
+           [dir (make-temporary-directory 
+                 #:parent-directory (model-scratch-directory a-model))]
            [program-path (build-path dir (string-append name ".ss"))])
       (call-with-output-file program-path 
         (lambda (op)
           (write-bytes (source-code a-source) op)))
       (generate name program-path dir)
-      
       (let* ([bin-path (first (find-files binary-find (build-path dir "bin")))]
-             [bin (make-binary 
-                   #f 
-                   (path->string (file-name-from-path bin-path))
-                   (get-file-bytes bin-path)
-                   (not (user-moderated? (source-user a-source))) ;; approved?
-                   a-source                                       ;; source
-                   )])
-        #;(delete-directory/files dir)
-        bin)))
+             [filename (path->string (file-name-from-path bin-path))]
+             [package (get-file-bytes bin-path)]
+             [is-visible (if (not (user-moderated? (source-user a-source))) 1 0)])
+        (let ([bin
+               (model-find-binary a-model
+                                  (with-transaction/stmts
+                                   ((model-db a-model) 
+                                    abort 
+                                    [add-binary-stmt "insert into binary 
+                                        (name, package, is_visible, downloads, source_id)
+                                        values (?, ?, ?, ?, ?)"])
+                                   (run add-binary-stmt filename package 
+                                        is-visible 0 (source-id a-source))
+                                   (last-insert-id (model-db a-model))))])
+          (delete-directory/files dir)
+          bin))))
   (with-serializing 
    a-model
    (lambda ()
@@ -460,7 +468,8 @@ EOF
                   [struct binary ([id any/c #;number?]
                                   [name string?]
                                   [package bytes?]
-                                  [approved? boolean?]
+                                  [visible? boolean?]
+                                  [downloads number?]
                                   [source source?])]
                   
                   [struct platform ()]
