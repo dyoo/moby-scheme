@@ -27,16 +27,18 @@
                      name ;; string
                      email ;; string
                      moderated? ;; boolean
-                     ))
+                     )
+  #:transparent)
 
 
 
 (define-struct source (id             ;; string
-                       program-name   ;; string
+                       name           ;; string
                        code           ;; bytes
                        date-submitted ;; date
                        user           ;; user
-                       ))
+                       )
+  #:transparent)
 
 
 (define-struct binary (id 
@@ -44,7 +46,8 @@
                        package   ;; bytes
                        approved? ;; boolean
                        source    ;; source
-                       ))
+                       )
+  #:transparent)
 
 ;;;;
 
@@ -176,7 +179,7 @@ EOF
 ;; model-compile-source!: model source platform -> binary              
 (define (model-compile-source! a-model a-source a-platform)
   (define (do-platform-compilation generate binary-find)
-    (let* ([name (source-program-name a-source)]
+    (let* ([name (source-name a-source)]
            [dir (make-temporary-directory #:parent-directory (model-scratch-directory a-model))]
            [program-path (build-path dir (string-append name ".ss"))])
       (call-with-output-file program-path 
@@ -304,7 +307,7 @@ EOF
 ;; last-insert-id: db -> number
 ;; Gets the last insert id.
 (define (last-insert-id db)
-  (vector-ref (first (select db "select last_insert_rowid()")) 0))
+  (vector-ref (second (select db "select last_insert_rowid()")) 0))
 
 
 ;; model-add-source!: model string code user
@@ -315,7 +318,7 @@ EOF
     [add-source-stmt "insert into source (name, code, date_submitted, user_id)
                       values (?, ?, ?, ?)"])
    (run add-source-stmt a-name a-code (now-date-string) (user-id a-user))
-   (model-find-source a-model (last-insert-id))))
+   (model-find-source a-model (last-insert-id (model-db a-model)))))
 
 
 ;; model-find-source: model id -> (or/c source #f)
@@ -324,18 +327,19 @@ EOF
    ((model-db a-model) 
     abort
     [find-source-stmt 
-     "select id, name, date_submitted, user_id from user where id=?"])
+     "select id, name, code, date_submitted, user_id from source where id=?"])
    (load-params find-source-stmt an-id)
    (cond
      [(step find-source-stmt)
       =>
       (lambda (v)
         (match v
-          [(vector id name date-submitted-string user-id)
+          [(vector id name code date-submitted-string user-id)
            (make-source id
                         name
+                        code
                         (string->date date-submitted-string)
-                        (model-find-user #:id user-id))]))]
+                        (model-find-user a-model #:id user-id))]))]
      [else
       #f])))
   
@@ -362,7 +366,7 @@ EOF
                                 [moderated? boolean?])]
                   
                   [struct source ([id number?]
-                                  [program-name string?]
+                                  [name string?]
                                   [code bytes?]
                                   [date-submitted date?]
                                   [user user?])]

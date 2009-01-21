@@ -55,6 +55,16 @@
        (check-false (model-find-user a-model #:email "dyoo@hashcollision.org")))))
        
    
+   (test-case
+    "Add a user and a source."
+    (call-with-test-model
+     (lambda (a-model)
+       (let* ([user (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")]
+              [source (model-add-source! a-model "Happy Days" #"\n\n\nBlah" user)])
+         (check-equal? (source-name source) "Happy Days")
+         (check-equal? (source-user source) user)))))
+   
+   
 
    
    (test-case
