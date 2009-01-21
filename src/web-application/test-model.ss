@@ -60,8 +60,11 @@
     (call-with-test-model
      (lambda (a-model)
        (let* ([user (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")]
-              [source (model-add-source! a-model "Happy Days" #"\n\n\nBlah" user)])
+              [source (model-add-source! a-model 
+                                         "Happy Days"
+                                         #"\n\n\nBlah" user)])
          (check-equal? (source-name source) "Happy Days")
+         (check-true (bytes=? (source-code source) #"\n\n\nBlah"))
          (check-equal? (source-user source) user)))))
    
    
@@ -71,11 +74,16 @@
     "compilation"
     (call-with-test-model
      (lambda (a-model)
-       (let* ([a-user (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")]
+       (let* ([a-user 
+               (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")]
+              [a-source 
+               (model-add-source! 
+                a-model 
+                "hello" 
+                #"\n\n\n \"hello world\" (big-bang 0 0 1 false)"
+                a-user)]
               [binary
-               (model-compile-source! a-model
-                                      (make-source 1 "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (seconds->date (current-seconds)) a-user)
-                                      (make-platform:j2me))])
+               (model-compile-source! a-model a-source j2me)])
          (check-true (binary? binary))))))))
 
 

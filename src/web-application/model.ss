@@ -345,6 +345,11 @@ EOF
   
 
 
+(define j2me (make-platform:j2me))
+(define android (make-platform:android))
+
+
+
 (provide/contract [rename -make-model make-model (path-string? . -> . model?)]
                   [close-model (model? . -> . any)]
                   [delete-model! (model? . -> . any)]                  
@@ -379,4 +384,6 @@ EOF
                   
                   [struct platform ()]
                   [struct (platform:j2me platform) ()]
-                  [struct (platform:android platform) ()])
+                  [struct (platform:android platform) ()]
+                  [j2me platform?]
+                  [android platform?])
