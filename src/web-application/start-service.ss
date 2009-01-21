@@ -15,8 +15,8 @@
   "id")
 
 
-(define (moby-compile platform-name name bytes)
-  (printf "I see ~s ~s ~s~n" platform-name name bytes)
+;; moby-compile: string bytes string -> void
+(define (moby-compile name bytes platform)
   (let ([bin
          (compile-source model
                          (make-source (make-id)

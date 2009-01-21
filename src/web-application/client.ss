@@ -8,7 +8,8 @@
 (define (get-moby-compile server-url-string)
   (define server (xmlrpc-server (string->url server-url-string)))
   (define moby-compile (server "moby.compile"))
-  moby-compile)
+  (lambda (name code platform)
+    (moby-compile name code platform)))
 
 
 (define (test)

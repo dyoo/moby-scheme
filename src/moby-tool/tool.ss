@@ -86,8 +86,11 @@
                                 (bytes-append
                                  #"\n\n\n"
                                  (get-input-port-bytes (open-input-text-editor editor)))])
-                           (let* ([moby-compile (get-moby-compile (send server-url get-value))]
-                                  [name&app-bytes (moby-compile platform app-name source-code)]
+                           (let* ([moby-compile (get-moby-compile 
+                                                 (send server-url get-value))]
+                                  [name&app-bytes (moby-compile app-name 
+                                                                source-code 
+                                                                platform)]
                                   [filename (first name&app-bytes)]
                                   [app-bytes (second name&app-bytes)]
                                   [path-dialog
@@ -141,13 +144,3 @@
                (string=? (send item get-plain-label) "Scheme"))
         (return item)))
     (return #f)))
-          
-
-(require (planet schematics/xmlrpc/xmlrpc)
-         net/url)
-
-(define (get-moby-compile server-url-string)
-  (define server (xmlrpc-server (string->url server-url-string)))
-  (define moby-compile (server "moby.compile"))
-  moby-compile)
-
