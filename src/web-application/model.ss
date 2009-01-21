@@ -173,8 +173,8 @@ EOF
 
 
 
-;; model-compile-source: model source platform -> binary              
-(define (model-compile-source a-model a-source a-platform)
+;; model-compile-source!: model source platform -> binary              
+(define (model-compile-source! a-model a-source a-platform)
   (define (do-platform-compilation generate binary-find)
     (let* ([name (source-program-name a-source)]
            [dir (make-temporary-directory #:parent-directory (model-scratch-directory a-model))]
@@ -267,27 +267,33 @@ EOF
 ;; Adds a user to the model.  If the user already exists,
 ;; raises an error.
 ;; FIXME: do the error trapping.
-
 (define (model-add-user! a-model name email)
   (with-transaction/stmts
    ((model-db a-model) 
     abort 
     [add-user-stmt "insert into user (name, email) values (?, ?)"])
    (run add-user-stmt name email)
-   (model-find-user a-model email)))
+   (model-find-user a-model #:email email)))
 
 
 ;; model-find-user: model string -> (or/c user #f)
 ;; Looks up a user in the model.
-(define (model-find-user a-model an-email)
+(define (model-find-user a-model
+                         #:email (an-email #f)
+                         #:id (an-id #f))
   (with-transaction/stmts
    ((model-db a-model) 
     abort
-    [find-user-stmt 
-     "select id, name, email, is_moderated from user where email=?"])
-   (load-params find-user-stmt an-email)
+    [find-user-stmt/email
+     "select id, name, email, is_moderated from user where email=?"]
+    [find-user-stmt/id
+     "select id, name, email, is_moderated from user where id=?"])
+   (when an-id
+     (load-params find-user-stmt/id an-id))
+   (when an-email
+     (load-params find-user-stmt/email an-email))
    (cond
-     [(step find-user-stmt)
+     [(or (step find-user-stmt/id) (step find-user-stmt/email))
       =>
       (lambda (v) (apply make-user (vector->list v)))]
      [else
@@ -295,9 +301,44 @@ EOF
 
 
 
+;; last-insert-id: db -> number
+;; Gets the last insert id.
+(define (last-insert-id db)
+  (vector-ref (first (select db "select last_insert_rowid()")) 0))
 
 
+;; model-add-source!: model string code user
+(define (model-add-source! a-model a-name a-code a-user)
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort 
+    [add-source-stmt "insert into source (name, code, date_submitted, user_id)
+                      values (?, ?, ?, ?)"])
+   (run add-source-stmt a-name a-code (now-date-string) (user-id a-user))
+   (model-find-source a-model (last-insert-id))))
 
+
+;; model-find-source: model id -> (or/c source #f)
+(define (model-find-source a-model an-id)
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort
+    [find-source-stmt 
+     "select id, name, date_submitted, user_id from user where id=?"])
+   (load-params find-source-stmt an-id)
+   (cond
+     [(step find-source-stmt)
+      =>
+      (lambda (v)
+        (match v
+          [(vector id name date-submitted-string user-id)
+           (make-source id
+                        name
+                        (string->date date-submitted-string)
+                        (model-find-user #:id user-id))]))]
+     [else
+      #f])))
+  
 
 
 (provide/contract [rename -make-model make-model (path-string? . -> . model?)]
@@ -305,9 +346,14 @@ EOF
                   [delete-model! (model? . -> . any)]                  
                   
                   [model-add-user! (model? string? string? . -> . user?)]
-                  [model-find-user (model? string? . -> . (or/c user? false/c))]
+                  [model-find-user ((model?) 
+                                    (#:id number? #:email string?)
+                                    . ->* .
+                                    (or/c user? false/c))]
                   
-                  [model-compile-source (model? source? platform? . -> . binary?)]
+                  [model-add-source! (model? string? bytes? user? . -> . source?)]
+                  [model-find-source (model? number? . -> . (or/c source? false/c))]
+                  [model-compile-source! (model? source? platform? . -> . binary?)]
 
                   
                   [struct user ([id number?]

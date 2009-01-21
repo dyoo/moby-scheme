@@ -29,7 +29,7 @@
     "Unknown user"
     (call-with-test-model
      (lambda (a-model)
-       (check-false (model-find-user a-model "no-such-user@invisible.com")))))
+       (check-false (model-find-user a-model #:email "no-such-user@invisible.com")))))
    
    (test-case
     "add a user."
@@ -37,7 +37,7 @@
      (lambda (a-model)
        (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")
        (let ([user
-              (model-find-user a-model "dyoo@cs.wpi.edu")])
+              (model-find-user a-model #:email "dyoo@cs.wpi.edu")])
          (check-equal? (user-name user) "Danny Yoo")))))
 
    (test-case
@@ -47,12 +47,12 @@
        (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")
        (model-add-user! a-model "Daniel Yoo" "dyoo@hkn.eecs.berkeley.edu")
        (check-equal?
-        (user-name (model-find-user a-model "dyoo@cs.wpi.edu"))
+        (user-name (model-find-user a-model #:email "dyoo@cs.wpi.edu"))
         "Danny Yoo")
        (check-equal?
-        (user-name (model-find-user a-model "dyoo@hkn.eecs.berkeley.edu"))
+        (user-name (model-find-user a-model #:email "dyoo@hkn.eecs.berkeley.edu"))
         "Daniel Yoo")
-       (check-false (model-find-user a-model "dyoo@hashcollision.org")))))
+       (check-false (model-find-user a-model #:email "dyoo@hashcollision.org")))))
        
    
 
@@ -63,9 +63,9 @@
      (lambda (a-model)
        (let* ([a-user (model-add-user! a-model "Danny Yoo" "dyoo@cs.wpi.edu")]
               [binary
-               (model-compile-source a-model
-                                     (make-source 1 "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (now) a-user)
-                                     (make-platform:j2me))])
+               (model-compile-source! a-model
+                                      (make-source 1 "hello" #"\n\n\n\"hello world\" (big-bang 0 0 1 false)" (seconds->date (current-seconds)) a-user)
+                                      (make-platform:j2me))])
          (check-true (binary? binary))))))))
 
 

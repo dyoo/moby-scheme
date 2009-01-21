@@ -1,13 +1,15 @@
 #lang scheme/base
 (require scheme/contract
-         scheme/file)
+         scheme/file
+         (prefix-in 19: srfi/19))
 
 (provide/contract [copy-directory/files* (path-string? path-string? . -> . any)]
                   [upper-camel-case (string? . -> . string?)]
                   [make-temporary-directory (() (#:parent-directory path?) . ->* . path?)]
                   [get-file-bytes (path? . -> . bytes?)]
                   [get-input-port-bytes (input-port? . -> . bytes?)]
-                  [now (-> date?)])
+                  [now-date-string (-> string?)]
+                  [string->date (string? . -> . date?)])
 
 
 ;; copy-directory/files*: path path -> void
@@ -62,11 +64,37 @@
 
 
 
-;; now: ->date
-;; Returns the current date.
-(define (now)
-  (seconds->date (current-seconds)))
 
+
+;; now-date-string: -> string
+;; Returns the current date as a string.
+(define (now-date-string)
+  (19:date->string (19:current-date) "~5"))
+
+;; string->date: string -> date
+(define (string->date an-str)
+  (let* ([d (19:string->date an-str "~Y-~m-~dT~H:~M:~S")]
+         [second (19:date-second d)]
+         [minute (19:date-minute d)]
+         [hour (19:date-hour d)]
+         [day (19:date-day d)]
+         [month (19:date-month d)]
+         [year (19:date-year d)]
+         [week-day (19:date-week-day d)]
+         [year-day (19:date-year-day d)]
+         [dst? #f] ;; fixme: I have no idea how to get daylight savings time from SRFI 19
+         [time-zone-offset (19:date-zone-offset d)])
+    (make-date second
+               minute
+               hour
+               day
+               month
+               year
+               week-day
+               year-day
+               dst?
+               time-zone-offset)))
+         
 
 ;; upper-camel-case: string -> string
 ;; Given a string name, perform an UpperCamelCasing of the name.
