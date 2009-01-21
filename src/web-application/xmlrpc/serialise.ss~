@@ -28,7 +28,7 @@
 
 (module serialise scheme
   
-  (require (require (planet jim/webit:1:6/xml))
+  (require "../webit/xml.ss"
            (lib "pregexp.ss")
            (prefix-in c: (lib "contract.ss"))
            (only-in (lib "date.ss") find-seconds)
