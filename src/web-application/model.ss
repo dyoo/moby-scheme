@@ -9,6 +9,8 @@
          "../utils.ss"
          (planet jaymccarthy/sqlite:3))
 
+(require (for-syntax scheme/base))
+
 
 ;; The model we maintain has a maintenance thread, a request channel, and a response channel.
 ;; data-dir is a path that we use to store things like the database and other disk-based
@@ -235,26 +237,54 @@ EOF
   (delete-directory/files (model-data-dir a-model)))
 
 
+;; Syntax do handle both transactions and prepared statements.
+(define-syntax (with-transaction/stmts stx)
+  (syntax-case stx ()
+    [(_ (db abort (prep-id prep-stmt-string) ...)
+        body ...)
+     (syntax/loc stx
+       (with-transaction 
+        (db abort)
+        (let ([prep-id (prepare db prep-stmt-string)] ...)
+          (dynamic-wind
+           (lambda () (void))
+           (lambda () body ...)
+           (lambda () (finalize prep-id) ...)))))]))
+
+
+
 ;; model-add-user!: model string string -> void
 ;; Adds a user to the model.  If the user already exists,
 ;; raises an error.
 ;; FIXME: do the error trapping.
 
 (define (model-add-user! a-model user-name email)
-  (with-transaction 
-   ((model-db a-model) abort)
-   (let ([add-user-stmt 
-          (prepare (model-db a-model) "insert into user (name, email) values (?, ?)")])
-     (run add-user-stmt user-name email)
-     (finalize add-user-stmt)))
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort 
+    [add-user-stmt "insert into user (name, email) values (?, ?)"])
+   (run add-user-stmt user-name email))
   (model-find-user a-model user-name))
 
   
 
+
 ;; model-find-user: model string -> (or/c user #f)
 ;; Looks up a user in the model.
 (define (model-find-user a-model an-email)
-  (make-user 0 "Danny Yoo" "dyoo@cs.wpi.edu" #f))
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort
+    [find-user-stmt 
+     "select id, name, email, is_moderated from user where email=?"])
+   (load-params find-user-stmt an-email)
+   (cond
+     [(step find-user-stmt)
+      =>
+      (lambda (v) (apply make-user (vector->list v)))]
+     [else
+      #f])))
+
 
 
 
