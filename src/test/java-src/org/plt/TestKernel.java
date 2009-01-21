@@ -651,4 +651,15 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(Kernel.ONE,
 				Kernel.imag_dash_part(FloatPoint.fromString("1.1"))).isFalse());
 	}
+
+	@Test
+	public void testEqual_tilde__question_() {
+		assertTrue(Kernel.equal_tilde__question_(Kernel.ONE, Kernel.THREE,
+				Kernel.ONE).isFalse());
+		assertTrue(Kernel.equal_tilde__question_(Kernel.ONE, Kernel.TWO,
+				Kernel.ONE).isTrue());
+		assertTrue(Kernel.equal_tilde__question_(Kernel.ONE, 'a', Kernel.ONE)
+				.isFalse());
+		assertTrue(Kernel.equal_tilde__question_('a', 'a', Kernel.ONE).isTrue());
+	}
 }

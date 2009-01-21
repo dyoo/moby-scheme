@@ -106,8 +106,20 @@ public class Kernel {
 		}
 	}
 
+	private static void itemTypeCheck(Object n, PropertyChecker checker,
+			String propertyType, String funName, int argNum) {
+
+		if (!checker.satisfied(n))
+			throw new SchemeException(funName + ": expects argument number "
+					+ argNum + " of type <" + propertyType + ">; given " + n);
+	}
+
 	private static interface RelationChecker {
 		public boolean satisfied(Object n1, Object n2);
+	}
+
+	private static interface PropertyChecker {
+		public boolean satisfied(Object n);
 	}
 
 	/**
@@ -1470,5 +1482,20 @@ public class Kernel {
 
 	public static void exit() {
 		System.exit(0);
+	}
+
+	public static org.plt.types.Logic equal_tilde__question_(Object n1,
+			Object n2, Object n3) {
+		itemTypeCheck(n3, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (real_question_(n).isTrue() && negative_question_(n)
+						.isFalse());
+			}
+		}, "non-negative-real", "equal~?", 3);
+
+		if (real_question_(n1).isTrue() && real_question_(n2).isTrue())
+			return _equal__tilde_(n1, n2, n3);
+
+		return equal_question_(n1, n2);
 	}
 }
