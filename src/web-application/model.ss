@@ -369,6 +369,60 @@ EOF
         empty]))))
 
 
+
+;; model-source-binaries: model source -> (listof binary)
+(define (model-source-binaries a-model a-source)
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort
+    [find-bin-stmt 
+     "select id, name, package, is_visible, downloads from binary where source_id=?"])
+   (load-params find-bin-stmt (source-id a-source))
+   (let loop ()
+     (cond
+       [(step find-bin-stmt)
+        =>
+        (lambda (v)
+          (match v
+            [(vector id name package is-visible downloads)
+             (cons 
+              (make-binary id
+                           name
+                           package
+                           (if (= is-visible 1) #t #f)
+                           downloads
+                           a-source)
+              (loop))]))]
+       [else
+        empty]))))
+
+
+;; model-find-binary: model number -> binary
+(define (model-find-binary a-model an-id)
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort
+    [find-bin-stmt 
+     "select id, name, package, is_visible, downloads, source_id from binary where id=?"])
+   (load-params find-bin-stmt an-id)
+   (cond
+       [(step find-bin-stmt)
+        =>
+        (lambda (v)
+          (match v
+            [(vector id name package is-visible downloads source-id)
+             (make-binary id
+                          name
+                          package
+                          (if (= is-visible 1) #t #f)
+                          downloads
+                          (model-find-source a-model source-id))]))]
+       [else
+        #f])))
+
+
+
+
 (define j2me (make-platform:j2me))
 (define android (make-platform:android))
 
@@ -389,7 +443,8 @@ EOF
                   [model-user-sources (model? user? . -> . (listof source?))]
                   
                   [model-compile-source! (model? source? platform? . -> . binary?)]
-
+                  [model-source-binaries (model? source? . -> . (listof binary?))]
+                  [model-find-binary (model? number? . -> . (or/c binary? false/c))]
                   
                   [struct user ([id number?]
                                 [name string?]

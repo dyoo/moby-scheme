@@ -86,7 +86,8 @@
                 a-user)]
               [binary
                (model-compile-source! a-model a-source j2me)])
-         (check-true (binary? binary))))))))
+         (check-true (binary? binary))
+         (check-equal? (model-find-binary a-model (binary-id binary)) binary)))))))
 
 
 (run-tests test-module)
