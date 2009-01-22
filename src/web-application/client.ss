@@ -13,7 +13,7 @@
 
 
 (define (test)
-  (define c (get-moby-compile "http://localhost:8000/compile/"))
+  (define c (get-moby-compile "http://localhost:8080/compile/"))
   (c "Danny Yoo" "dyoo@cs.wpi.edu" 
      "Hiya"
      #"\n\n\n(big-bang 100 100 0 false)"

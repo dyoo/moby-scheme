@@ -10,7 +10,8 @@
          "model.ss")
 
 
-(provide/contract [main (request? . -> . response?)])
+(provide/contract [main (request? . -> . response?)]
+                  [run-server (() (number?) . ->* . any)])
 
 
 (define-runtime-path htdocs (build-path "htdocs"))
@@ -122,12 +123,12 @@
   (dispatch request moby-site))
 
 
-(define (run-server)
+(define (run-server (port 8080))
   (serve/servlet main 
                  #:listen-ip #f
                  #:launch-browser? #f
                  #:extra-files-paths (list htdocs)
-                 
+                 #:port port
                  ;; using file-not-found-responder as a workaround
                  ;; a weirdness in the treatment of servlet-path.
                  #:file-not-found-responder main
