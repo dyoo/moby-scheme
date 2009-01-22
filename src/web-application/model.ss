@@ -312,6 +312,14 @@ EOF
 
 
 
+;; model-find-or-add-user!: model string string -> user
+(define (model-find-or-add-user! a-model a-name an-email)
+  (or (model-find-user a-model #:email an-email)
+      (model-add-user! a-model a-name an-email)))
+  
+
+
+
 ;; last-insert-id: db -> number
 ;; Gets the last insert id.
 (define (last-insert-id db)
@@ -440,6 +448,7 @@ EOF
                   [close-model (model? . -> . any)]
                   [delete-model! (model? . -> . any)]                  
                   
+                  [model-find-or-add-user! (model? string? string? . -> . user?)]
                   [model-add-user! (model? string? string? . -> . user?)]
                   [model-find-user ((model?) 
                                     (#:id number? #:email string?)
