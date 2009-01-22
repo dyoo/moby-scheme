@@ -14,7 +14,7 @@
 
 
 (define-runtime-path htdocs (build-path "htdocs"))
-(define-runtime-path data (build-path "htdocs"))
+(define-runtime-path data (build-path "data"))
 
 
 
@@ -50,6 +50,8 @@
                               (string->bytes/utf-8 filename)
                               #"\"")))])
     ;; fixme: Check that the filename matches what we've got?
+    ;; fixme: increment download count.
+    ;; fixme: can we use file-response for this?
     (make-response/incremental 200
                                "Okay"
                                (current-seconds)
