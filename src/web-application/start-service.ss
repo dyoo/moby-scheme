@@ -16,20 +16,20 @@
 
 
 ;; moby-compile: string bytes string -> void
-(define (moby-compile name bytes platform)
+(define (moby-compile name bytes platform-name)
   (let ([bin
-         (compile-source model
-                         (make-source (make-id)
-                                      name
-                                      bytes
-                                      (now)
-                                      #f)
-                         (match platform-name
-                           ['"j2me"
-                            (make-platform:j2me)]
-                           ['"android"
-                            (make-platform:android)]))])
-    (list (binary-name bin)  (binary-bytes bin))))
+         (model-compile-source! model
+                                (make-source (make-id)
+                                             name
+                                             bytes
+                                             (now-date-string)
+                                             #f)
+                                (match platform-name
+                                  ['"j2me"
+                                   (make-platform:j2me)]
+                                  ['"android"
+                                   (make-platform:android)]))])
+    (list (binary-name bin)  (binary-package bin))))
 
 
 

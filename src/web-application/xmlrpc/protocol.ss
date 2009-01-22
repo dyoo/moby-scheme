@@ -28,7 +28,7 @@
 
 (module protocol scheme
 
-  (require (require (planet jim/webit:1:6/xml))
+  (require (planet jim/webit:1:6/xml)
            (planet "xxexpr.ss" ("lshift" "xxexpr.plt" 1))
            (lib "url.ss" "net")
            ;; 20060711 MCJ

@@ -67,7 +67,7 @@
                     test-pinholes 
                     test-rectangles 
                     test-approx-equal 
-                    test-struct-question 
+                    test-struct-question
                     test-move-ball
                     
                     test-cowabunga 
