@@ -106,7 +106,7 @@
                            (let* ([moby-compile (get-moby-compile 
                                                  (string-append 
                                                   (send server-url get-value)
-                                                  "compile"))]
+                                                  "compile/"))]
                                   [result-path (string-append 
                                                 (send server-url get-value)
                                                 (moby-compile username
