@@ -20,4 +20,7 @@
      "android"))
 
 
-(provide/contract [get-moby-compile (string? . -> . (string? string? bytes? . -> . (list/c string? bytes?)))])
+(provide/contract 
+ [get-moby-compile 
+  (string? . -> . 
+           (string? string? string? bytes? string? . -> . string?)))])
