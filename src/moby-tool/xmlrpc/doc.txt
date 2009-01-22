@@ -1,0 +1,197 @@
+_XML-RPC_ Library
+==============
+
+By Matt Jadud and Noel Welsh
+An Untyped Production
+
+Time-stamp: <06/01/04 15:34:39 nhw>
+
+Keywords: _xml_, _xmlrpc_, _xml-rpc_
+
+Current version: 1.4
+Requires PLT Version: 359.100 or greater.
+
+Introduction
+============
+
+This library implements the XML-RPC protocol as specified at
+http://www.xmlrpc.com/spec
+
+XML-RPC is a popular protocol for interface to Internet
+services such as blog engines.
+
+The client-side library can be required in to your programs using:
+
+(require (planet "xmlrpc.ss" ("schematics" "xmlrpc.plt" 2 1)))
+
+Basic Types
+===========
+
+> struct (exn:xmlrpc exn) : ()
+
+A subtype of exn, this exception is raised whenever the XML-RPC library
+encounters an error.
+
+> struct (exn:xmlrpc exn) : code
+  
+A subtype of exn:xmlrpc, this exception is raised when the XML-RPC
+server responds to the client with a fault.  The code is an integer
+containing the fault code returned by the server.  The fault message
+returned by the server is contained in the exception message (which is
+a field in the exn type).
+
+
+Client-side Functions
+=====================
+
+To use the library, require:
+
+(require (planet "xmlrpc.ss" ("schematics" "xmlrpc.plt" 2 1)))
+
+The client library provides a few forms for defining servers and
+their supported endpoints.
+
+> xmlrpc-server : string integer string -> (string -> (any ... -> any))
+> xmlrpc-server : url -> (string -> (any ... -> any))
+
+Returns a function configured to make XML-RPC requests to the given
+URL.  The function accepts a string, the name of the method, and
+returns a function of any arguments which calls the method with the
+given arguments.
+
+Example:
+
+This example calls the examples.getStateName method on the server
+betty.userland.com
+
+  > (define betty (xmlrpc-server "betty.userland.com" 80 "RPC2"))
+  > (define get-state-name (betty "examples.getStateName"))
+  > (get-state-name 42)
+  "Tennessee"
+
+PLT Servlet Functions
+=====================
+
+To use the Untyped XML-RPC library to build a servlet, include one of
+the two servlet-based libraries. If you want to write a unit-based
+servlet, include "xmlrpc-unit-servlet.ss".  If you want to write a
+module-based servlet, use "xmlrpc-module-servlet.ss". For PLT Scheme
+version 352.5 and later, we recommend using the module-based approach.
+
+> add-handler : symbol (any ... -> any) -> void
+
+An XML-RPC servlet defines one or more endpoints that can be invoked by
+a remote client. The simple act of defining a Scheme function does not
+automatically provide it to the outside world; this would be
+fundamentally unsafe. Each function to be exposed externally must be
+mappend onto a name by which it can be called.
+
+For example:
+
+(define (add x y) (+ x y))
+(add-handler 'math.add add)
+
+These two lines of code define a Scheme function ('add') and provide it
+to an outside client under the name 'math.add'. The same function can
+be provided under multiple names:
+
+(define (add x y) (+ x y))
+(add-handler 'math.add add)
+(add-handler 'addFun add)
+
+'case-lambda', 'match-lambda', and functions of 
+variable argument can be bound in the same way.
+
+A complete XML-RPC handler therefore looks like: 
+
+--------
+(module add mzscheme
+  
+  (require (planet "xmlrpc-module-servlet.ss" 
+                   ("schematics" "xmlrpc.plt" 2)))
+  
+  ;; Provided by the library; must be re-exported
+  ;; to the web server.
+  (provide interface-version manager timeout start)
+  
+  (define (add x y) (+ x y))
+  (add-handler 'math.add add)
+  )
+--------
+
+The 'provide' statement provides a start, timeout, and continuation
+manager to the webserver for your XML-RPC servlet. These are defined in
+the Untyped XML-RPC module-based servlet library.
+
+PLT CGI Functions
+=====================
+The XML-RPC library can also be used for implementing CGI-based
+endpoints under a server like Apache. These endpoints are significantly
+slower at this time, as each XML-RPC call requires Apache to launch an
+entire MzScheme instance to handle the call. Servlet handlers are
+roughly two orders of magnitude faster.
+
+Typically, CGIs are executed as a user other than the author of the CGI
+(eg. 'nobody' or 'www'). This presents a problem, as the PLaneT request
+to include the XML-RPC library will likely fail, causing your CGI to
+fail as well.
+
+There are many solutions to this problem. One is to execute the CGIs in
+a SuExec'd environment. Or, you could ask your systems administrator to
+install the PLaneT package for the XML-RPC library in a globally
+accessible location. Below, we've demonstrated how you might make the
+library work for you in an environment where this is not an option.
+
+(Note: I have found this to be non-trivial in the past, and would
+encourage you to ask questions on the PLT Scheme mailing list if you
+end up taking this approach and run into trouble. --MCJ)
+
+--------
+#!/path/to/mzscheme -gqr
+
+(require (lib "config.ss" "planet"))
+(PLANET-DIR "/path/to/writable/planet-dir")
+(CACHE-DIR "/path/to/writable/planet-cache")
+(LINKAGE-FILE "/path/to/writeable/planet-linkage")
+(LOG-FILE #f)
+
+(require (planet "xmlrpc-cgi.ss" 
+                 ("schematics" "xmlrpc.plt" 1 3)))
+
+(add-handler 'add (lambda (a b) (+ a b)))
+
+(output-http-headers)
+
+(handle-xmlrpc-requests)
+--------
+
+First, we require the configuration library for PLaneT.  We then define
+PLaneT-writable directories for all of its files: these will need to be
+locations writable by the webserver (eg. owned/writable by 'nobody',
+'www', or whatever user your webserver runs as). Then, include the
+XML-RPC library, and from there, add your handlers.
+
+Before you handle your XML-RPC requests, you will need to output HTTP
+headers. This may change in the future; Apache CGI support is new, and
+currently a moving target.
+
+
+COMPATABILITY
+===================
+As of this release, the server-side of the XML-RPC library has not been
+thoroughly tested. This means we have not written a test suite in a
+variety of other languages to test against our server.
+
+The following clients are suspected to work against the Untyped XML-RPC
+server running as either a servlet or Apache CGI process:
+
+* The Untyped XML-RPC client (Scheme)
+* The Python native XML-RPC client (Python)
+* Ecto, a popular blogging package for OSX (Cocoa)
+* Apache XML-RPC v2 (Java)
+
+These tests, however, were not exhaustive. Your milage may vary. Please
+report any difficulties or patches to jadudm at gmail dot com. Or, if
+you prefer, you may also post questions to the PLT Scheme mailing list,
+where all of the library contributors participate.
+

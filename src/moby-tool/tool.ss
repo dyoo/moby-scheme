@@ -5,7 +5,8 @@
          scheme/gui/base
          scheme/class
          drscheme/tool
-         mrlib/path-dialog)
+         mrlib/path-dialog
+         "client.ss")
 
 (provide tool@)
 
@@ -50,6 +51,16 @@
 
         (define -editor editor)
         (define options-panel (new group-box-panel% [parent this] [label "Options"]))
+        (define username-field
+          (new text-field%
+               [parent options-panel]
+               [label "User name"]))
+
+        (define email-field
+          (new text-field%
+               [parent options-panel]
+               [label "E-mail"]))
+        
         (define application-name
           (new text-field%
                [parent options-panel]
@@ -71,50 +82,44 @@
           (new text-field% 
                [parent other-options-panel]
                [label "Server URL"]
-               [init-value "http://kfisler-ra1.wpi.edu:8000/servlets/standalone.ss"]))
+               [init-value "http://kfisler-ra1.wpi.edu:8080/"]))
 
         
         (define button-panel (new horizontal-panel% [parent this]))
 
         (new button% [parent button-panel]
-             [label "Download Application Locally"]
+             [label "Compile Application"]
              [callback (lambda (b e)
-                         (let ([app-name (send application-name get-value)]
-                               [platform (string-downcase (send platform-box get-item-plain-label
-                                                                (send platform-box get-selection)))]
+                         (let ([username (send username-field get-value)]
+                               [email (send email-field get-value)]
+                               [app-name 
+                                (send application-name get-value)]
+                               [platform 
+                                (string-downcase 
+                                 (send platform-box get-item-plain-label
+                                       (send platform-box get-selection)))]
                                [source-code 
+                                ;; fixme! not right yet.
                                 (bytes-append
                                  #"\n\n\n"
                                  (get-input-port-bytes (open-input-text-editor editor)))])
                            (let* ([moby-compile (get-moby-compile 
-                                                 (send server-url get-value))]
-                                  [name&app-bytes (moby-compile app-name 
-                                                                source-code 
-                                                                platform)]
-                                  [filename (first name&app-bytes)]
-                                  [app-bytes (second name&app-bytes)]
-                                  [path-dialog
-                                   (new path-dialog% 
-                                        [label "Save application"]
-                                        [message "Choose where to download the application to"]
-                                        [put? #t]
-                                        [new? #t]
-                                        [parent this]
-                                        [filename filename])])
-                             (cond [(send path-dialog run) 
-                                    => 
-                                    (lambda (a-path) 
-                                      (call-with-output-file a-path (lambda (op) 
-                                                                      (write-bytes app-bytes op)))
-                                      
-                                                                                                      
-                                      (message-box "Application created" 
-                                                   (format "Application ~a has been saved to ~a" 
-                                                           app-name
-                                                           (path->string a-path))))]
-                                   [else
-                                    (void)]))))])
-
+                                                 (string-append 
+                                                  (send server-url get-value)
+                                                  "compile"))]
+                                  [result-path (string-append 
+                                                (send server-url get-value)
+                                                (moby-compile username
+                                                              email
+                                                              app-name 
+                                                              source-code 
+                                                              platform))])
+                             (message-box
+                              "Application created" 
+                              (format "Application ~a has been compiled.  Download it from ~a." 
+                                      app-name
+                                      result-path)))))])
+        
         
         (new button% [parent button-panel]
              [label "Close"]

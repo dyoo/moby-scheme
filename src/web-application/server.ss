@@ -123,7 +123,7 @@
   (dispatch request moby-site))
 
 
-(define (run-server (port 8080))
+(define (run-server (port 8000))
   (serve/servlet main 
                  #:listen-ip #f
                  #:launch-browser? #f
