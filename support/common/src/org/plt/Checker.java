@@ -90,6 +90,14 @@ public class Checker {
 			throw new SchemeException(funName + ": expects argument number "
 					+ argNum + " of type <" + propertyType + ">; given " + n);
 	}
+
+	public static void itemTypeCheck(Object n, PropertyChecker checker,
+			String propertyType, String funName) {
+
+		if (!checker.satisfied(n))
+			throw new SchemeException(funName + ": expects argument of type <"
+					+ propertyType + ">; given " + n);
+	}
 }
 
 interface RelationChecker {
