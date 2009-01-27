@@ -192,24 +192,24 @@ EOF
              [filename (path->string (file-name-from-path bin-path))]
              [package (get-file-bytes bin-path)]
              [is-visible (if (not (user-moderated? (source-user a-source))) 1 0)])
-        (let ([bin
-               (model-find-binary a-model
-                                  (with-transaction/stmts
-                                   ((model-db a-model) 
-                                    abort 
-                                    [add-binary-stmt "insert into binary 
-                                        (name, package, is_visible, downloads, source_id)
+        (let ([bin-id (model-random-binary-id a-model)])
+          (with-transaction/stmts
+           ((model-db a-model) 
+            abort 
+            [add-binary-stmt "insert into binary 
+                                        (id, name, package, is_visible, downloads, source_id)
                                         values (?, ?, ?, ?, ?, ?)"])
-                                   (run (model-random-binary-id a-model)
-                                        add-binary-stmt
-                                        filename
-                                        package 
-                                        is-visible
-                                        0 
-                                        (source-id a-source))
-                                   (last-insert-id (model-db a-model))))])
-          #;(delete-directory/files dir)
-          bin))))
+           (run add-binary-stmt
+                bin-id
+                filename
+                package 
+                is-visible
+                0 
+                (source-id a-source)))
+          (let ([bin
+                 (model-find-binary a-model bin-id)])
+            #;(delete-directory/files dir)
+            bin)))))
   (with-serializing 
    a-model
    (lambda ()
@@ -454,7 +454,7 @@ EOF
    (let loop ()
      (let ([new-name (make-new-name)])
        (load-params find-duplicate-stmt new-name)
-       (cond [(= (vector-ref (step find-duplicate-stmt) 0)
+       (cond [(= (string->number (vector-ref (step find-duplicate-stmt) 0))
                  0)
               new-name]
              [else
@@ -507,7 +507,7 @@ EOF
                   
                   [model-compile-source! (model? source? platform? . -> . binary?)]
                   [model-source-binaries (model? source? . -> . (listof binary?))]
-                  [model-find-binary (model? number? . -> . (or/c binary? false/c))]
+                  [model-find-binary (model? string? . -> . (or/c binary? false/c))]
                   
                   [struct user ([id number?]
                                 [name string?]
