@@ -13,14 +13,11 @@ first to consult on the design of solutions.
 * Implement more of the Beginner Scheme primitives in the runtime.
   The list of primitives comes at the end of this file.
 
-* Remove unnecessary classes like MicroFloat from Android platform
-  compilation.  Android guarantees a floating-point unit; our current
-  implementation uses the MicroFloat fixed-point library even though
-  we don't need it.
-
 * Expose Android-specific functionality.  Definitely talk to us before
   tackling this one: we want to make sure the design matches the
   functional flavor of the world primitives.
+
+* Fix the bugs listed in BUGS.
 
 * The bridge classes we've adopted for the J2ME-Android bridge are not
   reproducing correct behavior.  We need someone to investigate and
@@ -32,13 +29,16 @@ first to consult on the design of solutions.
   src/test/java-src/org/plt/TestKernel.java, exercising code that's in
   support/common/src/org/plt/Kernel.java.
 
-* Fix the bugs listed in BUGS.
-
 * Improve the design of the numeric support.  For expediency, the
   kernel code reproduced the behavior of the numeric tower with a
   bunch of hardcoded if statements.  We want to look existing
   implementations of the numeric tower from other Java Scheme systems
   like SISC and adopt one of them.
+
+* Remove unnecessary classes like MicroFloat from Android platform
+  compilation.  Android guarantees a floating-point unit; our current
+  implementation uses the MicroFloat fixed-point library even though
+  we don't need it.
 
 
 
