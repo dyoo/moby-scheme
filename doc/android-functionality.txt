@@ -43,7 +43,7 @@ The Android and J2ME specific functionality includes, roughly:
 
      
     * Google Maps gui widget.  We'd expose this as an extension of
-      gui-world; it behaves as a canvas with a few more hooks.
+      gui-world; it behaves as a canvas with a few more hooks.  Appears only available for Android.
 
 
     * HTTP GET for RESTful services.
