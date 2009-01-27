@@ -1,0 +1,31 @@
+The Android and J2ME specific functionality includes, roughly:
+
+    * File persistance
+
+      open-file-input: String -> input-port
+      open-file-output: String -> output-port
+
+    * Location Services
+
+      get-latitude: -> number
+      get-longitude: -> number
+
+      Optionally, if the mobile device supports it:
+
+      get-attitude: -> (U number #f)
+      get-bearing: -> (U number #f)
+      get-speed: -> (U number #f)
+     
+    * Google Maps gui widget.  We'd expose this as an extension of gui-world.
+
+    * HTTP GET for REST services
+
+      get-response: url -> input-port
+
+    * Audio and video
+
+      (Not stable in Android yet.)
+
+    * Phone calling.
+
+      dial: phone-number -> void
