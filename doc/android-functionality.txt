@@ -5,6 +5,31 @@ The Android and J2ME specific functionality includes, roughly:
       open-file-input: String -> input-port
       open-file-output: String -> output-port
 
+
+      Android supports SQLite:
+
+      create-database: string number -> db
+      exec-sql: db string -> void
+      raw-query: db string (listof string) -> cursor
+      ... 
+
+      with all the SQL stuff.
+
+
+
+      J2ME has RecordStore, which is a byte-oriented interface to a persistent store:
+      
+      open-record-store: string boolean -> rs
+      add-record: rs number bytes -> void
+      get-record: rs number -> bytes
+      set-record: rs number bytes -> void
+
+
+      We want an API that transparently hides the complexity of these
+      approaches.  Ideally, we should have something that can deal
+      with structs.
+
+
     * Location Services
 
       get-latitude: -> number
@@ -15,16 +40,30 @@ The Android and J2ME specific functionality includes, roughly:
       get-attitude: -> (U number #f)
       get-bearing: -> (U number #f)
       get-speed: -> (U number #f)
-     
-    * Google Maps gui widget.  We'd expose this as an extension of gui-world.
 
-    * HTTP GET for REST services
+     
+    * Google Maps gui widget.  We'd expose this as an extension of
+      gui-world; it behaves as a canvas with a few more hooks.
+
+
+    * HTTP GET for RESTful services.
 
       get-response: url -> input-port
+
 
     * Audio and video
 
       (Not stable in Android yet.)
+
+
+      In J2ME, the MMAPI provides:
+      
+      create-player: string -> player
+
+      start: player -> void
+
+
+
 
     * Phone calling.
 
