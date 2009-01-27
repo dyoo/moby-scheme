@@ -2,13 +2,19 @@
 
 (require scheme/unit
          scheme/list
+         scheme/path
          scheme/gui/base
          scheme/class
+         framework/preferences
          drscheme/tool
          mrlib/path-dialog
          "client.ss")
 
 (provide tool@)
+
+(define MOBY-EMAIL 'moby:email-address)
+
+
 
 (define tool@
   (unit
@@ -19,7 +25,9 @@
       (void))
 
     (define (phase2) 
-      (install-menu-item))
+      (install-menu-item)
+      (preferences:set-default MOBY-EMAIL "your-email@domain.com" string?))
+
     
     (define (install-menu-item)
       (drscheme:get/extend:extend-unit-frame menu-introducing-mixin))
@@ -42,6 +50,34 @@
                                         [parent this]
                                         [editor (send this get-editor)])
                                    show #t))])))))
+ 
+    
+    
+    ;; get-definition-editor-bytes: editor% -> bytes
+    (define (get-definition-editor-bytes an-editor)
+      (let* ([next-settings (send an-editor get-next-settings)]
+             [lang
+              (drscheme:language-configuration:language-settings-language 
+               next-settings)]
+             [settings
+              (drscheme:language-configuration:language-settings-settings
+               next-settings)]
+             [name-mod (send lang get-reader-module)]
+             [result
+              (let* ([op (open-output-bytes)])
+                (when name-mod
+                  (let ([metadata 
+                         (send lang get-metadata 
+                               (string->symbol
+                                (port-name->name 
+                                 (send an-editor get-port-name)))
+                               settings)])
+                    (write-bytes (string->bytes/utf-8 metadata) op))
+                  (send an-editor save-port op)
+                  (get-output-bytes op)))])
+        result))
+        
+    
     
     (define my-frame%
       (class frame%
@@ -50,8 +86,9 @@
         (super-new)
 
         (define -editor editor)
-        (define options-panel (new group-box-panel% [parent this] [label "Options"]))
-        (define username-field
+        (define options-panel 
+          (new group-box-panel% [parent this] [label "Options"]))
+        #;(define username-field
           (new text-field%
                [parent options-panel]
                [label "User name"]))
@@ -59,13 +96,14 @@
         (define email-field
           (new text-field%
                [parent options-panel]
-               [label "E-mail"]))
+               [label "E-mail"]
+               [init-value (preferences:get MOBY-EMAIL)]))
         
         (define application-name
           (new text-field%
                [parent options-panel]
                [label "Application name"]
-               [init-value "hello world"]))
+               [init-value (port-name->name (send editor get-port-name))]))
         
         (define platform-box
           (new radio-box% 
@@ -74,7 +112,8 @@
                [choices (list "J2ME" "Android")]))
 
  
-        (define other-options-panel (new group-box-panel% [parent this] [label "Other options"]))
+        (define other-options-panel 
+          (new group-box-panel% [parent this] [label "Other options"]))
         (new message%
              [parent other-options-panel]
              [label "You probably do not need to touch these options."])        
@@ -90,7 +129,8 @@
         (new button% [parent button-panel]
              [label "Compile Application"]
              [callback (lambda (b e)
-                         (let ([username (send username-field get-value)]
+                         (let ([username 
+                                "PLT" #;(send username-field get-value)]
                                [email (send email-field get-value)]
                                [app-name 
                                 (send application-name get-value)]
@@ -99,10 +139,8 @@
                                  (send platform-box get-item-plain-label
                                        (send platform-box get-selection)))]
                                [source-code 
-                                ;; fixme! not right yet.
-                                (bytes-append
-                                 #"\n\n\n"
-                                 (get-input-port-bytes (open-input-text-editor editor)))])
+                                (get-definition-editor-bytes editor)])
+                           (preferences:set MOBY-EMAIL email)
                            (let* ([moby-compile (get-moby-compile 
                                                  (string-append 
                                                   (send server-url get-value)
@@ -124,24 +162,32 @@
         (new button% [parent button-panel]
              [label "Close"]
              [callback (lambda (b e)
+                         (preferences:set MOBY-EMAIL 
+                                          (send email-field get-value))
                          (send this show #f))])))))
 
 
-;; get-input-port-bytes: input-port -> bytes
-(define (get-input-port-bytes ip)
-  (let loop ([b (bytes)])
-    (let ([chunk (read-bytes 8196 ip)])
-      (cond
-        [(eof-object? chunk)
-         b]
-        [else
-         (loop (bytes-append b chunk))]))))
   
+
+;; port-name->string: port-name -> string
+;; Try to get a reasonable name out of port-name.
+(define (port-name->name a-port-name)
+  (regexp-replace #px"\\.\\w*$"
+                  (cond
+                    [(path? a-port-name)
+                     (path->string 
+                      (file-name-from-path (path->string a-port-name)))]
+                    [(symbol? a-port-name)
+                     (symbol->string a-port-name)]
+                    [else
+                     (format "~a" a-port-name)])
+                  ""))
 
 
 
 ;; find-scheme-menu: menu-bar -> (U menu #f)
 ;; Looks for the Scheme menu.  Very hacky.
+;; FIXME: this is totally not the right way to do this.
 (define (find-scheme-menu a-menu-bar)
   (let/ec return
     (for ([item (send a-menu-bar get-items)])

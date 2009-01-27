@@ -41,7 +41,7 @@
   #:transparent)
 
 
-(define-struct binary (id 
+(define-struct binary (id        ;; string
                        name      ;; string
                        package   ;; bytes
                        visible?  ;; boolean
@@ -112,7 +112,7 @@ create table if not exists
                      user_id INTEGER not null);
 
 create table if not exists
-             binary (id INTEGER primary key,
+             binary (id TEXT primary key,
                      name TEXT not null,
                      package BLOB not null,
                      is_visible INTEGER not null default 1,
@@ -199,11 +199,16 @@ EOF
                                     abort 
                                     [add-binary-stmt "insert into binary 
                                         (name, package, is_visible, downloads, source_id)
-                                        values (?, ?, ?, ?, ?)"])
-                                   (run add-binary-stmt filename package 
-                                        is-visible 0 (source-id a-source))
+                                        values (?, ?, ?, ?, ?, ?)"])
+                                   (run (model-random-binary-id a-model)
+                                        add-binary-stmt
+                                        filename
+                                        package 
+                                        is-visible
+                                        0 
+                                        (source-id a-source))
                                    (last-insert-id (model-db a-model))))])
-          (delete-directory/files dir)
+          #;(delete-directory/files dir)
           bin))))
   (with-serializing 
    a-model
@@ -413,7 +418,7 @@ EOF
         empty]))))
 
 
-;; model-find-binary: model number -> binary
+;; model-find-binary: model string -> binary
 (define (model-find-binary a-model an-id)
   (with-transaction/stmts
    ((model-db a-model) 
@@ -435,6 +440,47 @@ EOF
                           (model-find-source a-model source-id))]))]
        [else
         #f])))
+
+
+
+;; model-random-binary-id: model -> string
+;; Creates a new binary id.
+(define (model-random-binary-id a-model)
+  (with-transaction/stmts
+   ((model-db a-model) 
+    abort
+    [find-duplicate-stmt
+     "select count(*) from binary where id=?"])
+   (let loop ()
+     (let ([new-name (make-new-name)])
+       (load-params find-duplicate-stmt new-name)
+       (cond [(= (vector-ref (step find-duplicate-stmt) 0)
+                 0)
+              new-name]
+             [else
+              (reset find-duplicate-stmt)
+              (loop)])))))
+
+(define NAME-LENGTH 6)
+
+;; make-new-name: -> string
+;; Creates a new name of length 6.
+(define (make-new-name)
+  (apply string 
+         (random-choices 
+          (string->list "abcdefghijklmnopqrstuvwxyz1234567890")
+          NAME-LENGTH)))
+
+
+;; random-choice: (listof X) -> X    
+(define (random-choice elts)
+  (list-ref elts (random (length elts))))
+    
+
+;; random-choices: (listof X) number -> (listof X)
+(define (random-choices elts n)
+  (for/list ([i (in-range n)])
+    (random-choice elts)))
 
 
 
@@ -474,7 +520,7 @@ EOF
                                   [date-submitted date?]
                                   [user user?])]
                   
-                  [struct binary ([id any/c #;number?]
+                  [struct binary ([id string?]
                                   [name string?]
                                   [package bytes?]
                                   [visible? boolean?]
