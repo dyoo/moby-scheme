@@ -10,7 +10,9 @@ first to consult on the design of solutions.
 
 ----------------------------------------------------------------------
 
-* Implement more of the Beginner Scheme primitives in the runtime.
+Major:
+
+* Implement all of the Beginner Scheme primitives in the runtime.
   The list of primitives comes at the end of this file.
 
 * Expose Android-specific functionality.  Definitely talk to us before
@@ -18,6 +20,24 @@ first to consult on the design of solutions.
   functional flavor of the world primitives.
 
 * Fix the bugs listed in BUGS.
+
+* Port the gui-world teachpack to Moby.
+
+
+* Work on the network compiler.
+
+   - Add error trapping.
+
+   - Design security features.
+
+   - Set up server.
+
+   - Set up watchdog.
+
+
+
+Minor:
+
 
 * The bridge classes we've adopted for the J2ME-Android bridge are not
   reproducing correct behavior.  We need someone to investigate and
