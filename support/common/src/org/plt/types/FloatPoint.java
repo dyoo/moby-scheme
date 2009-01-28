@@ -9,6 +9,9 @@ public class FloatPoint implements Number {
 		this.f = n;
 	}
 
+	public static FloatPoint ZERO = FloatPoint.fromString("0");
+	public static FloatPoint MINUS_ONE = FloatPoint.fromString("-1");
+
 	public static FloatPoint fromInt(int n) {
 		return new FloatPoint(MicroDouble.intToDouble(n));
 	}
@@ -76,6 +79,10 @@ public class FloatPoint implements Number {
 	}
 
 	public Number sqrt() {
+		// if (numericLessThan(ZERO))
+		// return new Complex_type(ZERO, numericMultiply(MINUS_ONE, this)
+		// .sqrt());
+
 		return new FloatPoint(MicroDouble.sqrt(this.f));
 	}
 
@@ -117,13 +124,11 @@ public class FloatPoint implements Number {
 	}
 
 	public Number floor() {
-	    return new Rational(MicroDouble.intValue(MicroDouble.floor(this.f)),
-				1);
+		return new Rational(MicroDouble.intValue(MicroDouble.floor(this.f)), 1);
 	}
 
 	public Number ceiling() {
-	    return new Rational(MicroDouble.intValue(MicroDouble.ceil(this.f)),
-				1);
+		return new Rational(MicroDouble.intValue(MicroDouble.ceil(this.f)), 1);
 	}
 
 	public String toString() {

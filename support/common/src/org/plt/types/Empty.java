@@ -1,6 +1,6 @@
 package org.plt.types;
 
-import org.plt.SchemeException;
+import org.plt.checker.SchemeException;
 
 public class Empty implements List {
 	private Empty() {

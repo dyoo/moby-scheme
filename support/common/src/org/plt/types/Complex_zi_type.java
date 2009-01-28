@@ -1,5 +1,8 @@
 package org.plt.types;
 
+import org.plt.*;
+import org.plt.checker.*;
+
 /**
  * Complex_zi_type: complex whose imaginary part is zero
  * 
@@ -17,9 +20,9 @@ public class Complex_zi_type implements Complex {
 	public static Number TWO = FloatPoint.fromString("2");
 
 	public Complex_zi_type(Number real) {
-		Checker.itemTypeCheck(real, new PropertyChecker() {
-			public boolean satisfied() {
-				return (real instanceof Rational || real instanceof FloatPoint);
+		ArgumentChecker.checkAtomType(real, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof Rational || n instanceof FloatPoint);
 			}
 		}, "real number", "Complex_zi_type");
 	}
@@ -31,7 +34,7 @@ public class Complex_zi_type implements Complex {
 		if (real_part.numericGreaterThan(ZERO))
 			return ZERO;
 		else
-			return FloatPoint.pi;
+			return FloatPoint.PI;
 	}
 
 	public Number conjugate() {
@@ -42,7 +45,7 @@ public class Complex_zi_type implements Complex {
 		return real_part.abs();
 	}
 
-	int toInt() {
+	public int toInt() {
 		return real_part.toInt();
 	}
 
@@ -55,9 +58,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public boolean numericGreaterThan(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericGreaterThan");
 
@@ -65,9 +68,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public boolean numericEqual(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericEqual");
 
@@ -75,9 +78,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public boolean numericLessThan(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericLessThan");
 
@@ -85,9 +88,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public Number numericPlus(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericPlus");
 
@@ -95,9 +98,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public Number numericMinus(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericMinus");
 
@@ -105,9 +108,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public Number numericMultiply(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericMultiply");
 
@@ -115,9 +118,9 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public Number numericDivide(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return (other instanceof FloatPoint || other instanceof Rational);
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof FloatPoint || n instanceof Rational);
 			}
 		}, "real number", "numericDivide");
 
@@ -141,15 +144,15 @@ public class Complex_zi_type implements Complex {
 	}
 
 	public Number modulo(Number other) {
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return real_part.isInteger();
+		ArgumentChecker.checkAtomType(real_part, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return ((org.plt.types.Number) n).isInteger();
 			}
 		}, "integer", "modulo", 1);
 
-		Checker.itemTypeCheck(other, new PropertyChecker() {
-			public boolean satisfied() {
-				return other.isInteger();
+		ArgumentChecker.checkAtomType(other, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return ((org.plt.types.Number) n).isInteger();
 			}
 		}, "integer", "modulo", 2);
 

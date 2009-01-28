@@ -1,4 +1,4 @@
-package org.plt;
+package org.plt.checker;
 
 public class SchemeException extends RuntimeException {
 	public SchemeException(String msg) {

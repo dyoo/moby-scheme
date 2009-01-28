@@ -1,7 +1,7 @@
 package org.plt.types;
 
 import org.plt.types.Bignum;
-import org.plt.SchemeException;
+import org.plt.checker.SchemeException;
 
 public class Rational implements Number {
     Bignum n, d;

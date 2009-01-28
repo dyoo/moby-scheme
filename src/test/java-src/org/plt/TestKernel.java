@@ -4,6 +4,7 @@ import org.plt.Kernel;
 import org.plt.types.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.plt.checker.*;
 
 public class TestKernel {
 
@@ -640,6 +641,11 @@ public class TestKernel {
 				Kernel.real_dash_part(FloatPoint.fromString("1.0"))).isTrue());
 		assertTrue(Kernel._equal_(Kernel.ONE,
 				Kernel.real_dash_part(FloatPoint.fromString("1.1"))).isFalse());
+//		assertTrue(Kernel
+//				._equal_(
+//						Kernel.ZERO,
+//						Kernel.real_dash_part(Kernel.sqrt(FloatPoint
+//								.fromString("-1")))).isTrue());
 	}
 
 	@Test
