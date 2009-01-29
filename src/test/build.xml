@@ -11,7 +11,7 @@
 </target>
 
 
-<target name="compile" depends="init">
+<target name="compile" depends="clean,init">
   <javac srcdir="../../support/common/src" destdir="build" debug="true">
     <classpath refid="test.classpath"/>
   </javac>
