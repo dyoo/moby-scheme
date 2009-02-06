@@ -81,6 +81,11 @@ public class WorldKernel {
     }
     
 
+    public static Picture image_dash_rotate(Object image) {
+	// Fill me in!
+	return (Picture) image;
+    }
+
 
     // Coerses a symbol or string into a string.
     private static String coerseToString(Object obj) {
