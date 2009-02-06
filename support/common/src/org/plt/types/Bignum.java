@@ -800,11 +800,10 @@ public class Bignum
                 {
                     pow2 = (mag[i] == 0);
                 }
-
-                bitLength -= (pow2 ? 1 : 0);
+		// dyoo: commenting for now.
+                // bitLength -= (pow2 ? 1 : 0);
             }
         }
-
         return bitLength;
     }
 
@@ -1632,7 +1631,6 @@ public class Bignum
         {
             w[wBase] = (int)(u2 + (u1 >> 32) + w[wBase]);
         }
-
         return w;
     }
 
