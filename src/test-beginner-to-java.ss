@@ -14,7 +14,7 @@
                (test-case
                 "simple definition"
                 (check-equal? (program-analyze (list '(define pi 3.1415)))
-                              (make-program-info '(pi) empty)))))
+                              (make-program-info '(pi) '())))))
 
 
 (run-tests tests)

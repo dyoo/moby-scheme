@@ -905,7 +905,7 @@
 
 ;; program-info captures the information we get from analyzing 
 ;; the program.
-(define-struct program-info (free-ids defined-ids) #:transparent)
+(define-struct program-info (defined-ids free-ids) #:transparent)
 (define empty-program-info (make-program-info empty empty))
 
 ;; pinfo-accumulate-free-id: program-info symbol -> program-info
@@ -929,14 +929,14 @@
                 (cond [(defn? (first a-program))
                        (definition-analyze (first a-program) pinfo)]
                       [(test-case? (first a-program))
-                       empty]
+                       pinfo]
                       [(library-require? (first a-program))
                        (error 'program-top-level-identifiers 
                               "I don't know how to handle require")]
                       [(expression? (first a-program))
                        (expression-analyze (first a-program) '() pinfo)])])
            (program-analyze (rest a-program)
-                                                  updated-pinfo))]))
+                            updated-pinfo))]))
 
 
 ;; definition-analyze: definition program-info -> program-info
@@ -945,11 +945,11 @@
     [(list 'define (list fun args ...) body)
      (expression-analyze body args 
                          (pinfo-accumulate-defined-id pinfo fun))]
-     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
+    [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
      (expression-analyze body args 
-                                               (pinfo-accumulate-defined-id pinfo fun))]
+                         (pinfo-accumulate-defined-id pinfo fun))]
     [(list 'define (? symbol? id) body)
-     (expression-analyze body '() pinfo)]
+     (expression-analyze body '() (pinfo-accumulate-defined-id pinfo id))]
     [(list 'define-struct id (list fields ...))
      (foldl pinfo-accumulate-defined-id pinfo 
             (cons (string->symbol (format "make-~a" id))
@@ -976,6 +976,6 @@
                   [expression? (any/c . -> . boolean?)]
                   
                   
-                  [struct program-info ([free-ids (listof symbol?)]
-                                        [defined-ids (listof symbol?)])]
+                  [struct program-info ([defined-ids (listof symbol?)]
+                                        [free-ids (listof symbol?)])]
                   [program-analyze ((program?) (program-info?) . ->* . program-info?)])
