@@ -13,4 +13,21 @@ public class TestNumber {
     }
 
 
+    @Test public void testMultipication() {
+	assertEquals(new Rational(1, 1).numericMultiply(new Rational(1, 1)),
+		     new Rational(1, 1));
+	assertEquals(new Rational(-1, 1).numericMultiply(new Rational(-1, 1)),
+		     new Rational(1, 1));
+	assertEquals(new Rational(1, 1).numericMultiply(new Rational(-1, 1)),
+		     new Rational(-1, 1));
+	assertEquals(new Rational(-1, 1).numericMultiply(new Rational(1, 1)),
+		     new Rational(-1, 1));
+
+	assertEquals(new Rational(2, 1).numericMultiply(new Rational(20, 1)),
+		     new Rational(40, 1));
+
+
+    }
+
+
 }
