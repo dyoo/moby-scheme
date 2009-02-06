@@ -901,10 +901,81 @@
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; program-info captures the information we get from analyzing 
+;; the program.
+(define-struct program-info (free-ids defined-ids) #:transparent)
+(define empty-program-info (make-program-info empty empty))
+
+;; pinfo-accumulate-free-id: program-info symbol -> program-info
+(define (pinfo-accumulate-free-id pinfo free-id)
+  (struct-copy program-info pinfo
+               [free-ids (cons free-id (program-info-free-ids pinfo))]))
+
+;; pinfo-accumulate-defined-id: program-info symbol -> program-info
+(define (pinfo-accumulate-defined-id pinfo defined-id)
+  (struct-copy program-info pinfo
+               [defined-ids (cons defined-id (program-info-defined-ids pinfo))]))
+
+
+;; program-analyze: program [program-info] -> program-info
+;; Collects which identifiers are free or definition-bound by the program.
+(define (program-analyze a-program [pinfo empty-program-info])
+  (cond [(empty? a-program)
+         pinfo]
+        [else
+         (let ([updated-pinfo
+                (cond [(defn? (first a-program))
+                       (definition-analyze (first a-program) pinfo)]
+                      [(test-case? (first a-program))
+                       empty]
+                      [(library-require? (first a-program))
+                       (error 'program-top-level-identifiers 
+                              "I don't know how to handle require")]
+                      [(expression? (first a-program))
+                       (expression-analyze (first a-program) '() pinfo)])])
+           (program-analyze (rest a-program)
+                                                  updated-pinfo))]))
+
+
+;; definition-analyze: definition program-info -> program-info
+(define (definition-analyze a-definition pinfo)
+  (match a-definition
+    [(list 'define (list fun args ...) body)
+     (expression-analyze body args 
+                         (pinfo-accumulate-defined-id pinfo fun))]
+     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
+     (expression-analyze body args 
+                                               (pinfo-accumulate-defined-id pinfo fun))]
+    [(list 'define (? symbol? id) body)
+     (expression-analyze body '() pinfo)]
+    [(list 'define-struct id (list fields ...))
+     (foldl pinfo-accumulate-defined-id pinfo 
+            (cons (string->symbol (format "make-~a" id))
+                  (map (lambda (f)
+                         (string->symbol (format "~a-~a" id f)))
+                       fields)))]))
+
+
+
+;; definition-analyze: expression (listof symbol) program-info -> program-info
+(define (expression-analyze an-expression bound-ids pinfo)
+  ;; fixme
+  pinfo)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 
 
 (provide/contract [program->java-string (program? . -> . string?)]
                   [expression->java-string (expression? (listof symbol?) . -> . string?)]
                   [defn? (any/c . -> . boolean?)]
-                  [expression? (any/c . -> . boolean?)])
+                  [expression? (any/c . -> . boolean?)]
+                  
+                  
+                  [struct program-info ([free-ids (listof symbol?)]
+                                        [defined-ids (listof symbol?)])]
+                  [program-analyze ((program?) (program-info?) . ->* . program-info?)])
