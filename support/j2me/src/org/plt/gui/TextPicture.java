@@ -48,15 +48,6 @@ public class TextPicture extends BasicPicture {
 	return this.font.getHeight();
     }
 
-    public void draw(Graphics g, int x, int y) {
-	g.setFont(this.font);
-	g.setColor(this.color.r(), this.color.g(), this.color.b());
-	g.drawString(this.text,
-		     x - this.getPinholeX(), 
-		     y - this.getPinholeY()); 
-    }	
-
-
     public void accept(PictureVisitor visitor, int x, int y) {
 	visitor.visit(this, x, y);
     }

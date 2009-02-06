@@ -48,17 +48,6 @@ public class Scene implements Picture {
 	return this.pictures;
     }
 
-    public void draw(Graphics g, int x, int y) {
-	// empty scene is pure white.
-	g.setColor(255, 255, 255);
-	g.fillRect(0, 0, width, height);	
-	PictureList.PictureNode node = pictures.reverse().first;
-	while(node != null) {
-	    node.picture.draw(g, node.x, node.y);
-	    node = node.rest;
-	}
-    }
-
 
     public void accept(PictureVisitor visitor, int x, int y) {
 	visitor.visit(this, x, y);

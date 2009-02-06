@@ -31,25 +31,6 @@ public class CirclePicture extends BasicPicture {
 	return 2*r;
     }
 
-    public void draw(Graphics g, int x, int y) {
-	g.setColor(color.r(), color.g(), color.b());
-	if (style.toUpperCase().equals("SOLID")) {
-	    g.fillArc(x - this.getPinholeX(),
-		      y - this.getPinholeY(),
-		      2*r,
-		      2*r,
-		      0,
-		      360);
-	} else {
-	    g.drawArc(x - this.getPinholeX(),
-		      y - this.getPinholeY(),
-		      2*r,
-		      2*r,
-		      0,
-		      360);
-	}
-    }
-
     public void accept(PictureVisitor visitor, int x, int y) {
 	visitor.visit(this, x, y);
     }

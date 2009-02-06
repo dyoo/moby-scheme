@@ -24,12 +24,6 @@ public class FilePicture extends BasicPicture {
 	return this.img;
     }
 
-    public void draw(Graphics g, int x, int y) {
-	g.drawImage(img,
-		    x - this.getPinholeX(),
-		    y - this.getPinholeY());
-    }	
-
     public void accept(PictureVisitor visitor, int x, int y) {
 	visitor.visit(this, x, y);
     }
