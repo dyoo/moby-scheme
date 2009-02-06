@@ -11,6 +11,18 @@ public class CirclePicture extends BasicPicture {
 	this.color = color;
 
     }
+    public String getStyle() {
+	return this.style;
+    }
+
+    public Color getColor() {
+	return this.color;
+    }
+
+    public int getRadius() {
+	return this.r;
+    }
+
     public int getWidth() {
 	return 2*r;
     }

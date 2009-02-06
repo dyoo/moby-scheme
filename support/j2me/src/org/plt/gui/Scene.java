@@ -44,6 +44,10 @@ public class Scene implements Picture {
 
     public int getHeight() { return this.height; }
 
+    public PictureList getPictures() {
+	return this.pictures;
+    }
+
     public void draw(Graphics g, int x, int y) {
 	// empty scene is pure white.
 	g.setColor(255, 255, 255);

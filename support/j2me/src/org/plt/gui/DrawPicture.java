@@ -1,6 +1,8 @@
 package org.plt.gui;
 
 public class DrawPicture implements PictureVisitor {
+    private Graphics g;
+
     public DrawPicture(Graphics g) {
 	this.g = g;
     }
@@ -12,7 +14,7 @@ public class DrawPicture implements PictureVisitor {
 	// Fixme: it looks like we're ignoring x and y here, but
 	// we really should be paying attention to it.
 	g.fillRect(0, 0, s.getWidth(), s.getHeight());	
-	PictureList.PictureNode node = s.getPictureList().reverse().first;
+	PictureList.PictureNode node = s.getPictures().reverse().first;
 	while(node != null) {
 	    node.picture.accept(this, node.x, node.y);
 	    node = node.rest;
@@ -22,20 +24,18 @@ public class DrawPicture implements PictureVisitor {
     public void visit(RectanglePicture r, int x, int y) {
 	g.setColor(r.getColor().r(), r.getColor().g(), r.getColor().b());
 	if (r.getStyle().toUpperCase().equals("SOLID")) {
-	    g.fillRect(x - r.getPinholeX(), 
-		       y - r.getPinholeY(), width, height);
+	    g.fillRect(x - r.getPinholeX(), y - r.getPinholeY(),
+		       r.getWidth(), r.getHeight());
 	} else {
-	    g.drawRect(x - r.getPinholeX(), 
-		       y - r.getPinholeY(),
-		       r.getWidth(),
-		       r.getHeight());
+	    g.drawRect(x - r.getPinholeX(), y - r.getPinholeY(),
+		       r.getWidth(), r.getHeight());
 	}
     }
 
     public void visit(FilePicture f, int x, int y) {
 	g.drawImage(f.getImage(),
-		    x - this.getPinholeX(),
-		    y - this.getPinholeY());
+		    x - f.getPinholeX(),
+		    y - f.getPinholeY());
 
     }
 

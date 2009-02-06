@@ -307,7 +307,10 @@
 
 ;; write-j2me-ant-buildfile: string path -> void
 ;; Writes a build file that's specialized toward building the midlet.
-(define (write-j2me-ant-buildfile name dest-dir)
+(define (write-j2me-ant-buildfile name dest-dir 
+                                  #:cdlc-version [cldc-version "1.1" #;"1.0"]
+                                  #:midp-version [midp-version "2.0" #;"1.0"]
+                                  )
   (define (property name val)
     `(property ((name ,name) (value ,val))))
   
@@ -320,8 +323,8 @@
            "\n"
            ,(property "wtk.home" (path->string (current-j2me-home))) "\n"
            ,(property "wtk.proguard.home" (path->string proguard-home)) "\n"
-           ,(property "wtk.cldc.version" "1.0") "\n"
-           ,(property "wtk.midp.version" "1.0") "\n"
+           ,(property "wtk.cldc.version" cldc-version) "\n"
+           ,(property "wtk.midp.version" midp-version) "\n"
            ,(property "midlet.name" (upper-camel-case name)) "\n"
            ,(property "company.name" "PLT") "\n"
            "\n"

@@ -60,7 +60,8 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	public void paint(Graphics g) {
             org.plt.gui.GraphicsAdapter ag = new org.plt.gui.GraphicsAdapter(g);
 	    // #4,5,6 on-redraw expression
-	    ((org.plt.gui.Scene) <<ON-REDRAW-EXPRESSION>>).draw(ag, 0, 0);
+	    org.plt.gui.DrawPicture pVisitor = new org.plt.gui.DrawPicture(ag);
+	    ((org.plt.gui.Scene) <<ON-REDRAW-EXPRESSION>>).accept(pVisitor, 0, 0);
 	}
 
 	protected void keyPressed(int keyCode) {

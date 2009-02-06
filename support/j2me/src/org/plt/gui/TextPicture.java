@@ -26,6 +26,20 @@ public class TextPicture extends BasicPicture {
 	}
     }
 
+
+    public Color getColor() {
+	return this.color;
+    }
+
+
+    public String getText() {
+	return this.text;
+    }
+
+    public Font getFont() { 
+	return this.font;
+    }
+
     public int getWidth() {
 	return this.font.stringWidth(this.text);
     }

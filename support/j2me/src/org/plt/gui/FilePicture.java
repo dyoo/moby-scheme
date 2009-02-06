@@ -20,6 +20,10 @@ public class FilePicture extends BasicPicture {
 	return img.getHeight();
     }
 
+    public javax.microedition.lcdui.Image getImage() {
+	return this.img;
+    }
+
     public void draw(Graphics g, int x, int y) {
 	g.drawImage(img,
 		    x - this.getPinholeX(),

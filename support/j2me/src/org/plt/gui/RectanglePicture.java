@@ -15,6 +15,10 @@ public class RectanglePicture extends BasicPicture {
 	this.color = color;
     }
 
+    public Color getColor() { return this.color; }
+
+    public String getStyle() { return this.style; }
+
     public int getWidth() { return this.width; }
 
     public int getHeight() { return this.height; }
