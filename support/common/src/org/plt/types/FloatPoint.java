@@ -9,6 +9,14 @@ public class FloatPoint implements Number {
 		this.f = n;
 	}
 
+	public boolean isReal() {
+		return true;
+	}
+
+	public Number toReal() {
+		return new FloatPoint(f);
+	}
+
 	public static FloatPoint ZERO = FloatPoint.fromString("0");
 	public static FloatPoint MINUS_ONE = FloatPoint.fromString("-1");
 
@@ -79,9 +87,14 @@ public class FloatPoint implements Number {
 	}
 
 	public Number sqrt() {
-		// if (numericLessThan(ZERO))
-		// return new Complex_type(ZERO, numericMultiply(MINUS_ONE, this)
-		// .sqrt());
+		if (numericLessThan(ZERO)) {
+			if (isInteger()) {
+				Number minus = Rational.ZERO.numericMinus(new Rational(this
+						.toInt(), 1));
+				return new Complex(Rational.ZERO, minus.sqrt());
+			} else
+				return new Complex(ZERO, MINUS_ONE.numericMultiply(this).sqrt());
+		}
 
 		return new FloatPoint(MicroDouble.sqrt(this.f));
 	}
@@ -120,7 +133,20 @@ public class FloatPoint implements Number {
 	}
 
 	public Number expt(Number exponent) {
+
 		return new FloatPoint(MicroDouble.pow(this.f, fromNumber(exponent).f));
+	}
+
+	public static Number exp(Number exponent) {
+		if (exponent.isReal())
+			return FloatPoint.E.expt(exponent.toReal());
+
+		// e ^ z = e ^ real_part(z) * e ^ (cos(img_part(z) +
+		// i*sin(img_part(z))))
+		Number ret1 = exp(((Complex) exponent).getRealPart());
+		Number ret2 = exp(((Complex) exponent).getImgPart().cos().numericPlus(
+				new Complex(ZERO, ((Complex) exponent).getImgPart().sin())));
+		return ret1.numericMultiply(ret2);
 	}
 
 	public Number floor() {

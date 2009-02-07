@@ -3,6 +3,10 @@ package org.plt.types;
 public interface Number {
 	int toInt();
 
+	boolean isReal();
+
+	Number toReal();
+
 	boolean isInteger();
 
 	boolean isZero();
