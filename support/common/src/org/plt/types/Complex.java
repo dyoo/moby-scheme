@@ -140,8 +140,8 @@ public class Complex implements Number {
 		if (isReal() || other.isReal())
 			return false;
 
-		return (real_part.numericEqual(((Complex_type) other).getRealPart()) && imag_part
-				.numericEqual(((Complex_type) other).getImgPart()));
+		return (real_part.numericEqual(((Complex) other).getRealPart()) && imag_part
+				.numericEqual(((Complex) other).getImgPart()));
 	}
 
 	public boolean numericLessThan(Number other) {
@@ -194,8 +194,8 @@ public class Complex implements Number {
 			return toReal().numericMultiply(other.toReal());
 		if (isReal())
 			return new Complex(toReal().numericMultiply(
-					((Complex_type) other).getRealPart()), toReal()
-					.numericMultiply(((Complex_type) other).getImgPart()));
+					((Complex) other).getRealPart()), toReal().numericMultiply(
+					((Complex) other).getImgPart()));
 		if (other.isReal())
 			return new Complex(real_part.numericMultiply(other.toReal()),
 					imag_part.numericMultiply(other.toReal()));
@@ -342,8 +342,8 @@ public class Complex implements Number {
 			return toReal().atan();
 
 		Number iz = multiplyByI(this);
-		Number part1 = new Complex_type(Rational.ONE, minus(iz)).ln();
-		Number part2 = new Complex_type(Rational.ONE, iz).ln();
+		Number part1 = new Complex(Rational.ONE, minus(iz)).ln();
+		Number part2 = new Complex(Rational.ONE, iz).ln();
 
 		return half(multiplyByI(part1.numericMinus(part2)));
 	}
