@@ -713,7 +713,9 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic real_question_(Object n) {
-		return toLogic(n instanceof FloatPoint || n instanceof Rational);
+		return (n instanceof org.plt.types.Number ? toLogic(((org.plt.types.Number) n)
+				.isReal())
+				: Logic.FALSE);
 	}
 
 	public static org.plt.types.Logic string_question_(Object n) {
@@ -1404,14 +1406,20 @@ public class Kernel {
 
 	public static org.plt.types.Number real_dash_part(Object n) {
 		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "real_part");
-		// currently all Numbers are Real
-		return (org.plt.types.Number) n;
+
+		if (n instanceof Complex)
+			return ((Complex) n).getRealPart();
+		else
+			return (org.plt.types.Number) n;
 	}
 
 	public static org.plt.types.Number imag_dash_part(Object n) {
 		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "imag-part");
-		// currently all Numbers are Real
-		return FloatPoint.fromString("0.0");
+
+		if (n instanceof Complex)
+			return ((Complex) n).getImgPart();
+		else
+			return FloatPoint.ZERO;
 	}
 
 	public static void exit() {
@@ -1436,13 +1444,23 @@ public class Kernel {
 	public static org.plt.types.Logic exact_question_(Object n) {
 		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "exact?");
 
-		return rational_question_(n);
+		if (rational_question_(n).isTrue())
+			return Logic.TRUE;
+		if (n instanceof Complex
+				&& ((Complex) n).getRealPart() instanceof Rational)
+			return Logic.TRUE;
+		if (n instanceof Complex
+				&& ((Complex) n).getRealPart() instanceof Rational
+				&& ((Complex) n).getImgPart() instanceof Rational)
+			return Logic.TRUE;
+
+		return Logic.FALSE;
 	}
 
 	public static org.plt.types.Logic inexact_question_(Object n) {
 		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "inexact?");
 
-		return toLogic(n instanceof FloatPoint);
+		return exact_question_(n).negate();
 	}
 
 	public static org.plt.types.Number exact_dash__greaterthan_inexact(Object n) {
@@ -1463,5 +1481,23 @@ public class Kernel {
 			return (org.plt.types.Number) n;
 		else
 			return new Rational(((FloatPoint) n).toInt(), 1);
+	}
+
+	public static org.plt.types.Number angle(Object n) {
+		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "angle");
+
+		return ((org.plt.types.Number) n).angle();
+	}
+
+	public static org.plt.types.Number conjugate(Object n) {
+		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "conjugate");
+
+		return ((org.plt.types.Number) n).conjugate();
+	}
+
+	public static org.plt.types.Number magnitude(Object n) {
+		ArgumentChecker.checkAtomType(n, "org.plt.types.Number", "magnitude");
+
+		return ((org.plt.types.Number) n).magnitude();
 	}
 }
