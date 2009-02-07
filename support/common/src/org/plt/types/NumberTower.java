@@ -50,7 +50,7 @@ public class NumberTower {
 		if (coerseLeft(n1, n2) != null) {
 			n1 = coerseLeft(n1, n2);
 		}
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericLessThan(n2);
@@ -60,7 +60,7 @@ public class NumberTower {
 		if (coerseLeft(n1, n2) != null) {
 			n1 = coerseLeft(n1, n2);
 		}
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericGreaterThan(n2);
@@ -79,7 +79,7 @@ public class NumberTower {
 			n1 = coerseLeft(n1, n2);
 		}
 
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericEqual(n2);
@@ -97,7 +97,7 @@ public class NumberTower {
 		if (coerseLeft(n1, n2) != null) {
 			n1 = coerseLeft(n1, n2);
 		}
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericPlus(n2);
@@ -107,7 +107,7 @@ public class NumberTower {
 		if (coerseLeft(n1, n2) != null) {
 			n1 = coerseLeft(n1, n2);
 		}
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericMinus(n2);
@@ -117,7 +117,7 @@ public class NumberTower {
 		if (coerseLeft(n1, n2) != null) {
 			n1 = coerseLeft(n1, n2);
 		}
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericMultiply(n2);
@@ -127,7 +127,7 @@ public class NumberTower {
 		if (coerseLeft(n1, n2) != null) {
 			n1 = coerseLeft(n1, n2);
 		}
-		if (coerseLeft(n2, n2) != null) {
+		if (coerseLeft(n2, n1) != null) {
 			n2 = coerseLeft(n2, n1);
 		}
 		return n1.numericDivide(n2);
