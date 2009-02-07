@@ -202,4 +202,21 @@ public class Rational implements Number {
 			return false;
 		}
 	}
+
+	public Number angle() {
+		if (isZero())
+			throw new SchemeException("angle: undefined for 0");
+		if (numericGreaterThan(Rational.ZERO))
+			return Rational.ZERO;
+		else
+			return FloatPoint.PI;
+	}
+
+	public Number conjugate() {
+		return new Rational(n, d);
+	}
+
+	public Number magnitude() {
+		return abs();
+	}
 }

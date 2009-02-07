@@ -169,4 +169,20 @@ public class FloatPoint implements Number {
 		}
 	}
 
+	public Number angle() {
+		if (isZero())
+			throw new SchemeException("angle: undefined for 0");
+		if (numericGreaterThan(FloatPoint.ZERO))
+			return FloatPoint.ZERO;
+		else
+			return FloatPoint.PI;
+	}
+
+	public Number conjugate() {
+		return new FloatPoint(f);
+	}
+
+	public Number magnitude() {
+		return abs();
+	}
 }

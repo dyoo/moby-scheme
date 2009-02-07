@@ -44,4 +44,10 @@ public interface Number {
 	Number sin();
 
 	Number atan();
+
+	Number angle();
+
+	Number conjugate();
+
+	Number magnitude();
 }
