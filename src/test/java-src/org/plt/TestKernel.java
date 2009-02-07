@@ -143,6 +143,8 @@ public class TestKernel {
 	@Test
 	public void testNumber_question_() {
 		assertTrue(Kernel.number_question_(Kernel.TWO).isTrue());
+		// assertTrue(Kernel.number_question_(
+		// Complex.makeComplex(Rational.ZERO, Rational.ONE)).isTrue());
 		assertTrue(Kernel.number_question_(
 				Kernel.sqrt(FloatPoint.fromString("-1"))).isTrue());
 	}
@@ -641,11 +643,11 @@ public class TestKernel {
 				Kernel.real_dash_part(FloatPoint.fromString("1.0"))).isTrue());
 		assertTrue(Kernel._equal_(Kernel.ONE,
 				Kernel.real_dash_part(FloatPoint.fromString("1.1"))).isFalse());
-//		assertTrue(Kernel
-//				._equal_(
-//						Kernel.ZERO,
-//						Kernel.real_dash_part(Kernel.sqrt(FloatPoint
-//								.fromString("-1")))).isTrue());
+		assertTrue(Kernel
+				._equal_(
+						Kernel.ZERO,
+						Kernel.real_dash_part(Kernel.sqrt(FloatPoint
+								.fromString("-1")))).isTrue());
 	}
 
 	@Test
@@ -654,8 +656,11 @@ public class TestKernel {
 				Kernel.imag_dash_part(FloatPoint.fromString("1.0"))).isTrue());
 		assertTrue(Kernel._equal_(FloatPoint.fromString("0"),
 				Kernel.imag_dash_part(FloatPoint.fromString("1.0"))).isTrue());
-		assertTrue(Kernel._equal_(Kernel.ONE,
-				Kernel.imag_dash_part(FloatPoint.fromString("1.1"))).isFalse());
+		assertTrue(Kernel
+				._equal_(
+						Kernel.ONE,
+						Kernel.imag_dash_part(Kernel.sqrt(FloatPoint
+								.fromString("-1")))).isTrue());
 	}
 
 	@Test
@@ -675,7 +680,7 @@ public class TestKernel {
 		assertTrue(Kernel.exact_question_(FloatPoint.fromString("-1.1"))
 				.isFalse());
 		assertTrue(Kernel.exact_question_(
-				Kernel.sqrt(FloatPoint.fromString("-1"))).isFalse());
+				Kernel.sqrt(FloatPoint.fromString("-1"))).isTrue());
 		assertTrue(Kernel.exact_question_(Kernel.pi).isFalse());
 	}
 
@@ -684,8 +689,6 @@ public class TestKernel {
 		assertTrue(Kernel.inexact_question_(Kernel.ONE).isFalse());
 		assertTrue(Kernel.inexact_question_(FloatPoint.fromString("-1.1"))
 				.isTrue());
-		assertTrue(Kernel.inexact_question_(
-				Kernel.sqrt(FloatPoint.fromString("-1"))).isTrue());
 	}
 
 	@Test
@@ -703,5 +706,12 @@ public class TestKernel {
 		assertTrue(Kernel
 				._equal_(Kernel.inexact_dash__greaterthan_exact(Kernel.pi),
 						Kernel.THREE).isTrue());
+	}
+
+	@Test
+	public void testAngle() {
+		assertTrue(Kernel._equal_(
+				Kernel.angle(Kernel.sqrt(FloatPoint.fromString("-1"))),
+				Kernel._slash_(FloatPoint.PI, Kernel.TWO)).isTrue());
 	}
 }
