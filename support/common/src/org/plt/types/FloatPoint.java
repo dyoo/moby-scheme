@@ -1,6 +1,7 @@
 package org.plt.types;
 
 import net.dclausen.microfloat.MicroDouble;
+import org.plt.checker.*;
 
 public class FloatPoint implements Number {
 	long f;
