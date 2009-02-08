@@ -69,27 +69,12 @@ Details on Beginner Scheme primitives:
 
 Primitives that need implementation:
 
-
-(angle
- complex?
- conjugate
- current-seconds
- exact->inexact
- exact?
- imag-part
- inexact->exact
- inexact?
- integer->char
- magnitude
- make-polar
- real-part
+(integer->char
  format
  image=?
  image?
  eof
- eof-object?
- equal~?
- exit)
+ eof-object?)
 
 You can look at the code in support/src/org/plt/Kernel.java for
 implementations of the primitives we support so far.  Any primitive
