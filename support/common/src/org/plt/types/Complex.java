@@ -50,6 +50,11 @@ public class Complex implements Number {
 		return n.numericMultiply(n);
 	}
 
+	public Complex(int real, int imag) {
+		real_part = new Rational(real, 1);
+		imag_part = new Rational(imag, 1);
+	}
+
 	public Complex(Number real, Number imag) {
 		ArgumentChecker.checkAtomType(real, new PropertyChecker() {
 			public boolean satisfied(Object n) {
