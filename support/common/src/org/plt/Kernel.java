@@ -1317,6 +1317,18 @@ public class Kernel {
 		return new Rational((int) ((Character) n).charValue(), 1);
 	}
 
+	public static Object integer_dash__greaterthan_char(Object n) {
+		// ArgumentCheck.checkAtomType(n, "org.plt.types.Number")
+		ArgumentChecker.checkAtomType(n, new PropertyChecker() {
+			public boolean satisfied(Object n) {
+				return (n instanceof org.plt.types.Number)
+						&& ((org.plt.types.Number) n).isInteger();
+			}
+		}, "exact integer", "integer->char");
+
+		return new Character((char) (((org.plt.types.Number) n).toInt()));
+	}
+
 	public static org.plt.types.Logic member(Object n1, Object n2) {
 		if ((n2 instanceof org.plt.types.List) == false)
 			throw new SchemeException(

@@ -553,6 +553,18 @@ public class TestKernel {
 	public void testChar_dash__greaterthan_integer() {
 		assertTrue(Kernel._equal_(Kernel.char_dash__greaterthan_integer('1'),
 				new Rational(49, 1)).isTrue());
+		assertTrue(Kernel._equal_(Kernel.char_dash__greaterthan_integer('d'),
+				new Rational(100, 1)).isTrue());
+	}
+
+	@Test
+	public void testInteger_dash__greaterthan_char() {
+		assertTrue(Kernel.char_equal__question_(
+				Kernel.integer_dash__greaterthan_char(new Rational(49, 1)),
+				new Character('1')).isTrue());
+		assertTrue(Kernel.char_equal__question_(
+				Kernel.integer_dash__greaterthan_char(new Rational(100, 1)),
+				new Character('d')).isTrue());
 	}
 
 	@Test
