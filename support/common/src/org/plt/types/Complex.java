@@ -34,15 +34,16 @@ public class Complex implements Number {
 	}
 
 	private static Number minus(Number n) {
-		return new Rational(-1, 1).numericMultiply(n);
+		return NumberTower.multiply(new Rational(-1, 1), n);
 	}
 
 	private static Number half(Number n) {
-		return new Rational(1, 2).numericMultiply(n);
+		return NumberTower.multiply(new Rational(1, 2), n);
 	}
 
 	private static Number multiplyByI(Number n) {
-		return new Complex(Rational.ZERO, Rational.ONE).numericMultiply(n);
+		return NumberTower
+				.multiply(new Complex(Rational.ZERO, Rational.ONE), n);
 	}
 
 	private static Number sqr(Number n) {
@@ -70,25 +71,26 @@ public class Complex implements Number {
 		if (isReal()) {
 			if (toReal().isZero())
 				throw new SchemeException("angle: undefined for 0");
-			if (toReal().numericGreaterThan(Rational.ZERO))
+			if (NumberTower.greaterThan(toReal(), Rational.ZERO))
 				return Rational.ZERO;
 			else
 				return FloatPoint.PI;
 		} else {
 			if (real_part.isZero()) {
-				if (imag_part.numericGreaterThan(Rational.ZERO))
+				if (NumberTower.greaterThan(imag_part, Rational.ZERO))
 					return half(FloatPoint.PI);
 				else
 					return minus(half(FloatPoint.PI));
 			} else {
-				Number tmp = imag_part.numericDivide(real_part.abs()).atan();
-				if (real_part.numericGreaterThan(Rational.ZERO))
-					return (imag_part.numericGreaterThan(Rational.ZERO) ? tmp
-							: minus(tmp));
+				Number tmp = NumberTower.divide(imag_part, real_part.abs())
+						.atan();
+				if (NumberTower.greaterThan(real_part, Rational.ZERO))
+					return NumberTower.greaterThan(imag_part, Rational.ZERO) ? tmp
+							: minus(tmp);
 				else
-					return (imag_part.numericGreaterThan(Rational.ZERO) ? FloatPoint.PI
-							.numericMinus(tmp)
-							: minus(FloatPoint.PI.numericMinus(tmp)));
+					return NumberTower.greaterThan(imag_part, Rational.ZERO) ? NumberTower
+							.minus(FloatPoint.PI, tmp)
+							: NumberTower.minus(tmp, FloatPoint.PI);
 			}
 		}
 	}
@@ -99,8 +101,8 @@ public class Complex implements Number {
 	}
 
 	public Number magnitude() {
-		return (isReal() ? real_part.abs() : sqr(real_part).numericPlus(
-				sqr(imag_part)).sqrt());
+		return isReal() ? real_part.abs() : NumberTower.plus(sqr(real_part),
+				sqr(imag_part)).sqrt();
 	}
 
 	public int toInt() {
@@ -127,7 +129,7 @@ public class Complex implements Number {
 				}
 			}, "real number", "numericGreaterThan");
 
-			return real_part.numericGreaterThan(other.toReal());
+			return NumberTower.greaterThan(real_part, other.toReal());
 		}
 
 		throw new SchemeException(
@@ -136,12 +138,12 @@ public class Complex implements Number {
 
 	public boolean numericEqual(Number other) {
 		if (isReal() && other.isReal())
-			return toReal().numericEqual(other.toReal());
+			return NumberTower.equal(toReal(), other.toReal());
 		if (isReal() || other.isReal())
 			return false;
 
-		return (real_part.numericEqual(((Complex) other).getRealPart()) && imag_part
-				.numericEqual(((Complex) other).getImgPart()));
+		return NumberTower.equal(real_part, ((Complex) other).getRealPart())
+				&& NumberTower.equal(imag_part, ((Complex) other).getImgPart());
 	}
 
 	public boolean numericLessThan(Number other) {
@@ -152,7 +154,7 @@ public class Complex implements Number {
 				}
 			}, "real number", "numericLessThan");
 
-			return real_part.numericLessThan(other.toReal());
+			return NumberTower.lessThan(real_part, other.toReal());
 		}
 
 		throw new SchemeException(
@@ -161,67 +163,69 @@ public class Complex implements Number {
 
 	public Number numericPlus(Number other) {
 		if (isReal() && other.isReal())
-			return toReal().numericPlus(other.toReal());
+			return NumberTower.plus(toReal(), other.toReal());
 		if (isReal())
-			return new Complex(toReal().numericPlus(
-					((Complex) other).getRealPart()), ((Complex) other)
-					.getImgPart());
+			return new Complex(NumberTower.plus(toReal(), ((Complex) other)
+					.getRealPart()), ((Complex) other).getImgPart());
 		if (other.isReal())
-			return new Complex(real_part.numericPlus(other.toReal()), imag_part);
-
-		return new Complex(real_part.numericPlus(((Complex) other)
-				.getRealPart()), imag_part.numericPlus(((Complex) other)
+			return new Complex(NumberTower.plus(real_part, other.toReal()),
+					imag_part);
+		return new Complex(NumberTower.plus(real_part, ((Complex) other)
+				.getRealPart()), NumberTower.plus(imag_part, ((Complex) other)
 				.getImgPart()));
 	}
 
 	public Number numericMinus(Number other) {
 		if (isReal() && other.isReal())
-			return toReal().numericMinus(other.toReal());
+			return NumberTower.minus(toReal(), other.toReal());
 		if (isReal())
-			return new Complex(toReal().numericMinus(
+			return new Complex(NumberTower.minus(toReal(),
 					((Complex) other).real_part), ((Complex) other)
 					.getImgPart());
 		if (other.isReal())
-			return new Complex(real_part.numericMinus(other.toReal()),
+			return new Complex(NumberTower.minus(real_part, other.toReal()),
 					imag_part);
 
-		return new Complex(real_part.numericMinus(((Complex) other).real_part),
-				imag_part.numericMinus(((Complex) other).getImgPart()));
+		return new Complex(NumberTower.minus(real_part,
+				((Complex) other).real_part), NumberTower.minus(imag_part,
+				((Complex) other).imag_part));
 	}
 
 	public Number numericMultiply(Number other) {
 		if (isReal() && other.isReal())
-			return toReal().numericMultiply(other.toReal());
+			return NumberTower.multiply(toReal(), other.toReal());
 		if (isReal())
-			return new Complex(toReal().numericMultiply(
-					((Complex) other).getRealPart()), toReal().numericMultiply(
+			return new Complex(NumberTower.multiply(toReal(), ((Complex) other)
+					.getRealPart()), NumberTower.multiply(toReal(),
 					((Complex) other).getImgPart()));
 		if (other.isReal())
-			return new Complex(real_part.numericMultiply(other.toReal()),
-					imag_part.numericMultiply(other.toReal()));
+			return new Complex(NumberTower.multiply(real_part, other.toReal()),
+					NumberTower.multiply(imag_part, other.toReal()));
 
-		Number real = real_part.numericMultiply(((Complex) other).real_part)
-				.numericMinus(
-						imag_part.numericMultiply(((Complex) other)
-								.getImgPart()));
-		Number imag = real_part.numericMultiply(((Complex) other).getImgPart())
-				.numericPlus(
-						imag_part.numericMultiply(((Complex) other).real_part));
+		Number real = NumberTower.minus(NumberTower.multiply(real_part,
+				((Complex) other).real_part), NumberTower.multiply(imag_part,
+				((Complex) other).getImgPart()));
+
+		Number imag = NumberTower.plus(NumberTower.multiply(real_part,
+				((Complex) other).getImgPart()), NumberTower.multiply(
+				imag_part, ((Complex) other).real_part));
+
 		return new Complex(real, imag);
 	}
 
 	public Number numericDivide(Number other) {
 		if (isReal() && other.isReal())
-			return toReal().numericDivide(other.toReal());
+			return NumberTower.divide(toReal(), other.toReal());
 		if (isReal())
-			return toReal().numericMultiply(((Complex) other).conjugate())
-					.numericDivide(sqr(((Complex) other).magnitude()));
+			return NumberTower.divide(NumberTower.multiply(toReal(),
+					((Complex) other).conjugate()), sqr(((Complex) other)
+					.magnitude()));
 		if (other.isReal())
-			return new Complex(real_part.numericDivide(other.toReal()),
-					imag_part.numericDivide(other.toReal()));
+			return new Complex(NumberTower.divide(real_part, other.toReal()),
+					NumberTower.divide(imag_part, other.toReal()));
 
-		return this.numericMultiply(((Complex) other).conjugate())
-				.numericDivide(sqr(((Complex) other).magnitude()));
+		return NumberTower.divide(NumberTower.multiply(this, ((Complex) other)
+				.conjugate()), sqr(((Complex) other).magnitude()));
 	}
 
 	public Number abs() {
@@ -238,7 +242,7 @@ public class Complex implements Number {
 
 		Number part1 = FloatPoint.fromNumber(this.magnitude()).log();
 		Number part2 = multiplyByI(this.angle());
-		return part1.numericPlus(part2);
+		return NumberTower.plus(part1, part2);
 	}
 
 	public Number acos() {
@@ -247,11 +251,11 @@ public class Complex implements Number {
 
 		Number pi_half = half(FloatPoint.PI);
 		Number iz = multiplyByI(this);
-		Number root = FloatPoint.fromString("1").numericMinus(
-				this.numericMultiply(this)).sqrt();
-		Number l = multiplyByI(((Complex) (iz.numericPlus(root))).ln());
+		Number root = NumberTower.minus(FloatPoint.fromString("1"),
+				NumberTower.multiply(this, this)).sqrt();
+		Number l = multiplyByI(((Complex) NumberTower.plus(iz, root)).ln());
 
-		return pi_half.numericPlus(l);
+		return NumberTower.plus(pi_half, l);
 	}
 
 	public Number asin() {
@@ -259,10 +263,10 @@ public class Complex implements Number {
 			return toReal().asin();
 
 		Number iz = multiplyByI(this);
-		Number root = FloatPoint.fromString("1").numericMinus(
-				this.numericMultiply(this)).sqrt();
+		Number root = NumberTower.minus(FloatPoint.fromString("1"),
+				NumberTower.multiply(this, this)).sqrt();
 
-		return minus(multiplyByI(((Complex) (iz.numericPlus(root))).ln()));
+		return minus(multiplyByI(((Complex) NumberTower.plus(iz, root)).ln()));
 	}
 
 	public Number sqrt() {
@@ -270,10 +274,10 @@ public class Complex implements Number {
 			return toReal().sqrt();
 
 		Number part1 = this.magnitude().sqrt();
-		Number part2 = half(imag_part.numericDivide(real_part).atan());
-		Number part3 = part2.cos().numericPlus(multiplyByI(part2.sin()));
+		Number part2 = half(NumberTower.divide(imag_part, real_part).atan());
+		Number part3 = NumberTower.plus(part2.cos(), multiplyByI(part2.sin()));
 
-		return part1.numericMultiply(part2);
+		return NumberTower.multiply(part1, part2);
 	}
 
 	public Number modulo(Number other) {
@@ -322,7 +326,8 @@ public class Complex implements Number {
 		Number iz = multiplyByI(this);
 		Number iz_minus = minus(iz);
 
-		return half(FloatPoint.exp(iz).numericPlus(FloatPoint.exp(iz_minus)));
+		return half(NumberTower.plus(FloatPoint.exp(iz), FloatPoint
+				.exp(iz_minus)));
 	}
 
 	public Number sin() {
@@ -333,8 +338,8 @@ public class Complex implements Number {
 		Number iz_minus = minus(iz);
 		Number z2 = multiplyByI(FloatPoint.fromString("2"));
 
-		return FloatPoint.exp(iz).numericMinus(FloatPoint.exp(iz_minus))
-				.numericDivide(z2);
+		return NumberTower.divide(NumberTower.minus(FloatPoint.exp(iz),
+				FloatPoint.exp(iz_minus)), z2);
 	}
 
 	public Number atan() {
@@ -345,6 +350,6 @@ public class Complex implements Number {
 		Number part1 = new Complex(Rational.ONE, minus(iz)).ln();
 		Number part2 = new Complex(Rational.ONE, iz).ln();
 
-		return half(multiplyByI(part1.numericMinus(part2)));
+		return half(multiplyByI(NumberTower.minus(part1, part2)));
 	}
 }
