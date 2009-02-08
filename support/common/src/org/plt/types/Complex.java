@@ -87,8 +87,8 @@ public class Complex implements Number {
 				else
 					return minus(half(FloatPoint.PI));
 			} else {
-				Number tmp = NumberTower.divide(imag_part, real_part.abs())
-						.atan();
+				Number tmp = NumberTower.divide(imag_part.abs(),
+						real_part.abs()).atan();
 				if (NumberTower.greaterThan(real_part, Rational.ZERO))
 					return NumberTower.greaterThan(imag_part, Rational.ZERO) ? tmp
 							: minus(tmp);
