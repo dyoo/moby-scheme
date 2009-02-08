@@ -713,5 +713,38 @@ public class TestKernel {
 		assertTrue(Kernel._equal_(
 				Kernel.angle(Kernel.sqrt(FloatPoint.fromString("-1"))),
 				Kernel._slash_(FloatPoint.PI, Kernel.TWO)).isTrue());
+		assertTrue(Kernel._equal_(Kernel.angle(Kernel.ONE), Kernel.ZERO)
+				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.angle(FloatPoint.fromString("-2")),
+				FloatPoint.PI).isTrue());
+		assertTrue(Kernel._equal_(Kernel.angle(new Complex(1, 1)),
+				Kernel._slash_(FloatPoint.PI, Kernel.FOUR)).isTrue());
+		assertTrue(Kernel._equal_(Kernel.angle(new Complex(-1, 1)),
+				Kernel._star_(FloatPoint.PI, FloatPoint.fromString("0.75")))
+				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.angle(new Complex(1, -1)),
+				Kernel._slash_(FloatPoint.PI, FloatPoint.fromString("-4")))
+				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.angle(new Complex(-1, -1)),
+				Kernel._star_(FloatPoint.PI, FloatPoint.fromString("-0.75")))
+				.isTrue());
+	}
+
+	@Test
+	public void testConjugate() {
+		assertTrue(Kernel._equal_(
+				Kernel.conjugate(FloatPoint.fromString("-1")),
+				FloatPoint.fromString("-1")).isTrue());
+		assertTrue(Kernel._equal_(Kernel.conjugate(new Complex(1, 1)),
+				new Complex(1, -1)).isTrue());
+	}
+
+	@Test
+	public void testMagnitude() {
+		assertTrue(Kernel._equal_(
+				Kernel.magnitude(FloatPoint.fromString("-1")), Kernel.ONE)
+				.isTrue());
+		assertTrue(Kernel._equal_(Kernel.magnitude(new Complex(-3, 4)),
+				Kernel.FIVE).isTrue());
 	}
 }
