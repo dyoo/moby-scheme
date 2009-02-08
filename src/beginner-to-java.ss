@@ -586,7 +586,6 @@
     <
     =
     =~
-    equal?
     number->string
     even?
     odd?
@@ -599,6 +598,7 @@
     numerator
     denominator
     integer?
+    real?
     
     abs
     acos
@@ -631,13 +631,19 @@
     sinh
     cosh
     
+    angle
+    conjugate
+    magnitude
+    
     ;; Logic
     not
     false?
     boolean?
     boolean=?
+    equal?
     eq?
     eqv?
+    equal~?
     
     ;; Characters
     char?
@@ -659,6 +665,7 @@
     char-ci>=?
     char-ci>?
     char->integer
+    integer->char
     
     ;; Symbols
     symbol=?
@@ -760,7 +767,7 @@
     
     ;; Misc
     error
-    
+    current-seconds
     
     ))
 
