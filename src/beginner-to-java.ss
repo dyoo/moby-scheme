@@ -285,6 +285,10 @@
       ;; Boolean false
       ['false
        "(org.plt.types.Logic.FALSE)"]
+
+      ;; End of file object
+      ['eof
+       "(org.plt.types.EofObject.EOF)"]
       
       ;; Numbers
       [(? number?)
@@ -765,6 +769,10 @@
     posn-y
     posn?
     
+    ;; Eof
+    eof
+    eof-object?
+
     ;; Misc
     error
     current-seconds

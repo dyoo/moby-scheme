@@ -1512,4 +1512,13 @@ public class Kernel {
 
 		return ((org.plt.types.Number) n).magnitude();
 	}
+
+
+    public static org.plt.types.Logic eof_dash_object_question_(Object n) {
+	if (n instanceof EofObject) {
+	    return Logic.TRUE;
+	} else {
+	    return Logic.FALSE;
+	}
+    }
 }
