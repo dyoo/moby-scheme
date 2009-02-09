@@ -72,9 +72,7 @@ Primitives that need implementation:
 
 (format
  image=?
- image?
- eof
- eof-object?)
+ image?)
 
 You can look at the code in support/src/org/plt/Kernel.java for
 implementations of the primitives we support so far.  Any primitive
