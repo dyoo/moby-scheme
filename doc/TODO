@@ -23,6 +23,7 @@ Major:
 
 * Port the gui-world teachpack to Moby.
 
+* Port universe.ss to Moby.
 
 * Work on the network compiler.
 
