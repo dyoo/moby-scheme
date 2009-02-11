@@ -80,11 +80,22 @@
     (test g w)))
 
 
-;; If you do not have the Sun Wireless SDK, change the value in config.ss.
-(when (current-has-sun-wireless-sdk?)
-  (test-all generate-j2me-application test-app-j2me-path))
+(define (run-tests)
+  ;; If you do not have the Sun Wireless SDK, change the value in config.ss.
+  (when (current-has-sun-wireless-sdk?)
+    (test-all generate-j2me-application test-app-j2me-path))
+  
+  ;; If you do not have the Android SDK, change the value in config.ss.
+  (when (current-has-android-sdk?)
+    (test-all generate-android-application test-app-android-path)))
 
 
-;; If you do not have the Android SDK, change the value in config.ss.
-(when (current-has-android-sdk?)
-  (test-all generate-android-application test-app-android-path))
+
+(define (run-single-test a-test)
+  (when (current-has-sun-wireless-sdk?)
+    (a-test generate-j2me-application test-app-j2me-path))
+  (when (current-has-android-sdk?)
+    (a-test generate-android-application test-app-android-path)))
+
+
+#;(run-tests)

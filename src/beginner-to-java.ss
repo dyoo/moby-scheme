@@ -790,7 +790,8 @@
     text
     -kernel-create-image     
     image-width
-    image-height))
+    image-height
+    image?))
 
 
 
