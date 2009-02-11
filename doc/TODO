@@ -25,6 +25,8 @@ Major:
 
 * Port universe.ss to Moby.
 
+* Incorporate the libraries of mobile.processing.org into Moby.
+
 * Work on the network compiler.
 
    - Add error trapping.
