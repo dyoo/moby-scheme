@@ -81,6 +81,11 @@ public class WorldKernel {
     }
     
 
+    public static org.plt.types.Logic image_question_(Object x) {
+	return toLogic(x instanceof Picture);
+    }
+
+
     public static Picture image_dash_rotate(Object image) {
 	// Fill me in!
 	return (Picture) image;

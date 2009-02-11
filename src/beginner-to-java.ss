@@ -717,7 +717,8 @@
     
     image-width
     image-height
-    
+    image?    
+
     ;; Pairs
     empty?
     first
