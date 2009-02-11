@@ -1,0 +1,17 @@
+Primitives that need implementation:
+
+The GUI subclasses:
+
+  row
+  col
+  message
+  box-group
+  canvas
+  button
+  slider
+  drop-down
+  text-field
+  check-box
+
+  big-bang
+  on-tick

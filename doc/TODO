@@ -15,13 +15,13 @@ Major:
 * Implement all of the Beginner Scheme primitives in the runtime.
   The list of primitives comes at the end of this file.
 
+* Port the gui-world teachpack to Moby.
+
 * Expose Android-specific functionality.  Definitely talk to us before
   tackling this one: we want to make sure the design matches the
   functional flavor of the world primitives.
 
 * Fix the bugs listed in BUGS.
-
-* Port the gui-world teachpack to Moby.
 
 * Port universe.ss to Moby.
 
