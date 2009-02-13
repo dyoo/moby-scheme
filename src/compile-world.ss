@@ -172,8 +172,10 @@
 ;; get-mappings: string program world-handlers -> (hashtableof string string)
 ;; Returns the template mappings we need.
 (define (get-mappings classname program a-world-handlers)
-  (let-values ([(compiled-program toplevel-bound-ids)
-               (program->java-string program)])
+  (let*-values ([(compiled-program pinfo)
+                 (program->java-string program)]
+                [(toplevel-bound-ids)
+                 (program-info-defined-ids pinfo)])
     (build-mappings (PROGRAM-NAME classname)
                     (PROGRAM-DEFINITIONS compiled-program)
                     (INITIAL-WORLD-EXPRESSION
