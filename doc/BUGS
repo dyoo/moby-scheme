@@ -9,3 +9,5 @@
 * Vararity functions aren't being handled uniformly.
 
 * Complex literals aren't being handles in beginner-to-java.ss.
+
+* BigInteger literals aren't being handled in beginner-to-java.
