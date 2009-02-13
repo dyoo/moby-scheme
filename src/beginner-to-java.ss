@@ -147,17 +147,17 @@
 
 
 
-;; field->accessor-name: symbol symbol -> symbol
-;; Given a structure name and a field, return the accessor.
-(define (field->accessor-name struct-name field-name)
-  (string->symbol
-   (string-append (symbol->string struct-name)
-                  "-"
-                  (symbol->string field-name))))
-
-
 ;; struct-definition->java-string: symbol (listof symbol) -> string
 (define (struct-definition->java-string id fields)
+  
+  ;; field->accessor-name: symbol symbol -> symbol
+  ;; Given a structure name and a field, return the accessor.
+  (define (field->accessor-name struct-name field-name)
+    (string->symbol
+     (string-append (symbol->string struct-name)
+                    "-"
+                    (symbol->string field-name))))
+  
   (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
           (identifier->java-identifier id (list id))
           (string-join (map (lambda (a-field)
@@ -298,7 +298,7 @@
                       (if (char=? expr #\") "\\" (string expr))
                       "\"))")]
       
-      ;; Bound identifiers (Variables)
+      ;; Identifiers
       [(? symbol?)
        (cond [(member expr bound-ids)
               (symbol->string
@@ -372,7 +372,10 @@
 (register-toplevel-id-constant! 'eof (lambda (sym)
                                        "org.plt.types.EofObject.EOF"))
 
-
+(for ([kernel-constant '(pi e)])
+  (register-toplevel-id-constant! kernel-constant
+                                  (lambda (sym)
+                                    (format "org.plt.Kernel.~a" kernel-constant))))
 
 
 
@@ -987,12 +990,19 @@
 ;; program-analyze: program [program-info] -> program-info
 ;; Collects which identifiers are free or definition-bound by the program.
 (define (program-analyze a-program [pinfo empty-program-info])
+  ;; fixme to do free variable analysis.  We want to error early if the user
+  ;; tries to use an identifier that hasn't been bound.
+  (program-analyze-collect-definitions a-program pinfo))
+
+
+;; program-analyze-collect-definitions: program pinfo -> pinfo
+(define (program-analyze-collect-definitions a-program pinfo)
   (cond [(empty? a-program)
          pinfo]
         [else
          (let ([updated-pinfo
                 (cond [(defn? (first a-program))
-                       (definition-analyze (first a-program) pinfo)]
+                       (definition-analyze-collect-definitions (first a-program) pinfo)]
                       [(test-case? (first a-program))
                        pinfo]
                       [(library-require? (first a-program))
@@ -1000,12 +1010,12 @@
                               "I don't know how to handle require")]
                       [(expression? (first a-program))
                        (expression-analyze (first a-program) '() pinfo)])])
-           (program-analyze (rest a-program)
-                            updated-pinfo))]))
+           (program-analyze-collect-definitions (rest a-program)
+                                                updated-pinfo))]))
 
 
-;; definition-analyze: definition program-info -> program-info
-(define (definition-analyze a-definition pinfo)
+;; definition-analyze-collect-definitions: definition program-info -> program-info
+(define (definition-analyze-collect-definitions a-definition pinfo)
   (match a-definition
     [(list 'define (list fun args ...) body)
      (expression-analyze body args 
@@ -1026,8 +1036,7 @@
 
 ;; definition-analyze: expression (listof symbol) program-info -> program-info
 (define (expression-analyze an-expression bound-ids pinfo)
-  ;; fixme to do free variable analysis.  We want to error early if the user
-  ;; tries to use an identifier that hasn't been bound.
+  ;; Expressions don't introduce any new definitions, so just return.
   pinfo)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
