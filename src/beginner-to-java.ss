@@ -70,30 +70,34 @@
 
 
 
-;; program->java-string: program -> string
+;; program->java-string: program -> (values string (listof symbol))
 ;; Consumes a program and returns a java string fragment that represents the
 ;; content of the program.
 (define (program->java-string program [bound-ids '()])
   (cond [(empty? program)
-         ""]
+         (values "" bound-ids)]
         [else
-         (let-values ([(new-java-code new-bound-ids)
-                       (cond [(defn? (first program))
-                              (definition->java-string (first program) bound-ids)]
-                             [(test-case? (first program))
-                              "// Test case erased\n"]
-                             [(library-require? (first program))
-                              (error 'program->java-string 
-                                     "I don't know how to handle require")]
-                             [(expression? (first program))
-                              (values (string-append 
-                                       "static { org.plt.Kernel.identity("
-                                       (expression->java-string (first program) bound-ids) 
-                                       "); }")
-                                      '())])])
-           (string-append new-java-code 
-                          "\n"
-                          (program->java-string (rest program) (append bound-ids new-bound-ids))))]))
+         (let*-values ([(new-java-code new-bound-ids)
+                        (cond [(defn? (first program))
+                               (definition->java-string (first program) bound-ids)]
+                              [(test-case? (first program))
+                               "// Test case erased\n"]
+                              [(library-require? (first program))
+                               (error 'program->java-string 
+                                      "I don't know how to handle require")]
+                              [(expression? (first program))
+                               (values (string-append 
+                                        "static { org.plt.Kernel.identity("
+                                        (expression->java-string (first program) bound-ids) 
+                                        "); }")
+                                       '())])]
+                       [(rest-java-code rest-bound-ids)
+                        (program->java-string (rest program)
+                                              (append bound-ids new-bound-ids))])
+           (values (string-append new-java-code 
+                                  "\n"
+                                  rest-java-code)
+                   rest-bound-ids))]))
 
 
 
@@ -306,6 +310,7 @@
       
       ;; Bound identifiers (Variables)
       [(? symbol?)
+       (printf "bound identifier? ~s ~s~n" expr bound-ids)
        (cond [(member expr bound-ids)
               (symbol->string
                (identifier->java-identifier expr bound-ids))]
@@ -1041,7 +1046,7 @@
 
 
 
-(provide/contract [program->java-string (program? . -> . string?)]
+(provide/contract [program->java-string (program? . -> . (values string? (listof symbol?)))]
                   [expression->java-string (expression? (listof symbol?) . -> . string?)]
                   [defn? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]

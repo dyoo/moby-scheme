@@ -172,39 +172,45 @@
 ;; get-mappings: string program world-handlers -> (hashtableof string string)
 ;; Returns the template mappings we need.
 (define (get-mappings classname program a-world-handlers)
-  (build-mappings (PROGRAM-NAME classname)
-                  (PROGRAM-DEFINITIONS (program->java-string program))
-                  (INITIAL-WORLD-EXPRESSION
-                   (expression->java-string
-                    (big-bang-record-world0
-                     (world-handlers-big-bang a-world-handlers))
-                    '()))
-                  (DELAY-EXPRESSION
-                   (expression->java-string 
-                    `(* ,(big-bang-record-r 
-                          (world-handlers-big-bang a-world-handlers))
-                        1000)
-                    '()))
-                  (STOP-WHEN-EXPRESSION
-                   (if (world-handlers-stop-when a-world-handlers)
-                       (expression->java-string
-                        `(,(world-handlers-stop-when a-world-handlers) world) '())
-                       "org.plt.Kernel.no_op_stopWhen(world)"))
-                  (ON-TICK-EXPRESSION
-                   (if (world-handlers-on-tick-event a-world-handlers)
-                       (expression->java-string
-                        `(,(world-handlers-on-tick-event a-world-handlers) world) '())
-                       "org.plt.Kernel.no_op_worldEvent(world)"))
-                  (ON-REDRAW-EXPRESSION
-                   (if (world-handlers-on-redraw a-world-handlers)
-                       (expression->java-string
-                        `(,(world-handlers-on-redraw a-world-handlers) world) '())
-                       "org.plt.gui.Scene.emptyScene(this.getWidth(), this.getHeight())"))
-                  (ON-KEY-EVENT-EXPRESSION
-                   (if (world-handlers-on-key-event a-world-handlers)
-                       (expression->java-string
-                        `(,(world-handlers-on-key-event a-world-handlers) world aKey) '())
-                       "org.plt.Kernel.no_op_keyEvent(world, aKey)"))))
+  (let-values ([(compiled-program toplevel-bound-ids)
+               (program->java-string program)])
+    (build-mappings (PROGRAM-NAME classname)
+                    (PROGRAM-DEFINITIONS compiled-program)
+                    (INITIAL-WORLD-EXPRESSION
+                     (expression->java-string
+                      (big-bang-record-world0
+                       (world-handlers-big-bang a-world-handlers))
+                      toplevel-bound-ids))
+                    (DELAY-EXPRESSION
+                     (expression->java-string 
+                      `(* ,(big-bang-record-r 
+                            (world-handlers-big-bang a-world-handlers))
+                          1000)
+                      toplevel-bound-ids))
+                    (STOP-WHEN-EXPRESSION
+                     (if (world-handlers-stop-when a-world-handlers)
+                         (expression->java-string
+                          `(,(world-handlers-stop-when a-world-handlers) world) 
+                          (cons 'world toplevel-bound-ids))
+                         "org.plt.Kernel.no_op_stopWhen(world)"))
+                    (ON-TICK-EXPRESSION
+                     (if (world-handlers-on-tick-event a-world-handlers)
+                         (expression->java-string
+                          `(,(world-handlers-on-tick-event a-world-handlers) world) 
+                          (cons 'world toplevel-bound-ids))
+                         "org.plt.Kernel.no_op_worldEvent(world)"))
+                    (ON-REDRAW-EXPRESSION
+                     (if (world-handlers-on-redraw a-world-handlers)
+                         (expression->java-string
+                          `(,(world-handlers-on-redraw a-world-handlers) world)
+                          (cons 'world toplevel-bound-ids))
+                         "org.plt.gui.Scene.emptyScene(this.getWidth(), this.getHeight())"))
+                    (ON-KEY-EVENT-EXPRESSION
+                     (if (world-handlers-on-key-event a-world-handlers)
+                         (expression->java-string
+                          `(,(world-handlers-on-key-event a-world-handlers) world aKey) 
+                          (cons 'world (cons 'aKey toplevel-bound-ids)))
+                         "org.plt.Kernel.no_op_keyEvent(world, aKey)")))))
 
 
 

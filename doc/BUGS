@@ -5,3 +5,5 @@
 
 * The test case org.plt.TestKernel.testBigExp is failing because
   our current approach always converts to floating point.
+
+* Vararity functions aren't being handled uniformly.
