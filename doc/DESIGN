@@ -40,15 +40,6 @@ world0) to determine the appropriate layout.
 ----------------------------------------------------------------------
 
 
-Deviation: strings are immutable in Moby.  Beginner-level programs are
-functional, and in particular, there are no mutators, so there's no
-good reason to use eq?.
-
-In particular, when compiling to Moby, beginner-level programs that
-depend on
-
-   (eq? "hello" "hello")
-
-will get different results in Moby.  If this becomes a real issue, we
-can duplicate Beginner-Level behavior, at the cost of more string
-allocation.
+Deviation: strings are currently immutable in Moby.  Beginner-level
+programs are functional, and in particular, there are no string
+mutators, so this deviation shouldn't be visible.

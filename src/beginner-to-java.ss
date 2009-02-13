@@ -290,7 +290,7 @@
       
       ;; Strings
       [(? string?)
-       (format "(~s)" expr)]
+       (format "(new String(~s))" expr)]
       
       ;; Characters
       [(? char?)
@@ -306,7 +306,7 @@
              [else
               (translate-toplevel-id expr)])]
       
-      ;; Symbols
+      ;; Quoted symbols
       [(list 'quote datum)
        (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
                datum)]
@@ -322,21 +322,27 @@
 (define (application-expression->java-string id exprs bound-ids)
   (cond
     [(unimplemented-java-kernel-id? id)
-     (error 'expression->java-string "Function ~s hasn't yet been implemented in this compiler."
+     (error 'expression->java-string 
+            "Function ~s hasn't yet been implemented in this compiler."
             id)]
     [else
      (format "(~a(~a))"
              (identifier->java-identifier id bound-ids)
-             (string-join (map (lambda (e) (expression->java-string e bound-ids)) exprs) ","))]))
+             (string-join (map (lambda (e) 
+                                 (expression->java-string e bound-ids))
+                               exprs) ","))]))
 
 
 
-
+;; Fixme: undocumented!
 
 ;; registered-toplevel-ids: (parameter (hashtable-of symbol (symbol -> string))
 ;; Keeps a mapping from symbols to functions that do the translation to Java.
 (define registered-toplevel-ids (make-parameter (make-hasheq)))
 
+(define-struct id-info ())
+(define-struct (id-info:constant id-info) (name ->java-string))
+(define-struct (id-info:function id-info) (name args optargs ->java-string))
 
 ;; register-toplevel-id: symbol (symbol -> string) -> void
 (define (register-toplevel-id-constant! id fun)
@@ -1004,12 +1010,15 @@
                 (cond [(defn? (first a-program))
                        (definition-analyze-collect-definitions (first a-program) pinfo)]
                       [(test-case? (first a-program))
+                       ;; Test cases don't introduce any new definitions, so just return.
                        pinfo]
                       [(library-require? (first a-program))
+                       ;; Fixme!
                        (error 'program-top-level-identifiers 
-                              "I don't know how to handle require")]
+                              "I don't know how to handle require yet")]
                       [(expression? (first a-program))
-                       (expression-analyze (first a-program) '() pinfo)])])
+                       ;; Expressions don't introduce any new definitions, so just return.
+                       pinfo])])
            (program-analyze-collect-definitions (rest a-program)
                                                 updated-pinfo))]))
 
@@ -1018,26 +1027,18 @@
 (define (definition-analyze-collect-definitions a-definition pinfo)
   (match a-definition
     [(list 'define (list fun args ...) body)
-     (expression-analyze body args 
-                         (pinfo-accumulate-defined-id fun pinfo))]
+     (pinfo-accumulate-defined-id fun pinfo)]
     [(list 'define (? symbol? fun-id) (list 'lambda (list args ...) body))
-     (expression-analyze body args 
-                         (pinfo-accumulate-defined-id fun-id pinfo))]
+     (pinfo-accumulate-defined-id fun-id pinfo)]
     [(list 'define (? symbol? id) body)
-     (expression-analyze body '() (pinfo-accumulate-defined-id id pinfo))]
+     ;; Expressions don't introduce any new definitions, so just return.
+     (pinfo-accumulate-defined-id id pinfo)]
     [(list 'define-struct id (list fields ...))
      (foldl pinfo-accumulate-defined-id pinfo 
             (cons (string->symbol (format "make-~a" id))
                   (map (lambda (f)
                          (string->symbol (format "~a-~a" id f)))
                        fields)))]))
-
-
-
-;; definition-analyze: expression (listof symbol) program-info -> program-info
-(define (expression-analyze an-expression bound-ids pinfo)
-  ;; Expressions don't introduce any new definitions, so just return.
-  pinfo)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1049,8 +1050,7 @@
                   [expression->java-string (expression? (listof symbol?) . -> . string?)]
                   [defn? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
-                  
-                  
+                                    
                   [struct program-info ([defined-ids (listof symbol?)]
                                         [free-ids (listof symbol?)])]
                   [program-analyze ((program?) (program-info?) . ->* . program-info?)])
