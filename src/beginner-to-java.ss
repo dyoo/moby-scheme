@@ -12,6 +12,8 @@
          scheme/contract)
 
 
+
+
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 
 
@@ -71,68 +73,74 @@
 ;; program->java-string: program -> string
 ;; Consumes a program and returns a java string fragment that represents the
 ;; content of the program.
-(define (program->java-string program)
+(define (program->java-string program [bound-ids '()])
   (cond [(empty? program)
          ""]
         [else
-         (string-append (cond [(defn? (first program))
-                               (definition->java-string (first program))]
-                              [(test-case? (first program))
-                               "// Test case erased\n"]
-                              [(library-require? (first program))
-                               (error 'program->java-string 
-                                      "I don't know how to handle require")]
-                              [(expression? (first program))
-                               (string-append 
-                                "static { org.plt.Kernel.identity("
-                                (expression->java-string (first program) '()) 
-                                "); }")])
-                        "\n"
-                        (program->java-string (rest program)))]))
+         (let-values ([(new-java-code new-bound-ids)
+                       (cond [(defn? (first program))
+                              (definition->java-string (first program) bound-ids)]
+                             [(test-case? (first program))
+                              "// Test case erased\n"]
+                             [(library-require? (first program))
+                              (error 'program->java-string 
+                                     "I don't know how to handle require")]
+                             [(expression? (first program))
+                              (values (string-append 
+                                       "static { org.plt.Kernel.identity("
+                                       (expression->java-string (first program) bound-ids) 
+                                       "); }")
+                                      '())])])
+           (string-append new-java-code 
+                          "\n"
+                          (program->java-string (rest program) (append bound-ids new-bound-ids))))]))
 
 
 
-;; definition->java-string: definition -> string
+;; definition->java-string: definition (listof symbol)-> (values string (listof symbol))
 ;; Consumes a definition (define or define-struct) and produces a string
 ;; that maps that definition to a static, public function that consumes
-;; Object arguments and produces Objects.
+;; Object arguments and produces Objects.  The second value is the
+;; list of bound symbols from the definition.
 ;;
 ;; Structure definitions map to static inner classes with transparent fields.
-(define (definition->java-string defn)
+(define (definition->java-string defn bound-ids)
   (match defn
     [(list 'define (list fun args ...) body)
-     (function-definition->java-string fun args body)]
+     (function-definition->java-string fun args body bound-ids)]
     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
-     (function-definition->java-string fun args body)]
+     (function-definition->java-string fun args body bound-ids)]
     [(list 'define (? symbol? id) body)
-     (variable-definition->java-string id body)]
+     (variable-definition->java-string id body bound-ids)]
     [(list 'define-struct id (list fields ...))
      (struct-definition->java-string id fields)]))
 
 
-;; function-definition->java-string: symbol (listof symbol) expr -> string
+;; function-definition->java-string: symbol (listof symbol) expr (listof symbol) -> (values string (listof symbol))
 ;; Converts the function definition into a static function declaration whose
 ;; return value is an object.
-(define (function-definition->java-string fun args body)
-  (format "static public Object ~a(~a) { return ~a; }"
-          (identifier->java-identifier fun (list fun))
-          (string-join (map (lambda (x)
-                              (string-append 
-                               "Object "
-                               (symbol->string
-                                (identifier->java-identifier x (cons fun args)))))
-                            args)
-                       ", ")
-          (expression->java-string body (cons fun args))))
+(define (function-definition->java-string fun args body bound-ids)
+  (values (format "static public Object ~a(~a) { return ~a; }"
+                  (identifier->java-identifier fun (list fun))
+                  (string-join (map (lambda (x)
+                                      (string-append 
+                                       "Object "
+                                       (symbol->string
+                                        (identifier->java-identifier x (cons fun args)))))
+                                    args)
+                               ", ")
+                  (expression->java-string body (append (cons fun args) bound-ids)))
+          (list fun)))
 
 
-;; variable-definition->java-string: symbol expr -> string
+;; variable-definition->java-string: symbol expr (listof symbol) -> (values string (listof symbol))
 ;; Converts the variable definition into a static variable declaration.
-(define (variable-definition->java-string id body)
-  (format "static Object ~a; static { ~a = ~a; }" 
-          (identifier->java-identifier id (list id))
-          (identifier->java-identifier id (list id))
-          (expression->java-string body (list id))))
+(define (variable-definition->java-string id body bound-ids)
+  (values (format "static Object ~a; static { ~a = ~a; }" 
+                  (identifier->java-identifier id (list id))
+                  (identifier->java-identifier id (list id))
+                  (expression->java-string body (cons id bound-ids)))
+          (list id)))
 
 
 
@@ -145,74 +153,84 @@
                   (symbol->string field-name))))
 
 
-;; struct-definition->java-string: symbol (listof symbol) -> string
+;; struct-definition->java-string: symbol (listof symbol) -> (values string (listof symbol))
 (define (struct-definition->java-string id fields)
-  (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
-          (identifier->java-identifier id (list id))
-          (string-join (map (lambda (a-field)
-                              (format "public Object ~a;"
-                                      (identifier->java-identifier a-field (cons id fields))))
-                            fields)
-                       "\n")
-          
-          ;; default constructor
-          (format "public ~a(~a) { ~a }"
-                  (identifier->java-identifier id (list id))
-                  (string-join (map (lambda (i) (format "Object ~a"
-                                                        (identifier->java-identifier i (list i))))
-                                    fields) 
-                               ",")
-                  (string-join (map (lambda (i) (format "this.~a = ~a;" 
-                                                        (identifier->java-identifier i (list i))
-                                                        (identifier->java-identifier i (list i))))
-                                    fields) 
-                               "\n"))
-          
-          ;; equality
-          (format "public boolean equals(Object other) {
+  (let ([constructor-id (string->symbol 
+                         (string-append "make-" (symbol->string id)))]
+        [accessor-ids
+         (map (lambda (a-field)
+                (string->symbol
+                 (string-append (symbol->string id)
+                                "-"
+                                (symbol->string a-field))))
+              fields)])
+    (values (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
+                    (identifier->java-identifier id (list id))
+                    (string-join (map (lambda (a-field)
+                                        (format "public Object ~a;"
+                                                (identifier->java-identifier a-field (cons id fields))))
+                                      fields)
+                                 "\n")
+                    
+                    ;; default constructor
+                    (format "public ~a(~a) { ~a }"
+                            (identifier->java-identifier id (list id))
+                            (string-join (map (lambda (i) (format "Object ~a"
+                                                                  (identifier->java-identifier i (list i))))
+                                              fields) 
+                                         ",")
+                            (string-join (map (lambda (i) (format "this.~a = ~a;" 
+                                                                  (identifier->java-identifier i (list i))
+                                                                  (identifier->java-identifier i (list i))))
+                                              fields) 
+                                         "\n"))
+                    
+                    ;; equality
+                    (format "public boolean equals(Object other) {
                      if (other instanceof ~a) {
                        return ~a.isTrue();
                      } else {
                        return false;
                      }
                    } "
-                  (identifier->java-identifier id (list id))
-                  (expression->java-string (foldl (lambda (a-field acc)
-                                                    (let ([acc-id (field->accessor-name id a-field)])
-                                                      `(and (equal? (,acc-id this)
-                                                                    (,acc-id other)) 
-                                                            ,acc)))
-                                                  'true
-                                                  fields)
-                                           (list* 'other 'this 
-                                                  (map (lambda (f) (field->accessor-name id f)) 
-                                                       fields))))
-          
-          ;; make-id
-          (format "static public Object ~a(~a) { return new ~a(~a); }"
-                  (let ([make-id (string->symbol 
-                                  (string-append "make-" (symbol->string id)))])
-                    (identifier->java-identifier  make-id (list make-id)))
-                  (string-join (build-list (length fields) (lambda (i) (format "Object id~a" i)))
-                               ",")
-                  (identifier->java-identifier id (list id))
-                  (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
-                               ","))
-          
-          ;; accessors
-          (string-join 
-           (map (lambda (a-field)
-                  (format "static public Object ~a(Object obj) { return ((~a)obj).~a; }"
-                          (let ([acc-id (string->symbol
-                                         (string-append (symbol->string id)
-                                                        "-"
-                                                        (symbol->string a-field)))])
-                            (identifier->java-identifier  acc-id
-                                                          (list acc-id)))
-                          (identifier->java-identifier id (list id))
-                          (identifier->java-identifier a-field (list a-field))))
-                fields)
-           "\n")))
+                            (identifier->java-identifier id (list id))
+                            (expression->java-string (foldl (lambda (a-field acc)
+                                                              (let ([acc-id (field->accessor-name id a-field)])
+                                                                `(and (equal? (,acc-id this)
+                                                                              (,acc-id other)) 
+                                                                      ,acc)))
+                                                            'true
+                                                            fields)
+                                                     (list* 'other 'this 
+                                                            (map (lambda (f) (field->accessor-name id f)) 
+                                                                 fields))))
+                    
+                    ;; make-id
+                    (format "static public Object ~a(~a) { return new ~a(~a); }"
+                            (let ([make-id (string->symbol 
+                                            (string-append "make-" (symbol->string id)))])
+                              (identifier->java-identifier  make-id (list make-id)))
+                            (string-join (build-list (length fields) (lambda (i) (format "Object id~a" i)))
+                                         ",")
+                            (identifier->java-identifier id (list id))
+                            (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
+                                         ","))
+                    
+                    ;; accessors
+                    (string-join 
+                     (map (lambda (a-field)
+                            (format "static public Object ~a(Object obj) { return ((~a)obj).~a; }"
+                                    (let ([acc-id (string->symbol
+                                                   (string-append (symbol->string id)
+                                                                  "-"
+                                                                  (symbol->string a-field)))])
+                                      (identifier->java-identifier  acc-id
+                                                                    (list acc-id)))
+                                    (identifier->java-identifier id (list id))
+                                    (identifier->java-identifier a-field (list a-field))))
+                          fields)
+                     "\n"))
+            (cons constructor-id accessor-ids))))
 
 
 ;; expression->java-string: expr (listof symbol) -> string
@@ -271,25 +289,7 @@
                                          expr) 
                                     "||")
                       ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
-      
-      ['null
-       (format "org.plt.types.Empty.EMPTY")]
-      
-      ['empty
-       (format "org.plt.types.Empty.EMPTY")]
-      
-      ;; Boolean true
-      ['true
-       "(org.plt.types.Logic.TRUE)"]
-      
-      ;; Boolean false
-      ['false
-       "(org.plt.types.Logic.FALSE)"]
-
-      ;; End of file object
-      ['eof
-       "(org.plt.types.EofObject.EOF)"]
-      
+            
       ;; Numbers
       [(? number?)
        (number->java-string expr)]
@@ -304,10 +304,13 @@
                       (if (char=? expr #\") "\\" (string expr))
                       "\"))")]
       
-      ;; Identifiers (Variables)
+      ;; Bound identifiers (Variables)
       [(? symbol?)
-       (symbol->string
-        (identifier->java-identifier expr bound-ids))]
+       (cond [(member expr bound-ids)
+              (symbol->string
+               (identifier->java-identifier expr bound-ids))]
+             [else
+              (translate-toplevel-id expr)])]
       
       ;; Symbols
       [(list 'quote datum)
@@ -331,6 +334,57 @@
      (format "(~a(~a))"
              (identifier->java-identifier id bound-ids)
              (string-join (map (lambda (e) (expression->java-string e bound-ids)) exprs) ","))]))
+
+
+
+
+
+;; registered-toplevel-ids: (parameter (hashtable-of symbol (symbol -> string))
+;; Keeps a mapping from symbols to functions that do the translation to Java.
+(define registered-toplevel-ids (make-parameter (make-hasheq)))
+
+
+;; register-toplevel-id: symbol (symbol -> string) -> void
+(define (register-toplevel-id! id fun)
+  (hash-set! (registered-toplevel-ids) id fun))
+
+
+;; translate-toplevel-id: symbol -> string
+(define (translate-toplevel-id an-id)
+  (let ([translator
+         (hash-ref (registered-toplevel-ids) an-id 
+                   (lambda ()
+                     (error 'translate-toplevel-id 
+                            "I'm sorry, you've used a primitive ~s that Moby doesn't know about yet."
+                            an-id)))])
+    (translator an-id)))
+
+
+;; We register the toplevel identifiers here.
+
+;; null
+(register-toplevel-id! 'null (lambda (sym)
+                               "org.plt.types.Empty.EMPTY"))
+;; empty
+(register-toplevel-id! 'empty (lambda (sym)
+                               "org.plt.types.Empty.EMPTY"))
+;; true
+(register-toplevel-id! 'true (lambda (sym)
+                               "org.plt.types.Logic.TRUE"))
+;; false
+(register-toplevel-id! 'false (lambda (sym)
+                               "org.plt.types.Logic.FALSE"))
+;; eof
+(register-toplevel-id! 'eof (lambda (sym)
+                              "org.plt.types.EofObject.EOF"))
+
+
+
+
+
+
+
+
 
 
 
@@ -991,7 +1045,7 @@
                   [expression->java-string (expression? (listof symbol?) . -> . string?)]
                   [defn? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
-                  
+
                   
                   [struct program-info ([defined-ids (listof symbol?)]
                                         [free-ids (listof symbol?)])]
