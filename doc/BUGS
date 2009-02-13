@@ -7,3 +7,5 @@
   our current approach always converts to floating point.
 
 * Vararity functions aren't being handled uniformly.
+
+* Complex literals aren't being handles in beginner-to-java.ss.
