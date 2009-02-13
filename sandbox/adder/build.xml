@@ -17,6 +17,7 @@
 <target name="init">
 <mkdir dir="classes" />
 <mkdir dir="bin" />
+<mkdir dir="res" />
 </target>
 
 <target name="make.jad" depends="init">
