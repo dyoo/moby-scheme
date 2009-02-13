@@ -8,8 +8,8 @@
 <property name="wtk.midp.version" value="2.0" />
 
 
-<property name="midlet.name" value="MoveBall" />
-<property name="midlet.class" value="org.plt.MoveBall.MoveBall" />
+<property name="midlet.name" value="Adder" />
+<property name="midlet.class" value="Adder" />
 <property name="company.name" value="PLT" />
 
 
