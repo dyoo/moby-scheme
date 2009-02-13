@@ -973,13 +973,13 @@
 (define-struct program-info (defined-ids free-ids) #:transparent)
 (define empty-program-info (make-program-info empty empty))
 
-;; pinfo-accumulate-free-id: program-info symbol -> program-info
-(define (pinfo-accumulate-free-id pinfo free-id)
+;; pinfo-accumulate-free-id: symbol program-info -> program-info
+(define (pinfo-accumulate-free-id free-id pinfo)
   (struct-copy program-info pinfo
                [free-ids (cons free-id (program-info-free-ids pinfo))]))
 
-;; pinfo-accumulate-defined-id: program-info symbol -> program-info
-(define (pinfo-accumulate-defined-id pinfo defined-id)
+;; pinfo-accumulate-defined-id: symbol program-info -> program-info
+(define (pinfo-accumulate-defined-id defined-id pinfo)
   (struct-copy program-info pinfo
                [defined-ids (cons defined-id (program-info-defined-ids pinfo))]))
 
@@ -1009,12 +1009,12 @@
   (match a-definition
     [(list 'define (list fun args ...) body)
      (expression-analyze body args 
-                         (pinfo-accumulate-defined-id pinfo fun))]
-    [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
+                         (pinfo-accumulate-defined-id fun pinfo))]
+    [(list 'define (? symbol? fun-id) (list 'lambda (list args ...) body))
      (expression-analyze body args 
-                         (pinfo-accumulate-defined-id pinfo fun))]
+                         (pinfo-accumulate-defined-id fun-id pinfo))]
     [(list 'define (? symbol? id) body)
-     (expression-analyze body '() (pinfo-accumulate-defined-id pinfo id))]
+     (expression-analyze body '() (pinfo-accumulate-defined-id id pinfo))]
     [(list 'define-struct id (list fields ...))
      (foldl pinfo-accumulate-defined-id pinfo 
             (cons (string->symbol (format "make-~a" id))
