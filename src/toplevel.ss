@@ -18,7 +18,7 @@
 ;; register-toplevel-id-constant: symbol (symbol -> string) -> void
 ;; Registers a translator for the use of a toplevel id constant.
 (define (register-plain-toplevel-id-constant! id java-string)
-  (when (hash-ref (registered-toplevel-ids) id)
+  (when (hash-ref (registered-toplevel-ids) id #f)
     (error 'register-toplevel-id-constant! "~s already bound" id))
   (hash-set! (registered-toplevel-ids) 
              id 
@@ -27,7 +27,7 @@
 
 ;; register-toplevel-id-function!: symbol number boolean? ??? -> void
 (define (register-toplevel-id-function! id min-arity var-arity? ->java-string)
-  (when (hash-ref (registered-toplevel-ids) id)
+  (when (hash-ref (registered-toplevel-ids) id #f)
     (error 'register-toplevel-id-constant! "~s already bound" id))
   (hash-set! (registered-toplevel-ids)
              id
