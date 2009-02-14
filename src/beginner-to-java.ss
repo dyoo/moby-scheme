@@ -9,7 +9,8 @@
 (require scheme/match
          scheme/list
          scheme/string
-         scheme/contract)
+         scheme/contract
+         "toplevel.ss")
 
 
 
@@ -82,7 +83,9 @@
                    [else
                     (let ([new-java-code
                            (cond [(defn? (first program))
-                                  (definition->java-string (first program) toplevel-defined-ids)]
+                                  (definition->java-string 
+                                    (first program) 
+                                    toplevel-defined-ids)]
                                  [(test-case? (first program))
                                   "// Test case erased\n"]
                                  [(library-require? (first program))
@@ -91,7 +94,9 @@
                                  [(expression? (first program))
                                   (string-append 
                                    "static { org.plt.Kernel.identity("
-                                   (expression->java-string (first program) toplevel-defined-ids) 
+                                   (expression->java-string 
+                                    (first program) 
+                                    toplevel-defined-ids) 
                                    "); }")])]
                           [rest-java-code (loop (rest program))])
                       (string-append new-java-code "\n" rest-java-code))]))])
@@ -334,56 +339,53 @@
 
 
 
-;; Fixme: undocumented!
-
-;; registered-toplevel-ids: (parameter (hashtable-of symbol (symbol -> string))
-;; Keeps a mapping from symbols to functions that do the translation to Java.
-(define registered-toplevel-ids (make-parameter (make-hasheq)))
-
-(define-struct id-info ())
-(define-struct (id-info:constant id-info) (name ->java-string))
-(define-struct (id-info:function id-info) (name args optargs ->java-string))
-
-;; register-toplevel-id: symbol (symbol -> string) -> void
-(define (register-toplevel-id-constant! id fun)
-  (hash-set! (registered-toplevel-ids) id fun))
-
 
 ;; translate-toplevel-id: symbol -> string
+;; Translates the use of a toplevel identifier to the appropriate
+;; Java code.
 (define (translate-toplevel-id an-id)
-  (let ([translator
-         (hash-ref (registered-toplevel-ids) an-id 
-                   (lambda ()
-                     (error 'translate-toplevel-id 
-                            "I'm sorry, you've used a primitive ~s that Moby doesn't know about yet."
-                            an-id)))])
-    (translator an-id)))
+  (match (lookup-toplevel-id an-id)
+    ['#f
+     (error 'translate-toplevel-id 
+            "Moby doesn't know about toplevel primitive ~s."
+            an-id)]
+    [(struct id-info:constant (name ->java-string))
+     (->java-string an-id)]
+    #;[(struct id-info:function (name args optargs ->java-string))
+       (error 'translate-toplevel-id
+              "Moby doesn't allow higher-order use of ~s." an-id)]))
+
+
+;; translate-toplevel-application: symbol expression -> string
+(define (translate-toplevel-application an-operator-id operands)
+  (void)
+  #;(let* ([fail-f 
+          (lambda ()
+            (error 'translate-toplevel-id 
+                   "Moby doesn't know about toplevel primitive ~s."
+                   an-id))]
+         [record (hash-ref (registered-toplevel-ids) an-id fail-f)])
+    (match record
+      [(struct id-info:constant (name ->java-string))
+       (->java-string an-id)]
+      [(struct id-info:function (name args optargs ->java-string))
+       (error 'translate-toplevel-id
+              "Moby doesn't allow higher-order use of ~s." an-id)])))
+
+
+
 
 
 ;; We register the toplevel identifiers here.
-
-;; null
-(register-toplevel-id-constant! 'null (lambda (sym)
-                                        "org.plt.types.Empty.EMPTY"))
-;; empty
-(register-toplevel-id-constant! 'empty (lambda (sym)
-                                         "org.plt.types.Empty.EMPTY"))
-;; true
-(register-toplevel-id-constant! 'true (lambda (sym)
-                                        "org.plt.types.Logic.TRUE"))
-;; false
-(register-toplevel-id-constant! 'false (lambda (sym)
-                                         "org.plt.types.Logic.FALSE"))
-;; eof
-(register-toplevel-id-constant! 'eof (lambda (sym)
-                                       "org.plt.types.EofObject.EOF"))
-
+(register-plain-toplevel-id-constant! 'null "org.plt.types.Empty.EMPTY")
+(register-plain-toplevel-id-constant! 'empty "org.plt.types.Empty.EMPTY")
+(register-plain-toplevel-id-constant! 'true "org.plt.types.Logic.TRUE")
+(register-plain-toplevel-id-constant! 'false "org.plt.types.Logic.FALSE")
+(register-plain-toplevel-id-constant! 'eof "org.plt.types.EofObject.EOF")
 (for ([kernel-constant '(pi e)])
-  (register-toplevel-id-constant! kernel-constant
-                                  (lambda (sym)
-                                    (format "org.plt.Kernel.~a" kernel-constant))))
-
-
+  (register-plain-toplevel-id-constant! kernel-constant
+                                        (format "org.plt.Kernel.~a" 
+                                                kernel-constant)))
 
 
 
@@ -408,32 +410,33 @@
          (error 'number->java-string "Don't know how to handle ~s yet" a-num)]))
 
 
-;; Special character mappings for identifiers
-(define char-mappings 
-  #hash((#\- . "_dash_")
-        (#\_ . "_underline_")
-        (#\? . "_question_")
-        (#\! . "_bang_")
-        (#\. . "_dot_")
-        (#\: . "_colon_")
-        (#\= . "_equal_")
-        (#\# . "_pound_")
-        (#\$ . "_dollar_")
-        (#\% . "_percent_")
-        (#\^ . "_tilde_")
-        (#\& . "_and_")
-        (#\* . "_star_")
-        (#\+ . "_plus_")
-        (#\* . "_star_")
-        (#\/ . "_slash_")
-        (#\< . "_lessthan_")
-        (#\> . "_greaterthan_")
-        (#\~ . "_tilde_")))
+
 
 
 ;; identifier->java-identifier: symbol (listof symbol) -> symbol
 ;; Converts identifiers into ones compatible with Java.
 (define (identifier->java-identifier an-id bound-ids)
+  ;; Special character mappings for identifiers
+  (define char-mappings 
+    #hash((#\- . "_dash_")
+          (#\_ . "_underline_")
+          (#\? . "_question_")
+          (#\! . "_bang_")
+          (#\. . "_dot_")
+          (#\: . "_colon_")
+          (#\= . "_equal_")
+          (#\# . "_pound_")
+          (#\$ . "_dollar_")
+          (#\% . "_percent_")
+          (#\^ . "_tilde_")
+          (#\& . "_and_")
+          (#\* . "_star_")
+          (#\+ . "_plus_")
+          (#\* . "_star_")
+          (#\/ . "_slash_")
+          (#\< . "_lessthan_")
+          (#\> . "_greaterthan_")
+          (#\~ . "_tilde_")))
   (let* ([chars (string->list (symbol->string an-id))]
          [translated-chunks 
           (map (lambda (ch) (hash-ref char-mappings ch (string ch))) chars)]
@@ -1050,7 +1053,7 @@
                   [expression->java-string (expression? (listof symbol?) . -> . string?)]
                   [defn? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
-                                    
+                  
                   [struct program-info ([defined-ids (listof symbol?)]
                                         [free-ids (listof symbol?)])]
                   [program-analyze ((program?) (program-info?) . ->* . program-info?)])
