@@ -32,6 +32,7 @@
 
 (define-runtime-path common-support-src-path "../support/common/src")
 (define-runtime-path j2me-support-src-path "../support/j2me/src")
+(define-runtime-path j2me-support-res-path "../support/j2me/res")
 (define-runtime-path stub-path "../support/j2me/MidletStub.java.template")
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
@@ -110,6 +111,7 @@
 (define (write-j2me-resources a-text name dest-dir)
   (lift-images-to-directory a-text (build-path dest-dir "res"))
   (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
+  (copy-directory/files* j2me-support-res-path (build-path dest-dir "res"))
   (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
   (write-j2me-ant-buildfile name dest-dir))
 
@@ -382,7 +384,8 @@
            (target ((name "package") (depends "compile,make.jad"))
                    (wtkpackage ((jarfile "bin/${midlet.name}.jar")
                                 (jadfile "bin/${midlet.name}.jad")
-                                (obfuscate "true")
+                                (obfuscate "false")
+                                #;(obfuscate "true")
                                 (preverify "true"))
                                (preserve ((class "org.plt.platform.Platform")))
                                (preserve ((class "org.plt.platform.J2MEPlatform")))

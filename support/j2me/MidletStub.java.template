@@ -3,6 +3,9 @@ package org.plt.<<PROGRAM-NAME>>;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
 
+import org.plt.platform.PlatformI;
+import org.plt.platform.Platform;
+
 // This is stub code.
 // The following things must be plugged in:
 // 
@@ -30,6 +33,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
     public void destroyApp(boolean unconditional) {}
 
     public void startApp() {
+	// debug: show the platform in the log.
+	System.out.println(Platform.getInstance().getName());
+
 	MyCanvas canvas = new MyCanvas();
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();

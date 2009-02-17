@@ -17,8 +17,8 @@ public class Platform {
 	    InputStream ins = 
 		Class.forName("org.plt.platform.Platform").
 		getResourceAsStream("/platform.implementation");
- 	    String platformImpl = 
- 		readLine(ins);
+	    System.out.println("Reading in a line from " + ins);
+ 	    String platformImpl = readLine(ins);
  	    instance = (PlatformI) 
 		Class.forName(platformImpl).newInstance();
 	} catch(Exception ex) {
