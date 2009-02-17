@@ -384,6 +384,8 @@
                                 (jadfile "bin/${midlet.name}.jad")
                                 (obfuscate "true")
                                 (preverify "true"))
+                               (preserve ((class "org.plt.platform.Platform")))
+                               (preserve ((class "org.plt.platform.J2MEPlatform")))
                                (fileset ((dir "classes")))
                                (fileset ((dir "res")))))
            "\n"           
