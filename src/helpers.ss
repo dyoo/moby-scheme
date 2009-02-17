@@ -2,7 +2,8 @@
 
 (require scheme/match
          scheme/string
-         scheme/contract)
+         scheme/contract
+         scheme/path)
 
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
@@ -93,9 +94,18 @@
            (string-join translated-chunks ""))])
     translated-id))
 
+
+;; path=?: path path -> boolean
+;; Returns true if the paths refer to the same file.
+(define (path=? path-1 path-2)
+  (string=? (path->string (normalize-path path-1))
+            (path->string (normalize-path path-2))))
+
+
 (provide/contract [program? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
                   [defn? (any/c . -> . boolean?)]
                   [test-case? (any/c . -> . boolean?)]
                   [library-require? (any/c . -> . boolean?)]
-                  [identifier->munged-java-identifier (symbol? . -> . symbol?)])
+                  [identifier->munged-java-identifier (symbol? . -> . symbol?)]
+                  [path=? (path? path? . -> . boolean?)])

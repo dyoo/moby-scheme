@@ -48,6 +48,7 @@
 (define test-struct-question (make-test "struct-question.ss"))
 (define test-move-ball (make-test "move-ball.ss"))
 (define test-image-question (make-test "image-question.ss"))
+(define test-location (make-test "location.ss"))
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -71,6 +72,7 @@
                     test-struct-question
                     test-move-ball
                     test-image-question
+                    test-location
                     
                     test-cowabunga 
                     test-flight-lander

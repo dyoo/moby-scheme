@@ -37,8 +37,7 @@
                                  [(test-case? (first program))
                                   "// Test case erased\n"]
                                  [(library-require? (first program))
-                                  (error 'program->java-string 
-                                         "I don't know how to handle require")]
+                                  "// Module require erased\n"]
                                  [(expression? (first program))
                                   (string-append 
                                    "static { org.plt.Kernel.identity("

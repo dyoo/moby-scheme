@@ -3,8 +3,12 @@
 (require "env.ss"
          "toplevel.ss"
          "helpers.ss"
-         scheme/contract)
+         syntax/modresolve
+         scheme/contract
+         scheme/runtime-path)
 
+
+(define-runtime-path mock-lib-path "mock-libs")
 
 
 ;; pinfo (program-info) captures the information we get from analyzing 
@@ -16,6 +20,14 @@
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
    (env-extend (pinfo-env a-pinfo) a-binding)))
+
+
+;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
+(define (pinfo-accumulate-bindings bindings a-pinfo)
+  (foldl pinfo-accumulate-binding
+         a-pinfo
+         bindings))
+
 
 
 ;; program-analyze: program [program-info] -> program-info
@@ -38,9 +50,7 @@
                        ;; Test cases don't introduce any new definitions, so just return.
                        pinfo]
                       [(library-require? (first a-program))
-                       ;; Fixme!
-                       (error 'program-top-level-identifiers 
-                              "I don't know how to handle require yet")]
+                       (require-analyze (second (first a-program)) pinfo)]
                       [(expression? (first a-program))
                        ;; Expressions don't introduce any new definitions, so just return.
                        pinfo])])
@@ -108,9 +118,64 @@
 
 
 
+(define-struct module-binding (name path bindings))
+
+
+;; TODO: syntactic abstraction using the stuff in each mock library, to reduce this
+;; drudgery.
+(define location-module 
+  (let ([module-path (build-path mock-lib-path "location.ss")])
+    (make-module-binding 'location
+                         module-path
+                         (list (make-binding:function 'get-latitude module-path 0 #f 
+                                                      "org.plt.lib.Location.getLatitude")
+                               (make-binding:function 'get-longitude module-path 0 #f 
+                                                      "org.plt.lib.Location.getLongitude")
+                               (make-binding:function 'get-attitude module-path 0 #f 
+                                                      "org.plt.lib.Location.getAttitude")
+                               (make-binding:function 'get-bearing module-path 0 #f 
+                                                      "org.plt.lib.Location.getBearing")
+                               (make-binding:function 'get-speed module-path 0 #f 
+                                                      "org.plt.lib.Location.getSpeed")))))
+  
+  
+;; extend-env/module-binding: env module-binding -> env
+;; Extends an environment with the bindings associated to a module.
+(define (extend-env/module-binding an-env a-module-binding)
+  (let loop ([an-env an-env]
+             [contents (module-binding-bindings a-module-binding)])
+    (cond
+      [(empty? contents)
+       an-env]
+      [else
+       (loop (env-extend an-env (first contents))
+             (rest contents))])))
+
+                          
+(define known-modules (list location-module))
+                                             
+
+
+;; require-analyze: require-path -> pinfo
+(define (require-analyze require-path pinfo)
+  (let loop ([modules known-modules])
+    (cond
+      [(empty? modules)
+       (error 'require-analyze "Moby doesn't know about module ~s yet"
+              require-path)]
+      [(path=? (resolve-module-path require-path #f)
+               (module-binding-path (first modules)))
+       (pinfo-accumulate-bindings (module-binding-bindings (first modules))
+                                  pinfo)]
+      [else
+       (loop (rest modules))])))
+
+
+
+
+
 
 
 
 (provide/contract [struct pinfo ([env env?])]
-                  
                   [program-analyze (program? . -> . pinfo?)])
