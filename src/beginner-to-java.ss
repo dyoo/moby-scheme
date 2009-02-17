@@ -191,10 +191,10 @@
 
 
 
-;; expression->java-string: expr (listof symbol) -> string
+;; expression->java-string: expr env -> string
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
-(define (expression->java-string expr bound-ids)
+(define (expression->java-string expr env)
   (let ([expr (desugar-var-arity-application expr)])
     (match expr
       [(list 'cond [list questions answers] ... [list 'else answer-last])
@@ -202,11 +202,11 @@
                   [answers answers])
          (cond
            [(empty? questions)
-            (expression->java-string answer-last bound-ids)]
+            (expression->java-string answer-last env)]
            [else
             (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-                    (expression->java-string (first questions) bound-ids)
-                    (expression->java-string (first answers) bound-ids)
+                    (expression->java-string (first questions) env)
+                    (expression->java-string (first answers) env)
                     (loop (rest questions) (rest answers)))]))]
       
       
@@ -215,26 +215,27 @@
                   [answers answers])
          (cond
            [(empty? questions)
-            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
-                    (expression->java-string question-last bound-ids)
-                    (expression->java-string answer-last bound-ids))]
+            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : 
+                      org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
+                    (expression->java-string question-last env)
+                    (expression->java-string answer-last env))]
            [else
             (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-                    (expression->java-string (first questions) bound-ids)
-                    (expression->java-string (first answers) bound-ids)
+                    (expression->java-string (first questions) env)
+                    (expression->java-string (first answers) env)
                     (loop (rest questions) (rest answers)))]))]
       
       [(list 'if test consequent alternative)
        (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-               (expression->java-string test bound-ids)
-               (expression->java-string consequent bound-ids)
-               (expression->java-string alternative bound-ids))]
+               (expression->java-string test env)
+               (expression->java-string consequent env)
+               (expression->java-string alternative env))]
       
       [(list 'and expr ...)
        (string-append "(("
                       (string-join (map (lambda (e)
                                           (format "(((org.plt.types.Logic)~a).isTrue())"
-                                                  (expression->java-string e bound-ids)))
+                                                  (expression->java-string e env)))
                                         expr) 
                                    "&&")
                       ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
@@ -243,7 +244,7 @@
        (string-append "(("
                       (string-join  (map (lambda (e)
                                            (format "(((org.plt.types.Logic)~a).isTrue())"
-                                                   (expression->java-string e bound-ids)))
+                                                   (expression->java-string e env)))
                                          expr) 
                                     "||")
                       ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
@@ -264,11 +265,7 @@
       
       ;; Identifiers
       [(? symbol?)
-       (cond [(member expr bound-ids)
-              (symbol->string
-               (identifier->java-identifier expr bound-ids))]
-             [else
-              (translate-toplevel-id expr)])]
+       (identifier-expression->java-string expr env)]
       
       ;; Quoted symbols
       [(list 'quote datum)
@@ -277,67 +274,45 @@
       
       ;; Function call/primitive operation call
       [(list (? symbol? id) exprs ...)
-       (application-expression->java-string id exprs bound-ids)
-       ])))
+       (application-expression->java-string id exprs env)])))
 
 
-;; application-expression->java-string: symbol (listof expr) (listof symbol) -> string
+
+;; application-expression->java-string: symbol (listof expr) env -> string
 ;; Converts the function application to a string.
-(define (application-expression->java-string id exprs bound-ids)
-  (cond
-    [(unimplemented-java-kernel-id? id)
-     (error 'expression->java-string 
-            "Function ~s hasn't yet been implemented in this compiler."
-            id)]
-    [else
-     (format "(~a(~a))"
-             (identifier->java-identifier id bound-ids)
-             (string-join (map (lambda (e) 
-                                 (expression->java-string e bound-ids))
-                               exprs) ","))]))
+(define (application-expression->java-string id exprs env)
+  (let ([operator-binding (env-lookup env id)]
+        [operand-strings 
+         (string-join (map (lambda (e) 
+                             (expression->java-string e env))
+                           exprs) ",")])
+    (match operator-binding
+      ['#f
+       (error 'application-expression->java-string
+              "Moby doesn't know about ~s" id)]
+
+      [(struct binding:constant (name java-string))
+       (format "(~a(~a))" java-string operand-strings)]
+  
+      [(struct binding:function (name module-path arity var-arity? java-string))
+       ;; FIXME: handle var-arity
+       ;; FIXME: check arity.
+       (format "(~a(~a))" java-string operand-strings)])))
 
 
 
-
-
-;; translate-toplevel-id: symbol -> string
+;; identifier-expression->java-string: symbol -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
-(define (translate-toplevel-id an-id)
-  (match (lookup-toplevel-id an-id)
+(define (identifier-expression->java-string an-id an-env)
+  (match (env-lookup an-env an-id)
     ['#f
-     (error 'translate-toplevel-id 
-            "Moby doesn't know about toplevel primitive ~s."
-            an-id)]
+     (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
     [(struct binding:constant (name java-string))
      java-string]
-    #;[(struct id-info:function (name args optargs ->java-string))
-       (error 'translate-toplevel-id
-              "Moby doesn't allow higher-order use of ~s." an-id)]))
-
-
-;; translate-toplevel-application: symbol expression -> string
-(define (translate-toplevel-application an-operator-id operands)
-  (void)
-  #;(let* ([fail-f 
-          (lambda ()
-            (error 'translate-toplevel-id 
-                   "Moby doesn't know about toplevel primitive ~s."
-                   an-id))]
-         [record (hash-ref (registered-toplevel-ids) an-id fail-f)])
-    (match record
-      [(struct id-info:constant (name ->java-string))
-       (->java-string an-id)]
-      [(struct id-info:function (name args optargs ->java-string))
-       (error 'translate-toplevel-id
-              "Moby doesn't allow higher-order use of ~s." an-id)])))
-
-
-
-
-
-
-
+    [(struct binding:function (name _ _ _ _))
+     (error 'translate-toplevel-id
+            "Moby doesn't yet allow higher-order use of ~s." an-id)]))
 
 
 
@@ -360,23 +335,23 @@
 
 
 
-
-
-;; identifier->java-identifier: symbol (listof symbol) -> symbol
-;; Converts identifiers into ones compatible with Java.
-(define (identifier->java-identifier an-id bound-ids)
-  (let ([translated-id (identifier->munged-java-identifier an-id)])
-    (cond
-      [(and (not (member an-id bound-ids))
-            (implemented-java-kernel-id? an-id))
-       (string->symbol
-        (string-append 
-         (if (world-primitive-id? an-id)
-             "org.plt.WorldKernel."
-             "org.plt.Kernel.")
-         (symbol->string translated-id)))]
-      [else
-       translated-id])))
+;
+;
+;;; identifier->java-identifier: symbol (listof symbol) -> symbol
+;;; Converts identifiers into ones compatible with Java.
+;(define (identifier->java-identifier an-id bound-ids)
+;  (let ([translated-id (identifier->munged-java-identifier an-id)])
+;    (cond
+;      [(and (not (member an-id bound-ids))
+;            (implemented-java-kernel-id? an-id))
+;       (string->symbol
+;        (string-append 
+;         (if (world-primitive-id? an-id)
+;             "org.plt.WorldKernel."
+;             "org.plt.Kernel.")
+;         (symbol->string translated-id)))]
+;      [else
+;       translated-id])))
 
   
 
@@ -561,248 +536,35 @@
 
 
 
-(define IMPLEMENTED-JAVA-KERNEL-SYMBOLS
-  '(identity
-    
-    ;; Numerics
-    +
-    -
-    *
-    /
-    >=
-    >
-    <=
-    <
-    =
-    =~
-    number->string
-    even?
-    odd?
-    positive?
-    negative?
-    number?
-    rational?
-    quotient
-    remainder
-    numerator
-    denominator
-    integer?
-    real?
-    
-    abs
-    acos
-    asin
-    atan
-    random
-    max
-    min
-    sqr
-    sqrt
-    modulo
-    add1
-    sub1
-    zero?
-    exp
-    expt
-    sgn
-    log
-    gcd
-    lcm
-    round
-    
-    pi
-    e
-    floor
-    ceiling
-    sin
-    cos
-    tan
-    sinh
-    cosh
-    
-    angle
-    conjugate
-    magnitude
-    
-    ;; Logic
-    not
-    false?
-    boolean?
-    boolean=?
-    equal?
-    eq?
-    eqv?
-    equal~?
-    
-    ;; Characters
-    char?
-    char=?
-    char<?
-    char<=?
-    char>?
-    char>=?
-    char-downcase
-    char-lower-case?
-    char-numeric?
-    char-upcase
-    char-upper-case?
-    char-whitespace?
-    char-alphabetic?
-    char-ci<=?
-    char-ci<?
-    char-ci=?
-    char-ci>=?
-    char-ci>?
-    char->integer
-    integer->char
-    
-    ;; Symbols
-    symbol=?
-    symbol->string
-    ;; Strings
-    string=?
-    symbol?
-    string?
-    string>?
-    string>=?
-    string<?
-    string<=?
-    substring
-    string-length
-    string-ref
-    string-copy
-    string->number
-    string-ci<=?
-    string-ci<?
-    string-ci=?
-    string-ci>=?
-    string-ci>?
-    string->list
-    string->symbol 
-    string-append 
-    list->string 
-    make-string 
-    string 
-    
-    ;; World
-    empty-scene
-    place-image
-    circle
-    nw:rectangle
-    rectangle
-    key=?
-    text
-    
-    ;; Images
-    
-    ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-    ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-    ;; ensure students don't accidently hit this function.
-    -kernel-create-image 
-    
-    image-width
-    image-height
-    image?    
-    
-    ;; Pairs
-    empty?
-    first
-    second
-    third
-    fourth
-    fifth
-    sixth
-    seventh
-    eighth
-    rest
-    cons
-    pair?
-    cons?
-    null?
-    length
-    list
-    list*
-    empty
-    null
-    list-ref
-    append
-    member
-    memq
-    memv
-    
-    reverse
-    
-    caaar
-    caadr
-    caar
-    cadar
-    cadddr
-    caddr
-    cadr
-    car
-    cdaar
-    cdadr
-    cdar
-    cddar
-    cdddr
-    cddr
-    cdr
-    
-    struct?
-    ;; Posn
-    make-posn
-    posn-x
-    posn-y
-    posn?
-    
-    ;; Eof
-    eof
-    eof-object?
-    
-    ;; Misc
-    error
-    current-seconds
-    
-    ))
-
-(define WORLD-PRIMITIVE-SYMBOLS
-  '(empty-scene
-    place-image
-    circle
-    nw:rectangle
-    rectangle
-    key=?
-    text
-    -kernel-create-image     
-    image-width
-    image-height
-    image?))
 
 
 
-;; java-kernel-id?: symbol -> boolean
-;; Returns true if the java-identifier should be treated as part of the Kernel.
-(define (implemented-java-kernel-id? an-id)
-  (and (member an-id IMPLEMENTED-JAVA-KERNEL-SYMBOLS)
-       #t))
-
-(define (world-primitive-id? an-id)
-  (and (member an-id WORLD-PRIMITIVE-SYMBOLS)
-       #t))
 
 
-;; unimplemented-java-kernel-id?: symbol -> boolean
-;; Returns true if the java-identifier hasn't been implemented yet.
-(define (unimplemented-java-kernel-id? an-id)
-  (and (member an-id ALL-JAVA-KERNEL-SYMBOLS)
-       (not (implemented-java-kernel-id? an-id))
-       #t))
 
-
-;; todo-list: -> (listof symbol)
-;; Produces the list of symbols of kernel functions we haven't yet implemented.
-(define (todo-list)
-  (filter unimplemented-java-kernel-id? ALL-JAVA-KERNEL-SYMBOLS))
+;;; java-kernel-id?: symbol -> boolean
+;;; Returns true if the java-identifier should be treated as part of the Kernel.
+;(define (implemented-java-kernel-id? an-id)
+;  (and (member an-id IMPLEMENTED-JAVA-KERNEL-SYMBOLS)
+;       #t))
+;
+;(define (world-primitive-id? an-id)
+;  (and (member an-id WORLD-PRIMITIVE-SYMBOLS)
+;       #t))
+;
+;
+;;; unimplemented-java-kernel-id?: symbol -> boolean
+;;; Returns true if the java-identifier hasn't been implemented yet.
+;(define (unimplemented-java-kernel-id? an-id)
+;  (and (member an-id ALL-JAVA-KERNEL-SYMBOLS)
+;       (not (implemented-java-kernel-id? an-id))
+;       #t))
+;
+;
+;;; todo-list: -> (listof symbol)
+;;; Produces the list of symbols of kernel functions we haven't yet implemented.
+;(define (todo-list)
+;  (filter unimplemented-java-kernel-id? ALL-JAVA-KERNEL-SYMBOLS))
 
 
 
