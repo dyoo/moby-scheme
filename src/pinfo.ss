@@ -2,7 +2,10 @@
 
 (require "env.ss"
          "toplevel.ss"
-         "helpers.ss")
+         "helpers.ss"
+         scheme/contract)
+
+
 
 ;; pinfo (program-info) captures the information we get from analyzing 
 ;; the program.
@@ -17,7 +20,7 @@
 
 ;; program-analyze: program [program-info] -> program-info
 ;; Collects which identifiers are free or definition-bound by the program.
-(define (program-analyze a-program [pinfo empty-pinfo])
+(define (program-analyze a-program [pinfo (make-pinfo (get-toplevel-env))])
   ;; fixme to do free variable analysis.  We want to error early if the user
   ;; tries to use an identifier that hasn't been bound.
   (program-analyze-collect-definitions a-program pinfo))
@@ -86,3 +89,8 @@
                   selector-ids)])
        (foldl pinfo-accumulate-binding pinfo 
               (cons (cons constructor-binding selector-bindings))))]))
+
+
+(provide/contract [struct pinfo ([env env?])]
+                  
+                  [program-analyze (program? . -> . pinfo?)])
