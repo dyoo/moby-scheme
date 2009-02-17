@@ -80,7 +80,7 @@
             [constructor-binding 
              (make-binding:function constructor-id #f (length fields) #f
                                     (symbol->string
-                                     (identifier->munged-java-identifier id)))]
+                                     (identifier->munged-java-identifier constructor-id)))]
             
             [selector-ids
              (map (lambda (f)
