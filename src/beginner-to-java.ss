@@ -24,7 +24,7 @@
 ;; content of the program.
 (define (program->java-string program)
   (let* ([a-pinfo (program-analyze program)]
-         [env (pinfo-env a-pinfo)])
+         [toplevel-env (pinfo-env a-pinfo)])
     (let ([compiled-code
            (let loop ([program program])
              (cond [(empty? program) ""]
@@ -33,7 +33,7 @@
                            (cond [(defn? (first program))
                                   (definition->java-string 
                                     (first program) 
-                                    env)]
+                                    toplevel-env)]
                                  [(test-case? (first program))
                                   "// Test case erased\n"]
                                  [(library-require? (first program))
@@ -44,7 +44,7 @@
                                    "static { org.plt.Kernel.identity("
                                    (expression->java-string 
                                     (first program) 
-                                    env) 
+                                    toplevel-env) 
                                    "); }")])]
                           [rest-java-code (loop (rest program))])
                       (string-append new-java-code "\n" rest-java-code))]))])
@@ -53,55 +53,61 @@
 
 
 
-;; definition->java-string: definition (listof symbol)-> string
+;; definition->java-string: definition env -> string
 ;; Consumes a definition (define or define-struct) and produces a string
 ;; that maps that definition to a static, public function that consumes
 ;; Object arguments and produces Objects.  The second value is the
 ;; list of bound symbols from the definition.
 ;;
 ;; Structure definitions map to static inner classes with transparent fields.
-(define (definition->java-string defn bound-ids)
+(define (definition->java-string defn env)
   (match defn
     [(list 'define (list fun args ...) body)
-     (function-definition->java-string fun args body bound-ids)]
+     (function-definition->java-string fun args body env)]
     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
-     (function-definition->java-string fun args body bound-ids)]
+     (function-definition->java-string fun args body env)]
     [(list 'define (? symbol? id) body)
-     (variable-definition->java-string id body bound-ids)]
+     (variable-definition->java-string id body env)]
     [(list 'define-struct id (list fields ...))
-     (struct-definition->java-string id fields)]))
+     (struct-definition->java-string id fields env)]))
 
 
-;; function-definition->java-string: symbol (listof symbol) expr (listof symbol) -> string
+;; function-definition->java-string: symbol (listof symbol) expr env -> string
 ;; Converts the function definition into a static function declaration whose
 ;; return value is an object.
-(define (function-definition->java-string fun args body bound-ids)
-  (format "static public Object ~a(~a) { return ~a; }"
-          (identifier->java-identifier fun (list fun))
-          (string-join (map (lambda (x)
-                              (string-append 
-                               "Object "
-                               (symbol->string
-                                (identifier->java-identifier x (cons fun args)))))
-                            args)
-                       ", ")
-          (expression->java-string body (append (cons fun args) bound-ids))))
+(define (function-definition->java-string fun args body env)
+  (let* ([munged-fun-id
+          (identifier->munged-java-identifier fun)]
+         [munged-arg-ids
+          (map identifier->munged-java-identifier args)]
+         [new-env 
+          (env-extend env (make-binding:function fun #f (length args) #f
+                                                 munged-fun-id))])
+    (format "static public Object ~a(~a) { return ~a; }"
+            munged-fun-id
+            (string-join (map (lambda (arg-id)
+                                (string-append "Object " (symbol->string arg-id)))
+                              munged-arg-ids)
+                         ", ")
+            (expression->java-string body new-env))))
 
 
 
-;; variable-definition->java-string: symbol expr (listof symbol) -> string
+;; variable-definition->java-string: symbol expr env -> string
 ;; Converts the variable definition into a static variable declaration.
-(define (variable-definition->java-string id body bound-ids)
-  (format "static Object ~a; static { ~a = ~a; }" 
-          (identifier->java-identifier id (list id))
-          (identifier->java-identifier id (list id))
-          (expression->java-string body (cons id bound-ids))))
+(define (variable-definition->java-string id body env)
+  (let* ([munged-id (identifier->munged-java-identifier id)]
+         [new-env (env-extend env (make-binding:constant id munged-id))])
+    (format "static Object ~a; static { ~a = ~a; }" 
+            munged-id
+            munged-id
+            (expression->java-string body new-env))))
 
 
 
 
-;; struct-definition->java-string: symbol (listof symbol) -> string
-(define (struct-definition->java-string id fields)
+;; struct-definition->java-string: symbol (listof symbol) env -> string
+(define (struct-definition->java-string id fields env)
   
   ;; field->accessor-name: symbol symbol -> symbol
   ;; Given a structure name and a field, return the accessor.
@@ -112,23 +118,23 @@
                     (symbol->string field-name))))
   
   (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
-          (identifier->java-identifier id (list id))
+          (identifier->munged-java-identifier id)
           (string-join (map (lambda (a-field)
                               (format "public Object ~a;"
-                                      (identifier->java-identifier a-field (cons id fields))))
+                                      (identifier->munged-java-identifier a-field)))
                             fields)
                        "\n")
           
           ;; default constructor
           (format "public ~a(~a) { ~a }"
-                  (identifier->java-identifier id (list id))
+                  (identifier->munged-java-identifier id)
                   (string-join (map (lambda (i) (format "Object ~a"
-                                                        (identifier->java-identifier i (list i))))
+                                                        (identifier->munged-java-identifier i)))
                                     fields) 
                                ",")
                   (string-join (map (lambda (i) (format "this.~a = ~a;" 
-                                                        (identifier->java-identifier i (list i))
-                                                        (identifier->java-identifier i (list i))))
+                                                        (identifier->munged-java-identifier i)
+                                                        (identifier->munged-java-identifier i)))
                                     fields) 
                                "\n"))
           
@@ -140,7 +146,7 @@
                        return false;
                      }
                    } "
-                  (identifier->java-identifier id (list id))
+                  (identifier->munged-java-identifier id)
                   (expression->java-string (foldl (lambda (a-field acc)
                                                     (let ([acc-id (field->accessor-name id a-field)])
                                                       `(and (equal? (,acc-id this)
@@ -148,18 +154,24 @@
                                                             ,acc)))
                                                   'true
                                                   fields)
-                                           (list* 'other 'this 
-                                                  (map (lambda (f) (field->accessor-name id f)) 
-                                                       fields))))
+                                           (let* ([new-env (env-extend env
+                                                                       (make-binding:constant
+                                                                        'this
+                                                                        (identifier->munged-java-identifier 'this)))]
+                                                  [new-env (env-extend new-env
+                                                                       (make-binding:constant
+                                                                        'other
+                                                                        (identifier->munged-java-identifier 'other)))])
+                                             new-env)))
           
           ;; make-id
           (format "static public Object ~a(~a) { return new ~a(~a); }"
                   (let ([make-id (string->symbol 
                                   (string-append "make-" (symbol->string id)))])
-                    (identifier->java-identifier  make-id (list make-id)))
+                    (identifier->munged-java-identifier  make-id))
                   (string-join (build-list (length fields) (lambda (i) (format "Object id~a" i)))
                                ",")
-                  (identifier->java-identifier id (list id))
+                  (identifier->munged-java-identifier id)
                   (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
                                ","))
           
@@ -171,10 +183,9 @@
                                          (string-append (symbol->string id)
                                                         "-"
                                                         (symbol->string a-field)))])
-                            (identifier->java-identifier  acc-id
-                                                          (list acc-id)))
-                          (identifier->java-identifier id (list id))
-                          (identifier->java-identifier a-field (list a-field))))
+                            (identifier->munged-java-identifier acc-id))
+                          (identifier->munged-java-identifier id)
+                          (identifier->munged-java-identifier a-field)))
                 fields)
            "\n")))
 
