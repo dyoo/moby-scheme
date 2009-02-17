@@ -46,6 +46,10 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
 	public J2ABMIDletActivity()
 	{
 		DEFAULT_ACTIVITY = this;
+		
+		((org.plt.platform.AndroidPlatform)
+		 org.plt.platform.Platform.getInstance())
+		    .setActivity(this);
 	}
 	
 	public MIDlet getMIDlet()
