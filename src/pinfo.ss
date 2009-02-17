@@ -96,6 +96,21 @@
               (cons constructor-binding selector-bindings)))]))
 
 
+
+
+
+;; pinfo-android-permissions: pinfo -> (listof string)
+;; Computes the permissions needed.
+(define (pinfo-android-permissions a-pinfo)
+  ;; Fixme: currently hardcoded.
+  '("android.permission.ACCESS_LOCATION"
+    "android.permission.ACCESS_GPS"))
+
+
+
+
+
+
 (provide/contract [struct pinfo ([env env?])]
                   
                   [program-analyze (program? . -> . pinfo?)])

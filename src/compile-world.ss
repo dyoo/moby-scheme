@@ -143,7 +143,8 @@
                                   (ANDROID-SDK-PATH (current-android-sdk-path))
                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
-    (replace-template-file dest-dir "AndroidManifest.xml" mappings)
+    (write-android-manifest dest-dir #:name a-name)
+    #;(replace-template-file dest-dir "AndroidManifest.xml" mappings)
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
@@ -398,6 +399,40 @@
       (lambda (op)
         (display (xexpr->string build.xml) op))
       #:exists 'replace)))
+
+
+
+;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
+(define (write-android-manifest dest-dir 
+                                #:name name
+                                #:permissions (permissions '()))
+  (let ([AndroidManifest.xml
+         `(manifest 
+           ((xmlns:android "http://schemas.android.com/apk/res/android")
+            (package ,(string-append "org.plt." (upper-camel-case name)))
+            (android:versionCode "1")
+            (android:versionName "1.0.0"))
+
+           ,@(map (lambda (p)
+                    `(uses-permission ((android:name ,p))))
+                  permissions)
+           
+           (application 
+            ((android:label "@string/app_name"))
+            (activity ((android:name "j2ab.android.app.J2ABMIDletActivity")
+                       (android:label "@string/app_name"))
+                      (intent-filter 
+                       ()
+                       (action ((android:name "android.intent.action.MAIN")))
+                       (category
+                        ((android:name
+                          "android.intent.category.LAUNCHER")))))))])
+
+    (call-with-output-file (build-path dest-dir "AndroidManifest.xml")
+      (lambda (op)
+        (display (xexpr->string AndroidManifest.xml) op))
+      #:exists 'replace)))
+
 
 
 
