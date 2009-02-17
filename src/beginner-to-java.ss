@@ -11,63 +11,10 @@
          scheme/string
          scheme/contract
          "env.ss"
-         "toplevel.ss")
+         "toplevel.ss"
+         "pinfo.ss"
+         "helpers.ss")
 
-
-
-
-;; A program is a (listof (or/c defn? expr? test-case? library-require?))
-
-
-;; program: any -> boolean
-;; Returns true if the datum is a program.
-(define (program? datum)
-  (and (list? datum)
-       (andmap (lambda (x) 
-                 (or (defn? x)
-                     (expression? x)
-                     (test-case? x)
-                     (library-require? x)))
-               datum)))
-
-
-;; expression?: any -> boolean
-;; Returns true if the datum is an expression.
-(define (expression? an-expr)
-  (and (not (defn? an-expr))
-       (not (test-case? an-expr))
-       (not (library-require? an-expr))))
-
-
-;; defn?: s-expression -> boolean
-(define (defn? an-s-exp)
-  (match an-s-exp
-    [(list 'define rest ...)
-     #t]
-    [(list 'define-struct rest ...)
-     #t]
-    [else
-     #f]))
-
-;; test-case?: s-expression -> boolean
-(define (test-case? an-sexp)
-  (match an-sexp
-    [(list 'check-expect e ...)
-     #t]
-    [(list 'check-within e ...)
-     #t]
-    [(list 'check-error e ...)
-     #t]
-    [else
-     #f]))
-
-;; library-require?: s-expression -> boolean
-(define (library-require? an-sexp)
-  (match an-sexp
-    [(list 'require s ...)
-     #t]
-    [else
-     #f]))
 
 
 
@@ -76,8 +23,8 @@
 ;; Consumes a program and returns a java string fragment that represents the
 ;; content of the program.
 (define (program->java-string program)
-  (let* ([pinfo (program-analyze program)]
-         [toplevel-defined-ids (program-info-defined-ids pinfo)])
+  (let* ([a-pinfo (program-analyze program)]
+         [env (pinfo-env a-pinfo)])
     (let ([compiled-code
            (let loop ([program program])
              (cond [(empty? program) ""]
@@ -86,7 +33,7 @@
                            (cond [(defn? (first program))
                                   (definition->java-string 
                                     (first program) 
-                                    toplevel-defined-ids)]
+                                    env)]
                                  [(test-case? (first program))
                                   "// Test case erased\n"]
                                  [(library-require? (first program))
@@ -97,11 +44,11 @@
                                    "static { org.plt.Kernel.identity("
                                    (expression->java-string 
                                     (first program) 
-                                    toplevel-defined-ids) 
+                                    env) 
                                    "); }")])]
                           [rest-java-code (loop (rest program))])
                       (string-append new-java-code "\n" rest-java-code))]))])
-      (values compiled-code pinfo))))
+      (values compiled-code a-pinfo))))
 
 
 
@@ -407,33 +354,7 @@
 ;; identifier->java-identifier: symbol (listof symbol) -> symbol
 ;; Converts identifiers into ones compatible with Java.
 (define (identifier->java-identifier an-id bound-ids)
-  ;; Special character mappings for identifiers
-  (define char-mappings 
-    #hash((#\- . "_dash_")
-          (#\_ . "_underline_")
-          (#\? . "_question_")
-          (#\! . "_bang_")
-          (#\. . "_dot_")
-          (#\: . "_colon_")
-          (#\= . "_equal_")
-          (#\# . "_pound_")
-          (#\$ . "_dollar_")
-          (#\% . "_percent_")
-          (#\^ . "_tilde_")
-          (#\& . "_and_")
-          (#\* . "_star_")
-          (#\+ . "_plus_")
-          (#\* . "_star_")
-          (#\/ . "_slash_")
-          (#\< . "_lessthan_")
-          (#\> . "_greaterthan_")
-          (#\~ . "_tilde_")))
-  (let* ([chars (string->list (symbol->string an-id))]
-         [translated-chunks 
-          (map (lambda (ch) (hash-ref char-mappings ch (string ch))) chars)]
-         [translated-id
-          (string->symbol
-           (string-join translated-chunks ""))])
+  (let ([translated-id (identifier->munged-java-identifier an-id)])
     (cond
       [(and (not (member an-id bound-ids))
             (implemented-java-kernel-id? an-id))
@@ -445,6 +366,8 @@
          (symbol->string translated-id)))]
       [else
        translated-id])))
+
+  
 
 
 
@@ -969,66 +892,6 @@
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; program-info captures the information we get from analyzing 
-;; the program.
-(define-struct program-info (defined-ids) #:transparent)
-(define empty-program-info (make-program-info empty))
-
-;; pinfo-accumulate-defined-id: symbol program-info -> program-info
-(define (pinfo-accumulate-defined-id defined-id pinfo)
-  (struct-copy program-info pinfo
-               [defined-ids (cons defined-id (program-info-defined-ids pinfo))]))
-
-
-
-;; program-analyze: program [program-info] -> program-info
-;; Collects which identifiers are free or definition-bound by the program.
-(define (program-analyze a-program [pinfo empty-program-info])
-  ;; fixme to do free variable analysis.  We want to error early if the user
-  ;; tries to use an identifier that hasn't been bound.
-  (program-analyze-collect-definitions a-program pinfo))
-
-
-;; program-analyze-collect-definitions: program pinfo -> pinfo
-(define (program-analyze-collect-definitions a-program pinfo)
-  (cond [(empty? a-program)
-         pinfo]
-        [else
-         (let ([updated-pinfo
-                (cond [(defn? (first a-program))
-                       (definition-analyze-collect-definitions (first a-program) pinfo)]
-                      [(test-case? (first a-program))
-                       ;; Test cases don't introduce any new definitions, so just return.
-                       pinfo]
-                      [(library-require? (first a-program))
-                       ;; Fixme!
-                       (error 'program-top-level-identifiers 
-                              "I don't know how to handle require yet")]
-                      [(expression? (first a-program))
-                       ;; Expressions don't introduce any new definitions, so just return.
-                       pinfo])])
-           (program-analyze-collect-definitions (rest a-program)
-                                                updated-pinfo))]))
-
-
-;; definition-analyze-collect-definitions: definition program-info -> program-info
-(define (definition-analyze-collect-definitions a-definition pinfo)
-  (match a-definition
-    [(list 'define (list fun args ...) body)
-     (pinfo-accumulate-defined-id fun pinfo)]
-    [(list 'define (? symbol? fun-id) (list 'lambda (list args ...) body))
-     (pinfo-accumulate-defined-id fun-id pinfo)]
-    [(list 'define (? symbol? id) body)
-     ;; Expressions don't introduce any new definitions, so just return.
-     (pinfo-accumulate-defined-id id pinfo)]
-    [(list 'define-struct id (list fields ...))
-     (foldl pinfo-accumulate-defined-id pinfo 
-            (cons (string->symbol (format "make-~a" id))
-                  (map (lambda (f)
-                         (string->symbol (format "~a-~a" id f)))
-                       fields)))]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1036,10 +899,5 @@
 
 
 
-(provide/contract [program->java-string (program? . -> . (values string? program-info?))]
-                  [expression->java-string (expression? (listof symbol?) . -> . string?)]
-                  [defn? (any/c . -> . boolean?)]
-                  [expression? (any/c . -> . boolean?)]
-                  
-                  [struct program-info ([defined-ids (listof symbol?)])]
-                  [program-analyze ((program?) (program-info?) . ->* . program-info?)])
+(provide/contract [program->java-string (program? . -> . (values string? pinfo?))]
+                  [expression->java-string (expression? (listof symbol?) . -> . string?)])

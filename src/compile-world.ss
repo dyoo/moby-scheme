@@ -7,11 +7,13 @@
          scheme/file
          scheme/runtime-path
          (only-in xml xexpr->string)
+         "helpers.ss"
          "image-lift.ss"
          "beginner-to-java.ss"
          "utils.ss"
          "template.ss"
-         "config.ss")
+         "config.ss"
+         "pinfo.ss")
 
 (provide/contract [generate-j2me-application
                    (string? path-string? path-string? . -> . any)]
@@ -175,7 +177,7 @@
   (let*-values ([(compiled-program pinfo)
                  (program->java-string program)]
                 [(toplevel-bound-ids)
-                 (program-info-defined-ids pinfo)])
+                 (pinfo-env pinfo)])
     (build-mappings (PROGRAM-NAME classname)
                     (PROGRAM-DEFINITIONS compiled-program)
                     (INITIAL-WORLD-EXPRESSION
