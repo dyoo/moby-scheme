@@ -46,198 +46,196 @@
                                        kernel-constant)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Now let's register the htdp primitives.
+;; Now let's register the htdp primitive functions
 
-(let ([r! (lambda (id arity vararity?)
-            (register-toplevel-function! id 
-                                         (resolve-module-path 'lang/htdp-beginner)
-                                         arity
-                                         vararity?
-                                         (format "org.plt.Kernel.~a"
-                                                 (identifier->munged-java-identifier id))))])
+(let ([r (lambda (id arity (vararity? #f))
+           (register-toplevel-function! id 
+                                        (resolve-module-path 'lang/htdp-beginner)
+                                        arity
+                                        vararity?
+                                        (format "org.plt.Kernel.~a"
+                                                (identifier->munged-java-identifier id))))])
   
-  (r! 'identity 1 #f)
+  (r 'identity 1 #f)
   ;; Numerics
-  (r! '+ 0 #t)
-  (r! '- 1 #t)
-  (r! '* 0 #t)
-  (r! '/ 1 #t)
-  (r! '>= 2 #t)
-  (r! '> 2 #t)
-  (r! '<= 2 #t)
-  (r! '< 2 #t)
-  (r! '= 2 #t)
-  (r! '=~ 2 #t)
+  (r '+ 0 #t)
+  (r '- 1 #t)
+  (r '* 0 #t)
+  (r '/ 1 #t)
+  (r '>= 2 #t)
+  (r '> 2 #t)
+  (r '<= 2 #t)
+  (r '< 2 #t)
+  (r '= 2 #t)
+  (r '=~ 2 #t)
   
-  'number->string
-  'even?
-  'odd?
-  'positive?
-  'negative?
-  'number?
-  'rational?
-  'quotient
-  'remainder
-  'numerator
-  'denominator
-  'integer?
-  'real?
+  (r 'number->string 1)
+  (r 'even? 1)
+  (r 'odd? 1)
+  (r 'positive? 1)
+  (r 'negative? 1)
+  (r 'number? 1)
+  (r 'rational? 1)
+  (r 'quotient 1)
+  (r 'remainder 1)
+  (r 'numerator 1)
+  (r 'denominator 1)
+  (r 'integer? 1)
+  (r 'real? 1)
   
-  abs
-  acos
-  asin
-  atan
-  random
-  max
-  min
-  sqr
-  sqrt
-  modulo
-  add1
-  sub1
-  zero?
-  exp
-  expt
-  sgn
-  log
-  gcd
-  lcm
-  round
+  (r 'abs 1)
+  (r 'acos 1)
+  (r 'asin 1)
+  (r 'atan 1)
+  (r 'random 1)
+  (r 'max 1 #t)
+  (r 'min 1 #t)
+  (r 'sqr 1)
+  (r 'sqrt 1)
+  (r 'modulo 2)
+  (r 'add1 1)
+  (r 'sub1 1)
+  (r 'zero? 1)
+  (r 'exp 1)
+  (r 'expt 2)
+  (r 'sgn 1)
+  (r 'log 1)
+  (r 'gcd 2 #t)
+  (r 'lcm 2 #t)
+  (r 'round 1)
   
-  pi
-  e
-  floor
-  ceiling
-  sin
-  cos
-  tan
-  sinh
-  cosh
+  (r 'floor 1)
+  (r 'ceiling 1)
+  (r 'sin 1)
+  (r 'cos 1)
+  (r 'tan 1)
+  (r 'sinh 1)
+  (r 'cosh 1)
   
-  angle
-  conjugate
-  magnitude
+  (r 'angle 1)
+  (r 'conjugate 1)
+  (r 'magnitude 1)
   
   ;; Logic
-  not
-  false?
-  boolean?
-  boolean=?
-  equal?
-  eq?
-  eqv?
-  equal~?
+  (r 'not 1)
+  (r 'false? 1)
+  (r 'boolean? 1)
+  (r 'boolean=? 2)
+  (r 'equal? 2)
+  (r 'eq? 2)
+  (r 'eqv? 2)
+  (r 'equal~? 3)
   
   ;; Characters
-  char?
-  char=?
-  char<?
-  char<=?
-  char>?
-  char>=?
-  char-downcase
-  char-lower-case?
-  char-numeric?
-  char-upcase
-  char-upper-case?
-  char-whitespace?
-  char-alphabetic?
-  char-ci<=?
-  char-ci<?
-  char-ci=?
-  char-ci>=?
-  char-ci>?
-  char->integer
-  integer->char
+  'char?
+  'char=?
+  'char<?
+  'char<=?
+  'char>?
+  'char>=?
+  'char-downcase
+  'char-lower-case?
+  'char-numeric?
+  'char-upcase
+  'char-upper-case?
+  'char-whitespace?
+  'char-alphabetic?
+  'char-ci<=?
+  'char-ci<?
+  'char-ci=?
+  'char-ci>=?
+  'char-ci>?
+  'char->integer
+  'integer->char
   
   ;; Symbols
-  symbol=?
-  symbol->string
+  'symbol=?
+  'symbol->string
   ;; Strings
-  string=?
-  symbol?
-  string?
-  string>?
-  string>=?
-  string<?
-  string<=?
-  substring
-  string-length
-  string-ref
-  string-copy
-  string->number
-  string-ci<=?
-  string-ci<?
-  string-ci=?
-  string-ci>=?
-  string-ci>?
-  string->list
-  string->symbol 
-  string-append 
-  list->string 
-  make-string 
-  string 
+  'string=?
+  'symbol?
+  'string?
+  'string>?
+  'string>=?
+  'string<?
+  'string<=?
+  'substring
+  'string-length
+  'string-ref
+  'string-copy
+  'string->number
+  'string-ci<=?
+  'string-ci<?
+  'string-ci=?
+  'string-ci>=?
+  'string-ci>?
+  'string->list
+  'string->symbol 
+  'string-append 
+  'list->string 
+  'make-string 
+  'string 
   
   ;; Pairs
-  empty?
-  first
-  second
-  third
-  fourth
-  fifth
-  sixth
-  seventh
-  eighth
-  rest
-  cons
-  pair?
-  cons?
-  null?
-  length
-  list
-  list*
-  empty
-  null
-  list-ref
-  append
-  member
-  memq
-  memv
+  'empty?
+  'first
+  'second
+  'third
+  'fourth
+  'fifth
+  'sixth
+  'seventh
+  'eighth
+  'rest
+  'cons
+  'pair?
+  'cons?
+  'null?
+  'length
+  'list
+  'list*
+  'empty
+  'null
+  'list-ref
+  'append
+  'member
+  'memq
+  'memv
   
-  reverse
+  'reverse
   
-  caaar
-  caadr
-  caar
-  cadar
-  cadddr
-  caddr
-  cadr
-  car
-  cdaar
-  cdadr
-  cdar
-  cddar
-  cdddr
-  cddr
-  cdr
+  'caaar
+  'caadr
+  'caar
+  'cadar
+  'cadddr
+  'caddr
+  'cadr
+  'car
+  'cdaar
+  'cdadr
+  'cdar
+  'cddar
+  'cdddr
+  'cddr
+  'cdr
   
-  struct?
+  'struct?
   ;; Posn
-  make-posn
-  posn-x
-  posn-y
-  posn?
+  'make-posn
+  'posn-x
+  'posn-y
+  'posn?
   
   ;; Eof
-  eof
-  eof-object?
+  'eof
+  'eof-object?
   
   ;; Misc
-  error
-  current-seconds)
+  'error
+  'current-seconds)
 
-  
+
 
 
 
