@@ -93,7 +93,7 @@
                                             (identifier->munged-java-identifier sel-id))))
                   selector-ids)])
        (foldl pinfo-accumulate-binding pinfo 
-              (cons (cons constructor-binding selector-bindings))))]))
+              (cons constructor-binding selector-bindings)))]))
 
 
 (provide/contract [struct pinfo ([env env?])]
