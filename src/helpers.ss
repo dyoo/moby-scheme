@@ -1,9 +1,9 @@
 #lang scheme/base
 
 (require scheme/match
-         scheme/string)
+         scheme/string
+         scheme/contract)
 
-(provide (all-defined-out))
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 
@@ -92,3 +92,10 @@
           (string->symbol
            (string-join translated-chunks ""))])
     translated-id))
+
+(provide/contract [program? (any/c . -> . boolean?)]
+                  [expression? (any/c . -> . boolean?)]
+                  [defn? (any/c . -> . boolean?)]
+                  [test-case? (any/c . -> . boolean?)]
+                  [library-require? (any/c . -> . boolean?)]
+                  [identifier->munged-java-identifier (symbol? . -> . symbol?)])
