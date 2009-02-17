@@ -10,7 +10,8 @@
          scheme/list
          scheme/string
          scheme/contract
-         "env.ss")
+         "env.ss"
+         "toplevel.ss")
 
 
 
@@ -338,15 +339,6 @@
                                exprs) ","))]))
 
 
-(define toplevel-env empty-env)
-
-(define (lookup-toplevel-id a-name)
-  (env-lookup toplevel-env a-name))
-
-(define (register-plain-toplevel-id-constant! a-name java-string)
-  (set! toplevel-env
-        (env-extend-constant toplevel-env a-name java-string)))
-
 
 
 
@@ -385,17 +377,6 @@
 
 
 
-
-;; We register the toplevel identifiers here.
-(register-plain-toplevel-id-constant! 'null "org.plt.types.Empty.EMPTY")
-(register-plain-toplevel-id-constant! 'empty "org.plt.types.Empty.EMPTY")
-(register-plain-toplevel-id-constant! 'true "org.plt.types.Logic.TRUE")
-(register-plain-toplevel-id-constant! 'false "org.plt.types.Logic.FALSE")
-(register-plain-toplevel-id-constant! 'eof "org.plt.types.EofObject.EOF")
-(for ([kernel-constant '(pi e)])
-  (register-plain-toplevel-id-constant! kernel-constant
-                                        (format "org.plt.Kernel.~a" 
-                                                kernel-constant)))
 
 
 
@@ -992,18 +973,14 @@
 
 ;; program-info captures the information we get from analyzing 
 ;; the program.
-(define-struct program-info (defined-ids free-ids) #:transparent)
-(define empty-program-info (make-program-info empty empty))
-
-;; pinfo-accumulate-free-id: symbol program-info -> program-info
-(define (pinfo-accumulate-free-id free-id pinfo)
-  (struct-copy program-info pinfo
-               [free-ids (cons free-id (program-info-free-ids pinfo))]))
+(define-struct program-info (defined-ids) #:transparent)
+(define empty-program-info (make-program-info empty))
 
 ;; pinfo-accumulate-defined-id: symbol program-info -> program-info
 (define (pinfo-accumulate-defined-id defined-id pinfo)
   (struct-copy program-info pinfo
                [defined-ids (cons defined-id (program-info-defined-ids pinfo))]))
+
 
 
 ;; program-analyze: program [program-info] -> program-info
@@ -1064,6 +1041,5 @@
                   [defn? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
                   
-                  [struct program-info ([defined-ids (listof symbol?)]
-                                        [free-ids (listof symbol?)])]
+                  [struct program-info ([defined-ids (listof symbol?)])]
                   [program-analyze ((program?) (program-info?) . ->* . program-info?)])
