@@ -76,7 +76,16 @@ To install:
         as the parameters within src/config.ss.  You should change
         those paths to the ones on your system.
 
-    3.  Run the regression test suite.  Instructions on running the
+    3.  Add a symbolic link from moby/src/mock-libs to collects/moby.
+
+        For example, if moby is under the home directory, and PLT Scheme
+        under the ~/local/plt directory, then the command:
+
+            $ ln -s ~/moby/src/mock-libs ~/local/plt/collects/moby
+
+        will set up the necessary symbolic link.
+
+    4.  Run the regression test suite.  Instructions on running the
         test suite are in the next section.
 
 
