@@ -8,6 +8,7 @@
          scheme/runtime-path
          (only-in xml xexpr->string)
          "helpers.ss"
+         "env.ss"
          "image-lift.ss"
          "beginner-to-java.ss"
          "utils.ss"
@@ -74,6 +75,7 @@
   (define text (new text%))
   (send text insert-file (path->string path))
   ;; delete the metadata at the beginning of the file.
+  ;; FIXME: this is wrong!
   (send text delete 0 (send text paragraph-start-position 3))
   text)
   
@@ -176,44 +178,51 @@
 (define (get-mappings classname program a-world-handlers)
   (let*-values ([(compiled-program pinfo)
                  (program->java-string program)]
-                [(toplevel-bound-ids)
-                 (pinfo-env pinfo)])
+                [(toplevel-env)
+                 (pinfo-env pinfo)]
+                [(simple-env-extend)
+                 (lambda (env id) 
+                   (env-extend env 
+                               (make-binding:constant id 
+                                                      (identifier->munged-java-identifier id))))])
     (build-mappings (PROGRAM-NAME classname)
                     (PROGRAM-DEFINITIONS compiled-program)
                     (INITIAL-WORLD-EXPRESSION
                      (expression->java-string
                       (big-bang-record-world0
                        (world-handlers-big-bang a-world-handlers))
-                      toplevel-bound-ids))
+                      toplevel-env))
                     (DELAY-EXPRESSION
                      (expression->java-string 
                       `(* ,(big-bang-record-r 
                             (world-handlers-big-bang a-world-handlers))
                           1000)
-                      toplevel-bound-ids))
+                      toplevel-env))
                     (STOP-WHEN-EXPRESSION
                      (if (world-handlers-stop-when a-world-handlers)
                          (expression->java-string
                           `(,(world-handlers-stop-when a-world-handlers) world) 
-                          (cons 'world toplevel-bound-ids))
+                          (simple-env-extend toplevel-env 'world))
                          "org.plt.Kernel.no_op_stopWhen(world)"))
                     (ON-TICK-EXPRESSION
                      (if (world-handlers-on-tick-event a-world-handlers)
                          (expression->java-string
                           `(,(world-handlers-on-tick-event a-world-handlers) world) 
-                          (cons 'world toplevel-bound-ids))
+                          (simple-env-extend toplevel-env 'world))
                          "org.plt.Kernel.no_op_worldEvent(world)"))
                     (ON-REDRAW-EXPRESSION
                      (if (world-handlers-on-redraw a-world-handlers)
                          (expression->java-string
                           `(,(world-handlers-on-redraw a-world-handlers) world)
-                          (cons 'world toplevel-bound-ids))
+                          (simple-env-extend toplevel-env 'world))
                          "org.plt.gui.Scene.emptyScene(this.getWidth(), this.getHeight())"))
                     (ON-KEY-EVENT-EXPRESSION
                      (if (world-handlers-on-key-event a-world-handlers)
                          (expression->java-string
                           `(,(world-handlers-on-key-event a-world-handlers) world aKey) 
-                          (cons 'world (cons 'aKey toplevel-bound-ids)))
+                          (simple-env-extend 
+                           (simple-env-extend toplevel-env 'world)
+                           'aKey))
                          "org.plt.Kernel.no_op_keyEvent(world, aKey)")))))
 
 

@@ -47,7 +47,7 @@
   ;; Now let's register the htdp primitive functions
   (let ([r (lambda (id arity (vararity? #f))
              (register-toplevel-function! id 
-                                          (resolve-module-path 'lang/htdp-beginner)
+                                          (resolve-module-path 'lang/htdp-beginner '())
                                           arity
                                           vararity?
                                           (format "org.plt.Kernel.~a"

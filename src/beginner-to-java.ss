@@ -673,4 +673,4 @@
 
 
 (provide/contract [program->java-string (program? . -> . (values string? pinfo?))]
-                  [expression->java-string (expression? (listof symbol?) . -> . string?)])
+                  [expression->java-string (expression? env? . -> . string?)])
