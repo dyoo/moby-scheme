@@ -82,7 +82,14 @@
           (map identifier->munged-java-identifier args)]
          [new-env 
           (env-extend env (make-binding:function fun #f (length args) #f
-                                                 (symbol->string munged-fun-id)))])
+                                                 (symbol->string munged-fun-id)))]
+         [new-env
+          (foldl (lambda (arg-id env) 
+                   (env-extend env (make-binding:constant arg-id 
+                                                          (symbol->string
+                                                           (identifier->munged-java-identifier arg-id)))))
+                 new-env
+                 args)])
     (format "static public Object ~a(~a) { return ~a; }"
             munged-fun-id
             (string-join (map (lambda (arg-id)
