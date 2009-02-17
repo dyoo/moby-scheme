@@ -1,48 +1,88 @@
 #lang scheme/base
 
-(require scheme/contract)
-
- 
-
-
-;; registered-toplevel-ids: (parameter (hashtable-of symbol (symbol -> string))
-;; Keeps a mapping from symbols to functions that do the translation to Java.
-(define registered-toplevel-ids (make-parameter (make-hasheq)))
-
-(define-struct id-info ())
-(define-struct (id-info:constant id-info) 
-  (name ->java-string))
-(define-struct (id-info:function id-info) 
-  (name min-arity var-arity? ->java-string))
-
-;; register-toplevel-id-constant: symbol (symbol -> string) -> void
-;; Registers a translator for the use of a toplevel id constant.
-(define (register-plain-toplevel-id-constant! id java-string)
-  (when (hash-ref (registered-toplevel-ids) id #f)
-    (error 'register-toplevel-id-constant! "~s already bound" id))
-  (hash-set! (registered-toplevel-ids) 
-             id 
-             (make-id-info:constant id (lambda (sym) java-string))))
+(require scheme/contract
+         syntax/modresolve
+         scheme/match
+         scheme/bool)
 
 
-;; register-toplevel-id-function!: symbol number boolean? ??? -> void
-(define (register-toplevel-id-function! id min-arity var-arity? ->java-string)
-  (when (hash-ref (registered-toplevel-ids) id #f)
-    (error 'register-toplevel-id-constant! "~s already bound" id))
-  (hash-set! (registered-toplevel-ids)
-             id
-             (make-id-info:function id min-arity var-arity? ->java-string)))
+;; An env collects a set of bindings.
+(define-struct env (bindings))
+(define empty-env (make-env (make-immutable-hasheq '())))
 
 
-;; lookup-toplevel-id: symbol -> (or/c #f id-info)
-(define (lookup-toplevel-id an-id)
-  (hash-ref (registered-toplevel-ids) an-id #f))
+;; A binding associates a symbol with some value.
+(define-struct binding ())
+
+
+;; binding:constant records an id and its associated Java implementation.
+(define-struct (binding:constant binding) 
+  (name java-string))
+
+;; Function bindings try to record more information.
+(define-struct (binding:function binding) 
+  (name module-path min-arity var-arity? java-string))
+
+
+;; binding-id: binding -> symbol
+(define (binding-id a-binding)
+  (match a-binding
+    [(struct binding:constant (name-2 _))
+     name-2]
+    [(struct binding:function (name-2 _ _ _ _))
+     name-2]))
+
+
+
+;; env-extend: env binding -> env
+(define (env-extend an-env new-binding)
+  (make-env (hash-set (env-bindings an-env) (binding-id new-binding) new-binding)))
+
+
+
+;; env-lookup: env symbol -> (or/c binding #f)
+(define (env-lookup an-env name)
+  (match an-env
+    [(struct env (bindings))
+     (hash-ref (env-bindings an-env) name #f)]))
+               
+
+
+
+;; env-extend-constant: env symbol string -> env
+;; Extends the environment with a new constant binding.
+(define (env-extend-constant an-env id java-string)
+  (env-extend an-env
+              (make-binding:constant id java-string)))
+
+
+;; env-extend-function: env symbol (or/c module-path #f) number boolean? string? -> env
+;; Extends the environment with a new function binding
+(define (env-extend-function an-env id module-path min-arity var-arity? java-string)
+  (env-extend an-env
+              (make-binding:function id 
+                                     (if module-path (resolve-module-path module-path) #f)
+                                     min-arity 
+                                     var-arity?
+                                     java-string)))
 
 
 
 (provide/contract 
- [struct id-info ()]
- [struct (id-info:constant id-info) ([name symbol?]
-                                     [->java-string (symbol? . -> . string?)])]
- [register-plain-toplevel-id-constant! (symbol? string? . -> . any)]
- [lookup-toplevel-id (symbol? . -> . (or/c id-info? false/c))])
+ [struct binding ()]
+ [struct (binding:constant binding) ([name symbol?]
+                                     [java-string string?])]
+ [struct (binding:function binding) ([name symbol?]
+                                     [module-path (or/c false/c path?)]
+                                     [min-arity natural-number/c]
+                                     [var-arity? boolean?]
+                                     [java-string string?])]
+
+ 
+ [struct env ([bindings (listof binding?)])]
+ [empty-env env?]
+ [env-extend (env? binding? . -> . env?)]
+ [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
+ 
+ [env-extend-constant (env? symbol? string? . -> . env?)]
+ [env-extend-function (env? symbol? (or/c false/c module-path?) number? boolean? string? . -> . env?)])

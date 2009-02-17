@@ -338,6 +338,16 @@
                                exprs) ","))]))
 
 
+(define toplevel-env empty-env)
+
+(define (lookup-toplevel-id a-name)
+  (env-lookup toplevel-env a-name))
+
+(define (register-plain-toplevel-id-constant! a-name java-string)
+  (set! toplevel-env
+        (env-extend-constant toplevel-env a-name java-string)))
+
+
 
 
 ;; translate-toplevel-id: symbol -> string
@@ -349,8 +359,8 @@
      (error 'translate-toplevel-id 
             "Moby doesn't know about toplevel primitive ~s."
             an-id)]
-    [(struct id-info:constant (name ->java-string))
-     (->java-string an-id)]
+    [(struct binding:constant (name java-string))
+     java-string]
     #;[(struct id-info:function (name args optargs ->java-string))
        (error 'translate-toplevel-id
               "Moby doesn't allow higher-order use of ~s." an-id)]))
