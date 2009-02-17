@@ -56,18 +56,21 @@
                                                       #f
                                                       (length args) 
                                                       #f 
-                                                      (identifier->munged-java-identifier id))
+                                                      (symbol->string
+                                                       (identifier->munged-java-identifier id)))
                                pinfo)]
     [(list 'define (? symbol? id) (list 'lambda (list args ...) body))
      (pinfo-accumulate-binding (make-binding:function id
                                                       #f
                                                       (length args) 
                                                       #f 
-                                                      (identifier->munged-java-identifier id))
+                                                      (symbol->string
+                                                       (identifier->munged-java-identifier id)))
                                pinfo)]
     [(list 'define (? symbol? id) body)
      (pinfo-accumulate-binding (make-binding:constant id
-                                                      (identifier->munged-java-identifier id))
+                                                      (symbol->string 
+                                                       (identifier->munged-java-identifier id)))
                                pinfo)]
     
     
@@ -76,7 +79,8 @@
              (string->symbol (format "make-~a" id))]
             [constructor-binding 
              (make-binding:function constructor-id #f (length fields) #f
-                                    (identifier->munged-java-identifier id))]
+                                    (symbol->string
+                                     (identifier->munged-java-identifier id)))]
             
             [selector-ids
              (map (lambda (f)
@@ -85,7 +89,8 @@
             [selector-bindings
              (map (lambda (sel-id) 
                     (make-binding:function sel-id #f 2 #f 
-                                           (identifier->munged-java-identifier sel-id)))
+                                           (symbol->string
+                                            (identifier->munged-java-identifier sel-id))))
                   selector-ids)])
        (foldl pinfo-accumulate-binding pinfo 
               (cons (cons constructor-binding selector-bindings))))]))

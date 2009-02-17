@@ -184,7 +184,7 @@
                  (lambda (env id) 
                    (env-extend env 
                                (make-binding:constant id 
-                                                      (identifier->munged-java-identifier id))))])
+                                                      (symbol->string (identifier->munged-java-identifier id)))))])
     (build-mappings (PROGRAM-NAME classname)
                     (PROGRAM-DEFINITIONS compiled-program)
                     (INITIAL-WORLD-EXPRESSION

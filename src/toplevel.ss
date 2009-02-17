@@ -47,7 +47,7 @@
   ;; Now let's register the htdp primitive functions
   (let ([r (lambda (id arity (vararity? #f))
              (register-toplevel-function! id 
-                                          (resolve-module-path 'lang/htdp-beginner '())
+                                          (resolve-module-path 'lang/htdp-beginner #f)
                                           arity
                                           vararity?
                                           (format "org.plt.Kernel.~a"
@@ -230,7 +230,7 @@
   ;; The World kernel functions.
   (let ([r (lambda (id arity (vararity? #f))
              (register-toplevel-function! id 
-                                          (resolve-module-path 'htdp/world)
+                                          (resolve-module-path 'htdp/world #f)
                                           arity
                                           vararity?
                                           (format "org.plt.WorldKernel.~a"

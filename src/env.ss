@@ -1,7 +1,6 @@
 #lang scheme/base
 
 (require scheme/contract
-         syntax/modresolve
          scheme/match
          scheme/bool)
 
@@ -61,7 +60,7 @@
 (define (env-extend-function an-env id module-path min-arity var-arity? java-string)
   (env-extend an-env
               (make-binding:function id 
-                                     (if module-path (resolve-module-path module-path) #f)
+                                     module-path
                                      min-arity 
                                      var-arity?
                                      java-string)))
@@ -85,4 +84,4 @@
  [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
  
  [env-extend-constant (env? symbol? string? . -> . env?)]
- [env-extend-function (env? symbol? (or/c false/c module-path?) number? boolean? string? . -> . env?)])
+ [env-extend-function (env? symbol? (or/c false/c path?) number? boolean? string? . -> . env?)])

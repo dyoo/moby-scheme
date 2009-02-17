@@ -82,7 +82,7 @@
           (map identifier->munged-java-identifier args)]
          [new-env 
           (env-extend env (make-binding:function fun #f (length args) #f
-                                                 munged-fun-id))])
+                                                 (symbol->string munged-fun-id)))])
     (format "static public Object ~a(~a) { return ~a; }"
             munged-fun-id
             (string-join (map (lambda (arg-id)
@@ -97,7 +97,7 @@
 ;; Converts the variable definition into a static variable declaration.
 (define (variable-definition->java-string id body env)
   (let* ([munged-id (identifier->munged-java-identifier id)]
-         [new-env (env-extend env (make-binding:constant id munged-id))])
+         [new-env (env-extend env (make-binding:constant id (symbol->string munged-id)))])
     (format "static Object ~a; static { ~a = ~a; }" 
             munged-id
             munged-id
@@ -157,11 +157,13 @@
                                            (let* ([new-env (env-extend env
                                                                        (make-binding:constant
                                                                         'this
-                                                                        (identifier->munged-java-identifier 'this)))]
+                                                                        (symbol->string
+                                                                         (identifier->munged-java-identifier 'this))))]
                                                   [new-env (env-extend new-env
                                                                        (make-binding:constant
                                                                         'other
-                                                                        (identifier->munged-java-identifier 'other)))])
+                                                                        (symbol->string
+                                                                         (identifier->munged-java-identifier 'other))))])
                                              new-env)))
           
           ;; make-id
@@ -290,10 +292,10 @@
       ['#f
        (error 'application-expression->java-string
               "Moby doesn't know about ~s" id)]
-
+      
       [(struct binding:constant (name java-string))
        (format "(~a(~a))" java-string operand-strings)]
-  
+      
       [(struct binding:function (name module-path arity var-arity? java-string))
        ;; FIXME: handle var-arity
        ;; FIXME: check arity.
@@ -353,7 +355,7 @@
 ;      [else
 ;       translated-id])))
 
-  
+
 
 
 
