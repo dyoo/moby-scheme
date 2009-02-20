@@ -1,4 +1,3 @@
-package circle;
 import javax.microedition.lcdui.*;
 import javax.microedition.midlet.*;
 
@@ -6,6 +5,8 @@ public class CircleApp extends MIDlet implements CommandListener {
 
 	// program state
 	private Integer radius;
+	private static final Integer max = new Integer(50);
+	private static final Integer min = new Integer(20);
 
 	// program ui
 	private Display display;
@@ -30,7 +31,7 @@ public class CircleApp extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		display = Display.getDisplay(this);
 
-		radius = new Integer(50);
+		radius = min;
 		cir = new Canvas() {
 			protected void paint(Graphics g) {
 				g.setGrayScale(255);
@@ -51,9 +52,11 @@ public class CircleApp extends MIDlet implements CommandListener {
 
 	public void commandAction(Command c, Displayable d) {
 		if (c.getLabel().equals("larger")) {
-			radius = new Integer(radius.intValue() + 1);
+			radius = radius.intValue() == max.intValue() ? max : new Integer(
+					radius.intValue() + 1);
 		} else if (c.getLabel().equals("smaller")) {
-			radius = new Integer(radius.intValue() - 1);
+			radius = radius.intValue() == min.intValue() ? min : new Integer(
+					radius.intValue() - 1);
 		}
 		cir.repaint();
 	}
