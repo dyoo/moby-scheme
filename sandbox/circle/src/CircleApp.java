@@ -36,7 +36,7 @@ public class CircleApp extends MIDlet implements CommandListener {
 			protected void paint(Graphics g) {
 				g.setGrayScale(255);
 				g.fillRect(0, 0, getWidth(), getHeight());
-				g.setColor(255, 0, 0);
+				g.setColor(0x00ff0000);
 				g.fillArc(getWidth() / 2 - radius.intValue(), getHeight() / 2
 						- radius.intValue(), radius.intValue() * 2, radius
 						.intValue() * 2, 0, 360);
