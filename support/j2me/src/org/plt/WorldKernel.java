@@ -86,8 +86,14 @@ public class WorldKernel {
     }
 
 
-    public static Picture image_dash_rotate(Object image) {
-	// Fill me in!
+    public static Logic image_equal__question_(Object obj1, 
+					       Object obj2) {
+	// Fixme: fill me in
+	return toLogic(obj1.equals(obj2));
+    }
+
+    public static Picture image_dash_rotate(Object image, Object degrees) {
+	// Fixme: fill me in
 	return (Picture) image;
     }
 

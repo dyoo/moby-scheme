@@ -248,7 +248,9 @@
     ;; ensure students don't accidently hit this function.
     (r 'image-width 1)
     (r 'image-height 1)
-    (r 'image? 1)))
+    (r 'image? 1)
+    (r 'image=? 2)
+    (r 'image-rotate 2)))
   
   
 
