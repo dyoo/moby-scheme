@@ -6,7 +6,9 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.location.LocationListener;
 import android.location.Criteria;
+import android.os.Bundle;
 
 import org.plt.lib.LocationService;
 import org.plt.types.*;
@@ -27,77 +29,98 @@ public class AndroidPlatform implements PlatformI {
 
 
 
-    public class AndroidLocationService 
+    static private AndroidLocationService locationService;
+
+    private class AndroidLocationService 
 	implements LocationService {
 	private LocationManager manager;
 	private LocationProvider provider;
-
+	private Location lastLocation;
 
 	public AndroidLocationService() {
 
 	    this.manager = (LocationManager) 
 		activity.getSystemService(Context.LOCATION_SERVICE);
-	    System.out.println("Providers: " +  manager.getAllProviders());
-	    System.out.println("Providers: " +  manager.getAllProviders().size());
-	    
-	    Iterator iter = manager.getAllProviders().iterator();
-	    while (iter.hasNext()) {
-		LocationProvider provider = 
-		    manager.getProvider((String) iter.next());
-		System.out.println("provider: " + provider.getName());
-		System.out.println("cost: " + provider.hasMonetaryCost());
-	    }
-
+	    this.lastLocation = null;
 
 	    Criteria c = new Criteria();
- 	    c.setCostAllowed(true);
-	    System.out.println("Probing for a provider");
 	    this.provider = manager.getProvider
 		(manager.getBestProvider(c, false));
-	    System.out.println("Finally got a provider: " + this.provider);
+
+	    int pollingTime = 1000;
+	    int minDistance = 0;
+	    this.manager.requestLocationUpdates
+		(this.provider.getName(),
+		 pollingTime,
+		 minDistance,
+		 new LocationListener() {
+		     public void onLocationChanged(Location location) {
+			 System.out.println("Location updated: " + location);
+			 lastLocation = location;
+		     }
+		     public void onProviderDisabled(String provider) {
+		     }
+		     public void onProviderEnabled(String provider) {
+		     }
+		     public void onStatusChanged(String provider,
+						 int status,
+						 Bundle extras) { 
+		     }
+								
+		 });
 	}
+
+
 
 	// fixme!
 	public Object getLatitude() {
-	    if (this.provider == null) {
-		return Logic.FALSE;
+	    if (this.lastLocation == null) {
+		return FloatPoint.fromString("0");
 	    }
-	    System.out.println("I have a provider: " + this.provider);
-	    Location l =
-		this.manager.getLastKnownLocation(this.provider.getName());
-	    return FloatPoint.fromString("" + l.getLatitude());
-// 	    // 41 44' N
-// 	    return FloatPoint.fromString("44.73");
+	    return FloatPoint.fromString
+		("" + this.lastLocation.getLatitude());
 	}
 
 	public Object getLongitude() {
-	    if (this.provider == null) {
-		return Logic.FALSE;
+	    if (this.lastLocation == null) {
+		return FloatPoint.fromString("0");
 	    }
-	    Location l =
-		this.manager.getLastKnownLocation(this.provider.getName());
-	    return FloatPoint.fromString("" + l.getLongitude());
-
-// 	    // 71 26' W
-// 	    return FloatPoint.fromString("-71.43");
+	    return FloatPoint.fromString
+		("" + this.lastLocation.getLongitude());
 	}
 
 	public Object getAltitude() {
-	    return Logic.FALSE;
+	    if (this.lastLocation == null) {
+		return FloatPoint.fromString("0");
+	    }
+	    return FloatPoint.fromString
+		("" + this.lastLocation.getAltitude());
 	}
 
 	public Object getBearing() {
-	    return Logic.FALSE;
+	    if (this.lastLocation == null) {
+		return FloatPoint.fromString("0");
+	    }
+	    return FloatPoint.fromString
+		("" + this.lastLocation.getBearing());
 	}
 
 	public Object getSpeed() {
-	    return Logic.FALSE;
+	    if (this.lastLocation == null) {
+		return FloatPoint.fromString("0");
+	    }
+	    return FloatPoint.fromString
+		("" + this.lastLocation.getSpeed());
 	}
 	    
     }
 
+
     public LocationService getLocationService() {
-	return new AndroidLocationService();
+	if (locationService == null) {
+	    locationService = new AndroidLocationService();
+	} 
+	return locationService;
     }
 
 }
