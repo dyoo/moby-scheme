@@ -13,7 +13,11 @@ import android.os.Bundle;
 import org.plt.lib.LocationService;
 import org.plt.types.*;
 
+import org.plt.MessageListener;
+
 import java.util.Iterator;
+import java.util.ArrayList;
+
 
 public class AndroidPlatform implements PlatformI {
     private Activity activity;
@@ -36,12 +40,14 @@ public class AndroidPlatform implements PlatformI {
 	private LocationManager manager;
 	private LocationProvider provider;
 	private Location lastLocation;
+	private java.util.List listeners;
 
 	public AndroidLocationService() {
 
 	    this.manager = (LocationManager) 
 		activity.getSystemService(Context.LOCATION_SERVICE);
 	    this.lastLocation = null;
+	    this.listeners = new ArrayList();
 
 	    Criteria c = new Criteria();
 	    this.provider = manager.getProvider
@@ -56,6 +62,17 @@ public class AndroidPlatform implements PlatformI {
 		 new LocationListener() {
 		     public void onLocationChanged(Location location) {
 			 lastLocation = location;
+			 
+			 Iterator iter = listeners.iterator();
+			 Object msg =
+			     new Pair(FloatPoint.fromString
+				      (""+location.getLatitude()),
+				      new Pair(FloatPoint.fromString
+					       (""+location.getLongitude()), 
+					       Empty.EMPTY));;
+			 while (iter.hasNext()) {
+			     ((MessageListener)iter.next()).onMessage(msg);
+			 }
 		     }
 		     public void onProviderDisabled(String provider) {
 		     }
@@ -69,6 +86,9 @@ public class AndroidPlatform implements PlatformI {
 		 });
 	}
 
+	public void addListener(MessageListener listener) {
+	    this.listeners.add(listener);
+	}
 
 
 	// fixme!

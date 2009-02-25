@@ -5,6 +5,7 @@ import javax.microedition.lcdui.*;
 
 import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
+import org.plt.MessageListener;
 
 // This is stub code.
 // The following things must be plugged in:
@@ -17,6 +18,7 @@ import org.plt.platform.Platform;
 // ON-TICK-EXPPRESSION
 // ON-REDRAW-EXPRESSION
 // ON-KEY-EVENT-EXPRESSION
+// ON-MESSAGE-EXPRESSION
 
 
 public class <<PROGRAM-NAME>> extends MIDlet {
@@ -37,11 +39,14 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	System.out.println(Platform.getInstance().getName());
 
 	MyCanvas canvas = new MyCanvas();
+
+	Platform.getInstance().getLocationService().addListener(canvas);
+
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();
     }
 
-    class MyCanvas extends Canvas implements Runnable {
+    class MyCanvas extends Canvas implements Runnable, MessageListener {
 	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
@@ -60,6 +65,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 			world = <<ON-TICK-EXPRESSION>>;
 		    }
 		}
+	    }
+	}
+
+        public void onMessage(Object aMessage) {
+	    synchronized(world) {
+		world = <<ON-MESSAGE-EVENT-EXPRESSION>>;
+		// fill me in.
 	    }
 	}
 

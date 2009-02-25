@@ -57,6 +57,12 @@ public class Kernel {
 		return world;
 	}
 
+
+	public static Object no_op_messageEvent(Object world, Object aMessage) {
+		return world;
+	}
+
+
 	// ////////////////////////////////////////////////////////////////////
 
 	public static org.plt.types.Number pi = FloatPoint.PI;

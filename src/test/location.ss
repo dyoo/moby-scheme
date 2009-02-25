@@ -6,14 +6,28 @@
 (define width 300)
 (define height 100)
 
+(define-struct world (latitude longitude))
+
+(define initial-world (make-world 0 0))
+
+
 (define (render-world a-world)
   (place-image
-   (text (number->string (get-latitude)) 20 "red")
+   (text (number->string (world-longitude a-world)) 20 "blue")
    0
-   0
-   (empty-scene width height)))
+   50
+   (place-image
+    (text (number->string (world-latitude a-world)) 20 "red")
+    0
+    0
+    (empty-scene width height))))
 
 
+(define (handle-location-message a-world a-message)
+  (make-world (first a-message)
+              (second a-message)))
 
-(big-bang width height 1/10 false)
+
+(big-bang width height 1/10 initial-world)
 (on-redraw render-world)
+(on-message-event handle-location-message)

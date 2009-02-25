@@ -45,14 +45,17 @@
                                on-tick-event ;; id of function
                                on-key-event ;; id of function
                                on-mouse-event ;; id of function
+                               on-message-event ;; id of function
                                on-redraw ;; id of function
                                stop-when ;; id of function
+
                                ))
 (define-struct big-bang-record (width height r world0))
 (define EMPTY-WORLD-HANDLERS (make-world-handlers #f ; big-bang
                                                   #f ; on-tick
                                                   #f ; on-key-event
                                                   #f ; on-mouse-event
+                                                  #f ; on-message-event
                                                   #f ; on-redraw
                                                   #f ; stop-when
                                                   ))
@@ -226,7 +229,17 @@
                           (simple-env-extend 
                            (simple-env-extend toplevel-env 'world)
                            'aKey))
-                         "org.plt.Kernel.no_op_keyEvent(world, aKey)")))))
+                         "org.plt.Kernel.no_op_keyEvent(world, aKey)"))
+                    (ON-MESSAGE-EVENT-EXPRESSION
+                     (if (world-handlers-on-message-event a-world-handlers)
+                         (expression->java-string
+                          `(,(world-handlers-on-message-event a-world-handlers) world aMessage) 
+                          (simple-env-extend 
+                           (simple-env-extend toplevel-env 'world)
+                           'aMessage))
+                         "org.plt.Kernel.no_op_messageEvent(world, aMessage)"))
+                    
+                    )))
 
 
 
@@ -289,6 +302,12 @@
                 (struct-copy
                  world-handlers a-world-handlers
                  (on-key-event change)))]
+              
+              [(list 'on-message-event change)
+               (loop/handler
+                (struct-copy
+                 world-handlers a-world-handlers
+                 (on-message-event change)))]
               
               [(list 'on-mouse-event clack)   
                (loop/handler

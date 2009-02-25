@@ -13,3 +13,6 @@
 * BigInteger literals aren't being handled in beginner-to-java.
 
 * require isn't properly handled in beginner-to-java.
+
+* Name mangling doesn't handle java keywords.  A defined variable
+  named "long", for example, breaks the compiler.
