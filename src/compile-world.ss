@@ -407,7 +407,8 @@
 (define (write-android-manifest dest-dir 
                                 #:name name
                                 #:permissions (permissions '("android.permission.ACCESS_LOCATION"
-                                                             "android.permission.ACCESS_GPS")))
+                                                             "android.permission.ACCESS_GPS"
+                                                             "android.permission.ACCESS_FINE_LOCATION")))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")
