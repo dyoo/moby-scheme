@@ -16,10 +16,10 @@ public class Location {
 	return service.getLongitude();
     }
 
-    public static Object getAttitude() {
+    public static Object getAltitude() {
 	LocationService service = 
 	    Platform.getInstance().getLocationService();
-	return service.getAttitude();
+	return service.getAltitude();
 
     }
 

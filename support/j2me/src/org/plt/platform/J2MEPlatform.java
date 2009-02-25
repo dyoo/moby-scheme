@@ -20,7 +20,7 @@ public class J2MEPlatform implements PlatformI {
 		return Logic.FALSE;
 	    }
 
-	    public Object getAttitude() {
+	    public Object getAltitude() {
 		return Logic.FALSE;
 	    }
 

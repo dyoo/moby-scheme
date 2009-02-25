@@ -3,7 +3,7 @@ package org.plt.lib;
 public interface LocationService {
     Object getLatitude();
     Object getLongitude();
-    Object getAttitude();
+    Object getAltitude();
     Object getBearing();
     Object getSpeed();
 }

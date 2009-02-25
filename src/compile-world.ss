@@ -403,9 +403,11 @@
 
 
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
+;; FIXME: we need pinfo to compute the right permissions...
 (define (write-android-manifest dest-dir 
                                 #:name name
-                                #:permissions (permissions '()))
+                                #:permissions (permissions '("android.permission.ACCESS_LOCATION"
+                                                             "android.permission.ACCESS_GPS")))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")
