@@ -55,7 +55,6 @@ public class AndroidPlatform implements PlatformI {
 		 minDistance,
 		 new LocationListener() {
 		     public void onLocationChanged(Location location) {
-			 System.out.println("Location updated: " + location);
 			 lastLocation = location;
 		     }
 		     public void onProviderDisabled(String provider) {
