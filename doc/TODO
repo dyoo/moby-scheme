@@ -21,6 +21,9 @@ Major:
   tackling this one: we want to make sure the design matches the
   functional flavor of the world primitives.
 
+* Connect Google Maps to DrScheme so we can drive tests of the
+  location system when testing Moby programs on the desktop.
+
 * Fix the bugs listed in BUGS.
 
 * Port universe.ss to Moby.
