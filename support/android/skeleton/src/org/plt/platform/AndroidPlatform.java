@@ -75,7 +75,7 @@ public class AndroidPlatform implements PlatformI {
 		 new LocationListener() {
 		     public void onLocationChanged(Location location) {
 			 lastLocation = location;
-			 Iterator iter = listeners.iterator();
+			 Iterator iter = locationListeners.iterator();
 			 while (iter.hasNext()) {
 			     ((LocationChangeListener)iter.next()).
 				 onLocationChange(FloatPoint.fromString("" + location.getLatitude()),
