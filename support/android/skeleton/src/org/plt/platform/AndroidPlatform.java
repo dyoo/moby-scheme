@@ -9,6 +9,8 @@ import android.location.LocationProvider;
 import android.location.LocationListener;
 import android.location.Criteria;
 import android.os.Bundle;
+import android.os.HandlerThread;
+import android.os.Looper;
 
 import org.plt.lib.LocationService;
 import org.plt.types.*;
@@ -43,16 +45,24 @@ public class AndroidPlatform implements PlatformI {
 	private java.util.List listeners;
 
 	public AndroidLocationService() {
-
-	    this.manager = (LocationManager) 
-		activity.getSystemService(Context.LOCATION_SERVICE);
-	    this.lastLocation = null;
 	    this.listeners = new ArrayList();
 
+	    new HandlerThread("Location") {
+		public void run() {
+		    Looper.prepare();
+		    manager = (LocationManager) 
+			activity.getSystemService(Context.LOCATION_SERVICE);
+		    initializeProvider();
+		    Looper.loop();
+		}
+	    }.start();
+	}
+
+
+	private void initializeProvider() {
 	    Criteria c = new Criteria();
 	    this.provider = manager.getProvider
 		(manager.getBestProvider(c, false));
-
 	    int pollingTime = 1000;
 	    int minDistance = 0;
 	    this.manager.requestLocationUpdates
@@ -82,16 +92,15 @@ public class AndroidPlatform implements PlatformI {
 						 int status,
 						 Bundle extras) { 
 		     }
-								
 		 });
 	}
+
 
 	public void addListener(MessageListener listener) {
 	    this.listeners.add(listener);
 	}
 
 
-	// fixme!
 	public Object getLatitude() {
 	    if (this.lastLocation == null) {
 		return FloatPoint.fromString("0");

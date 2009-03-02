@@ -226,54 +226,54 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
 	}
 
     @Override
-    protected void onResume()
+	protected void onResume()
     {
         super.onResume();
 
         if( this.midlet == null )
-        {
-	    	Thread thread = new Thread() {
+	    {
+	    	Thread thread = new Thread("J2ABMIDletActivity") {
 	    		public void run(){
-	    			while( defaultView.getWidth() == 0 )
+			    while( defaultView.getWidth() == 0 )
 	    			{
-		    			try
+				    try
 		    			{
-		    				Thread.sleep( 500 );
-		    				System.out.println( "W:"+defaultView.getWidth()+",H:"+defaultView.getHeight()+",MW:"+defaultView.getMeasuredWidth()+",MH:"+defaultView.getMeasuredHeight() );
+					    Thread.sleep( 500 );
+					    System.out.println( "W:"+defaultView.getWidth()+",H:"+defaultView.getHeight()+",MW:"+defaultView.getMeasuredWidth()+",MH:"+defaultView.getMeasuredHeight() );
 		    			}catch( Exception ex )
 		    			{
-		    				ex.printStackTrace();
+					    ex.printStackTrace();
 		    			}
 	    			}
-	    			MIDlet midlet = createMIDlet();
-	    			J2ABMIDletActivity.this.midlet = midlet;
-	    	        try
-	    	        {
-	    	        	if( midlet != null )
-	    	        	{
-	    	        		midlet.doStartApp();
-	    	        	}
-	    	        }
-	    	        catch( Exception ex )
-	    	        {
-	    	        	ex.printStackTrace();
-	    	        }
+			    MIDlet midlet = createMIDlet();
+			    J2ABMIDletActivity.this.midlet = midlet;
+			    try
+				{
+				    if( midlet != null )
+					{
+					    midlet.doStartApp();
+					}
+				}
+			    catch( Exception ex )
+				{
+				    ex.printStackTrace();
+				}
 	    		}
-	    	};
+		    };
 	    	thread.start();
-        }
+	    }
         else
-        {
+	    {
 	        try
-	        {
+		    {
         		this.midlet.doStartApp();
-	        }
+		    }
 	        catch( Exception ex )
-	        {
+		    {
 	        	ex.printStackTrace();
 	        	throw new RuntimeException( "couldn't start MIDlet" );
-	        }
-        }
+		    }
+	    }
 
     }
 	@Override
