@@ -1,6 +1,7 @@
 package org.plt.lib;
 
-import org.plt.MessageListener;
+import org.plt.LocationChangeListener;
+
 
 public interface LocationService {
     Object getLatitude();
@@ -9,5 +10,5 @@ public interface LocationService {
     Object getBearing();
     Object getSpeed();
 
-    void addListener(MessageListener listener);
+    void addLocationChangeListener(LocationChangeListener listener);
 }

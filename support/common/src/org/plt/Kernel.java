@@ -62,6 +62,11 @@ public class Kernel {
 		return world;
 	}
 
+        public static Object no_op_locationChangeEvent(Object world, Object latitude, Object longitude) {
+		return world;
+	}
+
+
 
 	// ////////////////////////////////////////////////////////////////////
 

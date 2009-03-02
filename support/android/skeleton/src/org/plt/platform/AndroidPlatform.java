@@ -16,6 +16,7 @@ import org.plt.lib.LocationService;
 import org.plt.types.*;
 
 import org.plt.MessageListener;
+import org.plt.LocationChangeListener;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -43,9 +44,11 @@ public class AndroidPlatform implements PlatformI {
 	private LocationProvider provider;
 	private Location lastLocation;
 	private java.util.List listeners;
+	private java.util.List locationListeners;
 
 	public AndroidLocationService() {
 	    this.listeners = new ArrayList();
+	    this.locationListeners = new ArrayList();
 
 	    new HandlerThread("Location") {
 		public void run() {
@@ -72,16 +75,11 @@ public class AndroidPlatform implements PlatformI {
 		 new LocationListener() {
 		     public void onLocationChanged(Location location) {
 			 lastLocation = location;
-			 
 			 Iterator iter = listeners.iterator();
-			 Object msg =
-			     new Pair(FloatPoint.fromString
-				      (""+location.getLatitude()),
-				      new Pair(FloatPoint.fromString
-					       (""+location.getLongitude()), 
-					       Empty.EMPTY));;
 			 while (iter.hasNext()) {
-			     ((MessageListener)iter.next()).onMessage(msg);
+			     ((LocationChangeListener)iter.next()).
+				 onLocationChange(FloatPoint.fromString("" + location.getLatitude()),
+						  FloatPoint.fromString("" + location.getLongitude()));
 			 }
 		     }
 		     public void onProviderDisabled(String provider) {
@@ -96,9 +94,14 @@ public class AndroidPlatform implements PlatformI {
 	}
 
 
-	public void addListener(MessageListener listener) {
+	public void addMessageListener(MessageListener listener) {
 	    this.listeners.add(listener);
 	}
+
+	public void addLocationChangeListener(LocationChangeListener listener) {
+	    this.locationListeners.add(listener);
+	}
+
 
 
 	public Object getLatitude() {

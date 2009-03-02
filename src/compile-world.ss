@@ -46,6 +46,7 @@
                                on-key-event ;; id of function
                                on-mouse-event ;; id of function
                                on-message-event ;; id of function
+                               on-location-change-event ;; id of function
                                on-redraw ;; id of function
                                stop-when ;; id of function
 
@@ -56,6 +57,7 @@
                                                   #f ; on-key-event
                                                   #f ; on-mouse-event
                                                   #f ; on-message-event
+                                                  #f ; on-location-change-event
                                                   #f ; on-redraw
                                                   #f ; stop-when
                                                   ))
@@ -239,6 +241,17 @@
                            'aMessage))
                          "org.plt.Kernel.no_op_messageEvent(world, aMessage)"))
                     
+                    (ON-LOCATION-CHANGE-EVENT-EXPRESSION
+                     (if (world-handlers-on-location-change-event a-world-handlers)
+                         (expression->java-string
+                          `(,(world-handlers-on-location-change-event a-world-handlers) world latitude longitude) 
+                          (simple-env-extend
+                           (simple-env-extend 
+                            (simple-env-extend toplevel-env 'world)
+                            'latitude)
+                           'longitude))
+                         "org.plt.Kernel.no_op_locationChangeEvent(world, latitude, longitude)"))
+                    
                     )))
 
 
@@ -308,6 +321,12 @@
                 (struct-copy
                  world-handlers a-world-handlers
                  (on-message-event change)))]
+
+              [(list 'on-location-change-event change)
+               (loop/handler
+                (struct-copy
+                 world-handlers a-world-handlers
+                 (on-location-change-event change)))]
               
               [(list 'on-mouse-event clack)   
                (loop/handler

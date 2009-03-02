@@ -2,7 +2,7 @@ package org.plt.platform;
 
 import org.plt.lib.LocationService;
 import org.plt.types.*;
-import org.plt.MessageListener;
+import org.plt.LocationChangeListener;
 
 
 public class J2MEPlatform implements PlatformI {
@@ -33,7 +33,7 @@ public class J2MEPlatform implements PlatformI {
 		return Logic.FALSE;
 	    }
 	    
-	    public void addListener(MessageListener l) {
+	    public void addLocationChangeListener(LocationChangeListener l) {
 		// fill me in
 	    }
 	};

@@ -6,6 +6,8 @@ import javax.microedition.lcdui.*;
 import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
 import org.plt.MessageListener;
+import org.plt.LocationChangeListener;
+
 
 // This is stub code.
 // The following things must be plugged in:
@@ -18,7 +20,8 @@ import org.plt.MessageListener;
 // ON-TICK-EXPPRESSION
 // ON-REDRAW-EXPRESSION
 // ON-KEY-EVENT-EXPRESSION
-// ON-MESSAGE-EXPRESSION
+// ON-MESSAGE-EVENTEXPRESSION
+// ON-LOCATION-CHANGE-EVENT-EXPRESSION
 
 
 public class <<PROGRAM-NAME>> extends MIDlet {
@@ -40,13 +43,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
 	MyCanvas canvas = new MyCanvas();
 
-	Platform.getInstance().getLocationService().addListener(canvas);
+	Platform.getInstance().getLocationService().addLocationChangeListener(canvas);
 
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();
     }
 
-    class MyCanvas extends Canvas implements Runnable, MessageListener {
+    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener {
 	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
@@ -73,6 +76,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 		world = <<ON-MESSAGE-EVENT-EXPRESSION>>;
 		// fill me in.
 	    }
+	}
+
+	public void onLocationChange(Object latitude, Object longitude) {
+	    synchronized(world) {
+		world = <<ON-LOCATION-CHANGE-EVENT-EXPRESSION>>;
+		// fill me in.
+	    }	    
 	}
 
 	public void paint(Graphics g) {
