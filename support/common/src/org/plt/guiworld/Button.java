@@ -1,6 +1,6 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
-public class CheckBox implements Gui {
+public class Button implements Gui {
     // Fill me in
 
 

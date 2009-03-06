@@ -1,6 +1,6 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
-public class TextField implements Gui {
+public class Canvas implements Gui {
     // Fill me in
 
 

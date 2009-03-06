@@ -1,6 +1,6 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
-public class Slider implements Gui {
+public class DropDown implements Gui {
     // Fill me in
 
 

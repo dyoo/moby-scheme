@@ -1,6 +1,6 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
-public class Row implements Gui {
+public class Col implements Gui {
     // Fill me in
 
 

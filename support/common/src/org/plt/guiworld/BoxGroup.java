@@ -1,4 +1,4 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
 public class BoxGroup implements Gui {
     // Fill me in

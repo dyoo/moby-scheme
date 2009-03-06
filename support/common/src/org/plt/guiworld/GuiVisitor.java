@@ -1,4 +1,4 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
 public interface GuiVisitor {
     void visit(Row r);

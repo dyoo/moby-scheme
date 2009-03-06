@@ -1,6 +1,6 @@
-package org.plt.GuiWorld;
+package org.plt.guiworld;
 
-public class Button implements Gui {
+public class Slider implements Gui {
     // Fill me in
 
 
