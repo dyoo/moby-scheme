@@ -1,0 +1,21 @@
+image-color?
+ellipse
+triangle
+star
+regular-polygon
+add-line
+overlay
+overlay/xy
+image-inside?
+find-image
+shrink-tl
+shrink-tr
+shrink-bl
+shrink-br
+shrink
+image->color-list
+color-list->image
+
+(struct alpha-color (alpha red green blue))
+image->alpha-color-list
+alpha-color-list->image

@@ -15,6 +15,8 @@ Major:
 * Implement all of the Beginner Scheme primitives in the runtime.
   The list of primitives comes at the end of this file.
 
+* Implement all of the image.ss teachpack primitives.  See image-ss-todo.txt.
+
 * Port the gui-world teachpack to Moby.
 
 * Expose Android-specific functionality.  Definitely talk to us before
