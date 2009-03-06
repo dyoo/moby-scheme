@@ -1,0 +1,63 @@
+<project name="guiworld" default="package">
+<taskdef resource="antenna.properties" 
+         classpath="../../support/common/externals/antenna-bin-1.1.0-beta.jar" />
+<property name="wtk.home" value="/usr/local/WTK2.5.2" />
+<property name="wtk.proguard.home" 
+         value="../../support/common/externals/proguard4.2" />
+<property name="wtk.cldc.version" value="1.1" />
+<property name="wtk.midp.version" value="2.0" />
+
+
+<property name="midlet.name" value="guiworld" />
+<property name="midlet.class" value="guiworld" />
+<property name="company.name" value="PLT" />
+
+
+
+<target name="init">
+<mkdir dir="classes" />
+<mkdir dir="bin" />
+<mkdir dir="res" />
+</target>
+
+<target name="make.jad" depends="init">
+<wtkjad jadfile="bin/${midlet.name}.jad" 
+        jarfile="bin/${midlet.name}.jar" 
+        name="${midlet.name}" vendor="${company.name}" version="1.0.0">
+<midlet name="${midlet.name}" class="${midlet.class}" />
+</wtkjad>
+</target>
+
+
+<target name="compile" depends="init">
+<copy todir="classes">
+<fileset dir="src">
+<include name="**/*.class" />
+</fileset>
+</copy>
+<copy todir="src">
+<fileset dir="../../support/common/src">
+<include name="**/*.java" />
+</fileset>
+<fileset dir="../../support/j2me/src">
+<include name="**/*.java" />
+</fileset>
+</copy>
+<wtkbuild srcdir="src" destdir="classes" 
+          source="1.4" target="1.4" preverify="false" />
+</target>
+
+
+
+<target name="package" depends="compile,make.jad">
+<wtkpackage jarfile="bin/${midlet.name}.jar" 
+            jadfile="bin/${midlet.name}.jad"
+            obfuscate="true" preverify="true">
+<fileset dir="classes" />
+<fileset dir="res" />
+</wtkpackage>
+</target>
+
+
+<target name="run" depends="package">
+<wtkrun jadfile="bin/${midlet.name}.jad" /></target></project>

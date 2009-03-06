@@ -16,7 +16,7 @@ public class GuiRenderer {
     private void topForm;
     private Gui view;
     
-    public GuiRenderer(String title, Object world) {
+    public GuiRenderer(String title, Object world, Gui view) {
 	this.topForm = new Form(title);
 	this.world = world;
 	this.view = view;
