@@ -70,7 +70,7 @@ public class GuiRenderer {
 	public void visit(Message m) {
 	    String msg = 
 		(m.getValF().transform(world)).toString();
-	    topForm.append(new StringItem(msg, msg));
+	    topForm.append(new StringItem("", msg));
 	}
 
     

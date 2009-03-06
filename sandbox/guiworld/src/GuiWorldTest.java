@@ -20,10 +20,18 @@ public class GuiWorldTest extends MIDlet {
 		    public Object transform(Object world) {
 			return "Hello world";
 		    }
-		})});
+		}),
 
 
-	GuiRenderer guiRender = new GuiRenderer("title",world, view);
+	    new Message(new WorldTransformer() {
+		    public Object transform(Object world) {
+			return "Goodbye world";
+		    }
+		}),
+	});
+
+
+	GuiRenderer guiRender = new GuiRenderer("title", world, view);
 	Form form = guiRender.getForm();
 	display.setCurrent(form);
     }
