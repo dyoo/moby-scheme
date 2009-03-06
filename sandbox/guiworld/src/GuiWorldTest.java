@@ -5,7 +5,7 @@ import org.plt.guiworld.*;
 import org.plt.world.WorldTransformer;
 
 
-public class GuiWorldTest extends MIDlet implements CommandListener {
+public class GuiWorldTest extends MIDlet {
     private Object world;
 
     public GuiWorldTest() {
@@ -17,7 +17,7 @@ public class GuiWorldTest extends MIDlet implements CommandListener {
 
 	Gui view = new Row(new Gui[] {
 	    new Message(new WorldTransformer() {
-		    public Object transform(World world) {
+		    public Object transform(Object world) {
 			return "Hello world";
 		    }
 		})});

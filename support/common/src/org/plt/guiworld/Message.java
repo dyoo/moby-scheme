@@ -5,13 +5,15 @@ import org.plt.world.WorldTransformer;
 
 public class Message implements Gui {
 
-    public WorldTransformer valF;
+    private WorldTransformer valF;
 
-    public void Message(WorldTransformer valF) {
+
+
+    public Message(WorldTransformer valF) {
 	this.valF = valF;
     }
 
-    public getValF() {
+    public WorldTransformer getValF() {
 	return this.valF;
     }
 

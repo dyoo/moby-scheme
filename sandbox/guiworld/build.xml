@@ -8,8 +8,8 @@
 <property name="wtk.midp.version" value="2.0" />
 
 
-<property name="midlet.name" value="guiworld" />
-<property name="midlet.class" value="guiworld" />
+<property name="midlet.name" value="GuiWorldTest" />
+<property name="midlet.class" value="GuiWorldTest" />
 <property name="company.name" value="PLT" />
 
 

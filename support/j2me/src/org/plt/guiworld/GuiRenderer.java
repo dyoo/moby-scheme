@@ -13,7 +13,8 @@ import org.plt.world.WorldTransformer;
 public class GuiRenderer {
 
     private String title;
-    private void topForm;
+    Form topForm;
+    Object world;
     private Gui view;
     
     public GuiRenderer(String title, Object world, Gui view) {
@@ -25,7 +26,7 @@ public class GuiRenderer {
 
 
     // Returns the toplevel form.
-    public Form getTopForm() {
+    public Form getForm() {
 	return topForm;
     }
 
@@ -37,7 +38,7 @@ public class GuiRenderer {
 
 
     // Changes the world, and updates the view accordingly.
-    public void changeWorld(World world) {
+    public void changeWorld(Object world) {
 	this.world = world;
 	this.view.accept(new GuiRefresher(0));
     }
