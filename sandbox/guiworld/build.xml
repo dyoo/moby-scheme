@@ -52,7 +52,7 @@
 <target name="package" depends="compile,make.jad">
 <wtkpackage jarfile="bin/${midlet.name}.jar" 
             jadfile="bin/${midlet.name}.jad"
-            obfuscate="true" preverify="true">
+            obfuscate="false" preverify="true">
 <fileset dir="classes" />
 <fileset dir="res" />
 </wtkpackage>

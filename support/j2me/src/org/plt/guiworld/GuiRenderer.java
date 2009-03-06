@@ -60,9 +60,9 @@ public class GuiRenderer {
 
 	
 	public void visit(Row r) {
-	    Gui[] items = r.items;
+	    Gui[] items = r.getItems();
 	    for(int i = 0; i < items.length; i++) {
-		new items[i].accept(this);
+		items[i].accept(this);
 	    }
 	}
 
@@ -70,7 +70,7 @@ public class GuiRenderer {
 	public void visit(Message m) {
 	    String msg = 
 		(m.getValF().transform(world)).toString();
-	    form.append(new StringItem(msg, msg));
+	    topForm.append(new StringItem(msg, msg));
 	}
 
     
@@ -101,9 +101,9 @@ public class GuiRenderer {
 
 
 	public void visit(Row r) {
-	    Gui[] items = r.items;
+	    Gui[] items = r.getItems();
 	    for(int i = 0; i < items.length; i++) {
-		new items[i].accept(new GuiRefresher(this.formIndex + i));
+		items[i].accept(new GuiRefresher(this.formIndex + i));
 	    }
 	}
 
