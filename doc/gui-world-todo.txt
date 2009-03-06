@@ -13,5 +13,18 @@ The GUI subclasses:
   text-field
   check-box
 
-  big-bang
-  on-tick
+
+Implement the GuiRenderer class:
+
+    moby/support/j2me/src/org/plt/guiworld/GuiRenderer
+
+to support all of the gui widgets.  The widgets are in: 
+
+    moby/support/common/src/org/plt/guiworld/
+
+As you add implementations for the widgets, adjust the GuiWorldTest
+program in
+
+    moby/sandbox/guiworld
+
+and test.

@@ -17,7 +17,8 @@ Major:
 
 * Implement all of the image.ss teachpack primitives.  See image-ss-todo.txt.
 
-* Port the gui-world teachpack to Moby.
+* Port the gui-world teachpack to Moby.  See gui-world-todo.txt.
+
 
 * Expose Android-specific functionality.  Definitely talk to us before
   tackling this one: we want to make sure the design matches the
