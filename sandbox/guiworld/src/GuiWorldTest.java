@@ -9,7 +9,7 @@ public class GuiWorldTest extends MIDlet {
     private Object world;
 
     public GuiWorldTest() {
-	this.world = "no world yet.";
+	this.world = new Integer(1);
     }
 
     public void startApp() throws MIDletStateChangeException {
@@ -24,11 +24,24 @@ public class GuiWorldTest extends MIDlet {
 
 
 	    new Message(new WorldTransformer() {
+		    // label
 		    public Object transform(Object world) {
-			return "Goodbye world";
+			return "The World says: " + world.toString();
 		    }
 		}),
-	});
+
+	    // Button has not yet been implemented.
+	    new Button(new WorldTransformer() {
+		    // label
+		    public Object transform(Object world) {
+			return "The World says: " + world.toString();
+		    }},
+		       
+		       // callback
+		       new WorldTransformer() {
+			   public Object transform(Object world) {
+			       return new Integer(((Integer)world).intValue() + 1);
+			   }})});
 
 
 	GuiRenderer guiRender = new GuiRenderer("title", world, view);
