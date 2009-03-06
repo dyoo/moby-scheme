@@ -1,33 +1,126 @@
 package org.plt.guiworld;
 
 
-public class GuiRenderer implements GuiVisitor {
+import javax.microedition.lcdui.*;
+import javax.microedition.midlet.*;
+import org.plt.world.WorldTransformer;
 
-    public GuiRenderer() {
+
+// GuiRenderer: creates the initial gui, given the world and the view.
+// The visitor also keeps things up to date.
+
+
+public class GuiRenderer {
+
+    private String title;
+    private void topForm;
+    private Gui view;
+    
+    public GuiRenderer(String title, Object world) {
+	this.topForm = new Form(title);
+	this.world = world;
+	this.view = view;
+	initializeForm();
     }
 
 
-    public void visit(Row r) {
-
+    // Returns the toplevel form.
+    public Form getTopForm() {
+	return topForm;
     }
+
+
+    // Initialize the form contents.
+    public void initializeForm() {
+	this.view.accept(new InitialGuiConstructor(view));
+    }
+
+
+    // Changes the world, and updates the view accordingly.
+    public void changeWorld(World world) {
+	this.world = world;
+	this.view.accept(new GuiRefresher(0));
+    }
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+    private class InitialGuiConstructor implements GuiVisitor {
+	private Gui gui;
+
+
+	public InitialGuiConstructor(Gui gui) {
+	    this.gui = gui;
+	}
+
+	
+	public void visit(Row r) {
+	    Gui[] items = r.items;
+	    for(int i = 0; i < items.length; i++) {
+		new items[i].accept(this);
+	    }
+	}
+
+
+	public void visit(Message m) {
+	    String msg = 
+		(m.getValF().transform(world)).toString();
+	    form.append(new StringItem(msg, msg));
+	}
+
     
 
-    // public void visit(Col c) {
-    //     }
-    
+	// FIXME: implement these!
 
-    public void visit(Message m) {
+	public void visit(Col c) {}
+	public void visit(BoxGroup b) {}
+	public void visit(Canvas c) {}
+	public void visit(Button b) {}
+	public void visit(Slider s) {}
+	public void visit(DropDown d) {}
+	public void visit(TextField t) {}
+	public void visit(CheckBox c) {}
     }
 
 
 
-    // FIXME: implement these!
- 
-    public void visit(BoxGroup b) {}
-    public void visit(Canvas c) {}
-    public void visit(Button b) {}
-    public void visit(Slider s) {}
-    public void visit(DropDown d) {}
-    public void visit(TextField t) {}
-    public void visit(CheckBox c) {}
+
+
+
+    private class GuiRefresher implements GuiVisitor {
+	private int formIndex;
+
+	public GuiRefresher(int formIndex) {
+	    this.formIndex = formIndex;
+	}
+
+
+	public void visit(Row r) {
+	    Gui[] items = r.items;
+	    for(int i = 0; i < items.length; i++) {
+		new items[i].accept(new GuiRefresher(this.formIndex + i));
+	    }
+	}
+
+	public void visit(Message m) {
+	    StringItem stringItem = (StringItem) topForm.get(this.formIndex);
+	    stringItem.setText(m.getValF().transform(world).toString());	    
+	}
+
+
+	// FIXME: implement these!
+	public void visit(Col c) {}
+	public void visit(BoxGroup b) {}
+	public void visit(Canvas c) {}
+	public void visit(Button b) {}
+	public void visit(Slider s) {}
+	public void visit(DropDown d) {}
+	public void visit(TextField t) {}
+	public void visit(CheckBox c) {}
+    }
+
 }
