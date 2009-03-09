@@ -32,23 +32,36 @@
          [(binding:file? a-file-binding)
           (match a-file-binding
             [(struct binding:file (id filename headers content))
-             (let ([result-package 
-                    (compile-file filename content)])
-               (form-response result-package))]
+             (let ([result-binary 
+                    (compile-file (bytes->string/utf-8 filename)
+                                  content)])
+               (make-binary-response result-binary))]
             [else
              (error 'start "Not a file: ~s" a-file-binding)])]))]
     [else
      a-form]))
 
 
+
 (define (compile-file filename content)
-  #"ok")
+  (let* ([user (model-find-or-add-user! 
+                model
+                "anonymous"
+                "nobody@nobody.com")]
+         [source (model-add-source! model
+                                    filename 
+                                    content 
+                                    user)]
+         [binary (model-compile-source! model source android)])
+    binary))
 
 
-(define (form-response some-bytes)
+
+
+(define (make-binary-response a-binary)
   (make-input-port-response 
-   "foo.apk" 
-   (open-input-bytes some-bytes)))
+   (binary-name a-binary)
+   (open-input-bytes (binary-package a-binary))))
 
 
 
