@@ -1,10 +1,13 @@
 #lang scheme
 
 (require web-server/http/request-structs
-         web-server/http/response-structs)
+         web-server/http/response-structs
+         scheme/contract)
 
 
-(define (make-incremental-ip-response filename ip)
+
+;; make-input-port-response: string input-port -> response
+(define (make-input-port-response filename ip)
   (let* ([CHUNK-SIZE (expt 2 16)]
          [headers
           (list (make-header #"Content-Disposition"
@@ -28,3 +31,6 @@
                                        [else
                                         (send/bytes chunk)
                                         (loop)])))))))
+
+(provide/contract [make-input-port-response 
+                   (string? input-port? . -> . response?)])
