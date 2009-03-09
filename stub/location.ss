@@ -14,13 +14,13 @@
   (- (degree&minute->float 71 52)))
 
 (define (get-attitude)
-  #f)
+  0)
 
 (define (get-bearing)
-  #f)
+  0)
 
 (define (get-speed)
-  #f)
+  0)
 
 
 (define (degree&minute->float degree minute)
