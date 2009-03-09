@@ -1,3 +1,5 @@
+* Location services doesn't automatically turn on.  See http://osdir.com/ml/AndroidDevelopers/2009-01/msg01186.html.
+
 * Image transparency isn't being done during image lifting.  This
   might be a problem in DrScheme itself, as pure white is being
   treated as the transparent color, which is the wrong approach: we

@@ -9,9 +9,16 @@ get-longitude: -> number
 
 Optionally, if the mobile device supports it:
 
-get-attitude: -> (U number #f)
-get-bearing: -> (U number #f)
-get-speed: -> (U number #f)
+get-attitude: -> number
+get-bearing: -> number
+get-speed: -> number
+
+------
+
+* Accelerometer Sercies
+
+???
+
 
 
 
