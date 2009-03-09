@@ -66,6 +66,7 @@
 
 
 (serve/servlet start
+               #:port 8888
                #:command-line? #t
                #:listen-ip #f
                #:servlet-regexp #rx"")
