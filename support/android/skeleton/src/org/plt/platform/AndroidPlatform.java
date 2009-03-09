@@ -12,7 +12,14 @@ import android.os.Bundle;
 import android.os.HandlerThread;
 import android.os.Looper;
 
+import android.hardware.SensorManager; 
+import android.hardware.SensorListener; 
+
+
+
+
 import org.plt.lib.LocationService;
+import org.plt.lib.TiltService;
 import org.plt.types.*;
 
 import org.plt.MessageListener;
@@ -36,7 +43,12 @@ public class AndroidPlatform implements PlatformI {
 
 
 
-    static private AndroidLocationService locationService;
+
+
+    static private LocationService locationService;
+    static private TiltService tiltService;
+
+
 
     private class AndroidLocationService 
 	implements LocationService {
@@ -152,6 +164,73 @@ public class AndroidPlatform implements PlatformI {
 	    locationService = new AndroidLocationService();
 	} 
 	return locationService;
+    }
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    // Accelerometer.
+
+    public TiltService getTiltService() {
+	if (tiltService == null) {
+	    tiltService = new AndroidTiltService();
+	}
+	return tiltService;
+    }
+
+
+    private class AndroidTiltService implements TiltService {
+	SensorManager manager;
+	float[] lastValues;
+
+	public AndroidTiltService() {
+
+	    new HandlerThread("Tilt") {
+		public void run() {
+		    Looper.prepare();
+		    manager = (SensorManager) 
+			activity.getSystemService(Context.SENSOR_SERVICE);
+		    manager.registerListener(new SensorListener() {
+			    public void onAccuracyChanged(int sensor, int accuracy) {
+			    }
+
+			    public void onSensorChanged(int sensor, float[] values) {
+				lastValues = values;
+			    }
+			},
+					     SensorManager.SENSOR_DELAY_GAME |
+					     SensorManager.SENSOR_ACCELEROMETER|
+					     SensorManager.SENSOR_DELAY_GAME
+					     );
+		    Looper.loop();
+		}
+	    }.start();
+
+	}
+
+	public Object getXTilt() {
+	    if (lastValues != null) {
+		return lastValues[SensorManager.DATA_X];
+	    }
+	    return FloatPoint.ZERO;
+	}
+
+	public Object getYTilt() {
+	    if (lastValues != null) {
+		return lastValues[SensorManager.DATA_Y];
+	    }
+	    return FloatPoint.ZERO;
+	}
+
+	public Object getZTilt() {
+	    if (lastValues != null) {
+		return lastValues[SensorManager.DATA_Z];
+	    }
+	    return FloatPoint.ZERO;
+	}
     }
 
 }

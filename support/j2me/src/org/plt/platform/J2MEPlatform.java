@@ -1,6 +1,7 @@
 package org.plt.platform;
 
 import org.plt.lib.LocationService;
+import org.plt.lib.TiltService;
 import org.plt.types.*;
 import org.plt.LocationChangeListener;
 
@@ -10,27 +11,44 @@ public class J2MEPlatform implements PlatformI {
 	return "J2ME";
     }
 
+
+    public TiltService getTiltService() {
+	return new TiltService() {
+		public Object getXTilt() {
+		    return FloatPoint.ZERO;
+		}
+
+		public Object getYTilt() {
+		    return FloatPoint.ZERO;
+		}
+
+		public Object getZTilt() {
+		    return FloatPoint.ZERO;
+		}
+	    };
+    }
+
     public LocationService getLocationService() {
 	return new LocationService() {
 	    // fixme!
 	    public Object getLatitude() {
-		return Logic.FALSE;
+		return FloatPoint.ZERO;
 	    }
 
 	    public Object getLongitude() {
-		return Logic.FALSE;
+		return FloatPoint.ZERO;
 	    }
 
 	    public Object getAltitude() {
-		return Logic.FALSE;
+		return FloatPoint.ZERO;
 	    }
 
 	    public Object getBearing() {
-		return Logic.FALSE;
+		return FloatPoint.ZERO;
 	    }
 
 	    public Object getSpeed() {
-		return Logic.FALSE;
+		return FloatPoint.ZERO;
 	    }
 	    
 	    public void addLocationChangeListener(LocationChangeListener l) {

@@ -8,7 +8,7 @@
          scheme/runtime-path)
 
 
-(define-runtime-path mock-lib-path "mock-libs")
+(define-runtime-path mock-lib-path "../mock")
 
 
 ;; pinfo (program-info) captures the information we get from analyzing 
@@ -124,7 +124,8 @@
 ;; TODO: syntactic abstraction using the stuff in each mock library, to reduce this
 ;; drudgery.
 (define location-module 
-  (let ([module-path (build-path mock-lib-path "location.ss")])
+  (let ([module-path 
+         (build-path mock-lib-path "location.ss")])
     (make-module-binding 'location
                          module-path
                          (list (make-binding:function 'get-latitude module-path 0 #f 
@@ -137,8 +138,24 @@
                                                       "org.plt.lib.Location.getBearing")
                                (make-binding:function 'get-speed module-path 0 #f 
                                                       "org.plt.lib.Location.getSpeed")))))
+
   
-  
+
+(define tilt-module 
+  (let ([module-path 
+         (build-path mock-lib-path "tilt.ss")])
+    (make-module-binding 'tilt
+                         module-path
+                         (list (make-binding:function 'get-x-tilt module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getXTilt")
+                               (make-binding:function 'get-y-tilt module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getYTilt")
+                               (make-binding:function 'get-z-tilt module-path 0 #f 
+                                                      "org.plt.lib.Location.getZTilt")))))
+
+
+
+
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
 (define (extend-env/module-binding an-env a-module-binding)
@@ -152,7 +169,8 @@
              (rest contents))])))
 
                           
-(define known-modules (list location-module))
+(define known-modules (list location-module
+                            tilt-module))
                                              
 
 
