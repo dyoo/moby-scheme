@@ -14,7 +14,9 @@ public class GuiWorldTest extends MIDlet {
 	public void startApp() throws MIDletStateChangeException {
 		Display display = Display.getDisplay(this);
 
-		Gui view = new Row(new Gui[] { new Message(new WorldTransformer() {
+		Gui view = new Row(new Gui[] {
+
+		new Message(new WorldTransformer() {
 			public Object transform(Object world) {
 				return "Hello world";
 			}
@@ -41,7 +43,15 @@ public class GuiWorldTest extends MIDlet {
 								return new Integer(
 										((Integer) world).intValue() + 1);
 							}
-						}) });
+						}),
+
+				new org.plt.guiworld.TextField(new WorldTransformer() {
+					public Object transform(Object world) {
+						return "init text in text field: " + world.toString();
+					}
+				}),
+
+		});
 
 		GuiRenderer guiRender = new GuiRenderer("title", world, view);
 		Form form = guiRender.getForm();

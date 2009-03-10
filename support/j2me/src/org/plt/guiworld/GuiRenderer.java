@@ -60,6 +60,12 @@ public class GuiRenderer {
 
 		// FIXME: implement these!
 
+		public void visit(TextField t) {
+			String msg = (t.getValF().transform(world)).toString();
+			topForm.append(new javax.microedition.lcdui.TextField("", msg, 100,
+					javax.microedition.lcdui.TextField.ANY));
+		}
+
 		public void visit(Col c) {
 		}
 
@@ -87,9 +93,6 @@ public class GuiRenderer {
 		}
 
 		public void visit(DropDown d) {
-		}
-
-		public void visit(TextField t) {
 		}
 
 		public void visit(CheckBox c) {
