@@ -6,21 +6,23 @@
 
 
 ;; An env collects a set of bindings.
-(define-struct env (bindings))
+(define-struct env (bindings) #:transparent)
 (define empty-env (make-env (make-immutable-hasheq '())))
 
 
 ;; A binding associates a symbol with some value.
-(define-struct binding ())
+(define-struct binding () #:transparent)
 
 
 ;; binding:constant records an id and its associated Java implementation.
 (define-struct (binding:constant binding) 
-  (name java-string))
+  (name java-string)
+  #:transparent)
 
 ;; Function bindings try to record more information.
 (define-struct (binding:function binding) 
-  (name module-path min-arity var-arity? java-string))
+  (name module-path min-arity var-arity? java-string)
+  #:transparent)
 
 
 ;; binding-id: binding -> symbol

@@ -196,4 +196,4 @@
 
 
 (provide/contract [struct pinfo ([env env?])]
-                  [program-analyze (program? . -> . pinfo?)])
+                  [program-analyze ((program?) (pinfo?) . ->* . pinfo?)])
