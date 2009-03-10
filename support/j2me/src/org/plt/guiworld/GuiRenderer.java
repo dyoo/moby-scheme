@@ -70,12 +70,15 @@ public class GuiRenderer {
 		}
 
 		public void visit(final Button b) {
-			Command update = new Command("update", Command.OK, 1);
+			String label = (b.getValF().transform(world)).toString();
+			Command update = new Command(label, Command.OK, 1);
 			topForm.addCommand(update);
 			topForm.setCommandListener(new CommandListener() {
 				public void commandAction(Command c, Displayable d) {
 					Object newWorld = b.getCallback().transform(world);
 					changeWorld(newWorld);
+					topForm.removeCommand(c);
+					visit(b);
 				}
 			});
 		}
@@ -123,6 +126,8 @@ public class GuiRenderer {
 		}
 
 		public void visit(Button b) {
+			// String label = (b.getValF().transform(world)).toString();
+			// (Command)topForm.get(this.formIndex)
 		}
 
 		public void visit(Slider s) {
