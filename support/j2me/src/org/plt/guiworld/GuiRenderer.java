@@ -126,8 +126,6 @@ public class GuiRenderer {
 		}
 
 		public void visit(Button b) {
-			// String label = (b.getValF().transform(world)).toString();
-			// (Command)topForm.get(this.formIndex)
 		}
 
 		public void visit(Slider s) {
