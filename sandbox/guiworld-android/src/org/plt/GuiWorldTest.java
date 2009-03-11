@@ -34,49 +34,49 @@ public class GuiWorldTest extends Activity {
 			}
 		}),
 
-		// Button has not yet been implemented.
-				new org.plt.guiworld.Button(new WorldTransformer() {
-					// label
-					public Object transform(Object world) {
-						return "says: " + world.toString();
-					}
-				},
+		new org.plt.guiworld.Button(new WorldTransformer() {
+			// label
+			public Object transform(Object world) {
+				return "says: " + world.toString();
+			}
+		},
 
-				// callback
-						new WorldTransformer() {
-							public Object transform(Object world) {
-								return new Integer(
-										((Integer) world).intValue() + 1);
-							}
-						}),
-				//
-				new org.plt.guiworld.TextField(new WorldTransformer() {
+		// callback
+				new WorldTransformer() {
 					public Object transform(Object world) {
-						return "init text in text field: " + world.toString();
-					}
-				}, new WorldAndObjectTransformer() {
-					public Object transform(Object world, Object obj) {
-						try {
-							int val = Integer.parseInt(obj.toString());
-							Integer newWorld = new Integer(((Integer) world)
-									.intValue()
-									+ val);
-							return newWorld;
-						} catch (NumberFormatException e) {
-							return new Integer(0);
-						}
+						return new Integer(((Integer) world).intValue() + 1);
 					}
 				}),
-		//
-				// new DropDown(new WorldTransformer() {
-				// public Object transform(Object world) {
-				// Object[] items = new Object[] { "item1", "item2",
-				// "item3" };
-				// return items;
-				// }
-				// })
 
-				});
+		new org.plt.guiworld.TextField(new WorldTransformer() {
+			public Object transform(Object world) {
+				return "init text in text field: " + world.toString();
+			}
+		}, new WorldAndObjectTransformer() {
+			public Object transform(Object world, Object obj) {
+				try {
+					int val = Integer.parseInt(obj.toString());
+					Integer newWorld = new Integer(((Integer) world).intValue()
+							+ val);
+					return newWorld;
+				} catch (NumberFormatException e) {
+					return new Integer(0);
+				}
+			}
+		}),
+
+		new DropDown(new WorldTransformer() {
+			public Object transform(Object world) {
+				Object[] items = new Object[] { "0", "1", "2", "3" };
+				return items;
+			}
+		}, new WorldAndObjectTransformer() {
+			public Object transform(Object world, Object obj) {
+				return Integer.parseInt(obj.toString());
+			}
+		})
+
+		});
 
 		// Uncomment this when we have a GuiRenderer.
 		LinearLayout view = new LinearLayout(this);

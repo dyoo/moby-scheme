@@ -1,9 +1,11 @@
 package org.plt.guiworld;
 
 import org.plt.world.*;
+import org.plt.guiworldtest.*;
 
 import android.view.*;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.*;
 import android.text.*;
 
@@ -116,13 +118,27 @@ public class GuiRenderer {
 		public void visit(Slider s) {
 		}
 
-		public void visit(DropDown d) {
-			// Object[] items = (Object[]) (d.getValF().transform(world));
-			// ChoiceGroup cg = new ChoiceGroup("", Choice.EXCLUSIVE);
-			// for (int i = 0; i < items.length; i++) {
-			// cg.append(items[i].toString(), null);
-			// }
-			// topForm.append(cg);
+		public void visit(final DropDown d) {
+			Object[] items = (Object[]) (d.getValF().transform(world));
+			ArrayAdapter adapter = new ArrayAdapter(view.getContext(),
+					android.R.layout.simple_list_item_1, items);
+			adapter
+					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			Spinner dropdown = new Spinner(view.getContext());
+			dropdown.setAdapter(adapter);
+			dropdown.setOnItemSelectedListener(new OnItemSelectedListener() {
+				public void onItemSelected(AdapterView parent, View view,
+						int position, long id) {
+					Object item = parent.getSelectedItem();
+					Object newWorld = d.getCallback().transform(world, item);
+					changeWorld(newWorld);
+				}
+
+				public void onNothingSelected(AdapterView parent) {
+
+				}
+			});
+			view.addView(dropdown);
 		}
 
 		public void visit(CheckBox c) {
