@@ -51,6 +51,14 @@ public class GuiWorldTest extends MIDlet {
 					}
 				}),
 
+				new DropDown(new WorldTransformer() {
+					public Object transform(Object world) {
+						Object[] items = new Object[] { "item1", "item2",
+								"item3" };
+						return items;
+					}
+				})
+
 		});
 
 		GuiRenderer guiRender = new GuiRenderer("title", world, view);

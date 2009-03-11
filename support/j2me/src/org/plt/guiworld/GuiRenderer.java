@@ -93,6 +93,12 @@ public class GuiRenderer {
 		}
 
 		public void visit(DropDown d) {
+			Object[] items = (Object[]) (d.getValF().transform(world));
+			ChoiceGroup cg = new ChoiceGroup("", Choice.EXCLUSIVE);
+			for (int i = 0; i < items.length; i++) {
+				cg.append(items[i].toString(), null);
+			}
+			topForm.append(cg);
 		}
 
 		public void visit(CheckBox c) {
