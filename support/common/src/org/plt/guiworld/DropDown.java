@@ -1,10 +1,19 @@
 package org.plt.guiworld;
 
+import org.plt.world.WorldTransformer;
+
 public class DropDown implements Gui {
-    // Fill me in
+	private WorldTransformer valF;
 
+	public DropDown(WorldTransformer valF) {
+		this.valF = valF;
+	}
 
-    public void accept(GuiVisitor v) {
-	v.visit(this);
-    }
+	public WorldTransformer getValF() {
+		return this.valF;
+	}
+
+	public void accept(GuiVisitor v) {
+		v.visit(this);
+	}
 }
