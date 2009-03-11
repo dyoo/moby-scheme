@@ -300,12 +300,18 @@
               "Moby doesn't know about ~s" id)]
       
       [(struct binding:constant (name java-string))
-       (format "(~a(~a))" java-string operand-strings)]
+       (format "(((org.plt.types.Callable)~a).call(new Object[] {~a}))" java-string operand-strings)]
       
       [(struct binding:function (name module-path arity var-arity? java-string))
-       ;; FIXME: handle var-arity
-       ;; FIXME: check arity.
-       (format "(~a(~a))" java-string operand-strings)])))
+       (cond
+         [var-arity?
+          (format "~a(new Object[] {~a})"
+                  java-string
+                  operand-strings)]
+         [else
+          ;; FIXME: handle var-arity
+          ;; FIXME: check arity.
+          (format "(~a(~a))" java-string operand-strings)])])))
 
 
 
@@ -318,9 +324,26 @@
      (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
     [(struct binding:constant (name java-string))
      java-string]
-    [(struct binding:function (name _ _ _ _))
-     (error 'translate-toplevel-id
-            "Moby doesn't yet allow higher-order use of ~s." an-id)]))
+    [(struct binding:function (name module-path min-arity var-arity? java-string))
+     (cond
+       [var-arity?
+        (format "(new org.plt.types.Callable() {
+                      public Object call(Object[] args) {
+                          return ~a(args);
+                      }
+                  })"
+                java-string)]
+       [else
+        (format "(new org.plt.types.Callable() {
+                   public Object call(Object[] args) {
+                       return ~a(~a);
+                   }
+                 })"
+                java-string
+                (string-join (for/list ([i (in-range min-arity)])
+                               (format "args[~a]" i))))])
+     #;(error 'translate-toplevel-id
+              "Moby doesn't yet allow higher-order use of ~s." an-id)]))
 
 
 
