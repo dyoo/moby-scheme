@@ -1,6 +1,7 @@
 package org.plt.guiworld;
 
 import android.view.*;
+import android.view.View.OnClickListener;
 import android.widget.*;
 import org.plt.world.*;
 
@@ -9,9 +10,9 @@ import org.plt.world.*;
 
 public class GuiRenderer {
 
-	private String title;
-	LinearLayout view;
-	Object world;
+	// private String title;
+	private LinearLayout view;
+	private Object world;
 	private Gui gui;
 
 	public GuiRenderer(Object world, LinearLayout view, Gui gui) {
@@ -88,24 +89,18 @@ public class GuiRenderer {
 		public void visit(Canvas c) {
 		}
 
-		public void visit(final Button b) {
-			// /*
-			// * topForm.append("") is a must!! Otherwise, mismatch will happen
-			// in
-			// * visit methods of GuiRefresher!!
-			// */
-			// topForm.append("");
-			// String label = (b.getValF().transform(world)).toString();
-			// Command update = new Command(label, Command.OK, 1);
-			// topForm.addCommand(update);
-			// topForm.setCommandListener(new CommandListener() {
-			// public void commandAction(Command c, Displayable d) {
-			// Object newWorld = b.getCallback().transform(world);
-			// changeWorld(newWorld);
-			// topForm.removeCommand(c);
-			// visit(b);
-			// }
-			// });
+		public void visit(final org.plt.guiworld.Button b) {
+			String label = (b.getValF().transform(world)).toString();
+			android.widget.Button update = new android.widget.Button(view
+					.getContext());
+			update.setText(label);
+			update.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					Object newWorld = b.getCallback().transform(world);
+					changeWorld(newWorld);
+				}
+			});
+			view.addView(update);
 		}
 
 		public void visit(Slider s) {
@@ -160,8 +155,11 @@ public class GuiRenderer {
 		public void visit(Canvas c) {
 		}
 
-		public void visit(Button b) {
-
+		public void visit(org.plt.guiworld.Button b) {
+			String label = (b.getValF().transform(world)).toString();
+			android.widget.Button update = (android.widget.Button) view
+					.getChildAt(this.formIndex);
+			update.setText(label);
 		}
 
 		public void visit(Slider s) {

@@ -32,24 +32,24 @@ public class GuiWorldTest extends Activity {
 			public Object transform(Object world) {
 				return "The World says: " + world.toString();
 			}
-		})
+		}),
 
-		// // Button has not yet been implemented.
-				// new Button(new WorldTransformer() {
-				// // label
-				// public Object transform(Object world) {
-				// return "says: " + world.toString();
-				// }
-				// },
-				//
-				// // callback
-				// new WorldTransformer() {
-				// public Object transform(Object world) {
-				// return new Integer(
-				// ((Integer) world).intValue() + 1);
-				// }
-				// }),
-				//
+		// Button has not yet been implemented.
+				new org.plt.guiworld.Button(new WorldTransformer() {
+					// label
+					public Object transform(Object world) {
+						return "says: " + world.toString();
+					}
+				},
+
+				// callback
+						new WorldTransformer() {
+							public Object transform(Object world) {
+								return new Integer(
+										((Integer) world).intValue() + 1);
+							}
+						})
+		//
 				// new org.plt.guiworld.TextField(new WorldTransformer() {
 				// public Object transform(Object world) {
 				// return "init text in text field: " + world.toString();
@@ -81,6 +81,6 @@ public class GuiWorldTest extends Activity {
 		// Uncomment this when we have a GuiRenderer.
 		LinearLayout view = new LinearLayout(this);
 		GuiRenderer guiRender = new GuiRenderer(world, view, gui);
-		setContentView(view);
+		setContentView(guiRender.getView());
 	}
 }
