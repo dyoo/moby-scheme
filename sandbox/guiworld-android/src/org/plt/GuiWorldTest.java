@@ -81,6 +81,6 @@ public class GuiWorldTest extends Activity {
 		// Uncomment this when we have a GuiRenderer.
 		LinearLayout view = new LinearLayout(this);
 		GuiRenderer guiRender = new GuiRenderer(world, view, gui);
-		setContentView(this);
+		setContentView(view);
 	}
 }
