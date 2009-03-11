@@ -82,40 +82,62 @@ public class Kernel {
 
 	// >=
 
-	public static Logic _greaterthan__equal_(Object _n1, Object _n2) {
-		return toLogic(NumberTower.greaterThanEqual((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2));
+	public static Logic _greaterthan__equal_(Object[] args) {
+	    for(int i = 0; i < args.length - 1; i++) {
+		if (! NumberTower.greaterThanEqual((org.plt.types.Number) args[i],
+						   (org.plt.types.Number) args[i+1]))
+		    return Logic.FALSE;
+	    }
+	    return Logic.TRUE;
 	}
 
 	// >
-	public static Logic _greaterthan_(Object _n1, Object _n2) {
-		return toLogic(NumberTower.greaterThan((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2));
+	public static Logic _greaterthan_(Object[] args) {
+
+	    for(int i = 0; i < args.length - 1; i++) {
+		if (! NumberTower.greaterThan((org.plt.types.Number) args[i],
+					      (org.plt.types.Number) args[i+1]))
+		    return Logic.FALSE;
+	    }
+	    return Logic.TRUE;
 	}
 
 	// <=
-
-	public static Logic _lessthan__equal_(Object _n1, Object _n2) {
-		return toLogic(NumberTower.lessThanEqual((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2));
+	public static Logic _lessthan__equal_(Object[] args) {
+	    for(int i = 0; i < args.length - 1; i++) {
+		if (! NumberTower.lessThanEqual((org.plt.types.Number) args[i],
+						(org.plt.types.Number) args[i+1]))
+		    return Logic.FALSE;
+	    }
+	    return Logic.TRUE;
 	}
 
 	// <
-	public static Logic _lessthan_(Object _n1, Object _n2) {
-		return toLogic(NumberTower.lessThan((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2));
+	public static Logic _lessthan_(Object[] args) {
+	    for(int i = 0; i < args.length - 1; i++) {
+		if (! NumberTower.lessThan((org.plt.types.Number) args[i],
+					   (org.plt.types.Number) args[i+1]))
+		    return Logic.FALSE;
+	    }
+	    return Logic.TRUE;
 	}
 
 	// =
-	public static Logic _equal_(Object _n1, Object _n2) {
-		return toLogic(NumberTower.equal((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2));
+	public static Logic _equal_(Object[] args) {
+	    for(int i = 0; i < args.length - 1; i++) {
+		if (! NumberTower.equal((org.plt.types.Number) args[i],
+					   (org.plt.types.Number) args[i+1]))
+		    return Logic.FALSE;
+	    }
+	    return Logic.TRUE;
 	}
 
 	// =~
 	public static Logic _equal__tilde_(Object _n1, Object _n2, Object _n3) {
-		return toLogic(NumberTower.approxEqual((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2, (org.plt.types.Number) _n3));
+		return toLogic(NumberTower.approxEqual
+			       ((org.plt.types.Number) _n1,
+				(org.plt.types.Number) _n2,
+				(org.plt.types.Number) _n3));
 	}
 
 	// +
@@ -240,20 +262,36 @@ public class Kernel {
 		return toLogic(((org.plt.types.Number) n).isZero());
 	}
 
-	public static org.plt.types.Number max(Object n1, Object n2) {
-		if (_greaterthan__equal_(n1, n2)
+	public static org.plt.types.Number max(Object[] args) {
+	    org.plt.types.Number currentMax = 
+		NumberTower.greaterThanEqual((org.plt.types.Number) args[0],
+					     (org.plt.types.Number) args[1])
+		? (org.plt.types.Number) args[0] : (org.plt.types.Number) args[1];
 
-		.isTrue()) {
-			return (org.plt.types.Number) n1;
-		}
-		return (org.plt.types.Number) n2;
+	    for(int i = 2; i < args.length; i++) {
+		currentMax = 
+		    NumberTower.greaterThanEqual(currentMax
+						 (org.plt.types.Number) args[i])
+		? currentMax : args[i];
+
+	    }
+	    return currentMax;
 	}
 
 	public static org.plt.types.Number min(Object n1, Object n2) {
-		if (_lessthan__equal_(n1, n2).isTrue()) {
-			return (org.plt.types.Number) n1;
-		}
-		return (org.plt.types.Number) n2;
+	    org.plt.types.Number currentMin = 
+		NumberTower.lessThanEqual((org.plt.types.Number) args[0],
+					  (org.plt.types.Number) args[1])
+		? (org.plt.types.Number) args[0] : (org.plt.types.Number) args[1];
+
+	    for(int i = 2; i < args.length; i++) {
+		currentMin = 
+		    NumberTower.lessThanEqual(currentMin
+					      (org.plt.types.Number) args[i])
+		    ? currentMin : args[i];
+		
+	    }
+	    return currentMin;
 	}
 
 	public static org.plt.types.Number sqr(Object n) {
@@ -580,54 +618,48 @@ public class Kernel {
 		return toLogic(n instanceof org.plt.types.Symbol);
 	}
 
-	public static org.plt.types.Number gcd(Object a, Object b) {
-		if (integer_question_(a).isFalse())
-			throw new SchemeException(
-					"gcd: expects type <integer> as 1st argument; giving: " + a);
-		if (integer_question_(b).isFalse())
-			throw new SchemeException(
-					"gcd: expects type <integer> as 2nd argument; giving: " + b);
-
-		if (negative_question_(a).isTrue())
-		    a = NumberTower.minus(ZERO, (org.plt.types.Number) a);
-		if (negative_question_(b).isTrue())
-		    b = NumberTower.minus(ZERO, (org.plt.types.Number) b);
-
-		while (_equal_(b, ZERO).isFalse()) {
-			org.plt.types.Number t = (org.plt.types.Number) b;
-			b = ((org.plt.types.Number) a).modulo((org.plt.types.Number) b);
-			a = t;
-		}
-
-		return (org.plt.types.Number) a;
+	public static org.plt.types.Number gcd(Object[] args) {
+	    org.plt.types.Number currentGcd = gcd2((org.plt.types.Number) args[0], 
+						   (org.plt.types.Number) args[1]);
+	    for(int i = 2; i < args.length; i++) {
+		currentGcd = gcd2(currentGcd, gcd2(currentGcd, 
+						   (org.plt.types.Number) args[i]));
+	    }
+	    return currentGcd;
 	}
 
-	public static org.plt.types.Number lcm(Object a, Object b) {
-		if (integer_question_(a).isFalse())
-			throw new SchemeException(
-					"lcm: expects type <integer> as 1st argument; giving: " + a);
-		if (integer_question_(b).isFalse())
-			throw new SchemeException(
-					"lcm: expects type <integer> as 2nd argument; giving: " + b);
-		if (negative_question_(a).isTrue())
-		    a = NumberTower.minus(ZERO, (org.plt.types.Number)a);
-		if (negative_question_(b).isTrue())
-		    b = NumberTower.minus(ZERO, (org.plt.types.Number)b);
 
-		org.plt.types.Number acc = ONE;
-		org.plt.types.Number cd;
+    private static org.plt.types.Number gcd2(org.plt.types.Number a,
+					     org.plt.types.Number b) {
+	if (integer_question_(a).isFalse())
+	    throw new SchemeException(
+				      "gcd: expects type <integer> as 1st argument; giving: " + a);
+	if (integer_question_(b).isFalse())
+	    throw new SchemeException(
+				      "gcd: expects type <integer> as 2nd argument; giving: " + b);
 
-		while (_equal_(cd = gcd(a, b), ONE).isFalse()) {
-			acc = NumberTower.multiply(acc, cd);
-			a = NumberTower.divide((org.plt.types.Number)a, cd);
-			b = NumberTower.divide((org.plt.types.Number)b, cd);
-		}
+	if (negative_question_(a).isTrue())
+	    a = NumberTower.minus(ZERO, (org.plt.types.Number) a);
+	if (negative_question_(b).isTrue())
+	    b = NumberTower.minus(ZERO, (org.plt.types.Number) b);
 
-		return NumberTower.multiply
-		    (acc, 
-		     NumberTower.multiply((org.plt.types.Number)a,
-					  (org.plt.types.Number)b));
+	while (_equal_(b, ZERO).isFalse()) {
+	    org.plt.types.Number t = (org.plt.types.Number) b;
+	    b = ((org.plt.types.Number) a).modulo((org.plt.types.Number) b);
+	    a = t;
 	}
+
+	return (org.plt.types.Number) a;
+    }
+
+
+
+	public static org.plt.types.Number lcm(Object[] args) {
+	    org.plt.types.Number commonDivisor = gcd(args);
+	    org.plt.types.Number product = _star_(args);
+	    return abs(NumberTower.divide(product, commonDivisor));
+	}
+    
 
 	public static org.plt.types.Logic pair_question_(Object n) {
 		return toLogic(n instanceof org.plt.types.Pair);
@@ -930,7 +962,7 @@ public class Kernel {
 		return toLogic(n instanceof Character);
 	}
 
-	private static org.plt.types.Logic char_equal__question_(Object[] arr) {
+	public static org.plt.types.Logic char_equal__question_(Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char=?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char=?");
 
@@ -943,12 +975,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_equal__question_(Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
+	public static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char<?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char<?");
 
@@ -961,13 +989,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_lessthan__question_(Object n1,
-			Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_lessthan__question_(arr);
-	}
 
-	private static org.plt.types.Logic char_lessthan__equal__question_(
+	public static org.plt.types.Logic char_lessthan__equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char<=?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char<=?");
@@ -981,13 +1004,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_lessthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_lessthan__equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
+	public static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char>?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char>?");
 
@@ -1000,13 +1018,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_greaterthan__question_(Object n1,
-			Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_greaterthan__question_(arr);
-	}
 
-	private static org.plt.types.Logic char_greaterthan__equal__question_(
+    public static org.plt.types.Logic char_greaterthan__equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char>=?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char>=?");
@@ -1018,12 +1031,6 @@ public class Kernel {
 								.charValue());
 					}
 				}));
-	}
-
-	public static org.plt.types.Logic char_greaterthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_greaterthan__equal__question_(arr);
 	}
 
 	public static org.plt.types.Logic char_dash_upper_dash_case_question_(
@@ -1078,7 +1085,7 @@ public class Kernel {
 		return toLogic((v >= 'a' && v <= 'z') || (v >= 'A' && v <= 'Z'));
 	}
 
-	private static org.plt.types.Logic char_dash_ci_equal__question_(
+	public static org.plt.types.Logic char_dash_ci_equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char-ci=?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci=?");
@@ -1093,13 +1100,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_equal__question_(Object n1,
-			Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_dash_ci_equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic char_dash_ci_greaterthan__question_(
+	public static org.plt.types.Logic char_dash_ci_greaterthan__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char-ci>?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci>?");
@@ -1114,13 +1116,7 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_greaterthan__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_dash_ci_greaterthan__question_(arr);
-	}
-
-	private static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
+	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char-ci>=?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci>=?");
@@ -1135,13 +1131,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_dash_ci_greaterthan__equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic char_dash_ci_lessthan__question_(
+	public static org.plt.types.Logic char_dash_ci_lessthan__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char-ci<?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci<?");
@@ -1156,13 +1147,7 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_lessthan__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_dash_ci_lessthan__question_(arr);
-	}
-
-	private static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
+	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "char-ci<=?");
 		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci<=?");
@@ -1177,13 +1162,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return char_dash_ci_lessthan__equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic string_dash_ci_equal__question_(
+	public static org.plt.types.Logic string_dash_ci_equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "string-ci=?");
 		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci=?");
@@ -1197,13 +1177,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic string_dash_ci_equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_dash_ci_equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic string_dash_ci_greaterthan__question_(
+	public static org.plt.types.Logic string_dash_ci_greaterthan__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "string-ci>?");
 		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci>?");
@@ -1217,13 +1192,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic string_dash_ci_greaterthan__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_dash_ci_greaterthan__question_(arr);
-	}
 
-	private static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
+	public static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "string-ci>=?");
 		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci>=?");
@@ -1237,13 +1207,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_dash_ci_greaterthan__equal__question_(arr);
-	}
 
-	private static org.plt.types.Logic string_dash_ci_lessthan__question_(
+	public static org.plt.types.Logic string_dash_ci_lessthan__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "string-ci<?");
 		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci<?");
@@ -1257,13 +1222,8 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic string_dash_ci_lessthan__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_dash_ci_lessthan__question_(arr);
-	}
 
-	private static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
+	public static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
 			Object[] arr) {
 		ArgumentChecker.checkArraySize(arr, 2, "string-ci<=?");
 		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci<=?");
@@ -1277,11 +1237,6 @@ public class Kernel {
 				}));
 	}
 
-	public static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_dash_ci_lessthan__equal__question_(arr);
-	}
 
 	public static org.plt.types.Symbol string_dash__greaterthan_symbol(Object n) {
 		ArgumentChecker.checkAtomType(n, "java.lang.String", "string->symbol");
@@ -1300,7 +1255,7 @@ public class Kernel {
 		return ret;
 	}
 
-	private static Object string_dash_append(Object[] arr) {
+	public static Object string_dash_append(Object[] arr) {
 		ArgumentChecker.checkArrayType(arr, stringClass, "string-append");
 
 		StringBuffer buf = new StringBuffer();
@@ -1308,11 +1263,6 @@ public class Kernel {
 			buf.append(arr[i]);
 		}
 		return buf.toString();
-	}
-
-	public static Object string_dash_append(Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_dash_append(arr);
 	}
 
 	public static Object string(Object[] arr) {

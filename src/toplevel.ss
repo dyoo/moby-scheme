@@ -54,16 +54,16 @@
                                                   (identifier->munged-java-identifier id))))])
     
     ;; Numerics
-    (r '+ 0 #t) ; done
-    (r '- 1 #t) ; done
-    (r '* 0 #t) ; done
-    (r '/ 1 #t) ; done
+    (r '+ 0 #t)
+    (r '- 1 #t)
+    (r '* 0 #t)
+    (r '/ 1 #t)
     (r '>= 2 #t)
     (r '> 2 #t)
     (r '<= 2 #t)
     (r '< 2 #t)
     (r '= 2 #t)
-    (r '=~ 2 #t)
+    (r '=~ 3)
     (r 'number->string 1)
     (r 'even? 1)
     (r 'odd? 1)
