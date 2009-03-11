@@ -8,7 +8,7 @@
          scheme/runtime-path)
 
 
-(define-runtime-path mock-lib-path "../mock")
+(define-runtime-path mock-lib-path "../stub")
 
 
 ;; pinfo (program-info) captures the information we get from analyzing 
