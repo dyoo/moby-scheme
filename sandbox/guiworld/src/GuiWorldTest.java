@@ -2,7 +2,7 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.*;
 
 import org.plt.guiworld.*;
-import org.plt.world.WorldTransformer;
+import org.plt.world.*;
 
 public class GuiWorldTest extends MIDlet {
 	private Object world;
@@ -48,6 +48,18 @@ public class GuiWorldTest extends MIDlet {
 				new org.plt.guiworld.TextField(new WorldTransformer() {
 					public Object transform(Object world) {
 						return "init text in text field: " + world.toString();
+					}
+				}, new WorldAndObjectTransformer() {
+					public Object transform(Object world, Object obj) {
+						try {
+							int val = Integer.parseInt(obj.toString());
+							Integer newWorld = new Integer(((Integer) world)
+									.intValue()
+									+ val);
+							return newWorld;
+						} catch (NumberFormatException e) {
+							return new Integer(0);
+						}
 					}
 				}),
 
