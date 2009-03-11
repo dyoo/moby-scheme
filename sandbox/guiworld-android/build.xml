@@ -134,6 +134,16 @@
 
     <!-- Compile this project's .java files into .class files. -->
     <target name="compile" depends="dirs, resource-src, aidl">
+        <copy todir="src">
+        <fileset dir="../../support/common/src">
+          <include name="**/*.java" />
+        </fileset>
+        <fileset dir="../../support/android/skeleton/src">
+          <include name="**/*.java" />
+        </fileset>
+        </copy>
+
+
         <javac encoding="ascii" target="1.5" debug="true" extdirs=""
                 srcdir="."
                 destdir="${outdir-classes}"
