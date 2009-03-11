@@ -33,12 +33,13 @@ public class Kernel {
 
 	static public org.plt.types.Number ZERO = Rational.ZERO;
 	static public org.plt.types.Number ONE = Rational.ONE;
-	static public org.plt.types.Number TWO = _plus_(ONE, ONE);
-	static public org.plt.types.Number HALF = _slash_(ONE, TWO);
-	static public org.plt.types.Number THREE = _plus_(ONE, TWO);
-	static public org.plt.types.Number FOUR = _plus_(ONE, THREE);
-	static public org.plt.types.Number FIVE = _plus_(ONE, FOUR);
-	static public org.plt.types.Number SIX = _star_(TWO, THREE);
+	static public org.plt.types.Number TWO = NumberTower.plus(ONE, ONE);
+	static public org.plt.types.Number HALF = NumberTower.divide(ONE, TWO);
+	static public org.plt.types.Number THREE = NumberTower.plus(ONE, TWO);
+	static public org.plt.types.Number FOUR = NumberTower.plus(ONE, THREE);
+	static public org.plt.types.Number FIVE = NumberTower.plus(ONE, FOUR);
+	static public org.plt.types.Number SIX = 
+	    NumberTower.multiply(TWO, THREE);
 
 	// no-op: void -> void
 	public static Object no_op() {
@@ -118,28 +119,48 @@ public class Kernel {
 	}
 
 	// +
-	public static org.plt.types.Number _plus_(Object _n1, Object _n2) {
-		return NumberTower.plus((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2);
+	public static org.plt.types.Number _plus_(Object[] args) {
+	    Number currentSum = ZERO;
+	    for(int i = 0; i < args.length; i++) {
+		currentSum = NumberTower.plus
+		    (currentSum,
+		     (org.plt.types.Number) args[i]);
+	    }
+	    return currentSum;
 	}
 
 	// -
-	public static org.plt.types.Number _dash_(Object _n1, Object _n2) {
-		return NumberTower.minus((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2);
+	public static org.plt.types.Number _dash_(Object[] args) {
+	    org.plt.types.Number currentDifference = (org.plt.types.Number )args[0];
+	    for(int i = 1; i < args.length; i++) {
+		currentDifference = NumberTower.minus
+		    (currentDifference,
+		     (org.plt.types.Number) args[i]);
+	    }
+	    return currentDifference;
 	}
 
 	// *
-	public static org.plt.types.Number _star_(Object _n1, Object _n2) {
-		return NumberTower.multiply((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2);
+    public static org.plt.types.Number _star_(Object[] args) {
+	org.plt.types.Number currentProduct = ONE;
+	for (int i = 0; i < args.length; i++) {
+	    currentProduct = 
+		NumberTower.multiply((org.plt.types.Number) args[i],
+				     currentProduct);
 	}
+	return currentProduct;
+    }
 
 	// /
-	public static org.plt.types.Number _slash_(Object _n1, Object _n2) {
-		return NumberTower.divide((org.plt.types.Number) _n1,
-				(org.plt.types.Number) _n2);
+    public static org.plt.types.Number _slash_(Object[] args) {
+	org.plt.types.Number currentDivision = 
+	    (org.plt.types.Number) args[0];
+	for (int i = 1; i < args.length; i++) {
+	    currentDivision = NumberTower.divide(currentDivision,
+						 (org.plt.types.Number) args[i]);
 	}
+	return currentDivision;
+    }
 
 	public static org.plt.types.Number abs(Object n) {
 		return ((org.plt.types.Number) n).abs();
@@ -236,15 +257,16 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number sqr(Object n) {
-		return _star_(n, n);
+	    return NumberTower.multiply((org.plt.types.Number)n,
+					(org.plt.types.Number)n);
 	}
 
 	public static org.plt.types.Number add1(Object n) {
-		return _plus_(n, ONE);
+	    return NumberTower.plus((org.plt.types.Number) n, ONE);
 	}
 
 	public static org.plt.types.Number sub1(Object n) {
-		return _dash_(n, ONE);
+	    return NumberTower.minus((org.plt.types.Number) n, ONE);
 	}
 
 	// ////////////////////////////////////////////////////////////////////
@@ -441,15 +463,19 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Number tan(Object _n1) {
-		return _slash_(sin(_n1), cos(_n1));
+		return NumberTower.divide(sin(_n1), cos(_n1));
 	}
 
 	public static org.plt.types.Number sinh(Object _n1) {
-		return _slash_(_dash_(exp(_n1), exp(_dash_(ZERO, _n1))), TWO);
+	    return NumberTower.divide(NumberTower.minus
+			   (exp((org.plt.types.Number) _n1), 
+			    exp(NumberTower.minus(ZERO,
+						  (org.plt.types.Number)_n1))),
+			   TWO);
 	}
 
 	public static org.plt.types.Number cosh(Object _n1) {
-		return _slash_(_plus_(exp(_n1), exp(_dash_(ZERO, _n1))), TWO);
+	    return NumberTower.divide(NumberTower.plus(exp(_n1), exp(NumberTower.minus(ZERO, (org.plt.types.Number)_n1))), TWO);
 	}
 
 	public static org.plt.types.Logic even_question_(Object n) {
@@ -522,7 +548,7 @@ public class Kernel {
 			return (org.plt.types.Number) ONE;
 
 		if (negative_question_(n1).isTrue())
-			return (org.plt.types.Number) (_dash_(ZERO, ONE));
+			return (org.plt.types.Number) (NumberTower.minus(ZERO, ONE));
 
 		return ZERO;
 	}
@@ -563,9 +589,9 @@ public class Kernel {
 					"gcd: expects type <integer> as 2nd argument; giving: " + b);
 
 		if (negative_question_(a).isTrue())
-			a = _dash_(ZERO, a);
+		    a = NumberTower.minus(ZERO, (org.plt.types.Number) a);
 		if (negative_question_(b).isTrue())
-			b = _dash_(ZERO, b);
+		    b = NumberTower.minus(ZERO, (org.plt.types.Number) b);
 
 		while (_equal_(b, ZERO).isFalse()) {
 			org.plt.types.Number t = (org.plt.types.Number) b;
@@ -584,20 +610,23 @@ public class Kernel {
 			throw new SchemeException(
 					"lcm: expects type <integer> as 2nd argument; giving: " + b);
 		if (negative_question_(a).isTrue())
-			a = _dash_(ZERO, a);
+		    a = NumberTower.minus(ZERO, (org.plt.types.Number)a);
 		if (negative_question_(b).isTrue())
-			b = _dash_(ZERO, b);
+		    b = NumberTower.minus(ZERO, (org.plt.types.Number)b);
 
 		org.plt.types.Number acc = ONE;
 		org.plt.types.Number cd;
 
 		while (_equal_(cd = gcd(a, b), ONE).isFalse()) {
-			acc = _star_(acc, cd);
-			a = _slash_(a, cd);
-			b = _slash_(b, cd);
+			acc = NumberTower.multiply(acc, cd);
+			a = NumberTower.divide((org.plt.types.Number)a, cd);
+			b = NumberTower.divide((org.plt.types.Number)b, cd);
 		}
 
-		return _star_(acc, _star_(a, b));
+		return NumberTower.multiply
+		    (acc, 
+		     NumberTower.multiply((org.plt.types.Number)a,
+					  (org.plt.types.Number)b));
 	}
 
 	public static org.plt.types.Logic pair_question_(Object n) {
@@ -626,7 +655,8 @@ public class Kernel {
 					"quotient: expects type <integer> as 2nd argument, given: "
 							+ b);
 
-		return floor(_slash_(a, b));
+		return floor(NumberTower.divide((org.plt.types.Number)a,
+						(org.plt.types.Number)b));
 	}
 
 	public static org.plt.types.Number remainder(Object a, Object b) {
@@ -639,7 +669,10 @@ public class Kernel {
 					"remainder: expects type <integer> as 2nd argument, given: "
 							+ b);
 
-		return _dash_(a, _star_(quotient(a, b), b));
+		return NumberTower.minus((org.plt.types.Number)a, NumberTower.multiply
+			      (quotient((org.plt.types.Number)a,
+					(org.plt.types.Number)b),
+			       (org.plt.types.Number) b));
 	}
 
 	public static org.plt.types.Number numerator(Object n) {
@@ -714,12 +747,12 @@ public class Kernel {
 							+ n);
 
 		if (negative_question_(n).isFalse()) {
-			if (_lessthan_(_dash_(n, floor(n)), HALF).isTrue())
+		    if (_lessthan_(NumberTower.minus((org.plt.types.Number)n, floor(n)), HALF).isTrue())
 				return floor(n);
 			else
 				return ceiling(n);
 		} else {
-			return _dash_(ZERO, round(abs(n)));
+			return NumberTower.minus(ZERO, round(abs(n)));
 		}
 	}
 

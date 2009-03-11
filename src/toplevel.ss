@@ -54,10 +54,10 @@
                                                   (identifier->munged-java-identifier id))))])
     
     ;; Numerics
-    (r '+ 0 #t)
-    (r '- 1 #t)
-    (r '* 0 #t)
-    (r '/ 1 #t)
+    (r '+ 0 #t) ; done
+    (r '- 1 #t) ; done
+    (r '* 0 #t) ; done
+    (r '/ 1 #t) ; done
     (r '>= 2 #t)
     (r '> 2 #t)
     (r '<= 2 #t)
