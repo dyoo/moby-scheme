@@ -203,86 +203,85 @@
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (expression->java-string expr env)
-  (let ([expr (desugar-var-arity-application expr)])
-    (match expr
-      [(list 'cond [list questions answers] ... [list 'else answer-last])
-       (let loop ([questions questions]
-                  [answers answers])
-         (cond
-           [(empty? questions)
-            (expression->java-string answer-last env)]
-           [else
-            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-                    (expression->java-string (first questions) env)
-                    (expression->java-string (first answers) env)
-                    (loop (rest questions) (rest answers)))]))]
-      
-      
-      [(list 'cond [list questions answers] ... [list question-last answer-last])
-       (let loop ([questions questions]
-                  [answers answers])
-         (cond
-           [(empty? questions)
-            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : 
+  (match expr
+    [(list 'cond [list questions answers] ... [list 'else answer-last])
+     (let loop ([questions questions]
+                [answers answers])
+       (cond
+         [(empty? questions)
+          (expression->java-string answer-last env)]
+         [else
+          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+                  (expression->java-string (first questions) env)
+                  (expression->java-string (first answers) env)
+                  (loop (rest questions) (rest answers)))]))]
+    
+    
+    [(list 'cond [list questions answers] ... [list question-last answer-last])
+     (let loop ([questions questions]
+                [answers answers])
+       (cond
+         [(empty? questions)
+          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : 
                       org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
-                    (expression->java-string question-last env)
-                    (expression->java-string answer-last env))]
-           [else
-            (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-                    (expression->java-string (first questions) env)
-                    (expression->java-string (first answers) env)
-                    (loop (rest questions) (rest answers)))]))]
-      
-      [(list 'if test consequent alternative)
-       (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-               (expression->java-string test env)
-               (expression->java-string consequent env)
-               (expression->java-string alternative env))]
-      
-      [(list 'and expr ...)
-       (string-append "(("
-                      (string-join (map (lambda (e)
-                                          (format "(((org.plt.types.Logic)~a).isTrue())"
-                                                  (expression->java-string e env)))
-                                        expr) 
-                                   "&&")
-                      ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
-      
-      [(list 'or expr ...)
-       (string-append "(("
-                      (string-join  (map (lambda (e)
-                                           (format "(((org.plt.types.Logic)~a).isTrue())"
-                                                   (expression->java-string e env)))
-                                         expr) 
-                                    "||")
-                      ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
-      
-      ;; Numbers
-      [(? number?)
-       (number->java-string expr)]
-      
-      ;; Strings
-      [(? string?)
-       (format "(new String(~s))" expr)]
-      
-      ;; Characters
-      [(? char?)
-       (string-append "(new Character(\""
-                      (if (char=? expr #\") "\\" (string expr))
-                      "\"))")]
-      
-      ;; Identifiers
-      [(? symbol?)
-       (identifier-expression->java-string expr env)]
-      
-      ;; Quoted symbols
-      [(list 'quote datum)
-       (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
-               datum)]
-      
-      ;; Function call/primitive operation call
-      [(list (? symbol? id) exprs ...)
-       (application-expression->java-string id exprs env)])))
+                  (expression->java-string question-last env)
+                  (expression->java-string answer-last env))]
+         [else
+          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+                  (expression->java-string (first questions) env)
+                  (expression->java-string (first answers) env)
+                  (loop (rest questions) (rest answers)))]))]
+    
+    [(list 'if test consequent alternative)
+     (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+             (expression->java-string test env)
+             (expression->java-string consequent env)
+             (expression->java-string alternative env))]
+    
+    [(list 'and expr ...)
+     (string-append "(("
+                    (string-join (map (lambda (e)
+                                        (format "(((org.plt.types.Logic)~a).isTrue())"
+                                                (expression->java-string e env)))
+                                      expr) 
+                                 "&&")
+                    ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
+    
+    [(list 'or expr ...)
+     (string-append "(("
+                    (string-join  (map (lambda (e)
+                                         (format "(((org.plt.types.Logic)~a).isTrue())"
+                                                 (expression->java-string e env)))
+                                       expr) 
+                                  "||")
+                    ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
+    
+    ;; Numbers
+    [(? number?)
+     (number->java-string expr)]
+    
+    ;; Strings
+    [(? string?)
+     (format "(new String(~s))" expr)]
+    
+    ;; Characters
+    [(? char?)
+     (string-append "(new Character(\""
+                    (if (char=? expr #\") "\\" (string expr))
+                    "\"))")]
+    
+    ;; Identifiers
+    [(? symbol?)
+     (identifier-expression->java-string expr env)]
+    
+    ;; Quoted symbols
+    [(list 'quote datum)
+     (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
+             datum)]
+    
+    ;; Function call/primitive operation call
+    [(list (? symbol? id) exprs ...)
+     (application-expression->java-string id exprs env)]))
 
 
 
@@ -363,105 +362,6 @@
                  (denominator a-num))]
         [else
          (error 'number->java-string "Don't know how to handle ~s yet" a-num)]))
-
-
-
-
-
-;; desugar-var-arity-application: expr -> expr
-;; Desugars the multi-arity functions into binary applications.
-(define (desugar-var-arity-application an-expr)
-  (match an-expr
-    [(list '+ x ...)
-     (cond
-       [(empty? x)
-        0]
-       [else
-        (foldl (lambda (arg acc)
-                 `(+ ,acc ,arg))
-               (first x)
-               (rest x))])]
-    
-    [(list '- x z ...)
-     (cond [(empty? z)
-            `(- 0 ,x)]
-           [else
-            (foldl (lambda (arg acc)
-                     `(- ,acc ,arg))
-                   x
-                   z)])]
-    
-    [(list '* x ...)
-     (cond [(empty? x)
-            1]
-           [else
-            (foldl (lambda (arg acc)
-                     `(* ,acc ,arg))
-                   (first x)
-                   (rest x))])]
-    
-    [(list '/ x z ...)
-     (cond
-       [(empty? z)
-        x]
-       [else
-        (foldl (lambda (arg acc)
-                 `(/ ,acc ,arg))
-               x
-               z)])]
-    
-    [(list '< x y ...)
-     (desugar-comparisons '< x y)]
-    
-    [(list '<= x y ...)
-     (desugar-comparisons '<= x y)]
-    
-    [(list '> x y ...)
-     (desugar-comparisons '> x y)]
-    
-    [(list '>= x y ...)
-     (desugar-comparisons '>= x y)]
-    
-    [(list 'max x y ...)
-     (foldl (lambda (arg acc) `(max ,acc ,arg)) x y)]
-    
-    [(list 'min x y ...)
-     (foldl (lambda (arg acc) `(min ,acc ,arg)) x y)]
-    
-    [(list 'append x ...)
-     (cond
-       [(empty? x)
-        'empty]
-       [else
-        (foldl (lambda (arg acc) `(append ,acc ,arg)) 
-               (first x) 
-               (rest x))])]
-    
-    [(list 'list x ...)
-     (cond
-       [(empty? x)
-        'empty]
-       [else
-        (foldr (lambda (arg acc) `(cons ,arg ,acc)) empty x)])]
-    
-    [(list 'list* x ... ys)
-     `(append ,(desugar-var-arity-application (cons 'list x))
-              ,ys)]
-    
-    [else
-     an-expr]))
-
-
-;; desugar-comparisons: symbol expr (listof expr) -> expr
-(define (desugar-comparisons op x ys)
-  (cond [(empty? ys)
-         'true]
-        [(empty? (rest ys))
-         `(,op ,x ,(first ys))]
-        [else
-         `(and (,op ,x ,(first ys))
-               ,(desugar-comparisons op (first ys) (rest ys)))]))
-
 
 
 

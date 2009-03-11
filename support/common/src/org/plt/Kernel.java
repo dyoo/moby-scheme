@@ -1385,7 +1385,38 @@ public class Kernel {
 			return Logic.FALSE;
 	}
 
-	public static org.plt.types.List append(Object n1, Object n2) {
+
+    public static org.plt.types.List list(Object[] args) {
+	org.plt.types.List result = Empty.EMPTY;
+	for(int i = 0; i < args.length; i++) {
+	    result = cons(args[i], result);
+	}
+	return reverse(result);
+    }
+
+
+    public static org.plt.types.List list_star_(Object[] args) {
+	org.plt.types.List result = Empty.EMPTY;
+	for(int i = 0; i < args.length-1; i++) {
+	    result = cons(args[i], result);
+	}
+	return append2(reverse(result),
+		       (org.plt.types.List) args[args.length -1]);
+    }
+
+
+
+
+    public static org.plt.types.List append(Object[] args) {
+	org.plt.types.List result = append2(args[0], args[1]);
+	for(int i = 2; i < args.length; i++) {
+	    result = append2(result, args[i]);
+	}
+	return result;
+    }
+
+
+	private static org.plt.types.List append2(Object n1, Object n2) {
 		Object[] args = { n1, n2 };
 		ArgumentChecker.checkArrayType(args, listClass, "append");
 

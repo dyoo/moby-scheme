@@ -613,7 +613,7 @@ public class TestKernel {
 		org.plt.types.List lst3 = new Pair(1, new Pair(2, new Pair(3, new Pair(
 				4, Empty.EMPTY))));
 
-		assertTrue(Kernel.equal_question_(lst3, Kernel.append(lst1, lst2))
+		assertTrue(Kernel.equal_question_(lst3, Kernel.append(new Object[] { lst1, lst2} ))
 				.isTrue());
 	}
 
