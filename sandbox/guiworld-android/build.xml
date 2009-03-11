@@ -100,6 +100,7 @@
     <target name="dirs">
         <echo>Creating output directories if needed...</echo>
         <mkdir dir="${outdir}" />
+        <mkdir dir="${external-libs}" />
         <mkdir dir="${outdir-classes}" />
     </target>
 
