@@ -416,8 +416,8 @@
                                   (include ((name "**/*.class")))))
                    (wtkbuild ((srcdir "src")
                               (destdir "classes")
-                              (source "1.4")
-                              (target "1.4")
+                              (source "1.3")
+                              (target "1.3")
                               (preverify "false"))))
            "\n"
            (target ((name "package") (depends "compile,make.jad"))

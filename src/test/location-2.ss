@@ -1,5 +1,5 @@
 ;; Location, using the on-location-changed hook.
-(require (lib "location.ss" "moby"))
+(require (lib "location.ss" "moby" "stub"))
 
 (define width 300)
 (define height 100)
