@@ -32,7 +32,7 @@ public class GuiWorldTest extends Activity {
 			public Object transform(Object world) {
 				return "The World says: " + world.toString();
 			}
-		}),
+		})
 
 		// // Button has not yet been implemented.
 				// new Button(new WorldTransformer() {
