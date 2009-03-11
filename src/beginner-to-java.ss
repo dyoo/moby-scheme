@@ -300,7 +300,7 @@
               "Moby doesn't know about ~s" id)]
       
       [(struct binding:constant (name java-string))
-       (format "(((org.plt.types.Callable)~a).call(new Object[] {~a}))" java-string operand-strings)]
+       (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" java-string operand-strings)]
       
       [(struct binding:function (name module-path arity var-arity? java-string))
        (cond
