@@ -142,7 +142,7 @@ public class Kernel {
 
 	// +
 	public static org.plt.types.Number _plus_(Object[] args) {
-	    Number currentSum = ZERO;
+	    org.plt.types.Number currentSum = ZERO;
 	    for(int i = 0; i < args.length; i++) {
 		currentSum = NumberTower.plus
 		    (currentSum,

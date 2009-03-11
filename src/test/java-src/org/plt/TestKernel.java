@@ -16,19 +16,19 @@ public class TestKernel {
 	// Fill me in with more test cases!
 	@Test
 	public void testTan() {
-		assertTrue(Kernel._equal_(Kernel.tan(Kernel.ZERO), Kernel.ZERO)
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.tan(Kernel.ZERO), Kernel.ZERO})
 				.isTrue());
 	}
 
 	@Test
 	public void testSinh() {
-		assertTrue(Kernel._equal_(Kernel.sinh(Kernel.ZERO), Kernel.ZERO)
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.sinh(Kernel.ZERO), Kernel.ZERO})
 				.isTrue());
 	}
 
 	@Test
 	public void testCosh() {
-		assertTrue(Kernel._equal_(Kernel.cosh(Kernel.ZERO), Kernel.ONE)
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.cosh(Kernel.ZERO), Kernel.ONE})
 				.isTrue());
 	}
 
@@ -60,13 +60,13 @@ public class TestKernel {
 
 	@Test
 	public void testExpt() {
-		assertTrue(Kernel._equal_(Kernel.expt(Kernel.TWO, Kernel.ONE),
-				Kernel.TWO).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.expt(Kernel.TWO, Kernel.ONE),
+						    Kernel.TWO}).isTrue());
 	}
 
 	@Test
 	public void testExp() {
-		assertTrue(Kernel._equal_(Kernel.exp(Kernel.ZERO), Kernel.ONE).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.exp(Kernel.ZERO), Kernel.ONE}).isTrue());
 	}
 
 	// @Test
@@ -78,8 +78,8 @@ public class TestKernel {
 	@Test
 	public void testLog() {
 		assertTrue(Kernel
-				._equal_(Kernel.log(Kernel.ONE), FloatPoint.fromInt(0))
-				.isTrue());
+			   ._equal_(new Object[]{Kernel.log(Kernel.ONE), FloatPoint.fromInt(0)})
+			   .isTrue());
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class TestKernel {
 
 	@Test
 	public void testSgn() {
-		assertTrue(Kernel._equal_(Kernel.sgn(Kernel.ONE), Kernel.ONE).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.sgn(Kernel.ONE), Kernel.ONE}).isTrue());
 	}
 
 	@Test
@@ -121,14 +121,14 @@ public class TestKernel {
 
 	@Test
 	public void testGCD() {
-		assertTrue(Kernel._equal_(Kernel.gcd(Kernel.TWO, Kernel.THREE),
-				Kernel.ONE).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.gcd(new Object[] {Kernel.TWO, Kernel.THREE}),
+						    Kernel.ONE}).isTrue());
 	}
 
 	@Test
 	public void testLCM() {
-		assertTrue(Kernel._equal_(Kernel.lcm(Kernel.TWO, Kernel.THREE),
-				Kernel.SIX).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.lcm(new Object[] {Kernel.TWO, Kernel.THREE}),
+						    Kernel.SIX}).isTrue());
 	}
 
 	@Test
@@ -157,26 +157,26 @@ public class TestKernel {
 
 	@Test
 	public void testQuotient() {
-		assertTrue(Kernel._equal_(Kernel.quotient(Kernel.SIX, Kernel.FOUR),
-				Kernel.ONE).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.quotient(Kernel.SIX, Kernel.FOUR),
+						     Kernel.ONE}).isTrue());
 	}
 
 	@Test
 	public void testRemainder() {
-		assertTrue(Kernel._equal_(Kernel.remainder(Kernel.SIX, Kernel.FOUR),
-				Kernel.TWO).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.remainder(Kernel.SIX, Kernel.FOUR),
+						    Kernel.TWO}).isTrue());
 	}
 
 	@Test
 	public void testNumerator() {
-		assertTrue(Kernel._equal_(Kernel.numerator(new Rational(12, 10)),
-				Kernel.SIX).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.numerator(new Rational(12, 10)),
+						     Kernel.SIX}).isTrue());
 	}
 
 	@Test
 	public void testDenominator() {
-		assertTrue(Kernel._equal_(Kernel.denominator(new Rational(12, 10)),
-				Kernel.FIVE).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.denominator(new Rational(12, 10)),
+						     Kernel.FIVE}).isTrue());
 	}
 
 	@Test
@@ -192,27 +192,28 @@ public class TestKernel {
 	@Test
 	public void testLength() {
 		assertTrue(Kernel._equal_(
-				Kernel.length(Kernel.cons(Kernel.THREE, Empty.EMPTY)),
-				Kernel.ONE).isTrue());
+					  new Object[] { Kernel.length(Kernel.cons(Kernel.THREE, Empty.EMPTY)),
+							 Kernel.ONE}).isTrue());
 	}
 
 	@Test
 	public void testList_ref_() {
-		assertTrue(Kernel._equal_(
-				Kernel.list_dash_ref(Kernel.cons(Kernel.THREE, Empty.EMPTY),
-						Kernel.ZERO), Kernel.THREE).isTrue());
+	    assertTrue(Kernel._equal_( new Object[] {
+			Kernel.list_dash_ref(Kernel.cons(Kernel.THREE, Empty.EMPTY),
+					     Kernel.ZERO), 
+			Kernel.THREE}).isTrue());
 	}
 
 	@Test
 	public void testRound() {
-		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("3.1")),
-				FloatPoint.fromString("3")).isTrue());
-		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("3.5")),
-				FloatPoint.fromString("4")).isTrue());
-		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("-3.5")),
-				FloatPoint.fromString("-4")).isTrue());
-		assertTrue(Kernel._equal_(Kernel.round(FloatPoint.fromString("-3.1")),
-				FloatPoint.fromString("-3")).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.round(FloatPoint.fromString("3.1")),
+						    FloatPoint.fromString("3")}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.round(FloatPoint.fromString("3.5")),
+						    FloatPoint.fromString("4")}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.round(FloatPoint.fromString("-3.5")),
+						     FloatPoint.fromString("-4")}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] {Kernel.round(FloatPoint.fromString("-3.1")),
+						    FloatPoint.fromString("-3")}).isTrue());
 	}
 
 	@Test
@@ -271,8 +272,8 @@ public class TestKernel {
 
 	@Test
 	public void testString_dash_length() {
-		assertTrue(Kernel._equal_(Kernel.FIVE,
-				Kernel.string_dash_length("world")).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.FIVE,
+						     Kernel.string_dash_length("world")}).isTrue());
 	}
 
 	@Test
@@ -283,11 +284,12 @@ public class TestKernel {
 
 	@Test
 	public void testString_dash__greaterthan_number() {
-		assertTrue(Kernel._equal_(Kernel.string_dash__greaterthan_number("3"),
-				Kernel.THREE).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.string_dash__greaterthan_number("3"),
+						     Kernel.THREE}).isTrue());
 		assertTrue(Kernel._equal_(
-				Kernel.string_dash__greaterthan_number("3.1"),
-				FloatPoint.fromString("3.1")).isTrue());
+					  new Object[] {
+					      Kernel.string_dash__greaterthan_number("3.1"),
+					      FloatPoint.fromString("3.1")}).isTrue());
 		assertTrue(((Logic) (Kernel.string_dash__greaterthan_number("3.1a")))
 				.isFalse());
 	}
@@ -315,40 +317,40 @@ public class TestKernel {
 
 	@Test
 	public void testChar_equal__question_() {
-		assertTrue(Kernel.char_equal__question_('a', 'a').isTrue());
-		assertTrue(Kernel.char_equal__question_('a', 'A').isFalse());
-		assertTrue(Kernel.char_equal__question_('a', 'b').isFalse());
-		assertTrue(Kernel.char_equal__question_(new Character('a'),
-				new Character('a')).isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { 'a', 'a'} ).isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] {'a', 'A'}).isFalse());
+	    assertTrue(Kernel.char_equal__question_(new Object[] {'a', 'b'}).isFalse());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { new Character('a'),
+								   new Character('a')}).isTrue());
 	}
 
 	@Test
 	public void testChar_lessthan__question_() {
-		assertTrue(Kernel.char_lessthan__question_('a', 'b').isTrue());
-		assertTrue(Kernel.char_lessthan__question_('a', 'a').isFalse());
-		assertTrue(Kernel.char_lessthan__question_('b', 'a').isFalse());
+	    assertTrue(Kernel.char_lessthan__question_(new Object[] {'a', 'b'}).isTrue());
+	    assertTrue(Kernel.char_lessthan__question_(new Object[] {'a', 'a'}).isFalse());
+	    assertTrue(Kernel.char_lessthan__question_(new Object[] {'b', 'a'}).isFalse());
 	}
 
 	@Test
 	public void testChar_lessthan__equal__question_() {
-		assertTrue(Kernel.char_lessthan__equal__question_('a', 'b').isTrue());
-		assertTrue(Kernel.char_lessthan__equal__question_('a', 'a').isTrue());
-		assertTrue(Kernel.char_lessthan__equal__question_('b', 'a').isFalse());
+	    assertTrue(Kernel.char_lessthan__equal__question_(new Object[] {'a', 'b'}).isTrue());
+	    assertTrue(Kernel.char_lessthan__equal__question_(new Object[] {'a', 'a'}).isTrue());
+	    assertTrue(Kernel.char_lessthan__equal__question_(new Object[] {'b', 'a'}).isFalse());
 	}
 
 	@Test
 	public void testChar_greaterthan_question_() {
-		assertTrue(Kernel.char_greaterthan__question_('b', 'a').isTrue());
-		assertTrue(Kernel.char_greaterthan__question_('b', 'b').isFalse());
-		assertTrue(Kernel.char_greaterthan__question_('a', 'b').isFalse());
+	    assertTrue(Kernel.char_greaterthan__question_(new Object[] {'b', 'a'}).isTrue());
+	    assertTrue(Kernel.char_greaterthan__question_(new Object[] {'b', 'b'}).isFalse());
+	    assertTrue(Kernel.char_greaterthan__question_(new Object[] {'a', 'b'}).isFalse());
 	}
 
 	@Test
 	public void testChar_greaterthan__equal__question_() {
-		assertTrue(Kernel.char_greaterthan__equal__question_('b', 'a').isTrue());
-		assertTrue(Kernel.char_greaterthan__equal__question_('a', 'b')
+	    assertTrue(Kernel.char_greaterthan__equal__question_(new Object[] {'b', 'a'}).isTrue());
+	    assertTrue(Kernel.char_greaterthan__equal__question_(new Object[] {'a', 'b'})
 				.isFalse());
-		assertTrue(Kernel.char_greaterthan__equal__question_('b', 'b').isTrue());
+	    assertTrue(Kernel.char_greaterthan__equal__question_(new Object[] {'b', 'b'}).isTrue());
 	}
 
 	@Test
@@ -371,22 +373,22 @@ public class TestKernel {
 
 	@Test
 	public void testChar_dash_upcase() {
-		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_upcase('1'),
-				'1').isTrue());
-		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_upcase('A'),
-				'A').isTrue());
-		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_upcase('a'),
-				'A').isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { Kernel.char_dash_upcase('1'),
+								   '1'}).isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { Kernel.char_dash_upcase('A'),
+								   'A'}).isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { Kernel.char_dash_upcase('a'),
+								   'A'}).isTrue());
 	}
 
 	@Test
 	public void testChar_dash_downcase() {
-		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_downcase('1'),
-				'1').isTrue());
-		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_downcase('a'),
-				'a').isTrue());
-		assertTrue(Kernel.char_equal__question_(Kernel.char_dash_downcase('A'),
-				'a').isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { Kernel.char_dash_downcase('1'),
+								   '1'}).isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { Kernel.char_dash_downcase('a'),
+								   'a'}).isTrue());
+	    assertTrue(Kernel.char_equal__question_(new Object[] { Kernel.char_dash_downcase('A'),
+								   'a'}).isTrue());
 	}
 
 	@Test
@@ -403,41 +405,41 @@ public class TestKernel {
 
 	@Test
 	public void testChar_dash_ci_equal__question_() {
-		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'a').isTrue());
-		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'A').isTrue());
-		assertTrue(Kernel.char_dash_ci_equal__question_('a', 'b').isFalse());
-		assertTrue(Kernel.char_dash_ci_equal__question_(new Character('a'),
-				new Character('a')).isTrue());
+	    assertTrue(Kernel.char_dash_ci_equal__question_(new Object[] {'a', 'a'}).isTrue());
+	    assertTrue(Kernel.char_dash_ci_equal__question_(new Object[] {'a', 'A'}).isTrue());
+	    assertTrue(Kernel.char_dash_ci_equal__question_(new Object[] {'a', 'b'}).isFalse());
+	    assertTrue(Kernel.char_dash_ci_equal__question_(new Object[] { new Character('a'),
+									   new Character('a')}).isTrue());
 	}
 
 	@Test
 	public void testChar_dash_ci_greaterthan__question_() {
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_('B', 'a')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__question_(new Object[] {'B', 'a'})
 				.isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_('b', 'A')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__question_(new Object[] {'b', 'A'})
 				.isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_('a', 'b')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__question_(new Object[] {'a', 'b'})
 				.isFalse());
-		assertTrue(Kernel.char_dash_ci_greaterthan__question_('a', 'A')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__question_(new Object[] {'a', 'A'})
 				.isFalse());
 	}
 
 	@Test
 	public void testChar_dash_ci_greaterthan__equal__question_() {
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('B', 'a')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(new Object[] {'B', 'a'})
 				.isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('b', 'A')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(new Object[] {'b', 'A'})
 				.isTrue());
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('a', 'b')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(new Object[] {'a', 'b'})
 				.isFalse());
-		assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_('a', 'A')
+	    assertTrue(Kernel.char_dash_ci_greaterthan__equal__question_(new Object[] {'a', 'A'})
 				.isTrue());
 	}
 
 	@Test
 	public void testChar_dash_ci_lessthan__question_() {
-		assertTrue(Kernel.char_dash_ci_lessthan__question_('B', 'a').isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__question_('b', 'A').isFalse());
+	    assertTrue(Kernel.char_dash_ci_lessthan__question_(new Object[] {'B', 'a'}).isFalse());
+	    assertTrue(Kernel.char_dash_ci_lessthan__question_(new Object[] {'b', 'A'}).isFalse());
 	}
 
 	@Test
