@@ -1,9 +1,11 @@
 package org.plt.guiworld;
 
+import org.plt.world.*;
+
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
-import org.plt.world.*;
+import android.text.*;
 
 // GuiRenderer: creates the initial gui, given the world and the view.
 // The visitor also keeps things up to date.
@@ -18,6 +20,7 @@ public class GuiRenderer {
 	public GuiRenderer(Object world, LinearLayout view, Gui gui) {
 		this.world = world;
 		this.view = view;
+		view.setOrientation(LinearLayout.VERTICAL);
 		this.gui = gui;
 		initializeForm();
 	}
@@ -64,20 +67,27 @@ public class GuiRenderer {
 		// FIXME: implement these!
 
 		public void visit(final TextField t) {
-			// String msg = (t.getValF().transform(world)).toString();
-			// final javax.microedition.lcdui.TextField tf = new
-			// javax.microedition.lcdui.TextField(
-			// "", msg, 100, javax.microedition.lcdui.TextField.ANY);
-			// topForm.append(tf);
-			// topForm.setItemStateListener(new ItemStateListener() {
-			// public void itemStateChanged(Item item) {
-			// javax.microedition.lcdui.TextField tf =
-			// (javax.microedition.lcdui.TextField) item;
-			// String str = tf.getString();
-			// Object newWorld = t.getCallback().transform(world, str);
-			// changeWorld(newWorld);
-			// }
-			// });
+			String txt = (t.getValF().transform(world)).toString();
+			EditText edit = new EditText(view.getContext());
+			edit.setText(txt);
+			edit.addTextChangedListener(new TextWatcher() {
+				public void afterTextChanged(Editable s) {
+					String str = s.toString();
+					Object newWorld = t.getCallback().transform(world, str);
+					changeWorld(newWorld);
+				}
+
+				public void beforeTextChanged(CharSequence s, int start,
+						int count, int after) {
+
+				}
+
+				public void onTextChanged(CharSequence s, int start, int count,
+						int after) {
+				}
+			});
+
+			view.addView(edit);
 		}
 
 		public void visit(Col c) {
@@ -120,30 +130,29 @@ public class GuiRenderer {
 	}
 
 	private class GuiRefresher implements GuiVisitor {
-		private int formIndex;
+		private int viewIndex;
 
-		public GuiRefresher(int formIndex) {
-			this.formIndex = formIndex;
+		public GuiRefresher(int viewIndex) {
+			this.viewIndex = viewIndex;
 		}
 
 		public void visit(Row r) {
 			Gui[] items = r.getItems();
 			for (int i = 0; i < items.length; i++) {
-				items[i].accept(new GuiRefresher(this.formIndex + i));
+				items[i].accept(new GuiRefresher(this.viewIndex + i));
 			}
 		}
 
 		public void visit(Message m) {
-			TextView txt = (TextView) view.getChildAt(this.formIndex);
+			TextView txt = (TextView) view.getChildAt(this.viewIndex);
 			txt.setText(m.getValF().transform(world).toString());
 		}
 
 		// FIXME: implement these!
 		public void visit(TextField t) {
-			// javax.microedition.lcdui.TextField tf =
-			// (javax.microedition.lcdui.TextField) topForm
-			// .get(this.formIndex);
-			// tf.setString(t.getValF().transform(world).toString());
+			String label = (t.getValF().transform(world)).toString();
+			EditText edit = (EditText) view.getChildAt(this.viewIndex);
+			edit.setText(label);
 		}
 
 		public void visit(Col c) {
@@ -158,7 +167,7 @@ public class GuiRenderer {
 		public void visit(org.plt.guiworld.Button b) {
 			String label = (b.getValF().transform(world)).toString();
 			android.widget.Button update = (android.widget.Button) view
-					.getChildAt(this.formIndex);
+					.getChildAt(this.viewIndex);
 			update.setText(label);
 		}
 

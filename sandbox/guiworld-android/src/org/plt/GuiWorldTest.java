@@ -48,26 +48,26 @@ public class GuiWorldTest extends Activity {
 								return new Integer(
 										((Integer) world).intValue() + 1);
 							}
-						})
-		//
-				// new org.plt.guiworld.TextField(new WorldTransformer() {
-				// public Object transform(Object world) {
-				// return "init text in text field: " + world.toString();
-				// }
-				// }, new WorldAndObjectTransformer() {
-				// public Object transform(Object world, Object obj) {
-				// try {
-				// int val = Integer.parseInt(obj.toString());
-				// Integer newWorld = new Integer(((Integer) world)
-				// .intValue()
-				// + val);
-				// return newWorld;
-				// } catch (NumberFormatException e) {
-				// return new Integer(0);
-				// }
-				// }
-				// }),
+						}),
 				//
+				new org.plt.guiworld.TextField(new WorldTransformer() {
+					public Object transform(Object world) {
+						return "init text in text field: " + world.toString();
+					}
+				}, new WorldAndObjectTransformer() {
+					public Object transform(Object world, Object obj) {
+						try {
+							int val = Integer.parseInt(obj.toString());
+							Integer newWorld = new Integer(((Integer) world)
+									.intValue()
+									+ val);
+							return newWorld;
+						} catch (NumberFormatException e) {
+							return new Integer(0);
+						}
+					}
+				}),
+		//
 				// new DropDown(new WorldTransformer() {
 				// public Object transform(Object world) {
 				// Object[] items = new Object[] { "item1", "item2",
