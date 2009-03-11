@@ -2,7 +2,7 @@ package org.plt.guiworld;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.midlet.*;
-import org.plt.world.WorldTransformer;
+import org.plt.world.*;
 
 // GuiRenderer: creates the initial gui, given the world and the view.
 // The visitor also keeps things up to date.
@@ -60,10 +60,19 @@ public class GuiRenderer {
 
 		// FIXME: implement these!
 
-		public void visit(TextField t) {
+		public void visit(final TextField t) {
 			String msg = (t.getValF().transform(world)).toString();
-			topForm.append(new javax.microedition.lcdui.TextField("", msg, 100,
-					javax.microedition.lcdui.TextField.ANY));
+			final javax.microedition.lcdui.TextField tf = new javax.microedition.lcdui.TextField(
+					"", msg, 100, javax.microedition.lcdui.TextField.ANY);
+			topForm.append(tf);
+			topForm.setItemStateListener(new ItemStateListener() {
+				public void itemStateChanged(Item item) {
+					javax.microedition.lcdui.TextField tf = (javax.microedition.lcdui.TextField) item;
+					String str = tf.getString();
+					Object newWorld = t.getCallback().transform(world, str);
+					changeWorld(newWorld);
+				}
+			});
 		}
 
 		public void visit(Col c) {
@@ -76,6 +85,11 @@ public class GuiRenderer {
 		}
 
 		public void visit(final Button b) {
+			/*
+			 * topForm.append("") is a must!! Otherwise, mismatch will happen in
+			 * visit methods of GuiRefresher!!
+			 */
+			topForm.append("");
 			String label = (b.getValF().transform(world)).toString();
 			Command update = new Command(label, Command.OK, 1);
 			topForm.addCommand(update);
@@ -125,6 +139,12 @@ public class GuiRenderer {
 		}
 
 		// FIXME: implement these!
+		public void visit(TextField t) {
+			javax.microedition.lcdui.TextField tf = (javax.microedition.lcdui.TextField) topForm
+					.get(this.formIndex);
+			tf.setString(t.getValF().transform(world).toString());
+		}
+
 		public void visit(Col c) {
 		}
 
@@ -135,15 +155,13 @@ public class GuiRenderer {
 		}
 
 		public void visit(Button b) {
+
 		}
 
 		public void visit(Slider s) {
 		}
 
 		public void visit(DropDown d) {
-		}
-
-		public void visit(TextField t) {
 		}
 
 		public void visit(CheckBox c) {
