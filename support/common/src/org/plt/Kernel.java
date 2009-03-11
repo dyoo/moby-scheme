@@ -239,13 +239,14 @@ public class Kernel {
 		return ((org.plt.types.Number) _n1).toString();
 	}
 
-	public static Logic equal_question_(Object _o1, Object _o2) {
-		if (_o1 instanceof org.plt.types.Number
-				&& _o2 instanceof org.plt.types.Number) {
-			return _equal_(_o1, _o2);
-		}
-		return toLogic(_o1.equals(_o2));
+    public static Logic equal_question_(Object _o1, Object _o2) {
+	if (_o1 instanceof org.plt.types.Number
+	    && _o2 instanceof org.plt.types.Number) {
+	    return toLogic(NumberTower.equal((org.plt.types.Number)_o1,
+					     (org.plt.types.Number)_o2));
 	}
+	return toLogic(_o1.equals(_o2));
+    }
 
 	// ////////////////////////////////////////////////////////////////////
 	public static org.plt.types.Number random(Object n) {
@@ -270,15 +271,15 @@ public class Kernel {
 
 	    for(int i = 2; i < args.length; i++) {
 		currentMax = 
-		    NumberTower.greaterThanEqual(currentMax
+		    NumberTower.greaterThanEqual(currentMax,
 						 (org.plt.types.Number) args[i])
-		? currentMax : args[i];
+		    ? currentMax : (org.plt.types.Number) args[i];
 
 	    }
 	    return currentMax;
 	}
 
-	public static org.plt.types.Number min(Object n1, Object n2) {
+	public static org.plt.types.Number min(Object[] args) {
 	    org.plt.types.Number currentMin = 
 		NumberTower.lessThanEqual((org.plt.types.Number) args[0],
 					  (org.plt.types.Number) args[1])
@@ -286,9 +287,9 @@ public class Kernel {
 
 	    for(int i = 2; i < args.length; i++) {
 		currentMin = 
-		    NumberTower.lessThanEqual(currentMin
+		    NumberTower.lessThanEqual(currentMin,
 					      (org.plt.types.Number) args[i])
-		    ? currentMin : args[i];
+		    ? currentMin : (org.plt.types.Number) args[i];
 		
 	    }
 	    return currentMin;
@@ -566,7 +567,7 @@ public class Kernel {
 					"positive?: expects argument of type <real number>; given: "
 							+ n1);
 
-		return _greaterthan_(n1, ZERO);
+		return toLogic(NumberTower.greaterThan((org.plt.types.Number)n1, ZERO));
 	}
 
 	public static org.plt.types.Logic negative_question_(Object n1) {
@@ -575,7 +576,7 @@ public class Kernel {
 					"negative?: expects argument of type <real number>; given: "
 							+ n1);
 
-		return _lessthan_(n1, ZERO);
+		return toLogic(NumberTower.lessThan((org.plt.types.Number)n1, ZERO));
 	}
 
 	public static org.plt.types.Number sgn(Object n1) {
@@ -643,7 +644,7 @@ public class Kernel {
 	if (negative_question_(b).isTrue())
 	    b = NumberTower.minus(ZERO, (org.plt.types.Number) b);
 
-	while (_equal_(b, ZERO).isFalse()) {
+	while (! NumberTower.equal(b, ZERO)) {
 	    org.plt.types.Number t = (org.plt.types.Number) b;
 	    b = ((org.plt.types.Number) a).modulo((org.plt.types.Number) b);
 	    a = t;
@@ -727,7 +728,7 @@ public class Kernel {
 	}
 
 	public static org.plt.types.Logic integer_question_(Object n) {
-		return Kernel._equal_(Kernel.denominator(n), ONE);
+	    return toLogic(NumberTower.equal(Kernel.denominator(n), ONE));
 	}
 
 	public static org.plt.types.Logic null_question_(Object n) {
@@ -759,12 +760,13 @@ public class Kernel {
 							+ i + ";  other arguments were: " + lst);
 
 		org.plt.types.Number len = length(lst);
-		if (_greaterthan__equal_(i, len).isTrue())
+		if (NumberTower.greaterThanEqual((org.plt.types.Number) i,
+						 (org.plt.types.Number) len))
 			throw new SchemeException("list-ref: index " + i
 					+ " too large for " + lst);
 
 		org.plt.types.Number index = ZERO;
-		while (_lessthan_(index, i).isTrue()) {
+		while (NumberTower.lessThan(index, (org.plt.types.Number) i)) {
 			index = add1(index);
 			lst = ((org.plt.types.List) lst).rest();
 		}
@@ -779,7 +781,9 @@ public class Kernel {
 							+ n);
 
 		if (negative_question_(n).isFalse()) {
-		    if (_lessthan_(NumberTower.minus((org.plt.types.Number)n, floor(n)), HALF).isTrue())
+		    if (NumberTower.lessThan(NumberTower.minus((org.plt.types.Number)n, 
+							       floor(n)),
+					     HALF))
 				return floor(n);
 			else
 				return ceiling(n);
@@ -908,7 +912,8 @@ public class Kernel {
 			throw new SchemeException(
 					"string-ref: expects type <non-negative exact integer> as 2nd argument, given: "
 							+ i + "; other arguments were: " + s);
-		if (_greaterthan_(i, sub1(string_dash_length(s))).isTrue())
+		if (NumberTower.greaterThan((org.plt.types.Number)i,
+					    sub1(string_dash_length(s))))
 			throw new SchemeException("string-ref: index " + i
 					+ " out of range [0, " + sub1(string_dash_length(s))
 					+ "] for string: " + s);
