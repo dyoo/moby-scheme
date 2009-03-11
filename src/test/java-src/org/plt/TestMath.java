@@ -106,9 +106,9 @@ public class TestMath {
 	@Test
 	public void testAsin() {
 		assertEquals(new Rational(0, 1), Rational.ZERO.asin());
-		assertEquals(Kernel._slash_(FloatPoint.PI, new Rational(-2, 1)),
-				new Rational(-1, 1).asin());
-		assertEquals(Kernel._slash_(FloatPoint.PI, Kernel.TWO), new Rational(1,
+		assertEquals(NumberTower.divide(FloatPoint.PI, new Rational(-2, 1)),
+			     new Rational(-1, 1).asin());
+		assertEquals(NumberTower.divide(FloatPoint.PI, Kernel.TWO), new Rational(1,
 				1).asin());
 	}
 

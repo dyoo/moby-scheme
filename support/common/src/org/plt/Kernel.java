@@ -309,18 +309,26 @@ public class Kernel {
 	}
 
 	// ////////////////////////////////////////////////////////////////////
-	public static Logic string_equal__question_(Object s1, Object s2) {
-		if (string_question_(s1).isFalse())
+	public static Logic string_equal__question_(Object[] args) {
+		for (int i = 0; i < args.length - 1; i++) {
+		    String s1 = (String) args[i];
+		    String s2 = (String) args[i+1];
+		    if (string_question_(s1).isFalse())
 			throw new SchemeException(
-					"string=?: expects type <string> as 1st argument, given: "
-							+ s1 + "; other arguments were: " + s2);
-		if (string_question_(s1).isFalse())
+						  "string=?: expects type <string> as 1st argument, given: "
+						  + s1 + "; other arguments were: " + s2);
+		    if (string_question_(s1).isFalse())
 			throw new SchemeException(
-					"string=?: expects type <string> as 2nd argument, given: "
-							+ s2 + "; other arguments were: " + s1);
-
-		return toLogic(((String) s1).equals(s2));
+						  "string=?: expects type <string> as 2nd argument, given: "
+						  + s2 + "; other arguments were: " + s1);
+		    if (! s1.equals(s2)) {
+			return Logic.FALSE;
+		    }
+		    
+		}
+		return Logic.TRUE;
 	}
+
 
 	public static Logic struct_question_(Object obj) {
 		return toLogic(obj instanceof org.plt.types.Struct);

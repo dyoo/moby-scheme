@@ -260,7 +260,9 @@ public class TestKernel {
 	@Test
 	public void testSubstring() {
 		assertTrue(Kernel.string_equal__question_(
-				Kernel.substring("world", Kernel.ZERO, Kernel.TWO), "wo")
+							  new Object[] {			  
+							      Kernel.substring("world", Kernel.ZERO, Kernel.TWO), 
+							      "wo"})
 				.isTrue());
 	}
 
@@ -279,7 +281,7 @@ public class TestKernel {
 	@Test
 	public void testString_dash_copy() {
 		assertTrue(Kernel.string_equal__question_(
-				Kernel.string_dash_copy("hi"), "hi").isTrue());
+							  new Object[] { Kernel.string_dash_copy("hi"), "hi"}).isTrue());
 	}
 
 	@Test
@@ -444,55 +446,55 @@ public class TestKernel {
 
 	@Test
 	public void testChar_dash_ci_lessthan__equal__question_() {
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_('B', 'a')
+	    assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(new Object[] {'B', 'a'})
 				.isFalse());
-		assertTrue(Kernel.char_dash_ci_lessthan__equal__question_('b', 'A')
+	    assertTrue(Kernel.char_dash_ci_lessthan__equal__question_(new Object[] {'b', 'A'})
 				.isFalse());
 
 	}
 
 	@Test
 	public void testString_dash_ci_equal__question_() {
-		assertTrue(Kernel.string_dash_ci_equal__question_("Hi", "hI").isTrue());
-		assertTrue(Kernel.string_dash_ci_equal__question_("hi", "hi").isTrue());
-		assertTrue(Kernel.string_dash_ci_equal__question_("hi", "ha").isFalse());
+	    assertTrue(Kernel.string_dash_ci_equal__question_(new Object[] {"Hi", "hI"}).isTrue());
+	    assertTrue(Kernel.string_dash_ci_equal__question_(new Object[] {"hi", "hi"}).isTrue());
+	    assertTrue(Kernel.string_dash_ci_equal__question_(new Object[] {"hi", "ha"}).isFalse());
 	}
 
 	@Test
 	public void testString_dash_ci_greaterthan__question_() {
-		assertTrue(Kernel.string_dash_ci_greaterthan__question_("Hi", "hi")
+	    assertTrue(Kernel.string_dash_ci_greaterthan__question_(new Object[] {"Hi", "hi"})
 				.isFalse());
-		assertTrue(Kernel.string_dash_ci_greaterthan__question_("H", "a")
+	    assertTrue(Kernel.string_dash_ci_greaterthan__question_(new Object[] {"H", "a"})
 				.isTrue());
-		assertTrue(Kernel.string_dash_ci_greaterthan__question_("h", "a")
+	    assertTrue(Kernel.string_dash_ci_greaterthan__question_(new Object[] {"h", "a"})
 				.isTrue());
 	}
 
 	@Test
 	public void testString_dash_ci_greaterthan__equal__question_() {
-		assertTrue(Kernel.string_dash_ci_greaterthan__equal__question_("Hi",
-				"hI").isTrue());
+	    assertTrue(Kernel.string_dash_ci_greaterthan__equal__question_(new Object[] { "Hi",
+											  "hI"}).isTrue());
 		assertTrue(Kernel
-				.string_dash_ci_greaterthan__equal__question_("H", "a")
+			   .string_dash_ci_greaterthan__equal__question_(new Object[] { "H", "a"})
 				.isTrue());
 	}
 
 	@Test
 	public void testString_dash_ci_lessthan__question_() {
-		assertTrue(Kernel.string_dash_ci_lessthan__question_("h", "M").isTrue());
-		assertTrue(Kernel.string_dash_ci_lessthan__question_("h", "H")
+	    assertTrue(Kernel.string_dash_ci_lessthan__question_(new Object[] {"h", "M"}).isTrue());
+	    assertTrue(Kernel.string_dash_ci_lessthan__question_(new Object[] {"h", "H"})
 				.isFalse());
-		assertTrue(Kernel.string_dash_ci_lessthan__question_("b", "a")
+	    assertTrue(Kernel.string_dash_ci_lessthan__question_(new Object[] {"b", "a"})
 				.isFalse());
 	}
 
 	@Test
 	public void testString_dash_ci_lessthan__equal__question_() {
-		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("h", "M")
+	    assertTrue(Kernel.string_dash_ci_lessthan__equal__question_(new Object[] {"h", "M"})
 				.isTrue());
-		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("h", "H")
+	    assertTrue(Kernel.string_dash_ci_lessthan__equal__question_(new Object[] {"h", "H"})
 				.isTrue());
-		assertTrue(Kernel.string_dash_ci_lessthan__equal__question_("b", "a")
+	    assertTrue(Kernel.string_dash_ci_lessthan__equal__question_(new Object[] {"b", "a"})
 				.isFalse());
 	}
 
@@ -527,46 +529,46 @@ public class TestKernel {
 
 	@Test
 	public void testString_dash_append() {
-		assertTrue(Kernel.string_equal__question_("hello world",
-				Kernel.string_dash_append("hello", " world")).isTrue());
+	    assertTrue(Kernel.string_equal__question_(new Object[] { "hello world",
+								     Kernel.string_dash_append(new Object[] {"hello", " world"})}).isTrue());
 	}
 
 	@Test
 	public void testString() {
 		Object[] arr = { 'h', 'i' };
-		assertTrue(Kernel.string_equal__question_("hi", Kernel.string(arr))
+		assertTrue(Kernel.string_equal__question_(new Object[] {"hi", Kernel.string(arr)})
 				.isTrue());
 	}
 
 	@Test
 	public void testMake_dash_string() {
-		assertTrue(Kernel.string_equal__question_("hh",
-				Kernel.make_dash_string(Kernel.TWO, 'h')).isTrue());
+	    assertTrue(Kernel.string_equal__question_(new Object[] { "hh",
+								     Kernel.make_dash_string(Kernel.TWO, 'h')}).isTrue());
 	}
 
 	@Test
 	public void testList_dash__greaterthan_string() {
 		org.plt.types.List lst = new Pair('h', new Pair('i', Empty.EMPTY));
 		assertTrue(Kernel.string_equal__question_(
-				Kernel.list_dash__greaterthan_string(lst), "hi").isTrue());
+							  new Object[] { Kernel.list_dash__greaterthan_string(lst), "hi"}).isTrue());
 	}
 
 	@Test
 	public void testChar_dash__greaterthan_integer() {
-		assertTrue(Kernel._equal_(Kernel.char_dash__greaterthan_integer('1'),
-				new Rational(49, 1)).isTrue());
-		assertTrue(Kernel._equal_(Kernel.char_dash__greaterthan_integer('d'),
-				new Rational(100, 1)).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.char_dash__greaterthan_integer('1'),
+						     new Rational(49, 1)}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.char_dash__greaterthan_integer('d'),
+						     new Rational(100, 1)}).isTrue());
 	}
 
 	@Test
 	public void testInteger_dash__greaterthan_char() {
 		assertTrue(Kernel.char_equal__question_(
-				Kernel.integer_dash__greaterthan_char(new Rational(49, 1)),
-				new Character('1')).isTrue());
+							new Object[] { Kernel.integer_dash__greaterthan_char(new Rational(49, 1)),
+								       new Character('1')}).isTrue());
 		assertTrue(Kernel.char_equal__question_(
-				Kernel.integer_dash__greaterthan_char(new Rational(100, 1)),
-				new Character('d')).isTrue());
+							new Object[] { Kernel.integer_dash__greaterthan_char(new Rational(100, 1)),
+								       new Character('d')}).isTrue());
 	}
 
 	@Test
@@ -636,7 +638,7 @@ public class TestKernel {
 		} catch (InterruptedException e) {
 		}
 		org.plt.types.Number secondTime = Kernel.current_dash_seconds();
-		assertTrue(Kernel._lessthan_(firstTime, secondTime).isTrue());
+		assertTrue(Kernel._lessthan_(new Object[] { firstTime, secondTime }).isTrue());
 	}
 
 	@Test
@@ -657,30 +659,30 @@ public class TestKernel {
 
 	@Test
 	public void testReal_dash_part() {
-		assertTrue(Kernel._equal_(Kernel.ONE,
-				Kernel.real_dash_part(FloatPoint.fromString("1.0"))).isTrue());
-		assertTrue(Kernel._equal_(FloatPoint.fromString("1.0"),
-				Kernel.real_dash_part(FloatPoint.fromString("1.0"))).isTrue());
-		assertTrue(Kernel._equal_(Kernel.ONE,
-				Kernel.real_dash_part(FloatPoint.fromString("1.1"))).isFalse());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.ONE,
+						     Kernel.real_dash_part(FloatPoint.fromString("1.0"))}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { FloatPoint.fromString("1.0"),
+						     Kernel.real_dash_part(FloatPoint.fromString("1.0"))}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.ONE,
+						     Kernel.real_dash_part(FloatPoint.fromString("1.1"))}).isFalse());
 		assertTrue(Kernel
 				._equal_(
-						Kernel.ZERO,
+					 new Object[] { Kernel.ZERO,
 						Kernel.real_dash_part(Kernel.sqrt(FloatPoint
-								.fromString("-1")))).isTrue());
+										  .fromString("-1")))}).isTrue());
 	}
 
 	@Test
 	public void testImag_dash_part() {
-		assertTrue(Kernel._equal_(Kernel.ZERO,
-				Kernel.imag_dash_part(FloatPoint.fromString("1.0"))).isTrue());
-		assertTrue(Kernel._equal_(FloatPoint.fromString("0"),
-				Kernel.imag_dash_part(FloatPoint.fromString("1.0"))).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { Kernel.ZERO,
+						     Kernel.imag_dash_part(FloatPoint.fromString("1.0"))}).isTrue());
+	    assertTrue(Kernel._equal_(new Object[] { FloatPoint.fromString("0"),
+						     Kernel.imag_dash_part(FloatPoint.fromString("1.0"))}).isTrue());
 		assertTrue(Kernel
-				._equal_(
+			   ._equal_(new Object[] {
 						Kernel.ONE,
 						Kernel.imag_dash_part(Kernel.sqrt(FloatPoint
-								.fromString("-1")))).isTrue());
+										  .fromString("-1")))}).isTrue());
 	}
 
 	@Test
@@ -714,57 +716,61 @@ public class TestKernel {
 	@Test
 	public void testExact_dash__greaterthan_inexact() {
 		assertTrue(Kernel._equal_(
-				Kernel.exact_dash__greaterthan_inexact(Kernel.pi), Kernel.pi)
+					  new Object[] { Kernel.exact_dash__greaterthan_inexact(Kernel.pi), Kernel.pi})
 				.isTrue());
 		assertTrue(Kernel._equal_(
-				Kernel.exact_dash__greaterthan_inexact(Kernel.ONE),
-				FloatPoint.fromString("1.0")).isTrue());
+					  new Object[] {
+					      Kernel.exact_dash__greaterthan_inexact(Kernel.ONE),
+					      FloatPoint.fromString("1.0")}).isTrue());
 	}
 
 	@Test
 	public void testInexact_dash__greaterthan_exact() {
 		assertTrue(Kernel
-				._equal_(Kernel.inexact_dash__greaterthan_exact(Kernel.pi),
-						Kernel.THREE).isTrue());
+			   ._equal_(new Object[] { Kernel.inexact_dash__greaterthan_exact(Kernel.pi),
+						   Kernel.THREE}).isTrue());
 	}
 
 	@Test
 	public void testAngle() {
 		assertTrue(Kernel._equal_(
+					  new Object[] { 
 				Kernel.angle(Kernel.sqrt(FloatPoint.fromString("-1"))),
-				Kernel._slash_(FloatPoint.PI, Kernel.TWO)).isTrue());
-		assertTrue(Kernel._equal_(Kernel.angle(Kernel.ONE), Kernel.ZERO)
+				Kernel._slash_(new Object[] {FloatPoint.PI, Kernel.TWO})}).isTrue());
+		assertTrue(Kernel._equal_(new Object[] { Kernel.angle(Kernel.ONE), Kernel.ZERO})
 				.isTrue());
-		assertTrue(Kernel._equal_(Kernel.angle(FloatPoint.fromString("-2")),
-				FloatPoint.PI).isTrue());
-		assertTrue(Kernel._equal_(Kernel.angle(new Complex(1, 1)),
-				Kernel._slash_(FloatPoint.PI, Kernel.FOUR)).isTrue());
-		assertTrue(Kernel._equal_(Kernel.angle(new Complex(-1, 1)),
-				Kernel._star_(FloatPoint.PI, FloatPoint.fromString("0.75")))
+		assertTrue(Kernel._equal_(new Object[] { Kernel.angle(FloatPoint.fromString("-2")),
+							 FloatPoint.PI}).isTrue());
+		assertTrue(Kernel._equal_(new Object[] { Kernel.angle(new Complex(1, 1)),
+							 Kernel._slash_(new Object[] {FloatPoint.PI, Kernel.FOUR})}).isTrue());
+		assertTrue(Kernel._equal_(new Object[] { Kernel.angle(new Complex(-1, 1)),
+							 Kernel._star_(new Object[] { FloatPoint.PI, FloatPoint.fromString("0.75")})})
 				.isTrue());
-		assertTrue(Kernel._equal_(Kernel.angle(new Complex(1, -1)),
-				Kernel._slash_(FloatPoint.PI, FloatPoint.fromString("-4")))
+		assertTrue(Kernel._equal_(new Object[] { Kernel.angle(new Complex(1, -1)),
+							 Kernel._slash_(new Object[] { FloatPoint.PI, FloatPoint.fromString("-4")})})
 				.isTrue());
-		assertTrue(Kernel._equal_(Kernel.angle(new Complex(-1, -1)),
-				Kernel._star_(FloatPoint.PI, FloatPoint.fromString("-0.75")))
+		assertTrue(Kernel._equal_(new Object[] { Kernel.angle(new Complex(-1, -1)),
+							 Kernel._star_(new Object[] { FloatPoint.PI, FloatPoint.fromString("-0.75")})})
 				.isTrue());
 	}
 
 	@Test
 	public void testConjugate() {
 		assertTrue(Kernel._equal_(
+					  new Object[] { 
 				Kernel.conjugate(FloatPoint.fromString("-1")),
-				FloatPoint.fromString("-1")).isTrue());
-		assertTrue(Kernel._equal_(Kernel.conjugate(new Complex(1, 1)),
-				new Complex(1, -1)).isTrue());
+				FloatPoint.fromString("-1")}).isTrue());
+		assertTrue(Kernel._equal_(new Object[] { Kernel.conjugate(new Complex(1, 1)),
+							 new Complex(1, -1)}).isTrue());
 	}
 
 	@Test
 	public void testMagnitude() {
 		assertTrue(Kernel._equal_(
-				Kernel.magnitude(FloatPoint.fromString("-1")), Kernel.ONE)
+					  new Object[] { 
+					      Kernel.magnitude(FloatPoint.fromString("-1")), Kernel.ONE})
 				.isTrue());
-		assertTrue(Kernel._equal_(Kernel.magnitude(new Complex(-3, 4)),
-				Kernel.FIVE).isTrue());
+		assertTrue(Kernel._equal_(new Object[] { Kernel.magnitude(new Complex(-3, 4)),
+							 Kernel.FIVE}).isTrue());
 	}
 }

@@ -141,7 +141,7 @@
     (r 'symbol->string 1)
     
     ;; Strings
-    (r 'string=? 2)
+    (r 'string=? 2 #t)
     (r 'symbol? 1)
     (r 'string? 1)
     (r 'string>? 2 #t)
