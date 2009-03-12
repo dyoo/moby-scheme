@@ -10,6 +10,7 @@ import android.text.*;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 // GuiRenderer: creates the initial gui, given the world and the view.
 // The visitor also keeps things up to date.
@@ -84,7 +85,6 @@ public class GuiRenderer {
 			topView.addView(txt);
 		}
 
-		// FIXME: implement these!
 		public void visit(final TextField t) {
 			String txt = (t.getValF().transform(world)).toString();
 			EditText edit = new EditText(topView.getContext());
@@ -127,6 +127,23 @@ public class GuiRenderer {
 				}
 			});
 			topView.addView(update);
+		}
+
+		public void visit(final org.plt.guiworld.CheckBox c) {
+			String msg = (c.getValF().transform(world)).toString();
+			android.widget.CheckBox cb = new android.widget.CheckBox(topView
+					.getContext());
+			cb.setText(msg);
+			cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView,
+						boolean isChecked) {
+					Object newWorld = c.getCallback().transform(world,
+							new Boolean(isChecked));
+					changeWorld(newWorld);
+				}
+			});
+
+			topView.addView(cb);
 		}
 
 		public void visit(final Slider s) {
@@ -174,9 +191,6 @@ public class GuiRenderer {
 				}
 			});
 			topView.addView(dropdown);
-		}
-
-		public void visit(CheckBox c) {
 		}
 	}
 
@@ -231,6 +245,13 @@ public class GuiRenderer {
 			update.setText(label);
 		}
 
+		public void visit(org.plt.guiworld.CheckBox c) {
+			String label = (c.getValF().transform(world)).toString();
+			android.widget.CheckBox cb = (android.widget.CheckBox) topView
+					.getChildAt(this.viewIndex);
+			cb.setText(label);
+		}
+
 		public void visit(Slider s) {
 			SeekBar bar = (SeekBar) topView.getChildAt(this.viewIndex);
 			try {
@@ -249,11 +270,8 @@ public class GuiRenderer {
 				if (item.intValue() < dropdown.getCount())
 					dropdown.setSelection(item.intValue());
 			} catch (NumberFormatException e) {
-				
-			}
-		}
 
-		public void visit(CheckBox c) {
+			}
 		}
 	}
 

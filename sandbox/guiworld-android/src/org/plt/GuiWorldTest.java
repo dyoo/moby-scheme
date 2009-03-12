@@ -89,9 +89,21 @@ public class GuiWorldTest extends Activity {
 							public Object transform(Object world, Object obj) {
 								return Integer.parseInt(obj.toString());
 							}
-						})
+						}),
 
-		});
+				new org.plt.guiworld.CheckBox(new WorldTransformer() {
+					public Object transform(Object world) {
+						return "check: " + world.toString();
+					}
+				},
+
+				new WorldAndObjectTransformer() {
+					public Object transform(Object world, Object obj) {
+						if (((Boolean) obj).equals(Boolean.TRUE))
+							return new Integer(1);
+						return new Integer(0);
+					}
+				}) });
 
 		// Uncomment this when we have a GuiRenderer.
 		LinearLayout view = new LinearLayout(this);
