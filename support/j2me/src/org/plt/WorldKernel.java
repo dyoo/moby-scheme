@@ -9,6 +9,134 @@ import org.plt.gui.*;
 // World kernel functions
 
 public class WorldKernel {
+    private static Object width;
+    private static Object height;
+    private static Object frameRate;
+    private static Object initialWorld;
+
+    private static Callable onTickHandler;
+    private static Callable onKeyEventHandler;
+    private static Callable onMouseEventHandler;
+    private static Callable onMessageEventHandler;
+    private static Callable onLocationChangeEventHandler;
+    private static Callable onRedrawHandler;
+    private static Callable stopWhenHandler;
+
+    // Here are defaults for our handlers.
+    static {
+	onTickHandler = 
+	    onKeyEventHandler = 
+	    onMouseEventHandler =
+	    onMessageEventHandler =
+	    onLocationChangeEventHandler =
+	    new Callable() {
+		public Object call(Object[] args) {
+		    return args[0];
+		}
+	    };
+	onRedrawHandler = new Callable() {
+		public Object call(Object[] args) {
+		    return Scene.emptyScene(100, 100);
+		}
+	    };
+	stopWhenHandler = new Callable() {
+		public Object call(Object[] args) {
+		    return Logic.FALSE;
+		}
+	    };
+    }
+
+    public static Object bigBang(Object width,
+				 Object height,
+				 Object frameRate,
+				 Object initialWorld) {
+	WorldKernel.width = width;
+        WorldKernel.height = height;
+	WorldKernel.frameRate = frameRate;
+	WorldKernel.initialWorld = initialWorld;
+	return VoidObject.VOID;
+    }
+    public static Object getWidth() {
+	return WorldKernel.width;
+    }
+    public static Object getHeight() {
+	return WorldKernel.height;
+    }
+    public static Object getFrameRate() {
+	return WorldKernel.frameRate;
+    }
+    public static Object getInitialWorld() {
+	return WorldKernel.initialWorld;
+    }
+    public  static Callable getOnTickHandler() {
+	return WorldKernel.onTickHandler;
+    }
+    public  static Callable getOnKeyEventHandler() {
+	return WorldKernel.onKeyEventHandler;
+    }
+    public  static Callable getOnMouseEventHandler() {
+	return WorldKernel.onMouseEventHandler;
+    }
+    public  static Callable getOnMessageEventHandler() {
+	return WorldKernel.onMessageEventHandler;
+    }
+    public  static Callable getOnLocationChangeEventHandler() {
+	return WorldKernel.onLocationChangeEventHandler;
+    }
+    public  static Callable getOnRedrawHandler() {
+	return WorldKernel.onRedrawHandler;
+    }
+    public static Callable getStopWhenHandler() {
+	return WorldKernel.stopWhenHandler;
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+
+
+    public static Object on_dash_tick(Object callable) {
+	WorldKernel.onTickHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+    public static Object on_dash_key_dash_event(Object callable) {
+	WorldKernel.onKeyEventHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+
+    public static Object on_dash_mouse_dash_event(Object callable) {
+	WorldKernel.onMouseEventHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+    public static Object on_dash_message_dash_event(Object callable) {
+	WorldKernel.onMessageEventHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+
+    public static Object on_dash_location_dash_change_dash_event(Object callable) {
+	WorldKernel.onLocationChangeEventHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+    public static Object on_dash_redraw(Object callable) {
+	WorldKernel.onRedrawHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+    public static Object stop_dash_when(Object callable) {
+	WorldKernel.stopWhenHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////
 
     public static Scene empty_dash_scene(Object width, Object height) {
 	return Scene.emptyScene(((org.plt.types.Number)width).toInt(),

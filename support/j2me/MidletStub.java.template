@@ -25,6 +25,9 @@ import org.plt.LocationChangeListener;
 
 
 public class <<PROGRAM-NAME>> extends MIDlet {
+    // Important: definitions must come first, because they'll
+    // include static blocks that initialize values that
+    // we depend on later!
     <<PROGRAM-DEFINITIONS>>
 
     // #0 big-bang's world0
