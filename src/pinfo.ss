@@ -120,19 +120,43 @@
 
 (define-struct module-binding (name path bindings))
 
-
+;; world teachpack bindings
 (define world-module
   (let ([module-path
          (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
     (make-module-binding 'world
                          module-path
-                         (list
-                          ;; fixme: fill me in
-                          ))))
+                         (list (make-binding:function 'empty-scene module-path 2 #f
+                                                      "org.plt.WorldKernel.empty_dash_scene")
+                               (make-binding:function 'place-image module-path 4 #f
+                                                      "org.plt.WorldKernel.place_dash_image")
+                               (make-binding:function 'circle module-path 3 #f
+                                                      "org.plt.WorldKernel.circle")
+                               (make-binding:function 'nw:rectangle module-path 4 #f
+                                                      "org.plt.WorldKernel.rectangle")
+                               (make-binding:function 'key=? module-path 2 #f
+                                                      "org.plt.WorldKernel.key_equal__question_")
+                               (make-binding:function 'text module-path 3 #f
+                                                      "org.plt.WorldKernel.text")
+                               
+                               ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
+                               ;; We can fix this by extending expression to include a special "magic" identifier.  We should
+                               ;; ensure students don't accidently hit this function.
+                               (make-binding:function '-kernel-create-image module-path 1 #f
+                                                      "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
+                               (make-binding:function 'image-width module-path 1 #f
+                                                      "org.plt.WorldKernel.image_dash_width")
+                               (make-binding:function 'image-height module-path 1 #f
+                                                      "org.plt.WorldKernel.image_dash_height")
+                               (make-binding:function 'image? module-path 1 #f
+                                                      "org.plt.WorldKernel.image_question_")
+                               (make-binding:function 'image=? module-path 2 #f
+                                                      "org.plt.WorldKernel.image_equal__question_")
+                               (make-binding:function 'image-rotate module-path 2 #f
+                                                      "org.plt.WorldKernel.image_dash_rotate")))))
 
 
-;; TODO: syntactic abstraction using the stuff in each mock library, to reduce this
-;; drudgery.
+;; location library
 (define location-module 
   (let ([module-path 
          (build-path mock-lib-path "location.ss")])
@@ -150,7 +174,7 @@
                                                       "org.plt.lib.Location.getSpeed")))))
 
   
-
+;; accelerometer library
 (define tilt-module 
   (let ([module-path 
          (build-path mock-lib-path "tilt.ss")])
@@ -182,7 +206,14 @@
 (define known-modules (list world-module
                             location-module
                             tilt-module))
-                                             
+                                        
+
+
+;; extend-known-modules!: module-binding -> void
+;; Extends to the list of known modules.
+(define (extend-known-modules! a-module-binding)
+  (set! known-modules (cons a-module-binding known-modules)))
+
 
 
 ;; require-analyze: require-path -> pinfo
@@ -207,4 +238,9 @@
 
 
 (provide/contract [struct pinfo ([env env?])]
-                  [program-analyze ((program?) (pinfo?) . ->* . pinfo?)])
+                  [program-analyze ((program?) (pinfo?) . ->* . pinfo?)]
+                  
+                  [struct module-binding ([name symbol?]
+                                          [path path?]
+                                          [bindings (listof binding?)])]
+                  [extend-known-modules! (module-binding? . -> . any)])

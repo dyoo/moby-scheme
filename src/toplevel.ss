@@ -31,7 +31,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define (register-htdp!)
+(define (register-htdp-beginner-bindings!)
   ;; We register the toplevel identifiers here.
   (register-toplevel-constant! 'null "org.plt.types.Empty.EMPTY")
   (register-toplevel-constant! 'empty "org.plt.types.Empty.EMPTY")
@@ -225,32 +225,6 @@
     (r 'current-seconds 0)))
   
 
-
-(define (register-world!)
-  ;; The World kernel functions.
-  (let ([r (lambda (id arity (vararity? #f))
-             (register-toplevel-function! id 
-                                          (resolve-module-path 'htdp/world #f)
-                                          arity
-                                          vararity?
-                                          (format "org.plt.WorldKernel.~a"
-                                                  (identifier->munged-java-identifier id))))])
-    (r 'empty-scene 2)
-    (r 'place-image 4)
-    (r 'circle 3)
-    (r 'nw:rectangle 4)
-    (r 'rectangle 4)
-    (r 'key=? 2)
-    (r 'text 3)
-    (r '-kernel-create-image 1)
-    ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-    ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-    ;; ensure students don't accidently hit this function.
-    (r 'image-width 1)
-    (r 'image-height 1)
-    (r 'image? 1)
-    (r 'image=? 2)
-    (r 'image-rotate 2)))
   
   
 
@@ -259,8 +233,7 @@
 
 
 
-(register-htdp!)
-(register-world!)
+(register-htdp-beginner-bindings!)
 
 
 (provide/contract
