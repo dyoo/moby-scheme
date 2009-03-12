@@ -34,36 +34,46 @@ public class GuiRenderer {
 
 	// Initialize the form contents.
 	public void initializeForm() {
-		this.gui.accept(new InitialGuiConstructor());
+		this.gui.accept(new InitialGuiConstructor(view));
 	}
 
 	// Changes the world, and updates the view accordingly.
 	public void changeWorld(Object world) {
 		this.world = world;
-		this.gui.accept(new GuiRefresher(0));
+		this.gui.accept(new GuiRefresher(0, view));
 	}
 
 	// ////////////////////////////////////////////////////////////////////
 	private class InitialGuiConstructor implements GuiVisitor {
+		private LinearLayout topView;
+
+		public InitialGuiConstructor(LinearLayout view) {
+			this.topView = view;
+		}
+
 		public void visit(Row r) {
+			LinearLayout parent = new LinearLayout(topView.getContext());
+			parent.setOrientation(LinearLayout.HORIZONTAL);
+			topView.addView(parent);
+			InitialGuiConstructor visitor = new InitialGuiConstructor(parent);
+
 			Gui[] items = r.getItems();
 			for (int i = 0; i < items.length; i++) {
-				items[i].accept(this);
+				items[i].accept(visitor);
 			}
 		}
 
 		public void visit(Message m) {
 			String msg = (m.getValF().transform(world)).toString();
-			TextView txt = new TextView(view.getContext());
+			TextView txt = new TextView(topView.getContext());
 			txt.setText(msg);
-			view.addView(txt);
+			topView.addView(txt);
 		}
 
 		// FIXME: implement these!
-
 		public void visit(final TextField t) {
 			String txt = (t.getValF().transform(world)).toString();
-			EditText edit = new EditText(view.getContext());
+			EditText edit = new EditText(topView.getContext());
 			edit.setText(txt);
 			edit.addTextChangedListener(new TextWatcher() {
 				public void afterTextChanged(Editable s) {
@@ -82,7 +92,7 @@ public class GuiRenderer {
 				}
 			});
 
-			view.addView(edit);
+			topView.addView(edit);
 		}
 
 		public void visit(Col c) {
@@ -96,7 +106,7 @@ public class GuiRenderer {
 
 		public void visit(final org.plt.guiworld.Button b) {
 			String label = (b.getValF().transform(world)).toString();
-			android.widget.Button update = new android.widget.Button(view
+			android.widget.Button update = new android.widget.Button(topView
 					.getContext());
 			update.setText(label);
 			update.setOnClickListener(new OnClickListener() {
@@ -105,7 +115,7 @@ public class GuiRenderer {
 					changeWorld(newWorld);
 				}
 			});
-			view.addView(update);
+			topView.addView(update);
 		}
 
 		public void visit(Slider s) {
@@ -113,11 +123,11 @@ public class GuiRenderer {
 
 		public void visit(final DropDown d) {
 			Object[] items = (Object[]) (d.getValF().transform(world));
-			ArrayAdapter adapter = new ArrayAdapter(view.getContext(),
+			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
 					android.R.layout.simple_list_item_1, items);
 			adapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			Spinner dropdown = new Spinner(view.getContext());
+			Spinner dropdown = new Spinner(topView.getContext());
 			dropdown.setAdapter(adapter);
 			dropdown.setOnItemSelectedListener(new OnItemSelectedListener() {
 				public void onItemSelected(AdapterView parent, View view,
@@ -131,136 +141,40 @@ public class GuiRenderer {
 
 				}
 			});
-			view.addView(dropdown);
+			topView.addView(dropdown);
 		}
 
 		public void visit(CheckBox c) {
 		}
 	}
 
-	// private class InitialGuiConstructor implements GuiVisitor {
-	// private Gui gui;
-	//
-	// public InitialGuiConstructor(Gui gui) {
-	// this.gui = gui;
-	// }
-	//
-	// public void visit(Row r) {
-	// Gui[] items = r.getItems();
-	// for (int i = 0; i < items.length; i++) {
-	// items[i].accept(this);
-	// }
-	// }
-	//
-	// public void visit(Message m) {
-	// String msg = (m.getValF().transform(world)).toString();
-	// TextView txt = new TextView(view.getContext());
-	// txt.setText(msg);
-	// view.addView(txt);
-	// }
-	//
-	// // FIXME: implement these!
-	//
-	// public void visit(final TextField t) {
-	// String txt = (t.getValF().transform(world)).toString();
-	// EditText edit = new EditText(view.getContext());
-	// edit.setText(txt);
-	// edit.addTextChangedListener(new TextWatcher() {
-	// public void afterTextChanged(Editable s) {
-	// String str = s.toString();
-	// Object newWorld = t.getCallback().transform(world, str);
-	// changeWorld(newWorld);
-	// }
-	//
-	// public void beforeTextChanged(CharSequence s, int start,
-	// int count, int after) {
-	//
-	// }
-	//
-	// public void onTextChanged(CharSequence s, int start, int count,
-	// int after) {
-	// }
-	// });
-	//
-	// view.addView(edit);
-	// }
-	//
-	// public void visit(Col c) {
-	// }
-	//
-	// public void visit(BoxGroup b) {
-	// }
-	//
-	// public void visit(Canvas c) {
-	// }
-	//
-	// public void visit(final org.plt.guiworld.Button b) {
-	// String label = (b.getValF().transform(world)).toString();
-	// android.widget.Button update = new android.widget.Button(view
-	// .getContext());
-	// update.setText(label);
-	// update.setOnClickListener(new OnClickListener() {
-	// public void onClick(View v) {
-	// Object newWorld = b.getCallback().transform(world);
-	// changeWorld(newWorld);
-	// }
-	// });
-	// view.addView(update);
-	// }
-	//
-	// public void visit(Slider s) {
-	// }
-	//
-	// public void visit(final DropDown d) {
-	// Object[] items = (Object[]) (d.getValF().transform(world));
-	// ArrayAdapter adapter = new ArrayAdapter(view.getContext(),
-	// android.R.layout.simple_list_item_1, items);
-	// adapter
-	// .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	// Spinner dropdown = new Spinner(view.getContext());
-	// dropdown.setAdapter(adapter);
-	// dropdown.setOnItemSelectedListener(new OnItemSelectedListener() {
-	// public void onItemSelected(AdapterView parent, View view,
-	// int position, long id) {
-	// Object item = parent.getSelectedItem();
-	// Object newWorld = d.getCallback().transform(world, item);
-	// changeWorld(newWorld);
-	// }
-	//
-	// public void onNothingSelected(AdapterView parent) {
-	//
-	// }
-	// });
-	// view.addView(dropdown);
-	// }
-	//
-	// public void visit(CheckBox c) {
-	// }
-	// }
-
+	// /////////////////////GuiRefresher///////////////////////////////
 	private class GuiRefresher implements GuiVisitor {
 		private int viewIndex;
+		private LinearLayout topView;
 
-		public GuiRefresher(int viewIndex) {
+		public GuiRefresher(int viewIndex, LinearLayout view) {
 			this.viewIndex = viewIndex;
+			this.topView = view;
 		}
 
 		public void visit(Row r) {
 			Gui[] items = r.getItems();
 			for (int i = 0; i < items.length; i++) {
-				items[i].accept(new GuiRefresher(this.viewIndex + i));
+				items[i].accept(new GuiRefresher(i, (LinearLayout) topView
+						.getChildAt(this.viewIndex)));
 			}
 		}
 
 		public void visit(Message m) {
-			TextView txt = (TextView) view.getChildAt(this.viewIndex);
+			TextView txt = (TextView) topView.getChildAt(this.viewIndex);
 			txt.setText(m.getValF().transform(world).toString());
 		}
 
 		// FIXME: implement these!
 		public void visit(TextField t) {
 			String label = (t.getValF().transform(world)).toString();
-			EditText edit = (EditText) view.getChildAt(this.viewIndex);
+			EditText edit = (EditText) topView.getChildAt(this.viewIndex);
 			edit.setText(label);
 		}
 
@@ -275,7 +189,7 @@ public class GuiRenderer {
 
 		public void visit(org.plt.guiworld.Button b) {
 			String label = (b.getValF().transform(world)).toString();
-			android.widget.Button update = (android.widget.Button) view
+			android.widget.Button update = (android.widget.Button) topView
 					.getChildAt(this.viewIndex);
 			update.setText(label);
 		}
