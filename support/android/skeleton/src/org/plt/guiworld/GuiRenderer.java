@@ -1,7 +1,6 @@
 package org.plt.guiworld;
 
 import org.plt.world.*;
-import org.plt.guiworldtest.*;
 
 import android.view.*;
 import android.widget.*;

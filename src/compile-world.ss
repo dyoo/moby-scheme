@@ -154,10 +154,10 @@
   (when (directory-exists? dest-dir)
     (delete-directory/files dest-dir))
   (make-directory* dest-dir)
-  ;; At the moment, we use j2me bridge classes.
-  (copy-directory/files* android-skeleton-path dest-dir)
   (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
+  ;; At the moment, we use j2me bridge classes.
   (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
+  (copy-directory/files* android-skeleton-path dest-dir)
   (make-directory* (build-path dest-dir "libs")))
 
 

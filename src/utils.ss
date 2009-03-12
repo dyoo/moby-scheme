@@ -30,7 +30,7 @@
              (delete-file (build-path dest-path entry)))
            ;; Otherwise, recur by going into that directory.
            (when (not (directory-exists? (build-path dest-path entry)))
-             (make-directory (build-path dest-path entry)))
+             (make-directory* (build-path dest-path entry)))
            (copy-directory/files* (build-path from-path entry)
                                   (build-path dest-path entry))])))
 
