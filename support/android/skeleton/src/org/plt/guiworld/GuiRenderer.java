@@ -4,10 +4,12 @@ import org.plt.world.*;
 import org.plt.guiworldtest.*;
 
 import android.view.*;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.*;
 import android.text.*;
+
+import android.view.View.OnClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 // GuiRenderer: creates the initial gui, given the world and the view.
 // The visitor also keeps things up to date.
@@ -127,13 +129,34 @@ public class GuiRenderer {
 			topView.addView(update);
 		}
 
-		public void visit(Slider s) {
+		public void visit(final Slider s) {
+			Integer cur = (Integer) (s.getValF().transform(world));
+			SeekBar bar = new SeekBar(topView.getContext());
+			bar.setMax(100);
+			bar.setProgress(cur.intValue() % 100);
+			bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+				public void onProgressChanged(SeekBar seekBar, int progress,
+						boolean fromTouch) {
+					Object newWorld = s.getCallback().transform(world,
+							new Integer(progress));
+					changeWorld(newWorld);
+				}
+
+				public void onStartTrackingTouch(SeekBar seekBar) {
+
+				}
+
+				public void onStopTrackingTouch(SeekBar seekBar) {
+
+				}
+			});
+
+			topView.addView(bar);
 		}
 
 		public void visit(final DropDown d) {
-			Object[] items = (Object[]) (d.getValF().transform(world));
 			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
-					android.R.layout.simple_list_item_1, items);
+					android.R.layout.simple_list_item_1, d.getItems());
 			adapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			Spinner dropdown = new Spinner(topView.getContext());
@@ -209,9 +232,25 @@ public class GuiRenderer {
 		}
 
 		public void visit(Slider s) {
+			SeekBar bar = (SeekBar) topView.getChildAt(this.viewIndex);
+			try {
+				Integer cur = (Integer) s.getValF().transform(world);
+				bar.setProgress(cur.intValue() % 100);
+			} catch (ClassCastException e) {
+
+			}
 		}
 
 		public void visit(DropDown d) {
+			Spinner dropdown = (Spinner) topView.getChildAt(this.viewIndex);
+			try {
+				Integer item = Integer.parseInt((d.getValF().transform(world))
+						.toString());
+				if (item.intValue() < dropdown.getCount())
+					dropdown.setSelection(item.intValue());
+			} catch (NumberFormatException e) {
+
+			}
 		}
 
 		public void visit(CheckBox c) {
