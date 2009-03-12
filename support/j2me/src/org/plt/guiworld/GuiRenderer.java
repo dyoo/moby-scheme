@@ -28,7 +28,7 @@ public class GuiRenderer {
 
 	// Initialize the form contents.
 	public void initializeForm() {
-		this.view.accept(new InitialGuiConstructor(view));
+		this.view.accept(new InitialGuiConstructor());
 	}
 
 	// Changes the world, and updates the view accordingly.
@@ -40,12 +40,6 @@ public class GuiRenderer {
 	// ////////////////////////////////////////////////////////////////////
 
 	private class InitialGuiConstructor implements GuiVisitor {
-		private Gui gui;
-
-		public InitialGuiConstructor(Gui gui) {
-			this.gui = gui;
-		}
-
 		public void visit(Row r) {
 			Gui[] items = r.getItems();
 			for (int i = 0; i < items.length; i++) {
