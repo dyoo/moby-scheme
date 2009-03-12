@@ -4,16 +4,23 @@ import org.plt.world.*;
 
 public class CheckBox implements Gui {
 
-	private WorldTransformer valF;
+	private WorldTransformer labelValF;
+	private WorldTransformer checkValF;
 	private WorldAndObjectTransformer callback;
 
-	public CheckBox(WorldTransformer valF, WorldAndObjectTransformer callback) {
-		this.valF = valF;
+	public CheckBox(WorldTransformer labelValF, WorldTransformer checkValF,
+			WorldAndObjectTransformer callback) {
+		this.labelValF = labelValF;
+		this.checkValF = checkValF;
 		this.callback = callback;
 	}
 
-	public WorldTransformer getValF() {
-		return this.valF;
+	public WorldTransformer getLabelValF() {
+		return this.labelValF;
+	}
+
+	public WorldTransformer getCheckValF() {
+		return this.checkValF;
 	}
 
 	public WorldAndObjectTransformer getCallback() {
