@@ -1,5 +1,7 @@
 package org.plt.guiworld;
 
+import org.plt.world.*;
+
 public class Slider implements Gui {
 	private Integer cur;
 	private Integer min;
