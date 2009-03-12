@@ -126,7 +126,22 @@
          (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
     (make-module-binding 'world
                          module-path
-                         (list (make-binding:function 'empty-scene module-path 2 #f
+                         (list (make-binding:function 'big-bang module-path 4 #f
+                                                      "org.plt.WorldKernel.big_dash_bang")
+                               (make-binding:function 'on-tick-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_tick_dash_event")
+                               (make-binding:function 'on-mouse-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_mouse_dash_event")
+                               (make-binding:function 'on-message-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_message_dash_event")
+                               (make-binding:function 'on-location-change-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
+                               (make-binding:function 'on-redraw module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_redraw")
+                               (make-binding:function 'stop-when module-path 1 #f
+                                                      "org.plt.WorldKernel.stop_dash_when")
+                               
+                               (make-binding:function 'empty-scene module-path 2 #f
                                                       "org.plt.WorldKernel.empty_dash_scene")
                                (make-binding:function 'place-image module-path 4 #f
                                                       "org.plt.WorldKernel.place_dash_image")
@@ -161,35 +176,51 @@
          (resolve-module-path '(lib "world.ss" "moby" "stub") #f)])
   (make-module-binding 'world-stub
                        module-path
-                       (list (make-binding:function 'empty-scene module-path 2 #f
-                                                      "org.plt.WorldKernel.empty_dash_scene")
-                               (make-binding:function 'place-image module-path 4 #f
-                                                      "org.plt.WorldKernel.place_dash_image")
-                               (make-binding:function 'circle module-path 3 #f
-                                                      "org.plt.WorldKernel.circle")
-                               (make-binding:function 'nw:rectangle module-path 4 #f
-                                                      "org.plt.WorldKernel.rectangle")
-                               (make-binding:function 'key=? module-path 2 #f
-                                                      "org.plt.WorldKernel.key_equal__question_")
-                               (make-binding:function 'text module-path 3 #f
-                                                      "org.plt.WorldKernel.text")
-                               
-                               ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-                               ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-                               ;; ensure students don't accidently hit this function.
-                               (make-binding:function '-kernel-create-image module-path 1 #f
-                                                      "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
-                               (make-binding:function 'image-width module-path 1 #f
-                                                      "org.plt.WorldKernel.image_dash_width")
-                               (make-binding:function 'image-height module-path 1 #f
-                                                      "org.plt.WorldKernel.image_dash_height")
-                               (make-binding:function 'image? module-path 1 #f
-                                                      "org.plt.WorldKernel.image_question_")
-                               (make-binding:function 'image=? module-path 2 #f
-                                                      "org.plt.WorldKernel.image_equal__question_")
-                               (make-binding:function 'image-rotate module-path 2 #f
-                                                      "org.plt.WorldKernel.image_dash_rotate")))))
-                       
+                       (list (make-binding:function 'big-bang module-path 4 #f
+                                                    "org.plt.WorldKernel.big_dash_bang")
+                             (make-binding:function 'on-tick-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_tick_dash_event")
+                             (make-binding:function 'on-mouse-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_mouse_dash_event")
+                             (make-binding:function 'on-message-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_message_dash_event")
+                             (make-binding:function 'on-location-change-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
+                             (make-binding:function 'on-redraw module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_redraw")
+                             (make-binding:function 'stop-when module-path 1 #f
+                                                    "org.plt.WorldKernel.stop_dash_when")
+                                                          
+                             
+                             (make-binding:function 'empty-scene module-path 2 #f
+                                                    "org.plt.WorldKernel.empty_dash_scene")
+                             (make-binding:function 'place-image module-path 4 #f
+                                                    "org.plt.WorldKernel.place_dash_image")
+                             (make-binding:function 'circle module-path 3 #f
+                                                    "org.plt.WorldKernel.circle")
+                             (make-binding:function 'nw:rectangle module-path 4 #f
+                                                    "org.plt.WorldKernel.rectangle")
+                             (make-binding:function 'key=? module-path 2 #f
+                                                    "org.plt.WorldKernel.key_equal__question_")
+                             (make-binding:function 'text module-path 3 #f
+                                                    "org.plt.WorldKernel.text")
+                             
+                             ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
+                             ;; We can fix this by extending expression to include a special "magic" identifier.  We should
+                             ;; ensure students don't accidently hit this function.
+                             (make-binding:function '-kernel-create-image module-path 1 #f
+                                                    "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
+                             (make-binding:function 'image-width module-path 1 #f
+                                                    "org.plt.WorldKernel.image_dash_width")
+                             (make-binding:function 'image-height module-path 1 #f
+                                                    "org.plt.WorldKernel.image_dash_height")
+                             (make-binding:function 'image? module-path 1 #f
+                                                    "org.plt.WorldKernel.image_question_")
+                             (make-binding:function 'image=? module-path 2 #f
+                                                    "org.plt.WorldKernel.image_equal__question_")
+                             (make-binding:function 'image-rotate module-path 2 #f
+                                                    "org.plt.WorldKernel.image_dash_rotate")))))
+
 
 
 ;; location library

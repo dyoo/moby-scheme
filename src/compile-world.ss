@@ -195,14 +195,14 @@
                 [(program a-world-handlers) 
                  (program-extract-world-handlers (parse-text-as-program a-text))]
                 [(mappings) 
-                 (get-mappings classname program a-world-handlers)])
+                 (get-mappings classname program)])
     (fill-template-file stub-path (build-path src-path (string-append classname ".java")) mappings)))
 
 
 
 ;; get-mappings: string program world-handlers -> (hashtableof string string)
 ;; Returns the template mappings we need.
-(define (get-mappings classname program a-world-handlers)
+(define (get-mappings classname program)
   (let*-values ([(compiled-program pinfo)
                  (program->java-string program)]
                 [(toplevel-env)
@@ -213,65 +213,7 @@
                                (make-binding:constant id 
                                                       (symbol->string (identifier->munged-java-identifier id)))))])
     (build-mappings (PROGRAM-NAME classname)
-                    (PROGRAM-DEFINITIONS compiled-program)
-                    (INITIAL-WORLD-EXPRESSION
-                     (expression->java-string
-                      (big-bang-record-world0
-                       (world-handlers-big-bang a-world-handlers))
-                      toplevel-env))
-                    (DELAY-EXPRESSION
-                     (expression->java-string 
-                      `(* ,(big-bang-record-r 
-                            (world-handlers-big-bang a-world-handlers))
-                          1000)
-                      toplevel-env))
-                    (STOP-WHEN-EXPRESSION
-                     (if (world-handlers-stop-when a-world-handlers)
-                         (expression->java-string
-                          `(,(world-handlers-stop-when a-world-handlers) world) 
-                          (simple-env-extend toplevel-env 'world))
-                         "org.plt.Kernel.no_op_stopWhen(world)"))
-                    (ON-TICK-EXPRESSION
-                     (if (world-handlers-on-tick-event a-world-handlers)
-                         (expression->java-string
-                          `(,(world-handlers-on-tick-event a-world-handlers) world) 
-                          (simple-env-extend toplevel-env 'world))
-                         "org.plt.Kernel.no_op_worldEvent(world)"))
-                    (ON-REDRAW-EXPRESSION
-                     (if (world-handlers-on-redraw a-world-handlers)
-                         (expression->java-string
-                          `(,(world-handlers-on-redraw a-world-handlers) world)
-                          (simple-env-extend toplevel-env 'world))
-                         "org.plt.gui.Scene.emptyScene(this.getWidth(), this.getHeight())"))
-                    (ON-KEY-EVENT-EXPRESSION
-                     (if (world-handlers-on-key-event a-world-handlers)
-                         (expression->java-string
-                          `(,(world-handlers-on-key-event a-world-handlers) world aKey) 
-                          (simple-env-extend 
-                           (simple-env-extend toplevel-env 'world)
-                           'aKey))
-                         "org.plt.Kernel.no_op_keyEvent(world, aKey)"))
-                    (ON-MESSAGE-EVENT-EXPRESSION
-                     (if (world-handlers-on-message-event a-world-handlers)
-                         (expression->java-string
-                          `(,(world-handlers-on-message-event a-world-handlers) world aMessage) 
-                          (simple-env-extend 
-                           (simple-env-extend toplevel-env 'world)
-                           'aMessage))
-                         "org.plt.Kernel.no_op_messageEvent(world, aMessage)"))
-                    
-                    (ON-LOCATION-CHANGE-EVENT-EXPRESSION
-                     (if (world-handlers-on-location-change-event a-world-handlers)
-                         (expression->java-string
-                          `(,(world-handlers-on-location-change-event a-world-handlers) world latitude longitude) 
-                          (simple-env-extend
-                           (simple-env-extend 
-                            (simple-env-extend toplevel-env 'world)
-                            'latitude)
-                           'longitude))
-                         "org.plt.Kernel.no_op_locationChangeEvent(world, latitude, longitude)"))
-                    
-                    )))
+                    (PROGRAM-DEFINITIONS compiled-program))))
 
 
 
@@ -316,60 +258,9 @@
                   (cons defn-or-expr processed-program/rev)
                   a-world-handlers)]
            [else
-            (match defn-or-expr
-              [(list 'big-bang x y tick world0)
-               (loop/handler
-                (struct-copy 
-                 world-handlers a-world-handlers
-                 (big-bang (make-big-bang-record x y tick world0))))]
-              
-              [(list 'on-tick-event tock)
-               (loop/handler
-                (struct-copy
-                 world-handlers a-world-handlers
-                 (on-tick-event tock)))]
-              
-              [(list 'on-key-event change)
-               (loop/handler
-                (struct-copy
-                 world-handlers a-world-handlers
-                 (on-key-event change)))]
-              
-              [(list 'on-message-event change)
-               (loop/handler
-                (struct-copy
-                 world-handlers a-world-handlers
-                 (on-message-event change)))]
-
-              [(list 'on-location-change-event change)
-               (loop/handler
-                (struct-copy
-                 world-handlers a-world-handlers
-                 (on-location-change-event change)))]
-              
-              [(list 'on-mouse-event clack)   
-               (loop/handler
-                (struct-copy 
-                 world-handlers a-world-handlers
-                 (on-mouse-event clack)))]
-              
-              [(list 'on-redraw to-scene)  
-               (loop/handler
-                (struct-copy 
-                 world-handlers a-world-handlers
-                 (on-redraw to-scene)))]
-              
-              [(list 'stop-when last-world?)
-               (loop/handler
-                (struct-copy 
-                 world-handlers a-world-handlers
-                 (stop-when last-world?)))]
-
-              [else
-               (loop (rest a-program)
+            (loop (rest a-program)
                      (cons defn-or-expr processed-program/rev)
-                     a-world-handlers)])]))])))
-
+                     a-world-handlers)]))])))
 
 
 

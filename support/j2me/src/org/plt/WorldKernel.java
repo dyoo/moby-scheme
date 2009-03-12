@@ -46,10 +46,10 @@ public class WorldKernel {
 	    };
     }
 
-    public static Object bigBang(Object width,
-				 Object height,
-				 Object frameRate,
-				 Object initialWorld) {
+    public static Object big_dash_bang(Object width,
+				       Object height,
+				       Object frameRate,
+				       Object initialWorld) {
 	WorldKernel.width = width;
         WorldKernel.height = height;
 	WorldKernel.frameRate = frameRate;

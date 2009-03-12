@@ -344,7 +344,8 @@
                  })"
                 java-string
                 (string-join (for/list ([i (in-range min-arity)])
-                               (format "args[~a]" i))))])
+                               (format "args[~a]" i))
+                             ", "))])
      #;(error 'translate-toplevel-id
               "Moby doesn't yet allow higher-order use of ~s." an-id)]))
 
