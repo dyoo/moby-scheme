@@ -301,15 +301,19 @@
       [(struct binding:constant (name java-string))
        (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" java-string operand-strings)]
       
-      [(struct binding:function (name module-path arity var-arity? java-string))
+      [(struct binding:function (name module-path min-arity var-arity? java-string))
+       (unless (>= (length exprs)
+                   min-arity)
+         (error 'application-expression->java-string
+                "Minimal arity of ~s not met.  Operands were ~s"
+                id
+                exprs))
        (cond
          [var-arity?
           (format "~a(new Object[] {~a})"
                   java-string
                   operand-strings)]
          [else
-          ;; FIXME: handle var-arity
-          ;; FIXME: check arity.
           (format "(~a(~a))" java-string operand-strings)])])))
 
 
@@ -360,6 +364,10 @@
          (format "(new org.plt.types.Rational(~s, ~s))" 
                  (numerator a-num) 
                  (denominator a-num))]
+        [(complex? a-num)
+         (format "(new org.plt.types.Complex(~a, ~a))"
+                 (number->java-string (real-part a-num))
+                 (number->java-string (imag-part a-num)))]
         [else
          (error 'number->java-string "Don't know how to handle ~s yet" a-num)]))
 
