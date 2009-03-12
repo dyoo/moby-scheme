@@ -1,6 +1,6 @@
 package org.plt.guiworld;
 
-import org.plt.world.WorldTransformer;
+import org.plt.world.*;
 
 public class CheckBox implements Gui {
 
