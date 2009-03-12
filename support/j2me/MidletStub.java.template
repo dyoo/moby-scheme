@@ -7,6 +7,7 @@ import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
+import org.plt.WorldKernel;
 
 
 // This is stub code.
@@ -31,11 +32,11 @@ public class <<PROGRAM-NAME>> extends MIDlet {
     <<PROGRAM-DEFINITIONS>>
 
     // #0 big-bang's world0
-    Object world = <<INITIAL-WORLD-EXPRESSION>>;
+    Object world = WorldKernel.getInitialWorld();
 
     // When a program is paused, we'll restart the world.
     public void pauseApp() {
-	world = <<INITIAL-WORLD-EXPRESSION>>;
+	world = WorldKernel.getInitialWorld();
     }
 
     public void destroyApp(boolean unconditional) {}
@@ -56,10 +57,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
-	    long delay = (long) ((<<DELAY-EXPRESSION>>).toInt());
+	    long delay = (long) ((org.plt.types.NumberTower.multiply
+				  ((org.plt.types.Number)
+				   WorldKernel.getFrameRate(),
+				   new org.plt.types.Rational(1000, 1))).toInt());
 	    while(! stopped) {
 		repaint();
-		if(((org.plt.types.Logic) <<STOP-WHEN-EXPRESSION>>).isTrue()) {
+		if(((org.plt.types.Logic) WorldKernel.getStopWhenHandler().call(new Object[] {world})).isTrue()) {
 		    //  #2 stop-when expression
 		    stopped = true;
 		} else {
@@ -68,7 +72,7 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 		    } catch (InterruptedException e) {}
 		    synchronized(world) {
 			//  #3 on-tick expression
-			world = <<ON-TICK-EXPRESSION>>;
+			world = WorldKernel.getOnTickHandler().call(new Object[] { world });
 		    }
 		}
 	    }
@@ -76,15 +80,15 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
         public void onMessage(Object aMessage) {
 	    synchronized(world) {
-		world = <<ON-MESSAGE-EVENT-EXPRESSION>>;
-		// fill me in.
+		world = WorldKernel.getOnMessageEventHandler().call
+		    (new Object[] { world, aMessage});
 	    }
 	}
 
 	public void onLocationChange(Object latitude, Object longitude) {
 	    synchronized(world) {
-		world = <<ON-LOCATION-CHANGE-EVENT-EXPRESSION>>;
-		// fill me in.
+		world = WorldKernel.getOnLocationChangeEventHandler().call
+		    (new Object[] { world, latitude, longitude });
 	    }	    
 	}
 
@@ -92,7 +96,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
             org.plt.gui.GraphicsAdapter ag = new org.plt.gui.GraphicsAdapter(g);
 	    // #4,5,6 on-redraw expression
 	    org.plt.gui.DrawPicture pVisitor = new org.plt.gui.DrawPicture(ag);
-	    ((org.plt.gui.Scene) <<ON-REDRAW-EXPRESSION>>).accept(pVisitor, 0, 0);
+	    org.plt.gui.Scene aScene = (org.plt.gui.Scene) WorldKernel.getOnRedrawHandler().call
+		(new Object[] {world});
+	    aScene.accept(pVisitor, 0, 0);
 	}
 
 	protected void keyPressed(int keyCode) {
@@ -113,7 +119,8 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	    }
 	    
 	    synchronized(world) {
-		world = <<ON-KEY-EVENT-EXPRESSION>>;
+		world = WorldKernel.getOnKeyEventHandler().call
+		    (new Object[] {world, aKey});
 	    }
 	    repaint();
 	}
