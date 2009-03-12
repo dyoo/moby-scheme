@@ -68,7 +68,7 @@ public class GuiWorldTest extends Activity {
 		new DropDown(new WorldTransformer() {
 			public Object transform(Object world) {
 				Integer count = (Integer) world;
-				Object[] items = new Object[count.intValue()];
+				String[] items = new String[count.intValue()];
 				for (int i = 0; i < count.intValue(); i++)
 					items[i] = String.valueOf(i);
 

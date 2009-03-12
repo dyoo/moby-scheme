@@ -171,7 +171,7 @@ public class GuiRenderer {
 		}
 
 		public void visit(final DropDown d) {
-			Object[] items = (Object[]) d.getValF().transform(world);
+			String[] items = (String[]) d.getChoicesF().transform(world);
 			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
 					android.R.layout.simple_list_item_1, items);
 			adapter
@@ -265,7 +265,7 @@ public class GuiRenderer {
 		}
 
 		public void visit(DropDown d) {
-			Object[] items = (Object[]) d.getValF().transform(world);
+			String[] items = (String[]) d.getChoicesF().transform(world);
 			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
 					android.R.layout.simple_list_item_1, items);
 			adapter
