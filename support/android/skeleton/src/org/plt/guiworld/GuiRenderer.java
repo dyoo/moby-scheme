@@ -249,7 +249,7 @@ public class GuiRenderer {
 				if (item.intValue() < dropdown.getCount())
 					dropdown.setSelection(item.intValue());
 			} catch (NumberFormatException e) {
-
+				
 			}
 		}
 
