@@ -63,6 +63,18 @@ public class GuiRenderer {
 			}
 		}
 
+		public void visit(Col c) {
+			LinearLayout parent = new LinearLayout(topView.getContext());
+			parent.setOrientation(LinearLayout.VERTICAL);
+			topView.addView(parent);
+			InitialGuiConstructor visitor = new InitialGuiConstructor(parent);
+
+			Gui[] items = c.getItems();
+			for (int i = 0; i < items.length; i++) {
+				items[i].accept(visitor);
+			}
+		}
+
 		public void visit(Message m) {
 			String msg = (m.getValF().transform(world)).toString();
 			TextView txt = new TextView(topView.getContext());
@@ -93,9 +105,6 @@ public class GuiRenderer {
 			});
 
 			topView.addView(edit);
-		}
-
-		public void visit(Col c) {
 		}
 
 		public void visit(BoxGroup b) {
@@ -166,6 +175,14 @@ public class GuiRenderer {
 			}
 		}
 
+		public void visit(Col c) {
+			Gui[] items = c.getItems();
+			for (int i = 0; i < items.length; i++) {
+				items[i].accept(new GuiRefresher(i, (LinearLayout) topView
+						.getChildAt(this.viewIndex)));
+			}
+		}
+
 		public void visit(Message m) {
 			TextView txt = (TextView) topView.getChildAt(this.viewIndex);
 			txt.setText(m.getValF().transform(world).toString());
@@ -176,9 +193,6 @@ public class GuiRenderer {
 			String label = (t.getValF().transform(world)).toString();
 			EditText edit = (EditText) topView.getChildAt(this.viewIndex);
 			edit.setText(label);
-		}
-
-		public void visit(Col c) {
 		}
 
 		public void visit(BoxGroup b) {

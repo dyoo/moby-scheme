@@ -19,7 +19,7 @@ public class GuiWorldTest extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Gui gui = new Row(new Gui[] {
+		Gui gui = new Col(new Gui[] {
 
 		new Message(new WorldTransformer() {
 			public Object transform(Object world) {
