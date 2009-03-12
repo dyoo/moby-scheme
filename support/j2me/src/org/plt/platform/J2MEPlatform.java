@@ -4,6 +4,7 @@ import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
 import org.plt.types.*;
 import org.plt.LocationChangeListener;
+import org.plt.world.TiltChangeListener;
 
 
 public class J2MEPlatform implements PlatformI {
@@ -14,18 +15,21 @@ public class J2MEPlatform implements PlatformI {
 
     public TiltService getTiltService() {
 	return new TiltService() {
-		public Object getXTilt() {
-		    return FloatPoint.ZERO;
-		}
+	    public Object getXTilt() {
+		return FloatPoint.ZERO;
+	    }
 
-		public Object getYTilt() {
-		    return FloatPoint.ZERO;
-		}
+	    public Object getYTilt() {
+		return FloatPoint.ZERO;
+	    }
 
-		public Object getZTilt() {
-		    return FloatPoint.ZERO;
-		}
-	    };
+	    public Object getZTilt() {
+		return FloatPoint.ZERO;
+	    }
+
+	    public void addTiltChangeListener(TiltChangeListener t) {}
+	    
+	};
     }
 
     public LocationService getLocationService() {

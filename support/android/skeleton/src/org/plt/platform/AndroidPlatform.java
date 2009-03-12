@@ -24,6 +24,7 @@ import org.plt.types.*;
 
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
+import org.plt.world.TiltChangeListener;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -187,9 +188,10 @@ public class AndroidPlatform implements PlatformI {
     private class AndroidTiltService implements TiltService {
 	SensorManager manager;
 	float[] lastValues;
+	java.util.List listeners;
 
 	public AndroidTiltService() {
-
+	    listeners = new ArrayList();
 	    new HandlerThread("Tilt") {
 		public void run() {
 		    Looper.prepare();
@@ -201,6 +203,13 @@ public class AndroidPlatform implements PlatformI {
 
 			    public void onSensorChanged(int sensor, float[] values) {
 				lastValues = values;
+				Object x = getXTilt();
+				Object y = getYTilt();
+				Object z = getZTilt();
+				for(int i = 0; i < listeners.size(); i++) {
+				    ((TiltChangeListener) listeners.get(i)).onTiltChange(x, y, z);
+
+				}
 			    }
 			},
 					     SensorManager.SENSOR_DELAY_GAME |
@@ -232,6 +241,10 @@ public class AndroidPlatform implements PlatformI {
 		return lastValues[SensorManager.DATA_Z];
 	    }
 	    return FloatPoint.ZERO;
+	}
+
+	public void addTiltChangeListener(TiltChangeListener l) {
+	    listeners.add(l);
 	}
     }
 

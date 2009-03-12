@@ -19,6 +19,7 @@ public class WorldKernel {
     private static Callable onMouseEventHandler;
     private static Callable onMessageEventHandler;
     private static Callable onLocationChangeEventHandler;
+    private static Callable onTiltChangeEventHandler;
     private static Callable onRedrawHandler;
     private static Callable stopWhenHandler;
 
@@ -68,20 +69,23 @@ public class WorldKernel {
     public static Object getInitialWorld() {
 	return WorldKernel.initialWorld;
     }
-    public  static Callable getOnTickHandler() {
+    public static Callable getOnTickHandler() {
 	return WorldKernel.onTickHandler;
     }
-    public  static Callable getOnKeyEventHandler() {
+    public static Callable getOnKeyEventHandler() {
 	return WorldKernel.onKeyEventHandler;
     }
-    public  static Callable getOnMouseEventHandler() {
+    public static Callable getOnMouseEventHandler() {
 	return WorldKernel.onMouseEventHandler;
     }
-    public  static Callable getOnMessageEventHandler() {
+    public static Callable getOnMessageEventHandler() {
 	return WorldKernel.onMessageEventHandler;
     }
-    public  static Callable getOnLocationChangeEventHandler() {
+    public static Callable getOnLocationChangeEventHandler() {
 	return WorldKernel.onLocationChangeEventHandler;
+    }
+    public static Callable getOnTiltChangeEventHandler() {
+	return WorldKernel.onTiltChangeEventHandler;
     }
     public  static Callable getOnRedrawHandler() {
 	return WorldKernel.onRedrawHandler;
@@ -131,6 +135,12 @@ public class WorldKernel {
 
     public static Object stop_dash_when(Object callable) {
 	WorldKernel.stopWhenHandler = (Callable) callable;
+	return VoidObject.VOID;
+    }
+
+
+    public static Object on_dash_tilt_dash_change_dash_event(Object callable) {
+	WorldKernel.onTiltChangeEventHandler = (Callable) callable;
 	return VoidObject.VOID;
     }
 

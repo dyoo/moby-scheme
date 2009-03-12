@@ -136,6 +136,9 @@
                                                       "org.plt.WorldKernel.on_dash_message_dash_event")
                                (make-binding:function 'on-location-change-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
+                               
+                                                            (make-binding:function 'on-tilt-change-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
                                (make-binding:function 'on-redraw module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_redraw")
                                (make-binding:function 'stop-when module-path 1 #f
@@ -186,6 +189,8 @@
                                                     "org.plt.WorldKernel.on_dash_message_dash_event")
                              (make-binding:function 'on-location-change-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
+                                                          (make-binding:function 'on-tilt-change-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
                              (make-binding:function 'on-redraw module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_redraw")
                              (make-binding:function 'stop-when module-path 1 #f

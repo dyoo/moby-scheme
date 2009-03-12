@@ -7,6 +7,7 @@ import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
+import org.plt.world.TiltChangeListener;
 import org.plt.WorldKernel;
 
 
@@ -40,12 +41,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	MyCanvas canvas = new MyCanvas();
 
 	Platform.getInstance().getLocationService().addLocationChangeListener(canvas);
+	Platform.getInstance().getTiltService().addTiltChangeListener(canvas);
 
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();
     }
 
-    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener {
+    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, TiltChangeListener {
 	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
@@ -81,6 +83,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	    synchronized(world) {
 		world = WorldKernel.getOnLocationChangeEventHandler().call
 		    (new Object[] { world, latitude, longitude });
+	    }	    
+	}
+
+	public void onTiltChange(Object x, Object y, Object z) {
+	    synchronized(world) {
+		world = WorldKernel.getOnTiltChangeEventHandler().call
+		    (new Object[] { world, x, y, z });
 	    }	    
 	}
 
