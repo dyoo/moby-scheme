@@ -1,10 +1,18 @@
 package org.plt.guiworld;
 
 public class Col implements Gui {
-    // Fill me in
 
+	private Gui[] items;
 
-    public void accept(GuiVisitor v) {
-	v.visit(this);
-    }
+	public Col(Gui[] items) {
+		this.items = items;
+	}
+
+	public Gui[] getItems() {
+		return this.items;
+	}
+
+	public void accept(GuiVisitor v) {
+		v.visit(this);
+	}
 }
