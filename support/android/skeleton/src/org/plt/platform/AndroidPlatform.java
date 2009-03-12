@@ -53,7 +53,6 @@ public class AndroidPlatform implements PlatformI {
     private class AndroidLocationService 
 	implements LocationService {
 	private LocationManager manager;
-	private LocationProvider provider;
 	private Location lastLocation;
 	private java.util.List listeners;
 	private java.util.List locationListeners;
@@ -76,33 +75,36 @@ public class AndroidPlatform implements PlatformI {
 
 	private void initializeProvider() {
 	    Criteria c = new Criteria();
-	    this.provider = manager.getProvider
-		(manager.getBestProvider(c, false));
 	    int pollingTime = 1000;
 	    int minDistance = 0;
-	    this.manager.requestLocationUpdates
-		(this.provider.getName(),
-		 pollingTime,
-		 minDistance,
-		 new LocationListener() {
-		     public void onLocationChanged(Location location) {
-			 lastLocation = location;
-			 Iterator iter = locationListeners.iterator();
-			 while (iter.hasNext()) {
-			     ((LocationChangeListener)iter.next()).
-				 onLocationChange(FloatPoint.fromString("" + location.getLatitude()),
-						  FloatPoint.fromString("" + location.getLongitude()));
+	    
+	    java.util.List providerNames = manager.getProviders(c, true);
+	    for(int i = 0; i < providerNames.size(); i++) {
+		String providerName = (String) providerNames.get(i);
+		this.manager.requestLocationUpdates
+		    (providerName,
+		     pollingTime,
+		     minDistance,
+		     new LocationListener() {
+			 public void onLocationChanged(Location location) {
+			     lastLocation = location;
+			     Iterator iter = locationListeners.iterator();
+			     while (iter.hasNext()) {
+				 ((LocationChangeListener)iter.next()).
+				     onLocationChange(FloatPoint.fromString("" + location.getLatitude()),
+						      FloatPoint.fromString("" + location.getLongitude()));
+			     }
 			 }
-		     }
-		     public void onProviderDisabled(String provider) {
-		     }
-		     public void onProviderEnabled(String provider) {
-		     }
-		     public void onStatusChanged(String provider,
-						 int status,
-						 Bundle extras) { 
-		     }
-		 });
+			 public void onProviderDisabled(String provider) {
+			 }
+			 public void onProviderEnabled(String provider) {
+			 }
+			 public void onStatusChanged(String provider,
+						     int status,
+						     Bundle extras) { 
+			 }
+		     });
+	    }
 	}
 
 
