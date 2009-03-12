@@ -11,4 +11,6 @@ public interface LocationService {
     Object getSpeed();
 
     void addLocationChangeListener(LocationChangeListener listener);
+    void shutdownService();
+    void startService();
 }

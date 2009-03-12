@@ -52,61 +52,69 @@ public class AndroidPlatform implements PlatformI {
 
 
     private class AndroidLocationService 
-	implements LocationService {
+	implements LocationService, LocationListener {
 	private LocationManager manager;
 	private Location lastLocation;
 	private java.util.List listeners;
 	private java.util.List locationListeners;
 
+
 	public AndroidLocationService() {
 	    this.listeners = new ArrayList();
 	    this.locationListeners = new ArrayList();
+	}
+
+	public void startService() {
+	    manager = (LocationManager) 
+		activity.getSystemService(Context.LOCATION_SERVICE);
+	    final AndroidLocationService service = this;
 
 	    new HandlerThread("Location") {
 		public void run() {
 		    Looper.prepare();
-		    manager = (LocationManager) 
-			activity.getSystemService(Context.LOCATION_SERVICE);
-		    initializeProvider();
+		    Criteria c = new Criteria();
+		    int pollingTime = 1000;
+		    int minDistance = 0;
+		    
+		    java.util.List providerNames = manager.getProviders(c, true);
+		    for(int i = 0; i < providerNames.size(); i++) {
+			String providerName = (String) providerNames.get(i);
+			manager.requestLocationUpdates
+			    (providerName, pollingTime, minDistance, service);
+			
+		    }
+		    
 		    Looper.loop();
 		}
 	    }.start();
 	}
 
+	public void shutdownService() {
+	    this.manager.removeUpdates(this);
+	}
 
-	private void initializeProvider() {
-	    Criteria c = new Criteria();
-	    int pollingTime = 1000;
-	    int minDistance = 0;
-	    
-	    java.util.List providerNames = manager.getProviders(c, true);
-	    for(int i = 0; i < providerNames.size(); i++) {
-		String providerName = (String) providerNames.get(i);
-		this.manager.requestLocationUpdates
-		    (providerName,
-		     pollingTime,
-		     minDistance,
-		     new LocationListener() {
-			 public void onLocationChanged(Location location) {
-			     lastLocation = location;
-			     Iterator iter = locationListeners.iterator();
-			     while (iter.hasNext()) {
-				 ((LocationChangeListener)iter.next()).
-				     onLocationChange(FloatPoint.fromString("" + location.getLatitude()),
-						      FloatPoint.fromString("" + location.getLongitude()));
-			     }
-			 }
-			 public void onProviderDisabled(String provider) {
-			 }
-			 public void onProviderEnabled(String provider) {
-			 }
-			 public void onStatusChanged(String provider,
-						     int status,
-						     Bundle extras) { 
-			 }
-		     });
+
+//////////////////////////////////////////////////////////////////////
+	public void onLocationChanged(Location location) {
+	    lastLocation = location;
+	    Iterator iter = locationListeners.iterator();
+	    while (iter.hasNext()) {
+		((LocationChangeListener)iter.next()).
+		    onLocationChange(FloatPoint.fromString("" + location.getLatitude()),
+				     FloatPoint.fromString("" + location.getLongitude()));
 	    }
 	}
+	public void onProviderDisabled(String provider) {
+	}
+	public void onProviderEnabled(String provider) {
+	}
+	public void onStatusChanged(String provider,
+				    int status,
+				    Bundle extras) { 
+	}
+//////////////////////////////////////////////////////////////////////
+
+
 
 
 	public void addMessageListener(MessageListener listener) {
@@ -185,60 +193,65 @@ public class AndroidPlatform implements PlatformI {
     }
 
 
-    private class AndroidTiltService implements TiltService {
+    private class AndroidTiltService implements TiltService, SensorListener {
 	SensorManager manager;
 	float[] lastValues;
 	java.util.List listeners;
 
 	public AndroidTiltService() {
 	    listeners = new ArrayList();
+	}
+
+	public void startService() {
+	    final AndroidTiltService service = this;
 	    new HandlerThread("Tilt") {
 		public void run() {
 		    Looper.prepare();
 		    manager = (SensorManager) 
 			activity.getSystemService(Context.SENSOR_SERVICE);
-		    manager.registerListener(new SensorListener() {
-			    public void onAccuracyChanged(int sensor, int accuracy) {
-			    }
-
-			    public void onSensorChanged(int sensor, float[] values) {
-				lastValues = values;
-				Object x = getXTilt();
-				Object y = getYTilt();
-				Object z = getZTilt();
-				for(int i = 0; i < listeners.size(); i++) {
-				    ((TiltChangeListener) listeners.get(i)).onTiltChange(x, y, z);
-
-				}
-			    }
-			},
-					     SensorManager.SENSOR_DELAY_GAME |
-					     SensorManager.SENSOR_ACCELEROMETER|
-					     SensorManager.SENSOR_DELAY_GAME
-					     );
+		    manager.registerListener(service, SensorManager.SENSOR_ACCELEROMETER);
 		    Looper.loop();
 		}
 	    }.start();
-
 	}
+
+	public void shutdownService() {
+	    manager.unregisterListener(this);
+	}
+
+
+	public void onAccuracyChanged(int sensor, int accuracy) {
+	}
+
+	public void onSensorChanged(int sensor, float[] values) {
+	    lastValues = values;
+	    Object x = getXTilt();
+	    Object y = getYTilt();
+	    Object z = getZTilt();
+	    for(int i = 0; i < listeners.size(); i++) {
+		((TiltChangeListener) listeners.get(i)).onTiltChange(x, y, z);
+
+	    }
+	}
+
 
 	public Object getXTilt() {
 	    if (lastValues != null) {
-		return lastValues[SensorManager.DATA_X];
+		return FloatPoint.fromString(""+lastValues[SensorManager.DATA_X]);
 	    }
 	    return FloatPoint.ZERO;
 	}
 
 	public Object getYTilt() {
 	    if (lastValues != null) {
-		return lastValues[SensorManager.DATA_Y];
+		return FloatPoint.fromString(""+lastValues[SensorManager.DATA_Y]);
 	    }
 	    return FloatPoint.ZERO;
 	}
 
 	public Object getZTilt() {
 	    if (lastValues != null) {
-		return lastValues[SensorManager.DATA_Z];
+		return FloatPoint.fromString(""+lastValues[SensorManager.DATA_Z]);
 	    }
 	    return FloatPoint.ZERO;
 	}

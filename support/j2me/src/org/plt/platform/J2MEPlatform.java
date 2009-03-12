@@ -28,6 +28,9 @@ public class J2MEPlatform implements PlatformI {
 	    }
 
 	    public void addTiltChangeListener(TiltChangeListener t) {}
+
+	    public void shutdownService() {}
+	    public void startService() {}
 	    
 	};
     }
@@ -58,6 +61,9 @@ public class J2MEPlatform implements PlatformI {
 	    public void addLocationChangeListener(LocationChangeListener l) {
 		// fill me in
 	    }
+
+	    public void shutdownService() {}
+	    public void startService() {}
 	};
     }
 }

@@ -30,9 +30,16 @@ public class <<PROGRAM-NAME>> extends MIDlet {
     // When a program is paused, we'll restart the world.
     public void pauseApp() {
 	world = WorldKernel.getInitialWorld();
+	Platform.getInstance().getLocationService().shutdownService();
+	Platform.getInstance().getTiltService().shutdownService();
     }
 
-    public void destroyApp(boolean unconditional) {}
+    public void destroyApp(boolean unconditional) {
+	world = WorldKernel.getInitialWorld();
+	Platform.getInstance().getLocationService().shutdownService();
+	Platform.getInstance().getTiltService().shutdownService();
+    }	
+
 
     public void startApp() {
 	// debug: show the platform in the log.
@@ -40,6 +47,8 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
 	MyCanvas canvas = new MyCanvas();
 
+	Platform.getInstance().getLocationService().startService();
+	Platform.getInstance().getTiltService().startService();
 	Platform.getInstance().getLocationService().addLocationChangeListener(canvas);
 	Platform.getInstance().getTiltService().addTiltChangeListener(canvas);
 

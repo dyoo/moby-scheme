@@ -7,5 +7,6 @@ public interface TiltService {
     Object getYTilt();
     Object getZTilt();
     void addTiltChangeListener(TiltChangeListener listener);
-
+    void shutdownService();
+    void startService();
 }
