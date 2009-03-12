@@ -121,6 +121,16 @@
 (define-struct module-binding (name path bindings))
 
 
+(define world-module
+  (let ([module-path
+         (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
+    (make-module-binding 'world
+                         module-path
+                         (list
+                          ;; fixme: fill me in
+                          ))))
+
+
 ;; TODO: syntactic abstraction using the stuff in each mock library, to reduce this
 ;; drudgery.
 (define location-module 
@@ -169,7 +179,8 @@
              (rest contents))])))
 
                           
-(define known-modules (list location-module
+(define known-modules (list world-module
+                            location-module
                             tilt-module))
                                              
 
