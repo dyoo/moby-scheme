@@ -97,6 +97,12 @@ public class GuiWorldTest extends Activity {
 					}
 				},
 
+				new WorldTransformer() {
+					public Object transform(Object checked) {
+						return checked;
+					}
+				},
+
 				new WorldAndObjectTransformer() {
 					public Object transform(Object world, Object obj) {
 						if (((Boolean) obj).equals(Boolean.TRUE))

@@ -129,7 +129,7 @@ public class GuiRenderer {
 		}
 
 		public void visit(final org.plt.guiworld.CheckBox c) {
-			String msg = (c.getValF().transform(world)).toString();
+			String msg = (c.getLabelValF().transform(world)).toString();
 			android.widget.CheckBox cb = new android.widget.CheckBox(topView
 					.getContext());
 			cb.setText(msg);
@@ -224,7 +224,6 @@ public class GuiRenderer {
 			txt.setText(m.getValF().transform(world).toString());
 		}
 
-		// FIXME: implement these!
 		public void visit(TextField t) {
 			String label = (t.getValF().transform(world)).toString();
 			EditText edit = (EditText) topView.getChildAt(this.viewIndex);
@@ -245,10 +244,13 @@ public class GuiRenderer {
 		}
 
 		public void visit(org.plt.guiworld.CheckBox c) {
-			String label = (c.getValF().transform(world)).toString();
+			String label = (c.getLabelValF().transform(world)).toString();
 			android.widget.CheckBox cb = (android.widget.CheckBox) topView
 					.getChildAt(this.viewIndex);
 			cb.setText(label);
+			Boolean check = (Boolean) (c.getCheckValF().transform(Boolean
+					.valueOf(cb.isChecked())));
+			cb.setChecked(check.booleanValue());
 		}
 
 		public void visit(Slider s) {
