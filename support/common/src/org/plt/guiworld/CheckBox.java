@@ -9,6 +9,7 @@ public class CheckBox implements Gui {
 
 	public CheckBox(WorldTransformer valF, WorldAndObjectTransformer callback) {
 		this.valF = valF;
+		this.callback = callback;
 	}
 
 	public WorldTransformer getValF() {
