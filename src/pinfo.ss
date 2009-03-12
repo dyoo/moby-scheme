@@ -98,7 +98,7 @@
                   fields)]
             [selector-bindings
              (map (lambda (sel-id) 
-                    (make-binding:function sel-id #f 2 #f 
+                    (make-binding:function sel-id #f 1 #f 
                                            (symbol->string
                                             (identifier->munged-java-identifier sel-id))))
                   selector-ids)])
@@ -156,6 +156,42 @@
                                                       "org.plt.WorldKernel.image_dash_rotate")))))
 
 
+(define world-stub-module
+  (let ([module-path                       
+         (resolve-module-path '(lib "world.ss" "moby" "stub") #f)])
+  (make-module-binding 'world-stub
+                       module-path
+                       (list (make-binding:function 'empty-scene module-path 2 #f
+                                                      "org.plt.WorldKernel.empty_dash_scene")
+                               (make-binding:function 'place-image module-path 4 #f
+                                                      "org.plt.WorldKernel.place_dash_image")
+                               (make-binding:function 'circle module-path 3 #f
+                                                      "org.plt.WorldKernel.circle")
+                               (make-binding:function 'nw:rectangle module-path 4 #f
+                                                      "org.plt.WorldKernel.rectangle")
+                               (make-binding:function 'key=? module-path 2 #f
+                                                      "org.plt.WorldKernel.key_equal__question_")
+                               (make-binding:function 'text module-path 3 #f
+                                                      "org.plt.WorldKernel.text")
+                               
+                               ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
+                               ;; We can fix this by extending expression to include a special "magic" identifier.  We should
+                               ;; ensure students don't accidently hit this function.
+                               (make-binding:function '-kernel-create-image module-path 1 #f
+                                                      "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
+                               (make-binding:function 'image-width module-path 1 #f
+                                                      "org.plt.WorldKernel.image_dash_width")
+                               (make-binding:function 'image-height module-path 1 #f
+                                                      "org.plt.WorldKernel.image_dash_height")
+                               (make-binding:function 'image? module-path 1 #f
+                                                      "org.plt.WorldKernel.image_question_")
+                               (make-binding:function 'image=? module-path 2 #f
+                                                      "org.plt.WorldKernel.image_equal__question_")
+                               (make-binding:function 'image-rotate module-path 2 #f
+                                                      "org.plt.WorldKernel.image_dash_rotate")))))
+                       
+
+
 ;; location library
 (define location-module 
   (let ([module-path 
@@ -204,6 +240,7 @@
 
                           
 (define known-modules (list world-module
+                            world-stub-module
                             location-module
                             tilt-module))
                                         
