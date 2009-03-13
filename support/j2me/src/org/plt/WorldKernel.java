@@ -107,7 +107,7 @@ public class WorldKernel {
 
 
 
-    public static Object on_dash_tick(Object callable) {
+    public static Object on_dash_tick_dash_event(Object callable) {
 	WorldKernel.onTickHandler = (Callable) callable;
 	return VoidObject.VOID;
     }

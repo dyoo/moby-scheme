@@ -1,6 +1,6 @@
 package org.plt.lib;
 
-import org.plt.LocationChangeListener;
+import org.plt.world.LocationChangeListener;
 
 
 public interface LocationService {

@@ -5,8 +5,8 @@ import javax.microedition.lcdui.*;
 
 import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
-import org.plt.MessageListener;
-import org.plt.LocationChangeListener;
+import org.plt.world.MessageListener;
+import org.plt.world.LocationChangeListener;
 import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 import org.plt.WorldKernel;

@@ -80,29 +80,31 @@
 (define (open-beginner-program path)
   (define text (new text%))
   (send text insert-file (path->string path))
-  (let* ([reader-string
-         (send text get-text
-               (send text paragraph-start-position 2)
-               (send text paragraph-start-position 3))]
-         [reader-string (regexp-replace #rx"^#reader" reader-string "")]
-         [ip (open-input-string reader-string)])
-    (let ([reader-expr (read ip)])
-      (match reader-expr
-        [(list 'lib "htdp-beginner-reader.ss" "lang")
-         (let ([settings-expr (read ip)])
-           ;; deletes the metadata at the beginning of the file.
-           ;; FIXME: this is wrong!
-           (send text delete 0 (send text paragraph-start-position 3))
 
-           (when (assoc 'teachpacks settings-expr)
-             (for ([teachpack-sexp (second (assoc 'teachpacks settings-expr))])
-               (send text set-position 0)
-               (send text insert (format "(require ~s)"
-                                         teachpack-sexp))))
-           text)]
-        [else
-         (error 'open-beginner-program "Did not recognize ~s as the header of a beginner-level program."
-                reader-expr)]))))
+  text
+  #;(let* ([reader-string
+            (send text get-text
+                  (send text paragraph-start-position 2)
+                  (send text paragraph-start-position 3))]
+           [reader-string (regexp-replace #rx"^#reader" reader-string "")]
+           [ip (open-input-string reader-string)])
+      (let ([reader-expr (read ip)])
+        (match reader-expr
+          [(list 'lib "htdp-beginner-reader.ss" "lang")
+           (let ([settings-expr (read ip)])
+             ;; deletes the metadata at the beginning of the file.
+             ;; FIXME: this is wrong!
+             (send text delete 0 (send text paragraph-start-position 3))
+             
+             (when (assoc 'teachpacks settings-expr)
+               (for ([teachpack-sexp (second (assoc 'teachpacks settings-expr))])
+                 (send text set-position 0)
+                 (send text insert (format "(require ~s)"
+                                           teachpack-sexp))))
+             text)]
+          [else
+           (error 'open-beginner-program "Did not recognize ~s as the header of a beginner-level program."
+                  reader-expr)]))))
 
 
 
@@ -221,16 +223,12 @@
 ;; parse-text-as-program: text -> program
 ;; Given a text, returns a program as well.
 (define (parse-text-as-program a-text)
-  (let* ([ip (open-input-text-editor a-text)]
-         [s-exp
-          (parameterize ([read-accept-reader #t])
-            (let loop ([s-exp (read ip)])
-              (cond
-                [(eof-object? s-exp)
-                 '()]
-                [else
-                 (cons s-exp (loop (read ip)))])))])
-    s-exp))
+  (let* ([ip (open-input-text-editor a-text)])
+    (parameterize ([read-accept-reader #t])
+      (let ([s-exp (read ip)])
+        (match s-exp
+          [(list 'module name lang body ...)
+           body])))))
 
 
 ;; program-extract-world-handlers: program -> (values program world-handlers)

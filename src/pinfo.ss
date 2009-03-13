@@ -132,6 +132,7 @@
                                                       "org.plt.WorldKernel.on_dash_tick_dash_event")
                                (make-binding:function 'on-mouse-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_mouse_dash_event")
+                               (make-binding:function 'on-key-event module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
                                (make-binding:function 'on-message-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_message_dash_event")
                                (make-binding:function 'on-location-change-event module-path 1 #f
@@ -186,6 +187,8 @@
                                                     "org.plt.WorldKernel.on_dash_tick_dash_event")
                              (make-binding:function 'on-mouse-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_mouse_dash_event")
+                             (make-binding:function 'on-key-event module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
+
                              (make-binding:function 'on-message-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_message_dash_event")
                              (make-binding:function 'on-location-change-event module-path 1 #f

@@ -22,8 +22,8 @@ import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
 import org.plt.types.*;
 
-import org.plt.MessageListener;
-import org.plt.LocationChangeListener;
+import org.plt.world.MessageListener;
+import org.plt.world.LocationChangeListener;
 import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 
