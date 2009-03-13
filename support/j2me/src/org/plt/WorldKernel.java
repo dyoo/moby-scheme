@@ -31,6 +31,8 @@ public class WorldKernel {
 	    onMouseEventHandler =
 	    onMessageEventHandler =
 	    onLocationChangeEventHandler =
+	    onOrientationChangeEventHandler =
+	    onAccelerationChangeEventHandler =
 	    new Callable() {
 		public Object call(Object[] args) {
 		    return args[0];
