@@ -8,6 +8,7 @@ import org.plt.platform.Platform;
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
 import org.plt.world.TiltChangeListener;
+import org.plt.world.AccelerationChangeListener;
 import org.plt.WorldKernel;
 
 
@@ -51,12 +52,13 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	Platform.getInstance().getTiltService().startService();
 	Platform.getInstance().getLocationService().addLocationChangeListener(canvas);
 	Platform.getInstance().getTiltService().addTiltChangeListener(canvas);
+	Platform.getInstance().getTiltService().addAccelerationChangeListener(canvas);
 
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();
     }
 
-    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, TiltChangeListener {
+    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, TiltChangeListener, AccelerationChangeListener {
 	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
@@ -86,6 +88,7 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 		world = WorldKernel.getOnMessageEventHandler().call
 		    (new Object[] { world, aMessage});
 	    }
+	    repaint();
 	}
 
 	public void onLocationChange(Object latitude, Object longitude) {
@@ -93,14 +96,25 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 		world = WorldKernel.getOnLocationChangeEventHandler().call
 		    (new Object[] { world, latitude, longitude });
 	    }	    
+	    repaint();
 	}
 
-	public void onTiltChange(Object x, Object y, Object z) {
+	public void onTiltChange(Object azimuth, Object pitch, Object roll) {
 	    synchronized(world) {
 		world = WorldKernel.getOnTiltChangeEventHandler().call
+		    (new Object[] { world, azimuth, pitch, roll });
+	    }	    
+	    repaint();
+	}
+
+	public void onAccelerationChange(Object x, Object y, Object z) {
+	    synchronized(world) {
+		world = WorldKernel.getOnAccelerationChangeEventHandler().call
 		    (new Object[] { world, x, y, z });
 	    }	    
+	    repaint();
 	}
+
 
 	public void paint(Graphics g) {
             org.plt.gui.GraphicsAdapter ag = new org.plt.gui.GraphicsAdapter(g);

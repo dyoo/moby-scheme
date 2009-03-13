@@ -4,21 +4,40 @@ import org.plt.types.*;
 import org.plt.platform.Platform;
 
 public class Tilt {
-    public static Object getXTilt() {
+    public static Object getXAcceleration() {
 	TiltService service = 
 	    Platform.getInstance().getTiltService();
-	return service.getXTilt();
+	return service.getXAcceleration();
     }
 
-    public static Object getYTilt() {
+    public static Object getYAcceleration() {
 	TiltService service = 
 	    Platform.getInstance().getTiltService();
-	return service.getYTilt();
+	return service.getYAcceleration();
     }
 
-    public static Object getZTilt() {
+    public static Object getZAcceleration() {
 	TiltService service = 
 	    Platform.getInstance().getTiltService();
-	return service.getZTilt();
+	return service.getZAcceleration();
+    }
+
+
+    public static Object getAzimuth() {
+	TiltService service = 
+	    Platform.getInstance().getTiltService();
+	return service.getAzimuth();
+    }
+
+    public static Object getPitch() {
+	TiltService service = 
+	    Platform.getInstance().getTiltService();
+	return service.getPitch();
+    }
+
+    public static Object getRoll() {
+	TiltService service = 
+	    Platform.getInstance().getTiltService();
+	return service.getRoll();
     }
 }

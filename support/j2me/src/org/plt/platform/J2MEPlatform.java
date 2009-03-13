@@ -5,6 +5,7 @@ import org.plt.lib.TiltService;
 import org.plt.types.*;
 import org.plt.LocationChangeListener;
 import org.plt.world.TiltChangeListener;
+import org.plt.world.AccelerationChangeListener;
 
 
 public class J2MEPlatform implements PlatformI {
@@ -15,19 +16,33 @@ public class J2MEPlatform implements PlatformI {
 
     public TiltService getTiltService() {
 	return new TiltService() {
-	    public Object getXTilt() {
+	    public Object getXAcceleration() {
 		return FloatPoint.ZERO;
 	    }
 
-	    public Object getYTilt() {
+	    public Object getYAcceleration() {
 		return FloatPoint.ZERO;
 	    }
 
-	    public Object getZTilt() {
+	    public Object getZAcceleration() {
+		return FloatPoint.ZERO;
+	    }
+
+
+	    public Object getAzimuth() {
+		return FloatPoint.ZERO;
+	    }
+
+	    public Object getPitch() {
+		return FloatPoint.ZERO;
+	    }
+
+	    public Object getRoll() {
 		return FloatPoint.ZERO;
 	    }
 
 	    public void addTiltChangeListener(TiltChangeListener t) {}
+	    public void addAccelerationChangeListener(AccelerationChangeListener t) {}
 
 	    public void shutdownService() {}
 	    public void startService() {}

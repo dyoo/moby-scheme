@@ -25,6 +25,7 @@ import org.plt.types.*;
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
 import org.plt.world.TiltChangeListener;
+import org.plt.world.AccelerationChangeListener;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -193,13 +194,55 @@ public class AndroidPlatform implements PlatformI {
     }
 
 
-    private class AndroidTiltService implements TiltService, SensorListener {
+    private class AndroidTiltService implements TiltService {
 	SensorManager manager;
-	float[] lastValues;
-	java.util.List listeners;
+	float[] lastTiltValues;
+	float[] lastAccelerationValues;
+
+	java.util.List tiltListeners;
+	java.util.List accelerationListeners;
+
+	SensorListener mainOrientationListener;
+	SensorListener mainAccelerationListener;
+
 
 	public AndroidTiltService() {
-	    listeners = new ArrayList();
+	    tiltListeners = new ArrayList();
+	    accelerationListeners = new ArrayList();
+
+	    mainOrientationListener = new SensorListener() {
+		    public void onAccuracyChanged(int sensor, int accuracy) {
+		    }
+
+		    public void onSensorChanged(int sensor, float[] values) {
+			lastTiltValues = values;
+			Object azimuth = FloatPoint.fromString(""+ values[0]);
+			Object pitch = FloatPoint.fromString(""+values[1]);
+			Object roll = FloatPoint.fromString(""+values[2]);
+			for(int i = 0; i < tiltListeners.size(); i++) {
+			    ((TiltChangeListener) tiltListeners.get(i)).onTiltChange(azimuth, pitch, roll);
+
+			}
+		    }
+		};
+
+	    mainAccelerationListener = new SensorListener() {
+		    public void onAccuracyChanged(int sensor, int accuracy) {
+		    }
+
+		    public void onSensorChanged(int sensor, float[] values) {
+			lastAccelerationValues = values;
+			Object x = FloatPoint.fromString(""+ values[0]);
+			Object y = FloatPoint.fromString(""+values[1]);
+			Object z = FloatPoint.fromString(""+values[2]);
+			for(int i = 0; i < accelerationListeners.size(); i++) {
+			    ((AccelerationChangeListener) accelerationListeners.get(i)).onAccelerationChange(x, y, z);
+
+			}
+		    }
+
+
+		};
 	}
 
 	public void startService() {
@@ -209,56 +252,73 @@ public class AndroidPlatform implements PlatformI {
 		    Looper.prepare();
 		    manager = (SensorManager) 
 			activity.getSystemService(Context.SENSOR_SERVICE);
-		    manager.registerListener(service, SensorManager.SENSOR_ACCELEROMETER);
+		    manager.registerListener(mainAccelerationListener, SensorManager.SENSOR_ACCELEROMETER);
+		    manager.registerListener(mainOrientationListener, SensorManager.SENSOR_ORIENTATION);
 		    Looper.loop();
 		}
 	    }.start();
 	}
 
 	public void shutdownService() {
-	    manager.unregisterListener(this);
+	    manager.unregisterListener(mainAccelerationListener);	   
+	    manager.unregisterListener(mainOrientationListener);
 	}
 
 
-	public void onAccuracyChanged(int sensor, int accuracy) {
-	}
-
-	public void onSensorChanged(int sensor, float[] values) {
-	    lastValues = values;
-	    Object x = getXTilt();
-	    Object y = getYTilt();
-	    Object z = getZTilt();
-	    for(int i = 0; i < listeners.size(); i++) {
-		((TiltChangeListener) listeners.get(i)).onTiltChange(x, y, z);
-
-	    }
-	}
-
-
-	public Object getXTilt() {
-	    if (lastValues != null) {
-		return FloatPoint.fromString(""+lastValues[SensorManager.DATA_X]);
+	public Object getXAcceleration() {
+	    if (lastAccelerationValues != null) {
+		return FloatPoint.fromString(""+lastAccelerationValues[0]);
 	    }
 	    return FloatPoint.ZERO;
 	}
 
-	public Object getYTilt() {
-	    if (lastValues != null) {
-		return FloatPoint.fromString(""+lastValues[SensorManager.DATA_Y]);
+	public Object getYAcceleration() {
+	    if (lastAccelerationValues != null) {
+		return FloatPoint.fromString(""+lastAccelerationValues[1]);
 	    }
 	    return FloatPoint.ZERO;
 	}
 
-	public Object getZTilt() {
-	    if (lastValues != null) {
-		return FloatPoint.fromString(""+lastValues[SensorManager.DATA_Z]);
+	public Object getZAcceleration() {
+	    if (lastAccelerationValues != null) {
+		return FloatPoint.fromString(""+lastAccelerationValues[2]);
 	    }
 	    return FloatPoint.ZERO;
 	}
+
+
+	public Object getAzimuth() {
+	    if (lastTiltValues != null) {
+		return FloatPoint.fromString(""+lastTiltValues[0]);
+	    }
+	    return FloatPoint.ZERO;
+	}
+
+	public Object getPitch() {
+	    if (lastTiltValues != null) {
+		return FloatPoint.fromString(""+lastTiltValues[1]);
+	    }
+	    return FloatPoint.ZERO;
+	}
+
+	public Object getRoll() {
+	    if (lastTiltValues != null) {
+		return FloatPoint.fromString(""+lastTiltValues[2]);
+	    }
+	    return FloatPoint.ZERO;
+	}
+
+
+
 
 	public void addTiltChangeListener(TiltChangeListener l) {
-	    listeners.add(l);
+	    tiltListeners.add(l);
 	}
+
+	public void addAccelerationChangeListener(AccelerationChangeListener l) {
+	    accelerationListeners.add(l);
+	}
+
     }
 
 }

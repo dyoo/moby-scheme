@@ -136,9 +136,10 @@
                                                       "org.plt.WorldKernel.on_dash_message_dash_event")
                                (make-binding:function 'on-location-change-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
-                               
-                                                            (make-binding:function 'on-tilt-change-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
+                               (make-binding:function 'on-tilt-change-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
+                               (make-binding:function 'on-acceleration-change-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
                                (make-binding:function 'on-redraw module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_redraw")
                                (make-binding:function 'stop-when module-path 1 #f
@@ -189,8 +190,10 @@
                                                     "org.plt.WorldKernel.on_dash_message_dash_event")
                              (make-binding:function 'on-location-change-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
-                                                          (make-binding:function 'on-tilt-change-event module-path 1 #f
+                             (make-binding:function 'on-tilt-change-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
+                             (make-binding:function 'on-acceleration-change-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
                              (make-binding:function 'on-redraw module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_redraw")
                              (make-binding:function 'stop-when module-path 1 #f
@@ -252,12 +255,19 @@
          (build-path mock-lib-path "tilt.ss")])
     (make-module-binding 'tilt
                          module-path
-                         (list (make-binding:function 'get-x-tilt module-path 0 #f 
-                                                      "org.plt.lib.Tilt.getXTilt")
-                               (make-binding:function 'get-y-tilt module-path 0 #f 
-                                                      "org.plt.lib.Tilt.getYTilt")
-                               (make-binding:function 'get-z-tilt module-path 0 #f 
-                                                      "org.plt.lib.Location.getZTilt")))))
+                         (list (make-binding:function 'get-x-acceleration module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getXAcceleration")
+                               (make-binding:function 'get-y-acceleration module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getYAcceleration")
+                               (make-binding:function 'get-z-acceleration module-path 0 #f 
+                                                      "org.plt.lib.Location.getZAcceleration")
+                               
+                               (make-binding:function 'get-azimuth module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getAzimuth")
+                               (make-binding:function 'get-pitch module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getPitch")
+                               (make-binding:function 'get-roll module-path 0 #f 
+                                                      "org.plt.lib.Tilt.getRoll")))))
 
 
 
