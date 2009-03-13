@@ -40,8 +40,8 @@ public class GuiWorld {
     }
 
 
-    public static Object message(Object[] args) {
-	final Callable c = coerseToCallable(args[0]);
+    public static Object message(Object msg) {
+	final Callable c = coerseToCallable(msg);
 	return new Message(new WorldTransformer() {
 		public Object transform(Object world) {
 		    return c.call(new Object[] { world });

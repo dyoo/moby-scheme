@@ -279,6 +279,18 @@
                                                       "org.plt.lib.Tilt.getRoll")))))
 
 
+(define gui-world-module
+  (let ([module-path 
+         (resolve-module-path '(lib "gui-world.ss" "gui-world")
+                              #f)])
+    (make-module-binding 'gui-world
+                         module-path
+                         (list (make-binding:function 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
+                               (make-binding:function 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
+                               (make-binding:function 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
+                               (make-binding:function 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")))))
+
+
 
 
 ;; extend-env/module-binding: env module-binding -> env
@@ -297,7 +309,8 @@
 (define known-modules (list world-module
                             world-stub-module
                             location-module
-                            tilt-module))
+                            tilt-module
+                            gui-world-module))
                                         
 
 
