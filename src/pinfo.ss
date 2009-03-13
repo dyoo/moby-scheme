@@ -153,7 +153,10 @@
                                (make-binding:function 'circle module-path 3 #f
                                                       "org.plt.WorldKernel.circle")
                                (make-binding:function 'nw:rectangle module-path 4 #f
+                                                      "org.plt.WorldKernel.nw_colon_rectangle")
+                                                              (make-binding:function 'rectangle module-path 4 #f
                                                       "org.plt.WorldKernel.rectangle")
+                               
                                (make-binding:function 'key=? module-path 2 #f
                                                       "org.plt.WorldKernel.key_equal__question_")
                                (make-binding:function 'text module-path 3 #f
@@ -210,6 +213,9 @@
                              (make-binding:function 'circle module-path 3 #f
                                                     "org.plt.WorldKernel.circle")
                              (make-binding:function 'nw:rectangle module-path 4 #f
+                                                    "org.plt.WorldKernel.nw_colon_rectangle")
+                                        
+                             (make-binding:function 'rectangle module-path 4 #f
                                                     "org.plt.WorldKernel.rectangle")
                              (make-binding:function 'key=? module-path 2 #f
                                                     "org.plt.WorldKernel.key_equal__question_")
