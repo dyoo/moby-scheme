@@ -1,0 +1,50 @@
+package org.plt.<<PROGRAM-NAME>>;
+
+import android.os.Bundle;
+import android.widget.LinearLayout;
+import org.plt.guiworld.GuiRenderer;
+
+
+public class <<PROGRAM-NAME>> 
+    extends Activity {
+
+    // Important: definitions must come first, because they'll
+    // include static blocks that initialize values that
+    // we depend on later!
+    <<PROGRAM-DEFINITIONS>>
+
+
+    public void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+
+	LinearLayout view = new LinearLayout(this);
+	GuiRenderer guiRender; // = new GuiRenderer(world, view, gui);
+	setContentView(guiRender.getView());
+
+    }
+    
+    public void onStart() {
+	super.onStart();
+    }
+    
+    public void onRestart() {
+	super.onRestart();
+    }
+    
+    public void onResume() {
+	super.onResume();
+    }
+   
+    public void onPause() {
+	super.onPause();
+    }
+    
+    public void onStop() {
+	super.onStop();
+    }
+
+    public void onDestroy() {
+	super.onDestroy();
+    }
+}
+ 
