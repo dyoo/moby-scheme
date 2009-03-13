@@ -369,7 +369,8 @@
                   permissions)
            
            (application 
-            ((android:label "@string/app_name"))
+            ((android:label "@string/app_name")
+             (android:icon "@drawable/plt"))
             (activity ((android:name "j2ab.android.app.J2ABMIDletActivity")
                        (android:label "@string/app_name"))
                       (intent-filter 
