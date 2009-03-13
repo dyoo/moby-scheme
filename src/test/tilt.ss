@@ -8,26 +8,26 @@
 (define width 300)
 (define height 100)
 
-(define-struct world (x y z))
+(define-struct world (a p r))
 (define initial-world (make-world 0 0 0))
 
 
 (define (render-world a-world)
   (place-image
-   (text (string-append (number->string (world-x a-world))
+   (text (string-append (number->string (world-a a-world))
                         " "
-                        (number->string (world-y a-world))
+                        (number->string (world-p a-world))
                         " "
-                        (number->string (world-z a-world)))
+                        (number->string (world-r a-world)))
          20 
          "blue")
    0
    50
    (empty-scene width height)))
 
-(define (handle-tilt-change a-world new-x new-y new-z)
-  (make-world new-x new-y new-z))
+(define (handle-orientation-change a-world new-a new-p new-r)
+  (make-world new-a new-p new-r))
 
 (big-bang width height 1/10 initial-world)
 (on-redraw render-world)
-(on-tilt-change-event handle-tilt-change)
+(on-orientation-change-event handle-orientation-change)

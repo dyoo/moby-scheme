@@ -4,7 +4,7 @@ import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
 import org.plt.types.*;
 import org.plt.LocationChangeListener;
-import org.plt.world.TiltChangeListener;
+import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 
 
@@ -41,7 +41,7 @@ public class J2MEPlatform implements PlatformI {
 		return FloatPoint.ZERO;
 	    }
 
-	    public void addTiltChangeListener(TiltChangeListener t) {}
+	    public void addOrientationChangeListener(OrientationChangeListener t) {}
 	    public void addAccelerationChangeListener(AccelerationChangeListener t) {}
 
 	    public void shutdownService() {}

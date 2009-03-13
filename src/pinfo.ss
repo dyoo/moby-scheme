@@ -136,8 +136,8 @@
                                                       "org.plt.WorldKernel.on_dash_message_dash_event")
                                (make-binding:function 'on-location-change-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
-                               (make-binding:function 'on-tilt-change-event module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
+                               (make-binding:function 'on-orientation-change-event module-path 1 #f
+                                                      "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event")
                                (make-binding:function 'on-acceleration-change-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
                                (make-binding:function 'on-redraw module-path 1 #f
@@ -190,8 +190,8 @@
                                                     "org.plt.WorldKernel.on_dash_message_dash_event")
                              (make-binding:function 'on-location-change-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
-                             (make-binding:function 'on-tilt-change-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_tilt_dash_change_dash_event")
+                             (make-binding:function 'on-orientation-change-event module-path 1 #f
+                                                    "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event")
                              (make-binding:function 'on-acceleration-change-event module-path 1 #f
                                                     "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
                              (make-binding:function 'on-redraw module-path 1 #f

@@ -19,7 +19,7 @@ public class WorldKernel {
     private static Callable onMouseEventHandler;
     private static Callable onMessageEventHandler;
     private static Callable onLocationChangeEventHandler;
-    private static Callable onTiltChangeEventHandler;
+    private static Callable onOrientationChangeEventHandler;
     private static Callable onAccelerationChangeEventHandler;
     private static Callable onRedrawHandler;
     private static Callable stopWhenHandler;
@@ -85,8 +85,8 @@ public class WorldKernel {
     public static Callable getOnLocationChangeEventHandler() {
 	return WorldKernel.onLocationChangeEventHandler;
     }
-    public static Callable getOnTiltChangeEventHandler() {
-	return WorldKernel.onTiltChangeEventHandler;
+    public static Callable getOnOrientationChangeEventHandler() {
+	return WorldKernel.onOrientationChangeEventHandler;
     }
     public static Callable getOnAccelerationChangeEventHandler() {
 	return WorldKernel.onAccelerationChangeEventHandler;
@@ -143,8 +143,8 @@ public class WorldKernel {
     }
 
 
-    public static Object on_dash_tilt_dash_change_dash_event(Object callable) {
-	WorldKernel.onTiltChangeEventHandler = (Callable) callable;
+    public static Object on_dash_orientation_dash_change_dash_event(Object callable) {
+	WorldKernel.onOrientationChangeEventHandler = (Callable) callable;
 	return VoidObject.VOID;
     }
 

@@ -7,7 +7,7 @@ import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
-import org.plt.world.TiltChangeListener;
+import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 import org.plt.WorldKernel;
 
@@ -51,14 +51,14 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	Platform.getInstance().getLocationService().startService();
 	Platform.getInstance().getTiltService().startService();
 	Platform.getInstance().getLocationService().addLocationChangeListener(canvas);
-	Platform.getInstance().getTiltService().addTiltChangeListener(canvas);
+	Platform.getInstance().getTiltService().addOrientationChangeListener(canvas);
 	Platform.getInstance().getTiltService().addAccelerationChangeListener(canvas);
 
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();
     }
 
-    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, TiltChangeListener, AccelerationChangeListener {
+    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, OrientationChangeListener, AccelerationChangeListener {
 	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
@@ -99,9 +99,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	    repaint();
 	}
 
-	public void onTiltChange(Object azimuth, Object pitch, Object roll) {
+	public void onOrientationChange(Object azimuth, Object pitch, Object roll) {
 	    synchronized(world) {
-		world = WorldKernel.getOnTiltChangeEventHandler().call
+		world = WorldKernel.getOnOrientationChangeEventHandler().call
 		    (new Object[] { world, azimuth, pitch, roll });
 	    }	    
 	    repaint();

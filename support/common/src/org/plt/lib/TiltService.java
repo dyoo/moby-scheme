@@ -1,6 +1,6 @@
 package org.plt.lib;
 
-import org.plt.world.TiltChangeListener;
+import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 
 public interface TiltService {
@@ -12,7 +12,7 @@ public interface TiltService {
     Object getPitch();
     Object getRoll();
 
-    void addTiltChangeListener(TiltChangeListener listener);
+    void addOrientationChangeListener(OrientationChangeListener listener);
     void addAccelerationChangeListener(AccelerationChangeListener listener);
 
     void shutdownService();

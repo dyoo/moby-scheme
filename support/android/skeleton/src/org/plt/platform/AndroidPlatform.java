@@ -24,7 +24,7 @@ import org.plt.types.*;
 
 import org.plt.MessageListener;
 import org.plt.LocationChangeListener;
-import org.plt.world.TiltChangeListener;
+import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 
 import java.util.Iterator;
@@ -196,10 +196,10 @@ public class AndroidPlatform implements PlatformI {
 
     private class AndroidTiltService implements TiltService {
 	SensorManager manager;
-	float[] lastTiltValues;
+	float[] lastOrientationValues;
 	float[] lastAccelerationValues;
 
-	java.util.List tiltListeners;
+	java.util.List orientationListeners;
 	java.util.List accelerationListeners;
 
 	SensorListener mainOrientationListener;
@@ -207,7 +207,7 @@ public class AndroidPlatform implements PlatformI {
 
 
 	public AndroidTiltService() {
-	    tiltListeners = new ArrayList();
+	    orientationListeners = new ArrayList();
 	    accelerationListeners = new ArrayList();
 
 	    mainOrientationListener = new SensorListener() {
@@ -215,12 +215,12 @@ public class AndroidPlatform implements PlatformI {
 		    }
 
 		    public void onSensorChanged(int sensor, float[] values) {
-			lastTiltValues = values;
+			lastOrientationValues = values;
 			Object azimuth = FloatPoint.fromString(""+ values[0]);
 			Object pitch = FloatPoint.fromString(""+values[1]);
 			Object roll = FloatPoint.fromString(""+values[2]);
-			for(int i = 0; i < tiltListeners.size(); i++) {
-			    ((TiltChangeListener) tiltListeners.get(i)).onTiltChange(azimuth, pitch, roll);
+			for(int i = 0; i < orientationListeners.size(); i++) {
+			    ((OrientationChangeListener) orientationListeners.get(i)).onOrientationChange(azimuth, pitch, roll);
 
 			}
 		    }
@@ -288,22 +288,22 @@ public class AndroidPlatform implements PlatformI {
 
 
 	public Object getAzimuth() {
-	    if (lastTiltValues != null) {
-		return FloatPoint.fromString(""+lastTiltValues[0]);
+	    if (lastOrientationValues != null) {
+		return FloatPoint.fromString(""+lastOrientationValues[0]);
 	    }
 	    return FloatPoint.ZERO;
 	}
 
 	public Object getPitch() {
-	    if (lastTiltValues != null) {
-		return FloatPoint.fromString(""+lastTiltValues[1]);
+	    if (lastOrientationValues != null) {
+		return FloatPoint.fromString(""+lastOrientationValues[1]);
 	    }
 	    return FloatPoint.ZERO;
 	}
 
 	public Object getRoll() {
-	    if (lastTiltValues != null) {
-		return FloatPoint.fromString(""+lastTiltValues[2]);
+	    if (lastOrientationValues != null) {
+		return FloatPoint.fromString(""+lastOrientationValues[2]);
 	    }
 	    return FloatPoint.ZERO;
 	}
@@ -311,8 +311,8 @@ public class AndroidPlatform implements PlatformI {
 
 
 
-	public void addTiltChangeListener(TiltChangeListener l) {
-	    tiltListeners.add(l);
+	public void addOrientationChangeListener(OrientationChangeListener l) {
+	    orientationListeners.add(l);
 	}
 
 	public void addAccelerationChangeListener(AccelerationChangeListener l) {
