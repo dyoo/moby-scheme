@@ -39,14 +39,11 @@ public class GuiWorldTest extends Activity {
 			public Object transform(Object world) {
 				return "says: " + world.toString();
 			}
-		},
-
-		// callback
-				new WorldTransformer() {
-					public Object transform(Object world) {
-						return new Integer(((Integer) world).intValue() + 1);
-					}
-				}) }),
+		}, new WorldTransformer() {
+			public Object transform(Object world) {
+				return new Integer(((Integer) world).intValue() + 1);
+			}
+		}) }),
 
 		new org.plt.guiworld.TextField(new WorldTransformer() {
 			public Object transform(Object world) {
@@ -68,6 +65,11 @@ public class GuiWorldTest extends Activity {
 		new DropDown(new WorldTransformer() {
 			public Object transform(Object world) {
 				Integer count = (Integer) world;
+				return Integer.toString(count - 1);
+			}
+		}, new WorldTransformer() {
+			public Object transform(Object world) {
+				Integer count = (Integer) world;
 				String[] items = new String[count.intValue()];
 				for (int i = 0; i < count.intValue(); i++)
 					items[i] = String.valueOf(i);
@@ -84,9 +86,7 @@ public class GuiWorldTest extends Activity {
 			public Object transform(Object world) {
 				return Integer.parseInt(world.toString());
 			}
-		},
-
-		new WorldAndObjectTransformer() {
+		}, new WorldAndObjectTransformer() {
 			public Object transform(Object world, Object obj) {
 				return Integer.parseInt(obj.toString());
 			}
@@ -96,19 +96,15 @@ public class GuiWorldTest extends Activity {
 			public Object transform(Object world) {
 				return "check: " + world.toString();
 			}
-		},
-
-		new WorldTransformer() {
+		}, new WorldTransformer() {
 			public Object transform(Object checked) {
 				return checked;
 			}
-		},
-
-		new WorldAndObjectTransformer() {
+		}, new WorldAndObjectTransformer() {
 			public Object transform(Object world, Object obj) {
 				if (((Boolean) obj).equals(Boolean.TRUE))
-					return new Integer(1);
-				return new Integer(0);
+					return new Integer(2);
+				return new Integer(1);
 			}
 		}) });
 

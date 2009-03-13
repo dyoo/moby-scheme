@@ -178,6 +178,13 @@ public class GuiRenderer {
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			Spinner dropdown = new Spinner(topView.getContext());
 			dropdown.setAdapter(adapter);
+
+			String selected = (String) d.getValF().transform(world);
+			int i = 0;
+			for (; i < items.length && !((String) items[i]).equals(selected); i++)
+				;
+			dropdown.setSelection(i);
+
 			dropdown.setOnItemSelectedListener(new OnItemSelectedListener() {
 				public void onItemSelected(AdapterView parent, View view,
 						int position, long id) {
@@ -272,7 +279,12 @@ public class GuiRenderer {
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			Spinner dropdown = (Spinner) topView.getChildAt(this.viewIndex);
 			dropdown.setAdapter(adapter);
+
+			String selected = (String) d.getValF().transform(world);
+			int i = 0;
+			for (; i < items.length && !((String) items[i]).equals(selected); i++)
+				;
+			dropdown.setSelection(i);
 		}
 	}
-
 }
