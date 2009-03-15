@@ -33,4 +33,4 @@
                                         (loop)])))))))
 
 (provide/contract [make-input-port-response 
-                   (string? input-port? . -> . response/c)])
+                   (string? input-port? . -> . response/basic?)])

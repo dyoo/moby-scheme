@@ -9,6 +9,7 @@
 
 (define-runtime-path data (build-path "data"))
 
+(define-runtime-path htdocs-path (build-path "htdocs"))
 (define model (make-model data))
 
 
@@ -65,8 +66,10 @@
 
 
 
+
 (serve/servlet start
                #:port 8888
                #:command-line? #t
                #:listen-ip #f
-               #:servlet-regexp #rx"")
+               #:servlet-path "/compile"
+               #:extra-files-paths (list htdocs-path))
