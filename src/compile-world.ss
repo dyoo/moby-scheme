@@ -346,7 +346,7 @@
            
            (application 
             ((android:label "@string/app_name")
-             (android:icon "@drawable/plt"))
+             (android:icon "@drawable/icon"))
             (activity ((android:name "j2ab.android.app.J2ABMIDletActivity")
                        (android:label "@string/app_name"))
                       (intent-filter 
