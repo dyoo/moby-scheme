@@ -52,6 +52,7 @@
 (define test-location-2 (make-test "location-2.ss"))
 (define test-tilt (make-test "tilt.ss"))
 (define test-bubble (make-test "bubble.ss"))
+(define test-sketch (make-test "sketch.ss"))
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -79,6 +80,7 @@
                     test-location-2
                     test-tilt
                     test-bubble
+                    test-sketch
                     
                     test-cowabunga 
                     test-flight-lander

@@ -12,6 +12,14 @@ first to consult on the design of solutions.
 
 Major:
 
+* Write demonstration programs
+
+    Bubble
+    Tightrope walker
+    PID control
+    Etch a sketch
+
+
 * Implement all of the Beginner Scheme primitives in the runtime.
   The list of primitives comes at the end of this file.
 

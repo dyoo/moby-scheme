@@ -4,11 +4,15 @@
 (require (lib "world.ss" "moby" "stub"))
 
 ;; The width and height of the drawing canvas.
-(define WIDTH 500)
-(define HEIGHT 300)
+(define WIDTH 400)
+(define HEIGHT 400)
 (define BLANK-COLOR "lightgray")
 (define DRAW-COLOR "darkgray")
 (define DOT-RADIUS 3)
+
+
+;; amount of tilt required before we move in that direction.
+(define TILT-THRESHOLD 10)
 
 
 ;; A world will be the current position,
@@ -150,27 +154,31 @@
                                            0
                                            (empty-scene WIDTH HEIGHT)))))
 
-;; change-direction-left: world -> world
-(define (change-direction-left a-world)
-  (update-world-direction a-world "left"))
-
-;; change-direction-right: world -> world
-(define (change-direction-right a-world)
-  (update-world-direction a-world "right"))
-
-;; change-direction-up: world -> world
-(define (change-direction-up a-world)
-  (update-world-direction a-world "up"))
-
-;; change-direction-down: world -> world
-(define (change-direction-down a-world)
-  (update-world-direction a-world "down"))
-
-;; change-direction-stable: world -> world
-(define (change-direction-stable a-world)
-  (update-world-direction a-world "stable"))
   
+
+;; handle-orientation-change: world number number number -> world
+(define (handle-orientation-change a-world azimuth pitch roll)
+  (update-world-direction a-world (get-orientation-direction pitch roll)))
+  
+
+
+;; get-orientation-direction: number number -> direction
+(define (get-orientation-direction pitch roll)
+  (cond
+    [(< 0 TILT-THRESHOLD pitch)
+     "up"]
+    [(<  pitch (- TILT-THRESHOLD) 0)
+     "down"]
+    [(< 0 TILT-THRESHOLD roll)
+     "right"]
+    [(< roll (- TILT-THRESHOLD) 0)
+     "left"]
+    [else
+     "stable"]))
+
 
 
 (big-bang WIDTH HEIGHT 1/20 initial-world)
 (on-redraw render-etch-a-sketch)
+(on-tick-event move-by-drifting)
+(on-orientation-change-event handle-orientation-change)
