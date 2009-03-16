@@ -63,6 +63,12 @@
               "stable"))
 
 
+
+;; world-reset: world -> world
+(define (world-reset a-world)
+  initial-world)
+
+
 ;; draw-world-posn: posn scene -> scene
 ;; Draws the pin posn onto the scene.
 (define (draw-world-posn a-posn a-scene)
@@ -146,7 +152,11 @@
 
 ;; handle-orientation-change: world number number number -> world
 (define (handle-orientation-change a-world azimuth pitch roll)
-  (update-world-direction a-world (get-orientation-direction pitch roll)))
+  (cond
+    [(upside-down? pitch roll)
+     (world-reset a-world)]
+    [else
+     (update-world-direction a-world (get-orientation-direction pitch roll))]))
   
 
 
@@ -164,6 +174,12 @@
     [else
      "stable"]))
 
+
+;; upside-down?: number number -> boolean
+;; Returns true if we've gone upside-down.
+(define (upside-down? pitch roll)
+  (or (> (abs pitch) 120)
+      (> (abs roll) 120)))
 
 
 (big-bang WIDTH HEIGHT 1/20 initial-world)

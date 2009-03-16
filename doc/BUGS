@@ -20,4 +20,6 @@
   should mainfest.
 
 * The performance of the world primitives is poor on the Android
-  platform.
+  platform.  This may be due to the way we hold the image graph
+  structure rather than a cached version of the final image, but there
+  may be other sources of latency.
