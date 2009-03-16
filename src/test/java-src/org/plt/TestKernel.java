@@ -13,6 +13,13 @@ public class TestKernel {
 		assertTrue(Kernel.empty_question_(Empty.EMPTY).isTrue());
 	}
 
+        @Test
+        public void testSingleArgNegation() {
+	    assertTrue(NumberTower.equal(Kernel._dash_(new Object[] { new Rational(1, 1) }),
+					  new Rational(-1, 1)));
+	}
+
+
 	// Fill me in with more test cases!
 	@Test
 	public void testTan() {

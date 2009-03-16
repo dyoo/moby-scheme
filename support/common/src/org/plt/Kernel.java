@@ -153,7 +153,12 @@ public class Kernel {
 
 	// -
 	public static org.plt.types.Number _dash_(Object[] args) {
-	    org.plt.types.Number currentDifference = (org.plt.types.Number )args[0];
+	    if (args.length == 1) {
+		return NumberTower.minus(Rational.ZERO, 
+					 (org.plt.types.Number) args[0]);
+	    }
+	    org.plt.types.Number currentDifference = 
+		(org.plt.types.Number ) args[0];
 	    for(int i = 1; i < args.length; i++) {
 		currentDifference = NumberTower.minus
 		    (currentDifference,

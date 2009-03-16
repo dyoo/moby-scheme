@@ -18,3 +18,6 @@
 
 * Name mangling doesn't handle java keywords.  A defined variable
   named "long", for example, breaks the compiler.
+
+* If a program is given to the compiler that doesn't have a big-bang
+  call, we should fail immediately.
