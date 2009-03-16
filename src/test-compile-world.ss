@@ -53,6 +53,8 @@
 (define test-tilt (make-test "tilt.ss"))
 (define test-bubble (make-test "bubble.ss"))
 (define test-sketch (make-test "sketch.ss"))
+(define test-sketch-2 (make-test "sketch-2.ss"))
+(define test-upside-down (make-test "upside-down.ss"))
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -81,6 +83,8 @@
                     test-tilt
                     test-bubble
                     test-sketch
+                    test-sketch-2
+                    test-upside-down
                     
                     test-cowabunga 
                     test-flight-lander

@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname sketch) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname sketch-2) (read-case-sensitive #t) (teachpacks ((lib "world.ss" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "world.ss" "teachpack" "htdp")))))
 (require (lib "world.ss" "moby" "stub"))
 
 ;; The width and height of the drawing canvas.
@@ -16,28 +16,27 @@
 
 
 ;; A world will be the current position,
-;; and a list of posns representing
-;; the dots drawn already,
+;; and a scene of the drawn dots
 ;; and the drifting direction (one-of "left" "right" "up" "down" "stable")
-(define-struct world (posn dots direction))
+(define-struct world (posn scene direction))
 
 
 ;; update-world-posn: world posn -> world
 (define (update-world-posn a-world posn)
   (make-world posn 
-              (world-dots a-world)
+              (world-scene a-world)
               (world-direction a-world)))
 
-;; update-world-dots: world (listof posn) -> world
-(define (update-world-dots a-world dots)
+;; update-world-scene: world scene -> world
+(define (update-world-scene a-world a-scene)
   (make-world (world-posn a-world)
-              dots
+              a-scene
               (world-direction a-world)))
 
 ;; update-world-direction: world direction -> world
 (define (update-world-direction a-world a-direction)
   (make-world (world-posn a-world)
-              (world-dots a-world)
+              (world-scene a-world)
               a-direction))
 
 
@@ -57,7 +56,10 @@
 (define initial-world 
   (make-world (make-posn (/ WIDTH 2)
                          (/ HEIGHT 2))
-              empty
+              (place-image (nw:rectangle WIDTH HEIGHT "solid" BLANK-COLOR) 
+                           0 
+                           0
+                           (empty-scene WIDTH HEIGHT))
               "stable"))
 
 
@@ -70,29 +72,24 @@
                a-scene))
 
 
-;; draw-dots: (listof posn) scene -> scene
-;; Draws the dots onto a-scene.
-(define (draw-dots dots a-scene)
-  (cond
-    [(empty? dots)
-     a-scene]
-    [else
-     (draw-dots (rest dots)
-                (place-image (circle DOT-RADIUS "solid" DRAW-COLOR)
-                             (posn-x (first dots))
-                             (posn-y (first dots))
-                             a-scene))]))
+;; draw-dot: posn scene -> scene
+;; Draws the dot onto a-scene.
+(define (draw-dot a-posn a-scene)
+  (place-image (circle DOT-RADIUS "solid" DRAW-COLOR)
+               (posn-x a-posn)
+               (posn-y a-posn)
+               a-scene))
 
 
 ;; add-posn-to-dots: world -> world
-(define (add-posn-to-dots a-world)
-  (update-world-dots a-world
-                     (cons (world-posn a-world)
-                           (world-dots a-world))))
+(define (world-add-posn-to-scene a-world)
+  (update-world-scene a-world
+                      (draw-dot (world-posn a-world)
+                                (world-scene a-world))))
 
 ;; move-left: world -> world
 (define (move-left a-world)
-  (add-posn-to-dots
+  (world-add-posn-to-scene
    (update-world-posn a-world 
                       (update-posn-x (world-posn a-world)
                                      (max 0
@@ -100,21 +97,21 @@
 
 ;; move-right: world -> world
 (define (move-right a-world)
-  (add-posn-to-dots
+  (world-add-posn-to-scene
    (update-world-posn a-world
                       (update-posn-x (world-posn a-world)
                                      (min (sub1 WIDTH)
                                           (+ (posn-x (world-posn a-world)) DOT-RADIUS))))))
 ;; move-up: world -> world
 (define (move-up a-world)
-  (add-posn-to-dots
+  (world-add-posn-to-scene
    (update-world-posn a-world
                       (update-posn-y (world-posn a-world)
                                      (max 0
                                           (- (posn-y (world-posn a-world)) DOT-RADIUS))))))
 ;; move-down: world -> world
 (define (move-down a-world)
-  (add-posn-to-dots
+  (world-add-posn-to-scene
    (update-world-posn a-world
                       (update-posn-y (world-posn a-world)
                                      (min (sub1 HEIGHT)
@@ -135,7 +132,7 @@
      (move-up a-world)]
     [(string=? (world-direction a-world) "down")
      (move-down a-world)]))
-              
+               
 
 
 
@@ -143,11 +140,7 @@
 ;; Draws the etch-a-sketch's canvas
 (define (render-etch-a-sketch a-world)
   (draw-world-posn (world-posn a-world)
-                   (draw-dots (world-dots a-world)
-                              (place-image (nw:rectangle WIDTH HEIGHT "solid" BLANK-COLOR)
-                                           0
-                                           0
-                                           (empty-scene WIDTH HEIGHT)))))
+                   (world-scene a-world)))
 
   
 
