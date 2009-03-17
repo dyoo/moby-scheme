@@ -14,6 +14,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 // GuiRenderer: creates the initial gui, given the world and the view.
 // The visitor also keeps things up to date.
 
+/**
+ * GuiRenderer's rendering a Gui is like Interpretre's interpreting an Expression
+ */
 public class GuiRenderer {
 	// view contains a subView corresponded to gui
 	private LinearLayout view;
