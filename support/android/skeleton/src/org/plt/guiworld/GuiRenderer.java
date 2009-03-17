@@ -15,8 +15,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 // The visitor also keeps things up to date.
 
 public class GuiRenderer {
-
-	// private String title;
+	// view contains a subView corresponded to gui
 	private LinearLayout view;
 	private Object world;
 	private Gui gui;
@@ -45,7 +44,10 @@ public class GuiRenderer {
 		this.gui.accept(new GuiRefresher(0, view));
 	}
 
-	// ////////////////////////////////////////////////////////////////////
+	/**
+	 * It constructs a view corresponded to type of gui and displays the
+	 * constructed view in topView.
+	 */
 	private class InitialGuiConstructor implements GuiVisitor {
 		private LinearLayout topView;
 
@@ -212,13 +214,16 @@ public class GuiRenderer {
 		}
 	}
 
-	// /////////////////////GuiRefresher///////////////////////////////
+	/**
+	 * It refreshes an item according to its corresponded gui-type in topView
+	 */
 	private class GuiRefresher implements GuiVisitor {
-		private int viewIndex;
+		// viewIndex indicates which Gui in topView should be refreshed
+		private int indexToRefresh;
 		private LinearLayout topView;
 
-		public GuiRefresher(int viewIndex, LinearLayout view) {
-			this.viewIndex = viewIndex;
+		public GuiRefresher(int indexToRefresh, LinearLayout view) {
+			this.indexToRefresh = indexToRefresh;
 			this.topView = view;
 		}
 
@@ -226,7 +231,7 @@ public class GuiRenderer {
 			Gui[] items = r.getItems();
 			for (int i = 0; i < items.length; i++) {
 				items[i].accept(new GuiRefresher(i, (LinearLayout) topView
-						.getChildAt(this.viewIndex)));
+						.getChildAt(this.indexToRefresh)));
 			}
 		}
 
@@ -234,25 +239,25 @@ public class GuiRenderer {
 			Gui[] items = c.getItems();
 			for (int i = 0; i < items.length; i++) {
 				items[i].accept(new GuiRefresher(i, (LinearLayout) topView
-						.getChildAt(this.viewIndex)));
+						.getChildAt(this.indexToRefresh)));
 			}
 		}
 
 		public void visit(Message m) {
-			TextView txt = (TextView) topView.getChildAt(this.viewIndex);
+			TextView txt = (TextView) topView.getChildAt(this.indexToRefresh);
 			txt.setText(m.getValF().transform(world).toString());
 		}
 
 		public void visit(TextField t) {
 			String label = (t.getValF().transform(world)).toString();
-			EditText edit = (EditText) topView.getChildAt(this.viewIndex);
+			EditText edit = (EditText) topView.getChildAt(this.indexToRefresh);
 			edit.setText(label);
 		}
 
 		public void visit(BoxGroup b) {
 			String label = (b.getValF().transform(world)).toString();
 			LinearLayout group = (LinearLayout) topView
-					.getChildAt(this.viewIndex);
+					.getChildAt(this.indexToRefresh);
 			TextView txtView = (TextView) group.getChildAt(0);
 			LinearLayout guiView = (LinearLayout) group.getChildAt(1);
 
@@ -266,14 +271,14 @@ public class GuiRenderer {
 		public void visit(org.plt.guiworld.Button b) {
 			String label = (b.getValF().transform(world)).toString();
 			android.widget.Button update = (android.widget.Button) topView
-					.getChildAt(this.viewIndex);
+					.getChildAt(this.indexToRefresh);
 			update.setText(label);
 		}
 
 		public void visit(org.plt.guiworld.CheckBox c) {
 			String label = (c.getLabelValF().transform(world)).toString();
 			android.widget.CheckBox cb = (android.widget.CheckBox) topView
-					.getChildAt(this.viewIndex);
+					.getChildAt(this.indexToRefresh);
 			cb.setText(label);
 			Boolean check = (Boolean) (c.getCheckValF().transform(Boolean
 					.valueOf(cb.isChecked())));
@@ -281,7 +286,7 @@ public class GuiRenderer {
 		}
 
 		public void visit(Slider s) {
-			SeekBar bar = (SeekBar) topView.getChildAt(this.viewIndex);
+			SeekBar bar = (SeekBar) topView.getChildAt(this.indexToRefresh);
 			try {
 				Integer cur = (Integer) s.getValF().transform(world);
 				bar.setProgress(cur.intValue() % 100);
@@ -296,7 +301,8 @@ public class GuiRenderer {
 					android.R.layout.simple_list_item_1, items);
 			adapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			Spinner dropdown = (Spinner) topView.getChildAt(this.viewIndex);
+			Spinner dropdown = (Spinner) topView
+					.getChildAt(this.indexToRefresh);
 			dropdown.setAdapter(adapter);
 
 			String selected = (String) d.getValF().transform(world);
