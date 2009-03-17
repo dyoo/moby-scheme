@@ -109,6 +109,18 @@ public class GuiRenderer {
 		}
 
 		public void visit(BoxGroup b) {
+			String label = (b.getValF().transform(world)).toString();
+			LinearLayout group = new LinearLayout(view.getContext());
+			group.setOrientation(LinearLayout.VERTICAL);
+			TextView txtView = new TextView(group.getContext());
+			txtView.setText(label);
+			LinearLayout guiView = new LinearLayout(group.getContext());
+			InitialGuiConstructor visitor = new InitialGuiConstructor(guiView);
+			group.addView(txtView);
+			group.addView(guiView);
+			topView.addView(group);
+
+			b.getGui().accept(visitor);
 		}
 
 		public void visit(Canvas c) {
@@ -238,6 +250,14 @@ public class GuiRenderer {
 		}
 
 		public void visit(BoxGroup b) {
+			String label = (b.getValF().transform(world)).toString();
+			LinearLayout group = (LinearLayout) topView
+					.getChildAt(this.viewIndex);
+			TextView txtView = (TextView) group.getChildAt(0);
+			LinearLayout guiView = (LinearLayout) group.getChildAt(1);
+
+			txtView.setText(label);
+			b.getGui().accept(new GuiRefresher(0, guiView));
 		}
 
 		public void visit(Canvas c) {

@@ -78,6 +78,7 @@ public class GuiWorldTest extends Activity {
 			}
 		}, new WorldAndObjectTransformer() {
 			public Object transform(Object world, Object obj) {
+				// return obj;
 				return world;
 			}
 		}),
@@ -106,7 +107,18 @@ public class GuiWorldTest extends Activity {
 					return new Integer(2);
 				return new Integer(1);
 			}
-		}) });
+		}),
+
+		new BoxGroup(new WorldTransformer() {
+			public Object transform(Object world) {
+				return "BoxGroup: " + world.toString();
+			}
+		}, new Message(new WorldTransformer() {
+			// label
+			public Object transform(Object world) {
+				return "Message in BoxGroup: " + world.toString();
+			}
+		})) });
 
 		// Uncomment this when we have a GuiRenderer.
 		LinearLayout view = new LinearLayout(this);
