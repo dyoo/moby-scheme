@@ -194,7 +194,6 @@ public class GuiRenderer {
 				}
 
 				public void onNothingSelected(AdapterView parent) {
-
 				}
 			});
 			topView.addView(dropdown);
