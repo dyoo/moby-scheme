@@ -41,28 +41,6 @@
 
 
 
-(define-struct world-handlers (big-bang      ;; big-bang-record
-                               on-tick-event ;; id of function
-                               on-key-event ;; id of function
-                               on-mouse-event ;; id of function
-                               on-message-event ;; id of function
-                               on-location-change-event ;; id of function
-                               on-redraw ;; id of function
-                               stop-when ;; id of function
-
-                               ))
-(define-struct big-bang-record (width height r world0))
-(define EMPTY-WORLD-HANDLERS (make-world-handlers #f ; big-bang
-                                                  #f ; on-tick
-                                                  #f ; on-key-event
-                                                  #f ; on-mouse-event
-                                                  #f ; on-message-event
-                                                  #f ; on-location-change-event
-                                                  #f ; on-redraw
-                                                  #f ; stop-when
-                                                  ))
-
-
 
 ;; generate-j2me-app: string path path -> void
 ;; Given a file written in beginner-level scheme, generates a j2me application.
@@ -70,23 +48,25 @@
   (compile-world-program-to-j2me (open-beginner-program file) name dest))
 
 
+
+;; generate-android-application: string path path -> void
+;; Compiles an Android application.
 (define (generate-android-application name file dest)
   (compile-world-program-to-android (open-beginner-program file) name dest))
 
 
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ;; open-beginner-program: path-string -> text%
-;; Opens up the beginner-level program, stripping out the metadata.
+;; Opens up the beginner-level program.
 (define (open-beginner-program path)
   (define text (new text%))
   (send text insert-file (path->string path))
-
   text)
 
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; compiled-world-program-to-j2me: text% string path-string -> void
 ;; Consumes a text, an application name, destination directory, and produces an application.
@@ -171,8 +151,8 @@
 (define (write-java-midlet-source a-text a-name src-path)
   (let*-values ([(classname)
                  (upper-camel-case a-name)]
-                [(program a-world-handlers) 
-                 (program-extract-world-handlers (parse-text-as-program a-text))]
+                [(program)
+                 (parse-text-as-program a-text)]
                 [(mappings) 
                  (get-mappings classname program)])
     (fill-template-file stub-path (build-path src-path (string-append classname ".java")) mappings)))
@@ -208,35 +188,6 @@
            ;; FIXME: check that the language is beginner level!
            body])))))
 
-
-;; program-extract-world-handlers: program -> (values program world-handlers)
-;; Consumes a program, and extracts out the calls to the world handlers.  These are the only
-;; places where higher-order function stuff is happening, and that's where we have to
-;; intercede.
-;; The returned program should have those callbacks removed.
-(define (program-extract-world-handlers a-program)
-  (let loop  ([a-program a-program]
-              [processed-program/rev '()]
-              [a-world-handlers EMPTY-WORLD-HANDLERS])
-    (define (loop/handler new-world-handlers)
-      (loop (rest a-program)
-            processed-program/rev
-            new-world-handlers))
-    (cond 
-      [(empty? a-program)
-       (values (reverse processed-program/rev)
-               a-world-handlers)]
-      [else
-       (let ([defn-or-expr (first a-program)])
-         (cond
-           [(defn? defn-or-expr)
-            (loop (rest a-program)
-                  (cons defn-or-expr processed-program/rev)
-                  a-world-handlers)]
-           [else
-            (loop (rest a-program)
-                     (cons defn-or-expr processed-program/rev)
-                     a-world-handlers)]))])))
 
 
 
