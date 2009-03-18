@@ -33,7 +33,13 @@
 (define-runtime-path common-support-src-path "../support/common/src")
 (define-runtime-path j2me-support-src-path "../support/j2me/src")
 (define-runtime-path j2me-support-res-path "../support/j2me/res")
-(define-runtime-path stub-path "../support/j2me/MidletStub.java.template")
+
+(define-runtime-path j2me-world-stub-path
+  "../support/j2me/MidletStub.java.template")
+
+(define-runtime-path android-guiworld-stub-path
+  "../support/android/skeleton/ActivityStub.java.template")
+
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -75,8 +81,12 @@
 ;; as resources.
 (define (compile-world-program-to-j2me text name dest-dir)
   (make-j2me-directories dest-dir)
+  (lift-images-to-directory text (build-path dest-dir "res"))
+  (write-java-midlet-source text name 
+                            (build-path dest-dir
+                                        "src" "org" "plt"
+                                        (upper-camel-case name)))
   (write-j2me-resources text name dest-dir)
-  (write-java-midlet-source text name (build-path dest-dir "src" "org" "plt" (upper-camel-case name)))
   (run-ant-build.xml dest-dir))
 
 ;; make-directories: path -> void
@@ -92,7 +102,6 @@
 ;; write-source-and-resources: text% path -> void
 ;; Writes out all the external resources we need.
 (define (write-j2me-resources a-text name dest-dir)
-  (lift-images-to-directory a-text (build-path dest-dir "res"))
   (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
   (copy-directory/files* j2me-support-res-path (build-path dest-dir "res"))
   (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
@@ -104,8 +113,11 @@
 
 (define (compile-world-program-to-android text name dest-dir)
   (make-android-directories dest-dir)
+  (lift-images-to-directory text (build-path dest-dir "src"))
+  (write-java-midlet-source 
+   text name
+   (build-path dest-dir "src" "org" "plt" (upper-camel-case name)))
   (write-android-resources text name dest-dir)
-  (write-java-midlet-source text name (build-path dest-dir "src" "org" "plt" (upper-camel-case name)))
   (run-ant-build.xml dest-dir))
 
 
@@ -121,13 +133,11 @@
 
 
 (define (write-android-resources a-text a-name dest-dir)
-  (lift-images-to-directory a-text (build-path dest-dir "src"))
   (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
                                   (ANDROID-SDK-PATH (current-android-sdk-path))
                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
     (write-android-manifest dest-dir #:name a-name)
-    #;(replace-template-file dest-dir "AndroidManifest.xml" mappings)
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
@@ -153,26 +163,27 @@
                  (upper-camel-case a-name)]
                 [(program)
                  (parse-text-as-program a-text)]
-                [(mappings) 
-                 (get-mappings classname program)])
-    (fill-template-file stub-path (build-path src-path (string-append classname ".java")) mappings)))
-
-
-
-;; get-mappings: string program world-handlers -> (hashtableof string string)
-;; Returns the template mappings we need.
-(define (get-mappings classname program)
-  (let*-values ([(compiled-program pinfo)
+                [(compiled-program pinfo)
                  (program->java-string program)]
-                [(toplevel-env)
-                 (pinfo-env pinfo)]
-                [(simple-env-extend)
-                 (lambda (env id) 
-                   (env-extend env 
-                               (make-binding:constant id 
-                                                      (symbol->string (identifier->munged-java-identifier id)))))])
-    (build-mappings (PROGRAM-NAME classname)
-                    (PROGRAM-DEFINITIONS compiled-program))))
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-NAME classname)
+                  (PROGRAM-DEFINITIONS compiled-program))]
+
+                [(program-stub)
+                 (choose-program-stub compiled-program pinfo)]
+                [(dest-path)
+                 (build-path 
+                  src-path
+                  (string-append classname ".java"))])
+    (fill-template-file program-stub dest-path mappings)))
+
+
+
+;; choose-program-stub: program pinfo -> path
+;; Returns the stub necessary to compile this program.
+(define (choose-program-stub a-program a-pinfo)
+  j2me-world-stub-path)
 
 
 
@@ -197,6 +208,7 @@
 ;; The snips in the text will be replaced with the expression (create-image <path>)
 ;; where path refers to the file saves in the resource directory.
 (define (lift-images-to-directory a-text resource-dir)
+  (make-directory* resource-dir)
   (for ([nb (lift-images! a-text)])
     (named-bitmap-save nb resource-dir)))
 
@@ -261,7 +273,6 @@
                    (wtkpackage ((jarfile "bin/${midlet.name}.jar")
                                 (jadfile "bin/${midlet.name}.jad")
                                 (obfuscate "false")
-                                #;(obfuscate "true")
                                 (preverify "true"))
                                (preserve ((class "org.plt.platform.Platform")))
                                (preserve ((class "org.plt.platform.J2MEPlatform")))

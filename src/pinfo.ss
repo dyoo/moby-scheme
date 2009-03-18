@@ -13,14 +13,18 @@
 
 ;; pinfo (program-info) captures the information we get from analyzing 
 ;; the program.
-(define-struct pinfo (env) #:transparent)
-(define empty-pinfo (make-pinfo empty-env))
+(define-struct pinfo (env modules used-bindings) #:transparent)
+
+(define (get-base-pinfo)
+  (make-pinfo (get-toplevel-env) empty (make-immutable-hash empty)))
+
 
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
-   (env-extend (pinfo-env a-pinfo) a-binding)))
-
+   (env-extend (pinfo-env a-pinfo) a-binding)
+   (pinfo-modules a-pinfo)
+   (pinfo-used-bindings a-pinfo)))
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
 (define (pinfo-accumulate-bindings bindings a-pinfo)
@@ -28,17 +32,39 @@
          a-pinfo
          bindings))
 
+;; pinfo-accumulate-module: module-binding pinfo -> pinfo
+(define (pinfo-accumulate-module a-module a-pinfo)
+  (make-pinfo (pinfo-env a-pinfo)
+              (cons a-module (pinfo-modules a-pinfo))
+              (pinfo-used-bindings a-pinfo)))
+
+;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
+(define (pinfo-accumulate-binding-use a-binding a-pinfo)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (hash-set (pinfo-used-bindings a-pinfo)
+                        a-binding
+                        #t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; program-analyze: program [program-info] -> program-info
-;; Collects which identifiers are free or definition-bound by the program.
-(define (program-analyze a-program [pinfo (make-pinfo (get-toplevel-env))])
-  ;; fixme to do free variable analysis.  We want to error early if the user
-  ;; tries to use an identifier that hasn't been bound.
-  (program-analyze-collect-definitions a-program pinfo))
+;; Collects which identifiers are defined by the program, and which identifiers
+;; are actively used.
+(define (program-analyze a-program [pinfo (get-base-pinfo)])
+  (let* ([pinfo
+          (program-analyze-collect-definitions a-program pinfo)]
+         [pinfo
+          (program-analyze-uses a-program pinfo)])
+    
+    pinfo))
+
+
 
 
 ;; program-analyze-collect-definitions: program pinfo -> pinfo
+;; Collects the definitions either imported or defined by this program.
 (define (program-analyze-collect-definitions a-program pinfo)
   (cond [(empty? a-program)
          pinfo]
@@ -47,18 +73,40 @@
                 (cond [(defn? (first a-program))
                        (definition-analyze-collect-definitions (first a-program) pinfo)]
                       [(test-case? (first a-program))
-                       ;; Test cases don't introduce any new definitions, so just return.
                        pinfo]
                       [(library-require? (first a-program))
                        (require-analyze (second (first a-program)) pinfo)]
                       [(expression? (first a-program))
-                       ;; Expressions don't introduce any new definitions, so just return.
                        pinfo])])
            (program-analyze-collect-definitions (rest a-program)
                                                 updated-pinfo))]))
 
 
+
+;; program-analyze-uses: program pinfo -> pinfo
+(define (program-analyze-uses a-program pinfo)
+  (cond [(empty? a-program)
+         pinfo]
+        [else
+         (let ([updated-pinfo
+                (cond [(defn? (first a-program))
+                       (definition-analyze-uses (first a-program) pinfo)]
+                      [(test-case? (first a-program))
+                       pinfo]
+                      [(library-require? (first a-program))
+                       pinfo]
+                      [(expression? (first a-program))
+                       (expression-analyze-uses (first a-program)
+                                                pinfo 
+                                                (pinfo-env pinfo))])])
+           (program-analyze-uses (rest a-program)
+                                 updated-pinfo))]))
+
+
+
+
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
+;; Collects the defined names introduced by the definition.
 (define (definition-analyze-collect-definitions a-definition pinfo)
   (match a-definition
     [(list 'define (list id args ...) body)
@@ -107,14 +155,116 @@
 
 
 
+;; definition-analyze-uses: definition program-info -> program-info
+;; Collects the used names.
+(define (definition-analyze-uses a-definition pinfo)
+  (match a-definition
+    [(list 'define (list id args ...) body)
+     (function-definition-analyze-uses id args body pinfo)]
+    [(list 'define (? symbol? id) (list 'lambda (list args ...) body))
+     (function-definition-analyze-uses id args body pinfo)]   
+    [(list 'define (? symbol? id) body)
+     (expression-analyze-uses body pinfo (pinfo-env pinfo))]
+    [(list 'define-struct id (list fields ...))
+     pinfo]))
 
 
-;; pinfo-android-permissions: pinfo -> (listof string)
-;; Computes the permissions needed.
-(define (pinfo-android-permissions a-pinfo)
-  ;; Fixme: currently hardcoded.
-  '("android.permission.ACCESS_LOCATION"
-    "android.permission.ACCESS_GPS"))
+(define (function-definition-analyze-uses fun args body pinfo)
+  (let* ([env (pinfo-env pinfo)]
+         [env 
+          (env-extend env (make-binding:function fun #f (length args) #f
+                                                 (symbol->string fun)))]
+         [env
+          (foldl (lambda (arg-id env) 
+                   (env-extend env (make-binding:constant arg-id 
+                                                          (symbol->string
+                                                           arg-id))))
+                 env
+                 args)])
+    (expression-analyze-uses body pinfo env)))
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (expression-analyze-uses an-expression pinfo env)
+  (match an-expression
+    
+    [(list 'cond [list questions answers] ... [list 'else answer-last])
+     (foldl (lambda (e p)
+              (expression-analyze-uses e p env))
+            pinfo 
+            (cons answer-last (append questions answers)))]
+    
+    
+    [(list 'cond [list questions answers] ... [list question-last answer-last])
+     (foldl (lambda (e p)
+              (expression-analyze-uses e p env))
+            pinfo (cons question-last 
+                        (cons answer-last 
+                              (append questions answers))))]
+
+    
+    [(list 'if test consequent alternative)
+     (foldl (lambda (e p) (expression-analyze-uses e p env))
+            pinfo 
+            (list test consequent alternative))]
+    
+    [(list 'and exprs ...)
+     (foldl (lambda (e p) (expression-analyze-uses e p env))
+            pinfo 
+            exprs)]
+    
+    [(list 'or exprs ...)
+     (foldl (lambda (e p) (expression-analyze-uses e p env))
+            pinfo 
+            exprs)]
+    
+    ;; Numbers
+    [(? number?)
+     pinfo]
+    
+    ;; Strings
+    [(? string?)
+     pinfo]
+    
+    ;; Characters
+    [(? char?)
+     pinfo]
+    
+    ;; Identifiers
+    [(? symbol?)
+     (cond
+       [(env-lookup env an-expression)
+        =>
+        (lambda (binding)
+          (pinfo-accumulate-binding-use binding pinfo))]
+       [else
+        pinfo])]
+    
+    ;; Quoted symbols
+    [(list 'quote datum)
+     pinfo]
+    
+    ;; Function call/primitive operation call
+    [(list (? symbol? id) exprs ...)
+     (let ([updated-pinfo
+            (foldl (lambda (e p)
+                     (expression-analyze-uses e p env))
+                   pinfo
+                   exprs)])
+       (cond
+         [(env-lookup env id)
+          =>
+          (lambda (binding)
+            (pinfo-accumulate-binding-use binding updated-pinfo))]
+         [else
+          updated-pinfo]))]))
+   
+    
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
 
@@ -330,8 +480,10 @@
               require-path)]
       [(path=? (resolve-module-path require-path #f)
                (module-binding-path (first modules)))
-       (pinfo-accumulate-bindings (module-binding-bindings (first modules))
-                                  pinfo)]
+       (pinfo-accumulate-module 
+        (first modules)
+        (pinfo-accumulate-bindings (module-binding-bindings (first modules))
+                                   pinfo))]
       [else
        (loop (rest modules))])))
 
@@ -342,7 +494,9 @@
 
 
 
-(provide/contract [struct pinfo ([env env?])]
+(provide/contract [struct pinfo ([env env?]
+                                 [modules (listof module-binding?)]
+                                 [used-bindings hash?])]
                   [program-analyze ((program?) (pinfo?) . ->* . pinfo?)]
                   
                   [struct module-binding ([name symbol?]
