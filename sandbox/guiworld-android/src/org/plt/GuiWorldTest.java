@@ -65,21 +65,22 @@ public class GuiWorldTest extends Activity {
 		new DropDown(new WorldTransformer() {
 			public Object transform(Object world) {
 				Integer count = (Integer) world;
-				return Integer.toString(count - 1);
+				return Integer.toString(count);
 			}
 		}, new WorldTransformer() {
 			public Object transform(Object world) {
 				Integer count = (Integer) world;
 				String[] items = new String[count.intValue()];
 				for (int i = 0; i < count.intValue(); i++)
-					items[i] = String.valueOf(i);
+					items[i] = String.valueOf(i+1);
 
 				return items;
 			}
 		}, new WorldAndObjectTransformer() {
 			public Object transform(Object world, Object obj) {
+			    return new Integer(Integer.parseInt((String)obj));
 				// return obj;
-				return world;
+			    //  return world;
 			}
 		}),
 
