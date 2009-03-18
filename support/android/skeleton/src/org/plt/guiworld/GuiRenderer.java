@@ -15,7 +15,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 // The visitor also keeps things up to date.
 
 /**
- * GuiRenderer's rendering a Gui is like Interpretre's interpreting an Expression
+ * GuiRenderer's rendering a {Gui, World} is like Interpretre's interpreting an Expression
  */
 public class GuiRenderer {
 	// view contains a subView corresponded to gui
