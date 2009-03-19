@@ -38,7 +38,7 @@
       [(not (string? first-part))
        (error 'start "Must be /compile/ or /get/")]
       [(string=? first-part "compile")
-       (handle-compile (redirect/get))]
+       (handle-compile a-request)]
       [(string=? first-part "get")
        (handle-get (path/param-path (second  (url-path url))))])))
 
@@ -65,7 +65,8 @@
                                                     (binary-id result-binary)))))
                (we-will-call-you-response a-request email-address)]
               [else
-               (let ([result-binary 
+               (let* ([a-request (redirect/get/forget)]
+                      [result-binary 
                       (compile-file (bytes->string/utf-8 filename)
                                     content
                                     email-address)])
@@ -122,7 +123,7 @@
 ;; compile-file: string bytes string -> binary
 (define (compile-file filename content email-address)
   (let* ([program-name 
-          (regexp-replace #rx".(ss|scm)^" filename "")]
+          (regexp-replace #rx".(ss|scm)$" filename "")]
          [user (model-find-or-add-user! 
                 model
                 email-address
