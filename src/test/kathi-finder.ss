@@ -70,11 +70,11 @@
                                     -71.808207
                                     500))
 
-;; Danny's place, and 500 meters around it.
+;; Danny's place, and 50 meters around it.
 (define DANNY-PLACE (make-named-place "Danny's House"
                                       42.271869
                                       -71.807214
-                                      500))
+                                      50))
 
 ;; Worcester, in a radius of 3 miles.
 (define WORCESTER-PLACE (make-named-place "Worcester"
@@ -86,7 +86,7 @@
 (define PARENTS-PLACE (make-named-place "Parents"
                                         42.274514
                                         -71.798744
-                                        (mile->meter 0.5)))
+                                        50))
 
 
 

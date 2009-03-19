@@ -2,6 +2,8 @@ package org.plt.lib;
 
 import org.plt.types.*;
 import org.plt.platform.Platform;
+import org.plt.Kernel;
+
 
 public class Location {
     public static Object getLatitude() {
@@ -43,10 +45,9 @@ public class Location {
 	LocationService service = 
 	    Platform.getInstance().getLocationService();
 	return service.getDistanceBetween
-	    (lat1.toString(),
-	     long1.toString(),
-	     lat2.toString(),
-	     long2.toString());
-
+	    (Kernel.exact_dash__greaterthan_inexact(lat1).toString(),
+	     Kernel.exact_dash__greaterthan_inexact(long1).toString(),
+	     Kernel.exact_dash__greaterthan_inexact(lat2).toString(),
+	     Kernel.exact_dash__greaterthan_inexact(long2).toString());
     }
 }
