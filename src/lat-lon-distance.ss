@@ -1,6 +1,12 @@
 #lang scheme/base
 (require scheme/math
+         scheme/contract
          (planet dyoo/infix/infix))
+
+
+(provide/contract [compute-distance (number? number? number? number? . -> . number?)])
+
+
 
 (define (to-rad deg)
   (/ (* deg pi) 180.0))

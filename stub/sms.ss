@@ -6,6 +6,9 @@
 (define (send-text-message an-address
                            a-message
                            a-world)
+  (printf "Sending message ~s to ~a~n"
+          a-message
+          an-address)
   a-world)
 
 

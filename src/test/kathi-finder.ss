@@ -70,6 +70,11 @@
                                     -71.808207
                                     500))
 
+(define WPI-PARKING-PLACE (make-named-place "WPI Parking"
+                                            42.2737222
+                                            -71.8058627
+                                            50))
+
 ;; Danny's place, and 50 meters around it.
 (define DANNY-PLACE (make-named-place "Danny's House"
                                       42.271869
@@ -94,6 +99,7 @@
 (define-struct world (places place phone-number))
 
 (define initial-world (make-world (list WPI-PLACE
+                                        WPI-PARKING-PLACE
                                         WORCESTER-PLACE
                                         PARENTS-PLACE
                                         DANNY-PLACE)
@@ -113,17 +119,22 @@
 ;; handle-location-change: world number number -> world
 (define (handle-location-change a-world latitude longitude)
   (cond
-    [(places-are-significantly-different? (world-place a-world) (choose-place a-world latitude longitude))
-     (report-new-place (update-world-place a-world (choose-place a-world latitude longitude)))]
+    [(places-are-significantly-different? 
+      (world-place a-world) 
+      (choose-place a-world latitude longitude))
+     (report-new-place 
+      (update-world-place a-world 
+                          (choose-place a-world latitude longitude)))]
     [else
-     (update-world-place a-world (choose-place a-world latitude longitude))]))
+     (update-world-place a-world 
+                         (choose-place a-world latitude longitude))]))
 
 
 ;; places-are-significantly-different?: place place -> boolean
 (define (places-are-significantly-different? p1 p2)
   (cond
     [(and (named-place? p1) (named-place? p2))
-     (equal? p1 p2)]
+     (not (equal? p1 p2))]
     [(and (unnamed-place? p1) (unnamed-place? p2))
      false]
     [else

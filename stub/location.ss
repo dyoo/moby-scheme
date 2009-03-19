@@ -1,6 +1,8 @@
 #lang scheme/base
 (require lang/prim)
 
+(require "../src/lat-lon-distance.ss")
+
 ;; Mock module for the location service
 ;; 
 ;; http://www.bcca.org/misc/qiblih/latlong_us.html#MASSACHUSETTS
@@ -30,7 +32,7 @@
 ;; returns distance in meters between (lat-1, long-1) and (lat-2, long-2).
 ;; fixme: put some approximation here.
 (define (location-distance lat-1 long-1 lat-2 long-2)
-  0)
+  (compute-distance lat-1 long-1 lat-2 long-2))
 
          
          
