@@ -217,7 +217,7 @@
 ;; write-j2me-ant-buildfile: string path -> void
 ;; Writes a build file that's specialized toward building the midlet.
 (define (write-j2me-ant-buildfile name dest-dir 
-                                  #:cdlc-version [cldc-version "1.1" #;"1.0"]
+                                  #:cdlc-version [cldc-version "1.0"]
                                   #:midp-version [midp-version "2.0" #;"1.0"]
                                   )
   (define (property name val)

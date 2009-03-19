@@ -26,11 +26,17 @@
 (define (degree&minute->float degree minute)
   (exact->inexact (+ degree (/ minute 60))))
 
-         
+    
+;; returns distance in meters between (lat-1, long-1) and (lat-2, long-2).
+;; fixme: put some approximation here.
+(define (location-distance lat-1 long-1 lat-2 long-2)
+  0)
+
          
          
 (provide-primitives get-latitude
                     get-longitude 
                     get-attitude 
                     get-bearing 
-                    get-speed)
+                    get-speed
+                    location-distance)
