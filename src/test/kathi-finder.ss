@@ -70,6 +70,12 @@
                                     -71.808207
                                     500))
 
+;; Danny's place, and 500 meters around it.
+(define DANNY-PLACE (make-named-place "Danny's House"
+                                      42.271869
+                                      -71.807214
+                                      500))
+
 ;; Worcester, in a radius of 3 miles.
 (define WORCESTER-PLACE (make-named-place "Worcester"
                                           42.274514
@@ -89,7 +95,8 @@
 
 (define initial-world (make-world (list WPI-PLACE
                                         WORCESTER-PLACE
-                                        PARENTS-PLACE)
+                                        PARENTS-PLACE
+                                        DANNY-PLACE)
                                   (make-unnamed-place 0 0)
                                     ;; Currently hardcoded to Shriram's phone number.
                                   "4012633108"))
@@ -103,8 +110,8 @@
               (world-phone-number a-world)))
 
 
-;; handle-orientation-change: world number number -> world
-(define (handle-orientation-change a-world latitude longitude)
+;; handle-location-change: world number number -> world
+(define (handle-location-change a-world latitude longitude)
   (cond
     [(places-are-significantly-different? (world-place a-world) (choose-place a-world latitude longitude))
      (report-new-place (update-world-place a-world (choose-place a-world latitude longitude)))]
@@ -186,4 +193,4 @@
 
 (big-bang WIDTH HEIGHT 1 initial-world)
 (on-redraw render-world)
-(on-orientation-change-event handle-orientation-change)
+(on-location-change-event handle-location-change)
