@@ -294,7 +294,8 @@
                                 #:name name
                                 #:permissions (permissions '("android.permission.ACCESS_LOCATION"
                                                              "android.permission.ACCESS_GPS"
-                                                             "android.permission.ACCESS_FINE_LOCATION")))
+                                                             "android.permission.ACCESS_FINE_LOCATION"
+                                                             "android.permission.SEND_SMS")))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")

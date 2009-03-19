@@ -56,6 +56,8 @@
 (define test-sketch-2 (make-test "sketch-2.ss"))
 (define test-upside-down (make-test "upside-down.ss"))
 (define test-bubble-2 (make-test "bubble-2.ss"))
+(define test-sms (make-test "sms.ss"))
+
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -87,6 +89,7 @@
                     test-sketch-2
                     test-upside-down
                     test-bubble-2
+                    test-sms
                     
                     test-cowabunga 
                     test-flight-lander

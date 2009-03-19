@@ -441,6 +441,18 @@
                                (make-binding:function 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")))))
 
 
+(define sms-module
+  (let ([module-path
+         (resolve-module-path '(lib "sms.ss" "moby" "stub") #f)])
+    (make-module-binding 'gui-world
+                         module-path
+                         (list (make-binding:function 
+                                'send-text-message
+                                module-path 
+                                3 
+                                #f 
+                                "org.plt.lib.Sms.sendTextMessage")))))
+
 
 
 ;; extend-env/module-binding: env module-binding -> env
@@ -460,7 +472,8 @@
                             world-stub-module
                             location-module
                             tilt-module
-                            gui-world-module))
+                            gui-world-module
+                            sms-module))
                                         
 
 
