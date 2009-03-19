@@ -76,6 +76,11 @@ public class J2MEPlatform implements PlatformI {
 		return FloatPoint.ZERO;
 	    }
 	    
+	    public Object getDistanceBetween(String lat1, String long1,
+					     String lat2, String long2) {
+		return FloatPoint.ZERO;
+	    }
+
 	    public void addLocationChangeListener(LocationChangeListener l) {
 		// fill me in
 	    }

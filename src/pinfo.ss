@@ -139,6 +139,13 @@
              (make-binding:function constructor-id #f (length fields) #f
                                     (symbol->string
                                      (identifier->munged-java-identifier constructor-id)))]
+            [predicate-id
+             (string->symbol (format "~a?" id))]
+            [predicate-binding
+             (make-binding:function predicate-id #f 1 #f
+                                    (symbol->string
+                                     (identifier->munged-java-identifier predicate-id)))]
+            
             
             [selector-ids
              (map (lambda (f)
@@ -151,7 +158,7 @@
                                             (identifier->munged-java-identifier sel-id))))
                   selector-ids)])
        (foldl pinfo-accumulate-binding pinfo 
-              (cons constructor-binding selector-bindings)))]))
+              (list* constructor-binding predicate-binding selector-bindings)))]))
 
 
 
@@ -405,7 +412,9 @@
                                (make-binding:function 'get-bearing module-path 0 #f 
                                                       "org.plt.lib.Location.getBearing")
                                (make-binding:function 'get-speed module-path 0 #f 
-                                                      "org.plt.lib.Location.getSpeed")))))
+                                                      "org.plt.lib.Location.getSpeed")
+                               (make-binding:function 'location-distance module-path 4 #f
+                                                      "org.plt.lib.Location.getDistanceBetween")))))
 
   
 ;; accelerometer library

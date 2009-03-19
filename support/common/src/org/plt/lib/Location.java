@@ -34,6 +34,19 @@ public class Location {
 	LocationService service = 
 	    Platform.getInstance().getLocationService();
 	return service.getSpeed();
+    }
+
+    public static Object getDistanceBetween(Object lat1,
+					    Object long1,
+					    Object lat2,
+					    Object long2) {
+	LocationService service = 
+	    Platform.getInstance().getLocationService();
+	return service.getDistanceBetween
+	    (lat1.toString(),
+	     long1.toString(),
+	     lat2.toString(),
+	     long2.toString());
 
     }
 }

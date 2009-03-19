@@ -123,7 +123,7 @@
                     "-"
                     (symbol->string field-name))))
   
-  (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a" 
+  (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a\n ~a" 
           (identifier->munged-java-identifier id)
           (string-join (map (lambda (a-field)
                               (format "public Object ~a;"
@@ -144,6 +144,7 @@
                                     fields) 
                                "\n"))
           
+
           ;; equality
           (format "public boolean equals(Object other) {
                      if (other instanceof ~a) {
@@ -195,7 +196,12 @@
                           (identifier->munged-java-identifier id)
                           (identifier->munged-java-identifier a-field)))
                 fields)
-           "\n")))
+           "\n")
+          
+          ;; predicate
+          (format "static public org.plt.types.Logic ~a(Object obj) { return obj instanceof ~a ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE; }"
+                  (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
+                  (identifier->munged-java-identifier id))))
 
 
 

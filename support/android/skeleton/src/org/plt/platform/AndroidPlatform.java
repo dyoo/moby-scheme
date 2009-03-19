@@ -169,7 +169,17 @@ public class AndroidPlatform implements PlatformI {
 	    return FloatPoint.fromString
 		("" + this.lastLocation.getSpeed());
 	}
-	    
+
+	public Object getDistanceBetween(String lat1, String long1,
+					 String lat2, String long2) {
+	    float[] results = new float[1];
+	    Location.distanceBetween(Double.parseDouble(lat1),
+				     Double.parseDouble(long1),
+				     Double.parseDouble(lat2),
+				     Double.parseDouble(long2),
+				     results);
+	    return FloatPoint.fromString("" + results[0]);
+	}
     }
 
 

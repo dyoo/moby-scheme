@@ -57,6 +57,7 @@
 (define test-upside-down (make-test "upside-down.ss"))
 (define test-bubble-2 (make-test "bubble-2.ss"))
 (define test-sms (make-test "sms.ss"))
+(define test-kathi-finder (make-test "kathi-finder.ss"))
 
 
 ;; The programs here are the five programs of
@@ -90,6 +91,7 @@
                     test-upside-down
                     test-bubble-2
                     test-sms
+                    test-kathi-finder
                     
                     test-cowabunga 
                     test-flight-lander
