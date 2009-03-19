@@ -107,8 +107,8 @@
   (let ([op (send-mail-message/port #:from "Danny Yoo <dyoo@cs.wpi.edu>"
                                     #:subject "Your application has been compiled"
                                     #:to (list email-address))])
-    (write "Your download is available at: " op)
-    (write (string-append request-base-path "get/" binary-id)
+    (display "Your download is available at: " op)
+    (display (string-append request-base-path "get/" binary-id)
            op)
     (close-output-port op)))
 
