@@ -2,7 +2,10 @@ package org.plt.platform;
 
 import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
+import org.plt.lib.SmsService;
+
 import org.plt.types.*;
+
 import org.plt.world.LocationChangeListener;
 import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
@@ -79,6 +82,14 @@ public class J2MEPlatform implements PlatformI {
 
 	    public void shutdownService() {}
 	    public void startService() {}
+	};
+    }
+
+    public SmsService getSmsService() {
+	return new SmsService() {
+	    public void sendTextMessage(String destinationString, String msg) {
+		// Fill me in.
+	    }
 	};
     }
 }

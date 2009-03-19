@@ -12,14 +12,16 @@ import android.os.Bundle;
 import android.os.HandlerThread;
 import android.os.Looper;
 
+import android.telephony.gsm.SmsManager;
+
 import android.hardware.SensorManager; 
 import android.hardware.SensorListener; 
 
 
-
-
 import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
+import org.plt.lib.SmsService;
+
 import org.plt.types.*;
 
 import org.plt.world.MessageListener;
@@ -179,6 +181,19 @@ public class AndroidPlatform implements PlatformI {
     }
 
 
+
+    public SmsService getSmsService() {
+	return new SmsService() {
+	    public void sendTextMessage(String address, String msg) {
+		SmsManager manager = SmsManager.getDefault();
+		manager.sendTextMessage(address,
+					null,
+					msg,
+					null,
+					null);
+	    }
+	};
+    }
 
 
 
