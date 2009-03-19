@@ -13,6 +13,9 @@
 ;; else.
 (define server-name "kfisler-ra1.wpi.edu")
 (define port-number 8888)
+(define request-base-path 
+  (format "http://~a:~a/" server-name port-number))
+
 
 
 (define-runtime-path data (build-path "data"))
@@ -79,7 +82,6 @@
 
 ;; we-will-call-you-response: string -> response
 (define (we-will-call-you-response a-request email-address)
-  (request-base-path a-request)
   (make-bootstrap-response 
    (list
     `(p "We are currently compiling your application; as soon as we are done, we will send a "
@@ -90,10 +92,10 @@
 (define (here-is-the-download-link-response a-request binary-id)
   (make-bootstrap-response
    (list `(p "We've finished compilation.  You can download the application at "
-             (a ((href ,(string-append (request-base-path a-request)
+             (a ((href ,(string-append request-base-path
                                        "get/" 
                                        binary-id)))
-                ,(string-append (request-base-path a-request)
+                ,(string-append request-base-path
                                 "get/"
                                 binary-id))
              "."))))
@@ -106,7 +108,8 @@
                                     #:subject "Your application has been compiled"
                                     #:to (list email-address))])
     (write "Your download is available at: " op)
-    (write binary-id op)
+    (write (string-append request-base-path "get/" binary-id)
+           op)
     (close-output-port op)))
 
 
@@ -170,9 +173,6 @@
 
 
 
-;; request-base-path: request -> string
-(define (request-base-path a-request)
-  (format "http://~a:~a/" server-name port-number))
 
 
 
