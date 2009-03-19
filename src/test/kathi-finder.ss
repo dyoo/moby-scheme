@@ -15,8 +15,12 @@
 ;; A place is centered on a latitude and longitude, and extends 
 ;; to a radius measured in meters.
 (define-struct named-place (name latitude longitude radius))
+
+;; An unnamed-place is a location somewhere that we don't know about
 (define-struct unnamed-place (latitude longitude))
 
+
+;; place->string: place -> string
 (define (place->string a-place)
   (cond
     [(named-place? a-place)
@@ -29,7 +33,9 @@
                     ")")]))
 
 
+
 ;; place-radius: place -> number
+;; Given a place, returns its radius.
 (define (place-radius a-place)
   (cond
     [(named-place? a-place)
@@ -104,7 +110,9 @@
                                         PARENTS-PLACE
                                         DANNY-PLACE)
                                   (make-unnamed-place 0 0)
-                                    ;; Currently hardcoded to Shriram's phone number.
+                                  ;; The telephone number is 
+                                  ;; currently hardcoded to Shriram's
+                                  ;; phone number.
                                   "4012633108"))
 
 
@@ -142,9 +150,11 @@
 
 
 ;; report-new-place: world -> world
+;; Sends out a text message, and then returns the world.
 (define (report-new-place a-world)
   (send-text-message (world-phone-number a-world)
-                     (string-append "Kathi is at " (place->string (world-place a-world)))
+                     (string-append "Kathi is at " 
+                                    (place->string (world-place a-world)))
                      a-world))
 
 
@@ -188,7 +198,10 @@
 
 ;; place-matches?: place number number -> boolean
 (define (place-matches? a-place a-lat a-long)
-  (<= (location-distance a-lat a-long (place-latitude a-place) (place-longitude a-place))
+  (<= (location-distance a-lat 
+                         a-long 
+                         (place-latitude a-place) 
+                         (place-longitude a-place))
       (place-radius a-place)))
 
 
