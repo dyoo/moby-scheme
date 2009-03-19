@@ -45,6 +45,10 @@
       [(string=? first-part "get")
        (handle-get (path/param-path (second  (url-path url))))])))
 
+;; good-email-address
+(define (good-email-address? an-email)
+  (regexp-match #rx"^.*@.*$"))
+
 
 ;; handle-compile: request -> response
 (define (handle-compile a-request)
@@ -56,9 +60,11 @@
        (match a-file-binding
          [(struct binding:file (id filename headers content))
           (let ([email-address
-                 (extract-binding/single 'email (request-bindings a-request))])
+                 (extract-binding/single 'email
+                                         (request-bindings a-request))])
             (cond 
-              [(sendmail-available?)
+              [(and (sendmail-available?) 
+                    (good-email-address? email-address))
                (thread (lambda ()
                          (let ([result-binary 
                                 (compile-file (bytes->string/utf-8 filename)
@@ -73,7 +79,9 @@
                       (compile-file (bytes->string/utf-8 filename)
                                     content
                                     email-address)])
-                 (here-is-the-download-link-response a-request (binary-id result-binary)))]))]
+                 (here-is-the-download-link-response 
+                  a-request
+                  (binary-id result-binary)))]))]
          [else
           (error 'start "Not a file: ~s" a-file-binding)]))]
     [else
