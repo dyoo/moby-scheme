@@ -65,6 +65,17 @@
 
 ;; identifier->munged-java-identifier: symbol -> symbol
 (define (identifier->munged-java-identifier an-id)
+  (define java-identifiers
+    '(abstract  continue  	for  	new  	switch
+                assert 	default 	goto 	package 	synchronized
+                boolean 	do 	if 	private 	this
+                break 	double 	implements 	protected 	throw
+                byte 	else 	import 	public 	throws
+                case 	enum 	instanceof 	return 	transient
+                catch 	extends 	int 	short 	try
+                char 	final 	interface 	static 	void
+                class 	finally 	long 	strictfp 	volatile
+                const 	float 	native 	super 	while))
   ;; Special character mappings for identifiers
   (define char-mappings 
     #hash((#\- . "_dash_")
@@ -86,13 +97,17 @@
           (#\< . "_lessthan_")
           (#\> . "_greaterthan_")
           (#\~ . "_tilde_")))
-  (let* ([chars (string->list (symbol->string an-id))]
-         [translated-chunks 
-          (map (lambda (ch) (hash-ref char-mappings ch (string ch))) chars)]
-         [translated-id
-          (string->symbol
-           (string-join translated-chunks ""))])
-    translated-id))
+  (cond
+    [(member an-id java-identifiers)
+     (string->symbol (format "_nonclashing_~a" an-id))]
+    [else
+     (let* ([chars (string->list (symbol->string an-id))]
+            [translated-chunks 
+             (map (lambda (ch) (hash-ref char-mappings ch (string ch))) chars)]
+            [translated-id
+             (string->symbol
+              (string-join translated-chunks ""))])
+       translated-id)]))
 
 
 ;; path=?: path path -> boolean
