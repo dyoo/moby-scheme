@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname kathi-finder) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname kathi-finder-single) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "location.ss" "moby" "stub"))
 (require (lib "sms.ss" "moby" "stub"))
 (require (lib "world.ss" "moby" "stub"))
@@ -102,7 +102,7 @@
 
 
 ;; The world consists of a list of interested places and a place.
-(define-struct world (places place phone-number))
+(define-struct world (places place phone-number message-sent?))
 
 (define initial-world (make-world (list WPI-PLACE
                                         WPI-PARKING-PLACE
@@ -113,7 +113,8 @@
                                   ;; The telephone number is 
                                   ;; currently hardcoded to Shriram's
                                   ;; phone number.
-                                  "4012633108"))
+                                  "4012633108"
+                                  false))
 
 
 
@@ -121,15 +122,20 @@
 (define (update-world-place a-world a-place)
   (make-world (world-places a-world)
               a-place
-              (world-phone-number a-world)))
+              (world-phone-number a-world)
+              (world-message-sent? a-world)))
+
+(define (update-world-message-sent? a-world sent?)
+  (make-world (world-places a-world)
+              (world-place a-world)
+              (world-phone-number a-world)
+              sent?))
 
 
 ;; handle-location-change: world number number -> world
 (define (handle-location-change a-world latitude longitude)
   (cond
-    [(places-are-significantly-different? 
-      (world-place a-world) 
-      (choose-place a-world latitude longitude))
+    [(not (world-message-sent? a-world))
      (report-new-place 
       (update-world-place a-world 
                           (choose-place a-world latitude longitude)))]
@@ -152,18 +158,20 @@
 ;; report-new-place: world -> world
 ;; Sends out a text message, and then returns the world.
 (define (report-new-place a-world)
-  (send-text-message (world-phone-number a-world)
-                     (string-append "Kathi is at " 
-                                    (place->string (world-place a-world))
-                     
-                     
-                                    ".  Link: "
-                                    "http://maps.google.com/maps?q="
-                                    (number->string (place-latitude (world-place a-world)))
-                                    ",+"
-                                    (number->string (place-longitude (world-place a-world)))
-                                    "&iwloc=A&hl=en")
-                     a-world))
+  (update-world-message-sent?
+   (send-text-message (world-phone-number a-world)
+                      (string-append "Kathi is at " 
+                                     (place->string (world-place a-world))
+                                     
+                                     
+                                     ".  Link: "
+                                     "http://maps.google.com/maps?q="
+                                     (number->string (exact->inexact (place-latitude (world-place a-world))))
+                                     ",+"
+                                     (number->string (exact->inexact (place-longitude (world-place a-world))))
+                                     "&iwloc=A&hl=en")
+                      a-world)
+   true))
 
 
 ;; choose-place: world number number -> place

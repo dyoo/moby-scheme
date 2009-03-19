@@ -108,6 +108,8 @@
     (r 'conjugate 1)
     (r 'magnitude 1)
     
+    (r 'exact->inexact 1)
+    
     ;; Logic
     (r 'not 1)
     (r 'false? 1)
