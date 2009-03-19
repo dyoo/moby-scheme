@@ -5,6 +5,7 @@ import org.plt.world.*;
 import android.view.*;
 import android.widget.*;
 import android.text.*;
+import android.graphics.Color;
 
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -15,7 +16,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 // The visitor also keeps things up to date.
 
 /**
- * GuiRenderer's rendering a {Gui, World} is like Interpretre's interpreting an Expression
+ * GuiRenderer's rendering a {Gui, World} is like Interpretre's interpreting an
+ * Expression
  */
 public class GuiRenderer {
 	// view contains a subView corresponded to gui
@@ -116,9 +118,12 @@ public class GuiRenderer {
 		public void visit(BoxGroup b) {
 			String label = (b.getValF().transform(world)).toString();
 			LinearLayout group = new LinearLayout(view.getContext());
+			group.setBackgroundColor(Color.BLUE);
 			group.setOrientation(LinearLayout.VERTICAL);
 			TextView txtView = new TextView(group.getContext());
 			txtView.setText(label);
+			txtView.setBackgroundColor(Color.YELLOW);
+			txtView.setTextColor(Color.BLACK);
 			LinearLayout guiView = new LinearLayout(group.getContext());
 			InitialGuiConstructor visitor = new InitialGuiConstructor(guiView);
 			group.addView(txtView);
