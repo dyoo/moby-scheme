@@ -47,7 +47,7 @@
 
 ;; good-email-address
 (define (good-email-address? an-email)
-  (regexp-match #rx"^.*@.*$"))
+  (regexp-match #rx"^.*@.*$" an-email))
 
 
 ;; handle-compile: request -> response

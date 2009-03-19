@@ -8,7 +8,6 @@
          scheme/runtime-path)
 
 
-(define-runtime-path mock-lib-path "../stub")
 
 
 ;; pinfo (program-info) captures the information we get from analyzing 
@@ -400,7 +399,7 @@
 ;; location library
 (define location-module 
   (let ([module-path 
-         (build-path mock-lib-path "location.ss")])
+         (resolve-module-path '(lib "location.ss" "moby" "stub") #f)])
     (make-module-binding 'location
                          module-path
                          (list (make-binding:function 'get-latitude module-path 0 #f 
@@ -420,7 +419,7 @@
 ;; accelerometer library
 (define tilt-module 
   (let ([module-path 
-         (build-path mock-lib-path "tilt.ss")])
+         (resolve-module-path '(lib "tilt.ss" "moby" "stub") #f)])
     (make-module-binding 'tilt
                          module-path
                          (list (make-binding:function 'get-x-acceleration module-path 0 #f 
@@ -452,7 +451,8 @@
 
 (define sms-module
   (let ([module-path
-         (resolve-module-path '(lib "sms.ss" "moby" "stub") #f)])
+         (resolve-module-path 
+          '(lib "sms.ss" "moby" "stub") #f)])
     (make-module-binding 'gui-world
                          module-path
                          (list (make-binding:function 
