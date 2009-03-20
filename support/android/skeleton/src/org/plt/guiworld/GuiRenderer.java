@@ -195,7 +195,7 @@ public class GuiRenderer {
 		public void visit(final DropDown d) {
 			String[] items = (String[]) d.getChoicesF().transform(world);
 			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
-					android.R.layout.simple_list_item_1, items);
+					android.R.layout.simple_spinner_item, items);
 			adapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			Spinner dropdown = new Spinner(topView.getContext());
@@ -305,19 +305,29 @@ public class GuiRenderer {
 
 		public void visit(DropDown d) {
 			String[] items = (String[]) d.getChoicesF().transform(world);
-			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
-					android.R.layout.simple_list_item_1, items);
-			adapter
-					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			// ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
+			// android.R.layout.simple_list_item_1, items);
+			// adapter
+			// .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
 			Spinner dropdown = (Spinner) topView
 					.getChildAt(this.indexToRefresh);
-			dropdown.setAdapter(adapter);
+			ArrayAdapter adapter = (ArrayAdapter) dropdown.getAdapter();
+			// adapter.clear();
 
-			String selected = (String) d.getValF().transform(world);
-			int i = 0;
-			for (; i < items.length && !((String) items[i]).equals(selected); i++)
-				;
-			dropdown.setSelection(i);
+			// adapter.remove(adapter.getItem(0));
+
+			// ArrayAdapter adapter = (ArrayAdapter)dropdown.getAdapter();
+			// adapter.clear();
+
+			// dropdown.setAdapter(adapter);
+			//
+			// String selected = (String) d.getValF().transform(world);
+			// int i = 0;
+			// for (; i < items.length && !((String) items[i]).equals(selected);
+			// i++)
+			// ;
+			// dropdown.setSelection(i);
 		}
 	}
 }
