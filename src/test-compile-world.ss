@@ -60,6 +60,8 @@
 (define test-kathi-finder (make-test "kathi-finder.ss"))
 (define test-kathi-finder-single (make-test "kathi-finder-single.ss"))
 
+(define test-gui-world-hello-world (make-test "gui-world-hello-world.ss"))
+
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -94,6 +96,8 @@
                     test-sms
                     test-kathi-finder
                     test-kathi-finder-single
+                    
+                    test-gui-world-hello-world
                     
                     test-cowabunga 
                     test-flight-lander

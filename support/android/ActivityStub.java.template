@@ -1,8 +1,23 @@
+// This is stub code.
+// The following things must be plugged in:
+// 
+// PROGRAM-NAME
+// PROGRAM-DEFINITIONS
+// ON-START
+// ON-PAUSE
+// ON-DESTROY
+
+
 package org.plt.<<PROGRAM-NAME>>;
 
 import android.os.Bundle;
+import android.app.Activity;
 import android.widget.LinearLayout;
+
+import org.plt.guiworld.Gui;
 import org.plt.guiworld.GuiRenderer;
+import org.plt.guiworld.GuiWorld;
+
 
 
 public class <<PROGRAM-NAME>> 
@@ -13,38 +28,46 @@ public class <<PROGRAM-NAME>>
     // we depend on later!
     <<PROGRAM-DEFINITIONS>>
 
+    private Object world = GuiWorld.getInitialWorld();
+    private Gui gui = GuiWorld.getView();
 
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 
 	LinearLayout view = new LinearLayout(this);
-	GuiRenderer guiRender; // = new GuiRenderer(world, view, gui);
+	GuiRenderer guiRender = new GuiRenderer(world, view, gui);
 	setContentView(guiRender.getView());
-
     }
+
     
     public void onStart() {
 	super.onStart();
+	<<ON-START>>
     }
     
     public void onRestart() {
 	super.onRestart();
+	<<ON-START>>
     }
     
     public void onResume() {
 	super.onResume();
+	<<ON-START>>
     }
    
     public void onPause() {
 	super.onPause();
+	<<ON-PAUSE>>
     }
     
     public void onStop() {
 	super.onStop();
+	<<ON-PAUSE>>
     }
 
     public void onDestroy() {
 	super.onDestroy();
+	<<ON-DESTROY>>
     }
 }
  

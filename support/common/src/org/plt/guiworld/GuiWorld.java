@@ -1,16 +1,17 @@
 package org.plt.guiworld;
 
 import org.plt.types.*;
+import org.plt.checker.SchemeException;
 import org.plt.world.WorldTransformer;
 
 public class GuiWorld {
     private static Object initialWorld;
-    private static Object view;
+    private static Gui view;
 
     public static Object bigBang(Object initialWorld,
 				 Object view) {
 	GuiWorld.initialWorld = initialWorld;
-	GuiWorld.view = view;
+	GuiWorld.view = asGui(view);
 	return VoidObject.VOID;
     }
 
@@ -19,28 +20,41 @@ public class GuiWorld {
     }
 
 
-    public static Object getView() {
+    public static Gui getView() {
 	return GuiWorld.view;
     }
 
 
-    public static Object row(Object[] args) {
+    public static Gui asGui(Object obj) {
+	if (obj instanceof Gui) {
+	    return (Gui) obj;
+	} else if (obj instanceof String) {
+	    return message(obj);
+	} else if (obj instanceof org.plt.types.Number) {
+	    return message(obj.toString());
+	} else {
+	    throw new SchemeException("Don't know how to treat " + obj + " as a Gui");
+	}
+    }
+
+
+    public static Gui row(Object[] args) {
 	Gui[] elts = new Gui[args.length];
 	for(int i = 0; i < args.length; i++)
-	    elts[i] = (Gui) args[i];
+	    elts[i] = asGui(args[i]);
 	return new Row(elts);
     }
 
 
-    public static Object col(Object[] args) {
+    public static Gui col(Object[] args) {
 	Gui[] elts = new Gui[args.length];
 	for(int i = 0; i < args.length; i++)
-	    elts[i] = (Gui) args[i];
+	    elts[i] = asGui(args[i]);
 	return new Col(elts);
     }
 
 
-    public static Object message(Object msg) {
+    public static Gui message(Object msg) {
 	final Callable c = coerseToCallable(msg);
 	return new Message(new WorldTransformer() {
 		public Object transform(Object world) {

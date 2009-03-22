@@ -53,8 +53,8 @@
 (define-runtime-path j2me-world-stub-path
   "../support/j2me/MidletStub.java.template")
 
-(define-runtime-path android-guiworld-stub-path
-  "../support/android/skeleton/ActivityStub.java.template")
+(define-runtime-path android-gui-world-stub-path
+  "../support/android/ActivityStub.java.template")
 
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
@@ -160,6 +160,7 @@
 
       [(stub=? (choose-program-stub pinfo) STUB:GUI-WORLD)
        ;; fixme!
+       (fill-template-file android-gui-world-stub-path source-path mappings)
        (write-android:gui-world-resources pinfo name dest-dir)
        (run-ant-build.xml dest-dir)
        (void)]
