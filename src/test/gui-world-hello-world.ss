@@ -4,9 +4,20 @@
 (require (lib "gui-world.ss" "gui-world"))
 
 (define initial-world 0)
+
+
+(define (world-message a-world)
+  (number->string a-world))
+
+(define (on-button-pressed a-world)
+  (add1 a-world))
+
+
 (define view
-  (row "hello" (col "*world*" 
-                    (row "goodbye" 
-                         (message "world")))))
+  (col (row "hello" (col "*world*" 
+                         (row "goodbye" 
+                              (message "world"))))
+       (message world-message)
+       (button world-message on-button-pressed)))
 
 (big-bang initial-world view)

@@ -417,7 +417,9 @@
                          (list (bf 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
                                (bf 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
                                (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
-                               (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")))))
+                               (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")
+                               (bf 'button module-path 2 #f "org.plt.guiworld.GuiWorld.button")
+                               ))))
 
 
 (define sms-module

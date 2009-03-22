@@ -64,6 +64,23 @@ public class GuiWorld {
     }
 
 
+    public static Gui button(Object _valF,
+			     Object _callbackF) {
+	final Callable valF = coerseToCallable(_valF);
+	final Callable callbackF = coerseToCallable(_callbackF);
+	return new Button(new WorldTransformer() {
+		public Object transform(Object world) {
+		    return valF.call(new Object[] { world });
+		}
+	    },
+	    new WorldTransformer() {
+		public Object transform(Object world) {
+		    return callbackF.call(new Object[] { world });
+		}
+	    });
+    }
+
+
     private static Callable coerseToCallable(final Object obj) {
 	if (obj instanceof Callable) {
 	    return (Callable) obj;
