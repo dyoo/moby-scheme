@@ -209,7 +209,7 @@
 
 
 (define WORLD-PATH-1 (resolve-module-path '(lib "world.ss" "moby" "stub") #f))
-(define WORLD-PATH-2 (resolve-module-path '(lib "world.ss" "htdp") #f))
+(define WORLD-PATH-2 (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))
 (define GUI-WORLD-PATH (resolve-module-path '(lib "gui-world.ss" "gui-world") #f))
 
 
@@ -218,6 +218,7 @@
 (define (choose-program-stub a-pinfo)
   (let/ec return
     (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
+      (printf "~s~n" b)
       (cond
         [(and (binding:function? b)
               (binding:function-module-path b))
