@@ -17,6 +17,9 @@ import org.plt.WorldKernel;
 // 
 // PROGRAM-NAME
 // PROGRAM-DEFINITIONS
+// ON-START
+// ON-PAUSE
+// ON-DESTROY
 
 
 public class <<PROGRAM-NAME>> extends MIDlet {
@@ -28,17 +31,29 @@ public class <<PROGRAM-NAME>> extends MIDlet {
     // #0 big-bang's world0
     Object world = WorldKernel.getInitialWorld();
 
+
+    MyCanvas canvas;
+
+
     // When a program is paused, we'll restart the world.
     public void pauseApp() {
 	world = WorldKernel.getInitialWorld();
-	Platform.getInstance().getLocationService().shutdownService();
-	Platform.getInstance().getTiltService().shutdownService();
+	
+	// IMPORTANT: The injected code here assumes the
+	// presense of a 'listener' variable that
+	// can be used to register callbacks.
+	MyCanvas listener = canvas;
+	<<ON-PAUSE>>
     }
 
     public void destroyApp(boolean unconditional) {
 	world = WorldKernel.getInitialWorld();
-	Platform.getInstance().getLocationService().shutdownService();
-	Platform.getInstance().getTiltService().shutdownService();
+
+	// IMPORTANT: The injected code here assumes the
+	// presense of a 'listener' variable that
+	// can be used to register callbacks.
+	MyCanvas listener = canvas;
+	<<ON-DESTROY>>
     }	
 
 
@@ -46,13 +61,12 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	// debug: show the platform in the log.
 	System.out.println(Platform.getInstance().getName());
 
-	MyCanvas canvas = new MyCanvas();
-
-	Platform.getInstance().getLocationService().startService();
-	Platform.getInstance().getTiltService().startService();
-	Platform.getInstance().getLocationService().addLocationChangeListener(canvas);
-	Platform.getInstance().getTiltService().addOrientationChangeListener(canvas);
-	Platform.getInstance().getTiltService().addAccelerationChangeListener(canvas);
+	this.canvas = new MyCanvas();
+	// IMPORTANT: The injected code here assumes the
+	// presense of a 'listener' variable that
+	// can be used to register callbacks.
+	MyCanvas listener = canvas;
+	<<ON-START>>
 
 	Display.getDisplay(this).setCurrent(canvas);
 	new Thread(canvas).start();

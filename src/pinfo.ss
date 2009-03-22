@@ -3,6 +3,7 @@
 (require "env.ss"
          "toplevel.ss"
          "helpers.ss"
+         "permission.ss"
          syntax/modresolve
          scheme/contract
          scheme/runtime-path)
@@ -280,11 +281,6 @@
 (define-struct module-binding (name path bindings))
 
 
-(define LOCATION-PERMISSIONS (list "android.permission.ACCESS_LOCATION"
-                                   "android.permission.ACCESS_GPS"
-                                   "android.permission.ACCESS_FINE_LOCATION"))
-
-(define SMS-PERMISSIONS (list "android.permission.SEND_SMS"))
 
 
 (define (make-world-module module-path)
@@ -302,12 +298,18 @@
                                (make-binding:function
                                 'on-location-change-event module-path 1 #f
                                 "org.plt.WorldKernel.on_dash_location_dash_change_dash_event"
-                                LOCATION-PERMISSIONS)
+                                (list PERMISSION:LOCATION))
                                
-                               (bf 'on-orientation-change-event module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event")
-                               (bf 'on-acceleration-change-event module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
+                               (make-binding:function
+                                'on-orientation-change-event module-path 1 #f
+                                "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event"
+                                (list PERMISSION:TILT))
+                               
+                               (make-binding:function
+                                'on-acceleration-change-event module-path 1 #f
+                                "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event"
+                                (list PERMISSION:TILT))
+                               
                                (bf 'on-redraw module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_redraw")
                                (bf 'stop-when module-path 1 #f
@@ -365,7 +367,7 @@
           (resolve-module-path '(lib "location.ss" "moby" "stub") #f)]
          [bf (lambda (name module-path arity vararity? java-string)
                (make-binding:function name module-path arity vararity? java-string 
-                                      LOCATION-PERMISSIONS))])
+                                      (list PERMISSION:LOCATION)))])
     (make-module-binding 'location
                          module-path
                          (list (bf 'get-latitude module-path 0 #f 
@@ -384,8 +386,11 @@
   
 ;; accelerometer library
 (define tilt-module 
-  (let ([module-path 
-         (resolve-module-path '(lib "tilt.ss" "moby" "stub") #f)])
+  (let* ([module-path 
+          (resolve-module-path '(lib "tilt.ss" "moby" "stub") #f)]
+         [bf (lambda (name module-path arity vararity? java-string)
+               (make-binding:function name module-path arity vararity? java-string
+                                      (list PERMISSION:TILT)))])
     (make-module-binding 'tilt
                          module-path
                          (list (bf 'get-x-acceleration module-path 0 #f 
@@ -426,7 +431,7 @@
                                                       3 
                                                       #f 
                                                       "org.plt.lib.Sms.sendTextMessage"
-                                                      SMS-PERMISSIONS)))))
+                                                      (list PERMISSION:SMS))))))
 
 
 

@@ -2,7 +2,6 @@
 (require scheme/gui/base
          scheme/contract
          scheme/class
-         scheme/list
          scheme/match
          scheme/file
          scheme/runtime-path
@@ -15,7 +14,8 @@
          "utils.ss"
          "template.ss"
          "config.ss"
-         "pinfo.ss")
+         "pinfo.ss"
+         "permission.ss")
 
 (provide/contract [generate-j2me-application
                    (string? path-string? path-string? . -> . any)]
@@ -100,7 +100,10 @@
                 [(mappings) 
                  (build-mappings 
                   (PROGRAM-NAME classname)
-                  (PROGRAM-DEFINITIONS compiled-program))]
+                  (PROGRAM-DEFINITIONS compiled-program)
+                  (ON-START (get-on-start-code pinfo))
+                  (ON-PAUSE (get-on-pause-code pinfo))
+                  (ON-DESTROY (get-on-destroy-code pinfo)))]
                 [(source-path) 
                  (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
     (fill-template-file j2me-world-stub-path source-path mappings)
@@ -143,7 +146,10 @@
                 [(mappings) 
                  (build-mappings 
                   (PROGRAM-NAME classname)
-                  (PROGRAM-DEFINITIONS compiled-program))]
+                  (PROGRAM-DEFINITIONS compiled-program)
+                  (ON-START (get-on-start-code pinfo))
+                  (ON-PAUSE (get-on-pause-code pinfo))
+                  (ON-DESTROY (get-on-destroy-code pinfo)))]
                 [(source-path) 
                  (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
     (cond
@@ -153,10 +159,10 @@
        (run-ant-build.xml dest-dir)]      
 
       [(stub=? (choose-program-stub pinfo) STUB:GUI-WORLD)
-       (write-android:gui-world-resources pinfo name dest-dir)
        ;; fixme!
+       (write-android:gui-world-resources pinfo name dest-dir)
+       (run-ant-build.xml dest-dir)
        (void)]
-
       
       [else
        (error 'compile-program-to-android
@@ -182,7 +188,7 @@
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
     (write-android-manifest dest-dir 
                             #:name a-name
-                            #:permissions (collect-required-permissions pinfo))
+                            #:permissions (collect-required-android-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
@@ -194,7 +200,7 @@
                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (write-android-manifest dest-dir 
                             #:name a-name
-                            #:permissions (collect-required-permissions pinfo))
+                            #:permissions (collect-required-android-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
@@ -238,7 +244,17 @@
 
 
 ;; collect-required-permissions: pinfo -> (listof symbol)
-(define (collect-required-permissions a-pinfo)
+(define (collect-required-android-permissions a-pinfo)
+  (define ht (make-hash))
+  (for ([p (get-permissions a-pinfo)])
+    (for ([ps (permission->android-permissions p)])
+      (hash-set! ht ps #t)))
+  (for/list ([p (in-hash-keys ht)])
+    p))
+
+
+;; get-permissions: pinfo -> (listof permission)
+(define (get-permissions a-pinfo)
   (define ht (make-hash))
   (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
     (cond
@@ -247,7 +263,21 @@
          (hash-set! ht p #t))]))
   (for/list ([p (in-hash-keys ht)])
     p))
+  
+;; get-on-start-code: pinfo -> string
+(define (get-on-start-code a-pinfo)
+  (apply string-append
+         (map permission->on-start-code (get-permissions a-pinfo))))
 
+;; get-on-pause-code: pinfo -> string
+(define (get-on-pause-code a-pinfo)
+  (apply string-append
+         (map permission->on-pause-code (get-permissions a-pinfo))))
+
+;; get-on-shutdown-code: pinfo -> string
+(define (get-on-destroy-code a-pinfo)
+  (apply string-append
+         (map permission->on-destroy-code (get-permissions a-pinfo))))
   
 
 
@@ -355,13 +385,9 @@
 
 
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
-;; FIXME: we need pinfo to compute the right permissions...
 (define (write-android-manifest dest-dir 
                                 #:name name
-                                #:permissions (permissions '("android.permission.ACCESS_LOCATION"
-                                                             "android.permission.ACCESS_GPS"
-                                                             "android.permission.ACCESS_FINE_LOCATION"
-                                                             "android.permission.SEND_SMS")))
+                                #:permissions (permissions '()))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")

@@ -2,7 +2,8 @@
 
 (require scheme/contract
          scheme/match
-         scheme/list)
+         scheme/list
+         "permission.ss")
 
 
 ;; An env collects a set of bindings.
@@ -74,13 +75,13 @@
  [struct binding ()]
  [struct (binding:constant binding) ([name symbol?]
                                      [java-string string?]
-                                     [permissions (listof string?)])]
+                                     [permissions (listof permission?)])]
  [struct (binding:function binding) ([name symbol?]
                                      [module-path (or/c false/c path?)]
                                      [min-arity natural-number/c]
                                      [var-arity? boolean?]
                                      [java-string string?]
-                                     [permissions (listof string?)])]
+                                     [permissions (listof permission?)])]
 
  
  [struct env ([bindings (listof binding?)])]
