@@ -6,6 +6,7 @@
          scheme/match
          scheme/file
          scheme/runtime-path
+         syntax/modresolve
          (only-in xml xexpr->string)
          "helpers.ss"
          "env.ss"
@@ -21,6 +22,21 @@
                   
                   [generate-android-application
                    (string? path-string? path-string? . -> . any)])
+
+
+;; A platform is one of PLATFORM:ANDROID, PLATFORM:J2ME.
+(define PLATFORM:ANDROID 'android)
+(define PLATFORM:J2ME 'j2me)
+
+
+;; A stub is one of the following
+(define STUB:WORLD 'stub:world)
+(define STUB:GUI-WORLD 'stub:gui-world)
+
+;; stub=?: stub stub -> boolean
+(define (stub=? stub-1 stub-2)
+  (eq? stub-1 stub-2))
+
 
 
 ;; A program is a (listof sexp).
@@ -51,14 +67,14 @@
 ;; generate-j2me-app: string path path -> void
 ;; Given a file written in beginner-level scheme, generates a j2me application.
 (define (generate-j2me-application name file dest)
-  (compile-world-program-to-j2me (open-beginner-program file) name dest))
+  (compile-program-to-j2me (open-beginner-program file) name dest))
 
 
 
 ;; generate-android-application: string path path -> void
 ;; Compiles an Android application.
 (define (generate-android-application name file dest)
-  (compile-world-program-to-android (open-beginner-program file) name dest))
+  (compile-program-to-android (open-beginner-program file) name dest))
 
 
 
@@ -66,28 +82,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; open-beginner-program: path-string -> text%
-;; Opens up the beginner-level program.
-(define (open-beginner-program path)
-  (define text (new text%))
-  (send text insert-file (path->string path))
-  text)
 
-
-;; compiled-world-program-to-j2me: text% string path-string -> void
+;; compiled-program: platform text% string path-string -> void
 ;; Consumes a text, an application name, destination directory, and produces an application.
 ;; The text buffer is assumed to contain a beginner-level program that uses only the world
 ;; teachpack.  We need to consume a text because we must first lift up all the images
 ;; as resources.
-(define (compile-world-program-to-j2me text name dest-dir)
+(define (compile-program-to-j2me text name dest-dir)
   (make-j2me-directories dest-dir)
   (lift-images-to-directory text (build-path dest-dir "res"))
-  (write-java-midlet-source text name 
-                            (build-path dest-dir
-                                        "src" "org" "plt"
-                                        (upper-camel-case name)))
-  (write-j2me-resources text name dest-dir)
-  (run-ant-build.xml dest-dir))
+  (let*-values ([(classname)
+                 (upper-camel-case name)]
+                [(program)
+                 (parse-text-as-program text)]
+                [(compiled-program pinfo)
+                 (program->java-string program)]
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-NAME classname)
+                  (PROGRAM-DEFINITIONS compiled-program))]
+                [(source-path) 
+                 (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
+    (fill-template-file j2me-world-stub-path source-path mappings)
+    (write-j2me-resources text name dest-dir)
+    (run-ant-build.xml dest-dir)))
 
 ;; make-directories: path -> void
 ;; Creates the necessary directories.
@@ -110,15 +128,40 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-
-(define (compile-world-program-to-android text name dest-dir)
+;; compile-program-to-android: text string path -> void
+;; Writes out the compilation of the text program with the given name to the
+;; destination directory.
+(define (compile-program-to-android text name dest-dir)
   (make-android-directories dest-dir)
   (lift-images-to-directory text (build-path dest-dir "src"))
-  (write-java-midlet-source 
-   text name
-   (build-path dest-dir "src" "org" "plt" (upper-camel-case name)))
-  (write-android-resources text name dest-dir)
-  (run-ant-build.xml dest-dir))
+  (let*-values ([(classname)
+                 (upper-camel-case name)]
+                [(program)
+                 (parse-text-as-program text)]
+                [(compiled-program pinfo)
+                 (program->java-string program)]
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-NAME classname)
+                  (PROGRAM-DEFINITIONS compiled-program))]
+                [(source-path) 
+                 (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
+    (cond
+      [(stub=? (choose-program-stub pinfo) STUB:WORLD)
+       (fill-template-file j2me-world-stub-path source-path mappings)
+       (write-android:world-resources name dest-dir)
+       (run-ant-build.xml dest-dir)]      
+
+      [(stub=? (choose-program-stub pinfo) STUB:GUI-WORLD)
+       (write-android:gui-world-resources name dest-dir)
+       ;; fixme!
+       (void)]
+
+      
+      [else
+       (error 'compile-program-to-android
+              "Unrecognized stub ~s"
+              (choose-program-stub pinfo))])))
 
 
 (define (make-android-directories dest-dir)
@@ -132,11 +175,21 @@
   (make-directory* (build-path dest-dir "libs")))
 
 
-(define (write-android-resources a-text a-name dest-dir)
+(define (write-android:world-resources a-name dest-dir)
   (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
                                   (ANDROID-SDK-PATH (current-android-sdk-path))
                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
+    (write-android-manifest dest-dir #:name a-name)
+    (replace-template-file dest-dir "build.xml" mappings)
+    (replace-template-file dest-dir "res/values/strings.xml" mappings)
+    (replace-template-file dest-dir "src/jad.properties" mappings)))
+
+
+(define (write-android:gui-world-resources a-name dest-dir)
+  (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
+                                  (ANDROID-SDK-PATH (current-android-sdk-path))
+                                  (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (write-android-manifest dest-dir #:name a-name)
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
@@ -155,35 +208,32 @@
 
 
 
-
-;; write-java-midlet-source: text string path -> void
-;; Writes out a java source for the application.
-(define (write-java-midlet-source a-text a-name src-path)
-  (let*-values ([(classname)
-                 (upper-camel-case a-name)]
-                [(program)
-                 (parse-text-as-program a-text)]
-                [(compiled-program pinfo)
-                 (program->java-string program)]
-                [(mappings) 
-                 (build-mappings 
-                  (PROGRAM-NAME classname)
-                  (PROGRAM-DEFINITIONS compiled-program))]
-
-                [(program-stub)
-                 (choose-program-stub compiled-program pinfo)]
-                [(dest-path)
-                 (build-path 
-                  src-path
-                  (string-append classname ".java"))])
-    (fill-template-file program-stub dest-path mappings)))
+(define WORLD-PATH-1 (resolve-module-path '(lib "world.ss" "moby" "stub") #f))
+(define WORLD-PATH-2 (resolve-module-path '(lib "world.ss" "htdp") #f))
+(define GUI-WORLD-PATH (resolve-module-path '(lib "gui-world.ss" "gui-world") #f))
 
 
-
-;; choose-program-stub: program pinfo -> path
+;; choose-program-stub: pinfo -> stub
 ;; Returns the stub necessary to compile this program.
-(define (choose-program-stub a-program a-pinfo)
-  j2me-world-stub-path)
+(define (choose-program-stub a-pinfo)
+  (let/ec return
+    (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
+      (cond
+        [(and (binding:function? b)
+              (binding:function-module-path b))
+         (cond
+           [(or (path=? (binding:function-module-path b)
+                        WORLD-PATH-1)
+                (path=? (binding:function-module-path b)
+                        WORLD-PATH-2))
+            (return STUB:WORLD)]
+           [(path=? (binding:function-module-path b)
+                    GUI-WORLD-PATH)
+            (return STUB:GUI-WORLD)])]))
+      (error 'choose-program-stub "Couldn't identify stub to use for this program.")))
+
+  
+
 
 
 
@@ -325,6 +375,7 @@
       #:exists 'replace)))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; copy-port-to-debug-log: input-port -> void
 ;; Writes out the lines of the input port as debug events.
@@ -361,3 +412,11 @@
       (sync t1)
       (sync t2)
       (void))))
+
+
+;; open-beginner-program: path-string -> text%
+;; Opens up the beginner-level program.
+(define (open-beginner-program path)
+  (define text (new text%))
+  (send text insert-file (path->string path))
+  text)
