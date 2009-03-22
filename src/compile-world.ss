@@ -196,11 +196,14 @@
 
 
 (define (write-android:gui-world-resources pinfo a-name dest-dir)
-  (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
-                                  (ANDROID-SDK-PATH (current-android-sdk-path))
-                                  (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
+  (let* ([classname (upper-camel-case a-name)]
+         [mappings (build-mappings (PROGRAM-NAME classname)
+                                   (ANDROID-SDK-PATH (current-android-sdk-path))
+                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (write-android-manifest dest-dir 
                             #:name a-name
+                            #:activity-class (string-append
+                                              "org.plt." classname "." classname)
                             #:permissions (collect-required-android-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
@@ -386,8 +389,10 @@
 
 
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
-(define (write-android-manifest dest-dir 
+(define (write-android-manifest dest-dir
                                 #:name name
+                                #:activity-class (activity-class 
+                                                  "j2ab.android.app.J2ABMIDletActivity")
                                 #:permissions (permissions '()))
   (let ([AndroidManifest.xml
          `(manifest 
@@ -403,7 +408,7 @@
            (application 
             ((android:label "@string/app_name")
              (android:icon "@drawable/icon"))
-            (activity ((android:name "j2ab.android.app.J2ABMIDletActivity")
+            (activity ((android:name ,activity-class)
                        (android:label "@string/app_name"))
                       (intent-filter 
                        ()
