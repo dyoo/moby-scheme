@@ -218,7 +218,6 @@
 (define (choose-program-stub a-pinfo)
   (let/ec return
     (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
-      (printf "~s~n" b)
       (cond
         [(and (binding:function? b)
               (binding:function-module-path b))
