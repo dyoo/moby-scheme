@@ -102,6 +102,8 @@
                                  updated-pinfo))]))
 
 
+(define (bf name module-path arity vararity? java-string)
+  (make-binding:function name module-path arity vararity? java-string empty))
 
 
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
@@ -109,7 +111,7 @@
 (define (definition-analyze-collect-definitions a-definition pinfo)
   (match a-definition
     [(list 'define (list id args ...) body)
-     (pinfo-accumulate-binding (make-binding:function id
+     (pinfo-accumulate-binding (bf id
                                                       #f
                                                       (length args) 
                                                       #f 
@@ -117,7 +119,7 @@
                                                        (identifier->munged-java-identifier id)))
                                pinfo)]
     [(list 'define (? symbol? id) (list 'lambda (list args ...) body))
-     (pinfo-accumulate-binding (make-binding:function id
+     (pinfo-accumulate-binding (bf id
                                                       #f
                                                       (length args) 
                                                       #f 
@@ -127,7 +129,8 @@
     [(list 'define (? symbol? id) body)
      (pinfo-accumulate-binding (make-binding:constant id
                                                       (symbol->string 
-                                                       (identifier->munged-java-identifier id)))
+                                                       (identifier->munged-java-identifier id))
+                                                      empty)
                                pinfo)]
     
     
@@ -135,13 +138,13 @@
      (let* ([constructor-id 
              (string->symbol (format "make-~a" id))]
             [constructor-binding 
-             (make-binding:function constructor-id #f (length fields) #f
+             (bf constructor-id #f (length fields) #f
                                     (symbol->string
                                      (identifier->munged-java-identifier constructor-id)))]
             [predicate-id
              (string->symbol (format "~a?" id))]
             [predicate-binding
-             (make-binding:function predicate-id #f 1 #f
+             (bf predicate-id #f 1 #f
                                     (symbol->string
                                      (identifier->munged-java-identifier predicate-id)))]
             
@@ -152,7 +155,7 @@
                   fields)]
             [selector-bindings
              (map (lambda (sel-id) 
-                    (make-binding:function sel-id #f 1 #f 
+                    (bf sel-id #f 1 #f 
                                            (symbol->string
                                             (identifier->munged-java-identifier sel-id))))
                   selector-ids)])
@@ -178,13 +181,14 @@
 (define (function-definition-analyze-uses fun args body pinfo)
   (let* ([env (pinfo-env pinfo)]
          [env 
-          (env-extend env (make-binding:function fun #f (length args) #f
+          (env-extend env (bf fun #f (length args) #f
                                                  (symbol->string fun)))]
          [env
           (foldl (lambda (arg-id env) 
                    (env-extend env (make-binding:constant arg-id 
                                                           (symbol->string
-                                                           arg-id))))
+                                                           arg-id)
+                                                          empty)))
                  env
                  args)])
     (expression-analyze-uses body pinfo env)))
@@ -273,146 +277,108 @@
 
 
 
-
 (define-struct module-binding (name path bindings))
 
-;; world teachpack bindings
-(define world-module
-  (let ([module-path
-         (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
+
+(define LOCATION-PERMISSIONS (list "android.permission.ACCESS_LOCATION"
+                                   "android.permission.ACCESS_GPS"
+                                   "android.permission.ACCESS_FINE_LOCATION"))
+
+(define SMS-PERMISSIONS (list "android.permission.SEND_SMS"))
+
+
+(define (make-world-module module-path)
     (make-module-binding 'world
                          module-path
-                         (list (make-binding:function 'big-bang module-path 4 #f
-                                                      "org.plt.WorldKernel.big_dash_bang")
-                               (make-binding:function 'on-tick-event module-path 1 #f
+                         (list (bf 'big-bang module-path 4 #f "org.plt.WorldKernel.big_dash_bang")
+                               (bf 'on-tick-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_tick_dash_event")
-                               (make-binding:function 'on-mouse-event module-path 1 #f
+                               (bf 'on-mouse-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_mouse_dash_event")
-                               (make-binding:function 'on-key-event module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
-                               (make-binding:function 'on-message-event module-path 1 #f
+                               (bf 'on-key-event module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
+                               (bf 'on-message-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_message_dash_event")
-                               (make-binding:function 'on-location-change-event module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
-                               (make-binding:function 'on-orientation-change-event module-path 1 #f
+                               
+                               (make-binding:function
+                                'on-location-change-event module-path 1 #f
+                                "org.plt.WorldKernel.on_dash_location_dash_change_dash_event"
+                                LOCATION-PERMISSIONS)
+                               
+                               (bf 'on-orientation-change-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event")
-                               (make-binding:function 'on-acceleration-change-event module-path 1 #f
+                               (bf 'on-acceleration-change-event module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
-                               (make-binding:function 'on-redraw module-path 1 #f
+                               (bf 'on-redraw module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_redraw")
-                               (make-binding:function 'stop-when module-path 1 #f
+                               (bf 'stop-when module-path 1 #f
                                                       "org.plt.WorldKernel.stop_dash_when")
                                
-                               (make-binding:function 'empty-scene module-path 2 #f
+                               (bf 'empty-scene module-path 2 #f
                                                       "org.plt.WorldKernel.empty_dash_scene")
-                               (make-binding:function 'place-image module-path 4 #f
+                               (bf 'place-image module-path 4 #f
                                                       "org.plt.WorldKernel.place_dash_image")
-                               (make-binding:function 'circle module-path 3 #f
+                               (bf 'circle module-path 3 #f
                                                       "org.plt.WorldKernel.circle")
-                               (make-binding:function 'nw:rectangle module-path 4 #f
+                               (bf 'nw:rectangle module-path 4 #f
                                                       "org.plt.WorldKernel.nw_colon_rectangle")
-                                                              (make-binding:function 'rectangle module-path 4 #f
+                                                              (bf 'rectangle module-path 4 #f
                                                       "org.plt.WorldKernel.rectangle")
                                
-                               (make-binding:function 'key=? module-path 2 #f
+                               (bf 'key=? module-path 2 #f
                                                       "org.plt.WorldKernel.key_equal__question_")
-                               (make-binding:function 'text module-path 3 #f
+                               (bf 'text module-path 3 #f
                                                       "org.plt.WorldKernel.text")
                                
                                ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
                                ;; We can fix this by extending expression to include a special "magic" identifier.  We should
                                ;; ensure students don't accidently hit this function.
-                               (make-binding:function '-kernel-create-image module-path 1 #f
+                               (bf '-kernel-create-image module-path 1 #f
                                                       "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
-                               (make-binding:function 'image-width module-path 1 #f
+                               (bf 'image-width module-path 1 #f
                                                       "org.plt.WorldKernel.image_dash_width")
-                               (make-binding:function 'image-height module-path 1 #f
+                               (bf 'image-height module-path 1 #f
                                                       "org.plt.WorldKernel.image_dash_height")
-                               (make-binding:function 'image? module-path 1 #f
+                               (bf 'image? module-path 1 #f
                                                       "org.plt.WorldKernel.image_question_")
-                               (make-binding:function 'image=? module-path 2 #f
+                               (bf 'image=? module-path 2 #f
                                                       "org.plt.WorldKernel.image_equal__question_")
-                               (make-binding:function 'image-rotate module-path 2 #f
-                                                      "org.plt.WorldKernel.image_dash_rotate")))))
+                               (bf 'image-rotate module-path 2 #f
+                                                      "org.plt.WorldKernel.image_dash_rotate"))))
 
 
+;; world teachpack bindings
+(define world-module 
+  (let ([module-path
+         (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
+    (make-world-module module-path)))
+
+;; Alternative world teachpack bindings
 (define world-stub-module
   (let ([module-path                       
          (resolve-module-path '(lib "world.ss" "moby" "stub") #f)])
-  (make-module-binding 'world-stub
-                       module-path
-                       (list (make-binding:function 'big-bang module-path 4 #f
-                                                    "org.plt.WorldKernel.big_dash_bang")
-                             (make-binding:function 'on-tick-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_tick_dash_event")
-                             (make-binding:function 'on-mouse-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_mouse_dash_event")
-                             (make-binding:function 'on-key-event module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
-
-                             (make-binding:function 'on-message-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_message_dash_event")
-                             (make-binding:function 'on-location-change-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_location_dash_change_dash_event")
-                             (make-binding:function 'on-orientation-change-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event")
-                             (make-binding:function 'on-acceleration-change-event module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event")
-                             (make-binding:function 'on-redraw module-path 1 #f
-                                                    "org.plt.WorldKernel.on_dash_redraw")
-                             (make-binding:function 'stop-when module-path 1 #f
-                                                    "org.plt.WorldKernel.stop_dash_when")
-                                                          
-                             
-                             (make-binding:function 'empty-scene module-path 2 #f
-                                                    "org.plt.WorldKernel.empty_dash_scene")
-                             (make-binding:function 'place-image module-path 4 #f
-                                                    "org.plt.WorldKernel.place_dash_image")
-                             (make-binding:function 'circle module-path 3 #f
-                                                    "org.plt.WorldKernel.circle")
-                             (make-binding:function 'nw:rectangle module-path 4 #f
-                                                    "org.plt.WorldKernel.nw_colon_rectangle")
-                                        
-                             (make-binding:function 'rectangle module-path 4 #f
-                                                    "org.plt.WorldKernel.rectangle")
-                             (make-binding:function 'key=? module-path 2 #f
-                                                    "org.plt.WorldKernel.key_equal__question_")
-                             (make-binding:function 'text module-path 3 #f
-                                                    "org.plt.WorldKernel.text")
-                             
-                             ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-                             ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-                             ;; ensure students don't accidently hit this function.
-                             (make-binding:function '-kernel-create-image module-path 1 #f
-                                                    "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
-                             (make-binding:function 'image-width module-path 1 #f
-                                                    "org.plt.WorldKernel.image_dash_width")
-                             (make-binding:function 'image-height module-path 1 #f
-                                                    "org.plt.WorldKernel.image_dash_height")
-                             (make-binding:function 'image? module-path 1 #f
-                                                    "org.plt.WorldKernel.image_question_")
-                             (make-binding:function 'image=? module-path 2 #f
-                                                    "org.plt.WorldKernel.image_equal__question_")
-                             (make-binding:function 'image-rotate module-path 2 #f
-                                                    "org.plt.WorldKernel.image_dash_rotate")))))
-
+    (make-world-module module-path)))
 
 
 ;; location library
 (define location-module 
-  (let ([module-path 
-         (resolve-module-path '(lib "location.ss" "moby" "stub") #f)])
+  (let* ([module-path 
+          (resolve-module-path '(lib "location.ss" "moby" "stub") #f)]
+         [bf (lambda (name module-path arity vararity? java-string)
+               (make-binding:function name module-path arity vararity? java-string 
+                                      LOCATION-PERMISSIONS))])
     (make-module-binding 'location
                          module-path
-                         (list (make-binding:function 'get-latitude module-path 0 #f 
+                         (list (bf 'get-latitude module-path 0 #f 
                                                       "org.plt.lib.Location.getLatitude")
-                               (make-binding:function 'get-longitude module-path 0 #f 
+                               (bf 'get-longitude module-path 0 #f 
                                                       "org.plt.lib.Location.getLongitude")
-                               (make-binding:function 'get-attitude module-path 0 #f 
+                               (bf 'get-attitude module-path 0 #f 
                                                       "org.plt.lib.Location.getAttitude")
-                               (make-binding:function 'get-bearing module-path 0 #f 
+                               (bf 'get-bearing module-path 0 #f 
                                                       "org.plt.lib.Location.getBearing")
-                               (make-binding:function 'get-speed module-path 0 #f 
+                               (bf 'get-speed module-path 0 #f 
                                                       "org.plt.lib.Location.getSpeed")
-                               (make-binding:function 'location-distance module-path 4 #f
+                               (bf 'location-distance module-path 4 #f
                                                       "org.plt.lib.Location.getDistanceBetween")))))
 
   
@@ -422,18 +388,18 @@
          (resolve-module-path '(lib "tilt.ss" "moby" "stub") #f)])
     (make-module-binding 'tilt
                          module-path
-                         (list (make-binding:function 'get-x-acceleration module-path 0 #f 
+                         (list (bf 'get-x-acceleration module-path 0 #f 
                                                       "org.plt.lib.Tilt.getXAcceleration")
-                               (make-binding:function 'get-y-acceleration module-path 0 #f 
+                               (bf 'get-y-acceleration module-path 0 #f 
                                                       "org.plt.lib.Tilt.getYAcceleration")
-                               (make-binding:function 'get-z-acceleration module-path 0 #f 
+                               (bf 'get-z-acceleration module-path 0 #f 
                                                       "org.plt.lib.Location.getZAcceleration")
                                
-                               (make-binding:function 'get-azimuth module-path 0 #f 
+                               (bf 'get-azimuth module-path 0 #f 
                                                       "org.plt.lib.Tilt.getAzimuth")
-                               (make-binding:function 'get-pitch module-path 0 #f 
+                               (bf 'get-pitch module-path 0 #f 
                                                       "org.plt.lib.Tilt.getPitch")
-                               (make-binding:function 'get-roll module-path 0 #f 
+                               (bf 'get-roll module-path 0 #f 
                                                       "org.plt.lib.Tilt.getRoll")))))
 
 
@@ -443,10 +409,10 @@
                               #f)])
     (make-module-binding 'gui-world
                          module-path
-                         (list (make-binding:function 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
-                               (make-binding:function 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
-                               (make-binding:function 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
-                               (make-binding:function 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")))))
+                         (list (bf 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
+                               (bf 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
+                               (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
+                               (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")))))
 
 
 (define sms-module
@@ -455,12 +421,12 @@
           '(lib "sms.ss" "moby" "stub") #f)])
     (make-module-binding 'gui-world
                          module-path
-                         (list (make-binding:function 
-                                'send-text-message
-                                module-path 
-                                3 
-                                #f 
-                                "org.plt.lib.Sms.sendTextMessage")))))
+                         (list (make-binding:function 'send-text-message
+                                                      module-path 
+                                                      3 
+                                                      #f 
+                                                      "org.plt.lib.Sms.sendTextMessage"
+                                                      SMS-PERMISSIONS)))))
 
 
 

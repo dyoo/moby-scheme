@@ -149,11 +149,11 @@
     (cond
       [(stub=? (choose-program-stub pinfo) STUB:WORLD)
        (fill-template-file j2me-world-stub-path source-path mappings)
-       (write-android:world-resources name dest-dir)
+       (write-android:world-resources pinfo name dest-dir)
        (run-ant-build.xml dest-dir)]      
 
       [(stub=? (choose-program-stub pinfo) STUB:GUI-WORLD)
-       (write-android:gui-world-resources name dest-dir)
+       (write-android:gui-world-resources pinfo name dest-dir)
        ;; fixme!
        (void)]
 
@@ -175,22 +175,26 @@
   (make-directory* (build-path dest-dir "libs")))
 
 
-(define (write-android:world-resources a-name dest-dir)
+(define (write-android:world-resources pinfo a-name dest-dir)
   (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
                                   (ANDROID-SDK-PATH (current-android-sdk-path))
                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
-    (write-android-manifest dest-dir #:name a-name)
+    (write-android-manifest dest-dir 
+                            #:name a-name
+                            #:permissions (collect-required-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
 
 
-(define (write-android:gui-world-resources a-name dest-dir)
+(define (write-android:gui-world-resources pinfo a-name dest-dir)
   (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
                                   (ANDROID-SDK-PATH (current-android-sdk-path))
                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
-    (write-android-manifest dest-dir #:name a-name)
+    (write-android-manifest dest-dir 
+                            #:name a-name
+                            #:permissions (collect-required-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
@@ -231,6 +235,18 @@
                     GUI-WORLD-PATH)
             (return STUB:GUI-WORLD)])]))
       (error 'choose-program-stub "Couldn't identify stub to use for this program.")))
+
+
+;; collect-required-permissions: pinfo -> (listof symbol)
+(define (collect-required-permissions a-pinfo)
+  (define ht (make-hash))
+  (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
+    (cond
+      [(binding:function? b)
+       (for ([p (binding:function-permissions b)])
+         (hash-set! ht p #t))]))
+  (for/list ([p (in-hash-keys ht)])
+    p))
 
   
 

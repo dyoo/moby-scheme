@@ -81,12 +81,14 @@
           (map identifier->munged-java-identifier args)]
          [new-env 
           (env-extend env (make-binding:function fun #f (length args) #f
-                                                 (symbol->string munged-fun-id)))]
+                                                 (symbol->string munged-fun-id)
+                                                 empty))]
          [new-env
           (foldl (lambda (arg-id env) 
                    (env-extend env (make-binding:constant arg-id 
                                                           (symbol->string
-                                                           (identifier->munged-java-identifier arg-id)))))
+                                                           (identifier->munged-java-identifier arg-id))
+                                                          empty)))
                  new-env
                  args)])
     (format "static public Object ~a(~a) { return ~a; }"
@@ -103,7 +105,9 @@
 ;; Converts the variable definition into a static variable declaration.
 (define (variable-definition->java-string id body env)
   (let* ([munged-id (identifier->munged-java-identifier id)]
-         [new-env (env-extend env (make-binding:constant id (symbol->string munged-id)))])
+         [new-env (env-extend env (make-binding:constant id 
+                                                         (symbol->string munged-id)
+                                                         empty))])
     (format "static Object ~a; static { ~a = ~a; }" 
             munged-id
             munged-id
@@ -165,12 +169,14 @@
                                                                        (make-binding:constant
                                                                         'this
                                                                         (symbol->string
-                                                                         (identifier->munged-java-identifier 'this))))]
+                                                                         (identifier->munged-java-identifier 'this))
+                                                                        empty))]
                                                   [new-env (env-extend new-env
                                                                        (make-binding:constant
                                                                         'other
                                                                         (symbol->string
-                                                                         (identifier->munged-java-identifier 'other))))])
+                                                                         (identifier->munged-java-identifier 'other))
+                                                                        empty))])
                                              new-env)))
           
           ;; make-id
@@ -304,10 +310,10 @@
        (error 'application-expression->java-string
               "Moby doesn't know about ~s" id)]
       
-      [(struct binding:constant (name java-string))
+      [(struct binding:constant (name java-string permissions))
        (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" java-string operand-strings)]
       
-      [(struct binding:function (name module-path min-arity var-arity? java-string))
+      [(struct binding:function (name module-path min-arity var-arity? java-string permissions))
        (unless (>= (length exprs)
                    min-arity)
          (error 'application-expression->java-string
@@ -331,9 +337,9 @@
   (match (env-lookup an-env an-id)
     ['#f
      (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
-    [(struct binding:constant (name java-string))
+    [(struct binding:constant (name java-string permissions))
      java-string]
-    [(struct binding:function (name module-path min-arity var-arity? java-string))
+    [(struct binding:function (name module-path min-arity var-arity? java-string permissions))
      (cond
        [var-arity?
         (format "(new org.plt.types.Callable() {

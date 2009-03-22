@@ -2,7 +2,7 @@
 
 (require scheme/contract
          scheme/match
-         scheme/bool)
+         scheme/list)
 
 
 ;; An env collects a set of bindings.
@@ -16,21 +16,21 @@
 
 ;; binding:constant records an id and its associated Java implementation.
 (define-struct (binding:constant binding) 
-  (name java-string)
+  (name java-string permissions)
   #:transparent)
 
 ;; Function bindings try to record more information.
 (define-struct (binding:function binding) 
-  (name module-path min-arity var-arity? java-string)
+  (name module-path min-arity var-arity? java-string permissions)
   #:transparent)
 
 
 ;; binding-id: binding -> symbol
 (define (binding-id a-binding)
   (match a-binding
-    [(struct binding:constant (name-2 _))
+    [(struct binding:constant (name-2 _ _))
      name-2]
-    [(struct binding:function (name-2 _ _ _ _))
+    [(struct binding:function (name-2 _ _ _ _ _))
      name-2]))
 
 
@@ -54,7 +54,7 @@
 ;; Extends the environment with a new constant binding.
 (define (env-extend-constant an-env id java-string)
   (env-extend an-env
-              (make-binding:constant id java-string)))
+              (make-binding:constant id java-string empty)))
 
 
 ;; env-extend-function: env symbol (or/c module-path #f) number boolean? string? -> env
@@ -65,19 +65,22 @@
                                      module-path
                                      min-arity 
                                      var-arity?
-                                     java-string)))
+                                     java-string
+                                     empty)))
 
 
 
 (provide/contract 
  [struct binding ()]
  [struct (binding:constant binding) ([name symbol?]
-                                     [java-string string?])]
+                                     [java-string string?]
+                                     [permissions (listof string?)])]
  [struct (binding:function binding) ([name symbol?]
                                      [module-path (or/c false/c path?)]
                                      [min-arity natural-number/c]
                                      [var-arity? boolean?]
-                                     [java-string string?])]
+                                     [java-string string?]
+                                     [permissions (listof string?)])]
 
  
  [struct env ([bindings (listof binding?)])]
