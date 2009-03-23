@@ -6,61 +6,47 @@
 (define WIDTH 300)
 (define HEIGHT 300)
 
-(define-struct world (posn radius target-posn velocity-posn))
+;; A world is a posn, a radius, a target posn, and a velocity posn.
+(define-struct world (posn r target vel))
+
 (define initial-world 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
-              (make-posn 0 0)
+              (make-posn (random WIDTH) (random HEIGHT))
               (make-posn 0 0)))
 
-;; randomize-target-posn: world -> world
-(define (randomize-target-posn a-world)
-  (make-world (world-posn a-world)
-              (world-radius a-world)
-              (make-posn (random WIDTH) (random HEIGHT))
-              (world-velocity-posn a-world)))
-         
-;; handle-on-tick: world -> world
-(define (handle-on-tick a-world)
-  (world-reset-if-collide-or-too-small
-   (make-world (posn+ (world-posn a-world) 
-                      (world-velocity-posn a-world))
-               (- (world-radius a-world) 1/2)
-               (world-target-posn a-world)
-               (world-velocity-posn a-world))))
-         
-;; handle-orientation-change: world number number number -> world
-(define (handle-orientation-change a-world new-azimuth pitch roll)
-  (make-world (world-posn a-world)
-              (world-radius a-world)
-              (world-target-posn a-world)
+;; tick: world -> world
+(define (tick w)
+  (make-world (posn+ (world-posn w) 
+                     (world-vel w))
+              (- (world-r w) 1/3)
+              (world-target w)
+              (world-vel w)))
+
+;; tilt: world number number number -> world
+(define (tilt w azimuth pitch roll)
+  (make-world (world-posn w)
+              (world-r w)
+              (world-target w)
               (make-posn roll (- pitch))))
 
 ;; render-world: world -> scene
-(define (render-world a-world)
+(define (render-world w)
   (place-image/posn (circle 5 "solid" "red")
-                    (world-target-posn a-world)
-                    (place-image/posn (circle (world-radius a-world) "solid" "blue")
-                                      (world-posn a-world)
+                    (world-target w)
+                    (place-image/posn (circle (world-r w) "solid" "blue")
+                                      (world-posn w)
                                       (empty-scene WIDTH HEIGHT))))
 
-;; world-bubble-collide?: world -> boolean
-(define (world-bubble-collide? a-world)
-  (< (distance (world-posn a-world) (world-target-posn a-world))
-     (world-radius a-world)))
+;; collide?: world -> boolean
+(define (collide? w)
+  (< (distance (world-posn w) (world-target w))
+     (world-r w)))
 
-;; world-reset-if-collide-or-too-small: world -> world
-(define (world-reset-if-collide-or-too-small a-world)
-  (cond
-    [(or (<= (world-radius a-world) 1)
-         (world-bubble-collide? a-world))
-     (randomize-target-posn 
-      (make-world (world-posn a-world)
-                  30
-                  (world-target-posn a-world)
-                  (world-velocity-posn a-world)))]
-    [else
-     a-world]))
+;; game-ends?: world -> boolean
+(define (game-ends? w)
+  (or (<= (world-r w) 1) (collide? w)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; posn+: posn posn -> posn
@@ -89,7 +75,8 @@
   (place-image an-image (posn-x a-posn) (posn-y a-posn) a-scene))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(big-bang WIDTH HEIGHT 1/20 (randomize-target-posn initial-world))
+(big-bang WIDTH HEIGHT 1/20 initial-world)
 (on-redraw render-world)
-(on-tick-event handle-on-tick)
-(on-orientation-change-event handle-orientation-change)
+(on-tick-event tick)
+(stop-when game-ends?)
+(on-orientation-change-event tilt)
