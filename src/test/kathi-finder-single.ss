@@ -144,16 +144,6 @@
                          (choose-place a-world latitude longitude))]))
 
 
-;; places-are-significantly-different?: place place -> boolean
-(define (places-are-significantly-different? p1 p2)
-  (cond
-    [(and (named-place? p1) (named-place? p2))
-     (not (equal? p1 p2))]
-    [(and (unnamed-place? p1) (unnamed-place? p2))
-     false]
-    [else
-     true]))
-
 
 ;; report-new-place: world -> world
 ;; Sends out a text message, and then returns the world.
