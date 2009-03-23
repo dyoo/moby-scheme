@@ -6,18 +6,21 @@
 (define WIDTH 300)
 (define HEIGHT 300)
 
-;; A world is a posn, a radius, a target posn, and a velocity posn.
+;; A velocity has an x and y component.
+(define-struct velocity (x y))
+
+;; A world is a posn, a radius, a target posn, and a velocity.
 (define-struct world (posn r target vel))
 
 (define initial-w 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
               (make-posn (random WIDTH) (random HEIGHT))
-              (make-posn 0 0)))
+              (make-velocity 0 0)))
 
 ;; tick: world -> world
 (define (tick w)
-  (make-world (posn+ (world-posn w) (world-vel w))
+  (make-world (posn+velocity (world-posn w) (world-vel w))
               (- (world-r w) 1/3)
               (world-target w)
               (world-vel w)))
@@ -27,7 +30,7 @@
   (make-world (world-posn w)
               (world-r w)
               (world-target w)
-              (make-posn roll (- pitch))))
+              (make-velocity roll (- pitch))))
 
 ;; render: world -> scene
 (define (render w)
@@ -48,11 +51,11 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; posn+: posn posn -> posn
-(define (posn+ posn-1 posn-2)
-  (make-posn (clamp (+ (posn-x posn-1) (posn-x posn-2))
+;; posn+velocity: posn velocity -> posn
+(define (posn+velocity a-posn a-vel)
+  (make-posn (clamp (+ (posn-x a-posn) (velocity-x a-vel))
                     0 WIDTH)
-             (clamp (+ (posn-y posn-1) (posn-y posn-2))
+             (clamp (+ (posn-y a-posn) (velocity-y a-vel))
                     0 HEIGHT)))
 
 ;; clamp: number number number -> number
