@@ -2,6 +2,10 @@ package org.plt.guiworld;
 
 import org.plt.world.*;
 
+import java.util.List;
+import java.util.ArrayList;
+
+
 import android.view.*;
 import android.widget.*;
 import android.text.*;
@@ -192,12 +196,17 @@ public class GuiRenderer {
 			topView.addView(bar);
 		}
 
+
 		public void visit(final DropDown d) {
 			String[] items = (String[]) d.getChoicesF().transform(world);
+			List itemList = new ArrayList();
+			for(int i = 0; i < items.length; i++)
+			    itemList.add(items[i]);
 			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
-					android.R.layout.simple_spinner_item, items);
-			adapter
-					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+								android.R.layout.simple_spinner_item,
+								itemList);
+			adapter.setDropDownViewResource
+			    (android.R.layout.simple_spinner_dropdown_item);
 			Spinner dropdown = new Spinner(topView.getContext());
 			dropdown.setAdapter(adapter);
 
@@ -305,29 +314,18 @@ public class GuiRenderer {
 
 		public void visit(DropDown d) {
 			String[] items = (String[]) d.getChoicesF().transform(world);
-			// ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
-			// android.R.layout.simple_list_item_1, items);
-			// adapter
-			// .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
+ 			String selected = (String) d.getValF().transform(world);
 			Spinner dropdown = (Spinner) topView
 					.getChildAt(this.indexToRefresh);
+
 			ArrayAdapter adapter = (ArrayAdapter) dropdown.getAdapter();
-			// adapter.clear();
-
-			// adapter.remove(adapter.getItem(0));
-
-			// ArrayAdapter adapter = (ArrayAdapter)dropdown.getAdapter();
-			// adapter.clear();
-
-			// dropdown.setAdapter(adapter);
-			//
-			// String selected = (String) d.getValF().transform(world);
-			// int i = 0;
-			// for (; i < items.length && !((String) items[i]).equals(selected);
-			// i++)
-			// ;
-			// dropdown.setSelection(i);
+			adapter.clear();
+			for (int i = 0; i < items.length ; i++) {
+			    adapter.add(items[i]);
+			    if(items[i].equals(selected)) {
+				dropdown.setSelection(i);
+			    }
+			}
 		}
 	}
 }
