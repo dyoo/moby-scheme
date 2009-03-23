@@ -7,18 +7,18 @@
 (define HEIGHT 300)
 
 ;; A velocity has an x and y component.
-(define-struct velocity (x y))
+(define-struct vel (x y))
 
 ;; A target is at a random position.
 (define target (make-posn (random WIDTH) (random HEIGHT)))
 
-;; A world is a posn, a radius, and a velocity.
+;; A world is a posn, a radius, and a vel.
 (define-struct world (posn r vel))
 
 (define initial-w 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
-              (make-velocity 0 0)))
+              (make-vel 0 0)))
 
 ;; tick: world -> world
 (define (tick w)
@@ -30,7 +30,7 @@
 (define (tilt w azimuth pitch roll)
   (make-world (world-posn w)
               (world-r w)
-              (make-velocity roll (- pitch))))
+              (make-vel roll (- pitch))))
 
 ;; render: world -> scene
 (define (render w)
@@ -53,12 +53,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; posn+vel: posn velocity -> posn
 (define (posn+vel a-posn a-vel)
-  (make-posn (clamp (+ (posn-x a-posn) (velocity-x a-vel))
+  (make-posn (clamp (+ (posn-x a-posn) (vel-x a-vel))
                     0 WIDTH)
-             (clamp (+ (posn-y a-posn) (velocity-y a-vel))
+             (clamp (+ (posn-y a-posn) (vel-y a-vel))
                     0 HEIGHT)))
 
 ;; clamp: number number number -> number
+;; Clamps a number x between a and b.
 (define (clamp x a b)
   (cond [(> x b) b]
         [(< x a) a]

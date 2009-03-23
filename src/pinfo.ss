@@ -287,16 +287,16 @@
     (make-module-binding 'world
                          module-path
                          (list (bf 'big-bang module-path 4 #f "org.plt.WorldKernel.big_dash_bang")
-                               (bf 'on-tick-event module-path 1 #f
+                               (bf 'on-tick module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_tick_dash_event")
-                               (bf 'on-mouse-event module-path 1 #f
+                               (bf 'on-mouse module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_mouse_dash_event")
-                               (bf 'on-key-event module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
-                               (bf 'on-message-event module-path 1 #f
+                               (bf 'on-key module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
+                               (bf 'on-message module-path 1 #f
                                                       "org.plt.WorldKernel.on_dash_message_dash_event")
                                
                                (make-binding:function
-                                'on-location-change-event module-path 1 #f
+                                'on-location-change module-path 1 #f
                                 "org.plt.WorldKernel.on_dash_location_dash_change_dash_event"
                                 (list PERMISSION:LOCATION))
                                
@@ -306,7 +306,7 @@
                                 (list PERMISSION:TILT))
                                
                                (make-binding:function
-                                'on-acceleration-change-event module-path 1 #f
+                                'on-acceleration module-path 1 #f
                                 "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event"
                                 (list PERMISSION:TILT))
                                

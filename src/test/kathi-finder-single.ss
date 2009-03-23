@@ -10,9 +10,9 @@
 (define WIDTH 400)
 (define HEIGHT 400)
 
-;; A place is centered on a latitude and longitude, and extends 
+;; A place is centered on a lat and long, and extends 
 ;; to a radius measured in meters.
-(define-struct place (name latitude longitude radius))
+(define-struct place (name lat long radius))
 
 ;; mile->meter: number -> number
 ;; Converts miles to meters.
@@ -50,13 +50,13 @@
 ;; The telephone number to send messages to.
 (define ADDRESS "4012633108")
   
-;; The world is a latitude/longitude pair representing the current location.
-(define-struct loc (latitude longitude))
+;; The world is a lat/long pair representing the current location.
+(define-struct loc (lat long))
 (define initial-world (make-loc 0 0))
 
 ;; change-location: world number number -> world
-(define (change-location w latitude longitude)
-  (make-loc latitude longitude))
+(define (change-location w lat long)
+  (make-loc lat long))
 
 ;; send-report: world -> world
 ;; Sends out a text message of the world description,
@@ -71,10 +71,10 @@
          (string-append
           "http://maps.google.com/maps?q="
           (number->string 
-           (exact->inexact (loc-latitude w)))
+           (exact->inexact (loc-lat w)))
           ",+"
           (number->string 
-           (exact->inexact (loc-longitude w)))
+           (exact->inexact (loc-long w)))
           "&iwloc=A&hl=en")]
         [else
          (place-name
@@ -106,10 +106,10 @@
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
 (define (place-matches? a-place a-loc)
-  (<= (location-distance (loc-latitude a-loc)
-                         (loc-longitude a-loc)
-                         (place-latitude a-place) 
-                         (place-longitude a-place))
+  (<= (location-distance (loc-lat a-loc)
+                         (loc-long a-loc)
+                         (place-lat a-place) 
+                         (place-long a-place))
       (place-radius a-place)))
 
 
