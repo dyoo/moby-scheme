@@ -47,11 +47,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; The telephone number is currently hardcoded to Shriram's
-;; phone number.
-(define SHRIRAM-ADDRESS 
-  "508-826-6648"
-  #;"4012633108")
+;; The telephone number to send messages to.
+(define ADDRESS "4012633108")
   
 ;; The world is a latitude/longitude pair representing the current location.
 (define-struct loc (latitude longitude))
@@ -65,9 +62,7 @@
 ;; Sends out a text message of the world description,
 ;; and produces the world.
 (define (send-report w)
-  (send-text-message SHRIRAM-ADDRESS
-                     (description w)
-                     w))
+  (send-text-message ADDRESS (description w) w))
 
 ;; description: world -> string
 ;; Produces a text description of the current place.
@@ -131,6 +126,6 @@
 (define tick-delay (* 5 60))  ;; wait every five minutes before updates.
 
 (big-bang WIDTH HEIGHT tick-delay initial-world)
-(on-tick-event send-report)
+(on-tick send-report)
 (on-redraw render)
-(on-location-change-event change-location)
+(on-location-change change-location)

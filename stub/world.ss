@@ -61,7 +61,7 @@
  )
 
 (provide-higher-order-primitive
- on-tick-event (tock) ;; (World -> World) -> true
+ on-tick (tock) ;; (World -> World) -> true
  )
 
 (provide-higher-order-primitive
@@ -78,7 +78,7 @@
  )
 
 (provide-higher-order-primitive
- on-key-event (control) ;; (World KeyEvent -> World) -> true
+ on-key (control) ;; (World KeyEvent -> World) -> true
  )
 
 ;; A MouseEventType is one of:
@@ -90,7 +90,7 @@
 ;; - 'leave
 
 (provide-higher-order-primitive
- on-mouse-event (clack)  ;; (World Number Number MouseEvent -> World) -> true
+ on-mouse (clack)  ;; (World Number Number MouseEvent -> World) -> true
  )
 
 (provide-higher-order-primitive
@@ -225,9 +225,9 @@
 
 (define *the-delta* 0.0)
 
-(define (on-tick-event f)
-  (check-proc 'on-tick-event f 1 "on-tick-event" "one argument")
-  (check-world 'on-tick-event)
+(define (on-tick f)
+  (check-proc 'on-tick f 1 "on-tick" "one argument")
+  (check-world 'on-tick)
   (set-timer-callback f)
   (send the-time start
         (let* ([w (ceiling (* 1000 the-delta))])
@@ -249,15 +249,15 @@
   (check-arg 'key=? (key-event? m) 'KeyEvent "first" m)
   (eqv? k m))
 
-(define (on-key-event f)
-  (check-proc 'on-key-event f 2 "on-key-event" "two arguments")
-  (check-world 'on-key-event)
+(define (on-key f)
+  (check-proc 'on-key f 2 "on-key" "two arguments")
+  (check-world 'on-key)
   (set-key-callback f (current-eventspace))
   #t)
 
-(define (on-mouse-event f)
-  (check-proc 'on-mouse-event f 4 "on-mouse-event" "four arguments")
-  (check-world 'on-mouse-event)
+(define (on-mouse f)
+  (check-proc 'on-mouse f 4 "on-mouse" "four arguments")
+  (check-world 'on-mouse)
   (set-mouse-callback f (current-eventspace))
   #t)
 
@@ -308,7 +308,7 @@
      (check-arg 'run-simulation (boolean? record?) 'number "fifth [and optional]" record?)
      (big-bang width height rate 1 record?)
      (on-redraw f)
-     (on-tick-event add1)]
+     (on-tick add1)]
     [(width height rate f)
      (run-simulation width height rate f #f)]))
 
@@ -875,7 +875,7 @@
         [(send e entering?)    'enter]
         [(send e leaving?)     'leave]
         [else ; (send e get-event-type)
-         (error 'on-mouse-event
+         (error 'on-mouse
                 (format 
                  "Unknown event type: ~a"
                  (send e get-event-type)))]))
@@ -939,14 +939,14 @@
 (define (on-tilt handler)
   (void))
 
-(define (on-acceleration-change-event handler)
+(define (on-acceleration handler)
   (void))
 
 
-(define (on-location-change-event f)
-  (check-proc 'on-location-change-event f 3 "on-location-change-event" 
+(define (on-location-change f)
+  (check-proc 'on-location-change f 3 "on-location-change" 
               "three arguments")
-  (check-world 'on-location-change-event)
+  (check-world 'on-location-change)
   (set-location-callback f (current-eventspace))
   
   (show-location-gui)
@@ -956,7 +956,7 @@
 ;; f : [World KeyEvent -> World]
 ;; esp : EventSpace 
 ;; e : KeyEvent 
-(define-callback location "location-change-event handler" (f evt-space) 
+(define-callback location "location-change handler" (f evt-space) 
   (lat long)
   (parameterize ([current-eventspace evt-space])
     (queue-callback 
@@ -999,9 +999,9 @@
 
 
 
-(provide-higher-order-primitive on-location-change-event (handler))
+(provide-higher-order-primitive on-location-change (handler))
 
 (provide-higher-order-primitive on-tilt (handler))
-(provide-higher-order-primitive on-acceleration-change-event (handler))
+(provide-higher-order-primitive on-acceleration (handler))
 
 ;; FIXME: changes to location or tilt should reflect on the world.

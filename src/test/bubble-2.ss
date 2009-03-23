@@ -78,6 +78,6 @@
 
 (big-bang WIDTH HEIGHT 1/20 initial-w)
 (on-redraw render)
-(on-tick-event tick)
+(on-tick tick)
 (stop-when game-ends?)
 (on-tilt tilt)
