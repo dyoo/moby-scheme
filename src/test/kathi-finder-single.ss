@@ -49,7 +49,9 @@
 
 ;; The telephone number is currently hardcoded to Shriram's
 ;; phone number.
-(define SHRIRAM-ADDRESS "4012633108")
+(define SHRIRAM-ADDRESS 
+  "508-826-6648"
+  #;"4012633108")
   
 ;; The world is a latitude/longitude pair representing the current location.
 (define-struct loc (latitude longitude))
@@ -116,8 +118,8 @@
       (place-radius a-place)))
 
 
-;; render-world: world -> world
-(define (render-world w)
+;; render: world -> world
+(define (render w)
   (place-image
    (text (description w) 10 "black")
    20 
@@ -130,5 +132,5 @@
 
 (big-bang WIDTH HEIGHT tick-delay initial-world)
 (on-tick-event send-report)
-(on-redraw render-world)
+(on-redraw render)
 (on-location-change-event change-location)

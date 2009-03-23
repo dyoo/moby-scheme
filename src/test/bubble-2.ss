@@ -9,40 +9,40 @@
 ;; A velocity has an x and y component.
 (define-struct velocity (x y))
 
-;; A world is a posn, a radius, a target posn, and a velocity.
-(define-struct world (posn r target vel))
+;; A target is at a random position.
+(define target (make-posn (random WIDTH) (random HEIGHT)))
+
+;; A world is a posn, a radius, and a velocity.
+(define-struct world (posn r vel))
 
 (define initial-w 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
-              (make-posn (random WIDTH) (random HEIGHT))
               (make-velocity 0 0)))
 
 ;; tick: world -> world
 (define (tick w)
-  (make-world (posn+velocity (world-posn w) (world-vel w))
+  (make-world (posn+vel (world-posn w) (world-vel w))
               (- (world-r w) 1/3)
-              (world-target w)
               (world-vel w)))
 
 ;; tilt: world number number number -> world
 (define (tilt w azimuth pitch roll)
   (make-world (world-posn w)
               (world-r w)
-              (world-target w)
               (make-velocity roll (- pitch))))
 
 ;; render: world -> scene
 (define (render w)
   (place-image/posn (circle 5 "solid" "red")
-                    (world-target w)
+                    target
                     (place-image/posn (circle (world-r w) "solid" "blue")
                                       (world-posn w)
                                       (empty-scene WIDTH HEIGHT))))
 
 ;; collide?: world -> boolean
 (define (collide? w)
-  (< (distance (world-posn w) (world-target w))
+  (< (distance (world-posn w) target)
      (world-r w)))
 
 ;; game-ends?: world -> boolean
@@ -51,8 +51,8 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; posn+velocity: posn velocity -> posn
-(define (posn+velocity a-posn a-vel)
+;; posn+vel: posn velocity -> posn
+(define (posn+vel a-posn a-vel)
   (make-posn (clamp (+ (posn-x a-posn) (velocity-x a-vel))
                     0 WIDTH)
              (clamp (+ (posn-y a-posn) (velocity-y a-vel))
