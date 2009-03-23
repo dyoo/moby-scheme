@@ -11,9 +11,6 @@
 * Name mangling doesn't handle java keywords.  A defined variable
   named "long", for example, breaks the compiler.
 
-* If a program is given to the compiler that doesn't have a big-bang
-  call, we should fail immediately.
-
 * Functions that are recursive can trigger an effective stack
   overflow, manifested as an exception in android.view.ViewRoot.draw.
   Run the sketch test program for some period of time, and the error
@@ -23,3 +20,7 @@
   platform.  This may be due to the way we hold the image graph
   structure rather than a cached version of the final image, but there
   may be other sources of latency.
+
+* If a program is restarted, all of the toplevel expressions should be
+reevaluated.  This affects things like initial worlds that contain
+random values.
