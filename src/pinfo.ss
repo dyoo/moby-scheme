@@ -301,7 +301,7 @@
                                 (list PERMISSION:LOCATION))
                                
                                (make-binding:function
-                                'on-orientation-change-event module-path 1 #f
+                                'on-tilt module-path 1 #f
                                 "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event"
                                 (list PERMISSION:TILT))
                                

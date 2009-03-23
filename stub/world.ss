@@ -936,7 +936,7 @@
 
 
 
-(define (on-orientation-change-event handler)
+(define (on-tilt handler)
   (void))
 
 (define (on-acceleration-change-event handler)
@@ -1001,7 +1001,7 @@
 
 (provide-higher-order-primitive on-location-change-event (handler))
 
-(provide-higher-order-primitive on-orientation-change-event (handler))
+(provide-higher-order-primitive on-tilt (handler))
 (provide-higher-order-primitive on-acceleration-change-event (handler))
 
 ;; FIXME: changes to location or tilt should reflect on the world.

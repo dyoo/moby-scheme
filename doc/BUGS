@@ -23,4 +23,5 @@
 
 * If a program is restarted, all of the toplevel expressions should be
 reevaluated.  This affects things like initial worlds that contain
-random values.
+random values.  This means that the toplevel expressions shouldn't be
+in a static block in our translation, but in a constructor.

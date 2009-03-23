@@ -9,7 +9,7 @@
 ;; A world is a posn, a radius, a target posn, and a velocity posn.
 (define-struct world (posn r target vel))
 
-(define initial-world 
+(define initial-w 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
               (make-posn (random WIDTH) (random HEIGHT))
@@ -29,8 +29,8 @@
               (world-target w)
               (make-posn roll (- pitch))))
 
-;; render-world: world -> scene
-(define (render-world w)
+;; render: world -> scene
+(define (render w)
   (place-image/posn (circle 5 "solid" "red")
                     (world-target w)
                     (place-image/posn (circle (world-r w) "solid" "blue")
@@ -45,6 +45,7 @@
 ;; game-ends?: world -> boolean
 (define (game-ends? w)
   (or (<= (world-r w) 1) (collide? w)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; posn+: posn posn -> posn
@@ -69,10 +70,11 @@
 ;; place-image/posn: image posn scene -> scene
 (define (place-image/posn an-image a-posn a-scene)
   (place-image an-image (posn-x a-posn) (posn-y a-posn) a-scene))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(big-bang WIDTH HEIGHT 1/20 initial-world)
-(on-redraw render-world)
+
+(big-bang WIDTH HEIGHT 1/20 initial-w)
+(on-redraw render)
 (on-tick-event tick)
 (stop-when game-ends?)
-(on-orientation-change-event tilt)
+(on-tilt tilt)
