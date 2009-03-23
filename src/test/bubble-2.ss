@@ -17,8 +17,7 @@
 
 ;; tick: world -> world
 (define (tick w)
-  (make-world (posn+ (world-posn w) 
-                     (world-vel w))
+  (make-world (posn+ (world-posn w) (world-vel w))
               (- (world-r w) 1/3)
               (world-target w)
               (world-vel w)))
@@ -47,7 +46,6 @@
 (define (game-ends? w)
   (or (<= (world-r w) 1) (collide? w)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; posn+: posn posn -> posn
 (define (posn+ posn-1 posn-2)
@@ -58,10 +56,8 @@
 
 ;; clamp: number number number -> number
 (define (clamp x a b)
-  (cond [(> x b)
-         b]
-        [(< x a)
-         a]
+  (cond [(> x b) b]
+        [(< x a) a]
         [else x]))
 
 ;; distance: posn posn -> number
