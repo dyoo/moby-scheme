@@ -25,3 +25,7 @@
 reevaluated.  This affects things like initial worlds that contain
 random values.  This means that the toplevel expressions shouldn't be
 in a static block in our translation, but in a constructor.
+
+
+* When an Android program is finished, the on-tick handler thread
+should be killed.  At the moment, it isn't.

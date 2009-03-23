@@ -51,7 +51,7 @@
 
 
 ;; The telephone number to send messages to.
-(define ADDRESS "4012633108")
+(define ADDRESS "5554" #; "4012633108")
   
 ;; The world is the current location.
 (define initial-world (make-loc 0 0))
@@ -138,7 +138,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define tick-delay (* 5 60))  ;; wait every five minutes before updates.
+(define tick-delay 10 #;(* 5 60))  ;; wait every five minutes before updates.
 
 (big-bang WIDTH HEIGHT tick-delay initial-world)
 (on-tick send-report)

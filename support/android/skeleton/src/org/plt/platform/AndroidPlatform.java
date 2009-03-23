@@ -172,10 +172,6 @@ public class AndroidPlatform implements PlatformI {
 
 	public Object getDistanceBetween(String lat1, String long1,
 					 String lat2, String long2) {
-	    System.out.println("Getting distance between: " + lat1);
-	    System.out.println(" " + long1);
-	    System.out.println(" " + lat2);
-	    System.out.println(" " + long2);
 	    float[] results = new float[1];
 	    Location.distanceBetween(Double.parseDouble(lat1),
 				     Double.parseDouble(long1),
