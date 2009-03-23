@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname sketch-2) (read-case-sensitive #t) (teachpacks ((lib "world.ss" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "world.ss" "teachpack" "htdp")))))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname sketch-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "world.ss" "moby" "stub"))
 
 ;; The width and height of the drawing canvas.
@@ -185,4 +185,4 @@
 (big-bang WIDTH HEIGHT 1/20 initial-world)
 (on-redraw render-etch-a-sketch)
 (on-tick-event move-by-drifting)
-(on-orientation-change-event handle-orientation-change)
+(on-tilt handle-orientation-change)

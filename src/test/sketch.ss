@@ -176,4 +176,4 @@
 (big-bang WIDTH HEIGHT 1/20 initial-world)
 (on-redraw render-etch-a-sketch)
 (on-tick-event move-by-drifting)
-(on-orientation-change-event handle-orientation-change)
+(on-tilt handle-orientation-change)
