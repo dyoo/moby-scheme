@@ -12,7 +12,7 @@
 
 (define PERMISSION:LOCATION (make-permission:location))
 (define PERMISSION:SMS (make-permission:sms))
-(define PERMISSION:TILT (make-permission:sms))
+(define PERMISSION:TILT (make-permission:tilt))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
