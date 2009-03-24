@@ -198,23 +198,30 @@ public class GuiRenderer {
 
 
 		public void visit(final DropDown d) {
-			String[] items = (String[]) d.getChoicesF().transform(world);
 			List itemList = new ArrayList();
-			for(int i = 0; i < items.length; i++)
-			    itemList.add(items[i]);
-			ArrayAdapter adapter = new ArrayAdapter(topView.getContext(),
-								android.R.layout.simple_spinner_item,
-								itemList);
+			ArrayAdapter adapter =
+			    new ArrayAdapter(topView.getContext(),
+					     android.R.layout.simple_spinner_item,
+					     itemList);
 			adapter.setDropDownViewResource
 			    (android.R.layout.simple_spinner_dropdown_item);
 			Spinner dropdown = new Spinner(topView.getContext());
 			dropdown.setAdapter(adapter);
 
+
+			org.plt.types.List items = (org.plt.types.List)
+			    d.getChoicesF().transform(world);
 			String selected = (String) d.getValF().transform(world);
 			int i = 0;
-			for (; i < items.length && !((String) items[i]).equals(selected); i++)
-				;
-			dropdown.setSelection(i);
+			while(!items.isEmpty()) {
+			    Object nextItem = items.first();
+			    adapter.add(nextItem);
+			    if (nextItem.equals(selected)) {
+				dropdown.setSelection(i);
+			    }
+			    items = items.rest();
+			    i++;
+			}
 
 			dropdown.setOnItemSelectedListener(new OnItemSelectedListener() {
 				public void onItemSelected(AdapterView parent, View view,
@@ -313,18 +320,22 @@ public class GuiRenderer {
 		}
 
 		public void visit(DropDown d) {
-			String[] items = (String[]) d.getChoicesF().transform(world);
+			org.plt.types.List items = (org.plt.types.List)
+			    d.getChoicesF().transform(world);
  			String selected = (String) d.getValF().transform(world);
 			Spinner dropdown = (Spinner) topView
 					.getChildAt(this.indexToRefresh);
-
 			ArrayAdapter adapter = (ArrayAdapter) dropdown.getAdapter();
 			adapter.clear();
-			for (int i = 0; i < items.length ; i++) {
-			    adapter.add(items[i]);
-			    if(items[i].equals(selected)) {
+			int i = 0;
+			while(!items.isEmpty()) {
+			    Object nextItem = items.first();
+			    adapter.add(nextItem);
+			    if(nextItem.equals(selected)) {
 				dropdown.setSelection(i);
 			    }
+			    items = items.rest();
+			    i++;
 			}
 		}
 	}

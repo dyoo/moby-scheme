@@ -70,9 +70,12 @@ public class GuiWorldTest extends Activity {
 		}, new WorldTransformer() {
 			public Object transform(Object world) {
 				Integer count = (Integer) world;
-				String[] items = new String[Math.max(count.intValue(), 20)];
-				for (int i = 0; i < items.length; i++)
-					items[i] = String.valueOf(i+1);
+				org.plt.types.List items = org.plt.types.Empty.EMPTY;
+				for(int i = Math.max(count.intValue(), 20);
+				    i >= 1; i--) {
+				    items = new org.plt.types.Pair(String.valueOf(i),
+								   items);
+				}
 				return items;
 			}
 		}, new WorldAndObjectTransformer() {
