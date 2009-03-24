@@ -101,14 +101,24 @@ public class GuiWorldTest extends Activity {
 				return "check: " + world.toString();
 			}
 		}, new WorldTransformer() {
-			public Object transform(Object checked) {
-				return checked;
+			public Object transform(Object world) {
+			    return Integer.parseInt(world.toString()) % 2 == 0 ?
+				org.plt.types.Logic.TRUE : 
+				org.plt.types.Logic.FALSE;
 			}
 		}, new WorldAndObjectTransformer() {
 			public Object transform(Object world, Object obj) {
-				if (((Boolean) obj).equals(Boolean.TRUE))
-					return new Integer(2);
-				return new Integer(1);
+			    if (((org.plt.types.Logic) obj).isTrue()) {
+				if (Integer.parseInt(world.toString()) % 2 == 0)
+				    return world;
+				else
+				    return new Integer(Integer.parseInt(world.toString()) - 1);
+			    } else {
+				if (Integer.parseInt(world.toString()) % 2 == 0)
+				    return new Integer(Integer.parseInt(world.toString()) - 1);
+				else
+				    return world;
+			    }
 			}
 		}),
 

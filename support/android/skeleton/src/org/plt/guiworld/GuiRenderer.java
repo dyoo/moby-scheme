@@ -156,14 +156,20 @@ public class GuiRenderer {
 
 		public void visit(final org.plt.guiworld.CheckBox c) {
 			String msg = (c.getLabelValF().transform(world)).toString();
+			org.plt.types.Logic checked = 
+			    (org.plt.types.Logic) c.getCheckValF().transform(world);
 			android.widget.CheckBox cb = new android.widget.CheckBox(topView
 					.getContext());
 			cb.setText(msg);
+			cb.setChecked(checked.isTrue());
 			cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					Object newWorld = c.getCallback().transform(world,
-							new Boolean(isChecked));
+							     boolean isChecked) {
+					Object newWorld = 
+					    c.getCallback().transform
+					    (world, (isChecked ?
+						     org.plt.types.Logic.TRUE : 
+						     org.plt.types.Logic.FALSE));
 					changeWorld(newWorld);
 				}
 			});
@@ -315,12 +321,12 @@ public class GuiRenderer {
 
 		public void visit(org.plt.guiworld.CheckBox c) {
 			String label = (c.getLabelValF().transform(world)).toString();
+			org.plt.types.Logic checked = (org.plt.types.Logic)
+			    c.getCheckValF().transform(world);
 			android.widget.CheckBox cb = (android.widget.CheckBox) topView
 					.getChildAt(this.indexToRefresh);
 			cb.setText(label);
-			Boolean check = (Boolean) (c.getCheckValF().transform(Boolean
-					.valueOf(cb.isChecked())));
-			cb.setChecked(check.booleanValue());
+			cb.setChecked(checked.isTrue());
 		}
 
 		public void visit(Slider s) {
