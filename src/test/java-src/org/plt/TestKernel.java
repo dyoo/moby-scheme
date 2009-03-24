@@ -5,8 +5,14 @@ import org.plt.types.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.plt.checker.*;
+import org.plt.lib.Parser;
 
 public class TestKernel {
+
+    @Test public void testSplitWhitespace() {
+	assertEquals(Kernel.list(new Object[] { "", "42.272816", "-71.808205", ""}),
+		     Parser.splitWhitespace("\n      42.272816 -71.808205\n    "));
+    }
 
 	@Test
 	public void testEmpty() {

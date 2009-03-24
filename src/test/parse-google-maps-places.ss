@@ -25,7 +25,8 @@
   (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
                  msid))
 
-;; The initial world is one for My Saved Places.
+
+;; The initial world is one for dyoo's My Saved Places.
 (define initial-world 
   (make-world (make-mymaps-url "106933521686950086948.00046579f4b482756abc5")
               (list)
@@ -116,3 +117,51 @@
                    (find-children name (rest children))])]
                [else
                 (error 'find-children children)])]))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+;; place->string: place -> string
+(define (place->string a-place)
+  (string-append (place-name a-place) 
+                 " "
+                 (loc->string (place-loc a-place))
+                 " "
+                 (number->string (place-radius a-place))))
+
+;; loc->string: loc -> string
+(define (loc->string a-loc)
+  (string-append "(" (loc-lat a-loc) ", " (loc-long a-loc) ")"))
+                 
+;; places->string: (listof place) -> string
+(define (places->string places)
+  (cond
+    [(empty? places)
+     ""]
+    [else
+     (string-append (place->string (first places))
+                    ", "
+                    (places->string (rest places)))]))
+         
+;; description: world -> string
+(define (description a-world)
+  (cond [(world-out-of-sync? a-world)
+         "Out of sync"]
+        [else
+         (places->string (world-places a-world))]))
+
+
+;; reparse: world -> world
+;; Reparses the places.
+(define (reparse a-world)
+  (make-world (world-url a-world)
+              (parse-places (parse-xml (get-url (world-url a-world))))
+              false))
+
+(define view 
+  (col (message description)
+       (button "Parse" reparse)))
+
+
+(big-bang initial-world view)

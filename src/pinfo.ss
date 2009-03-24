@@ -464,6 +464,12 @@
                                                       1 
                                                       #f 
                                                       "org.plt.lib.Parser.parseXml"
+                                                      (list))
+                               (make-binding:function 'split-whitespace
+                                                      module-path
+                                                      1
+                                                      #f
+                                                      "org.plt.lib.Parser.splitWhitespace"
                                                       (list))))))
 
 ;; extend-env/module-binding: env module-binding -> env

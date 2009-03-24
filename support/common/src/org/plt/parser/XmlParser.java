@@ -14,6 +14,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Text;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.CDATASection;
 
 
 public class XmlParser {
@@ -43,7 +44,7 @@ public class XmlParser {
 	case Node.ATTRIBUTE_NODE:
 	    return parseAttribute((Attr) n);
 	case Node.CDATA_SECTION_NODE:
-	    throw new RuntimeException("Not handled yet");
+	    return parseCdata((CDATASection) n);
 	case Node.COMMENT_NODE:
 	    return null;
 	case Node.DOCUMENT_FRAGMENT_NODE:
@@ -73,6 +74,10 @@ public class XmlParser {
 	return t.getData();
     }
 
+
+    private String parseCdata(CDATASection c) {
+	return c.getData();
+    }
 
     private List parseAttribute(Attr a) {
 	return new Pair(Symbol.makeInstance(a.getName()),

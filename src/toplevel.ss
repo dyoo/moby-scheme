@@ -183,7 +183,7 @@
     (r 'cons? 1)
     (r 'null? 1)
     (r 'length 1)
-    (r 'list 1 #t)
+    (r 'list 0 #t)
     (r 'list* 1 #t)
     (r 'list-ref 2)
     (r 'append 1 #t)
