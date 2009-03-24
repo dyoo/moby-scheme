@@ -11,7 +11,9 @@
 
 ;; split-whitespace: string -> (listof string)
 (define (split-whitespace a-str)
-  (regexp-split #rx"[ \n\t]+" a-str))
+  (filter (lambda (x)
+            (> (string-length x) 0))
+          (regexp-split #rx"[ \n\t]+" a-str)))
 
 
 (provide-primitives parse-xml

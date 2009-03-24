@@ -14,7 +14,8 @@ public class Parser {
 	String[] vals = content.toString().split("[ \r\n\t]+");
 	List l = Empty.EMPTY;
 	for(int i = 0; i < vals.length; i++) {
-	    l = new Pair(vals[i], l);
+	    if (vals[i].length() > 0)
+		l = new Pair(vals[i], l);
 	}
 	return Kernel.reverse(l);
     }

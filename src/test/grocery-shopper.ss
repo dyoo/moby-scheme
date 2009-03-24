@@ -93,8 +93,8 @@
 
 ;; parse-georss:point: xexpr -> loc
 (define (parse-georss:point xexpr)
-  (make-loc (second (split-whitespace (get-text xexpr)))
-            (third (split-whitespace (get-text xexpr)))))
+  (make-loc (first (split-whitespace (get-text xexpr)))
+            (second (split-whitespace (get-text xexpr)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

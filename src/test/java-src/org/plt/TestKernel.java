@@ -10,7 +10,7 @@ import org.plt.lib.Parser;
 public class TestKernel {
 
     @Test public void testSplitWhitespace() {
-	assertEquals(Kernel.list(new Object[] { "", "42.272816", "-71.808205", ""}),
+	assertEquals(Kernel.list(new Object[] { "42.272816", "-71.808205"}),
 		     Parser.splitWhitespace("\n      42.272816 -71.808205\n    "));
     }
 
