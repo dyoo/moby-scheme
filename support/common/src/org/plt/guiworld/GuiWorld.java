@@ -133,6 +133,31 @@ public class GuiWorld {
 	    });
     }
 
+    public static Gui checkBox(Object _labelF,
+			       Object _valF,
+			       Object _callbackF) {
+	final Callable labelF = coerseToCallable(_labelF);
+	final Callable valF = coerseToCallable(_valF);
+	final Callable callbackF = coerseToCallable(_callbackF);
+
+	return new CheckBox(new WorldTransformer() {
+		public Object transform(Object world) {
+		    return labelF.call(new Object[] { world }); 
+		}
+	    },
+	    new WorldTransformer() {
+		public Object transform(Object world) {
+		    return valF.call(new Object[] { world }); 
+		}
+	    },
+	    new WorldAndObjectTransformer() {
+		public Object transform(Object world, Object obj) {
+		    return callbackF.call(new Object[] { world, obj });
+		}
+	    });
+
+    }
+
 
 
     private static Callable coerseToCallable(final Object obj) {

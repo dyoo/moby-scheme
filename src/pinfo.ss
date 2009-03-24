@@ -422,6 +422,7 @@
                                (bf 'drop-down module-path 3 #f "org.plt.guiworld.GuiWorld.dropDown")
                                (bf 'text-field module-path 2 #f "org.plt.guiworld.GuiWorld.textField")
                                (bf 'box-group module-path 2 #f "org.plt.guiworld.GuiWorld.boxGroup")
+                               (bf 'checkbox module-path 3 #f "org.plt.guiworld.GuiWorld.checkBox")
                                ))))
 
 
