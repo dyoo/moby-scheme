@@ -13,7 +13,7 @@ public class Empty implements List {
 	}
 
 	public List rest() {
-		throw new SchemeException("Cant' take rest on empty");
+		throw new SchemeException("Can't take rest on empty");
 	}
 
 	public boolean isEmpty() {
@@ -23,6 +23,7 @@ public class Empty implements List {
 	public boolean equals(Object other) {
 		return (other instanceof org.plt.types.Empty);
 	}
+
     public String toString() {
 	return "()";
     }

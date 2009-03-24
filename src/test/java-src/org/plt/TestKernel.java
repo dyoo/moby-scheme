@@ -11,7 +11,16 @@ public class TestKernel {
 	@Test
 	public void testEmpty() {
 		assertTrue(Kernel.empty_question_(Empty.EMPTY).isTrue());
+		assertTrue(Empty.EMPTY.equals(Empty.EMPTY));
 	}
+
+    @Test
+	public void testEqualityOfLists() {
+	assertEquals(Empty.EMPTY, Empty.EMPTY);
+	assertEquals(new Pair(Empty.EMPTY, Empty.EMPTY),
+		     new Pair(Empty.EMPTY, Empty.EMPTY));
+    }
+
 
         @Test
         public void testSingleArgNegation() {

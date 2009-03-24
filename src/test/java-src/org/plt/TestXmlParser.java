@@ -11,7 +11,7 @@ public class TestXmlParser {
 	@Test
 	public void testParse() {
 	    XmlParser parser = new XmlParser();
-	    assertEquals(new Pair(Symbol.makeInstance("hello"),
+	    assertEquals(new Pair("hello",
 				  new Pair(Empty.EMPTY,
 					   Empty.EMPTY)),
 			 parser.parseString("<hello/>"));

@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
 
@@ -37,34 +38,60 @@ public class XmlParser {
     private List parseNode(Node n) {
 	switch (n.getNodeType()) {
 	case Node.ATTRIBUTE_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.CDATA_SECTION_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.COMMENT_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.DOCUMENT_FRAGMENT_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.DOCUMENT_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.DOCUMENT_TYPE_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.ELEMENT_NODE:
 	    return parseElement((Element) n);
 	case Node.ENTITY_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.ENTITY_REFERENCE_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.NOTATION_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.PROCESSING_INSTRUCTION_NODE:
+	    throw new RuntimeException("Not handled yet");
 	case Node.TEXT_NODE:
+	    throw new RuntimeException("Not handled yet");
 	default:
 	    throw new RuntimeException("Impossible");
 	}
     }
 
     private List parseElement(Element e) {
-	String tagName = e.getTagName();
-	NodeList children = e.getChildNodes();
+	List parsed = Empty.EMPTY;
 
-	List parsedChildren = Empty.EMPTY;
-	parsedChildren = new Pair(tagName, parsedChildren);
+	String tagName = e.getTagName();
+	parsed = new Pair(tagName, parsed);
+
+
+	NamedNodeMap attrs = e.getAttributes();
+	if (attrs == null) {
+	    parsed = new Pair(Empty.EMPTY, parsed);
+	} else {
+	    List attrList = Empty.EMPTY;
+	    for(int i = 0; i < attrs.getLength(); i++) {
+		attrList = new Pair(parseNode(attrs.item(i)),
+				    attrList);
+	    }
+	    parsed = new Pair(attrList, parsed);
+	}
+ 
+	
+	NodeList children = e.getChildNodes();
 	// Fixme: add attributes
 	for(int i = 0; i < children.getLength(); i++) {
-	    parsedChildren = new Pair(parseNode(children.item(i)),
-				      parsedChildren);
+	    parsed = new Pair(parseNode(children.item(i)),
+				      parsed);
 	}
-	return Kernel.reverse(parsedChildren);
+	return Kernel.reverse(parsed);
     }
 }
