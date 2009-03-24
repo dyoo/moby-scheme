@@ -151,12 +151,10 @@
 
 ;; parse-item: xexpr -> place
 (define (parse-item xexpr)
-  ;; FIXME: wrong!  I need to return a place!
   (make-place (get-text (first (find-children 'title (children xexpr))))              
               (parse-georss:point (first (find-children 'georss:point (children xexpr))))
-              ;; fixme!  We need the radius!
-              ;; At the moment, we default to a radius of fifty meters.
-              50))
+              ;; At the moment, we default to a radius of 100 meters.
+              100))
 
 
 ;; parse-georss:point: xexpr -> loc
