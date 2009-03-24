@@ -453,7 +453,18 @@
                                                       "org.plt.lib.Net.getUrl"
                                                       (list PERMISSION:INTERNET))))))
 
-
+(define parser-module
+  (let ([module-path
+         (resolve-module-path 
+          '(lib "parser.ss" "moby" "stub") #f)])
+    (make-module-binding 'parser
+                         module-path
+                         (list (make-binding:function 'parse-xml
+                                                      module-path 
+                                                      1 
+                                                      #f 
+                                                      "org.plt.lib.Parser.parseXml"
+                                                      (list))))))
 
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
@@ -474,7 +485,8 @@
                             tilt-module
                             gui-world-module
                             sms-module
-                            net-module))
+                            net-module
+                            parser-module))
                                         
 
 

@@ -75,7 +75,7 @@ public class XmlParser {
 
 
     private List parseAttribute(Attr a) {
-	return new Pair(a.getName(),
+	return new Pair(Symbol.makeInstance(a.getName()),
 			new Pair(a.getValue(),
 				 Empty.EMPTY));
 	    
@@ -85,7 +85,7 @@ public class XmlParser {
 	List parsed = Empty.EMPTY;
 
 	String tagName = e.getTagName();
-	parsed = new Pair(tagName, parsed);
+	parsed = new Pair(Symbol.makeInstance(tagName), parsed);
 
 
 	NamedNodeMap attrs = e.getAttributes();

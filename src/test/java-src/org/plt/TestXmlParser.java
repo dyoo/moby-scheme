@@ -17,27 +17,27 @@ public class TestXmlParser {
     }
 
     @Test public void testParse() {
-	assertEquals(new Pair("hello",
+	assertEquals(new Pair(Symbol.makeInstance("hello"),
 			      new Pair(Empty.EMPTY,
 				       Empty.EMPTY)),
 		     parser.parseString("<hello/>"));
     }
 
     @Test public void testParseWithAttributes() {
-	List attr = new Pair("foo",
+	List attr = new Pair(Symbol.makeInstance("foo"),
 			     new Pair("bar",
 				      Empty.EMPTY));
-	assertEquals(new Pair("world",
+	assertEquals(new Pair(Symbol.makeInstance("world"),
 			      new Pair(new Pair(attr, Empty.EMPTY),
 				       Empty.EMPTY)),
 		     parser.parseString("<world foo=\"bar\"/>"));
     }
 
     @Test public void testNestedChildren() {
-	List worldList = new Pair("world",
+	List worldList = new Pair(Symbol.makeInstance("world"),
 				  new Pair(Empty.EMPTY,
 					   Empty.EMPTY));
-	assertEquals(new Pair("hello",
+	assertEquals(new Pair(Symbol.makeInstance("hello"),
 			      new Pair(Empty.EMPTY,
 				       new Pair(worldList,
 						Empty.EMPTY))),
@@ -46,7 +46,7 @@ public class TestXmlParser {
 
 
     @Test public void testText() {
-	assertEquals(new Pair("p",
+	assertEquals(new Pair(Symbol.makeInstance("p"),
 			      new Pair(Empty.EMPTY,
 				       new Pair("this is a test",
 						Empty.EMPTY))),
