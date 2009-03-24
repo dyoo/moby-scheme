@@ -1,4 +1,6 @@
-#lang scheme
+;; The first three lines of this file were inserted by DrScheme. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname parse-google-maps-places) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Parses out the places.
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
@@ -7,13 +9,13 @@
 (require (lib "gui-world.ss" "gui-world"))
 
 ;; A location is the latitude/longitude pair.
-(define-struct loc (lat long) #:transparent)
+(define-struct loc (lat long))
 
 ;; A place is a name string, a location, and a radius number.
-(define-struct place (name loc radius) #:transparent)
+(define-struct place (name loc radius))
 
 ;; The world is the URL for
-(define-struct world (url places out-of-sync?) #:transparent)
+(define-struct world (url places out-of-sync?))
 
 
 ;; make-mymaps-url: string -> string
@@ -31,7 +33,7 @@
 
 
 
-
+;; parse-places: xexpr -> (listof place)
 (define (parse-places xexpr)
   (parse-items
    (find-children 'item 
@@ -48,10 +50,19 @@
            (parse-items (rest xexprs)))]))
 
 
-;; parse-item: xexpr -> list
+;; parse-item: xexpr -> place
 (define (parse-item xexpr)
-  (list (first (find-children 'title (children xexpr)))
-        (first (find-children 'georss:point (children xexpr)))))
+  ;; FIXME: wrong!  I need to return a place!
+  (make-place (get-text (first (find-children 'title (children xexpr))))              
+              (parse-georss:point (first (find-children 'georss:point (children xexpr))))
+              ;; fixme!  We need the radius!
+              0))
+
+
+;; parse-georss:point: xexpr -> loc
+(define (parse-georss:point xexpr)
+  (make-loc (second (split-whitespace (get-text xexpr)))
+            (third (split-whitespace (get-text xexpr)))))
 
 
 

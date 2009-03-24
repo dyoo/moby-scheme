@@ -9,5 +9,10 @@
                  (read-xml (open-input-string
                             a-str)))))
 
+;; split-whitespace: string -> (listof string)
+(define (split-whitespace a-str)
+  (regexp-split #rx"[ \n\t]+" a-str))
 
-(provide-primitive parse-xml)
+
+(provide-primitives parse-xml
+                    split-whitespace)
