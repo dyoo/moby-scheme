@@ -23,4 +23,7 @@ public class Empty implements List {
 	public boolean equals(Object other) {
 		return (other instanceof org.plt.types.Empty);
 	}
+    public String toString() {
+	return "()";
+    }
 }

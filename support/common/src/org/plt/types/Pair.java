@@ -36,4 +36,23 @@ public class Pair implements List {
 
 		return (this.rest().equals(((org.plt.types.List) other).rest()));
 	}
+
+    public String toString() {
+
+	if (this.isEmpty()) {
+	    return "()";
+	}
+	List p = this;
+	StringBuffer b = new StringBuffer();
+	b.append("(");
+	b.append(p.first().toString());
+	p = p.rest();
+	while(!p.isEmpty()) {
+	    b.append(" ");
+	    b.append(p.first().toString());
+	    p = p.rest();
+	}
+	b.append(")");
+	return b.toString();
+    }
 }
