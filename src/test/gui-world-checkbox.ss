@@ -15,5 +15,10 @@
     [else
      "this is false"]))
 
+(define (flip w)
+  (not w))
+
 (big-bang true (row (checkbox "Click me" world-value world-update)
-                    (message description)))
+                    (message description)
+                    (button "Reverse" flip)
+                    ))
