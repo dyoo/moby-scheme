@@ -60,7 +60,7 @@
 (define test-kathi-finder (make-test "kathi-finder.ss"))
 (define test-kathi-finder-single (make-test "kathi-finder-single.ss"))
 (define test-net (make-test "net.ss"))
-(define test-parser (make-test "parser.ss"))
+(define test-get-ip-address (make-test "get-ip-address.ss"))
 
 (define test-gui-world-hello-world (make-test "gui-world-hello-world.ss"))
 (define test-gui-world-drop-down (make-test "gui-world-drop-down.ss"))
@@ -102,7 +102,7 @@
                     test-kathi-finder
                     test-kathi-finder-single
                     test-net
-                    test-parser
+                    test-get-ip-address
                     
                     test-gui-world-hello-world
                     test-gui-world-drop-down
