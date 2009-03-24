@@ -45,7 +45,7 @@ public class XmlParser {
 	case Node.CDATA_SECTION_NODE:
 	    throw new RuntimeException("Not handled yet");
 	case Node.COMMENT_NODE:
-	    throw new RuntimeException("Not handled yet");
+	    return null;
 	case Node.DOCUMENT_FRAGMENT_NODE:
 	    throw new RuntimeException("Not handled yet");
 	case Node.DOCUMENT_NODE:
@@ -94,7 +94,7 @@ public class XmlParser {
 	} else {
 	    List attrList = Empty.EMPTY;
 	    for(int i = 0; i < attrs.getLength(); i++) {
-		attrList = new Pair(parseNode(attrs.item(i)),
+		attrList = new Pair(parseAttribute((Attr)attrs.item(i)),
 				    attrList);
 	    }
 	    parsed = new Pair(attrList, parsed);
@@ -104,7 +104,9 @@ public class XmlParser {
 	NodeList children = e.getChildNodes();
 	for(int i = 0; i < children.getLength(); i++) {
 	    Object nextChild = parseNode(children.item(i));
-	    if (nextChild instanceof String &&
+	    if (nextChild == null)
+		continue;
+	    else if (nextChild instanceof String &&
 		!parsed.isEmpty() &&
 		parsed.first() instanceof String) {
 		// Collapse adjacent strings.
