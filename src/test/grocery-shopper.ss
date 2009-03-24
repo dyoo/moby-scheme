@@ -1,8 +1,12 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname grocery-shopper) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
-;; Parses out the places.
+;; Grocery store shopper
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
+
+(define WIDTH 400)
+(define HEIGHT 400)
+
 
 (require (lib "net.ss" "moby" "stub"))
 (require (lib "parser.ss" "moby" "stub"))
@@ -16,6 +20,15 @@
 ;; A place is a name string, a location, and a radius number.
 (define-struct place (name loc radius))
 
+;; A grocery item is a place-name and an identifier.
+(define-struct item (place-name identifier))
+
+;; Here are a list of the items we're interested in.
+(define ALL-ITEMS
+  (list (make-item "Stop and Shop" "Soap")
+        (make-item "Boynton" "Pizza")))
+
+
 ;; The world is current location.
 ;; The initial world is one for dyoo's My Saved Places.
 (define initial-world 
@@ -28,16 +41,37 @@
   (make-loc lat long))
 
 
-;; choose-smallest: (listof place) -> place
-;; Returns the place with the smallest radius.
-(define (choose-smallest places)
+;; filter-matching-items: place (listof item) -> (listof item)
+;; Given a place, lists out any of the items whose place-name matches.
+(define (filter-matching-items a-place items)
   (cond
-    [(empty? (rest places))
-     (first places)]
-    [(< (place-radius (first places)) (place-radius (second places)))
-     (choose-smallest (cons (first places) (rest (rest places))))]
+    [(empty? items)
+     empty]
+    [(string=? (place-name a-place)
+               (item-place-name (first items)))
+     (cons (first items)
+           (filter-matching-items a-place (rest items)))]
     [else
-     (choose-smallest (rest places))]))
+     (filter-matching-items a-place (rest items))]))
+
+
+;; places-matching-items: (listof places) -> (listof item)
+;; Reports the list of nearby matching items for the given places.
+(define (places-matching-items places)
+  (cond
+    [(empty? places)
+     empty]
+    [else
+     (append (filter-matching-items (first places) ALL-ITEMS)
+             (places-matching-items (rest places)))]))
+
+
+
+;; nearby-matching-items: world -> (listof item)
+;; Returns all items that are nearby our current location.
+(define (nearby-matching-items w)
+  (places-matching-items (find-places ALL-PLACES w)))
+  
 
 ;; find-places: world loc -> (listof place)
 ;; Finds places that match the a-loc.
@@ -61,6 +95,40 @@
 
 
 
+;; description: world -> string
+;; Produces a text description.
+(define (description w)
+  (items->string (nearby-matching-items w)))
+
+
+;; items->string: (listof item) -> string
+(define (items->string items)
+  (cond
+    [(empty? items)
+     ""]
+    [else
+     (string-append
+      (item->string (first items))
+      (cond [(empty? (rest items)) ""] [else ", "])
+      (items->string (rest items)))]))
+
+
+;; item->string: item -> string
+(define (item->string an-item)
+  (string-append "[" 
+                 (item-place-name an-item)
+                 ": "
+                 (item-identifier an-item)
+                 "]"))
+
+
+;; render: world -> scene
+(define (render w)
+  (place-image
+   (text (description w) 10 "black")
+   20 
+   20
+   (empty-scene WIDTH HEIGHT)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -93,8 +161,8 @@
 
 ;; parse-georss:point: xexpr -> loc
 (define (parse-georss:point xexpr)
-  (make-loc (first (split-whitespace (get-text xexpr)))
-            (second (split-whitespace (get-text xexpr)))))
+  (make-loc (string->number (first (split-whitespace (get-text xexpr))))
+            (string->number (second (split-whitespace (get-text xexpr))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -158,5 +226,12 @@
   (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
                  "106933521686950086948.00046579f4b482756abc5"))
 
-(define PLACES
+(define ALL-PLACES
   (parse-places (parse-xml (get-url mymaps-url))))
+
+
+;; Update every ten seconds.
+(define tick-delay 10)
+(big-bang WIDTH HEIGHT tick-delay initial-world)
+(on-redraw render)
+(on-location-change update-location)
