@@ -56,6 +56,15 @@ public class GuiWorld {
 	return new Col(elts);
     }
 
+    public static Gui boxGroup(Object _valF,
+			       Object gui) {
+	final Callable valF = coerseToCallable(_valF);
+	return new BoxGroup(new WorldTransformer () {
+		public Object transform(Object world) {
+		    return valF.call(new Object[] { world });
+		}
+	    }, asGui(gui));
+    }
 
     public static Gui message(Object msg) {
 	final Callable c = coerseToCallable(msg);
@@ -65,6 +74,8 @@ public class GuiWorld {
 		}
 	    });
     }
+
+
 
     public static Gui dropDown(Object _valF,
 			       Object _choicesF,

@@ -64,6 +64,7 @@
 (define test-gui-world-hello-world (make-test "gui-world-hello-world.ss"))
 (define test-gui-world-drop-down (make-test "gui-world-drop-down.ss"))
 (define test-gui-world-text-field (make-test "gui-world-text-field.ss"))
+(define test-gui-world-box-group (make-test "gui-world-box-group.ss"))
 
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
@@ -102,6 +103,7 @@
                     test-gui-world-hello-world
                     test-gui-world-drop-down
                     test-gui-world-text-field
+                    test-gui-world-box-group
                     
                     test-cowabunga 
                     test-flight-lander
