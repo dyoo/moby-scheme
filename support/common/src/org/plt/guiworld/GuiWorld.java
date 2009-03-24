@@ -66,7 +66,7 @@ public class GuiWorld {
 	    });
     }
 
-    public static Gui dropdown(Object _valF,
+    public static Gui dropDown(Object _valF,
 			       Object _choicesF,
 			       Object _callbackF) {
 	final Callable valF = coerseToCallable(_valF);
@@ -105,6 +105,23 @@ public class GuiWorld {
 		}
 	    });
     }
+
+    public static Gui textField(Object _valF,
+				Object _callbackF) {
+	final Callable valF = coerseToCallable(_valF);
+	final Callable callbackF = coerseToCallable(_callbackF);
+	return new TextField(new WorldTransformer() {
+		public Object transform(Object world) {
+		    return valF.call(new Object[] { world }); 
+		}
+	    },
+	    new WorldAndObjectTransformer() {
+		public Object transform(Object world, Object obj) {
+		    return callbackF.call(new Object[] { world, obj });
+		}
+	    });
+    }
+
 
 
     private static Callable coerseToCallable(final Object obj) {

@@ -419,7 +419,8 @@
                                (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
                                (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")
                                (bf 'button module-path 2 #f "org.plt.guiworld.GuiWorld.button")
-                               (bf 'drop-down module-path 3 #f "org.plt.guiworld.GuiWorld.dropdown")
+                               (bf 'drop-down module-path 3 #f "org.plt.guiworld.GuiWorld.dropDown")
+                               (bf 'text-field module-path 2 #f "org.plt.guiworld.GuiWorld.textField")
                                ))))
 
 

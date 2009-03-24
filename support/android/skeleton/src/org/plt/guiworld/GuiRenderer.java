@@ -275,8 +275,22 @@ public class GuiRenderer {
 		public void visit(TextField t) {
 			String label = (t.getValF().transform(world)).toString();
 			EditText edit = (EditText) topView.getChildAt(this.indexToRefresh);
+			// Try to preserve selection.
+			int selectionStart = edit.getSelectionStart();
+			int selectionEnd = edit.getSelectionEnd();
 			edit.setText(label);
+			
+			edit.setSelection(clamp(selectionStart, 0, edit.getText().length()),
+					  clamp(selectionEnd, 0, edit.getText().length()));
 		}
+	        
+	    private int clamp(int x, int a, int b) {
+		if (x < a) 
+		    return a;
+		if (x > b)
+		    return b;
+		return x;
+	    }
 
 		public void visit(BoxGroup b) {
 			String label = (b.getValF().transform(world)).toString();
