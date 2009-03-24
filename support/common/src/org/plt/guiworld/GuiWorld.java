@@ -2,7 +2,10 @@ package org.plt.guiworld;
 
 import org.plt.types.*;
 import org.plt.checker.SchemeException;
+
 import org.plt.world.WorldTransformer;
+import org.plt.world.WorldAndObjectTransformer;
+
 
 public class GuiWorld {
     private static Object initialWorld;
@@ -59,6 +62,29 @@ public class GuiWorld {
 	return new Message(new WorldTransformer() {
 		public Object transform(Object world) {
 		    return c.call(new Object[] { world });
+		}
+	    });
+    }
+
+    public static Gui dropdown(Object _valF,
+			       Object _choicesF,
+			       Object _callbackF) {
+	final Callable valF = coerseToCallable(_valF);
+	final Callable choicesF = coerseToCallable(_choicesF);
+	final Callable callbackF = coerseToCallable(_callbackF);
+	return new DropDown(new WorldTransformer() {
+		public Object transform(Object world) {
+		    return valF.call(new Object[] { world }); 
+		}
+	    },
+	    new WorldTransformer() {
+		public Object transform(Object world) {
+		    return choicesF.call(new Object[] { world });
+		}
+	    },
+	    new WorldAndObjectTransformer() {
+		public Object transform(Object world, Object obj) {
+		    return callbackF.call(new Object[] { world, obj });
 		}
 	    });
     }
