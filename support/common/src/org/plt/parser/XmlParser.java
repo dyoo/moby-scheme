@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
@@ -30,6 +31,7 @@ public class XmlParser {
 		builder.parse(new ByteArrayInputStream(s.getBytes())).getDocumentElement();
 	    return parseNode(topElement);
 	} catch (Exception e) {
+	    e.printStackTrace();
 	    return Empty.EMPTY;
 	}
     }
@@ -38,7 +40,7 @@ public class XmlParser {
     private List parseNode(Node n) {
 	switch (n.getNodeType()) {
 	case Node.ATTRIBUTE_NODE:
-	    throw new RuntimeException("Not handled yet");
+	    return parseAttribute((Attr) n);
 	case Node.CDATA_SECTION_NODE:
 	    throw new RuntimeException("Not handled yet");
 	case Node.COMMENT_NODE:
@@ -64,6 +66,13 @@ public class XmlParser {
 	default:
 	    throw new RuntimeException("Impossible");
 	}
+    }
+
+    private List parseAttribute(Attr a) {
+	return new Pair(a.getName(),
+			new Pair(a.getValue(),
+				 Empty.EMPTY));
+	    
     }
 
     private List parseElement(Element e) {
