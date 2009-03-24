@@ -1,12 +1,14 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname parser) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname get-ip-address) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Shows the current ip address.
 
 (require (lib "net.ss" "moby" "stub"))
 (require (lib "parser.ss" "moby" "stub"))
 (require (lib "gui-world.ss" "gui-world"))
 
+
+;; The world is a string.
 (define initial-world "unknown")
 
 ;; description: world -> string
