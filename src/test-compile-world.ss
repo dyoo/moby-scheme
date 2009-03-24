@@ -62,6 +62,7 @@
 (define test-net (make-test "net.ss"))
 (define test-get-ip-address (make-test "get-ip-address.ss"))
 (define test-parse-google-maps-places (make-test "parse-google-maps-places.ss"))
+(define test-grocery-shopper (make-test "grocery-shopper.ss"))
 
 (define test-gui-world-hello-world (make-test "gui-world-hello-world.ss"))
 (define test-gui-world-drop-down (make-test "gui-world-drop-down.ss"))
@@ -105,6 +106,7 @@
                     test-net
                     test-get-ip-address
                     test-parse-google-maps-places
+                    test-grocery-shopper
                     
                     test-gui-world-hello-world
                     test-gui-world-drop-down
