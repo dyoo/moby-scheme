@@ -21,6 +21,7 @@ import android.hardware.SensorListener;
 import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
 import org.plt.lib.SmsService;
+import org.plt.lib.NetworkService;
 
 import org.plt.types.*;
 
@@ -31,8 +32,17 @@ import org.plt.world.AccelerationChangeListener;
 
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
 
 
 public class AndroidPlatform implements PlatformI {
@@ -211,7 +221,30 @@ public class AndroidPlatform implements PlatformI {
     public NetworkService getNetworkService() {
 	return new NetworkService() {
 	    public String getUrl(String url) {
-		return "";
+		HttpClient client = new DefaultHttpClient();
+		HttpGet method = new HttpGet(url);
+		try {
+		    HttpResponse response = client.execute(method);
+		    HttpEntity entity = response.getEntity();
+		    if (entity == null)
+			return "";
+		    InputStream is = entity.getContent();
+		    return readString(is);
+		} catch (IOException e) {
+		    return "";
+		} finally {
+		    //method.releaseConnection();
+		}
+	    }
+
+	    private String readString(InputStream is) throws IOException {
+		StringBuffer buf = new StringBuffer();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		String line;
+		while ((line = reader.readLine()) != null) {
+		    buf.append(line);
+		}
+		return buf.toString();
 	    }
 	};
     }

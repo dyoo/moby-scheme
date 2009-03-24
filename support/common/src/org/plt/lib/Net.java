@@ -5,7 +5,7 @@ import org.plt.platform.Platform;
 
 public class Net {
     public static Object getUrl(Object url) {
-	TiltService service = 
+	NetworkService service = 
 	    Platform.getInstance().getNetworkService();
 	return service.getUrl(url.toString());
     }

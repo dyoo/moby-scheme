@@ -430,7 +430,7 @@
   (let ([module-path
          (resolve-module-path 
           '(lib "sms.ss" "moby" "stub") #f)])
-    (make-module-binding 'gui-world
+    (make-module-binding 'sms
                          module-path
                          (list (make-binding:function 'send-text-message
                                                       module-path 
@@ -438,6 +438,20 @@
                                                       #f 
                                                       "org.plt.lib.Sms.sendTextMessage"
                                                       (list PERMISSION:SMS))))))
+
+
+(define net-module
+  (let ([module-path
+         (resolve-module-path 
+          '(lib "net.ss" "moby" "stub") #f)])
+    (make-module-binding 'net
+                         module-path
+                         (list (make-binding:function 'get-url
+                                                      module-path 
+                                                      1 
+                                                      #f 
+                                                      "org.plt.lib.Net.getUrl"
+                                                      (list PERMISSION:INTERNET))))))
 
 
 
@@ -459,7 +473,8 @@
                             location-module
                             tilt-module
                             gui-world-module
-                            sms-module))
+                            sms-module
+                            net-module))
                                         
 
 
