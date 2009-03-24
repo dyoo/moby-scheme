@@ -9,10 +9,13 @@
 (define-struct (permission:location permission) () #:transparent)
 (define-struct (permission:sms permission) () #:transparent)
 (define-struct (permission:tilt permission) () #:transparent)
+(define-struct (permission:internet permission) () #:transparent)
+
 
 (define PERMISSION:LOCATION (make-permission:location))
 (define PERMISSION:SMS (make-permission:sms))
 (define PERMISSION:TILT (make-permission:tilt))
+(define PERMISSION:INTERNET (make-permission:internet))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -27,7 +30,9 @@
     [(struct permission:sms ())
      (list "android.permission.SEND_SMS")]
     [(struct permission:tilt ())
-     (list)]))
+     (list)]
+    [(struct permission:internet ())
+     (list "android.permission.INTERNET")]))
 
 
 ;; permission->on-start-code: permission -> string
@@ -41,7 +46,9 @@
     [(struct permission:tilt ())
      "org.plt.platform.Platform.getInstance().getTiltService().startService();
       org.plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);
-      org.plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);"]))
+      org.plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);"]
+    [(struct permission:internet())
+     ""]))
 
 
 ;; permission->on-pause-code: permission -> string
@@ -52,7 +59,9 @@
     [(struct permission:sms ())
      ""]
     [(struct permission:tilt ())
-     "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]))
+     "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+    [(struct permission:internet ())
+     ""]))
 
 
 ;; permission->on-destroy-code: permission -> string
@@ -63,7 +72,9 @@
     [(struct permission:sms ())
      ""]
     [(struct permission:tilt ())
-     "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]))
+     "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+    [(struct permission:internet ())
+     ""]))
 
 
 
@@ -72,6 +83,7 @@
                   [PERMISSION:LOCATION permission?]
                   [PERMISSION:SMS permission?]
                   [PERMISSION:TILT permission?]
+                  [PERMISSION:INTERNET permission?]
                                    
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))]

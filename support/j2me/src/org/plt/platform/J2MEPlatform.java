@@ -3,6 +3,7 @@ package org.plt.platform;
 import org.plt.lib.LocationService;
 import org.plt.lib.TiltService;
 import org.plt.lib.SmsService;
+import org.plt.lib.NetworkService;
 
 import org.plt.types.*;
 
@@ -94,6 +95,15 @@ public class J2MEPlatform implements PlatformI {
 	return new SmsService() {
 	    public void sendTextMessage(String destinationString, String msg) {
 		// Fill me in.
+	    }
+	};
+    }
+
+    public NetworkService getNetworkService() {
+	return new NetworkService() {
+	    public String getUrl(String url) {
+		// Fill me in.
+		return "";
 	    }
 	};
     }

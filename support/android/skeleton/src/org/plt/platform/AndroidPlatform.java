@@ -32,6 +32,8 @@ import org.plt.world.AccelerationChangeListener;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import org.apache.http.client.HttpClient;
+
 
 public class AndroidPlatform implements PlatformI {
     private Activity activity;
@@ -201,6 +203,15 @@ public class AndroidPlatform implements PlatformI {
 					msg,
 					null,
 					null);
+	    }
+	};
+    }
+
+
+    public NetworkService getNetworkService() {
+	return new NetworkService() {
+	    public String getUrl(String url) {
+		return "";
 	    }
 	};
     }
