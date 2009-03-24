@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Text;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
@@ -29,7 +30,7 @@ public class XmlParser {
 	    DocumentBuilder builder = this.factory.newDocumentBuilder();
 	    Element topElement = 
 		builder.parse(new ByteArrayInputStream(s.getBytes())).getDocumentElement();
-	    return parseNode(topElement);
+	    return parseElement(topElement);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    return Empty.EMPTY;
@@ -37,7 +38,7 @@ public class XmlParser {
     }
 
 
-    private List parseNode(Node n) {
+    private Object parseNode(Node n) {
 	switch (n.getNodeType()) {
 	case Node.ATTRIBUTE_NODE:
 	    return parseAttribute((Attr) n);
@@ -62,11 +63,16 @@ public class XmlParser {
 	case Node.PROCESSING_INSTRUCTION_NODE:
 	    throw new RuntimeException("Not handled yet");
 	case Node.TEXT_NODE:
-	    throw new RuntimeException("Not handled yet");
+	    return parseText((Text) n);
 	default:
 	    throw new RuntimeException("Impossible");
 	}
     }
+
+    private String parseText(Text t) {
+	return t.getData();
+    }
+
 
     private List parseAttribute(Attr a) {
 	return new Pair(a.getName(),
@@ -96,10 +102,17 @@ public class XmlParser {
  
 	
 	NodeList children = e.getChildNodes();
-	// Fixme: add attributes
 	for(int i = 0; i < children.getLength(); i++) {
-	    parsed = new Pair(parseNode(children.item(i)),
-				      parsed);
+	    Object nextChild = parseNode(children.item(i));
+	    if (nextChild instanceof String &&
+		!parsed.isEmpty() &&
+		parsed.first() instanceof String) {
+		// Collapse adjacent strings.
+		parsed = new Pair(((String)parsed.first()) + ((String)nextChild),
+				  parsed.rest());
+	    } else {
+		parsed = new Pair(nextChild, parsed);
+	    }
 	}
 	return Kernel.reverse(parsed);
     }

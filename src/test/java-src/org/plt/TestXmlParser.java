@@ -33,4 +33,23 @@ public class TestXmlParser {
 		     parser.parseString("<world foo=\"bar\"/>"));
     }
 
+    @Test public void testNestedChildren() {
+	List worldList = new Pair("world",
+				  new Pair(Empty.EMPTY,
+					   Empty.EMPTY));
+	assertEquals(new Pair("hello",
+			      new Pair(Empty.EMPTY,
+				       new Pair(worldList,
+						Empty.EMPTY))),
+		     parser.parseString("<hello><world/></hello>"));
+    }
+
+
+    @Test public void testText() {
+	assertEquals(new Pair("p",
+			      new Pair(Empty.EMPTY,
+				       new Pair("this is a test",
+						Empty.EMPTY))),
+		     parser.parseString("<p>this is a test</p>"));
+    }
 }
