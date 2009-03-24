@@ -7,7 +7,7 @@
 (require (lib "net.ss" "moby" "stub"))
 (require (lib "parser.ss" "moby" "stub"))
 (require (lib "location.ss" "moby" "stub"))
-(require (lib "gui-world.ss" "gui-world"))
+(require (lib "world.ss" "moby" "stub"))
 
 
 ;; A location is the latitude/longitude pair.
@@ -16,48 +16,16 @@
 ;; A place is a name string, a location, and a radius number.
 (define-struct place (name loc radius))
 
-;; The world is the URL to grab places from, a list of the loaded places,
-;; a boolean if we're out of sync with the url, and our current location.
-(define-struct world (url places out-of-sync? loc))
-
-;; make-mymaps-url: string -> string
-;; Given the unique Google Maps "My Maps" identifier, returns a url
-;; to get at its RSS feed.
-(define (make-mymaps-url msid)
-  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
-                 msid))
-
+;; The world is current location.
 ;; The initial world is one for dyoo's My Saved Places.
 (define initial-world 
-  (make-world (make-mymaps-url "106933521686950086948.00046579f4b482756abc5")
-              (list)
-              true
-              (make-loc 0 0)))
+  (make-loc 0 0))
+
 
 ;; update-location: world number number -> world
 ;; Updates the current location.
 (define (update-location w lat long)
-  (make-world (world-url w)
-              (world-places w)
-              (world-out-of-sync? w)
-              (make-loc lat long)))
-
-;; update-url: world string -> world
-;; Updates the url and marks us as out-of-sync.
-(define (update-url w url)
-  (make-world url
-              (world-places w)
-              true
-              (world-loc w)))
-
-;; reload: world -> world
-;; Reparses the places.
-(define (reload w)
-  (make-world (world-url w)
-              (parse-places (parse-xml (get-url (world-url w))))
-              false
-              (world-loc w)))
-
+  (make-loc lat long))
 
 
 ;; choose-smallest: (listof place) -> place
@@ -90,12 +58,6 @@
                          (loc-lat (place-loc a-place))
                          (loc-long (place-loc a-place)))
       (place-radius a-place)))
-
-
-
-
-
-
 
 
 
@@ -133,7 +95,6 @@
 (define (parse-georss:point xexpr)
   (make-loc (second (split-whitespace (get-text xexpr)))
             (third (split-whitespace (get-text xexpr)))))
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -191,39 +152,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
-;; place->string: place -> string
-(define (place->string a-place)
-  (string-append (place-name a-place) 
-                 " "
-                 (loc->string (place-loc a-place))
-                 " "
-                 (number->string (place-radius a-place))))
 
-;; loc->string: loc -> string
-(define (loc->string a-loc)
-  (string-append "(" (loc-lat a-loc) ", " (loc-long a-loc) ")"))
-                 
-;; places->string: (listof place) -> string
-(define (places->string places)
-  (cond
-    [(empty? places)
-     ""]
-    [else
-     (string-append (place->string (first places))
-                    ", "
-                    (places->string (rest places)))]))
-         
-;; description: world -> string
-(define (description a-world)
-  (cond [(world-out-of-sync? a-world)
-         "Out of sync"]
-        [else
-         (places->string (world-places a-world))]))
+;; The url to the Google Maps "My Maps" RSS feed.
+(define mymaps-url
+  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
+                 "106933521686950086948.00046579f4b482756abc5"))
 
-
-(define view 
-  (col (message description)
-       (button "Load" reload)))
-
-
-(big-bang initial-world view)
+(define PLACES
+  (parse-places (parse-xml (get-url mymaps-url))))
