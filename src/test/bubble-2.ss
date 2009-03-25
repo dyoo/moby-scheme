@@ -34,7 +34,7 @@
 
 ;; render: world -> scene
 (define (render w)
-  (place-image/posn (circle 5 "solid" "red")
+  (place-image/posn (circle 30 "solid" "red")
                     target
                     (place-image/posn (circle (world-r w) "solid" "blue")
                                       (world-posn w)
