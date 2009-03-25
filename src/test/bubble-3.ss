@@ -6,6 +6,8 @@
 (define WIDTH 320)
 (define HEIGHT 480)
 
+(define target-radius 20)
+
 ;; A velocity has an x and y component.
 (define-struct vel (x y))
 
@@ -67,18 +69,28 @@
 
 ;; render-world: world -> scene
 (define (render-world a-world)
-  (place-image/posn (circle 5 "solid" "red")
-                    (world-target-posn a-world)
-                    (place-image/posn (circle (world-radius a-world) "solid" "blue")
-                                      (world-posn a-world)
-                                      (empty-scene WIDTH HEIGHT))))
+  (cond [(game-end? a-world)
+         (place-image/posn (text "Game Over!" 10 "black")
+                           (make-posn 20 20)
+                           (place-image/posn (circle 5 "solid" "red")
+                                             (world-target-posn a-world)
+                                             (place-image/posn (circle (world-radius a-world) "solid" "blue")
+                                                               (world-posn a-world)
+                                                               (empty-scene WIDTH HEIGHT))))]
+        [else
+         (place-image/posn (circle target-radius "solid" "red")
+                           (world-target-posn a-world)
+                           (place-image/posn (circle (world-radius a-world) "solid" "blue")
+                                             (world-posn a-world)
+                                             (empty-scene WIDTH HEIGHT)))]))
+
 
 
 ;; world-bubble-collide?: world -> boolean
 (define (world-bubble-collide? a-world)
   (< (distance (world-posn a-world)
                (world-target-posn a-world))
-     (world-radius a-world)))
+     (+ target-radius (world-radius a-world))))
 
 
 ;; distance: posn posn -> number
