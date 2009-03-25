@@ -7,8 +7,8 @@
 
 ;; Kathi finder: A program to report where Kathi is.
 
-(define WIDTH 400)
-(define HEIGHT 400)
+(define WIDTH 320)
+(define HEIGHT 480)
 
 ;; A loc is a lat/long pair representing a location.
 (define-struct loc (lat long))

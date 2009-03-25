@@ -4,8 +4,8 @@
 ;; Grocery store shopper
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
-(define WIDTH 400)
-(define HEIGHT 400)
+(define WIDTH 320)
+(define HEIGHT 480)
 
 
 (require (lib "net.ss" "moby" "stub"))
