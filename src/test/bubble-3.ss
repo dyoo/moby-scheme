@@ -55,8 +55,15 @@
 
 (define (tick a-world)
   (world-reset-if-collide
-   (world-deflate-bubble a-world)))
+   (world-deflate-bubble 
+    (move a-world))))
 
+;; move: world -> world
+(define (move a-world)
+  (make-world (posn+vel (world-posn a-world) (world-vel a-world))
+              (world-radius a-world)
+              (world-target-posn a-world)
+              (world-vel a-world)))
 
 ;; render-world: world -> scene
 (define (render-world a-world)

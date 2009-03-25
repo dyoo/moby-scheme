@@ -56,6 +56,7 @@
 (define test-sketch-2 (make-test "sketch-2.ss"))
 (define test-upside-down (make-test "upside-down.ss"))
 (define test-bubble-2 (make-test "bubble-2.ss"))
+(define test-bubble-3 (make-test "bubble-3.ss"))
 (define test-sms (make-test "sms.ss"))
 (define test-kathi-finder (make-test "kathi-finder.ss"))
 (define test-kathi-finder-single (make-test "kathi-finder-single.ss"))
@@ -100,6 +101,7 @@
                     test-sketch-2
                     test-upside-down
                     test-bubble-2
+                    test-bubble-3
                     test-sms
                     test-kathi-finder
                     test-kathi-finder-single
