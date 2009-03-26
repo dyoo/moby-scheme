@@ -36,15 +36,14 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
     // #0 big-bang's world0
     Object world;
-
-
+    boolean stopped = false;
     MyCanvas canvas;
 
 
     // When a program is paused, we'll restart the world.
     public void pauseApp() {
 	world = WorldKernel.getInitialWorld();
-	
+	stopped = true;
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
 	// can be used to register callbacks.
@@ -54,7 +53,7 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
     public void destroyApp(boolean unconditional) {
 	world = WorldKernel.getInitialWorld();
-
+	stopped = true;
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
 	// can be used to register callbacks.
@@ -69,6 +68,7 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
 	UserProgram.runToplevel();
 	world = WorldKernel.getInitialWorld();
+	stopped = false;
 
 	this.canvas = new MyCanvas();
 	// IMPORTANT: The injected code here assumes the
@@ -82,7 +82,6 @@ public class <<PROGRAM-NAME>> extends MIDlet {
     }
 
     class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, OrientationChangeListener, AccelerationChangeListener {
-	boolean stopped = false;
 	public void run() {
 	    // #1 delay expression
 	    long delay = (long) ((org.plt.types.NumberTower.multiply
@@ -107,6 +106,8 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	}
 
         public void onMessage(Object aMessage) {
+	    if (stopped)
+		return;
 	    synchronized(world) {
 		world = WorldKernel.getOnMessageEventHandler().call
 		    (new Object[] { world, aMessage});
@@ -115,6 +116,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	}
 
 	public void onLocationChange(Object latitude, Object longitude) {
+	    if (stopped)
+		return;
+
 	    synchronized(world) {
 		world = WorldKernel.getOnLocationChangeEventHandler().call
 		    (new Object[] { world, latitude, longitude });
@@ -123,6 +127,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	}
 
 	public void onOrientationChange(Object azimuth, Object pitch, Object roll) {
+	    if (stopped)
+		return;
+
 	    synchronized(world) {
 		world = WorldKernel.getOnOrientationChangeEventHandler().call
 		    (new Object[] { world, azimuth, pitch, roll });
@@ -131,6 +138,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	}
 
 	public void onAccelerationChange(Object x, Object y, Object z) {
+	    if (stopped)
+		return;
+
 	    synchronized(world) {
 		world = WorldKernel.getOnAccelerationChangeEventHandler().call
 		    (new Object[] { world, x, y, z });
@@ -149,8 +159,9 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	}
 
 	protected void keyPressed(int keyCode) {
-	    Object aKey;
 	    if (stopped) { return; }
+
+	    Object aKey;
 	    switch(getGameAction(keyCode)) {
 	    case Canvas.LEFT: aKey = "left"; break;
 	    case Canvas.RIGHT: aKey = "right"; break;
