@@ -3,6 +3,7 @@
 // 
 // PROGRAM-NAME
 // PROGRAM-DEFINITIONS
+// PROGRAM-TOPLEVEL-EXPRESSIONS
 // ON-START
 // ON-PAUSE
 // ON-DESTROY
@@ -23,13 +24,18 @@ import org.plt.guiworld.GuiWorld;
 public class <<PROGRAM-NAME>> 
     extends Activity {
 
-    // Important: definitions must come first, because they'll
-    // include static blocks that initialize values that
-    // we depend on later!
-    <<PROGRAM-DEFINITIONS>>
+    static class UserProgram {
+        // Important: definitions must come first, because they'll
+        // include static blocks that initialize values that
+        // we depend on later!
+        <<PROGRAM-DEFINITIONS>>
+        public static void runToplevel() {
+	    <<PROGRAM-TOPLEVEL-EXPRESSIONS>>;
+	}
+    }
 
-    private Object world = GuiWorld.getInitialWorld();
-    private Gui gui = GuiWorld.getView();
+    private Object world;
+    private Gui gui;
 
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
@@ -42,6 +48,9 @@ public class <<PROGRAM-NAME>>
     
     public void onStart() {
 	super.onStart();
+	UserProgram.runToplevel();
+        world = GuiWorld.getInitialWorld();	
+        gui = GuiWorld.getView();
 	<<ON-START>>
     }
     

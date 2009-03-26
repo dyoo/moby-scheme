@@ -17,19 +17,25 @@ import org.plt.WorldKernel;
 // 
 // PROGRAM-NAME
 // PROGRAM-DEFINITIONS
+// PROGRAM-TOPLEVEL-EXPRESSIONS
 // ON-START
 // ON-PAUSE
 // ON-DESTROY
 
 
 public class <<PROGRAM-NAME>> extends MIDlet {
-    // Important: definitions must come first, because they'll
-    // include static blocks that initialize values that
-    // we depend on later!
-    <<PROGRAM-DEFINITIONS>>
+    static class UserProgram {
+        // Important: definitions must come first, because they'll
+        // include static blocks that initialize values that
+        // we depend on later!
+        <<PROGRAM-DEFINITIONS>>
+        public static void runToplevel() {
+	    <<PROGRAM-TOPLEVEL-EXPRESSIONS>>;
+	}
+    }
 
     // #0 big-bang's world0
-    Object world = WorldKernel.getInitialWorld();
+    Object world;
 
 
     MyCanvas canvas;
@@ -59,7 +65,10 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 
     public void startApp() {
 	// debug: show the platform in the log.
-	System.out.println(Platform.getInstance().getName());
+	// System.out.println(Platform.getInstance().getName());
+
+	UserProgram.runToplevel();
+	world = WorldKernel.getInitialWorld();
 
 	this.canvas = new MyCanvas();
 	// IMPORTANT: The injected code here assumes the

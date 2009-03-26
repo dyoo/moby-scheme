@@ -30,33 +30,46 @@
 (define (program->java-string program)
   (let* ([a-pinfo (program-analyze program)]
          [toplevel-env (pinfo-env a-pinfo)])
-    (let ([compiled-code
-           (let loop ([program program])
-             (cond [(empty? program) ""]
-                   [else
-                    (let ([new-java-code
-                           (cond [(defn? (first program))
-                                  (definition->java-string 
-                                    (first program) 
-                                    toplevel-env)]
-                                 [(test-case? (first program))
-                                  "// Test case erased\n"]
-                                 [(library-require? (first program))
-                                  "// Module require erased\n"]
-                                 [(expression? (first program))
-                                  (string-append 
-                                   "static { org.plt.Kernel.identity("
-                                   (expression->java-string 
-                                    (first program) 
-                                    toplevel-env) 
-                                   "); }")])]
-                          [rest-java-code (loop (rest program))])
-                      (string-append new-java-code 
-                                     "\n" 
-                                     rest-java-code))]))])
-      (make-compiled-program compiled-code empty a-pinfo))))
-
-
+    
+    (let loop ([program program]
+               [defns ""]
+               [tops ""])
+      (cond [(empty? program)
+             (make-compiled-program defns tops a-pinfo)]
+            [else
+             (cond [(defn? (first program))
+                    (loop (rest program)
+                          (string-append defns
+                                         "\n"
+                                         (definition->java-string 
+                                           (first program) 
+                                           toplevel-env))
+                          tops)]
+                   
+                   [(test-case? (first program))
+                    (loop (rest program)
+                          (string-append defns
+                                         "\n"
+                                         "// Test case erased\n")
+                          tops)]
+                   
+                   [(library-require? (first program))
+                    (loop (rest program)
+                          (string-append defns
+                                         "\n"
+                                         "// Module require erased\n")
+                          tops)] 
+                   
+                   [(expression? (first program))
+                    (loop (rest program)
+                          defns
+                          (string-append tops
+                                         "\n"
+                                         "org.plt.Kernel.identity("
+                                         (expression->java-string 
+                                          (first program) 
+                                          toplevel-env)
+                                         ");"))])]))))
 
 
 

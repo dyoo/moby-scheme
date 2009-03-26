@@ -104,6 +104,9 @@
                  (build-mappings 
                   (PROGRAM-NAME classname)
                   (PROGRAM-DEFINITIONS defns)
+                  (PROGRAM-TOPLEVEL-EXPRESSIONS
+                   (compiled-program-toplevel-exprs
+                    compiled-program))
                   (ON-START (get-on-start-code pinfo))
                   (ON-PAUSE (get-on-pause-code pinfo))
                   (ON-DESTROY (get-on-destroy-code pinfo)))]
@@ -153,6 +156,8 @@
            (PROGRAM-NAME classname)
            (PROGRAM-DEFINITIONS 
             (compiled-program-defns compiled-program))
+           (PROGRAM-TOPLEVEL-EXPRESSIONS
+            (compiled-program-toplevel-exprs compiled-program))
            (ON-START (get-on-start-code pinfo))
            (ON-PAUSE (get-on-pause-code pinfo))
            (ON-DESTROY (get-on-destroy-code pinfo)))]
