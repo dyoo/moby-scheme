@@ -11,13 +11,17 @@
 
                (test-case
                 "empty program has empty analysis"
-                (check-equal? (program-analyze empty (make-pinfo empty-env))
-                              (make-pinfo empty-env)))
+                (check-equal? (program-analyze empty empty-pinfo)
+                              empty-pinfo))
                (test-case
                 "simple definition"
                 (check-equal? (program-analyze (list '(define pi 3.1415))
-                                               (make-pinfo empty-env))
-                              (make-pinfo (env-extend empty-env (make-binding:constant 'pi "pi")))))))
+                                               empty-pinfo)
+                              
+                              (pinfo-accumulate-binding 
+                               (make-binding:constant 'pi "pi" empty)
+                               empty-pinfo)))))
+
                                           
 
 

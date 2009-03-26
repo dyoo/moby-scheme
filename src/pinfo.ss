@@ -15,6 +15,11 @@
 ;; the program.
 (define-struct pinfo (env modules used-bindings) #:transparent)
 
+;; pinfo
+(define empty-pinfo
+  (make-pinfo empty-env empty (make-immutable-hash empty)))
+
+;; get-base-pinfo: pinfo
 (define (get-base-pinfo)
   (make-pinfo (get-toplevel-env) empty (make-immutable-hash empty)))
 
@@ -529,6 +534,11 @@
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
                                  [used-bindings hash?])]
+                  [empty-pinfo pinfo?]
+                  [get-base-pinfo (-> pinfo?)]
+                  
+                  [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
+                  
                   [program-analyze ((program?) (pinfo?) . ->* . pinfo?)]
                   
                   [struct module-binding ([name symbol?]

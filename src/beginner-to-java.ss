@@ -16,12 +16,17 @@
          "helpers.ss")
 
 
+;; A compiled program is a:
+(define-struct compiled-program
+  (defns           ;; (listof string)
+    toplevel-exprs ;; (listof string)
+    pinfo          ;; pinfo
+    ))
 
 
 
-;; program->java-string: program -> (values string program-info)
-;; Consumes a program and returns a java string fragment that represents the
-;; content of the program.
+;; program->java-string: program -> compiled-program
+;; Consumes a program and returns a compiled program.
 (define (program->java-string program)
   (let* ([a-pinfo (program-analyze program)]
          [toplevel-env (pinfo-env a-pinfo)])
@@ -46,8 +51,11 @@
                                     toplevel-env) 
                                    "); }")])]
                           [rest-java-code (loop (rest program))])
-                      (string-append new-java-code "\n" rest-java-code))]))])
-      (values compiled-code a-pinfo))))
+                      (string-append new-java-code 
+                                     "\n" 
+                                     rest-java-code))]))])
+      (make-compiled-program compiled-code empty a-pinfo))))
+
 
 
 
@@ -393,5 +401,14 @@
 
 
 
-(provide/contract [program->java-string (program? . -> . (values string? pinfo?))]
-                  [expression->java-string (expression? env? . -> . string?)])
+(provide/contract [struct compiled-program ([defns 
+                                              string?]
+                                            [toplevel-exprs 
+                                             string?]
+                                            [pinfo pinfo?])]
+                  
+                  [program->java-string 
+                   (program? . -> . compiled-program?)]
+                  
+                  [expression->java-string 
+                   (expression? env? . -> . string?)])

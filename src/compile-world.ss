@@ -95,12 +95,15 @@
                  (upper-camel-case name)]
                 [(program)
                  (parse-text-as-program text)]
-                [(compiled-program pinfo)
+                [(compiled-program)
                  (program->java-string program)]
+                [(defns pinfo)
+                 (values (compiled-program-defns compiled-program)
+                         (compiled-program-pinfo compiled-program))]
                 [(mappings) 
                  (build-mappings 
                   (PROGRAM-NAME classname)
-                  (PROGRAM-DEFINITIONS compiled-program)
+                  (PROGRAM-DEFINITIONS defns)
                   (ON-START (get-on-start-code pinfo))
                   (ON-PAUSE (get-on-pause-code pinfo))
                   (ON-DESTROY (get-on-destroy-code pinfo)))]
@@ -137,21 +140,24 @@
 (define (compile-program-to-android text name dest-dir)
   (make-android-directories dest-dir)
   (lift-images-to-directory text (build-path dest-dir "src"))
-  (let*-values ([(classname)
-                 (upper-camel-case name)]
-                [(program)
-                 (parse-text-as-program text)]
-                [(compiled-program pinfo)
-                 (program->java-string program)]
-                [(mappings) 
-                 (build-mappings 
-                  (PROGRAM-NAME classname)
-                  (PROGRAM-DEFINITIONS compiled-program)
-                  (ON-START (get-on-start-code pinfo))
-                  (ON-PAUSE (get-on-pause-code pinfo))
-                  (ON-DESTROY (get-on-destroy-code pinfo)))]
-                [(source-path) 
-                 (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
+  (let* ([classname
+          (upper-camel-case name)]
+         [program
+          (parse-text-as-program text)]
+         [compiled-program
+          (program->java-string program)]
+         [pinfo
+          (compiled-program-pinfo compiled-program)]
+         [mappings
+          (build-mappings 
+           (PROGRAM-NAME classname)
+           (PROGRAM-DEFINITIONS 
+            (compiled-program-defns compiled-program))
+           (ON-START (get-on-start-code pinfo))
+           (ON-PAUSE (get-on-pause-code pinfo))
+           (ON-DESTROY (get-on-destroy-code pinfo)))]
+         [source-path
+          (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
     (cond
       [(stub=? (choose-program-stub pinfo) STUB:WORLD)
        (fill-template-file j2me-world-stub-path source-path mappings)
