@@ -13,6 +13,11 @@ platforms.  The current prototype supports the Android platform.  Our
 long-term goal is to make Scheme the premiere reactive scripting
 language for mobile phones.
 
+Shriram Krishnamurthi presented the ideas behind Moby for ILC 2009;
+his talk "The Moby Scheme Compiler for Smartphones" can be found here:
+
+    http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/
+
 
 ----------------------------------------------------------------------
 
