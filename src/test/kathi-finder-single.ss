@@ -30,28 +30,21 @@
 ;; Parking place.
 (define WPI-PARKING-PLACE 
   (make-place "WPI Parking" (make-loc 42.2737222 -71.8058627) 50))
-;; Danny's place, and 50 meters around it.
-(define DANNY-PLACE 
-  (make-place "Danny's House" (make-loc 42.271869 -71.807214) 50))
 ;; Worcester, in a radius of 3 miles.
 (define WORCESTER-PLACE 
   (make-place "Worcester" (make-loc 42.274514 -71.798744) (mile->meter 3)))
-;; Within half a mile of parent's place.
-(define PARENTS-PLACE 
-  (make-place "Parents" (make-loc 42.274514 -71.798744) 50))
 
 ;; This is a list of the places.
 (define ALL-PLACES
   (list WPI-PLACE
         WPI-PARKING-PLACE
-        WORCESTER-PLACE
-        PARENTS-PLACE
-        DANNY-PLACE))
+        WORCESTER-PLACE))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; The telephone number to send messages to.
-(define ADDRESS "5554" #; "4012633108")
+(define ADDRESS "5554")
   
 ;; The world is the current location.
 (define initial-world (make-loc 0 0))

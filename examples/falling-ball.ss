@@ -1,29 +1,44 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname falling-ball) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+;; Simple falling ball example.  A red ball falls down the screen
+;; until hitting the bottom.
+
 (require (lib "world.ss" "moby" "stub"))
-;; Simple falling ball example.  Red ball falls down.
 
-;; A world is a number representing the y position of the red ball.
 
+;; The dimensions of the screen:
 (define WIDTH 320)
 (define HEIGHT 480)
+
+;; The radius of the red circle.
 (define RADIUS 5)
 
-(define (tick y)
-  (+ y 5))
+;; The world is the distance from the top of the screen.
+(define INITIAL-WORLD 0)
 
-(define (hits-floor? y)
-  (>= y HEIGHT))
+;; tick: world -> world
+;; Moves the ball down.
+(define (tick w)
+  (+ w 5))
 
+;; hits-floor?: world -> boolean
+;; Returns true when the distance reaches the screen height.
+(define (hits-floor? w)
+  (>= w HEIGHT))
+
+;; We have some simple test cases.
 (check-expect (hits-floor? 0) false)
 (check-expect (hits-floor? HEIGHT) true)
 
-(define (draw-scene y)
-  (place-image (circle RADIUS "solid" "red") (/ WIDTH 2) y
+;; render: world -> scene
+;; Produces a scene with the circle at a height described by the world.
+(define (render w)
+  (place-image (circle RADIUS "solid" "red") (/ WIDTH 2) w
                (empty-scene WIDTH HEIGHT)))
 
-(big-bang WIDTH HEIGHT 1/15 0)
+;; Start up a big bang, 15 frames a second.
+(big-bang WIDTH HEIGHT 1/15 INITIAL-WORLD)
 (on-tick tick)
-(on-redraw draw-scene)
+(on-redraw render)
 (stop-when hits-floor?)

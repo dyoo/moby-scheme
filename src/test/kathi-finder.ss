@@ -81,23 +81,12 @@
                                             -71.8058627
                                             50))
 
-;; Danny's place, and 50 meters around it.
-(define DANNY-PLACE (make-named-place "Danny's House"
-                                      42.271869
-                                      -71.807214
-                                      50))
-
 ;; Worcester, in a radius of 3 miles.
 (define WORCESTER-PLACE (make-named-place "Worcester"
                                           42.274514
                                           -71.798744
                                           (mile->meter 3)))
 
-;; Within half a mile of parent's place.
-(define PARENTS-PLACE (make-named-place "Parents"
-                                        42.274514
-                                        -71.798744
-                                        50))
 
 
 
@@ -106,14 +95,12 @@
 
 (define initial-world (make-world (list WPI-PLACE
                                         WPI-PARKING-PLACE
-                                        WORCESTER-PLACE
-                                        PARENTS-PLACE
-                                        DANNY-PLACE)
+                                        WORCESTER-PLACE)
                                   (make-unnamed-place 0 0)
                                   ;; The telephone number is 
-                                  ;; currently hardcoded to Shriram's
-                                  ;; phone number.
-                                  "4012633108"))
+                                  ;; currently hardcoded to
+                                  ;; the emulator.
+                                  "5556"))
 
 
 
