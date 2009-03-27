@@ -7,36 +7,33 @@ Danny Yoo (dyoo@cs.wpi.edu)
 
 What is Moby?
 
-Moby is a compiler that consumes Beginner Student Language (BSL)
-programs and produces applications for mobile platforms.  The current
-prototype supports the Android platform.  The BSL programs can use the
-primitives provided by the World Teachpack.  Our long-term goal is to
-make Scheme the premiere reactive scripting language for mobile
-phones.
+The Moby compiler consumes Beginner Student Language (BSL) programs
+that use World primitives, and produces applications for mobile
+platforms.  The current prototype supports the Android platform.  Our
+long-term goal is to make Scheme the premiere reactive scripting
+language for mobile phones.
 
 
 ----------------------------------------------------------------------
 
 How does it work?
 
-The compiler currently takes a BSL program and translates it to Java
-code.  The BSL primitives have been reimplemented in a Java runtime
-library that's included with the compiled application.  To implement
-the world primitives, we currently use the graphical components in the
-J2ME platform to implement the functionality of the World Teachpack.
+The compiler takes a BSL program and translates it to Java code.
+We've reimplemented the BSL primitives in a Java runtime library
+that's included with the compiled application.  To implement the World
+primitives, we use the graphical components in the J2ME platform.
 
-Bridge classes between J2ME and Android provide a compatibility layer
-that we can code toward.  In this way, we should be able to support
-both platforms with a lot of code reuse.  The other libraries (tilt,
-location) are handled similarly, though with support only for the
-Android platforms for now.
+To support Android, we use bridge classes between J2ME and Android.
+In this way, we should be able to support both platforms with a lot of
+code reuse.  We handle the other libraries (tilt, location) similarly,
+though with support only for the Android platforms for now.
 
 
 ----------------------------------------------------------------------
 
 Dependencies
 
-The following are required:
+You need the following:
 
   Java >=1.6 (http://java.sun.com/)
   Apache Ant >=1.7.1 (http://ant.apache.org/)
@@ -49,14 +46,14 @@ The following are required:
 
 What needs to be implemented?
 
-See doc/TODO.
+See moby/doc/TODO.
 
 ----------------------------------------------------------------------
 
 Installation
 
 One prerequisite collection that needs to be installed is GUI-World.
-GUI-World is currently hosted under github.com.
+We host GUI-World under github.
 
     1.  Grab the GUI-World source.  For example:
 
@@ -69,7 +66,7 @@ GUI-World is currently hosted under github.com.
 
 To install Moby:
 
-    1.  Grab the Moby source, currently hosted on github.com at:
+    1.  Grab the Moby source, currently hosted on github at:
 
         http://github.com/dyoo/moby-scheme/tree/master
 
@@ -78,7 +75,7 @@ To install Moby:
         $ git clone git://github.com/dyoo/moby-scheme.git moby
 
 
-    2.  Edit moby/src/config.ss.  The system currently has hardcoded
+    2.  Edit moby/src/config.ss.  The system hardcodes
         paths to Apache Ant and Android SDK embedded as parameters
         within src/config.ss.  You should change those paths to the
         ones on your system.
@@ -94,7 +91,7 @@ To install Moby:
         will set up the necessary symbolic link.
 
 At this point, you can run the regression test suite.  Instructions on
-running the test suite are in the next section.
+running the test suite follow in the next section.
 
 
 ----------------------------------------------------------------------
@@ -104,15 +101,15 @@ Regression test suite
 
 We've got the beginnings of a regression test suite in
 moby/src/test-compile-world.ss.  The test suite compiles several
-applications in moby/src/test/; the compiled executables are stored in
-src/bin for manual inspection.
+applications in moby/src/test/; the suite saves compiled executables
+in src/bin for manual inspection.
 
 To run the regression test suite, open the
-moby/src/test-compile-world.ss in DrScheme.  You can then run the
-run-all-tests function.  If everything runs successfully, every
-sub-subdirectory in moby/src/bin will each contain a compiled
-application Each application that's produced will have an ant file
-that you can use to install the application into the Android emulator.
+moby/src/test-compile-world.ss module in DrScheme.  You can then run
+the run-all-tests function.  If everything runs successfully, every
+sub-subdirectory in moby/src/bin will contain a compiled application.
+Each application will have an ant file that you can use to install the
+application into the Android emulator.
 
 For Android, first start the emulator, then use
 
