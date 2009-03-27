@@ -12,28 +12,21 @@ first to consult on the design of solutions.
 
 Major:
 
-* Write demonstration programs
 
-    Bubble
-    Tightrope walker
-    PID control
-    Etch a sketch
-
-
-* Implement all of the Beginner Scheme primitives in the runtime.
-  The list of primitives comes at the end of this file.
+* Implement all of the BSL primitives in the runtime.  The list of
+  primitives comes at the end of this file.
 
 * Implement all of the image.ss teachpack primitives.  See image-ss-todo.txt.
 
 * Port the gui-world teachpack to Moby.  See gui-world-todo.txt.
 
+* Connect Google Maps to DrScheme so we can drive tests of the
+  location system when testing Moby programs on the desktop.
 
 * Expose Android-specific functionality.  Definitely talk to us before
   tackling this one: we want to make sure the design matches the
-  functional flavor of the world primitives.
-
-* Connect Google Maps to DrScheme so we can drive tests of the
-  location system when testing Moby programs on the desktop.
+  functional flavor of the world primitives.  See
+  android-functionality.txt.
 
 * Fix the bugs listed in BUGS.
 
@@ -41,7 +34,7 @@ Major:
 
 * Incorporate the libraries of mobile.processing.org into Moby.
 
-* Work on the network compiler.
+* Work on the network compiler in moby/src/web-application/simple-server.ss.
 
    - Add error trapping.
 
@@ -77,23 +70,3 @@ Minor:
   implementation uses the MicroFloat fixed-point library even though
   we don't need it.
 
-
-
-----------------------------------------------------------------------
-
-Details on Beginner Scheme primitives:
-
-
-Primitives that need implementation:
-
-(format
- image=?
- image-rotate)
-
-You can look at the code in support/j2me/src/org/plt/WorldKernel.java
-and support/common/src/org/plt/Kernel.java for implementations of the
-primitives we support so far.  Any primitive you write also needs to
-be registered in toplevel.ss.
-
-
-----------------------------------------------------------------------

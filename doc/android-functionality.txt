@@ -1,47 +1,27 @@
-We want Scheme API's for the following Android and J2ME-specific
-functionality.
-
-----------------------------------------------------------------------
-* Location Services
-
-get-latitude: -> number
-get-longitude: -> number
-
-Optionally, if the mobile device supports it:
-
-get-attitude: -> number
-get-bearing: -> number
-get-speed: -> number
-
-------
-
-* Accelerometer Sercies
-
-???
+We want Scheme API's for the following Android functionality.
 
 
 
-
-
-* HTTP GET for RESTful services.
-
-get-response: url -> input-port
-
-
-
-
-* SMS Message listening
+* SMS Message listening for the world.
 
 on-sms-message: (world sms-message -> world) -> void
 
 
 * Phone calling.
-  dial: phone-number -> void
+
+  dial: phone-number world -> world
+
+Should dial the phone, and when the user finally finishes the call,
+returns the world back to the caller.
 
 
 ----------------------------------------------------------------------
 
 Less important, but things to look at:
+
+
+* Camera access.
+
 
 
 * File persistance
@@ -57,21 +37,12 @@ Less important, but things to look at:
   raw-query: db string (listof string) -> cursor
   ... 
 
-  with all the SQL stuff.
+  with all the SQL stuff, as well as standard file access.
 
 
-
-  J2ME has RecordStore, which is a byte-oriented interface to a persistent store:
-      
-  open-record-store: string boolean -> rs
-  add-record: rs number bytes -> void
-  get-record: rs number -> bytes
-  set-record: rs number bytes -> void
-
-
-  We want an API that transparently hides the complexity of these
-  approaches.  Ideally, we should have something that can deal
-  with structs.
+  We want an API that transparently hides the complexity of file
+  storage.  Ideally, we should have something that can deal with
+  structs.
 
 
      
@@ -84,7 +55,6 @@ Less important, but things to look at:
 * Audio and video
 
   (Not stable in Android yet.)
-
 
   In J2ME, the MMAPI provides:
 

@@ -1,0 +1,13 @@
+Details on Beginner Scheme primitives:
+
+
+Primitives that need implementation:
+
+(format
+ image=?
+ image-rotate)
+
+You can look at the code in support/j2me/src/org/plt/WorldKernel.java
+and support/common/src/org/plt/Kernel.java for implementations of the
+primitives we support so far.  Any primitive you write also needs to
+be registered in moby/src/toplevel.ss.
