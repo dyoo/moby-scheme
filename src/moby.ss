@@ -4,12 +4,17 @@
 ;; Usage: <program> [-n name] <filename>
 
 (require "compile-world.ss"
-         scheme/cmdline)
+         "utils.ss"
+         scheme/cmdline
+         scheme/path)
 
 
-;; extract-name: string -> string
-(define (extract-name a-name)
-  (regexp-replace #rx".(ss|scm)$" (format "~a" a-name) ""))
+;; extract-name: path -> string
+(define (extract-name a-path)
+  (regexp-replace #rx".(ss|scm)$" 
+                  (format "~a" 
+                          (path->string 
+                           (file-name-from-path a-path))) ""))
 
 
 
@@ -23,15 +28,25 @@
    [("-n" "--name") n "Set the name of the output program"
                     (name n)]
    [("-d" "--dest") d "Set the destination path of the output"
-                    (dest-dir d)]
+                    (dest-dir (build-path d))]
    #:args (filename)
-   filename))
+   (build-path filename)))
 
 
-(generate-j2me-application (or (name) 
-                               (extract-name filename))
-                           filename 
-                           (or (dest-dir)
-                               (build-path (current-directory)
-                                           "bin")))
+;; get-name: -> string
+(define (get-name)
+  (or (name)
+      (extract-name file-to-compile)))
+
+;; get-output-path: -> path
+(define (get-output-path)
+ (or (dest-dir)
+     (build-path (current-directory)
+                 (upper-camel-case (get-name)))))
+
+(generate-android-application 
+ (get-name)
+ file-to-compile
+ (get-output-path))
+
 
