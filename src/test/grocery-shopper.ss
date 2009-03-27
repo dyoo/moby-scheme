@@ -73,7 +73,7 @@
   (places-matching-items (find-places ALL-PLACES w)))
   
 
-;; find-places: world loc -> (listof place)
+;; find-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
 (define (find-places places a-loc)
   (cond
