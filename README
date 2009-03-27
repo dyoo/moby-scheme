@@ -90,8 +90,70 @@ To install Moby:
 
         will set up the necessary symbolic link.
 
-At this point, you can run the regression test suite.  Instructions on
-running the test suite follow in the next section.
+
+----------------------------------------------------------------------
+
+Running Moby from the command line
+
+At this point, you can run the Moby command line utility
+(moby/src/moby.ss) on a BSL program.
+
+For example, let's run it on the falling-ball.ss example in moby/examples/falling-ball.ss:
+
+    $ cd moby/examples
+    $ mred ../src/moby.ss falling-ball.ss
+    $ cd FallingBall
+    $ ls
+    AndroidManifest.xml  bin  build.xml  libs  res  src
+    $ ls bin
+    classes  classes.dex  FallingBall.ap_  FallingBall-debug.apk
+
+FallingBall-debug.apk is the compiled Android binary.  The Ant
+build.xml build-script in the FallingBall directory can install,
+uninstall, and reinstall the application if the Android emulator
+is online.
+
+    $ ant install
+Buildfile: build.xml
+
+dirs:
+     [echo] Creating output directories if needed...
+
+resource-src:
+     [echo] Generating R.java / Manifest.java from the resources...
+
+aidl:
+     [echo] Compiling aidl files into Java classes...
+
+compile:
+    [javac] Compiling 142 source files to /home/dyoo/work/moby/examples/FallingBall/bin/classes
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+dex:
+     [echo] Converting compiled files and external libraries into bin/classes.dex...
+
+package-res:
+
+package-res-no-assets:
+     [echo] Packaging resources...
+
+debug:
+     [echo] Packaging bin/FallingBall-debug.apk, and signing it with a debug key...
+     [exec] Using keystore: /home/dyoo/.android/debug.keystore
+
+install:
+     [echo] Installing bin/FallingBall-debug.apk onto default emulator...
+     [exec] 726 KB/s (157611 bytes in 0.211s)
+     [exec] 	pkg: /data/local/tmp/FallingBall-debug.apk
+     [exec] Success
+
+BUILD SUCCESSFUL
+Total time: 19 seconds
+
+
+After this, you can look at the Android emulator, which should now
+have the FallingBall application installed.
 
 
 ----------------------------------------------------------------------
@@ -119,10 +181,7 @@ or
 
     ant reinstall
 
-
-
-Example
-======
+For example:
 
 ## Running in DrScheme:
 
@@ -152,12 +211,6 @@ android
 
 ## The application should deploy into the emulator.  Try running the
    program, and you should see a red ball descend.
-
-
-----------------------------------------------------------------------
-
-Running the examples
-
 
 
 ----------------------------------------------------------------------
