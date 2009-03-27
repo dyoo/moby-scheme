@@ -942,6 +942,10 @@
 (define (on-acceleration handler)
   (void))
 
+(define (on-message handler)
+  ;; fixme
+  (void))
+
 
 (define (on-location-change f)
   (check-proc 'on-location-change f 3 "on-location-change" 
@@ -1000,7 +1004,7 @@
 
 
 (provide-higher-order-primitive on-location-change (handler))
-
+(provide-higher-order-primitive on-message (handler))
 (provide-higher-order-primitive on-tilt (handler))
 (provide-higher-order-primitive on-acceleration (handler))
 

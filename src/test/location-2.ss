@@ -1,13 +1,13 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname location-2) (read-case-sensitive #t) (teachpacks ((lib "world.ss" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "world.ss" "teachpack" "htdp")))))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname location-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "world.ss" "moby" "stub"))
 ;; Location, using the on-location-changed hook.
 (require (lib "location.ss" "moby" "stub"))
 
 
-(define width 300)
-(define height 100)
+(define width 320)
+(define height 480)
 
 (define-struct world (latitude longitude))
 
@@ -33,4 +33,4 @@
 
 (big-bang width height 1/10 initial-world)
 (on-redraw render-world)
-(on-location-change-event handle-location-change)
+(on-location-change handle-location-change)

@@ -5,8 +5,8 @@
 (require (lib "tilt.ss" "moby" "stub"))
 
 
-(define width 300)
-(define height 100)
+(define width 320)
+(define height 480)
 
 (define-struct world (a p r))
 (define initial-world (make-world 0 0 0))

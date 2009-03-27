@@ -4,8 +4,8 @@
 (require (lib "world.ss" "moby" "stub"))
 
 ;; The width and height of the drawing canvas.
-(define WIDTH 400)
-(define HEIGHT 400)
+(define WIDTH 320)
+(define HEIGHT 480)
 (define BLANK-COLOR "lightgray")
 (define DRAW-COLOR "darkgray")
 (define DOT-RADIUS 3)
@@ -175,5 +175,5 @@
 
 (big-bang WIDTH HEIGHT 1/20 initial-world)
 (on-redraw render-etch-a-sketch)
-(on-tick-event move-by-drifting)
+(on-tick move-by-drifting)
 (on-tilt handle-orientation-change)

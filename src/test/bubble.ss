@@ -6,8 +6,8 @@
 (define-struct world (pitch roll))
 (define initial-world (make-world 0 0))
 
-(define width 300)
-(define height 300)
+(define width 320)
+(define height 480)
 
 
 (define (render-world a-world)

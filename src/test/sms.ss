@@ -4,8 +4,8 @@
 (require (lib "sms.ss" "moby" "stub"))
 (require (lib "world.ss" "moby" "stub"))
 
-(define WIDTH 100)
-(define HEIGHT 100)
+(define WIDTH 320)
+(define HEIGHT 480)
 
 (define the-world 42)
 

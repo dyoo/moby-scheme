@@ -3,8 +3,8 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname upside-down) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "world.ss" "moby" "stub"))
 
-(define width 300)
-(define height 100)
+(define width 320)
+(define height 480)
 
 ;; The world is a boolean, which is true if we've been
 ;; flipped upside down.

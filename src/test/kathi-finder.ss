@@ -8,8 +8,8 @@
 ;; Kathi finder: A program to report where Kathi is.
 
 
-(define WIDTH 400)
-(define HEIGHT 400)
+(define WIDTH 320)
+(define HEIGHT 480)
 
 
 ;; A place is centered on a latitude and longitude, and extends 
@@ -225,4 +225,4 @@
 
 (big-bang WIDTH HEIGHT 1 initial-world)
 (on-redraw render-world)
-(on-location-change-event handle-location-change)
+(on-location-change handle-location-change)

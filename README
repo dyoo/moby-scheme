@@ -7,30 +7,29 @@ Danny Yoo (dyoo@cs.wpi.edu)
 
 What is Moby?
 
-Moby is a compiler that consumes Beginner Language Scheme programs and
-produces applications for mobile platforms.  The current prototype
-supports the J2ME and Android platforms.  The Beginner Language
-programs can use the primitives provided by the World Teachpack.  Our
-long-term goal is to make Scheme the premiere reactive scripting
-language for mobile phones.
+Moby is a compiler that consumes Beginner Student Language (BSL)
+programs and produces applications for mobile platforms.  The current
+prototype supports the Android platform.  The BSL programs can use the
+primitives provided by the World Teachpack.  Our long-term goal is to
+make Scheme the premiere reactive scripting language for mobile
+phones.
 
 
 ----------------------------------------------------------------------
 
 How does it work?
 
-The compiler takes a Beginner Language program and translates it to
-Java code; Beginner Language Scheme is simple enough that's it's
-fairly easy to do this.  Many of the Beginner Language primitives have
-been reimplemented in a Java runtime library that's included with the
-compiled application.
+The compiler currently takes a BSL program and translates it to Java
+code.  The BSL primitives have been reimplemented in a Java runtime
+library that's included with the compiled application.  To implement
+the world primitives, we currently use the graphical components in the
+J2ME platform to implement the functionality of the World Teachpack.
 
-To implement the world primitives, we use the graphical components in
-the J2ME platform to implement the functionality of the world
-Teachpack.  But because we also want to support Android, we use
-adapter classes to bridge between our J2ME code and Android.  In this
-way, we should be able to support both platforms with a lot of code
-reuse.
+Bridge classes between J2ME and Android provide a compatibility layer
+that we can code toward.  In this way, we should be able to support
+both platforms with a lot of code reuse.  The other libraries (tilt,
+location) are handled similarly, though with support only for the
+Android platforms for now.
 
 
 ----------------------------------------------------------------------
@@ -39,18 +38,12 @@ Dependencies
 
 The following are required:
 
-  Java >=1.6
-  Apache Ant >=1.7.1
-  PLT Scheme >=4.1.3
+  Java >=1.6 (http://java.sun.com/)
+  Apache Ant >=1.7.1 (http://ant.apache.org/)
+  PLT Scheme >=4.1.3 (http://plt-scheme.org/)
+  Google Android SDK >= 1.0 (http://developer.android.com/)
+  GUI-World (http://github.com/dyoo/gui-world/tree/master)
 
-
-Furthermore, you need at least one of these to produce applications
-for the respective platforms:
-
-    Sun Wireless Toolkit (http://java.sun.com/products/sjwtoolkit/),
-    which provides J2ME application support.
-
-    Google Android SDK (http://code.google.com/android/).
 
 ----------------------------------------------------------------------
 
@@ -62,31 +55,46 @@ See doc/TODO.
 
 Installation
 
+One prerequisite collection that needs to be installed is GUI-World.
+GUI-World is currently hosted under github.com.
 
-To install:
+    1.  Grab the GUI-World source.  For example:
 
-    1.  Grab our sources:
+        git clone git://github.com/dyoo/gui-world.git
 
-        $ svn checkout \
-          http://svn.plt-scheme.org/usr/dyoo/moby/trunk \
-          moby
+    2.  Add a symbolic link from the gui-world directory into the
+    collects directory of your PLT Scheme installation.
 
-    2.  Edit config.ss.  The system currently has hardcoded paths to
-        Apache Ant, the Sun Wireless Toolkit, and Android SDK embedded
-        as the parameters within src/config.ss.  You should change
-        those paths to the ones on your system.
 
-    3.  Add a symbolic link from moby/src/mock-libs to collects/moby.
+
+To install Moby:
+
+    1.  Grab the Moby source, currently hosted on github.com at:
+
+        http://github.com/dyoo/moby-scheme/tree/master
+
+    For example:
+
+        $ git clone git://github.com/dyoo/moby-scheme.git moby
+
+
+    2.  Edit moby/src/config.ss.  The system currently has hardcoded
+        paths to Apache Ant and Android SDK embedded as parameters
+        within src/config.ss.  You should change those paths to the
+        ones on your system.
+
+    3.  Add a symbolic link from moby to the collects directory of
+    your PLT Scheme installation.
 
         For example, if moby is under the home directory, and PLT Scheme
         under the ~/local/plt directory, then the command:
 
-            $ ln -s ~/moby/src/mock-libs ~/local/plt/collects/moby
+            $ ln -s ~/moby ~/local/plt/collects/moby
 
         will set up the necessary symbolic link.
 
-    4.  Run the regression test suite.  Instructions on running the
-        test suite are in the next section.
+At this point, you can run the regression test suite.  Instructions on
+running the test suite are in the next section.
 
 
 ----------------------------------------------------------------------
@@ -95,38 +103,40 @@ Regression test suite
 
 
 We've got the beginnings of a regression test suite in
-src/test-compile-world.ss.  The regression suite compiled the Scheme
-programs in src/test/; compiled executables are stored in src/bin for
-manual inspection.
+moby/src/test-compile-world.ss.  The test suite compiles several
+applications in moby/src/test/; the compiled executables are stored in
+src/bin for manual inspection.
 
-To run the regression test suite, run the src/test-compile-world.ss
-program.  If everything runs successfully, every sub-subdirectory in
-src/bin will each contain a compiled application, for both J2ME and
-Android targets.  Each application that's produced will have an ant
-file that you can use to install the application into Sun's emulator.
+To run the regression test suite, open the
+moby/src/test-compile-world.ss in DrScheme.  You can then run the
+run-all-tests function.  If everything runs successfully, every
+sub-subdirectory in moby/src/bin will each contain a compiled
+application Each application that's produced will have an ant file
+that you can use to install the application into the Android emulator.
 
-For the J2ME binaries, use
-
-    ant run
-
-to start the emulator.
-
-
-For Android, first start the emulator, then either use
+For Android, first start the emulator, then use
 
     ant install
+
+or
+
     ant reinstall
+
 
 
 Example
 ======
 
-## Compile everything through MrEd.  Running through DrScheme will
-## also work.
+## Running in DrScheme:
 
-dyoo@mithril:~/moby/src$ mred test-compile-world.ss
+    Welcome to DrScheme, version 4.1.3 [3m].
+    Language: Module.
+    > (run-all-tests)
+
 
 ## This should take some time.
+
+
 
 dyoo@mithril:~/moby/src$
 
@@ -136,29 +146,15 @@ dyoo@mithril:~/moby/src$
 
 dyoo@mithril:~/moby/src$ cd bin
 dyoo@mithril:~/moby/src/bin$ ls
-android  j2me
-
-## We have binaries for both the Android and J2ME platforms.
-
-dyoo@mithril:~/moby/src/bin$ cd j2me/falling-ball
-
-## The J2ME build scripts have a convenient 'run' target to start
-## the emulator on the program.
-
-dyoo@mithril:~/moby/src/bin/j2me/falling-ball$ ant run
-
-## The emulator should show a red falling ball descending
-## the screen of the mobile phone.
- 
-
+android
 ## Let's test the Android binary.  If you haven't started up the
 ## emulator, do so now.
 
-dyoo@mithril:~/moby/src/bin/j2me/falling-ball$ cd ../../android/falling-ball
+dyoo@mithril:~/moby/src/bin$ cd android/falling-ball
 dyoo@mithril:~/moby/src/bin/android/falling-ball$ ant install
 
-## The application should deploy into the emulator.
-
+## The application should deploy into the emulator.  Try running the
+   program, and you should see a red ball descend.
 
 
 
@@ -166,9 +162,9 @@ dyoo@mithril:~/moby/src/bin/android/falling-ball$ ant install
 
 Unit tests
 
-Minimal unit tests live in src/test.  To run the unit tests, run the
-build.xml in src/test with ant.  Here's an example run of the test
-suite:
+Minimal unit tests for the Java runtime live in moby/src/test.  To run
+the unit tests, run the build.xml in src/test with ant.  Here's an
+example run of the test suite:
 
 ######################################################################
 dyoo@mithril:~/moby cd src/test
@@ -201,6 +197,3 @@ test:
 BUILD SUCCESSFUL
 Total time: 1 second
 ######################################################################
-
-
-

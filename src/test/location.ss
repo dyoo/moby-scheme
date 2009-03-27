@@ -1,10 +1,11 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname location) (read-case-sensitive #t) (teachpacks ((lib "world.ss" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "world.ss" "teachpack" "htdp")))))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname location) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "location.ss" "moby" "stub"))
+(require (lib "world.ss" "moby" "stub"))
 
-(define width 300)
-(define height 100)
+(define width 320)
+(define height 480)
 
 (define-struct world (latitude longitude))
 
@@ -23,11 +24,11 @@
     (empty-scene width height))))
 
 
-(define (handle-location-message a-world a-message)
-  (make-world (first a-message)
-              (second a-message)))
+(define (tick a-world)
+  (make-world (get-latitude)
+              (get-longitude)))
 
 
-(big-bang width height 1/10 initial-world)
+(big-bang width height 1 initial-world)
 (on-redraw render-world)
-(on-message-event handle-location-message)
+(on-tick tick)
