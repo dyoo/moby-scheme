@@ -16,7 +16,13 @@ Major:
 * Implement all of the BSL primitives in the runtime.  The list of
   primitives comes at the end of this file.
 
+* Fix the bugs listed in BUGS.
+
 * Implement all of the image.ss teachpack primitives.  See image-ss-todo.txt.
+
+* Port Emmanuel Schanzer's simplified world teachpack.  See
+  moby/sandbox/schanzer for examples of programs that use this
+  simplified teachpack.
 
 * Port the gui-world teachpack to Moby.  See gui-world-todo.txt.
 
@@ -27,8 +33,6 @@ Major:
   tackling this one: we want to make sure the design matches the
   functional flavor of the world primitives.  See
   android-functionality.txt.
-
-* Fix the bugs listed in BUGS.
 
 * Port universe.ss to Moby.
 
