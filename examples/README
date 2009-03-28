@@ -1,6 +1,13 @@
-bubble-2.ss
+The following are example programs that demonstrate Moby features
 
-falling-ball.ss
+falling-ball.ss: a simple World program that shows a falling ball.
 
-kathi-finder-single.ss
+bubble-2.ss: a game that uses the tilt sensor to play a ball-rolling
+game.
 
+grocery-shopper.ss: an application that uses the GPS location 
+feature and Google Maps web-service to alert the user when we're close
+to an interesting grocery store.
+
+kathi-finder-single.ss: another application that uses SMS to
+notify about the place where a user is located.

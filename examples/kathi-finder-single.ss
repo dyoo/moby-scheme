@@ -131,7 +131,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define tick-delay 10 #;(* 5 60))  ;; wait every five minutes before updates.
+(define tick-delay (* 10 60))  ;; wait every ten minutes before updates.
 
 (big-bang WIDTH HEIGHT tick-delay initial-world)
 (on-tick send-report)
