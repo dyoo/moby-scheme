@@ -11,5 +11,5 @@ grocery-shopper.ss: an application that uses the GPS location
 feature and Google Maps web-service to alert the user when we're close
 to an interesting grocery store.
 
-kathi-finder-single.ss: another application that uses SMS to
-notify about the place where a user is located.
+location-announcer.ss: another GPS application that also uses SMS to
+notify others of the place where a user is located.
