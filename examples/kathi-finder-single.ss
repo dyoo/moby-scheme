@@ -5,7 +5,7 @@
 (require (lib "sms.ss" "moby" "stub"))
 (require (lib "world.ss" "moby" "stub"))
 
-;; Kathi finder: A program to report where Kathi is.
+;; Location announcer: A program to report where we are.
 
 (define WIDTH 320)
 (define HEIGHT 480)
@@ -39,6 +39,10 @@
   (list WPI-PLACE
         WPI-PARKING-PLACE
         WORCESTER-PLACE))
+
+;; To make this program more interesting, have this use the same
+;; parser from grocery-shopper.ss so it reads the locations from
+;; Google Maps.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

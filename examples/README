@@ -1,4 +1,6 @@
-The following are example programs that demonstrate Moby features
+The following are example programs that demonstrate Moby features.
+
+----------------------------------------------------------------------
 
 falling-ball.ss: a simple World program that shows a falling ball.
 

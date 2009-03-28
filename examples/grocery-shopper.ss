@@ -131,8 +131,10 @@
    (empty-scene WIDTH HEIGHT)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; RSS Parser Helpers.
 
 ;; parse-places: xexpr -> (listof place)
+;; Parses out the places from the RSS we get from Google Maps.
 (define (parse-places xexpr)
   (parse-items
    (find-children 'item 
@@ -164,6 +166,8 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; XML Parser Helpers.
+
 ;; children: xexpr -> (listof xexpr)
 (define (children an-xexpr)
   (cond
