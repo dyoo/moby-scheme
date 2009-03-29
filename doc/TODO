@@ -14,7 +14,7 @@ Major:
 
 
 * Implement all of the BSL primitives in the runtime.  The list of
-  primitives comes at the end of this file.
+  primitives can be found in bsl-todo.txt.
 
 * Fix the bugs listed in BUGS.
 

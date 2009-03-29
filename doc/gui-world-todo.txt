@@ -6,7 +6,6 @@ The GUI subclasses:
 are still in need of implementation.
 
 
-
 Implement these in the GuiRenderer class:
 
     moby/support/j2me/src/org/plt/guiworld/GuiRenderer
@@ -16,7 +15,6 @@ Implement these in the GuiRenderer class:
 The widgets are in:
 
     moby/support/common/src/org/plt/guiworld/
-
 
 
 As you add implementations for the widgets, adjust the GuiWorldTest
