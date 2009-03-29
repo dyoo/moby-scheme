@@ -1,6 +1,3 @@
-PNG Encoder: http://www.chrfr.de/software/midp_png.html
-License: ???
-
 Floating point support: http://www.dclausen.net/projects/microfloat/
 Gives us floating point in environments that don't natively have one.
 License: GPL 3
@@ -11,11 +8,11 @@ java.math.BigInteger implementation.)
 License: Bouncy Castle License (appears to be BSD)
 
 Antenna: http://antenna.sourceforge.net/
-Antenna provides nice ant support to build j2me applications.
+Antenna provides nice Ant support to build J2ME applications.
 License: LGPL 3
 
 ProGuard: http://proguard.sourceforge.net/
-ProGuard does the optimization and obfuscation of java bytecode.
+ProGuard does the optimization and obfuscation of Java bytecode.
 License: GPL 2
 
 JUnit 4.5: http://junit.org/
