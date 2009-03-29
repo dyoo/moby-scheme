@@ -114,7 +114,7 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
 		return this.defaultView;
 	}
 	
-	@Override
+	
 	protected void onCreate(Bundle icicle) 
 	{
     	super.onCreate( icicle );
@@ -186,7 +186,7 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
     	return midlet;
 	}
 	
-    @Override
+    
     protected void onDestroy()
     {
         try
@@ -207,7 +207,7 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
     
     
 
-    @Override
+    
 	protected void onPause() 
     {
         try
@@ -225,7 +225,7 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
     	super.onPause();
 	}
 
-    @Override
+    
 	protected void onResume()
     {
         super.onResume();
@@ -276,7 +276,7 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
 	    }
 
     }
-	@Override
+	
 	public boolean onCreateOptionsMenu( Menu menu ) 
 	{
 		if( this.midlet != null )
@@ -290,7 +290,7 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
 		return super.onCreateOptionsMenu( menu );
 	}
 	
-	@Override
+	
 	public boolean onKeyDown( int keyCode, KeyEvent event ) 
 	{
 		if( keyCode == KeyEvent.KEYCODE_BACK )

@@ -33,27 +33,27 @@ public class AndroidURLConnection implements StreamConnection,
 		
 	}
 	
-	@Override
+	
 	public DataInputStream openDataInputStream() throws IOException {
 		return new DataInputStream( this.openInputStream() );
 	}
 
-	@Override
+	
 	public InputStream openInputStream() throws IOException {
 		return this.connection.getInputStream();
 	}
 
-	@Override
+	
 	public void close() throws IOException {
 		this.connection = null;
 	}
 
-	@Override
+	
 	public DataOutputStream openDataOutputStream() throws IOException {
 		return new DataOutputStream( openOutputStream() );
 	}
 
-	@Override
+	
 	public OutputStream openOutputStream() throws IOException {
 		return this.connection.getOutputStream();
 	}

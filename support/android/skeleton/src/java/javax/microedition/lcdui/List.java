@@ -42,18 +42,18 @@ public class List extends Screen implements OnKeyListener {
 		this.data = new ArrayList<Map<String,?>>();
 	}
 	
-	@Override
+	
 	public void disposeDisplayable() {
 		this.view = null;
 		this.data = null;
 	}
 
-	@Override
+	
 	public View getView() {
 		return this.view;
 	}
 
-	@Override
+	
 	public void initDisplayable(MIDlet midlet) {
         this.midlet = midlet;
     	
@@ -119,7 +119,7 @@ public class List extends Screen implements OnKeyListener {
 		}
 	}
 
-	@Override
+	
 	public boolean onKey( View source, int key, KeyEvent event ) {
 		boolean handled;
 		if( event.getKeyCode() == KeyEvent.KEYCODE_ENTER && this.commandListener != null && this.selectCommand != null ) {

@@ -51,7 +51,7 @@ public class AndroidContactList extends AndroidPIMList implements ContactList
 		);
 	}
 
-	@Override
+	
 	protected PIMItem create( Cursor cursor ) 
 	{
 		AndroidContact contact = new AndroidContact( cursor );
@@ -190,7 +190,7 @@ public class AndroidContactList extends AndroidPIMList implements ContactList
 			return 0;
 		}
 		
-		@Override
+		
 		public int countValues( int field ) 
 		{
 			int result;
@@ -205,7 +205,7 @@ public class AndroidContactList extends AndroidPIMList implements ContactList
 			return result;
 		}
 		
-		@Override
+		
 		public int getAttributes( int field, int index ) 
 		{
 			int result;
@@ -224,7 +224,7 @@ public class AndroidContactList extends AndroidPIMList implements ContactList
 			return result;
 		}
 
-		@Override
+		
 		public String getString(int field, int index) 
 		{
 			String result;
@@ -243,7 +243,7 @@ public class AndroidContactList extends AndroidPIMList implements ContactList
 			return result;
 		}
 
-		@Override
+		
 		public String[] getStringArray(int field, int index) 
 		{
 			String[] result;
@@ -278,7 +278,7 @@ public class AndroidContactList extends AndroidPIMList implements ContactList
 		
 	}
 
-	@Override
+	
 	public boolean isSupportedField(int fieldName) {
 		return DEFAULT_COLUMN_MAPPINGS.containsKey( fieldName );
 	}
