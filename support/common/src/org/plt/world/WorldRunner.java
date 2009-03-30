@@ -8,7 +8,7 @@ import org.plt.Kernel;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class World {
+public class WorldRunner {
     private Object world;
     private long delay;
     private boolean stopped;
