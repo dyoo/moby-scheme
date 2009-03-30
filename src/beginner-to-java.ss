@@ -323,18 +323,21 @@
 (define (application-expression->java-string id exprs env)
   (let ([operator-binding (env-lookup env id)]
         [operand-strings 
-         (string-join (map (lambda (e) 
+         (map (lambda (e) 
                              (expression->java-string e env))
-                           exprs) ",")])
+                           exprs)])
     (match operator-binding
       ['#f
        (error 'application-expression->java-string
               "Moby doesn't know about ~s" id)]
       
       [(struct binding:constant (name java-string permissions))
-       (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" java-string operand-strings)]
+       (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" 
+               java-string 
+               (string-join operand-strings ", "))]
       
-      [(struct binding:function (name module-path min-arity var-arity? java-string permissions))
+      [(struct binding:function (name module-path min-arity var-arity? 
+                                      java-string permissions))
        (unless (>= (length exprs)
                    min-arity)
          (error 'application-expression->java-string
@@ -343,11 +346,21 @@
                 exprs))
        (cond
          [var-arity?
-          (format "~a(new Object[] {~a})"
-                  java-string
-                  operand-strings)]
+          (cond [(> min-arity 0)
+                 (format "~a(~a, new Object[] {~a})"
+                         java-string
+                         (string-join (take operand-strings min-arity) ",")
+                         (string-join (list-tail operand-strings min-arity)
+                                      ","))]
+                [else
+                 (format "~a(new Object[] {~a})"
+                         java-string
+                         (string-join (list-tail operand-strings min-arity)
+                                      ","))])]
          [else
-          (format "(~a(~a))" java-string operand-strings)])])))
+          (format "(~a(~a))" 
+                  java-string 
+                  (string-join operand-strings ","))])])))
 
 
 
