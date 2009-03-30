@@ -19,7 +19,7 @@ public class WorldRunner {
 
     private BlockingQueue eventQueue;
 
-    public World(Object initialWorld) {
+    public WorldRunner(Object initialWorld) {
 	this.world = initialWorld;
 	this.delay = 0;
 	this.onTick = null;
