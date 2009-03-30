@@ -15,12 +15,12 @@ public class WorldRunner {
 
     private WorldTransformer onTick;
     private WorldJudge stopWhen;
+
     private List listeners; // listof WorldConsumer
+    private BlockingQueue eventQueue; // queueof WorldTransformer
 
-    private BlockingQueue eventQueue;
-
-    public WorldRunner(Object initialWorld) {
-	this.world = initialWorld;
+    public WorldRunner() {
+	this.world = null;
 	this.delay = 0;
 	this.onTick = null;
 	this.stopWhen = null;
@@ -33,8 +33,9 @@ public class WorldRunner {
 	return this.stopped;
     }
 
-    public void setStopped(boolean stopped) {
-	this.stopped = stopped;
+    public void stop() {
+	this.stopped = true;
+	queueTransformer(new StopEvent());
     }
 
     public Object getWorld() {
@@ -42,7 +43,10 @@ public class WorldRunner {
     }
 
     public void setWorld(Object world) {
-	this.world = world;
+	synchronized(world) {
+	    this.world = world;
+	}
+	notifyWorldChange();
     }
 
     public long getDelay() {
@@ -83,17 +87,24 @@ public class WorldRunner {
 	Thread eventLoop = new Thread
 	    (new Runnable() {
 		    public void run() {
+			if (stopWhen != null &&
+			    stopWhen.judge(world)) {
+			    stopped = true;
+			}
 			while(! stopped) {
-			    if (stopWhen != null &&
-				stopWhen.judge(world)) {
-				stopped = true;
-				break;
-			    }
 			    try {
-				Event e = 
-				    (Event) eventQueue.take();
+				WorldTransformer e = 
+				    (WorldTransformer)
+				    eventQueue.take();
 				synchronized(world) {
 				    world = e.transform(world);
+				    // NOTE: e.transform
+				    // may also change the stopped
+				    // variable!
+				    if (stopWhen != null &&
+					stopWhen.judge(world)) {
+					stopped = true;
+				    }
 				}
 				notifyWorldChange();
 			    } catch (InterruptedException e) {
@@ -111,14 +122,15 @@ public class WorldRunner {
 	return world;
     }
 
-
+    // Starts up a thread that generates a TickEvent every
+    // delay milliseconds.
     private void startTimerEventThread() {
 	if (delay > 0) {
 	    Thread timerThread = new Thread
 		(new Runnable() {
 			public void run() {
 			    while (! stopped) {
-				eventQueue.offer(new TickEvent());
+				queueTransformer(new TickEvent());
 				try {
 				    Thread.sleep(delay);
 				} catch (InterruptedException e) {
@@ -132,6 +144,7 @@ public class WorldRunner {
     }
 
 
+    // Notify all listeners that the world has changed.
     private void notifyWorldChange() {
 	List l = this.listeners;
 	while (!l.isEmpty()) {
@@ -140,30 +153,24 @@ public class WorldRunner {
 	}
     }
 
-
-    public void asyncTransform(WorldTransformer t) {
-	synchronized(world) {
-	    this.world = t.transform(world);
-	}
-	notifyWorldChange();
-    }
-
-    static private interface Event {
-	Object transform(Object world);
+    // Add a new WorldTransformer to the queue.
+    public void queueTransformer(WorldTransformer t) {
+	this.eventQueue.offer(t);
     }
 
 
-    class TickEvent implements Event {
+    class TickEvent implements WorldTransformer {
 	public Object transform(Object world) {
 	    return onTick.transform(world);
 	}
     }
     
-//     class KeyEvent implements Event {
-// 	public KeyEvent
-// 	public Object transform(World e) {
-	    
-// 	}
-//     }
-
+    // A proxy event that just makes sure the event loop shuts down
+    // cleanly.
+    class StopEvent implements WorldTransformer {
+	public Object transform(Object world) {
+	    stopped = true;
+	    return world;
+	}
+    }
 }

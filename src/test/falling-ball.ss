@@ -23,7 +23,7 @@
   (place-image (circle RADIUS "solid" "red") (/ WIDTH 2) y
                (empty-scene WIDTH HEIGHT)))
 
-(big-bang WIDTH HEIGHT 1/15 0)
-(on-tick tick)
-(on-redraw draw-scene)
-(stop-when hits-floor?)
+(big-bang WIDTH HEIGHT 1/15 0
+          (on-tick tick)
+          (on-redraw draw-scene)
+          (stop-when hits-floor?))

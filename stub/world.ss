@@ -179,67 +179,56 @@
 (define big-bang
   (lambda x 
     (define args (length x))
-    (if (or (= args 5) (= args 4))
+    (if (> args 4)
         (apply big-bang0 x) 
         (error 'big-bang msg))))
 (define msg
   (string-append
-   "big-bang consumes 4 or 5 arguments:\n"
-   "-- (big-bang <width> <height> <rate> <world0>)\n"
-   "-- (big-bang <width> <height> <rate> <world0> <animated-gif>)\n"
+   "big-bang consumes at least 4 or 5 arguments:\n"
+   "-- (big-bang <width> <height> <rate> <world0> handlers ...)\n"
+   "-- (big-bang <width> <height> <rate> <world0> <animated-gif> handlers ...)\n"
    "see Help Desk."))
 (define *running?* #f)
-(define big-bang0
-  (case-lambda 
-    [(w h delta world) (big-bang w h delta world #f)]
-    [(w h delta world animated-gif) 
-     (check-pos 'big-bang w "first")
-     (check-pos 'big-bang h "second")
-     ;; ============================================
-     ;; WHAT IF THEY ARE NOT INTs?
-     ;; ============================================
-     (check-arg 'big-bang
-                (and (number? delta) (<= 0 delta 1000))
-                "number [of seconds] between 0 and 1000"
-                "third"
-                delta)
-     (check-arg 'big-bang 
-                (boolean? animated-gif)
-                "boolean expected"
-                "fifth"
-                animated-gif)
-     (let ([w (coerce w)]
-           [h (coerce h)])
-       (when *running?*  (error 'big-bang "the world is still running"))
-       (set! *running?* #t)
-       (callback-stop!)
-       ;; (when (vw-init?) (error 'big-bang "big-bang already called once"))
-       (install-world delta world) ;; call first to establish a visible world
-       (set-and-show-frame w h animated-gif) ;; now show it
-       (unless animated-gif (set! add-event void)) ;; no recording if image undesired
-       (set! *the-delta* delta)
-       #t)]))
+(define (big-bang0 w h delta world . args)
+  (let ([animated-gif #f])
+    (when (and (not (null? args))
+               (boolean? (car args)))
+      (set! animated-gif (car args))
+      (set! args (cdr args)))
+    
+    (check-pos 'big-bang w "first")
+    (check-pos 'big-bang h "second")
+    ;; ============================================
+    ;; WHAT IF THEY ARE NOT INTs?
+    ;; ============================================
+    (check-arg 'big-bang
+               (and (number? delta) (<= 0 delta 1000))
+               "number [of seconds] between 0 and 1000"
+               "third"
+               delta)
+    (check-arg 'big-bang 
+               (boolean? animated-gif)
+               "boolean expected"
+               "fifth"
+               animated-gif)
+    (let ([w (coerce w)]
+          [h (coerce h)])
+      (when *running?*  (error 'big-bang "the world is still running"))
+      (set! *running?* #t)
+      (callback-stop!)
+      ;; (when (vw-init?) (error 'big-bang "big-bang already called once"))
+      (install-world delta world) ;; call first to establish a visible world
+      (set-and-show-frame w h animated-gif) ;; now show it
+      (unless animated-gif (set! add-event void)) ;; no recording if image undesired
+      (set! *the-delta* delta)
+      (for-each (lambda (x) (x)) args)
+      #;(channel-get last-world-channel))))
 
 ;; Number -> Int 
 (define (coerce x) (inexact->exact (floor x)))
 
 (define *the-delta* 0.0)
 
-(define (on-tick f)
-  (check-proc 'on-tick f 1 "on-tick" "one argument")
-  (check-world 'on-tick)
-  (set-timer-callback f)
-  (send the-time start
-        (let* ([w (ceiling (* 1000 the-delta))])
-          (if (exact? w) w (inexact->exact w))))
-  #t)
-
-(define (on-redraw f)
-  (check-proc 'on-redraw f 1 "on-redraw" "one argument")
-  (check-world 'on-redraw)
-  (set-redraw-callback f)
-  (redraw-callback)
-  #t)
 
 (define (key-event? k)
   (or (char? k) (symbol? k)))
@@ -249,23 +238,6 @@
   (check-arg 'key=? (key-event? m) 'KeyEvent "first" m)
   (eqv? k m))
 
-(define (on-key f)
-  (check-proc 'on-key f 2 "on-key" "two arguments")
-  (check-world 'on-key)
-  (set-key-callback f (current-eventspace))
-  #t)
-
-(define (on-mouse f)
-  (check-proc 'on-mouse f 4 "on-mouse" "four arguments")
-  (check-world 'on-mouse)
-  (set-mouse-callback f (current-eventspace))
-  #t)
-
-(define (stop-when f)
-  (check-proc 'stop-when f 1 "stop-when" "one argument")
-  (check-world 'stop-when)
-  (set-stop-when-callback f)
-  #t)
 
 (define (run-movie movie)
   (check-arg 'run-movie (list? movie) "list (of images)" "first" movie)
@@ -528,6 +500,8 @@
 (define (check-world tag)
   (when (eq? unique-world the-world) 
     (error tag "evaluate (big-bang Number Number Number World) first")))
+
+(define last-world-channel (make-channel))
 
 (define the-world unique-world)
 (define the-world0 unique-world)
@@ -824,7 +798,8 @@
     (update-frame result)
     ;; if this world is the last one, stop the world
     (when (stop-when-callback)
-      (callback-stop!))))
+      (callback-stop!)
+      #;(channel-put last-world-channel the-world))))
 
 ;; f : [World -> Boolean]
 (define-callback stop-when "is end of world check" (f) ()
@@ -936,26 +911,66 @@
 
 
 
+(define (on-tick f)
+    (check-proc 'on-tick f 1 "on-tick" "one argument")
+  (lambda ()
+    (set-timer-callback f)
+    (send the-time start
+          (let* ([w (ceiling (* 1000 the-delta))])
+            (if (exact? w) w (inexact->exact w))))
+    #t))
+
+(define (on-redraw f)
+  (check-proc 'on-redraw f 1 "on-redraw" "one argument")
+  (lambda ()
+    (set-redraw-callback f)
+    (redraw-callback)
+    #t))
+
+
+(define (on-key f)
+  (check-proc 'on-key f 2 "on-key" "two arguments")
+  (lambda ()
+    (set-key-callback f (current-eventspace))
+    #t))
+
+(define (on-mouse f)
+  (check-proc 'on-mouse f 4 "on-mouse" "four arguments")
+  (lambda ()
+    (set-mouse-callback f (current-eventspace))
+    #t))
+
+(define (stop-when f)
+  (check-proc 'stop-when f 1 "stop-when" "one argument")
+  (lambda ()
+    (set-stop-when-callback f)
+    #t))
+
+
 (define (on-tilt handler)
-  (void))
+  (lambda ()
+    ;; fixme
+    #t))
 
 (define (on-acceleration handler)
-  (void))
+  (lambda ()
+    ;; fixme
+    #t))
 
 (define (on-message handler)
-  ;; fixme
-  (void))
+  (lambda ()
+    ;; fixme
+    #t))
 
 
 (define (on-location-change f)
   (check-proc 'on-location-change f 3 "on-location-change" 
               "three arguments")
-  (check-world 'on-location-change)
-  (set-location-callback f (current-eventspace))
+  (lambda ()
+    (set-location-callback f (current-eventspace))
+    (show-location-gui)
+    #t))
   
-  (show-location-gui)
-  #t)
-
 
 ;; f : [World KeyEvent -> World]
 ;; esp : EventSpace 

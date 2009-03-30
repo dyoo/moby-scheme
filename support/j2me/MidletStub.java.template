@@ -5,11 +5,16 @@ import javax.microedition.lcdui.*;
 
 import org.plt.platform.PlatformI;
 import org.plt.platform.Platform;
+
+import org.plt.world.WorldRunner;
+import org.plt.world.WorldConsumer;
+import org.plt.WorldKernel;
+
 import org.plt.world.MessageListener;
 import org.plt.world.LocationChangeListener;
 import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
-import org.plt.WorldKernel;
+
 
 
 // This is stub code.
@@ -23,7 +28,12 @@ import org.plt.WorldKernel;
 // ON-DESTROY
 
 
-public class <<PROGRAM-NAME>> extends MIDlet {
+public class <<PROGRAM-NAME>> extends MIDlet 
+    implements WorldConsumer,
+	       MessageListener, 
+	       LocationChangeListener, 
+	       OrientationChangeListener,
+	       AccelerationChangeListener  {
     static class UserProgram {
         // Important: definitions must come first, because they'll
         // include static blocks that initialize values that
@@ -34,16 +44,15 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	}
     }
 
-    // #0 big-bang's world0
-    Object world;
-    boolean stopped = false;
     MyCanvas canvas;
+    WorldRunner runner;
+    Object world;
 
 
     // When a program is paused, we'll restart the world.
     public void pauseApp() {
 	world = WorldKernel.getInitialWorld();
-	stopped = true;
+	this.runner.stop();
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
 	// can be used to register callbacks.
@@ -51,9 +60,10 @@ public class <<PROGRAM-NAME>> extends MIDlet {
 	<<ON-PAUSE>>
     }
 
+
     public void destroyApp(boolean unconditional) {
 	world = WorldKernel.getInitialWorld();
-	stopped = true;
+	this.runner.stop();
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
 	// can be used to register callbacks.
@@ -65,122 +75,147 @@ public class <<PROGRAM-NAME>> extends MIDlet {
     public void startApp() {
 	// debug: show the platform in the log.
 	// System.out.println(Platform.getInstance().getName());
-
-	UserProgram.runToplevel();
-	world = WorldKernel.getInitialWorld();
-	stopped = false;
-
+	this.world = null;
+	this.runner = new WorldRunner();
+	this.runner.addListener(this);
+	WorldKernel.setRunner(this.runner);
 	this.canvas = new MyCanvas();
 	// IMPORTANT: The injected code here assumes the
-	// presense of a 'listener' variable that
+	// presence of a 'listener' variable that
 	// can be used to register callbacks.
 	MyCanvas listener = canvas;
 	<<ON-START>>
-
 	Display.getDisplay(this).setCurrent(canvas);
-	new Thread(canvas).start();
+
+
+	new Thread() {
+	    public void run() {
+		UserProgram.runToplevel();
+	    }
+	};.start();
     }
 
-    class MyCanvas extends Canvas implements Runnable, MessageListener, LocationChangeListener, OrientationChangeListener, AccelerationChangeListener {
-	public void run() {
-	    // #1 delay expression
-	    long delay = (long) ((org.plt.types.NumberTower.multiply
-				  ((org.plt.types.Number)
-				   WorldKernel.getFrameRate(),
-				   new org.plt.types.Rational(1000, 1))).toInt());
-	    while(! stopped) {
-		repaint();
-		if(((org.plt.types.Logic) WorldKernel.getStopWhenHandler().call(new Object[] {world})).isTrue()) {
-		    //  #2 stop-when expression
-		    stopped = true;
-		} else {
-		    try {
-			Thread.sleep(delay);
-		    } catch (InterruptedException e) {}
-		    synchronized(world) {
-			//  #3 on-tick expression
-			world = WorldKernel.getOnTickHandler().call(new Object[] { world });
-		    }
-		}
-	    }
-	}
 
-        public void onMessage(Object aMessage) {
-	    if (stopped)
-		return;
-	    synchronized(world) {
-		world = WorldKernel.getOnMessageEventHandler().call
+    // WorldConsumer: we get the new world and show it!
+    public void consume(Object newWorld) {
+	this.world = newWorld;
+	if (this.canvas != null)
+	    this.canvas.redraw();
+    }
+
+
+    public void onMessage(final Object aMessage) {
+	this.runner.queueTransformer(new WorldTransformer()) {
+	    public Object transform(Object world) {
+		return WorldKernel.getOnMessageEventHandler().call
 		    (new Object[] { world, aMessage});
 	    }
-	    repaint();
 	}
+    }
 
-	public void onLocationChange(Object latitude, Object longitude) {
-	    if (stopped)
-		return;
-
-	    synchronized(world) {
-		world = WorldKernel.getOnLocationChangeEventHandler().call
+    public void onLocationChange(final Object latitude,
+				 final Object longitude) {
+	this.runner.queueTransformer(new WorldTransformer()) {
+	    public Object transform(Object world) {
+		return WorldKernel.getOnLocationChangeEventHandler().call
 		    (new Object[] { world, latitude, longitude });
-	    }	    
-	    repaint();
+	    }
 	}
+    }
 
-	public void onOrientationChange(Object azimuth, Object pitch, Object roll) {
-	    if (stopped)
-		return;
-
-	    synchronized(world) {
-		world = WorldKernel.getOnOrientationChangeEventHandler().call
+    public void onOrientationChange(final Object azimuth, 
+				    final Object pitch,
+				    final Object roll) {
+	this.runner.queueTransformer(new WorldTransformer()) {
+	    public Object transform(Object world) {
+		return WorldKernel.getOnOrientationChangeEventHandler().call
 		    (new Object[] { world, azimuth, pitch, roll });
-	    }	    
-	    repaint();
+	    }
 	}
+    }
 
-	public void onAccelerationChange(Object x, Object y, Object z) {
-	    if (stopped)
-		return;
 
-	    synchronized(world) {
-		world = WorldKernel.getOnAccelerationChangeEventHandler().call
-		    (new Object[] { world, x, y, z });
-	    }	    
-	    repaint();
+    public void onAccelerationChange(final Object x,
+				     final Object y,
+				     final Object z) {
+	this.runner.queueTransformer(new WorldTransformer()) {
+	    public Object transform(Object world) {
+		return WorldKernel.getOnAccelerationChangeEventHandler()
+		    .call(new Object[] { world, x, y, z });
+	    }
 	}
+    }
+
+
+
+
+
+    class MyCanvas extends Canvas {
+	// public void run() {
+// 	    // #1 delay expression
+// 	    long delay = (long) ((org.plt.types.NumberTower.multiply
+// 				  ((org.plt.types.Number)
+// 				   WorldKernel.getFrameRate(),
+// 				   new org.plt.types.Rational(1000, 1))).toInt());
+// 	    while(! stopped) {
+// 		repaint();
+// 		if(((org.plt.types.Logic) WorldKernel.getStopWhenHandler().call(new Object[] {world})).isTrue()) {
+// 		    //  #2 stop-when expression
+// 		    stopped = true;
+// 		} else {
+// 		    try {
+// 			Thread.sleep(delay);
+// 		    } catch (InterruptedException e) {}
+// 		    synchronized(world) {
+// 			//  #3 on-tick expression
+// 			world = WorldKernel.getOnTickHandler().call(new Object[] { world });
+// 		    }
+// 		}
+// 	    }
+// 	}
 
 
 	public void paint(Graphics g) {
-            org.plt.gui.GraphicsAdapter ag = new org.plt.gui.GraphicsAdapter(g);
+	    if (world == null)
+		return;
+
+            org.plt.gui.GraphicsAdapter ag = 
+		new org.plt.gui.GraphicsAdapter(g);
 	    // #4,5,6 on-redraw expression
-	    org.plt.gui.DrawPicture pVisitor = new org.plt.gui.DrawPicture(ag);
-	    org.plt.gui.Scene aScene = (org.plt.gui.Scene) WorldKernel.getOnRedrawHandler().call
+	    org.plt.gui.DrawPicture pVisitor = 
+		new org.plt.gui.DrawPicture(ag);
+	    org.plt.gui.Scene aScene =
+		(org.plt.gui.Scene) WorldKernel.getOnRedrawHandler().call
 		(new Object[] {world});
 	    aScene.accept(pVisitor, 0, 0);
 	}
 
+
 	protected void keyPressed(int keyCode) {
 	    if (stopped) { return; }
 
-	    Object aKey;
+	    final Object aKey = translateKeyCode(keyCode);
+	    runner.queueTransformer(new WorldTransformer() {
+		    public Object transform(Object world) {
+			return WorldKernel.getOnKeyEventHandler().call
+			    (new Object[] {world, aKey});
+		    }
+		});
+	}
+
+	private Object translateKeyCode(int keyCode) {
 	    switch(getGameAction(keyCode)) {
-	    case Canvas.LEFT: aKey = "left"; break;
-	    case Canvas.RIGHT: aKey = "right"; break;
-	    case Canvas.UP: aKey = "up"; break;
-	    case Canvas.DOWN: aKey = "down"; break;
+	    case Canvas.LEFT: return "left";
+	    case Canvas.RIGHT: return "right"; 
+	    case Canvas.UP: return "up";
+	    case Canvas.DOWN: return "down";
 	    default:
 		if (keyCode > 0) {
-		    aKey = new Character((char)keyCode);
+		    return new Character((char)keyCode);
 		} else {
-		    aKey= "";
+		    return "";
 		}
-		break;
 	    }
-	    
-	    synchronized(world) {
-		world = WorldKernel.getOnKeyEventHandler().call
-		    (new Object[] {world, aKey});
-	    }
-	    repaint();
 	}
     }
 }

@@ -5,6 +5,7 @@ import javax.microedition.midlet.*;
 import org.plt.types.*;
 import org.plt.gui.*;
 
+import org.plt.world.WorldRunner;
 
 // World kernel functions
 
@@ -23,6 +24,8 @@ public class WorldKernel {
     private static Callable onAccelerationChangeEventHandler;
     private static Callable onRedrawHandler;
     private static Callable stopWhenHandler;
+
+    private static WorldRunner runner;
 
     // Here are defaults for our handlers.
     static {
@@ -48,54 +51,77 @@ public class WorldKernel {
 		    return Logic.FALSE;
 		}
 	    };
+	worldRunner = new WorldRunner();
+    }
+
+
+    public static void setRunner(WorldRunner runner) {
+	WorldKernel.runner = runner;
     }
 
     public static Object big_dash_bang(Object width,
 				       Object height,
 				       Object frameRate,
-				       Object initialWorld) {
+				       Object initialWorld,
+				       Object[] handlers) {
 	WorldKernel.width = width;
         WorldKernel.height = height;
 	WorldKernel.frameRate = frameRate;
 	WorldKernel.initialWorld = initialWorld;
+	for (int i = 0; i < handlers.length; i++) {
+	    ((Initializer)handlers[i]).initialize();
+	}
 	return VoidObject.VOID;
     }
+
     public static Object getWidth() {
 	return WorldKernel.width;
     }
+
     public static Object getHeight() {
 	return WorldKernel.height;
     }
+
     public static Object getFrameRate() {
 	return WorldKernel.frameRate;
     }
+
     public static Object getInitialWorld() {
 	return WorldKernel.initialWorld;
     }
+
     public static Callable getOnTickHandler() {
 	return WorldKernel.onTickHandler;
     }
+
     public static Callable getOnKeyEventHandler() {
 	return WorldKernel.onKeyEventHandler;
     }
+
     public static Callable getOnMouseEventHandler() {
 	return WorldKernel.onMouseEventHandler;
     }
+
     public static Callable getOnMessageEventHandler() {
 	return WorldKernel.onMessageEventHandler;
     }
+
     public static Callable getOnLocationChangeEventHandler() {
 	return WorldKernel.onLocationChangeEventHandler;
     }
+
     public static Callable getOnOrientationChangeEventHandler() {
 	return WorldKernel.onOrientationChangeEventHandler;
     }
+
     public static Callable getOnAccelerationChangeEventHandler() {
 	return WorldKernel.onAccelerationChangeEventHandler;
     }
+
     public  static Callable getOnRedrawHandler() {
 	return WorldKernel.onRedrawHandler;
     }
+
     public static Callable getStopWhenHandler() {
 	return WorldKernel.stopWhenHandler;
     }
@@ -104,56 +130,85 @@ public class WorldKernel {
 
     //////////////////////////////////////////////////////////////////////
 
-
-
-
-    public static Object on_dash_tick_dash_event(Object callable) {
-	WorldKernel.onTickHandler = (Callable) callable;
-	return VoidObject.VOID;
-    }
-
-    public static Object on_dash_key_dash_event(Object callable) {
-	WorldKernel.onKeyEventHandler = (Callable) callable;
-	return VoidObject.VOID;
+    public static interface Initializer {
+	void initialize();
     }
 
 
-    public static Object on_dash_mouse_dash_event(Object callable) {
-	WorldKernel.onMouseEventHandler = (Callable) callable;
-	return VoidObject.VOID;
+    public static Object onTick(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onTickHandler = (Callable) callable;
+		}
+	    };
     }
 
-    public static Object on_dash_message_dash_event(Object callable) {
-	WorldKernel.onMessageEventHandler = (Callable) callable;
-	return VoidObject.VOID;
-    }
-
-
-    public static Object on_dash_location_dash_change_dash_event(Object callable) {
-	WorldKernel.onLocationChangeEventHandler = (Callable) callable;
-	return VoidObject.VOID;
-    }
-
-    public static Object on_dash_redraw(Object callable) {
-	WorldKernel.onRedrawHandler = (Callable) callable;
-	return VoidObject.VOID;
-    }
-
-    public static Object stop_dash_when(Object callable) {
-	WorldKernel.stopWhenHandler = (Callable) callable;
-	return VoidObject.VOID;
+    public static Object onKey(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onKeyEventHandler = (Callable) callable;
+		}
+	    };
     }
 
 
-    public static Object on_dash_orientation_dash_change_dash_event(Object callable) {
-	WorldKernel.onOrientationChangeEventHandler = (Callable) callable;
-	return VoidObject.VOID;
+    public static Object onMouse(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onMouseEventHandler = (Callable) callable;
+		}
+	    };
     }
 
-    public static Object on_dash_acceleration_dash_change_dash_event(Object callable) {
-	WorldKernel.onAccelerationChangeEventHandler = (Callable) callable;
-	return VoidObject.VOID;
+    public static Object onMessage(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onMessageEventHandler = (Callable) callable;
+		}
+	    };
     }
+
+    public static Object onLocationChange(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onLocationChangeEventHandler = (Callable) callable;
+		}
+	    };
+    }
+
+    public static Object onRedraw(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onRedrawHandler = (Callable) callable;
+		}
+	    };
+    }
+
+    public static Object stopWhen(final Object callable) {
+	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.stopWhenHandler = (Callable) callable;
+		}
+	    };
+    }
+
+
+    public static Object onOrientationChange(final Object callable) {
+ 	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onOrientationChangeEventHandler = (Callable) callable;
+		}
+	    };
+    }
+
+
+    public static Object onAccelerationChange(final Object callable) {
+ 	return new Initializer() {
+		public void initialize() {
+		    WorldKernel.onAccelerationChangeEventHandler = (Callable) callable;
+		}
+	    };
+     }
 
 
 
