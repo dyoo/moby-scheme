@@ -1409,6 +1409,21 @@ public class Kernel {
 		       (org.plt.types.List) args[args.length -1]);
     }
 
+    public static org.plt.types.List remove(Object _aList,
+					    Object anElt) {
+	org.plt.types.List aList = (org.plt.types.List) _aList;
+	org.plt.types.List soFar = Empty.EMPTY;
+	while (!aList.isEmpty()) {
+	    if (aList.first().equals(anElt)) {
+		return append2(reverse(soFar), 
+			       aList.rest());
+	    } else {
+		soFar = cons(aList.first(), soFar);
+		aList = aList.rest();
+	    }
+	}
+	return (org.plt.types.List) _aList;
+    }
 
 
 
