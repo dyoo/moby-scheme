@@ -321,18 +321,18 @@
                                                       "org.plt.WorldKernel.stopWhen")
                                
                                (bf 'empty-scene module-path 2 #f
-                                                      "org.plt.WorldKernel.empty_dash_scene")
+                                                      "org.plt.WorldKernel.emptyScene")
                                (bf 'place-image module-path 4 #f
-                                                      "org.plt.WorldKernel.place_dash_image")
+                                                      "org.plt.WorldKernel.placeImage")
                                (bf 'circle module-path 3 #f
                                                       "org.plt.WorldKernel.circle")
                                (bf 'nw:rectangle module-path 4 #f
-                                                      "org.plt.WorldKernel.nw_colon_rectangle")
+                                                      "org.plt.WorldKernel.nwRectangle")
                                                               (bf 'rectangle module-path 4 #f
                                                       "org.plt.WorldKernel.rectangle")
                                
                                (bf 'key=? module-path 2 #f
-                                                      "org.plt.WorldKernel.key_equal__question_")
+                                                      "org.plt.WorldKernel.isKeyEqual")
                                (bf 'text module-path 3 #f
                                                       "org.plt.WorldKernel.text")
                                
@@ -340,17 +340,17 @@
                                ;; We can fix this by extending expression to include a special "magic" identifier.  We should
                                ;; ensure students don't accidently hit this function.
                                (bf '-kernel-create-image module-path 1 #f
-                                                      "org.plt.WorldKernel._dash_kernel_dash_create_dash_image")
+                                                      "org.plt.WorldKernel._kernelCreateImage")
                                (bf 'image-width module-path 1 #f
-                                                      "org.plt.WorldKernel.image_dash_width")
+                                                      "org.plt.WorldKernel.imageWidth")
                                (bf 'image-height module-path 1 #f
-                                                      "org.plt.WorldKernel.image_dash_height")
+                                                      "org.plt.WorldKernel.imageHeight")
                                (bf 'image? module-path 1 #f
-                                                      "org.plt.WorldKernel.image_question_")
+                                                      "org.plt.WorldKernel.isImage")
                                (bf 'image=? module-path 2 #f
-                                                      "org.plt.WorldKernel.image_equal__question_")
+                                                      "org.plt.WorldKernel.isImageEqual")
                                (bf 'image-rotate module-path 2 #f
-                                                      "org.plt.WorldKernel.image_dash_rotate"))))
+                                                      "org.plt.WorldKernel.imageRotate"))))
 
 
 ;; world teachpack bindings

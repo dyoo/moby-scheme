@@ -9,6 +9,10 @@ public class Rational implements Number {
 	public static Rational ZERO = new Rational(0, 1);
 	public static Rational ONE = new Rational(1, 1);
 
+    public Rational(int x) {
+	this(x, 1);
+    }
+
 	public Rational(int n, int d) {
 		this(Bignum.valueOf(n), Bignum.valueOf(d));
 	}

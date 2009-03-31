@@ -236,15 +236,15 @@ public class WorldKernel {
 
     //////////////////////////////////////////////////////////////////////
 
-    public static Scene empty_dash_scene(Object width, Object height) {
+    public static Scene emptyScene(Object width, Object height) {
 	return Scene.emptyScene(((org.plt.types.Number)width).toInt(),
 				((org.plt.types.Number)height).toInt());
     }
 
-    public static Scene place_dash_image(Object image,
-					   Object x,
-					   Object y,
-					   Object scene) {
+    public static Scene placeImage(Object image,
+				   Object x,
+				   Object y,
+				   Object scene) {
 	return ((Scene)scene).placeImage((Picture)image,
 					 ((org.plt.types.Number) x).toInt(),
 					 ((org.plt.types.Number) y).toInt());
@@ -257,7 +257,7 @@ public class WorldKernel {
     }
 
     
-    public static Picture nw_colon_rectangle(Object width, Object height, 
+    public static Picture nwRectangle(Object width, Object height, 
 					       Object style, Object color) {
 	return new NwRectanglePicture(((org.plt.types.Number)width).toInt(),
 				      ((org.plt.types.Number)height).toInt(),
@@ -274,7 +274,7 @@ public class WorldKernel {
     }
 
 
-    public static Object key_equal__question_(Object k1, Object k2) {
+    public static Logic isKeyEqual(Object k1, Object k2) {
 	return toLogic(k1.toString().toUpperCase().equals
 			      (k2.toString().toUpperCase()));
 
@@ -291,34 +291,34 @@ public class WorldKernel {
     // Loads up the image resource named by filename.
     // FIXME: we still don't have a good way to prevent the user from
     // colliding with this name accidently...
-    public static Picture _dash_kernel_dash_create_dash_image(Object pathString) {
+    public static Picture _kernelCreateImage(Object pathString) {
 	return new FilePicture((String) pathString);
     }
 
 
 
-    public static org.plt.types.Number image_dash_width(Object img) {
+    public static org.plt.types.Number imageWidth(Object img) {
 	return new Rational(((Picture)img).getWidth(), 1);
     }
 
 
-    public static org.plt.types.Number image_dash_height(Object img) {
+    public static org.plt.types.Number imageHeight(Object img) {
 	return new Rational(((Picture)img).getHeight(), 1);
     }
     
 
-    public static org.plt.types.Logic image_question_(Object x) {
+    public static org.plt.types.Logic isImage(Object x) {
 	return toLogic(x instanceof Picture);
     }
 
 
-    public static Logic image_equal__question_(Object obj1, 
+    public static Logic isImageEqual(Object obj1, 
 					       Object obj2) {
 	// Fixme: fill me in
 	return toLogic(obj1.equals(obj2));
     }
 
-    public static Picture image_dash_rotate(Object image, Object degrees) {
+    public static Picture imageRotate(Object image, Object degrees) {
 	// Fixme: fill me in
 	return (Picture) image;
     }

@@ -23,3 +23,7 @@ program in
     moby/sandbox/guiworld
 
 and test the widgets out.
+
+
+
+Integrate the other event hooks (on-location, on-tilt, on-acceleration, on-key, on-tick) into gui-world.

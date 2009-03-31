@@ -73,4 +73,3 @@ Minor:
   compilation.  Android guarantees a floating-point unit; our current
   implementation uses the MicroFloat fixed-point library even though
   we don't need it.
-

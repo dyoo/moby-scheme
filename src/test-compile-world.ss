@@ -6,8 +6,8 @@
 
 (define (start-up-debug-printing)
   (let ([receiver (make-log-receiver (current-logger) 
-                                     #;'debug
-                                     'info
+                                     'debug
+                                     #;'info
                                      #;'error)])
     (thread (lambda ()
                (let loop ()
