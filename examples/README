@@ -13,3 +13,7 @@ to an interesting grocery store.
 
 location-announcer.ss: another GPS application that also uses SMS to
 notify others of the place where a user is located.
+
+
+bootstrap-game.ss: an example of a game that uses the simplified
+Boostrap teachpack.

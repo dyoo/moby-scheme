@@ -3,6 +3,7 @@ package org.plt.world;
 import org.plt.WorldKernel;
 import org.plt.Kernel;
 import org.plt.gui.Picture;
+import org.plt.gui.Scene;
 import org.plt.types.Posn;
 import org.plt.types.Number;
 import org.plt.types.NumberTower;
@@ -35,7 +36,7 @@ public class Bootstrap {
     
 
     String titleString;
-    Picture backgroundImage;
+    Scene backgroundScene;
     Callable updateTargetX;
     Callable updateTargetY;
     Callable updatePlayer;
@@ -83,8 +84,12 @@ public class Bootstrap {
 		     Object objectImage,
 		     Object offscreenCallable) {
 	this.titleString = (String) titleString;
-	this.backgroundImage = ((Picture) backgroundImage);
-	this.backgroundImage.setPinhole(0, 0);
+	Picture background = (Picture) backgroundImage;
+	background.setPinhole(0, 0);
+	this.backgroundScene = WorldKernel.placeImage(background,
+						      Rational.ZERO,
+						      Rational.ZERO,
+						      WorldKernel.emptyScene(new Rational(320), new Rational(480)));
 	this.updateTargetX = (Callable) updateTargetXCallable;
 	this.updateTargetY = (Callable) updateTargetYCallable;
 	this.updatePlayer = (Callable) updatePlayerCallable;
@@ -161,15 +166,16 @@ public class Bootstrap {
 							   (Kernel.even_question_(world.timer).isTrue() 
 							    ? "red" : "orange"));
 		    String scoreText = titleString + "     score: " + world.score;
-		    Picture addTarget = NumberTower.greaterThan(world.timer, Rational.ONE) ? 
+		    Picture addTarget = 
+			NumberTower.greaterThan(world.timer, Rational.ONE) ? 
 			WorldKernel.placeImage(explosion, 
 					       world.object.getX(),
 					       world.object.getY(),
-					       backgroundImage)
+					       backgroundScene)
 			: WorldKernel.placeImage(targetImage,
 						 world.target.getX(),
 						 world.target.getY(),
-						 backgroundImage);
+						 backgroundScene);
 		    Picture addObject = WorldKernel.placeImage(objectImage,
 							       world.object.getX(),
 							       world.object.getY(),
