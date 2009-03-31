@@ -38,13 +38,18 @@
              (make-compiled-program defns tops a-pinfo)]
             [else
              (cond [(defn? (first program))
+                    (let-values ([(defn-string expr-string)
+                                  (definition->java-string 
+                                           (first program) 
+                                           toplevel-env)])
+                                         
                     (loop (rest program)
                           (string-append defns
                                          "\n"
-                                         (definition->java-string 
-                                           (first program) 
-                                           toplevel-env))
-                          tops)]
+                                         defn-string)
+                          (string-append tops
+                                         "\n"
+                                         expr-string)))]
                    
                    [(test-case? (first program))
                     (loop (rest program)
@@ -73,23 +78,26 @@
 
 
 
-;; definition->java-string: definition env -> string
-;; Consumes a definition (define or define-struct) and produces a string
-;; that maps that definition to a static, public function that consumes
-;; Object arguments and produces Objects.  The second value is the
-;; list of bound symbols from the definition.
+;; definition->java-string: definition env -> (values string string)
+;; Consumes a definition (define or define-struct) and produces two strings.
+;; The first maps a definitions string.
+;; The second value is the expression that will be evaluated at the toplevel.
 ;;
 ;; Structure definitions map to static inner classes with transparent fields.
 (define (definition->java-string defn env)
   (match defn
     [(list 'define (list fun args ...) body)
-     (function-definition->java-string fun args body env)]
+     (values (function-definition->java-string fun args body env)
+             "")]
     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
-     (function-definition->java-string fun args body env)]
+     (values (function-definition->java-string fun args body env)
+             "")]
     [(list 'define (? symbol? id) body)
      (variable-definition->java-string id body env)]
+
     [(list 'define-struct id (list fields ...))
-     (struct-definition->java-string id fields env)]))
+     (values (struct-definition->java-string id fields env)
+             "")]))
 
 
 ;; function-definition->java-string: symbol (listof symbol) expr env -> string
@@ -122,17 +130,19 @@
 
 
 
-;; variable-definition->java-string: symbol expr env -> string
-;; Converts the variable definition into a static variable declaration.
+;; variable-definition->java-string: symbol expr env -> (values string string)
+;; Converts the variable definition into a static variable declaration and its
+;; initializer at the toplevel.
 (define (variable-definition->java-string id body env)
   (let* ([munged-id (identifier->munged-java-identifier id)]
          [new-env (env-extend env (make-binding:constant id 
                                                          (symbol->string munged-id)
                                                          empty))])
-    (format "static Object ~a; static { ~a = ~a; }" 
-            munged-id
-            munged-id
-            (expression->java-string body new-env))))
+    (values (format "static Object ~a; "
+                    munged-id)
+            (format "~a = ~a;" 
+                    munged-id
+                    (expression->java-string body new-env)))))
 
 
 
