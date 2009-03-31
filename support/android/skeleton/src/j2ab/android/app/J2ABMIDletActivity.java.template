@@ -26,6 +26,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 
+import android.view.Window;
+import android.view.WindowManager;
+
 
 public class J2ABMIDletActivity extends Activity implements Toolkit
 {
@@ -118,6 +121,13 @@ public class J2ABMIDletActivity extends Activity implements Toolkit
 	protected void onCreate(Bundle icicle) 
 	{
     	super.onCreate( icicle );
+
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+
+
     	this.handler = new Handler();
     	this.eventThread = Thread.currentThread();
     	// NOTE : you must start the application in verbose logging mode for this to work!

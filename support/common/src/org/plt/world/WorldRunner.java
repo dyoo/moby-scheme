@@ -143,6 +143,7 @@ public class WorldRunner {
 				try {
 				    Thread.sleep(delay);
 				} catch (InterruptedException e) {
+				    e.printStackTrace();
 				    // do nothing.
 				}
 			    }
@@ -172,6 +173,10 @@ public class WorldRunner {
 	public Object transform(Object world) {
 	    return onTick.transform(world);
 	}
+
+	public String toString() {
+	    return "tick";
+	}
     }
     
     // A proxy event that just makes sure the event loop shuts down
@@ -180,6 +185,9 @@ public class WorldRunner {
 	public Object transform(Object world) {
 	    stopped = true;
 	    return world;
+	}
+	public String toString() {
+	    return "stop";
 	}
     }
 }

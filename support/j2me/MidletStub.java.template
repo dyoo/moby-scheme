@@ -47,7 +47,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
     MyCanvas canvas;
     WorldRunner runner;
-    Object world;
 
 
     // When a program is paused, we'll restart the world.
@@ -72,7 +71,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
 
     public void startApp() {
-	this.world = null;
 	this.runner = new WorldRunner();
 	this.runner.addListener(this);
 	WorldKernel.setRunner(this.runner);
@@ -95,7 +93,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
     // WorldConsumer: we get the new world and show it!
     public void consume(Object newWorld) {
-	this.world = newWorld;
 	if (this.canvas != null)
 	    this.canvas.repaint();
     }
@@ -150,7 +147,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
     class MyCanvas extends Canvas {
 
 	public void paint(Graphics g) {
-	    if (world == null)
+	    if (runner.getWorld() == null)
 		return;
 
             org.plt.gui.GraphicsAdapter ag = 
@@ -160,7 +157,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
 		new org.plt.gui.DrawPicture(ag);
 	    org.plt.gui.Scene aScene =
 		(org.plt.gui.Scene) WorldKernel.getOnRedrawHandler().call
-		(new Object[] {world});
+		(new Object[] {runner.getWorld()});
 	    aScene.accept(pVisitor, 0, 0);
 	}
 
