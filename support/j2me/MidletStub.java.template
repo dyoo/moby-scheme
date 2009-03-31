@@ -55,7 +55,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
 	// can be used to register callbacks.
-	MyCanvas listener = canvas;
+	<<PROGRAM-NAME>> listener = this;
 	<<ON-PAUSE>>
     }
 
@@ -65,7 +65,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
 	// can be used to register callbacks.
-	MyCanvas listener = canvas;
+	<<PROGRAM-NAME>> listener = this;
 	<<ON-DESTROY>>
     }	
 
@@ -78,7 +78,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
 	// IMPORTANT: The injected code here assumes the
 	// presence of a 'listener' variable that
 	// can be used to register callbacks.
-	MyCanvas listener = canvas;
+	<<PROGRAM-NAME>> listener = this;
 	<<ON-START>>
 	Display.getDisplay(this).setCurrent(canvas);
 

@@ -92,12 +92,12 @@
                     test-approx-equal 
                     test-struct-question
                     test-move-ball
-                    test-image-question)
+                    test-image-question
  
                     test-location
                     test-location-2
                     test-tilt
-                    test-bubble
+                    test-bubble)
                     test-sketch
                     test-sketch-2
                     test-upside-down

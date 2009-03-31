@@ -348,24 +348,33 @@ public class Kernel {
 	}
 
 	// ////////////////////////////////////////////////////////////////////
-	public static Logic string_equal__question_(Object[] args) {
-		for (int i = 0; i < args.length - 1; i++) {
-		    String s1 = (String) args[i];
-		    String s2 = (String) args[i+1];
-		    if (string_question_(s1).isFalse())
-			throw new SchemeException(
-						  "string=?: expects type <string> as 1st argument, given: "
-						  + s1 + "; other arguments were: " + s2);
-		    if (string_question_(s1).isFalse())
-			throw new SchemeException(
-						  "string=?: expects type <string> as 2nd argument, given: "
-						  + s2 + "; other arguments were: " + s1);
-		    if (! s1.equals(s2)) {
-			return Logic.FALSE;
-		    }
-		    
+    public static Logic string_equal__question_(Object firstArg, Object secondArg,
+						Object[] args) {
+	ArgumentChecker.checkArrayType(args, stringClass, "string=?");
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object x, Object y) {
+		    return (((String) x).equals((String) y));
 		}
-		return Logic.TRUE;
+	    },
+	    firstArg, secondArg, args);
+	    
+	    // 		for (int i = 0; i < args.length - 1; i++) {
+// 		    String s1 = (String) args[i];
+// 		    String s2 = (String) args[i+1];
+// 		    if (string_question_(s1).isFalse())
+// 			throw new SchemeException(
+// 						  "string=?: expects type <string> as 1st argument, given: "
+// 						  + s1 + "; other arguments were: " + s2);
+// 		    if (string_question_(s1).isFalse())
+// 			throw new SchemeException(
+// 						  "string=?: expects type <string> as 2nd argument, given: "
+// 						  + s2 + "; other arguments were: " + s1);
+// 		    if (! s1.equals(s2)) {
+// 			return Logic.FALSE;
+// 		    }
+		    
+// 		}
+// 		return Logic.TRUE;
 	}
 
 

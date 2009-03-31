@@ -303,10 +303,10 @@ public class TestKernel {
 
 	@Test
 	public void testSubstring() {
-		assertTrue(Kernel.string_equal__question_(
+		assertTrue(Kernel.string_equal__question_(Kernel.substring("world", Kernel.ZERO, Kernel.TWO), 
+							  "wo",
 							  new Object[] {			  
-							      Kernel.substring("world", Kernel.ZERO, Kernel.TWO), 
-							      "wo"})
+							      })
 				.isTrue());
 	}
 
@@ -324,8 +324,8 @@ public class TestKernel {
 
 	@Test
 	public void testString_dash_copy() {
-		assertTrue(Kernel.string_equal__question_(
-							  new Object[] { Kernel.string_dash_copy("hi"), "hi"}).isTrue());
+	    assertTrue(Kernel.string_equal__question_(Kernel.string_dash_copy("hi"), "hi", 
+							  new Object[] { }).isTrue());
 	}
 
 	@Test
@@ -574,27 +574,27 @@ public class TestKernel {
 
 	@Test
 	public void testString_dash_append() {
-	    assertTrue(Kernel.string_equal__question_(new Object[] { "hello world",
-								     Kernel.string_dash_append("hello",new Object[] { " world"})}).isTrue());
+	    assertTrue(Kernel.string_equal__question_("hello world",
+						      Kernel.string_dash_append("hello",new Object[] { " world"}), new Object[] {}).isTrue());
 	}
 
 	@Test
 	public void testString() {
-	    assertTrue(Kernel.string_equal__question_(new Object[] {"hi", Kernel.string('h', new Object[]{ 'i' })})
+	    assertTrue(Kernel.string_equal__question_("hi", Kernel.string('h', new Object[]{ 'i' }), new Object[] {})
 		       .isTrue());
 	}
 
 	@Test
 	public void testMake_dash_string() {
-	    assertTrue(Kernel.string_equal__question_(new Object[] { "hh",
-								     Kernel.make_dash_string(Kernel.TWO, 'h')}).isTrue());
+	    assertTrue(Kernel.string_equal__question_( "hh",
+						       Kernel.make_dash_string(Kernel.TWO, 'h'), new Object[] {}).isTrue());
 	}
 
 	@Test
 	public void testList_dash__greaterthan_string() {
 		org.plt.types.List lst = new Pair('h', new Pair('i', Empty.EMPTY));
-		assertTrue(Kernel.string_equal__question_(
-							  new Object[] { Kernel.list_dash__greaterthan_string(lst), "hi"}).isTrue());
+		assertTrue(Kernel.string_equal__question_(Kernel.list_dash__greaterthan_string(lst), "hi", 
+							  new Object[] { }).isTrue());
 	}
 
 	@Test
