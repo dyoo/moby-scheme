@@ -223,7 +223,7 @@
     (r 'equal~? 3)
     (r 'error 2)
     (r 'struct? 1)
-    (r 'identity 1 #f)
+    (r 'identity 1)
     (r 'current-seconds 0)))
   
 

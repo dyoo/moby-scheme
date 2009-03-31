@@ -6,6 +6,8 @@ import org.plt.types.*;
 import org.plt.gui.*;
 
 import org.plt.world.WorldRunner;
+import org.plt.world.WorldTransformer;
+import org.plt.world.WorldJudge;
 
 // World kernel functions
 
@@ -51,7 +53,7 @@ public class WorldKernel {
 		    return Logic.FALSE;
 		}
 	    };
-	worldRunner = new WorldRunner();
+	runner = new WorldRunner();
     }
 
 
@@ -59,11 +61,11 @@ public class WorldKernel {
 	WorldKernel.runner = runner;
     }
 
-    public static Object big_dash_bang(Object width,
-				       Object height,
-				       Object frameRate,
-				       Object initialWorld,
-				       Object[] handlers) {
+    public static Object bigBang(Object width,
+				 Object height,
+				 Object frameRate,
+				 Object initialWorld,
+				 Object[] handlers) {
 	WorldKernel.width = width;
         WorldKernel.height = height;
 	WorldKernel.frameRate = frameRate;
@@ -71,7 +73,27 @@ public class WorldKernel {
 	for (int i = 0; i < handlers.length; i++) {
 	    ((Initializer)handlers[i]).initialize();
 	}
-	return VoidObject.VOID;
+
+	WorldKernel.runner.setWorld(initialWorld);
+	WorldKernel.runner.setDelay
+	    ((long) ((org.plt.types.NumberTower.multiply
+		      ((org.plt.types.Number) frameRate,
+		       new org.plt.types.Rational(1000, 1))).toInt()));
+
+	WorldKernel.runner.setOnTick(new WorldTransformer() {
+		public Object transform(Object world) {
+		    return onTickHandler.call(new Object[] { world });
+		}
+	    });
+	WorldKernel.runner.setStopWhen(new WorldJudge() {
+		public boolean judge(Object world) {
+		    return ((org.plt.types.Logic) 
+			    stopWhenHandler.call(new Object[] { world }))
+			.isTrue();
+		}
+	    });
+
+	return WorldKernel.runner.bigBang();
     }
 
     public static Object getWidth() {

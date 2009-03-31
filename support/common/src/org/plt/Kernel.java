@@ -78,59 +78,97 @@ public class Kernel {
 		return x;
 	}
 
-	// Numerics
 
-	// >=
-
-	public static Logic _greaterthan__equal_(Object[] args) {
-	    for(int i = 0; i < args.length - 1; i++) {
-		if (! NumberTower.greaterThanEqual((org.plt.types.Number) args[i],
-						   (org.plt.types.Number) args[i+1]))
-		    return Logic.FALSE;
-	    }
-	    return Logic.TRUE;
+    private static Logic chainedTest(ChainingTester c,
+				     Object firstArg,
+				     Object secondArg,
+				     Object[] restArgs) {
+	if (! c.test(firstArg, secondArg))
+	    return Logic.FALSE;
+	if (restArgs.length > 0 && (! c.test(secondArg, restArgs[0])))
+	    return Logic.FALSE;
+	for(int i = 0; i < restArgs.length - 1; i++) {
+	    if (! c.test(restArgs[i], restArgs[i+1]))
+		return Logic.FALSE;
 	}
+	return Logic.TRUE;
+    }
 
-	// >
-	public static Logic _greaterthan_(Object[] args) {
+    private static interface ChainingTester {
+	public boolean test(Object x, Object j);
+    }
 
-	    for(int i = 0; i < args.length - 1; i++) {
-		if (! NumberTower.greaterThan((org.plt.types.Number) args[i],
-					      (org.plt.types.Number) args[i+1]))
-		    return Logic.FALSE;
-	    }
-	    return Logic.TRUE;
-	}
 
-	// <=
-	public static Logic _lessthan__equal_(Object[] args) {
-	    for(int i = 0; i < args.length - 1; i++) {
-		if (! NumberTower.lessThanEqual((org.plt.types.Number) args[i],
-						(org.plt.types.Number) args[i+1]))
-		    return Logic.FALSE;
-	    }
-	    return Logic.TRUE;
-	}
+    // Numerics    
+    // >=
+    public static Logic _greaterthan__equal_(Object firstArg,
+					     Object secondArg,
+					     Object[] restArgs) {
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object x, Object y) {
+		    return NumberTower.greaterThanEqual
+			((org.plt.types.Number) x,
+			 (org.plt.types.Number) y);
+		}
+	    },
+	    firstArg, secondArg, restArgs);
+    }
 
-	// <
-	public static Logic _lessthan_(Object[] args) {
-	    for(int i = 0; i < args.length - 1; i++) {
-		if (! NumberTower.lessThan((org.plt.types.Number) args[i],
-					   (org.plt.types.Number) args[i+1]))
-		    return Logic.FALSE;
-	    }
-	    return Logic.TRUE;
-	}
+    // >
+    public static Logic _greaterthan_(Object firstArg,
+				      Object secondArg,
+				      Object[] restArgs) {
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object x, Object y) {
+		    return NumberTower.greaterThan
+			((org.plt.types.Number) x,
+			 (org.plt.types.Number) y);
+		}
+	    },
+	    firstArg, secondArg, restArgs);
+    }
 
-	// =
-	public static Logic _equal_(Object[] args) {
-	    for(int i = 0; i < args.length - 1; i++) {
-		if (! NumberTower.equal((org.plt.types.Number) args[i],
-					   (org.plt.types.Number) args[i+1]))
-		    return Logic.FALSE;
-	    }
-	    return Logic.TRUE;
-	}
+    // <=
+    public static Logic _lessthan__equal_(Object firstArg,
+					  Object secondArg,
+					  Object[] restArgs) {
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object x, Object y) {
+		    return NumberTower.lessThanEqual
+			((org.plt.types.Number) x,
+			 (org.plt.types.Number) y);
+		}
+	    },
+	    firstArg, secondArg, restArgs);
+    }
+
+    // <
+    public static Logic _lessthan_(Object firstArg,
+				   Object secondArg, 
+				   Object[] restArgs) {
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object x, Object y) {
+		    return NumberTower.lessThan
+			((org.plt.types.Number) x,
+			 (org.plt.types.Number) y);
+		}
+	    },
+	    firstArg, secondArg, restArgs);
+    }
+
+    // =
+    public static Logic _equal_(Object firstArg,
+				Object secondArg,
+				Object[] restArgs) {
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object x, Object y) {
+		return NumberTower.equal
+		    ((org.plt.types.Number) x,
+		     (org.plt.types.Number) y);
+		}
+	    },
+	    firstArg, secondArg, restArgs);
+    }
 
 	// =~
 	public static Logic _equal__tilde_(Object _n1, Object _n2, Object _n3) {
@@ -152,14 +190,15 @@ public class Kernel {
 	}
 
 	// -
-	public static org.plt.types.Number _dash_(Object[] args) {
-	    if (args.length == 1) {
+    public static org.plt.types.Number _dash_(Object firstArg,
+					      Object[] args) {
+	    if (args.length == 0) {
 		return NumberTower.minus(Rational.ZERO, 
-					 (org.plt.types.Number) args[0]);
+					 (org.plt.types.Number) firstArg);
 	    }
 	    org.plt.types.Number currentDifference = 
-		(org.plt.types.Number ) args[0];
-	    for(int i = 1; i < args.length; i++) {
+		(org.plt.types.Number ) firstArg;
+	    for(int i = 0; i < args.length; i++) {
 		currentDifference = NumberTower.minus
 		    (currentDifference,
 		     (org.plt.types.Number) args[i]);
@@ -179,10 +218,10 @@ public class Kernel {
     }
 
 	// /
-    public static org.plt.types.Number _slash_(Object[] args) {
+    public static org.plt.types.Number _slash_(Object x, Object[] args) {
 	org.plt.types.Number currentDivision = 
-	    (org.plt.types.Number) args[0];
-	for (int i = 1; i < args.length; i++) {
+	    (org.plt.types.Number) x;
+	for (int i = 0; i < args.length; i++) {
 	    currentDivision = NumberTower.divide(currentDivision,
 						 (org.plt.types.Number) args[i]);
 	}
@@ -268,37 +307,32 @@ public class Kernel {
 		return toLogic(((org.plt.types.Number) n).isZero());
 	}
 
-	public static org.plt.types.Number max(Object[] args) {
-	    org.plt.types.Number currentMax = 
-		NumberTower.greaterThanEqual((org.plt.types.Number) args[0],
-					     (org.plt.types.Number) args[1])
-		? (org.plt.types.Number) args[0] : (org.plt.types.Number) args[1];
-
-	    for(int i = 2; i < args.length; i++) {
+    public static org.plt.types.Number max(Object firstArg,
+					   Object[] restArgs) {
+	org.plt.types.Number currentMax = (org.plt.types.Number) firstArg; 
+	    for(int i = 0; i < restArgs.length; i++) {
 		currentMax = 
-		    NumberTower.greaterThanEqual(currentMax,
-						 (org.plt.types.Number) args[i])
-		    ? currentMax : (org.plt.types.Number) args[i];
-
+		    NumberTower.greaterThanEqual
+		    (currentMax,
+		     (org.plt.types.Number) restArgs[i])
+		    ? currentMax : (org.plt.types.Number) restArgs[i];
 	    }
 	    return currentMax;
 	}
 
-	public static org.plt.types.Number min(Object[] args) {
-	    org.plt.types.Number currentMin = 
-		NumberTower.lessThanEqual((org.plt.types.Number) args[0],
-					  (org.plt.types.Number) args[1])
-		? (org.plt.types.Number) args[0] : (org.plt.types.Number) args[1];
+    public static org.plt.types.Number min(Object firstArg,
+					   Object[] restArgs) {
+	org.plt.types.Number currentMin = (org.plt.types.Number) firstArg;
 
-	    for(int i = 2; i < args.length; i++) {
-		currentMin = 
-		    NumberTower.lessThanEqual(currentMin,
-					      (org.plt.types.Number) args[i])
-		    ? currentMin : (org.plt.types.Number) args[i];
-		
-	    }
-	    return currentMin;
+	for(int i = 0; i < restArgs.length; i++) {
+	    currentMin = 
+		NumberTower.lessThanEqual
+		(currentMin,
+		 (org.plt.types.Number) restArgs[i])
+		? currentMin : (org.plt.types.Number) restArgs[i];
 	}
+	return currentMin;
+    }
 
 	public static org.plt.types.Number sqr(Object n) {
 	    return NumberTower.multiply((org.plt.types.Number)n,
@@ -632,12 +666,16 @@ public class Kernel {
 		return toLogic(n instanceof org.plt.types.Symbol);
 	}
 
-	public static org.plt.types.Number gcd(Object[] args) {
-	    org.plt.types.Number currentGcd = gcd2((org.plt.types.Number) args[0], 
-						   (org.plt.types.Number) args[1]);
-	    for(int i = 2; i < args.length; i++) {
-		currentGcd = gcd2(currentGcd, gcd2(currentGcd, 
-						   (org.plt.types.Number) args[i]));
+    public static org.plt.types.Number gcd(Object first,
+					   Object second,
+					   Object[] args) {
+	    org.plt.types.Number currentGcd =
+		gcd2((org.plt.types.Number) first, 
+		     (org.plt.types.Number) second);
+	    for(int i = 0; i < args.length; i++) {
+		currentGcd = gcd2(currentGcd, 
+				  gcd2(currentGcd, 
+				       (org.plt.types.Number) args[i]));
 	    }
 	    return currentGcd;
 	}
@@ -668,11 +706,16 @@ public class Kernel {
 
 
 
-	public static org.plt.types.Number lcm(Object[] args) {
-	    org.plt.types.Number commonDivisor = gcd(args);
-	    org.plt.types.Number product = _star_(args);
-	    return abs(NumberTower.divide(product, commonDivisor));
-	}
+    public static org.plt.types.Number lcm(Object first, Object second,
+					   Object[] args) {
+	org.plt.types.Number commonDivisor = gcd(first, second, args);
+	org.plt.types.Number product =
+	    NumberTower.multiply((org.plt.types.Number)second,
+				 NumberTower.multiply
+				 ((org.plt.types.Number)first,
+				  _star_(args)));
+	return abs(NumberTower.divide(product, commonDivisor));
+    }
     
 
 	public static org.plt.types.Logic pair_question_(Object n) {
@@ -815,80 +858,59 @@ public class Kernel {
 		return toLogic(n instanceof String);
 	}
 
-	private static org.plt.types.Logic string_greaterthan__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string>?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string>?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).compareTo((String) n2) > 0);
-					}
-				}));
+	public static org.plt.types.Logic string_greaterthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string>?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string>?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).compareTo((String) n2) > 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
 	}
 
-	public static org.plt.types.Logic string_greaterthan__question_(Object n1,
-			Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_greaterthan__question_(arr);
+
+	public static org.plt.types.Logic string_greaterthan__equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string>=?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string>=?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).compareTo((String) n2) >= 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
 	}
 
-	private static org.plt.types.Logic string_greaterthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string>=?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string>=?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).compareTo((String) n2) >= 0);
-					}
-				}));
+	public static org.plt.types.Logic string_lessthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string<?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string<?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).compareTo((String) n2) < 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
+
 	}
 
-	public static org.plt.types.Logic string_greaterthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_greaterthan__equal__question_(arr);
+	public static org.plt.types.Logic string_lessthan__equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string<=?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string<=?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).compareTo((String) n2) <= 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
+
 	}
 
-	private static org.plt.types.Logic string_lessthan__question_(Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string<?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string<?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).compareTo((String) n2) < 0);
-					}
-				}));
-	}
-
-	public static org.plt.types.Logic string_lessthan__question_(Object n1,
-			Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_lessthan__question_(arr);
-	}
-
-	private static org.plt.types.Logic string_lessthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string<=?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string<=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).compareTo((String) n2) <= 0);
-					}
-				}));
-	}
-
-	public static org.plt.types.Logic string_lessthan__equal__question_(
-			Object n1, Object n2) {
-		Object[] arr = { n1, n2 };
-		return string_lessthan__equal__question_(arr);
-	}
 
 	private static org.plt.types.Logic natural_question_(Object n) {
 		return toLogic(integer_question_(n).isTrue()
@@ -980,76 +1002,71 @@ public class Kernel {
 		return toLogic(n instanceof Character);
 	}
 
-	public static org.plt.types.Logic char_equal__question_(Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char=?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char=?");
+    public static org.plt.types.Logic char_equal__question_(Object n1, 
+							    Object n2) {
+	return toLogic(((Character) n1).charValue() == ((Character) n2)
+		       .charValue());
+    }
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((Character) n1).charValue() == ((Character) n2)
-								.charValue());
-					}
-				}));
+
+    public static org.plt.types.Logic char_lessthan__question_
+	(Object firstArg, Object secondArg, Object[] restArgs) {
+	ArgumentChecker.checkArraySize(restArgs, 0, "char<?");
+	ArgumentChecker.checkArrayType(restArgs, characterClass, "char<?");
+	return chainedTest(new ChainingTester() {
+		public boolean test(Object n1, Object n2) {
+		    return (((Character) n1).charValue() < 
+			    ((Character) n2).charValue());
+		}
+	    },
+	    firstArg, secondArg, restArgs);
+    }
+
+
+    public static org.plt.types.Logic char_lessthan__equal__question_
+	(Object firstArg, Object secondArg, Object[] restArgs) {
+	    ArgumentChecker.checkArraySize(restArgs, 0, "char<=?");
+	    ArgumentChecker.checkArrayType(restArgs, characterClass, "char<=?");
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (((Character) n1).charValue() <= 
+				((Character) n2).charValue());
+			    
+		    }
+		},
+		firstArg, secondArg, restArgs);
+	}
+		
+
+	public static org.plt.types.Logic char_greaterthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char>?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char>?");
+
+
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (((Character) n1).charValue() >
+				((Character) n2).charValue());
+		    }
+		},
+		firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic char_lessthan__question_(Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char<?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char<?");
+    public static org.plt.types.Logic char_greaterthan__equal__question_
+	(Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char>=?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char>=?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((Character) n1).charValue() < ((Character) n2)
-								.charValue());
-					}
-				}));
-	}
-
-
-	public static org.plt.types.Logic char_lessthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char<=?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char<=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((Character) n1).charValue() <= ((Character) n2)
-								.charValue());
-					}
-				}));
-	}
-
-
-	public static org.plt.types.Logic char_greaterthan__question_(Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char>?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char>?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((Character) n1).charValue() > ((Character) n2)
-								.charValue());
-					}
-				}));
-	}
-
-
-    public static org.plt.types.Logic char_greaterthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char>=?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char>=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((Character) n1).charValue() >= ((Character) n2)
-								.charValue());
-					}
-				}));
-	}
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (((Character) n1).charValue() >=
+				((Character) n2).charValue());
+		    }
+		},
+		firstArg, secondArg, restArgs);
+    }
 
 	public static org.plt.types.Logic char_dash_upper_dash_case_question_(
 			Object n) {
@@ -1081,8 +1098,7 @@ public class Kernel {
 	}
 
 	public static Object char_dash_downcase(Object n) {
-		ArgumentChecker
-				.checkAtomType(n, "java.lang.Character", "char-downcase");
+		ArgumentChecker.checkAtomType(n, "java.lang.Character", "char-downcase");
 
 		return new Character(Character.toLowerCase(((Character) n).charValue()));
 	}
@@ -1103,156 +1119,154 @@ public class Kernel {
 		return toLogic((v >= 'a' && v <= 'z') || (v >= 'A' && v <= 'Z'));
 	}
 
-	public static org.plt.types.Logic char_dash_ci_equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char-ci=?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci=?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (Character.toLowerCase(((Character) n1)
-								.charValue()) == Character
-								.toLowerCase(((Character) n2).charValue()));
-					}
-				}));
+	public static org.plt.types.Logic char_dash_ci_equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char-ci=?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char-ci=?");
+
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (Character.toLowerCase(((Character) n1).charValue())
+				==
+				Character.toLowerCase(((Character) n2).charValue()));
+		    }
+		},
+		firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic char_dash_ci_greaterthan__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char-ci>?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci>?");
+	public static org.plt.types.Logic char_dash_ci_greaterthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char-ci>?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char-ci>?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (Character.toLowerCase(((Character) n1)
-								.charValue()) > Character
-								.toLowerCase(((Character) n2).charValue()));
-					}
-				}));
-	}
-
-	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char-ci>=?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci>=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (Character.toLowerCase(((Character) n1)
-								.charValue()) >= Character
-								.toLowerCase(((Character) n2).charValue()));
-					}
-				}));
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (Character.toLowerCase(((Character) n1).charValue())
+				>
+				Character.toLowerCase(((Character) n2).charValue()));
+		    }
+		},
+		firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic char_dash_ci_lessthan__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char-ci<?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci<?");
+	public static org.plt.types.Logic char_dash_ci_greaterthan__equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char-ci>=?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char-ci>=?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (Character.toLowerCase(((Character) n1)
-								.charValue()) < Character
-								.toLowerCase(((Character) n2).charValue()));
-					}
-				}));
-	}
-
-	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "char-ci<=?");
-		ArgumentChecker.checkArrayType(arr, characterClass, "char-ci<=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (Character.toLowerCase(((Character) n1)
-								.charValue()) <= Character
-								.toLowerCase(((Character) n2).charValue()));
-					}
-				}));
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (Character.toLowerCase(((Character) n1).charValue())
+				>=
+				Character.toLowerCase(((Character) n2).charValue()));
+		    }
+		},
+		firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic string_dash_ci_equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string-ci=?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci=?");
+	public static org.plt.types.Logic char_dash_ci_lessthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char-ci<?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char-ci<?");
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).toLowerCase().compareTo(
-								((String) n2).toLowerCase()) == 0);
-					}
-				}));
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (Character.toLowerCase(((Character) n1).charValue())
+				<
+				Character.toLowerCase(((Character) n2).charValue()));
+		    }
+		},
+		firstArg, secondArg, restArgs);
+	}
+
+	public static org.plt.types.Logic char_dash_ci_lessthan__equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "char-ci<=?");
+		ArgumentChecker.checkArrayType(restArgs, characterClass, "char-ci<=?");
+
+	    return chainedTest(new ChainingTester() {
+		    public boolean test(Object n1, Object n2) {
+			return (Character.toLowerCase(((Character) n1).charValue())
+				<=
+				Character.toLowerCase(((Character) n2).charValue()));
+		    }
+		},
+		firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic string_dash_ci_greaterthan__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string-ci>?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci>?");
+	public static org.plt.types.Logic string_dash_ci_equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string-ci=?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string-ci=?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).toLowerCase().compareTo
+				    (((String) n2).toLowerCase()) == 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
+	}
+	    
 
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).toLowerCase().compareTo(
-								((String) n2).toLowerCase()) > 0);
-					}
-				}));
+
+	public static org.plt.types.Logic string_dash_ci_greaterthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string-ci>?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string-ci>?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).toLowerCase().compareTo
+				    (((String) n2).toLowerCase()) > 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string-ci>=?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci>=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).toLowerCase().compareTo(
-								((String) n2).toLowerCase()) >= 0);
-					}
-				}));
+	public static org.plt.types.Logic string_dash_ci_greaterthan__equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string-ci>=?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string-ci>=?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).toLowerCase().compareTo
+				    (((String) n2).toLowerCase()) >= 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic string_dash_ci_lessthan__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string-ci<?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci<?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).toLowerCase().compareTo(
-								((String) n2).toLowerCase()) < 0);
-					}
-				}));
+	public static org.plt.types.Logic string_dash_ci_lessthan__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string-ci<?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string-ci<?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).toLowerCase().compareTo
+				    (((String) n2).toLowerCase()) < 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
 	}
 
 
-	public static org.plt.types.Logic string_dash_ci_lessthan__equal__question_(
-			Object[] arr) {
-		ArgumentChecker.checkArraySize(arr, 2, "string-ci<=?");
-		ArgumentChecker.checkArrayType(arr, stringClass, "string-ci<=?");
-
-		return toLogic(ArgumentChecker.checkArrayType(arr,
-				new RelationChecker() {
-					public boolean hasRelation(Object n1, Object n2) {
-						return (((String) n1).toLowerCase().compareTo(
-								((String) n2).toLowerCase()) <= 0);
-					}
-				}));
+	public static org.plt.types.Logic string_dash_ci_lessthan__equal__question_
+	    (Object firstArg, Object secondArg, Object[] restArgs) {
+		ArgumentChecker.checkArraySize(restArgs, 0, "string-ci<=?");
+		ArgumentChecker.checkArrayType(restArgs, stringClass, "string-ci<=?");
+		return chainedTest(new ChainingTester() {
+			public boolean test(Object n1, Object n2) {
+			    return (((String) n1).toLowerCase().compareTo
+				    (((String) n2).toLowerCase()) <= 0);
+			}
+		    },
+		    firstArg, secondArg, restArgs);
 	}
 
 
@@ -1273,25 +1287,27 @@ public class Kernel {
 		return ret;
 	}
 
-	public static Object string_dash_append(Object[] arr) {
-		ArgumentChecker.checkArrayType(arr, stringClass, "string-append");
+    public static Object string_dash_append(Object firstArg, Object[] arr) {
+	ArgumentChecker.checkArrayType(arr, stringClass, "string-append");
 
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < arr.length; i++) {
-			buf.append(arr[i]);
-		}
-		return buf.toString();
+	StringBuffer buf = new StringBuffer();
+	buf.append(firstArg.toString());
+	for (int i = 0; i < arr.length; i++) {
+	    buf.append(arr[i].toString());
 	}
+	return buf.toString();
+    }
 
-	public static Object string(Object[] arr) {
-		ArgumentChecker.checkArrayType(arr, characterClass, "string");
+    public static Object string(Object firstArg, Object[] arr) {
+	ArgumentChecker.checkArrayType(arr, characterClass, "string");
 
-		char[] ret = new char[arr.length];
-		for (int i = 0; i < arr.length; i++)
-			ret[i] = ((Character) arr[i]).charValue();
+	char[] ret = new char[arr.length + 1];
+	ret[0] = ((Character) firstArg).charValue();
+	for (int i = 0; i < arr.length; i++)
+	    ret[i+1] = ((Character) arr[i]).charValue();
 
-		return new String(ret);
-	}
+	return new String(ret);
+    }
 
 	public static Object make_dash_string(Object n1, Object n2) {
 		if (natural_question_(n1).isFalse())
@@ -1400,8 +1416,12 @@ public class Kernel {
     }
 
 
-    public static org.plt.types.List list_star_(Object[] args) {
+    public static org.plt.types.List list_star_(Object firstArg, Object[] args) {
 	org.plt.types.List result = Empty.EMPTY;
+	if (args.length == 0) 
+	    return (org.plt.types.List) firstArg;
+
+	result = cons(firstArg, result);
 	for(int i = 0; i < args.length-1; i++) {
 	    result = cons(args[i], result);
 	}
@@ -1427,9 +1447,9 @@ public class Kernel {
 
 
 
-    public static org.plt.types.List append(Object[] args) {
-	org.plt.types.List result = append2(args[0], args[1]);
-	for(int i = 2; i < args.length; i++) {
+    public static org.plt.types.List append(Object firstArg, Object[] args) {
+	org.plt.types.List result = (org.plt.types.List) firstArg;
+	for(int i = 0; i < args.length; i++) {
 	    result = append2(result, args[i]);
 	}
 	return result;

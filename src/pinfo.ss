@@ -291,34 +291,34 @@
 (define (make-world-module module-path)
     (make-module-binding 'world
                          module-path
-                         (list (bf 'big-bang module-path 4 #f "org.plt.WorldKernel.big_dash_bang")
+                         (list (bf 'big-bang module-path 4 #t "org.plt.WorldKernel.bigBang")
                                (bf 'on-tick module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_tick_dash_event")
+                                                      "org.plt.WorldKernel.onTick")
                                (bf 'on-mouse module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_mouse_dash_event")
-                               (bf 'on-key module-path 1 #f "org.plt.WorldKernel.on_dash_key_dash_event")
+                                                      "org.plt.WorldKernel.onMouse")
+                               (bf 'on-key module-path 1 #f "org.plt.WorldKernel.onKey")
                                (bf 'on-message module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_message_dash_event")
+                                                      "org.plt.WorldKernel.onMessage")
                                
                                (make-binding:function
                                 'on-location-change module-path 1 #f
-                                "org.plt.WorldKernel.on_dash_location_dash_change_dash_event"
+                                "org.plt.WorldKernel.onLocationChange"
                                 (list PERMISSION:LOCATION))
                                
                                (make-binding:function
                                 'on-tilt module-path 1 #f
-                                "org.plt.WorldKernel.on_dash_orientation_dash_change_dash_event"
+                                "org.plt.WorldKernel.onOrientationChange"
                                 (list PERMISSION:TILT))
                                
                                (make-binding:function
                                 'on-acceleration module-path 1 #f
-                                "org.plt.WorldKernel.on_dash_acceleration_dash_change_dash_event"
+                                "org.plt.WorldKernel.onAccelerationChange"
                                 (list PERMISSION:TILT))
                                
                                (bf 'on-redraw module-path 1 #f
-                                                      "org.plt.WorldKernel.on_dash_redraw")
+                                                      "org.plt.WorldKernel.onRedraw")
                                (bf 'stop-when module-path 1 #f
-                                                      "org.plt.WorldKernel.stop_dash_when")
+                                                      "org.plt.WorldKernel.stopWhen")
                                
                                (bf 'empty-scene module-path 2 #f
                                                       "org.plt.WorldKernel.empty_dash_scene")

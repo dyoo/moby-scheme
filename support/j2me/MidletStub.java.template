@@ -8,6 +8,7 @@ import org.plt.platform.Platform;
 
 import org.plt.world.WorldRunner;
 import org.plt.world.WorldConsumer;
+import org.plt.world.WorldTransformer;
 import org.plt.WorldKernel;
 
 import org.plt.world.MessageListener;
@@ -92,7 +93,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
 	    public void run() {
 		UserProgram.runToplevel();
 	    }
-	};.start();
+	}.start();
     }
 
 
@@ -100,50 +101,50 @@ public class <<PROGRAM-NAME>> extends MIDlet
     public void consume(Object newWorld) {
 	this.world = newWorld;
 	if (this.canvas != null)
-	    this.canvas.redraw();
+	    this.canvas.repaint();
     }
 
 
     public void onMessage(final Object aMessage) {
-	this.runner.queueTransformer(new WorldTransformer()) {
+	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
 		return WorldKernel.getOnMessageEventHandler().call
 		    (new Object[] { world, aMessage});
 	    }
-	}
+	    });
     }
 
     public void onLocationChange(final Object latitude,
 				 final Object longitude) {
-	this.runner.queueTransformer(new WorldTransformer()) {
+	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
 		return WorldKernel.getOnLocationChangeEventHandler().call
 		    (new Object[] { world, latitude, longitude });
 	    }
-	}
+	    });
     }
 
     public void onOrientationChange(final Object azimuth, 
 				    final Object pitch,
 				    final Object roll) {
-	this.runner.queueTransformer(new WorldTransformer()) {
+	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
 		return WorldKernel.getOnOrientationChangeEventHandler().call
 		    (new Object[] { world, azimuth, pitch, roll });
 	    }
-	}
+	    });
     }
 
 
     public void onAccelerationChange(final Object x,
 				     final Object y,
 				     final Object z) {
-	this.runner.queueTransformer(new WorldTransformer()) {
+	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
 		return WorldKernel.getOnAccelerationChangeEventHandler()
 		    .call(new Object[] { world, x, y, z });
 	    }
-	}
+	    });
     }
 
 
@@ -192,8 +193,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
 
 	protected void keyPressed(int keyCode) {
-	    if (stopped) { return; }
-
 	    final Object aKey = translateKeyCode(keyCode);
 	    runner.queueTransformer(new WorldTransformer() {
 		    public Object transform(Object world) {
