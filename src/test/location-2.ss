@@ -31,6 +31,6 @@
               a-longitude))
 
 
-(big-bang width height 1/10 initial-world)
-(on-redraw render-world)
-(on-location-change handle-location-change)
+(big-bang width height 1/10 initial-world
+          (on-redraw render-world)
+          (on-location-change handle-location-change))

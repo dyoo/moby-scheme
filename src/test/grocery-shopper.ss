@@ -230,6 +230,6 @@
 
 ;; Update every ten seconds.
 (define tick-delay 10)
-(big-bang WIDTH HEIGHT tick-delay initial-world)
-(on-redraw render)
-(on-location-change update-location)
+(big-bang WIDTH HEIGHT tick-delay initial-world
+          (on-redraw render)
+          (on-location-change update-location))

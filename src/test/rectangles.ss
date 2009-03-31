@@ -16,5 +16,5 @@
                 (empty-scene WIDTH HEIGHT))))
 
 
-(big-bang WIDTH HEIGHT 1 false)
-(on-redraw draw-world)
+(big-bang WIDTH HEIGHT 1 false
+          (on-redraw draw-world))

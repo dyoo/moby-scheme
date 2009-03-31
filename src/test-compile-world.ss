@@ -82,7 +82,7 @@
 
 ;; Exercises the application generator.
 (define (test-all g w)
-  (for ([test (list test-hello-world
+  (for ([test (list #;(test-hello-world
                     test-falling-ball 
                     test-falling-cow 
                     test-falling-ball-posn 
@@ -92,7 +92,8 @@
                     test-approx-equal 
                     test-struct-question
                     test-move-ball
-                    test-image-question
+                    test-image-question)
+ 
                     test-location
                     test-location-2
                     test-tilt

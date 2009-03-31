@@ -210,6 +210,6 @@
 
 
 
-(big-bang WIDTH HEIGHT 1 initial-world)
-(on-redraw render-world)
-(on-location-change handle-location-change)
+(big-bang WIDTH HEIGHT 1 initial-world
+          (on-redraw render-world)
+          (on-location-change handle-location-change))

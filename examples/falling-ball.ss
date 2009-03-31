@@ -38,7 +38,7 @@
                (empty-scene WIDTH HEIGHT)))
 
 ;; Start up a big bang, 15 frames a second.
-(big-bang WIDTH HEIGHT 1/15 INITIAL-WORLD)
-(on-tick tick)
-(on-redraw render)
-(stop-when hits-floor?)
+(big-bang WIDTH HEIGHT 1/15 INITIAL-WORLD
+          (on-tick tick)
+          (on-redraw render)
+          (stop-when hits-floor?))

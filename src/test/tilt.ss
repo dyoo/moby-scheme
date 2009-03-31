@@ -28,6 +28,6 @@
 (define (handle-orientation-change a-world new-a new-p new-r)
   (make-world new-a new-p new-r))
 
-(big-bang width height 1/10 initial-world)
-(on-redraw render-world)
-(on-tilt handle-orientation-change)
+(big-bang width height 1/10 initial-world
+          (on-redraw render-world)
+          (on-tilt handle-orientation-change))

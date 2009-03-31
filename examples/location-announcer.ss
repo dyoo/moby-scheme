@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname kathi-finder-single) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname location-announcer) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "location.ss" "moby" "stub"))
 (require (lib "sms.ss" "moby" "stub"))
 (require (lib "world.ss" "moby" "stub"))
@@ -137,7 +137,7 @@
 
 (define tick-delay (* 10 60))  ;; wait every ten minutes before updates.
 
-(big-bang WIDTH HEIGHT tick-delay initial-world)
-(on-tick send-report)
-(on-redraw render)
-(on-location-change change-location)
+(big-bang WIDTH HEIGHT tick-delay initial-world
+          (on-tick send-report)
+          (on-redraw render)
+          (on-location-change change-location))

@@ -23,7 +23,7 @@
                (posn-y w)
                (empty-scene WIDTH HEIGHT)))
 
-(big-bang WIDTH HEIGHT 1/15 (make-posn 0 0))
-(on-tick tick)
-(on-redraw draw-scene)
-(stop-when hits-floor?)
+(big-bang WIDTH HEIGHT 1/15 (make-posn 0 0)
+          (on-tick tick)
+          (on-redraw draw-scene)
+          (stop-when hits-floor?))

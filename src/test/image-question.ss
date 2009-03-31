@@ -26,5 +26,5 @@
                             0 0
                             (empty-scene WIDTH HEIGHT))))
 
-(big-bang WIDTH HEIGHT 1 0)
-(on-redraw draw-scene)
+(big-bang WIDTH HEIGHT 1 0
+          (on-redraw draw-scene))

@@ -29,6 +29,6 @@
               (get-longitude)))
 
 
-(big-bang width height 1 initial-world)
-(on-redraw render-world)
-(on-tick tick)
+(big-bang width height 1 initial-world
+          (on-redraw render-world)
+          (on-tick tick))

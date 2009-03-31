@@ -24,6 +24,6 @@
   (make-world new-pitch new-roll))
 
 
-(big-bang width height 1/20 initial-world)
-(on-redraw render-world)
-(on-tilt handle-orientation-change)
+(big-bang width height 1/20 initial-world
+          (on-redraw render-world)
+          (on-tilt handle-orientation-change))
