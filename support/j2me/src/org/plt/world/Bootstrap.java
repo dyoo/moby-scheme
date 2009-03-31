@@ -30,7 +30,7 @@ public class Bootstrap {
 
     private static Posn target1 = new Posn(new Rational(5), new Rational(235));
     private static Posn object1 = new Posn(new Rational(380), new Rational(-400));
-    private static Number player1 = new Rational(320);
+    private static Number player1 = new Rational(320 / 2);
     private static State world1 = new State(target1, player1, object1, new Rational(0), new Rational(1));
     
 
@@ -121,7 +121,7 @@ public class Bootstrap {
 		public Object call(Object[] args) {
 		    State world = (State) args[0];
 		    if (((Logic) isOffscreen.call
-			 (new Object[] { world.target.getX() }))
+			 (new Object[] { world.target.getX(), world.target.getY() }))
 			.isTrue()) {
 			return new State(target1,
 					 world.player,
@@ -171,8 +171,8 @@ public class Bootstrap {
 						 world.target.getY(),
 						 backgroundImage);
 		    Picture addObject = WorldKernel.placeImage(objectImage,
-							       world.target.getX(),
-							       world.target.getY(),
+							       world.object.getX(),
+							       world.object.getY(),
 							       addTarget);
 		    Picture addPlayer = WorldKernel.placeImage(playerImage,
 							       world.player,
