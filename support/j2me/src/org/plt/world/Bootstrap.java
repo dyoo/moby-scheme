@@ -45,6 +45,33 @@ public class Bootstrap {
     Picture objectImage;
     Callable isOffscreen;
 
+
+    public static Object start(Object titleString,
+		     Object backgroundImage,
+		     Object updateTargetXCallable,
+		     Object updateTargetYCallable,
+		     Object updatePlayerCallable,
+		     Object updateObjectCallable,
+		     Object targetImage,
+		     Object playerImage,
+		     Object objectImage,
+		     Object offscreenCallable) {
+	Bootstrap b = new Bootstrap(titleString,
+				    backgroundImage,
+				    updateTargetXCallable,
+				    updateTargetYCallable,
+				    updatePlayerCallable,
+				    updateObjectCallable,
+				    targetImage,
+				    playerImage,
+				    objectImage,
+				    offscreenCallable);
+	return b.run();
+    }
+
+
+
+
     public Bootstrap(Object titleString,
 		     Object backgroundImage,
 		     Object updateTargetXCallable,
@@ -69,7 +96,7 @@ public class Bootstrap {
     }
 
 
-    public Object start() {
+    public Object run() {
 	return WorldKernel.bigBang
 	    (new Rational(320), 
 	     new Rational(480),

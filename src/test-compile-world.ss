@@ -72,6 +72,8 @@
 (define test-gui-world-box-group (make-test "gui-world-box-group.ss"))
 (define test-gui-world-checkbox (make-test "gui-world-checkbox.ss"))
 
+(define test-simple-bootstrap-game (make-test "simple-bootstrap-game.ss"))
+
 ;; The programs here are the five programs of
 ;; How To Design Worlds (http://world.cs.brown.edu)
 (define test-cowabunga (make-test "cowabunga.ss"))
@@ -122,7 +124,9 @@
                     test-flight-lander
                     test-chicken
                     test-fire-fighter
-                    test-spaceflight)])
+                    test-spaceflight
+                    
+                    test-simple-bootstrap-game)])
     (test g w)))
 
 

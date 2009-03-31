@@ -359,11 +359,24 @@
          (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
     (make-world-module module-path)))
 
+
 ;; Alternative world teachpack bindings
 (define world-stub-module
   (let ([module-path                       
          (resolve-module-path '(lib "world.ss" "moby" "stub") #f)])
     (make-world-module module-path)))
+
+
+;; Bootstrap bindings
+(define bootstrap-module
+  (let ([module-path
+         (resolve-module-path '(lib "bootstrap.ss" "moby" "stub") #f)])
+    (make-module-binding 'world
+                         module-path
+                         (append (list (bf 'start module-path 10 #f "org.plt.world.Bootstrap.start"))
+                                 (module-binding-bindings world-stub-module)))))
+                         
+
 
 
 ;; location library
@@ -497,7 +510,8 @@
                             gui-world-module
                             sms-module
                             net-module
-                            parser-module))
+                            parser-module
+                            bootstrap-module))
                                         
 
 
