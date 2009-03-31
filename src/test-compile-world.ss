@@ -97,7 +97,7 @@
                     test-location
                     test-location-2
                     test-tilt
-                    test-bubble)
+                    test-bubble
                     test-sketch
                     test-sketch-2
                     test-upside-down
@@ -117,7 +117,7 @@
                     test-gui-world-box-group
                     test-gui-world-checkbox
                     
-                    test-cowabunga 
+                    test-cowabunga) 
                     test-flight-lander
                     test-chicken
                     test-fire-fighter
