@@ -89,6 +89,7 @@
 ;; teachpack.  We need to consume a text because we must first lift up all the images
 ;; as resources.
 (define (compile-program-to-j2me text name dest-dir)
+  (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-j2me-directories dest-dir)
   (lift-images-to-directory text (build-path dest-dir "res"))
   (let*-values ([(classname)
@@ -141,6 +142,7 @@
 ;; Writes out the compilation of the text program with the given name to the
 ;; destination directory.
 (define (compile-program-to-android text name dest-dir)
+  (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-android-directories dest-dir)
   (lift-images-to-directory text (build-path dest-dir "src"))
   (let* ([classname

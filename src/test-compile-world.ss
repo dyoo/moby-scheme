@@ -6,7 +6,8 @@
 
 (define (start-up-debug-printing)
   (let ([receiver (make-log-receiver (current-logger) 
-                                     'debug
+                                     #;'debug
+                                     'info
                                      #;'error)])
     (thread (lambda ()
                (let loop ()
@@ -82,7 +83,7 @@
 
 ;; Exercises the application generator.
 (define (test-all g w)
-  (for ([test (list #;(test-hello-world
+  (for ([test (list test-hello-world
                     test-falling-ball 
                     test-falling-cow 
                     test-falling-ball-posn 
@@ -117,7 +118,7 @@
                     test-gui-world-box-group
                     test-gui-world-checkbox
                     
-                    test-cowabunga) 
+                    test-cowabunga
                     test-flight-lander
                     test-chicken
                     test-fire-fighter
