@@ -4,6 +4,7 @@ import org.plt.WorldKernel;
 import org.plt.gui.Picture;
 import org.plt.types.Posn;
 import org.plt.types.Callable;
+import org.plt.types.Logic;
 import org.plt.types.Rational;
 
 public class Bootstrap {
@@ -36,11 +37,10 @@ public class Bootstrap {
     Callable updateTargetX;
     Callable updateTargetY;
     Callable updatePlayer;
-    Callable targetImage;
-    Callable playerImage;
-    Callable objectImage;
+    Picture targetImage;
+    Picture playerImage;
+    Picture objectImage;
     Callable isOffscreen;
-
 
     public Bootstrap(Object titleString,
 		     Object backgroundImage,
@@ -52,7 +52,7 @@ public class Bootstrap {
 		     Object playerImage,
 		     Object objectImage,
 		     Object offscreenCallable) {
-	this.titleString = titleString;
+	this.titleString = (String) titleString;
 	this.backgroundImage = (Picture) backgroundImage;
 	this.updateTargetX = (Callable) updateTargetXCallable;
 	this.updateTargetY = (Callable) updateTargetYCallable;
@@ -69,49 +69,49 @@ public class Bootstrap {
 	    (((Picture)backgroundImage).getWidth(),
 	     ((Picture)backgroundImage).getHeight(),
 	     getDelay(),
-	     new State(),
+	     world1,
 	     new Object[] {
 		 WorldKernel.onTick(getUpdateWorld()),
 		 WorldKernel.onRedraw(getDrawWorld()),
-		 WorldKernel.onKey(getKeypress)
+		 WorldKernel.onKey(getKeypress())
 	     });
     }
 
 
 
-    private static Rational getDelay() {
+    private Rational getDelay() {
 	return new Rational(1, 10);
     }
 
 
-    private static Callable getUpdateWorld(final Callable isOffscreen) {
+    private Callable getUpdateWorld() {
 	return new Callable() {
 		public Object call(Object[] args) {
-		    State world = args[0];
+		    State world = (State) args[0];
 		    if (((Logic) isOffscreen.call
 			 (new Object[] { world.target.getX() }))
 			.isTrue()) {
-			return new State(TARGET1,
+			return new State(target1,
 					 world.player,
-					 updateMovement(state.object),
+					 updateMovement(world.object),
 					 world.score,
 					 0);
 		    } else if (isCollide(world)) {
-			return new State(TARGET1,
+			return new State(target1,
 					 world.player,
-					 updateMovement(state.object),
+					 updateMovement(world.object),
 					 world.score + 100,
 					 151);
 		    } else if (world.timer > 1) {
 			return new State(world.target,
 					 world.player,
-					 updateMovement(state.object),
+					 updateMovement(world.object),
 					 world.score,
 					 world.timer - 15);
 		    } else {
 			return new State(updateTarget(world),
 					 world.player,
-					 updateMovement(state.object),
+					 updateMovement(world.object),
 					 world.score,
 					 world.timer);
 		    }
@@ -120,24 +120,24 @@ public class Bootstrap {
     }
 
 
-    private static Callable getDrawWorld() {
+    private Callable getDrawWorld() {
 	return null;
     }
 
-    private static Callable getKeypress() {
+    private Callable getKeypress() {
 	return null;
     }
 
 
-    private static boolean isCollide(State world) {
+    private boolean isCollide(State world) {
+	return false;
+    }
+
+    private Posn updateTarget(State world) {
 	return null;
     }
 
-    private static Callable updateTarget(State world) {
-	return null;
-    }
-
-    private static Object updateMovement(Posn object) {
+    private Posn updateMovement(Posn object) {
 	return null;
     }
 }

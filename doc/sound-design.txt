@@ -12,7 +12,7 @@ arguments:
 
 I propose adding another callback called shout:
 
-     (shout on-sound sound-on? after-sound)
+     (shout which-sound sound-on? after-sound)
 
 shout: (world -> sound) (world -> boolean) (world -> world)
 
