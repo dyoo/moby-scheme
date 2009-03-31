@@ -52,7 +52,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
     // When a program is paused, we'll restart the world.
     public void pauseApp() {
-	world = WorldKernel.getInitialWorld();
 	this.runner.stop();
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
@@ -63,7 +62,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
 
     public void destroyApp(boolean unconditional) {
-	world = WorldKernel.getInitialWorld();
 	this.runner.stop();
 	// IMPORTANT: The injected code here assumes the
 	// presense of a 'listener' variable that
@@ -74,8 +72,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
 
     public void startApp() {
-	// debug: show the platform in the log.
-	// System.out.println(Platform.getInstance().getName());
 	this.world = null;
 	this.runner = new WorldRunner();
 	this.runner.addListener(this);
@@ -152,29 +148,6 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
 
     class MyCanvas extends Canvas {
-	// public void run() {
-// 	    // #1 delay expression
-// 	    long delay = (long) ((org.plt.types.NumberTower.multiply
-// 				  ((org.plt.types.Number)
-// 				   WorldKernel.getFrameRate(),
-// 				   new org.plt.types.Rational(1000, 1))).toInt());
-// 	    while(! stopped) {
-// 		repaint();
-// 		if(((org.plt.types.Logic) WorldKernel.getStopWhenHandler().call(new Object[] {world})).isTrue()) {
-// 		    //  #2 stop-when expression
-// 		    stopped = true;
-// 		} else {
-// 		    try {
-// 			Thread.sleep(delay);
-// 		    } catch (InterruptedException e) {}
-// 		    synchronized(world) {
-// 			//  #3 on-tick expression
-// 			world = WorldKernel.getOnTickHandler().call(new Object[] { world });
-// 		    }
-// 		}
-// 	    }
-// 	}
-
 
 	public void paint(Graphics g) {
 	    if (world == null)

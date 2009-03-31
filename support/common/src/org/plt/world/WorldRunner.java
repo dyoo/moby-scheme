@@ -81,6 +81,9 @@ public class WorldRunner {
 
 
     public Object bigBang() {
+
+	final BlockingQueue lastWorldQueue = new LinkedBlockingQueue();
+
 	stopped = false;
 	startTimerEventThread();
 	// Starts up the eventLoop and waits for events.
@@ -108,18 +111,24 @@ public class WorldRunner {
 				}
 				notifyWorldChange();
 			    } catch (InterruptedException e) {
+				e.printStackTrace();
 				stopped = true;
 			    }
 			}
+			lastWorldQueue.offer(world);
 		    }
 		});
 	eventLoop.start();
-	try {
-	    eventLoop.join();
-	} catch (InterruptedException e) {
-	    stopped = true;
+	while (true) {
+	    try {
+		Object lastWorld = lastWorldQueue.take();
+		return lastWorld;
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+		stopped = true;
+		return world;
+	    }
 	}
-	return world;
     }
 
     // Starts up a thread that generates a TickEvent every

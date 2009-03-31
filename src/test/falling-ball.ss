@@ -14,7 +14,7 @@
   (+ y 5))
 
 (define (hits-floor? y)
-  (>= y HEIGHT))
+  (>= y (- HEIGHT RADIUS)))
 
 (check-expect (hits-floor? 0) false)
 (check-expect (hits-floor? HEIGHT) true)
@@ -23,7 +23,7 @@
   (place-image (circle RADIUS "solid" "red") (/ WIDTH 2) y
                (empty-scene WIDTH HEIGHT)))
 
-(big-bang WIDTH HEIGHT 1/15 0
+(big-bang WIDTH HEIGHT 1 0
           (on-tick tick)
           (on-redraw draw-scene)
           (stop-when hits-floor?))

@@ -27,6 +27,21 @@ public class TestKernel {
 		     new Pair(Empty.EMPTY, Empty.EMPTY));
     }
 
+    @Test
+	public void testGreaterThanOrEqual() {
+	assertFalse(Kernel._greaterthan__equal_(new Rational(0, 1),
+						new Rational(480, 1),
+						new Object[] {}).isTrue());
+	assertTrue(Kernel._greaterthan__equal_(new Rational(480, 1),
+					       new Rational(480, 1),
+					       new Object[] {}).isTrue());
+	assertTrue(Kernel._greaterthan__equal_(new Rational(481, 1),
+					       new Rational(480, 1),
+					       new Object[] {}).isTrue());
+    }
+
+
+
 
         @Test
         public void testSingleArgNegation() {
