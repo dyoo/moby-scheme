@@ -39,7 +39,7 @@
             [else
              (cond [(defn? (first program))
                     (let-values ([(defn-string expr-string)
-                                  (definition->java-string 
+                                  (definition->java-strings 
                                            (first program) 
                                            toplevel-env)])
                                          
@@ -84,7 +84,7 @@
 ;; The second value is the expression that will be evaluated at the toplevel.
 ;;
 ;; Structure definitions map to static inner classes with transparent fields.
-(define (definition->java-string defn env)
+(define (definition->java-strings defn env)
   (match defn
     [(list 'define (list fun args ...) body)
      (values (function-definition->java-string fun args body env)
@@ -93,7 +93,7 @@
      (values (function-definition->java-string fun args body env)
              "")]
     [(list 'define (? symbol? id) body)
-     (variable-definition->java-string id body env)]
+     (variable-definition->java-strings id body env)]
 
     [(list 'define-struct id (list fields ...))
      (values (struct-definition->java-string id fields env)
@@ -133,7 +133,7 @@
 ;; variable-definition->java-string: symbol expr env -> (values string string)
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
-(define (variable-definition->java-string id body env)
+(define (variable-definition->java-strings id body env)
   (let* ([munged-id (identifier->munged-java-identifier id)]
          [new-env (env-extend env (make-binding:constant id 
                                                          (symbol->string munged-id)
