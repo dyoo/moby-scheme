@@ -20,3 +20,6 @@
 
 * world doesn't currently take in the other handler functions as
   arguments to big-bang.
+
+* The unit tests in TestKernel concerning the complex numbers aren't
+  exercising that functionality correctly.
