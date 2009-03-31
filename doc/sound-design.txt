@@ -1,0 +1,90 @@
+Sound API
+
+The new design of big-bang allows us to pass in the callbacks as
+arguments:
+
+   (big-bang WIDTH HEIGHT DELAY WORLD0
+             (on-redraw ...)
+             (on-tick ...)
+             (on-tilt ...)
+             ...)
+
+
+I propose adding another callback called shout:
+
+     (shout on-sound sound-on? after-sound)
+
+shout: (world -> sound) (world -> boolean) (world -> world)
+
+
+The design is meant to fit in with the Mealy machines approach: a flag
+in the world indicates when a sound should be played, and another
+function is used to unflag the world after the sound is played.
+
+
+A 'sound' is a sound file (.wav/.mp3).  Ideally, I would like to be
+able to directly embed sounds into DrScheme files; just as we can
+embed images, we should be able to embed sound files.  DrScheme
+doesn't give us this facility yet.  So we need to extend DrScheme to
+support sound snips.
+
+
+Example:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Shows a blank screen, but plays a sound every minute.
+
+(define WIDTH 320)
+(define HEIGHT 480)
+(define DELAY 1)
+
+
+;; The world is a boolean that's true when
+;; we should play our sound
+(define WORLD false)
+
+
+;; play?: world -> boolean
+;; Produces true when we should play a file.
+(define (play? w)
+  w)
+
+
+;; choose-sound: world -> sound
+(define (choose-sound w)
+  ;; At the moment, this is constant, but imagine
+  ;; functions to compose sounds together.
+  <sound-snip>)
+
+
+;; clear-after-play: world -> world
+;; Clears the play flag.
+(define (clear-after-play w)
+  false)
+
+
+(big-bang WIDTH HEIGHT 60 WORLD
+          (on-tick tick)
+          (shout choose-sound play? clear-after-play))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+We should also have functions to work with sounds.  These are
+functions I think we should definitely have:
+
+    update-volume: sound number -> sound
+    ;; Controls the volume of a sound
+
+    volume: sound -> number
+    ;; Gets the volume of a sound (default 75, from a scale of 0-99)
+
+    sound-mix: sound sound ... -> sound
+    ;; Mixes sounds together.
+
+    sound-append: sound sound ... -> sound
+    ;; Appends sounds end-to-end
+
+
+
+    
