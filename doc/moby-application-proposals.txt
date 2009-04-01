@@ -1,0 +1,4 @@
+Music: Allow the user to pick a playlist and a duration.  Start
+playing the playlist.  As the duration expires, gradually weaken the
+volume until it goes away.  If the user shakes the phone, they're
+still awake -- restore the volume and keep playing.  Repeat.
