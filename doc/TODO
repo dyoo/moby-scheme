@@ -20,10 +20,6 @@ Major:
 
 * Implement all of the image.ss teachpack primitives.  See image-ss-todo.txt.
 
-* Port Emmanuel Schanzer's simplified world teachpack.  See
-  moby/sandbox/schanzer for examples of programs that use this
-  simplified teachpack.
-
 * Port the gui-world teachpack to Moby.  See gui-world-todo.txt.
 
 * Connect Google Maps to DrScheme so we can drive tests of the
@@ -38,7 +34,8 @@ Major:
 
 * Incorporate the libraries of mobile.processing.org into Moby.
 
-* Work on the network compiler in moby/src/web-application/simple-server.ss.
+* Work on the network compiler in
+  moby/src/web-application/simple-server.ss.
 
    - Add error trapping.
 
@@ -48,6 +45,10 @@ Major:
 
    - Set up watchdog.
 
+
+* Revive the J2ME port.  Some classes that we use aren't available
+  in the J2ME environment, so you'll need to carefully write
+  replacements for the missing components.
 
 
 Minor:
