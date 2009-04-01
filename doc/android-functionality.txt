@@ -54,7 +54,9 @@ Less important, but things to look at:
 
 * Audio and video
 
-  (Not stable in Android yet.)
+    http://developer.android.com/guide/topics/media/index.html
+
+We want to support audio capture and playback.
 
   In J2ME, the MMAPI provides:
 

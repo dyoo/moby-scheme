@@ -43,3 +43,11 @@ world0) to determine the appropriate layout.
 Deviation: strings are currently immutable in Moby.  Beginner-level
 programs are functional, and in particular, there are no string
 mutators, so this deviation shouldn't be visible.
+
+
+----------------------------------------------------------------------
+
+We should be very careful to avoid behavior that charges uses.  Under
+no circumstance should we do data-roaming by default.
+
+http://www.engadget.com/2008/12/10/t-mobile-produces-official-statement-regarding-international-g1/

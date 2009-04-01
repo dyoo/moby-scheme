@@ -45,6 +45,8 @@ Major:
 
    - Set up watchdog.
 
+* Implement an interesting Moby program.  See
+  moby-application-proposals.txt.
 
 * Revive the J2ME port.  Some classes that we use aren't available
   in the J2ME environment, so you'll need to carefully write

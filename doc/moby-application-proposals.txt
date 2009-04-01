@@ -1,4 +1,12 @@
-Music: Allow the user to pick a playlist and a duration.  Start
+Music alarm: Allow the user to pick a playlist and a duration.  Start
 playing the playlist.  As the duration expires, gradually weaken the
 volume until it goes away.  If the user shakes the phone, they're
 still awake -- restore the volume and keep playing.  Repeat.
+
+
+Zombie: implement the zombie variation of the hide-and-seek game.  Use
+location services to arrange the world in a grid.
+
+
+rock-paper-scissors: Implement rock-paper-scissors using Universe.
+Conflict resolution using rock-paper-scissors.
