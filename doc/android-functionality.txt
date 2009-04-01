@@ -1,6 +1,13 @@
 We want Scheme API's for the following Android functionality.
 
 
+* Native window size: we should be able to provide the native window
+  size.
+
+get-width, get-height
+
+
+
 
 * SMS Message listening for the world.
 
