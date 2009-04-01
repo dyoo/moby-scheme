@@ -7,13 +7,14 @@ Danny Yoo (dyoo@cs.wpi.edu)
 
 What is Moby?
 
-The Moby compiler consumes Beginner Student Language (BSL) programs
-that use World primitives, and produces applications for mobile
-platforms.  The current prototype supports the Android platform.  Our
-long-term goal is to make Scheme the premiere reactive scripting
-language for mobile phones.
+Moby is a project from the PLT Scheme team.  The Moby compiler
+consumes Beginner Student Language (BSL) programs that use World
+primitives, and produces applications for mobile platforms.  The
+current prototype supports the Android platform.  Our long-term goal
+is to make Scheme the premiere reactive scripting language for mobile
+phones.
 
-Shriram Krishnamurthi presented the ideas behind Moby for ILC 2009;
+Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009;
 his talk "The Moby Scheme Compiler for Smartphones" can be found here:
 
     http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/
