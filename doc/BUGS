@@ -18,8 +18,8 @@
   structure rather than a cached version of the final image, but there
   may be other sources of latency.
 
-* world doesn't currently take in the other handler functions as
-  arguments to big-bang.
-
 * The unit tests in TestKernel concerning the complex numbers aren't
   exercising that functionality correctly.
+
+* placeImage breaks if the scene passed in is an Image, and not a
+  Scene.
