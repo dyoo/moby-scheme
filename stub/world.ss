@@ -222,7 +222,7 @@
       (unless animated-gif (set! add-event void)) ;; no recording if image undesired
       (set! *the-delta* delta)
       (for-each (lambda (x) (x)) args)
-      #;(channel-get last-world-channel))))
+      (yield last-world-channel))))
 
 ;; Number -> Int 
 (define (coerce x) (inexact->exact (floor x)))
@@ -799,7 +799,7 @@
     ;; if this world is the last one, stop the world
     (when (stop-when-callback)
       (callback-stop!)
-      #;(channel-put last-world-channel the-world))))
+      (thread (lambda () (channel-put last-world-channel the-world))))))
 
 ;; f : [World -> Boolean]
 (define-callback stop-when "is end of world check" (f) ()
