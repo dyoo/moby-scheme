@@ -16,7 +16,7 @@
 
 ;; long-msg: world -> string
 (define (long-msg w)
-  (number->string (world-latitude w)))
+  (number->string (world-longitude w)))
 
 
 ;; The gui shows the latitude and longitude.
@@ -32,4 +32,5 @@
               a-longitude))
 
 
-(big-bang initial-world view)
+(big-bang initial-world view
+          (on-location-change handle-location-change))

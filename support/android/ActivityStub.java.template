@@ -64,6 +64,10 @@ public class <<PROGRAM-NAME>>
     public void onCreate(Bundle savedInstanceState) {
 	this.handler = new Handler();
 	super.onCreate(savedInstanceState);
+
+	((org.plt.platform.AndroidPlatform)
+	 org.plt.platform.Platform.getInstance())
+	    .setActivity(this);
     }
 
     public void onStart() {
