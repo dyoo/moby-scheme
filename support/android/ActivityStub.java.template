@@ -39,9 +39,9 @@ public class <<PROGRAM-NAME>>
 	}
     }
 
-
     private WorldRunner runner;
-
+    private Gui gui;
+    private GuiRenderer guiRenderer;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,11 @@ public class <<PROGRAM-NAME>>
 
     public void onStart() {
 	super.onStart();
+	beginRunning();
+    }
+
+
+    private void beginRunning() {
 	// IMPORTANT: The injected code here assumes the
 	// presence of a 'listener' variable that
 	// can be used to register callbacks.
@@ -58,6 +63,7 @@ public class <<PROGRAM-NAME>>
 	      
 	this.runner = new WorldRunner();
         this.runner.addListener(this);
+        this.gui = null;
 
 	Thread userThread = new Thread() {
 		public void run() {
@@ -65,26 +71,29 @@ public class <<PROGRAM-NAME>>
 		}
 	    };
 	userThread.run();
-
-//         world = GuiWorld.getInitialWorld();	
-//         gui = GuiWorld.getView();
-
-// 	LinearLayout view = new LinearLayout(this);
-// 	GuiRenderer guiRender = new GuiRenderer(world, view, gui);
-// 	setContentView(guiRender.getView());
     }
 
 
+
     public void consume(Object world) {
-	// Update the gui according to the view.
-	// fixme!
+	// If this is the first world we've consumed, then bring up the 
+	// gui.
+	if (gui == null) {
+	    gui = GuiWorld.getView();
+	    this.guiRenderer = new GuiRenderer(world,
+					       new LinearLayout(this),
+					     gui);
+	    setContentView(guiRender.getView());
+	} else {
+	    this.guiRenderer.changeWorld(world);
+	}
     }
 
 
     public void onMessage(final Object aMessage) {
 	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
-		return WorldKernel.getOnMessageEventHandler().call
+		return GuiWorld.getConfigReader().onMessageHandler.call
 		    (new Object[] { world, aMessage});
 	    }
 	    });
@@ -95,7 +104,7 @@ public class <<PROGRAM-NAME>>
 				 final Object longitude) {
 	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
-		return WorldKernel.getOnLocationChangeEventHandler().call
+		return GuiWorld.getConfigReader().onLocationChangeHandler.call
 		    (new Object[] { world, latitude, longitude });
 	    }
 	    });
@@ -107,7 +116,7 @@ public class <<PROGRAM-NAME>>
 				    final Object roll) {
 	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
-		return WorldKernel.getOnOrientationChangeEventHandler().call
+		return GuiWorld.getConfigReader().onTiltHandler.call
 		    (new Object[] { world, azimuth, pitch, roll });
 	    }
 	    });
@@ -119,7 +128,7 @@ public class <<PROGRAM-NAME>>
 				     final Object z) {
 	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
-		return WorldKernel.getOnAccelerationChangeEventHandler()
+		return GuiWorld.getConfigReader().onAccelerationHandler.call
 		    .call(new Object[] { world, x, y, z });
 	    }
 	    });
@@ -131,24 +140,18 @@ public class <<PROGRAM-NAME>>
     
     public void onRestart() {
 	super.onRestart();
-	// IMPORTANT: The injected code here assumes the
-	// presence of a 'listener' variable that
-	// can be used to register callbacks.
-	<<PROGRAM-NAME>> listener = this;
-	<<ON-START>>
+	beginRunning();
     }
     
     public void onResume() {
 	super.onResume();
-	// IMPORTANT: The injected code here assumes the
-	// presence of a 'listener' variable that
-	// can be used to register callbacks.
-	<<PROGRAM-NAME>> listener = this;
-	<<ON-START>>
+	beginRunning();
     }
    
     public void onPause() {
 	super.onPause();
+	this.runner.stop();
+
 	// IMPORTANT: The injected code here assumes the
 	// presence of a 'listener' variable that
 	// can be used to register callbacks.
@@ -158,6 +161,8 @@ public class <<PROGRAM-NAME>>
     
     public void onStop() {
 	super.onStop();
+	this.runner.stop();
+
 	// IMPORTANT: The injected code here assumes the
 	// presence of a 'listener' variable that
 	// can be used to register callbacks.
@@ -167,6 +172,8 @@ public class <<PROGRAM-NAME>>
 
     public void onDestroy() {
 	super.onDestroy();
+	this.runner.stop();
+
 	// IMPORTANT: The injected code here assumes the
 	// presence of a 'listener' variable that
 	// can be used to register callbacks.
@@ -174,4 +181,3 @@ public class <<PROGRAM-NAME>>
 	<<ON-DESTROY>>
     }
 }
- 

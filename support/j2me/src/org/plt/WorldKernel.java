@@ -17,7 +17,6 @@ import org.plt.world.config.*;
 public class WorldKernel {
     private static Object width;
     private static Object height;
-    private static Object frameRate;
     private static Object initialWorld;
 
     private static WorldRunner runner;
@@ -33,12 +32,10 @@ public class WorldKernel {
 
     public static Object bigBang(Object width,
 				 Object height,
-				 Object frameRate,
 				 Object initialWorld,
 				 Object[] configs) {
 	WorldKernel.width = width;
         WorldKernel.height = height;
-	WorldKernel.frameRate = frameRate;
 	WorldKernel.initialWorld = initialWorld;
 
 	configReader = new ConfigReader();
@@ -46,9 +43,7 @@ public class WorldKernel {
 
 	WorldKernel.runner.setWorld(initialWorld);
 	WorldKernel.runner.setDelay
-	    ((long) ((org.plt.types.NumberTower.multiply
-		      ((org.plt.types.Number) frameRate,
-		       new org.plt.types.Rational(1000, 1))).toInt()));
+	    ((long) (configReader.delay.toInt()));
 
 	WorldKernel.runner.setOnTick(new WorldTransformer() {
 		public Object transform(Object world) {
@@ -77,10 +72,6 @@ public class WorldKernel {
 
     public static Object getHeight() {
 	return WorldKernel.height;
-    }
-
-    public static Object getFrameRate() {
-	return WorldKernel.frameRate;
     }
 
     public static Object getInitialWorld() {

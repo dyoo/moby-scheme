@@ -5,6 +5,8 @@ import org.plt.types.*;
 import org.plt.gui.Scene;
 
 public class ConfigReader {
+    public org.plt.types.Number delay;
+
     public Callable onTickHandler;
     public Callable onKeyHandler;
     public Callable onMouseHandler;
@@ -17,8 +19,11 @@ public class ConfigReader {
 
 
     public ConfigReader() {
+	// Here are defaults that will be overwritten
+	// when we load the configs.
 
-	// Here are defaults for our handlers.
+	delay = Rational.ZERO;
+
 	onTickHandler = 
 	    onKeyHandler = 
 	    onMouseHandler =
@@ -55,6 +60,7 @@ public class ConfigReader {
 
     class MyVisitor implements ConfigVisitor {
 	public void visit(OnTick config) {
+	    delay = config.delay;
 	    onTickHandler = config.c;
 	}
 

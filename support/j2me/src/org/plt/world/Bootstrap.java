@@ -105,10 +105,9 @@ public class Bootstrap {
 	return WorldKernel.bigBang
 	    (new Rational(320), 
 	     new Rational(480),
-	     getDelay(),
 	     world1,
 	     new Object[] {
-		 org.plt.world.config.Kernel.onTick(getUpdateWorld()),
+		 org.plt.world.config.Kernel.onTick(getDelay(), getUpdateWorld()),
 		 org.plt.world.config.Kernel.onRedraw(getDrawWorld()),
 		 org.plt.world.config.Kernel.onKey(getKeypress())
 	     });

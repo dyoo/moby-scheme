@@ -290,7 +290,7 @@
   (let ([module-path (resolve-module-path '(lib "world-config.ss" "moby" "stub") #f)])
     (make-module-binding 'world-config
                          module-path
-                         (list (bf 'on-tick module-path 1 #f "org.plt.world.config.Kernel.onTick")
+                         (list (bf 'on-tick module-path 2 #f "org.plt.world.config.Kernel.onTick")
                                (bf 'on-mouse module-path 1 #f "org.plt.world.config.Kernel.onMouse")
                                (bf 'on-key module-path 1 #f "org.plt.world.config.Kernel.onKey")
                                (bf 'on-message module-path 1 #f "org.plt.world.config.Kernel.onMessage")
@@ -321,7 +321,7 @@
     (make-module-binding 'world
                          module-path
                          (append (module-binding-bindings world-config-module)
-                                 (list (bf 'big-bang module-path 4 #t "org.plt.WorldKernel.bigBang")
+                                 (list (bf 'big-bang module-path 3 #t "org.plt.WorldKernel.bigBang")
                                        (bf 'empty-scene module-path 2 #f
                                            "org.plt.WorldKernel.emptyScene")
                                        (bf 'place-image module-path 4 #f

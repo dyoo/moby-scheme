@@ -6,6 +6,7 @@ import org.plt.checker.SchemeException;
 import org.plt.world.WorldTransformer;
 import org.plt.world.WorldAndObjectTransformer;
 import org.plt.world.WorldRunner;
+import org.plt.world.WorldJudge;
 import org.plt.world.config.ConfigReader;
 
 
@@ -20,6 +21,12 @@ public class GuiWorld {
 	GuiWorld.runner = runner;
     }
 
+
+    public static ConfigReader getConfigReader() {
+	return GuiWorld.configReader;
+    }
+
+
     public static Object bigBang(Object initialWorld,
 				 Object view,
 				 Object[] configs) {
@@ -27,8 +34,29 @@ public class GuiWorld {
 	GuiWorld.view = asGui(view);
 	configReader = new ConfigReader();
 	configReader.load(configs);
-	return VoidObject.VOID;
+
+
+	runner.setWorld(initialWorld);
+	runner.setDelay((long) (configReader.delay.toInt()));
+
+	runner.setOnTick(new WorldTransformer() {
+		public Object transform(Object world) {
+		    return configReader.onTickHandler.call
+			(new Object[] { world });
+		}
+	    });
+	runner.setStopWhen(new WorldJudge() {
+		public boolean judge(Object world) {
+		    return ((org.plt.types.Logic) 
+			    configReader.stopWhenHandler.call
+			    (new Object[] { world }))
+			.isTrue();
+		}
+	    });
+
+	return runner.bigBang();
     }
+
 
     public static Object getInitialWorld() {
 	return GuiWorld.initialWorld;

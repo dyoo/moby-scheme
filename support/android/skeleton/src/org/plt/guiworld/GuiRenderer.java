@@ -43,7 +43,7 @@ public class GuiRenderer {
     }
 
     // Initialize the form contents.
-    public void initializeForm() {
+    private void initializeForm() {
 	this.gui.accept(new InitialGuiConstructor(view));
     }
 

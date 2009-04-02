@@ -33,7 +33,7 @@
                (empty-scene WIDTH HEIGHT)))
 
 
-(big-bang WIDTH HEIGHT 1 (make-posn (/ WIDTH 2) (/ HEIGHT 2))
-          (on-tick tick)
+(big-bang WIDTH HEIGHT (make-posn (/ WIDTH 2) (/ HEIGHT 2))
+          (on-tick 1 tick)
           (on-redraw draw-scene)
           (on-key move-ball))
