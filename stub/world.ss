@@ -179,7 +179,7 @@
 (define big-bang
   (lambda x 
     (define args (length x))
-    (if (> args 3)
+    (if (>= args 3)
         (apply big-bang0 x) 
         (error 'big-bang msg))))
 (define msg
@@ -206,6 +206,17 @@
                "boolean expected"
                "fourth"
                animated-gif)
+
+    ;; fixme: improve error reporting.
+    (for-each (lambda (x) 
+                (check-arg 'big-bang 
+                           (procedure? x)
+                           "configuration option (on-tick, stop-when, ...) expected"
+                           "nth"
+                           x))
+              args)
+                
+    
     (let ([w (coerce w)]
           [h (coerce h)])
       (when *running?*  (error 'big-bang "the world is still running"))

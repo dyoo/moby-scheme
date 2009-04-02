@@ -13,4 +13,4 @@
                    "This is a test; hello world"
                    the-world)
 
-(big-bang WIDTH HEIGHT 1/20 the-world)
+(big-bang WIDTH HEIGHT the-world)

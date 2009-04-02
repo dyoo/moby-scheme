@@ -20,5 +20,5 @@
                             (empty-scene 320 480))))
 
 
-(big-bang 320 480 1 false
+(big-bang 320 480 false
           (on-redraw draw-world))

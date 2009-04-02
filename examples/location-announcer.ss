@@ -137,7 +137,7 @@
 
 (define tick-delay (* 10 60))  ;; wait every ten minutes before updates.
 
-(big-bang WIDTH HEIGHT tick-delay initial-world
-          (on-tick send-report)
+(big-bang WIDTH HEIGHT initial-world
+          (on-tick tick-delay send-report)
           (on-redraw render)
           (on-location-change change-location))

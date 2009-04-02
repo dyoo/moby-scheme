@@ -159,8 +159,8 @@
 
 
 
-(big-bang WIDTH HEIGHT 1/10 (randomize-target-posn initial-world)
+(big-bang WIDTH HEIGHT (randomize-target-posn initial-world)
           (on-redraw render-world)
-          (on-tick tick)
+          (on-tick 1/10 tick)
           (on-tilt handle-orientation-change)
           (stop-when game-end?))

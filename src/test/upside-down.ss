@@ -27,6 +27,6 @@
   (or (> (abs pitch) 120)
       (> (abs roll) 120)))
 
-(big-bang width height 1/10 initial-world
+(big-bang width height initial-world
           (on-redraw render-world)
           (on-tilt handle-orientation-change))

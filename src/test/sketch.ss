@@ -173,7 +173,7 @@
 
 
 
-(big-bang WIDTH HEIGHT 1/20 initial-world
+(big-bang WIDTH HEIGHT initial-world
           (on-redraw render-etch-a-sketch)
-          (on-tick move-by-drifting)
+          (on-tick 1/20 move-by-drifting)
           (on-tilt handle-orientation-change))
