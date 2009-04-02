@@ -61,7 +61,7 @@
  )
 
 (provide-higher-order-primitive
- on-tick (tock) ;; (World -> World) -> true
+ on-tick (_ tock) ;; Number (World -> World) -> true
  )
 
 (provide-higher-order-primitive
@@ -563,6 +563,7 @@
          (super-new)
          (define/augment (on-close)  
            (callback-stop!)
+           (thread (lambda () (channel-put last-world-channel the-world)))
            (custodian-shutdown-all the-play-back-custodian)))
        (label "DrScheme")
        (stretchable-width #f)
