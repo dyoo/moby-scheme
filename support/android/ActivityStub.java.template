@@ -20,6 +20,15 @@ import org.plt.guiworld.GuiRenderer;
 import org.plt.guiworld.GuiWorld;
 
 
+import org.plt.world.WorldRunner;
+import org.plt.world.WorldConsumer;
+import org.plt.world.WorldTransformer;
+import org.plt.world.MessageListener;
+import org.plt.world.LocationChangeListener;
+import org.plt.world.OrientationChangeListener;
+import org.plt.world.AccelerationChangeListener;
+
+
 
 public class <<PROGRAM-NAME>> 
     extends Activity
@@ -65,6 +74,7 @@ public class <<PROGRAM-NAME>>
         this.runner.addListener(this);
         this.gui = null;
 
+	GuiWorld.setRunner(this.runner);
 	Thread userThread = new Thread() {
 		public void run() {
 		    UserProgram.runToplevel();
@@ -76,6 +86,7 @@ public class <<PROGRAM-NAME>>
 
 
     public void consume(Object world) {
+	System.out.println("Consuming a world " + world);
 	// If this is the first world we've consumed, then bring up the 
 	// gui.
 	if (gui == null) {
@@ -83,7 +94,7 @@ public class <<PROGRAM-NAME>>
 	    this.guiRenderer = new GuiRenderer(world,
 					       new LinearLayout(this),
 					     gui);
-	    setContentView(guiRender.getView());
+	    setContentView(guiRenderer.getView());
 	} else {
 	    this.guiRenderer.changeWorld(world);
 	}
@@ -129,7 +140,7 @@ public class <<PROGRAM-NAME>>
 	this.runner.queueTransformer(new WorldTransformer() {
 	    public Object transform(Object world) {
 		return GuiWorld.getConfigReader().onAccelerationHandler.call
-		    .call(new Object[] { world, x, y, z });
+		    (new Object[] { world, x, y, z });
 	    }
 	    });
     }

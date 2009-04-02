@@ -435,7 +435,7 @@
     (make-module-binding 'gui-world
                          module-path
                          (append (module-binding-bindings world-config-module)
-                                 (list (bf 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
+                                 (list (bf 'big-bang module-path 2 #t "org.plt.guiworld.GuiWorld.bigBang")
                                        (bf 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
                                        (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
                                        (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")
