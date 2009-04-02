@@ -12,6 +12,9 @@
 package org.plt.<<PROGRAM-NAME>>;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+
 import android.app.Activity;
 import android.widget.LinearLayout;
 
@@ -48,12 +51,18 @@ public class <<PROGRAM-NAME>>
 	}
     }
 
+
+    private Handler handler;
+
+
     private WorldRunner runner;
     private Gui gui;
     private GuiRenderer guiRenderer;
 
 
+
     public void onCreate(Bundle savedInstanceState) {
+	this.handler = new Handler();
 	super.onCreate(savedInstanceState);
     }
 
@@ -80,24 +89,28 @@ public class <<PROGRAM-NAME>>
 		    UserProgram.runToplevel();
 		}
 	    };
-	userThread.run();
+	userThread.start();
     }
 
 
 
-    public void consume(Object world) {
-	System.out.println("Consuming a world " + world);
-	// If this is the first world we've consumed, then bring up the 
-	// gui.
-	if (gui == null) {
-	    gui = GuiWorld.getView();
-	    this.guiRenderer = new GuiRenderer(world,
-					       new LinearLayout(this),
-					     gui);
-	    setContentView(guiRenderer.getView());
-	} else {
-	    this.guiRenderer.changeWorld(world);
-	}
+    public void consume(final Object world) {
+	final Activity self = this;
+	handler.post(new Runnable() {
+		public void run() {
+		    // If this is the first world we've consumed, then bring up the 
+		    // gui.
+		    if (gui == null) {
+			gui = GuiWorld.getView();
+			guiRenderer = new GuiRenderer(world, 
+						      new LinearLayout(self),
+						      gui);
+			setContentView(guiRenderer.getView());
+		    } else {
+			guiRenderer.changeWorld(world);
+		    }
+		}
+	    });
     }
 
 

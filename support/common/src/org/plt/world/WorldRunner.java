@@ -90,7 +90,6 @@ public class WorldRunner {
 	Thread eventLoop = new Thread
 	    (new Runnable() {
 		    public void run() {
-			notifyWorldChange();
 
 			if (stopWhen != null &&
 			    stopWhen.judge(world)) {

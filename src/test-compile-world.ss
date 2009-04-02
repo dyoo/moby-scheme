@@ -71,6 +71,7 @@
 (define test-gui-world-text-field (make-test "gui-world-text-field.ss"))
 (define test-gui-world-box-group (make-test "gui-world-box-group.ss"))
 (define test-gui-world-checkbox (make-test "gui-world-checkbox.ss"))
+(define test-gui-world-location (make-test "gui-world-location.ss"))
 
 (define test-simple-bootstrap-game (make-test "simple-bootstrap-game.ss"))
 
