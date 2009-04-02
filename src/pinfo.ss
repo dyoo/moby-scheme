@@ -286,72 +286,74 @@
 (define-struct module-binding (name path bindings))
 
 
+(define world-config-module 
+  (let ([module-path (resolve-module-path '(lib "world-config.ss" "moby" "stub") #f)])
+    (make-module-binding 'world-config
+                         module-path
+                         (list (bf 'on-tick module-path 1 #f "org.plt.world.config.Kernel.onTick")
+                               (bf 'on-mouse module-path 1 #f "org.plt.world.config.Kernel.onMouse")
+                               (bf 'on-key module-path 1 #f "org.plt.world.config.Kernel.onKey")
+                               (bf 'on-message module-path 1 #f "org.plt.world.config.Kernel.onMessage")
+                               
+                               (make-binding:function
+                                'on-location-change module-path 1 #f
+                                "org.plt.world.config.Kernel.onLocationChange"
+                                (list PERMISSION:LOCATION))
+                               
+                               (make-binding:function
+                                'on-tilt module-path 1 #f
+                                "org.plt.world.config.Kernel.onOrientationChange"
+                                (list PERMISSION:TILT))
+                               
+                               (make-binding:function
+                                'on-acceleration module-path 1 #f
+                                "org.plt.world.config.Kernel.onAccelerationChange"
+                                (list PERMISSION:TILT))
+                               
+                               (bf 'on-redraw module-path 1 #f "org.plt.world.config.Kernel.onRedraw")
+                               (bf 'stop-when module-path 1 #f "org.plt.world.config.Kernel.stopWhen")))))
+                          
+
+
 
 
 (define (make-world-module module-path)
     (make-module-binding 'world
                          module-path
-                         (list (bf 'big-bang module-path 4 #t "org.plt.WorldKernel.bigBang")
-                               (bf 'on-tick module-path 1 #f
-                                                      "org.plt.WorldKernel.onTick")
-                               (bf 'on-mouse module-path 1 #f
-                                                      "org.plt.WorldKernel.onMouse")
-                               (bf 'on-key module-path 1 #f "org.plt.WorldKernel.onKey")
-                               (bf 'on-message module-path 1 #f
-                                                      "org.plt.WorldKernel.onMessage")
-                               
-                               (make-binding:function
-                                'on-location-change module-path 1 #f
-                                "org.plt.WorldKernel.onLocationChange"
-                                (list PERMISSION:LOCATION))
-                               
-                               (make-binding:function
-                                'on-tilt module-path 1 #f
-                                "org.plt.WorldKernel.onOrientationChange"
-                                (list PERMISSION:TILT))
-                               
-                               (make-binding:function
-                                'on-acceleration module-path 1 #f
-                                "org.plt.WorldKernel.onAccelerationChange"
-                                (list PERMISSION:TILT))
-                               
-                               (bf 'on-redraw module-path 1 #f
-                                                      "org.plt.WorldKernel.onRedraw")
-                               (bf 'stop-when module-path 1 #f
-                                                      "org.plt.WorldKernel.stopWhen")
-                               
-                               (bf 'empty-scene module-path 2 #f
-                                                      "org.plt.WorldKernel.emptyScene")
-                               (bf 'place-image module-path 4 #f
-                                                      "org.plt.WorldKernel.placeImage")
-                               (bf 'circle module-path 3 #f
-                                                      "org.plt.WorldKernel.circle")
-                               (bf 'nw:rectangle module-path 4 #f
-                                                      "org.plt.WorldKernel.nwRectangle")
-                                                              (bf 'rectangle module-path 4 #f
-                                                      "org.plt.WorldKernel.rectangle")
-                               
-                               (bf 'key=? module-path 2 #f
-                                                      "org.plt.WorldKernel.isKeyEqual")
-                               (bf 'text module-path 3 #f
-                                                      "org.plt.WorldKernel.text")
-                               
-                               ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-                               ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-                               ;; ensure students don't accidently hit this function.
-                               (bf '-kernel-create-image module-path 1 #f
-                                                      "org.plt.WorldKernel._kernelCreateImage")
-                               (bf 'image-width module-path 1 #f
-                                                      "org.plt.WorldKernel.imageWidth")
-                               (bf 'image-height module-path 1 #f
-                                                      "org.plt.WorldKernel.imageHeight")
-                               (bf 'image? module-path 1 #f
-                                                      "org.plt.WorldKernel.isImage")
-                               (bf 'image=? module-path 2 #f
-                                                      "org.plt.WorldKernel.isImageEqual")
-                               (bf 'image-rotate module-path 2 #f
-                                                      "org.plt.WorldKernel.imageRotate"))))
-
+                         (append (module-binding-bindings world-config-module)
+                                 (list (bf 'big-bang module-path 4 #t "org.plt.WorldKernel.bigBang")
+                                       (bf 'empty-scene module-path 2 #f
+                                           "org.plt.WorldKernel.emptyScene")
+                                       (bf 'place-image module-path 4 #f
+                                           "org.plt.WorldKernel.placeImage")
+                                       (bf 'circle module-path 3 #f
+                                           "org.plt.WorldKernel.circle")
+                                       (bf 'nw:rectangle module-path 4 #f
+                                           "org.plt.WorldKernel.nwRectangle")
+                                       (bf 'rectangle module-path 4 #f
+                                           "org.plt.WorldKernel.rectangle")
+                                       
+                                       (bf 'key=? module-path 2 #f
+                                           "org.plt.WorldKernel.isKeyEqual")
+                                       (bf 'text module-path 3 #f
+                                           "org.plt.WorldKernel.text")
+                                       
+                                       ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
+                                       ;; We can fix this by extending expression to include a special "magic" identifier.  We should
+                                       ;; ensure students don't accidently hit this function.
+                                       (bf '-kernel-create-image module-path 1 #f
+                                           "org.plt.WorldKernel._kernelCreateImage")
+                                       (bf 'image-width module-path 1 #f
+                                           "org.plt.WorldKernel.imageWidth")
+                                       (bf 'image-height module-path 1 #f
+                                           "org.plt.WorldKernel.imageHeight")
+                                       (bf 'image? module-path 1 #f
+                                           "org.plt.WorldKernel.isImage")
+                                       (bf 'image=? module-path 2 #f
+                                           "org.plt.WorldKernel.isImageEqual")
+                                       (bf 'image-rotate module-path 2 #f
+                                           "org.plt.WorldKernel.imageRotate")))))
+  
 
 ;; world teachpack bindings
 (define world-module 
@@ -432,16 +434,16 @@
                               #f)])
     (make-module-binding 'gui-world
                          module-path
-                         (list (bf 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
-                               (bf 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
-                               (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
-                               (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")
-                               (bf 'button module-path 2 #f "org.plt.guiworld.GuiWorld.button")
-                               (bf 'drop-down module-path 3 #f "org.plt.guiworld.GuiWorld.dropDown")
-                               (bf 'text-field module-path 2 #f "org.plt.guiworld.GuiWorld.textField")
-                               (bf 'box-group module-path 2 #f "org.plt.guiworld.GuiWorld.boxGroup")
-                               (bf 'checkbox module-path 3 #f "org.plt.guiworld.GuiWorld.checkBox")
-                               ))))
+                         (append (module-binding-bindings world-config-module)
+                                 (list (bf 'big-bang module-path 2 #f "org.plt.guiworld.GuiWorld.bigBang")
+                                       (bf 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
+                                       (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
+                                       (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")
+                                       (bf 'button module-path 2 #f "org.plt.guiworld.GuiWorld.button")
+                                       (bf 'drop-down module-path 3 #f "org.plt.guiworld.GuiWorld.dropDown")
+                                       (bf 'text-field module-path 2 #f "org.plt.guiworld.GuiWorld.textField")
+                                       (bf 'box-group module-path 2 #f "org.plt.guiworld.GuiWorld.boxGroup")
+                                       (bf 'checkbox module-path 3 #f "org.plt.guiworld.GuiWorld.checkBox"))))))
 
 
 (define sms-module
