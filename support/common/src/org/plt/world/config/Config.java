@@ -1,5 +1,5 @@
 package org.plt.world.config;
 
 public interface Config {
-    void visit(ConfigVisitor visitor);
+    void accept(ConfigVisitor visitor);
 }

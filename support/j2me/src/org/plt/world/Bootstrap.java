@@ -108,9 +108,9 @@ public class Bootstrap {
 	     getDelay(),
 	     world1,
 	     new Object[] {
-		 WorldKernel.onTick(getUpdateWorld()),
-		 WorldKernel.onRedraw(getDrawWorld()),
-		 WorldKernel.onKey(getKeypress())
+		 org.plt.world.config.Kernel.onTick(getUpdateWorld()),
+		 org.plt.world.config.Kernel.onRedraw(getDrawWorld()),
+		 org.plt.world.config.Kernel.onKey(getKeypress())
 	     });
     }
 

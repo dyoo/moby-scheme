@@ -1,5 +1,5 @@
 package org.plt.world.config;
-
+import org.plt.types.Callable;
 public class OnTilt implements Config {
     public Callable c;
 

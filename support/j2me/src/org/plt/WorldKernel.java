@@ -118,9 +118,9 @@ public class WorldKernel {
 	WorldKernel.frameRate = frameRate;
 	WorldKernel.initialWorld = initialWorld;
 
-	ConfigReader configReader = new ConfigReader();
-	for (int i = 0; i < handlers.length; i++) {
-	    ((Config)handlers[i]).accept(configReader);
+	ConfigVisitor configReader = new ConfigReader();
+	for (int i = 0; i < config.length; i++) {
+	    ((Config) config[i]).accept(configReader);
 	}
 
 	WorldKernel.runner.setWorld(initialWorld);
