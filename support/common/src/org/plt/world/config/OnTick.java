@@ -1,7 +1,7 @@
 package org.plt.world.config;
 
 public class OnTick implements Config {
-    Callable c;
+    public Callable c;
 
     public OnTick(Callable c) {
 	this.c = c;

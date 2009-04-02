@@ -1,7 +1,7 @@
 package org.plt.world.config;
 
 public class OnMouse implements Config {
-    Callable c;
+    public Callable c;
 
     public OnMouse(Callable c) {
 	this.c = c;

@@ -1,7 +1,7 @@
 package org.plt.world.config;
 
 public class OnRedraw implements Config {
-    Callable c;
+    public Callable c;
 
     public OnRedraw(Callable c) {
 	this.c = c;

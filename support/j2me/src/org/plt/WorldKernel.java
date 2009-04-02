@@ -9,8 +9,11 @@ import org.plt.world.WorldRunner;
 import org.plt.world.WorldTransformer;
 import org.plt.world.WorldJudge;
 
-// World kernel functions
+import org.plt.world.config.*;
 
+
+
+// World kernel functions
 public class WorldKernel {
     private static Object width;
     private static Object height;
@@ -57,21 +60,67 @@ public class WorldKernel {
     }
 
 
+    //////////////////////////////////////////////////////////////////////
+    // Configuration initialization
+    static class ConfigReader implements ConfigVisitor {
+	public void visit(OnTick config) {
+	    WorldKernel.onTickHandler = config.c;
+	}
+
+	public void visit(OnMouse config) {
+	    WorldKernel.onMouseEventHandler = config.c;
+	}
+
+	public void visit(OnKey config) {
+	    WorldKernel.onKeyEventHandler = config.c;
+	}
+
+	public void visit(OnMessage config) {
+	    WorldKernel.onMessageEventHandler = config.c;
+	}
+
+	public void visit(OnLocationChange config) {
+	    WorldKernel.onLocationChangeEventHandler = config.c;
+	}
+
+	public void visit(OnTilt config) {
+	    WorldKernel.onOrientationChangeEventHandler = config.c;
+	}
+
+	public void visit(OnAcceleration config) {
+	    WorldKernel.onAccelerationChangeEventHandler = config.c;
+	}
+
+	public void visit(OnRedraw config) {
+	    WorldKernel.onRedrawHandler = config.c;
+	}
+
+	public void visit(StopWhen config) {
+	    WorldKernel.stopWhenHandler = config.c;
+	}
+    }
+    //////////////////////////////////////////////////////////////////////
+
+
+
     public static void setRunner(WorldRunner runner) {
 	WorldKernel.runner = runner;
     }
+
 
     public static Object bigBang(Object width,
 				 Object height,
 				 Object frameRate,
 				 Object initialWorld,
-				 Object[] handlers) {
+				 Object[] config) {
 	WorldKernel.width = width;
         WorldKernel.height = height;
 	WorldKernel.frameRate = frameRate;
 	WorldKernel.initialWorld = initialWorld;
+
+	ConfigReader configReader = new ConfigReader();
 	for (int i = 0; i < handlers.length; i++) {
-	    ((Initializer)handlers[i]).initialize();
+	    ((Config)handlers[i]).accept(configReader);
 	}
 
 	WorldKernel.runner.setWorld(initialWorld);
@@ -92,9 +141,9 @@ public class WorldKernel {
 			.isTrue();
 		}
 	    });
-
 	return WorldKernel.runner.bigBang();
     }
+
 
     public static Object getWidth() {
 	return WorldKernel.width;
@@ -147,91 +196,6 @@ public class WorldKernel {
     public static Callable getStopWhenHandler() {
 	return WorldKernel.stopWhenHandler;
     }
-
-
-
-    //////////////////////////////////////////////////////////////////////
-
-    public static interface Initializer {
-	void initialize();
-    }
-
-
-    public static Object onTick(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onTickHandler = (Callable) callable;
-		}
-	    };
-    }
-
-    public static Object onKey(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onKeyEventHandler = (Callable) callable;
-		}
-	    };
-    }
-
-
-    public static Object onMouse(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onMouseEventHandler = (Callable) callable;
-		}
-	    };
-    }
-
-    public static Object onMessage(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onMessageEventHandler = (Callable) callable;
-		}
-	    };
-    }
-
-    public static Object onLocationChange(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onLocationChangeEventHandler = (Callable) callable;
-		}
-	    };
-    }
-
-    public static Object onRedraw(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onRedrawHandler = (Callable) callable;
-		}
-	    };
-    }
-
-    public static Object stopWhen(final Object callable) {
-	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.stopWhenHandler = (Callable) callable;
-		}
-	    };
-    }
-
-
-    public static Object onOrientationChange(final Object callable) {
- 	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onOrientationChangeEventHandler = (Callable) callable;
-		}
-	    };
-    }
-
-
-    public static Object onAccelerationChange(final Object callable) {
- 	return new Initializer() {
-		public void initialize() {
-		    WorldKernel.onAccelerationChangeEventHandler = (Callable) callable;
-		}
-	    };
-     }
-
 
 
     //////////////////////////////////////////////////////////////////////

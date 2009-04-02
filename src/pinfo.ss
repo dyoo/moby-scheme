@@ -302,12 +302,12 @@
                                
                                (make-binding:function
                                 'on-tilt module-path 1 #f
-                                "org.plt.world.config.Kernel.onOrientationChange"
+                                "org.plt.world.config.Kernel.onTilt"
                                 (list PERMISSION:TILT))
                                
                                (make-binding:function
                                 'on-acceleration module-path 1 #f
-                                "org.plt.world.config.Kernel.onAccelerationChange"
+                                "org.plt.world.config.Kernel.onAcceleration"
                                 (list PERMISSION:TILT))
                                
                                (bf 'on-redraw module-path 1 #f "org.plt.world.config.Kernel.onRedraw")

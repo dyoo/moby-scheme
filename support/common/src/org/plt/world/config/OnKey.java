@@ -1,7 +1,7 @@
 package org.plt.world.config;
 
 public class OnKey implements Config {
-    Callable c;
+    public Callable c;
 
     public OnKey(Callable c) {
 	this.c = c;

@@ -1,7 +1,7 @@
 package org.plt.world.config;
 
 public class OnLocationChange implements Config {
-    Callable c;
+    public Callable c;
 
     public OnLocationChange(Callable c) {
 	this.c = c;

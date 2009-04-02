@@ -1,7 +1,7 @@
 package org.plt.world.config;
 
 public class OnMessage implements Config {
-    Callable c;
+    public Callable c;
 
     public OnMessage(Callable c) {
 	this.c = c;
