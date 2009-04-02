@@ -20,85 +20,8 @@ public class WorldKernel {
     private static Object frameRate;
     private static Object initialWorld;
 
-    private static Callable onTickHandler;
-    private static Callable onKeyEventHandler;
-    private static Callable onMouseEventHandler;
-    private static Callable onMessageEventHandler;
-    private static Callable onLocationChangeEventHandler;
-    private static Callable onOrientationChangeEventHandler;
-    private static Callable onAccelerationChangeEventHandler;
-    private static Callable onRedrawHandler;
-    private static Callable stopWhenHandler;
-
     private static WorldRunner runner;
-
-    // Here are defaults for our handlers.
-    static {
-	onTickHandler = 
-	    onKeyEventHandler = 
-	    onMouseEventHandler =
-	    onMessageEventHandler =
-	    onLocationChangeEventHandler =
-	    onOrientationChangeEventHandler =
-	    onAccelerationChangeEventHandler =
-	    new Callable() {
-		public Object call(Object[] args) {
-		    return args[0];
-		}
-	    };
-	onRedrawHandler = new Callable() {
-		public Object call(Object[] args) {
-		    return Scene.emptyScene(100, 100);
-		}
-	    };
-	stopWhenHandler = new Callable() {
-		public Object call(Object[] args) {
-		    return Logic.FALSE;
-		}
-	    };
-	runner = new WorldRunner();
-    }
-
-
-    //////////////////////////////////////////////////////////////////////
-    // Configuration initialization
-    static class ConfigReader implements ConfigVisitor {
-	public void visit(OnTick config) {
-	    WorldKernel.onTickHandler = config.c;
-	}
-
-	public void visit(OnMouse config) {
-	    WorldKernel.onMouseEventHandler = config.c;
-	}
-
-	public void visit(OnKey config) {
-	    WorldKernel.onKeyEventHandler = config.c;
-	}
-
-	public void visit(OnMessage config) {
-	    WorldKernel.onMessageEventHandler = config.c;
-	}
-
-	public void visit(OnLocationChange config) {
-	    WorldKernel.onLocationChangeEventHandler = config.c;
-	}
-
-	public void visit(OnTilt config) {
-	    WorldKernel.onOrientationChangeEventHandler = config.c;
-	}
-
-	public void visit(OnAcceleration config) {
-	    WorldKernel.onAccelerationChangeEventHandler = config.c;
-	}
-
-	public void visit(OnRedraw config) {
-	    WorldKernel.onRedrawHandler = config.c;
-	}
-
-	public void visit(StopWhen config) {
-	    WorldKernel.stopWhenHandler = config.c;
-	}
-    }
+    private static ConfigReader configReader;
     //////////////////////////////////////////////////////////////////////
 
 
@@ -112,16 +35,14 @@ public class WorldKernel {
 				 Object height,
 				 Object frameRate,
 				 Object initialWorld,
-				 Object[] config) {
+				 Object[] configs) {
 	WorldKernel.width = width;
         WorldKernel.height = height;
 	WorldKernel.frameRate = frameRate;
 	WorldKernel.initialWorld = initialWorld;
 
-	ConfigVisitor configReader = new ConfigReader();
-	for (int i = 0; i < config.length; i++) {
-	    ((Config) config[i]).accept(configReader);
-	}
+	configReader = new ConfigReader();
+	configReader.load(configs);
 
 	WorldKernel.runner.setWorld(initialWorld);
 	WorldKernel.runner.setDelay
@@ -131,19 +52,24 @@ public class WorldKernel {
 
 	WorldKernel.runner.setOnTick(new WorldTransformer() {
 		public Object transform(Object world) {
-		    return onTickHandler.call(new Object[] { world });
+		    return configReader.onTickHandler.call
+			(new Object[] { world });
 		}
 	    });
 	WorldKernel.runner.setStopWhen(new WorldJudge() {
 		public boolean judge(Object world) {
 		    return ((org.plt.types.Logic) 
-			    stopWhenHandler.call(new Object[] { world }))
+			    configReader.stopWhenHandler.call
+			    (new Object[] { world }))
 			.isTrue();
 		}
 	    });
 	return WorldKernel.runner.bigBang();
     }
 
+    public static ConfigReader getConfigReader() {
+	return WorldKernel.configReader;
+    }
 
     public static Object getWidth() {
 	return WorldKernel.width;
@@ -162,39 +88,39 @@ public class WorldKernel {
     }
 
     public static Callable getOnTickHandler() {
-	return WorldKernel.onTickHandler;
+	return configReader.onTickHandler;
     }
 
     public static Callable getOnKeyEventHandler() {
-	return WorldKernel.onKeyEventHandler;
+	return configReader.onKeyHandler;
     }
 
     public static Callable getOnMouseEventHandler() {
-	return WorldKernel.onMouseEventHandler;
+	return configReader.onMouseHandler;
     }
 
     public static Callable getOnMessageEventHandler() {
-	return WorldKernel.onMessageEventHandler;
+	return configReader.onMessageHandler;
     }
 
     public static Callable getOnLocationChangeEventHandler() {
-	return WorldKernel.onLocationChangeEventHandler;
+	return configReader.onLocationChangeHandler;
     }
 
     public static Callable getOnOrientationChangeEventHandler() {
-	return WorldKernel.onOrientationChangeEventHandler;
+	return configReader.onTiltHandler;
     }
 
     public static Callable getOnAccelerationChangeEventHandler() {
-	return WorldKernel.onAccelerationChangeEventHandler;
+	return configReader.onAccelerationHandler;
     }
 
     public  static Callable getOnRedrawHandler() {
-	return WorldKernel.onRedrawHandler;
+	return configReader.onRedrawHandler;
     }
 
     public static Callable getStopWhenHandler() {
-	return WorldKernel.stopWhenHandler;
+	return configReader.stopWhenHandler;
     }
 
 

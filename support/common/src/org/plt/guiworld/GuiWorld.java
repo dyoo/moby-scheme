@@ -5,16 +5,28 @@ import org.plt.checker.SchemeException;
 
 import org.plt.world.WorldTransformer;
 import org.plt.world.WorldAndObjectTransformer;
+import org.plt.world.WorldRunner;
+import org.plt.world.config.ConfigReader;
 
 
 public class GuiWorld {
     private static Object initialWorld;
     private static Gui view;
+    private static WorldRunner runner;
+    private static ConfigReader configReader;
+
+
+    public static void setRunner(WorldRunner runner) {
+	GuiWorld.runner = runner;
+    }
 
     public static Object bigBang(Object initialWorld,
-				 Object view) {
+				 Object view,
+				 Object[] configs) {
 	GuiWorld.initialWorld = initialWorld;
 	GuiWorld.view = asGui(view);
+	configReader = new ConfigReader();
+	configReader.load(configs);
 	return VoidObject.VOID;
     }
 
@@ -28,7 +40,13 @@ public class GuiWorld {
     }
 
 
-    public static Gui asGui(Object obj) {
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+    private static Gui asGui(Object obj) {
 	if (obj instanceof Gui) {
 	    return (Gui) obj;
 	} else if (obj instanceof String) {
