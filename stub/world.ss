@@ -57,7 +57,7 @@
 ;; world manipulation functions: 
 ;; =============================
 (provide      ;; forall(World):
- big-bang	;; Number Number Number World [Boolean] -> true
+ big-bang	;; Number Number World [Boolean] -> true
  )
 
 (provide-higher-order-primitive
@@ -179,17 +179,17 @@
 (define big-bang
   (lambda x 
     (define args (length x))
-    (if (> args 4)
+    (if (> args 3)
         (apply big-bang0 x) 
         (error 'big-bang msg))))
 (define msg
   (string-append
-   "big-bang consumes at least 4 or 5 arguments:\n"
-   "-- (big-bang <width> <height> <rate> <world0> handlers ...)\n"
-   "-- (big-bang <width> <height> <rate> <world0> <animated-gif> handlers ...)\n"
+   "big-bang consumes at least 3 or 4 arguments:\n"
+   "-- (big-bang <width> <height> <world0> handlers ...)\n"
+   "-- (big-bang <width> <height> <world0> <animated-gif> handlers ...)\n"
    "see Help Desk."))
 (define *running?* #f)
-(define (big-bang0 w h delta world . args)
+(define (big-bang0 w h world . args)
   (let ([animated-gif #f])
     (when (and (not (null? args))
                (boolean? (car args)))
@@ -201,15 +201,10 @@
     ;; ============================================
     ;; WHAT IF THEY ARE NOT INTs?
     ;; ============================================
-    (check-arg 'big-bang
-               (and (number? delta) (<= 0 delta 1000))
-               "number [of seconds] between 0 and 1000"
-               "third"
-               delta)
     (check-arg 'big-bang 
                (boolean? animated-gif)
                "boolean expected"
-               "fifth"
+               "fourth"
                animated-gif)
     (let ([w (coerce w)]
           [h (coerce h)])
@@ -217,10 +212,9 @@
       (set! *running?* #t)
       (callback-stop!)
       ;; (when (vw-init?) (error 'big-bang "big-bang already called once"))
-      (install-world delta world) ;; call first to establish a visible world
+      (install-world world) ;; call first to establish a visible world
       (set-and-show-frame w h animated-gif) ;; now show it
       (unless animated-gif (set! add-event void)) ;; no recording if image undesired
-      (set! *the-delta* delta)
       (for-each (lambda (x) (x)) args)
       (yield last-world-channel))))
 
@@ -508,16 +502,13 @@
 
 ;; Nat World -> Void
 ;; effects: init event-history, the-delta, the-world, the-world0
-(define (install-world delta w)
+(define (install-world w)
   (reset-event-history)
-  (set! the-delta delta)
   (set! the-world w)
   (set! the-world0 w)
   (vw-setup))
 
-;; Number > 0
-;; the rate of at which the clock ticks 
-(define the-delta 1000)
+
 
 ;; Text-- The One and Only Visible World
 (define visible-world #f)
@@ -911,9 +902,15 @@
 
 
 
-(define (on-tick f)
-    (check-proc 'on-tick f 1 "on-tick" "one argument")
+(define (on-tick the-delta f)
+  (check-arg 'on-tick
+             (and (number? the-delta) (<= 0 the-delta 1000))
+             "number [of seconds] between 0 and 1000"
+             "first"
+             the-delta)
+  (check-proc 'on-tick f 1 "on-tick" "one argument")
   (lambda ()
+    (set! *the-delta* the-delta)
     (set-timer-callback f)
     (send the-time start
           (let* ([w (ceiling (* 1000 the-delta))])
