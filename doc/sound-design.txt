@@ -3,7 +3,7 @@ Sound API
 The new design of big-bang allows us to pass in the callbacks as
 arguments:
 
-   (big-bang WIDTH HEIGHT DELAY WORLD0
+   (big-bang WIDTH HEIGHT WORLD0
              (on-redraw ...)
              (on-tick ...)
              (on-tilt ...)
@@ -12,31 +12,46 @@ arguments:
 
 I propose adding another callback called shout:
 
-     (shout which-sound sound-on? after-sound)
+     (on-sound get-sound after-sound-starts-playing)
 
-shout: (world -> sound) (world -> boolean) (world -> world)
-
-
-The design is meant to fit in with the Mealy machines approach: a flag
-in the world indicates when a sound should be played, and another
-function is used to unflag the world after the sound is played.
+shout: (world -> sound) (world -> world)
 
 
-A 'sound' is a sound file (.wav/.mp3).  Ideally, I would like to be
-able to directly embed sounds into DrScheme files; just as we can
-embed images, we should be able to embed sound files.  DrScheme
-doesn't give us this facility yet.  So we need to extend DrScheme to
-support sound snips.
+The design is meant to fit in with the Mealy machines approach: the
+first function gets a sound from the world, and the second function
+builds a world that knows that the sound has started to play.
+
+
+A sound can be one of these basic sounds:
+
+    * (current-sound): the current sound already being played.  World
+      will manage this state as we play.
+
+    * silence: no sound at all.
+
+    * (open-sound url): a sound from a file, typically an MP3 or WAV.
+
+We'll consider sound combinators later.
+
+
+
+
+
+
+(Ideally, I would like to be able to directly embed sounds into
+DrScheme files; just as we can embed images, we should be able to
+embed sound files.  DrScheme doesn't give us this facility yet.  So
+we'd need to extend DrScheme to support sound snips.)
 
 
 Example:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Shows a blank screen, but plays a sound every minute.
+;; Shows a blank screen, but plays a sound every three seconds.
 
 (define WIDTH 320)
 (define HEIGHT 480)
-(define DELAY 1)
+(define DELAY 3)
 
 
 ;; The world is a boolean that's true when
@@ -44,17 +59,13 @@ Example:
 (define WORLD false)
 
 
-;; play?: world -> boolean
-;; Produces true when we should play a file.
-(define (play? w)
-  w)
-
-
 ;; choose-sound: world -> sound
 (define (choose-sound w)
-  ;; At the moment, this is constant, but imagine
-  ;; functions to compose sounds together.
-  <sound-snip>)
+  (cond 
+    ([w 
+      (open-sound "file:///alarm.mp3")]
+     [else
+      (current-sound)])))
 
 
 ;; clear-after-play: world -> world
@@ -63,28 +74,135 @@ Example:
   false)
 
 
-(big-bang WIDTH HEIGHT 60 WORLD
-          (on-tick tick)
-          (shout choose-sound play? clear-after-play))
+;; tick: world -> world
+(define (tick w)
+  w)
+
+
+(big-bang WIDTH HEIGHT WORLD
+          (on-tick DELAY tick)
+          (on-sound choose-sound clear-after-play))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
-We should also have functions to work with sounds.  These are
-functions I think we should definitely have:
-
-    update-volume: sound number -> sound
-    ;; Controls the volume of a sound
-
-    volume: sound -> number
-    ;; Gets the volume of a sound (default 75, from a scale of 0-99)
-
-    sound-mix: sound sound ... -> sound
-    ;; Mixes sounds together.
-
-    sound-append: sound sound ... -> sound
-    ;; Appends sounds end-to-end
+Sound combinators:
 
 
+We should also have functions to work with sounds.  Here are some
+simple combinators we should support:
 
-    
+    ;; get the volume of a sound
+    sound-volume: sound -> number
+
+    update-sound-volume: sound number -> sound
+
+    sound-mix: sound ... -> sound
+
+    sound-append: sound ... -> sound
+
+    sound-seek: sound number -> sound
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Example 2: An alarm, with the sound volume decreasing as we play.
+
+
+;; Shows a blank screen, but plays a sound 3 seconds.
+
+(define WIDTH 320)
+(define HEIGHT 480)
+(define DELAY 3)
+
+
+(define-struct world (play? loudness))
+;; The world is a (make-world play? loudness)
+;;
+;; where play? is a boolean and loudness is a number between 0-100
+(define WORLD (make-world false 100))
+
+
+;; choose-sound: world -> sound
+(define (choose-sound w)
+  (cond 
+    ([(world-play? w) 
+      (open-sound "file:///alarm.mp3")]
+     [else
+      (current-sound)])))
+
+
+;; clear-after-play: world -> world
+;; Clears the play flag.
+(define (clear-after-play w)
+  (make-world false loudness))
+
+
+
+;; tick: world -> world
+(define (tick w)
+  (make-world (world-play? w)
+              (max (- (world-loudness a-world) 10)
+                   0)))
+
+
+(big-bang WIDTH HEIGHT WORLD
+          (on-tick DELAY tick)
+          (on-sound choose-sound clear-after-play))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Example 3: a music player
+
+
+;; Shows a blank screen, but plays a sound 3 seconds.
+(define WIDTH 320)
+(define HEIGHT 480)
+(define DELAY 3)
+
+
+;; The world is a sound.
+(define initial-world (open-sound "file:///cowboy-bebop.mp3"))
+
+
+;; choose-sound: world -> sound
+(define (choose-sound w)
+  w)
+
+
+;; keep-playing: world -> world
+(define (keep-playing w)
+  (current-sound))
+
+
+;; control-music: world key -> world
+(define (control-music w key)
+  (cond
+    ([(key=? key 'up)
+      (update-sound-volume w (min 100 (+ (sound-volume w) 10)))]
+     [(key=? key 'down)
+      (update-sound-volume w (max 0 (- (sound-volume w) 10)))]
+     [(key=? key 'up)
+      (update-sound-volume w (min 100 (+ (sound-volume w) 10)))]
+     [(key=? key 'left)
+      (sound-seek w -10)]
+     [(key=? key 'right)
+      (sound-seek w 10)]
+      
+
+(big-bang WIDTH HEIGHT WORLD
+          (on-sound choose-sound keep-playing)
+          (on-key control-music))
+
+----------------------------------------------------------------------
+
+
+
+Bug: the only part that doesn't quite have a functional feel is the
+current-sound value.  If current-sound were passed into
+after-sound-starts-playing, maybe we can preserve the functionality.
