@@ -11,8 +11,8 @@
 
 (define init-world (make-world 0 0))
 
-(define (mouse-handler world x y m)
-  (if (key=? m 'button-down)
+(define (key-handler world key)
+  (if (key=? key 'up)
       (if (<= (world-time-remaining world) react-time)
           ; got it!
           (make-world (+ react-time (random wait-time)) (+ (world-score world) 1))
@@ -44,5 +44,5 @@
 ;; RUN PROGRAM
 (big-bang 400 300 init-world
           (on-tick 0.01 tick-handler)
-          (on-mouse mouse-handler)
+          (on-key key-handler)
           (on-redraw redraw))
