@@ -1,0 +1,54 @@
+<html>
+<script src="plt-kernel.js"></script>
+
+<script language="javascript">
+
+
+
+
+function Posn(x, y) {
+  this.x = x;
+  this.y = y;
+}
+Posn.prototype = new org.plt.Kernel.Struct();
+
+function makePosn(x, y) {
+  return new Posn(x, y);
+}
+
+
+Posn.prototype.toString = function() {
+  return "Point(" + this.x + ", " + this.y + ")";
+}
+
+Posn.prototype.isEqual = function(other) {
+  return (other instanceof Posn) && 
+         (this.x == other.x) &&
+         (this.y == other.y);
+}
+
+
+function startup() {
+  var d = document.getElementById("d");
+
+//org.plt.Kernel.identity(org.plt.Kernel.add(10,8,9));
+  var p = makePosn(3, 4);
+  var p2 = makePosn(3, 4);
+  var p3 = makePosn(4, 21);
+
+
+  d.innerHTML = (p instanceof Posn).toString() + "<br>" +
+                "should be true: " + org.plt.Kernel.isStruct(p)+ "<br>" + 
+                "should be false: " + org.plt.Kernel.isStruct(42) + "<br>" +
+		"should be true" + org.plt.Kernel.isEqual(p, p2);
+
+}
+</script>
+
+
+<body onload="startup()">
+<p>Hello world.
+<div id="d"></div>
+</p>
+</body>
+</html>
