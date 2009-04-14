@@ -97,7 +97,7 @@
                 [(program)
                  (parse-text-as-program text)]
                 [(compiled-program)
-                 (program->java-string program)]
+                 (program->compiled-program program)]
                 [(defns pinfo)
                  (values (compiled-program-defns compiled-program)
                          (compiled-program-pinfo compiled-program))]
@@ -150,7 +150,7 @@
          [program
           (parse-text-as-program text)]
          [compiled-program
-          (program->java-string program)]
+          (program->compiled-program program)]
          [pinfo
           (compiled-program-pinfo compiled-program)]
          [mappings

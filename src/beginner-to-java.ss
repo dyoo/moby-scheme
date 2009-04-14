@@ -25,9 +25,9 @@
 
 
 
-;; program->java-string: program -> compiled-program
+;; program->compiled-program: program -> compiled-program
 ;; Consumes a program and returns a compiled program.
-(define (program->java-string program)
+(define (program->compiled-program program)
   (let* ([a-pinfo (program-analyze program)]
          [toplevel-env (pinfo-env a-pinfo)])
     
@@ -443,8 +443,5 @@
                                              string?]
                                             [pinfo pinfo?])]
                   
-                  [program->java-string 
-                   (program? . -> . compiled-program?)]
-                  
-                  [expression->java-string 
-                   (expression? env? . -> . string?)])
+                  [program->compiled-program 
+                   (program? . -> . compiled-program?)])
