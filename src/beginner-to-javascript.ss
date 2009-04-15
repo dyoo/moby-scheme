@@ -412,16 +412,16 @@
   (cond [(integer? a-num)
          ;; Fixme: we need to handle exact/vs/inexact issue.
          ;; We probably need the numeric tower.
-         (format "(new org.plt.types.Rational(~a, 1))" (inexact->exact a-num))]
+         (format "(org.plt.types.Rational.makeInstance(~a, 1))" (inexact->exact a-num))]
         [(and (inexact? a-num)
               (real? a-num))
-         (format "(org.plt.types.FloatPoint.fromString(\"~s\"))" a-num)]
+         (format "(org.plt.types.FloatPoint.makeInstance(\"~s\"))" a-num)]
         [(rational? a-num)
-         (format "(new org.plt.types.Rational(~s, ~s))" 
+         (format "(org.plt.types.Rational.makeInstance(~s, ~s))" 
                  (numerator a-num) 
                  (denominator a-num))]
         [(complex? a-num)
-         (format "(new org.plt.types.Complex(~a, ~a))"
+         (format "(org.plt.types.Complex.makeInstance(~a, ~a))"
                  (number->javascript-string (real-part a-num))
                  (number->javascript-string (imag-part a-num)))]
         [else
@@ -429,11 +429,11 @@
 
 
 (define (string->javascript-string a-str)
-  (format "(new String(~s))" a-str))
+  (format "(org.plt.types.String.makeInstance(~s))" a-str))
 
 
 (define (char->javascript-string a-char)
-  (string-append "(new Character(\""
+  (string-append "(org.plt.types.Character.makeInstance(\""
                  (if (char=? a-char #\") "\\" (string a-char))
                  "\"))"))
 

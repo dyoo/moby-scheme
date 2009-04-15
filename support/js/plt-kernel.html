@@ -28,6 +28,22 @@ Posn.prototype.isEqual = function(other) {
 }
 
 
+function f(x, y) {
+  return x + y;
+}
+
+
+
+
+function factorial(x) { return ((org.plt.Kernel._equal_(x,(org.plt.types.Rational.makeInstance(0, 1)), [])) ? ((org.plt.types.Rational.makeInstance(1, 1))) : (org.plt.Kernel._star_([x,(factorial((org.plt.Kernel.sub1(x))))]))); }
+
+
+
+
+
+
+
+
 function startup() {
   var d = document.getElementById("d");
 
@@ -37,10 +53,12 @@ function startup() {
   var p3 = makePosn(4, 21);
 
 
-  d.innerHTML = (p instanceof Posn).toString() + "<br>" +
-                "should be true: " + org.plt.Kernel.isStruct(p)+ "<br>" + 
-                "should be false: " + org.plt.Kernel.isStruct(42) + "<br>" +
-		"should be true" + org.plt.Kernel.isEqual(p, p2);
+  d.innerHTML = ("should be true: " + (p instanceof Posn).toString() + "<br>" +
+                "should be true: " + org.plt.Kernel.struct_question_(p)+ "<br>" + 
+                "should be false: " + org.plt.Kernel.struct_question_(42) + "<br>" +
+		"should be true: " + org.plt.Kernel.equal_question_(p, p2) + "<br>" +
+                "6? " + factorial.apply(null, [org.plt.types.Rational.makeInstance(3, 1)])
+                );
 
 }
 </script>
