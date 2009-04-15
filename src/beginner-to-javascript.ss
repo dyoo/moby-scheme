@@ -158,87 +158,92 @@
                     "-"
                     (symbol->string field-name))))
   
-  (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a\n ~a" 
-          (identifier->munged-java-identifier id)
-          (string-join (map (lambda (a-field)
-                              (format "public Object ~a;"
-                                      (identifier->munged-java-identifier a-field)))
-                            fields)
-                       "\n")
-          
-          ;; default constructor
-          (format "public ~a(~a) { ~a }"
-                  (identifier->munged-java-identifier id)
-                  (string-join (map (lambda (i) (format "Object ~a"
-                                                        (identifier->munged-java-identifier i)))
-                                    fields) 
-                               ",")
-                  (string-join (map (lambda (i) (format "this.~a = ~a;" 
-                                                        (identifier->munged-java-identifier i)
-                                                        (identifier->munged-java-identifier i)))
-                                    fields) 
-                               "\n"))
-          
 
-          ;; equality
-          (format "public boolean equals(Object other) {
-                     if (other instanceof ~a) {
-                       return ~a.isTrue();
-                     } else {
-                       return false;
-                     }
-                   } "
-                  (identifier->munged-java-identifier id)
-                  (expression->javascript-string (foldl (lambda (a-field acc)
-                                                    (let ([acc-id (field->accessor-name id a-field)])
-                                                      `(and (equal? (,acc-id this)
-                                                                    (,acc-id other)) 
-                                                            ,acc)))
-                                                  'true
-                                                  fields)
-                                           (let* ([new-env (env-extend env
-                                                                       (make-binding:constant
-                                                                        'this
-                                                                        (symbol->string
-                                                                         (identifier->munged-java-identifier 'this))
-                                                                        empty))]
-                                                  [new-env (env-extend new-env
-                                                                       (make-binding:constant
-                                                                        'other
-                                                                        (symbol->string
-                                                                         (identifier->munged-java-identifier 'other))
-                                                                        empty))])
-                                             new-env)))
-          
-          ;; make-id
-          (format "static public Object ~a(~a) { return new ~a(~a); }"
-                  (let ([make-id (string->symbol 
-                                  (string-append "make-" (symbol->string id)))])
-                    (identifier->munged-java-identifier  make-id))
-                  (string-join (build-list (length fields) (lambda (i) (format "Object id~a" i)))
-                               ",")
-                  (identifier->munged-java-identifier id)
-                  (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
-                               ","))
-          
-          ;; accessors
-          (string-join 
-           (map (lambda (a-field)
-                  (format "static public Object ~a(Object obj) { return ((~a)obj).~a; }"
-                          (let ([acc-id (string->symbol
-                                         (string-append (symbol->string id)
-                                                        "-"
-                                                        (symbol->string a-field)))])
-                            (identifier->munged-java-identifier acc-id))
-                          (identifier->munged-java-identifier id)
-                          (identifier->munged-java-identifier a-field)))
-                fields)
-           "\n")
-          
-          ;; predicate
-          (format "static public org.plt.types.Logic ~a(Object obj) { return obj instanceof ~a ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE; }"
-                  (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
-                  (identifier->munged-java-identifier id))))
+  (string-append
+   
+   ;; default constructor
+   (format "function ~a(~a) { ~a }
+            ~a.prototype = new org.plt.Kernel.Struct();"
+           (identifier->munged-java-identifier id)
+           (string-join (map (lambda (i) (format "~a"
+                                                 (identifier->munged-java-identifier i)))
+                             fields) 
+                        ",")
+           (string-join (map (lambda (i) (format "this.~a = ~a;" 
+                                                 (identifier->munged-java-identifier i)
+                                                 (identifier->munged-java-identifier i)))
+                             fields) 
+                        "\n")
+           (identifier->munged-java-identifier id))
+   "\n"
+   
+   ;; equality
+   (format "~a.prototype.isEqual = function(other) {
+              if (other instanceof ~a) {
+                return ~a.isTrue();
+              } else {
+                return false;
+              }
+           } "
+           (identifier->munged-java-identifier id)
+           (identifier->munged-java-identifier id)
+           (expression->javascript-string (foldl (lambda (a-field acc)
+                                                   (let ([acc-id (field->accessor-name id a-field)])
+                                                     `(and (equal? (,acc-id this)
+                                                                   (,acc-id other)) 
+                                                           ,acc)))
+                                                 'true
+                                                 fields)
+                                          (let* ([new-env (env-extend env
+                                                                      (make-binding:constant
+                                                                       'this
+                                                                       (symbol->string
+                                                                        (identifier->munged-java-identifier 'this))
+                                                                       empty))]
+                                                 [new-env (env-extend new-env
+                                                                      (make-binding:constant
+                                                                       'other
+                                                                       (symbol->string
+                                                                        (identifier->munged-java-identifier 'other))
+                                                                       empty))])
+                                            new-env)))
+   
+   "\n"
+   
+   ;; make-id
+   (format "function ~a(~a) { return new ~a(~a); }"
+           (let ([make-id (string->symbol 
+                           (string-append "make-" (symbol->string id)))])
+             (identifier->munged-java-identifier  make-id))
+           (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
+                        ",")
+           (identifier->munged-java-identifier id)
+           (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
+                        ","))
+   
+   "\n"
+      
+   ;; accessors
+   (string-join 
+    (map (lambda (a-field)
+           (format "function ~a(obj) { return obj.~a; }"
+                   (let ([acc-id (string->symbol
+                                  (string-append (symbol->string id)
+                                                 "-"
+                                                 (symbol->string a-field)))])
+                     (identifier->munged-java-identifier acc-id))
+                   (identifier->munged-java-identifier a-field)))
+         fields)
+    "\n")
+   
+   "\n"
+   
+   ;; structure predicate
+   (format "function ~a(obj) { 
+              return obj instanceof ~a ; 
+            }"
+           (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
+           (identifier->munged-java-identifier id))))
 
 
 
@@ -254,7 +259,7 @@
          [(empty? questions)
           (expression->javascript-string answer-last env)]
          [else
-          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+          (format "((~a) ? (~a) : (~a))"
                   (expression->javascript-string (first questions) env)
                   (expression->javascript-string (first answers) env)
                   (loop (rest questions) (rest answers)))]))]
@@ -265,39 +270,40 @@
                 [answers answers])
        (cond
          [(empty? questions)
-          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : 
-                      org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
+          (format "((~a) ? (~a) : 
+                    org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"),
+                                         \"Fell out of cond\"))"
                   (expression->javascript-string question-last env)
                   (expression->javascript-string answer-last env))]
          [else
-          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+          (format "((~a) ? (~a) : (~a))"
                   (expression->javascript-string (first questions) env)
                   (expression->javascript-string (first answers) env)
                   (loop (rest questions) (rest answers)))]))]
     
     [(list 'if test consequent alternative)
-     (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+     (format "((~a) ? (~a) : (~a))"
              (expression->javascript-string test env)
              (expression->javascript-string consequent env)
              (expression->javascript-string alternative env))]
     
     [(list 'and expr ...)
-     (string-append "(("
+     (string-append "("
                     (string-join (map (lambda (e)
-                                        (format "(((org.plt.types.Logic)~a).isTrue())"
+                                        (format "(~a)"
                                                 (expression->javascript-string e env)))
                                       expr) 
                                  "&&")
-                    ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
+                    ")")]
     
     [(list 'or expr ...)
-     (string-append "(("
+     (string-append "("
                     (string-join  (map (lambda (e)
-                                         (format "(((org.plt.types.Logic)~a).isTrue())"
+                                         (format "(~a)"
                                                  (expression->javascript-string e env)))
                                        expr) 
                                   "||")
-                    ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
+                    ")")]
     
     ;; Numbers
     [(? number?)
@@ -340,7 +346,7 @@
               "Moby doesn't know about ~s" id)]
       
       [(struct binding:constant (name java-string permissions))
-       (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" 
+       (format "((~a).apply(null, [~a]))" 
                java-string 
                (string-join operand-strings ", "))]
       
@@ -355,13 +361,13 @@
        (cond
          [var-arity?
           (cond [(> min-arity 0)
-                 (format "~a(~a, new Object[] {~a})"
+                 (format "~a(~a, [~a])"
                          java-string
                          (string-join (take operand-strings min-arity) ",")
                          (string-join (list-tail operand-strings min-arity)
                                       ","))]
                 [else
-                 (format "~a(new Object[] {~a})"
+                 (format "~a([~a])"
                          java-string
                          (string-join (list-tail operand-strings min-arity)
                                       ","))])]
@@ -384,17 +390,13 @@
     [(struct binding:function (name module-path min-arity var-arity? java-string permissions))
      (cond
        [var-arity?
-        (format "(new org.plt.types.Callable() {
-                      public Object call(Object[] args) {
-                          return ~a(args);
-                      }
+        (format "(function(args) {
+                    return ~a.apply(null, args);
                   })"
                 java-string)]
        [else
-        (format "(new org.plt.types.Callable() {
-                   public Object call(Object[] args) {
-                       return ~a(~a);
-                   }
+        (format "(function(args) {
+                    return ~a(~a);
                  })"
                 java-string
                 (string-join (for/list ([i (in-range min-arity)])
