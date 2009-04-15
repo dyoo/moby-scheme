@@ -45,7 +45,7 @@ org.plt.Kernel = {
   },
   
   sub1 : function(x) {
-	return org.plt.types.NumberTower.subtract(x,  1);
+	return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
   },
 
 
@@ -109,8 +109,9 @@ org.plt.types.Rational.prototype.add = function(other) {
 }
 
 org.plt.types.Rational.prototype.subtract = function(other) {
-    return org.plt.types.Rational.makeInstance(this.n * other.d - this.d * other.n,
-                                               this.d * other.d);
+    return org.plt.types.Rational.makeInstance((this.n * other.d) - 
+                                                 (this.d * other.n),
+                                               (this.d * other.d));
 }
 
 org.plt.types.Rational.prototype.multiply = function(other) {
@@ -128,6 +129,9 @@ org.plt.types.Rational.prototype.divide = function(other) {
 org.plt.types.Rational.makeInstance = function(n, d) {
     if (n == 1 && d == 1) {
 	return org.plt.types.Rational.ONE;
+    }
+    if (n == 0 && d == 1) {
+	return org.plt.types.Rational.ZERO;
     }
     return new org.plt.types.Rational(n, d);
 };
