@@ -5,7 +5,8 @@
          scheme/contract)
 
 (provide/contract [fill-template (string? hash? . -> . string?)]
-                  [fill-template-file (path-string? path-string? hash? . -> . any)])
+                  [fill-template-file (path-string? path-string? hash? . -> . any)]
+                  [replace-template-file (path-string? path-string? hash? . -> . any)])
 
 (provide build-mappings)
 
@@ -53,7 +54,15 @@
             (newline op)))))
     #:exists 'replace))
 
-               
+
+
+(define (replace-template-file dest-dir a-path mappings)
+  (fill-template-file (build-path dest-dir (string-append a-path ".template"))
+                      (build-path dest-dir a-path)
+                        mappings)
+  (delete-file (build-path dest-dir (string-append a-path ".template"))))
+
+
 
 (define-syntax (build-mappings stx)
   (syntax-case stx ()

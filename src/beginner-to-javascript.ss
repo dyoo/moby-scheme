@@ -180,7 +180,7 @@
    ;; equality
    (format "~a.prototype.isEqual = function(other) {
               if (other instanceof ~a) {
-                return ~a.isTrue();
+                return ~a;
               } else {
                 return false;
               }

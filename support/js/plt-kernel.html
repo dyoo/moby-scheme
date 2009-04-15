@@ -4,6 +4,27 @@
 <script language="javascript">
 
 
+function pair(a,b) { this.a = a;
+this.b = b; }
+            pair.prototype = new org.plt.Kernel.Struct();
+pair.prototype.isEqual = function(other) {
+              if (other instanceof pair) {
+                return (((org.plt.Kernel.equal_question_((pair_dash_b(this)),(pair_dash_b(other)))))&&((((org.plt.Kernel.equal_question_((pair_dash_a(this)),(pair_dash_a(other)))))&&(org.plt.types.Logic.TRUE)))).isTrue();
+              } else {
+                return false;
+              }
+           } 
+function make_dash_pair(id0,id1) { return new pair(id0,id1); }
+function pair_dash_a(obj) { return obj.a; }
+function pair_dash_b(obj) { return obj.b; }
+function pair_question_(obj) { 
+              return obj instanceof pair ; 
+            }
+
+
+org.plt.Kernel.identity((make_dash_pair((org.plt.types.Rational.makeInstance(3, 1)),(org.plt.types.Rational.makeInstance(4, 1)))));
+
+
 
 
 function Posn(x, y) {
