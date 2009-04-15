@@ -126,6 +126,83 @@
   (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
   (write-j2me-ant-buildfile name dest-dir))
 
+
+;; write-j2me-ant-buildfile: string path -> void
+;; Writes a build file that's specialized toward building the midlet.
+(define (write-j2me-ant-buildfile name dest-dir 
+                                  #:cdlc-version [cldc-version "1.0"]
+                                  #:midp-version [midp-version "2.0" #;"1.0"]
+                                  )
+  (define (property name val)
+    `(property ((name ,name) (value ,val))))
+  
+  (let ([build.xml
+         `(project 
+           ((name ,(upper-camel-case name)) (default "package"))
+           "\n"
+           (taskdef ((resource "antenna.properties")
+                     (classpath ,(path->string antenna.jar))))
+           "\n"
+           ,(property "wtk.home" (path->string (current-j2me-home))) "\n"
+           ,(property "wtk.proguard.home" (path->string proguard-home)) "\n"
+           ,(property "wtk.cldc.version" cldc-version) "\n"
+           ,(property "wtk.midp.version" midp-version) "\n"
+           ,(property "midlet.name" (upper-camel-case name)) "\n"
+           ,(property "company.name" "PLT") "\n"
+           "\n"
+           (target ((name "init"))
+                   (mkdir ((dir "classes")))
+                   (mkdir ((dir "bin"))))
+           "\n"
+           (target ((name "make.jad") (depends "init"))
+                   (wtkjad ((jadfile ,(path->string 
+                                       (build-path 
+                                        "bin" 
+                                        (string-append (upper-camel-case name) ".jad"))))
+                            (jarfile ,(path->string 
+                                       (build-path 
+                                        "bin" 
+                                        (string-append (upper-camel-case name) ".jar"))))
+                            (name "${midlet.name}")
+                            (vendor "${company.name}")
+                            (version "1.0.0"))
+                           (midlet ((name ,(upper-camel-case name))
+                                    (class ,(string-append "org.plt." 
+                                                           (upper-camel-case name)
+                                                           "."
+                                                           (upper-camel-case name)))))))
+           "\n"
+           (target ((name "compile") (depends "init"))
+                   (copy ((todir "classes"))
+                         (fileset ((dir "src"))
+                                  (include ((name "**/*.class")))))
+                   (wtkbuild ((srcdir "src")
+                              (destdir "classes")
+                              (source "1.3")
+                              (target "1.3")
+                              (preverify "false"))))
+           "\n"
+           (target ((name "package") (depends "compile,make.jad"))
+                   (wtkpackage ((jarfile "bin/${midlet.name}.jar")
+                                (jadfile "bin/${midlet.name}.jad")
+                                (obfuscate "false")
+                                (preverify "true"))
+                               (preserve ((class "org.plt.platform.Platform")))
+                               (preserve ((class "org.plt.platform.J2MEPlatform")))
+                               (fileset ((dir "classes")))
+                               (fileset ((dir "res")))))
+           "\n"           
+           (target ((name "run") (depends "package"))
+                   (wtkrun ((jadfile "bin/${midlet.name}.jad")))))])
+    (call-with-output-file (build-path dest-dir "build.xml")
+      (lambda (op)
+        (display (xexpr->string build.xml) op))
+      #:exists 'replace)))
+
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -214,15 +291,6 @@
     (replace-template-file dest-dir "src/jad.properties" mappings)))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
-
-
-
-
 
 ;; collect-required-permissions: pinfo -> (listof symbol)
 (define (collect-required-android-permissions a-pinfo)
@@ -240,78 +308,6 @@
 
 
 
-
-;; write-j2me-ant-buildfile: string path -> void
-;; Writes a build file that's specialized toward building the midlet.
-(define (write-j2me-ant-buildfile name dest-dir 
-                                  #:cdlc-version [cldc-version "1.0"]
-                                  #:midp-version [midp-version "2.0" #;"1.0"]
-                                  )
-  (define (property name val)
-    `(property ((name ,name) (value ,val))))
-  
-  (let ([build.xml
-         `(project 
-           ((name ,(upper-camel-case name)) (default "package"))
-           "\n"
-           (taskdef ((resource "antenna.properties")
-                     (classpath ,(path->string antenna.jar))))
-           "\n"
-           ,(property "wtk.home" (path->string (current-j2me-home))) "\n"
-           ,(property "wtk.proguard.home" (path->string proguard-home)) "\n"
-           ,(property "wtk.cldc.version" cldc-version) "\n"
-           ,(property "wtk.midp.version" midp-version) "\n"
-           ,(property "midlet.name" (upper-camel-case name)) "\n"
-           ,(property "company.name" "PLT") "\n"
-           "\n"
-           (target ((name "init"))
-                   (mkdir ((dir "classes")))
-                   (mkdir ((dir "bin"))))
-           "\n"
-           (target ((name "make.jad") (depends "init"))
-                   (wtkjad ((jadfile ,(path->string 
-                                       (build-path 
-                                        "bin" 
-                                        (string-append (upper-camel-case name) ".jad"))))
-                            (jarfile ,(path->string 
-                                       (build-path 
-                                        "bin" 
-                                        (string-append (upper-camel-case name) ".jar"))))
-                            (name "${midlet.name}")
-                            (vendor "${company.name}")
-                            (version "1.0.0"))
-                           (midlet ((name ,(upper-camel-case name))
-                                    (class ,(string-append "org.plt." 
-                                                           (upper-camel-case name)
-                                                           "."
-                                                           (upper-camel-case name)))))))
-           "\n"
-           (target ((name "compile") (depends "init"))
-                   (copy ((todir "classes"))
-                         (fileset ((dir "src"))
-                                  (include ((name "**/*.class")))))
-                   (wtkbuild ((srcdir "src")
-                              (destdir "classes")
-                              (source "1.3")
-                              (target "1.3")
-                              (preverify "false"))))
-           "\n"
-           (target ((name "package") (depends "compile,make.jad"))
-                   (wtkpackage ((jarfile "bin/${midlet.name}.jar")
-                                (jadfile "bin/${midlet.name}.jad")
-                                (obfuscate "false")
-                                (preverify "true"))
-                               (preserve ((class "org.plt.platform.Platform")))
-                               (preserve ((class "org.plt.platform.J2MEPlatform")))
-                               (fileset ((dir "classes")))
-                               (fileset ((dir "res")))))
-           "\n"           
-           (target ((name "run") (depends "package"))
-                   (wtkrun ((jadfile "bin/${midlet.name}.jad")))))])
-    (call-with-output-file (build-path dest-dir "build.xml")
-      (lambda (op)
-        (display (xexpr->string build.xml) op))
-      #:exists 'replace)))
 
 
 
@@ -348,11 +344,4 @@
       (lambda (op)
         (display (xexpr->string AndroidManifest.xml) op))
       #:exists 'replace)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
 
