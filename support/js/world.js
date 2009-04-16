@@ -35,7 +35,7 @@ org.plt.WorldKernel = {};
 		var context = 
 		    canvas.getContext("2d");
 		var aScene = 
-		    org.plt.world.config.onRedraw(w);
+		    org.plt.world.config.onRedraw([w]);
 		aScene.render(context,
 			      0,
 			      0);
@@ -73,6 +73,15 @@ org.plt.WorldKernel = {};
     };
 
 
+    // circle: number style color -> TextImage
+    org.plt.WorldKernel.circle = function(aRadius, aStyle, aColor) {
+	return new CircleImage
+	(org.plt.types.NumberTower.toInteger(aRadius), 
+	 aStyle,
+	 aColor);
+    };
+
+
     
     // SceneImage: primitive-number primitive-number (listof image) -> Scene
     function SceneImage(width, height, children) {
@@ -94,7 +103,7 @@ org.plt.WorldKernel = {};
 	var i;
 	var childImage, childX, childY;
 	// Clear the scene.
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "lightgrey";
 	ctx.fillRect(x, y, x + this.width, y + this.height);
 
 	// Then ask every object to render itself.
@@ -133,6 +142,25 @@ org.plt.WorldKernel = {};
     };
     
 
+    function CircleImage(radius, style, color) {
+	this.radius = radius;
+	this.style = style;
+	this.color = color;
+    }
+
+    CircleImage.prototype.render = function(ctx, x, y) {
+	ctx.translate(0, 0);
+	ctx.beginPath();
+	ctx.fillStyle = this.color;
+	ctx.arc(x, y, this.radius, 0, 2*Math.PI, false);
+	if (this.style.toLowerCase() == "outline")
+	    ctx.stroke();
+	else
+	    ctx.fill();
+	ctx.closePath();
+    };
+    
+
 
  
  
@@ -144,12 +172,28 @@ org.plt.WorldKernel = {};
 org.plt.world = {};
 org.plt.world.config = {
     // onRedraw: world -> scene
-    onRedraw: false
+    onRedraw: false,
+    tickDelay: false,
+    onTick: false,
+    stopWhen: false
 };
 
 org.plt.world.config.Kernel = {};
 org.plt.world.config.Kernel.onRedraw = function(handler) {
     return function() {
 	org.plt.world.config.onRedraw = handler;    
+    };
+};
+org.plt.world.config.Kernel.onTick = function(aDelay, handler) {
+    return function() {
+	org.plt.world.config.tickDelay =
+	    org.plt.types.NumberTower.toInteger(aDelay);
+	org.plt.world.config.onTick = handler;    
+    };
+};
+
+org.plt.world.config.Kernel.stopWhen = function(handler) {
+    return function() {
+	org.plt.world.config.stopWhen = handler;    
     };
 };

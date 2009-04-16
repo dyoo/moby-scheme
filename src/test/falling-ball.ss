@@ -24,7 +24,7 @@
                (empty-scene WIDTH HEIGHT)))
 
 (big-bang WIDTH HEIGHT 
-          0
+          10
           (on-tick 1/15 tick)
           (on-redraw draw-scene)
           (stop-when hits-floor?))
