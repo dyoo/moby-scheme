@@ -86,7 +86,7 @@ org.plt.WorldKernel = {};
     SceneImage.prototype.add = function(anImage, x, y) {
 	return new SceneImage(this.width, 
 			      this.height,
-			      this.children + [[anImage, x, y]]);
+			      this.children.concat([[anImage, x, y]]));
     };
 
     // render: 2d-context primitive-number primitive-number -> void
@@ -100,8 +100,8 @@ org.plt.WorldKernel = {};
 	    childX = this.children[i][1];
 	    childY = this.children[i][2];
 	    childImage.render(context,
-			      org.plt.types.NumberTower.add(childX, x),
-			      org.plt.types.NumberTower.add(childY, y));
+			      childX + x,
+			      childY + y);
 	}
     };
 
