@@ -45,8 +45,6 @@
 (define-runtime-path android-gui-world-stub-path
   "../support/android/ActivityStub.java.template")
 
-(define-runtime-path javascript-world-stub-path
-  "../support/js/world.js.template")
 
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
@@ -367,10 +365,10 @@
                     compiled-program))
                   (ON-START (get-on-start-code pinfo))
                   (ON-PAUSE (get-on-pause-code pinfo))
-                  (ON-DESTROY (get-on-destroy-code pinfo)))]
-                [(source-path) 
-                 (build-path dest-dir "main.js")])
-    (fill-template-file javascript-world-stub-path source-path mappings)))
+                  (ON-DESTROY (get-on-destroy-code pinfo)))])
+    (fill-template-file (build-path dest-dir "main.js.template")
+                        (build-path dest-dir "main.js")
+                        mappings)))
 
 
 ;; make-javascript-directories: path -> void
