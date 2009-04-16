@@ -1,0 +1,30 @@
+main = {};
+
+
+(function() {
+
+
+
+main.startup = function() {
+<<ON-START>>
+};
+
+main.shutdown = function() {
+<<ON-PAUSE>>
+};
+
+
+main.destroy = function() {
+<<ON-DESTROY>>
+};
+
+
+main.runToplevel = function() {
+   <<PROGRAM-TOPLEVEL-EXPRESSIONS>>
+}
+
+<<PROGRAM-DEFINITIONS>>
+
+
+
+})();

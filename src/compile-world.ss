@@ -9,6 +9,7 @@
          "compile-helpers.ss"
          "image-lift.ss"
          "beginner-to-java.ss"
+         (prefix-in javascript: "beginner-to-javascript.ss")
          "utils.ss"
          "template.ss"
          "config.ss"
@@ -36,12 +37,16 @@
 (define-runtime-path common-support-src-path "../support/common/src")
 (define-runtime-path j2me-support-src-path "../support/j2me/src")
 (define-runtime-path j2me-support-res-path "../support/j2me/res")
+(define-runtime-path javascript-support-path "../support/js")
 
 (define-runtime-path j2me-world-stub-path
   "../support/j2me/MidletStub.java.template")
 
 (define-runtime-path android-gui-world-stub-path
   "../support/android/ActivityStub.java.template")
+
+(define-runtime-path javascript-world-stub-path
+  "../support/js/world.js.template")
 
 (define-runtime-path android-skeleton-path "../support/android/skeleton")
 
@@ -66,8 +71,7 @@
 
 ;; generate-javascript-application: name file dest
 (define (generate-javascript-application name file dest)
-  (void)
-  #;(compile-program-to-javascript (open-beginner-program file) naem dest))
+  (compile-program-to-javascript (open-beginner-program file) name dest))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -302,15 +306,6 @@
     p))
 
 
-
-
-
-
-
-
-
-
-
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
 (define (write-android-manifest dest-dir
                                 #:name name
@@ -345,3 +340,40 @@
         (display (xexpr->string AndroidManifest.xml) op))
       #:exists 'replace)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; compile-program-to-javascript: platform text% string path-string -> void
+;; Consumes a text, an application name, destination directory, and produces an application.
+;; The text buffer is assumed to contain a beginner-level program that uses only the world
+;; teachpack.  We need to consume a text because we must first lift up all the images
+;; as resources.
+(define (compile-program-to-javascript text name dest-dir)
+  (log-info (format "Compiling ~a to ~s" name dest-dir))
+  (make-javascript-directories dest-dir)
+  (lift-images-to-directory text (build-path dest-dir))
+  (let*-values ([(program)
+                 (parse-text-as-program text)]
+                [(compiled-program)
+                 (javascript:program->compiled-program program)]
+                [(defns pinfo)
+                 (values (javascript:compiled-program-defns compiled-program)
+                         (javascript:compiled-program-pinfo compiled-program))]
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-DEFINITIONS defns)
+                  (PROGRAM-TOPLEVEL-EXPRESSIONS
+                   (javascript:compiled-program-toplevel-exprs
+                    compiled-program))
+                  (ON-START (get-on-start-code pinfo))
+                  (ON-PAUSE (get-on-pause-code pinfo))
+                  (ON-DESTROY (get-on-destroy-code pinfo)))]
+                [(source-path) 
+                 (build-path dest-dir "main.js")])
+    (fill-template-file javascript-world-stub-path source-path mappings)))
+
+
+;; make-javascript-directories: path -> void
+(define (make-javascript-directories dest-dir)
+  (make-directory* dest-dir)
+  (copy-directory/files* javascript-support-path dest-dir))

@@ -25,6 +25,7 @@
 ;; Applications will be written to bin.
 (define-runtime-path test-app-j2me-path "bin/j2me")
 (define-runtime-path test-app-android-path "bin/android")
+(define-runtime-path test-app-js-path "bin/js")
 
 
 ;; make-test: string -> void
@@ -136,6 +137,8 @@
   #;(when (current-has-sun-wireless-sdk?)
       (test-all generate-j2me-application test-app-j2me-path))
   
+  (test-all generate-javascript-application test-app-js-path)
+  
   ;; If you do not have the Android SDK, change the value in config.ss.
   (when (current-has-android-sdk?)
     (test-all generate-android-application test-app-android-path)))
@@ -146,7 +149,9 @@
   #;(when (current-has-sun-wireless-sdk?)
       (a-test generate-j2me-application test-app-j2me-path))
   (when (current-has-android-sdk?)
-    (a-test generate-android-application test-app-android-path)))
+    (a-test generate-android-application test-app-android-path))
+  
+  (a-test generate-javascript-application test-app-js-path))
 
 
 #;(run-all-tests)
