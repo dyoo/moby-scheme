@@ -21,7 +21,7 @@ main.destroy = function() {
 
 main.runToplevel = function() {
    <<PROGRAM-TOPLEVEL-EXPRESSIONS>>
-}
+};
 
 <<PROGRAM-DEFINITIONS>>
 

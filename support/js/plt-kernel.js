@@ -130,6 +130,14 @@ org.plt.types = {};
    };
 
 
+    org.plt.types.Rational.prototype.toInteger = function(other) {
+	if (this.n >= 0)
+	    return Math.floor(this.n / this.d);
+	else
+	    return Math.ceil(this.n / this.d);
+	
+    }
+
 
    org.plt.types.Rational.makeInstance = function(n, d) {
      if (d == 1 && n < org.plt.types.Rational._cache.length)
@@ -182,6 +190,10 @@ org.plt.types.NumberTower.divide = function(x, y) {
 org.plt.types.NumberTower.equal = function(x, y) {
   return x.isEqual(y);
 };
+
+org.plt.types.NumberTower.toInteger = function(num) {
+    return x.toInteger();
+}
 
 
 //////////////////////////////////////////////////////////////////////
