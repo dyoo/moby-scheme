@@ -85,6 +85,22 @@ org.plt.Kernel = {
 	    div = org.plt.types.NumberTower.divide(div, args[i]);
 	}
 	return div;    
+    },
+
+    _greaterthan__equal_: function(first, second, rest) {
+	var test = 
+	    org.plt.types.NumberTower.greaterThanOrEqual;
+	if (! test(first, second))
+	    return false;
+	if (rest.length == 0)
+	    return true;
+	if (! test(second, rest[0]))
+	    return false;
+	for(var i = 0; i < rest.length - 1; i++) {
+	    if (! test(rest[i], rest[i+1]))
+		return false;
+	}
+	return true;
     }
 
 
@@ -172,6 +188,10 @@ org.plt.types = {};
 	
     }
 
+    org.plt.types.Rational.prototype.greaterThanOrEqual = function(other) {
+	return this.n*other.d >= this.d*other.n;
+    };
+
 
     org.plt.types.Rational.makeInstance = function(n, d) {
 	if (d == 1 && n < org.plt.types.Rational._cache.length)
@@ -228,6 +248,10 @@ org.plt.types.NumberTower.equal = function(x, y) {
 org.plt.types.NumberTower.toInteger = function(num) {
     return num.toInteger();
 }
+
+org.plt.types.NumberTower.greaterThanOrEqual = function(x, y) {
+    return x.greaterThanOrEqual(y);
+};
 
 
 //////////////////////////////////////////////////////////////////////

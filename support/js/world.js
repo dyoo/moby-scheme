@@ -3,6 +3,7 @@ org.plt.WorldKernel = {};
     
     var world;
     var worldListeners = [];
+    var stopped;
     
     function changeWorld(newWorld) {
 	world = newWorld;
@@ -24,6 +25,8 @@ org.plt.WorldKernel = {};
 
     org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
+	stopped = false;
+
 	for (i = 0; i < handlers.length; i++) {
 	    handlers[i]();
 	}
@@ -42,7 +45,30 @@ org.plt.WorldKernel = {};
 	    }
 
 	});
+	addWorldListener(function (w) {
+	    if (org.plt.world.config.stopWhen) {
+		if (org.plt.world.config.stopWhen([w])) {
+		    stopped = true;
+		}
+	    }
+	});
+
 	changeWorld(aWorld);
+
+	
+	if(org.plt.world.config.onTick) {
+	    var anInterval = window.setInterval(
+		function() {
+		    if (stopped)
+			window.clearInterval(anInterval);
+		    else {
+			changeWorld(
+			    org.plt.world.config.onTick([world]));
+		    }
+		},
+		org.plt.world.config.tickDelay);
+	}
+
     };
 
 
@@ -187,7 +213,10 @@ org.plt.world.config.Kernel.onRedraw = function(handler) {
 org.plt.world.config.Kernel.onTick = function(aDelay, handler) {
     return function() {
 	org.plt.world.config.tickDelay =
-	    org.plt.types.NumberTower.toInteger(aDelay);
+	    org.plt.types.NumberTower.toInteger
+	(org.plt.types.NumberTower.multiply(
+	    org.plt.types.Rational.makeInstance(1000, 1), 
+	    aDelay));
 	org.plt.world.config.onTick = handler;    
     };
 };
