@@ -90,16 +90,19 @@ org.plt.WorldKernel = {};
     };
 
     // render: 2d-context primitive-number primitive-number -> void
-    SceneImage.prototype.render = function(context, x, y) {
+    SceneImage.prototype.render = function(ctx, x, y) {
 	var i;
 	var childImage, childX, childY;
 	// Clear the scene.
+	ctx.fillStyle = "white";
+	ctx.fillRect(x, y, x + this.width, y + this.height);
+
 	// Then ask every object to render itself.
 	for(i = 0; i < this.children.length; i++) {
 	    childImage = this.children[i][0];
 	    childX = this.children[i][1];
 	    childY = this.children[i][2];
-	    childImage.render(context,
+	    childImage.render(ctx,
 			      childX + x,
 			      childY + y);
 	}
@@ -110,9 +113,23 @@ org.plt.WorldKernel = {};
 	this.msg = msg;
 	this.size = size;
 	this.color = color;
+	this.font = "Verdana";
     }
-    TextImage.prototype.render = function(context, x, y) {
-	alert("I'm drawing.");
+
+    TextImage.prototype.render = function(ctx, x, y) {
+	// Fixme: not quite right yet.
+	if ('mozDrawText' in ctx) {
+	    ctx.mozTextStyle=this.size+"pt "+this.font;
+	    // Fix me: I don't quite know how to get the
+	    // baseline right.
+	    ctx.translate(x, y + this.size);
+	    ctx.fillStyle = this.color;
+	    ctx.mozDrawText(this.msg);
+	} else {
+	    ctx.font.color = this.color;
+	    ctx.font.size = this.size + "px";
+	    ctx.fillText(this.msg, x, y);
+	}
     };
     
 
