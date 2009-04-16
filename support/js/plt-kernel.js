@@ -86,6 +86,15 @@ org.plt.types = {};
    }
 
 
+    // Strings
+    // For the moment, we just reuse Javascript strings.
+    org.plt.types.String = String;
+    org.plt.types.String.makeInstance = function(s) {
+	return s;
+    };
+
+
+
    // Rationals
 
    org.plt.types.Rational = function(n, d) {
@@ -192,7 +201,7 @@ org.plt.types.NumberTower.equal = function(x, y) {
 };
 
 org.plt.types.NumberTower.toInteger = function(num) {
-    return x.toInteger();
+    return num.toInteger();
 }
 
 

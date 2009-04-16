@@ -42,7 +42,6 @@ org.plt.WorldKernel = {};
 	    }
 
 	});
-	
 	changeWorld(aWorld);
     };
 
@@ -55,59 +54,72 @@ org.plt.WorldKernel = {};
 			  org.plt.types.NumberTower.toInteger(y));
     };
 
- 
- // emptyScene: number number -> scene
- org.plt.WorldKernel.emptyScene = function(width, height) {
-     return new SceneImage(
-	 org.plt.types.NumberTower.toInteger(width), 
-	 org.plt.types.NumberTower.toInteger(height),
-	 []);
- };
+    
+    // emptyScene: number number -> scene
+    org.plt.WorldKernel.emptyScene = function(width, height) {
+	return new SceneImage(
+	    org.plt.types.NumberTower.toInteger(width), 
+	    org.plt.types.NumberTower.toInteger(height),
+	    []);
+    };
+
+
+    // text: string number color -> TextImage
+    org.plt.WorldKernel.text = function(aString, aSize, aColor) {
+	return new TextImage
+	(aString, 
+	 org.plt.types.NumberTower.toInteger(aSize), 
+	 aColor);
+    };
+
+
+    
+    // SceneImage: primitive-number primitive-number (listof image) -> Scene
+    function SceneImage(width, height, children) {
+	this.width = width;
+	this.height = height;
+	this.children = children;
+    }
+    
+
+    // add: image primitive-number primitive-number -> Scene
+    SceneImage.prototype.add = function(anImage, x, y) {
+	return new SceneImage(this.width, 
+			      this.height,
+			      this.children + [[anImage, x, y]]);
+    };
+
+    // render: 2d-context primitive-number primitive-number -> void
+    SceneImage.prototype.render = function(context, x, y) {
+	var i;
+	var childImage, childX, childY;
+	// Clear the scene.
+	// Then ask every object to render itself.
+	for(i = 0; i < this.children.length; i++) {
+	    childImage = this.children[i][0];
+	    childX = this.children[i][1];
+	    childY = this.children[i][2];
+	    childImage.render(context,
+			      org.plt.types.NumberTower.add(childX, x),
+			      org.plt.types.NumberTower.add(childY, y));
+	}
+    };
+
+    
+    function TextImage(msg, size, color) {
+	this.msg = msg;
+	this.size = size;
+	this.color = color;
+    }
+    TextImage.prototype.render = function(context, x, y) {
+	alert("I'm drawing.");
+    };
+    
+
 
  
-// SceneImage: primitive-number primitive-number (listof image) -> Scene
- function SceneImage(width, height, children) {
-     this.width = width;
-     this.height = height;
-     this.children = children;
- }
  
 
- // add: image primitive-number primitive-number -> Scene
- SceneImage.prototype.add = function(anImage, x, y) {
-     return new SceneImage(this.width, 
-			   this.height,
-			   this.children + [[anImage, x, y]]);
- };
-
- // render: 2d-context primitive-number primitive-number -> void
- SceneImage.prototype.render = function(context, x, y) {
-     var i;
-     var childImage, childX, childY;
-     // Clear the scene.
-     // Then ask every object to render itself.
-     for(i = 0; i < this.children.length; i++) {
-	 childImage = this.children[i][0];
-	 childX = this.children[i][1];
-	 childY = this.children[i][2];
-	 childImage.render(context,
-			   org.plt.types.NumberTower.add(childX, x),
-			   org.plt.types.NumberTower.add(childY, y));
-     }
- };
-
- 
- function TextImage() {
-     return 0;
- }
-
- TextImage.prototype.render = function(context, x, y) {
-     alert("I'm drawing.");
- };
- 
- 
-
- 
  
 })();
 
