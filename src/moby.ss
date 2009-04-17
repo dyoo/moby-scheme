@@ -8,6 +8,12 @@
          scheme/cmdline
          scheme/path)
 
+;; Parameters.
+(define name (make-parameter #f))
+(define dest-dir (make-parameter #f))
+(define app-compiler (make-parameter generate-android-application))
+
+
 
 ;; extract-name: path -> string
 (define (extract-name a-path)
@@ -16,10 +22,29 @@
                           (path->string 
                            (file-name-from-path a-path))) ""))
 
+;; lookup-app-type: string -> (string path-string path path-string -> void)
+(define (lookup-app-type a-type)
+  (cond 
+    [(string=? a-type "android")
+     generate-android-application]
+    [(string=? a-type "js")
+     generate-javascript-application]
+    [else
+     (error 'moby "Type is expected to be one of [android, js]")]))
 
 
-(define name (make-parameter #f))
-(define dest-dir (make-parameter #f))
+;; get-name: -> string
+(define (get-name)
+  (or (name)
+      (extract-name file-to-compile)))
+
+
+;; get-output-path: -> path
+(define (get-output-path)
+ (or (dest-dir)
+     (build-path (current-directory)
+                 (upper-camel-case (get-name)))))
+
 
 
 (define file-to-compile
@@ -29,24 +54,14 @@
                     (name n)]
    [("-d" "--dest") d "Set the destination path of the output"
                     (dest-dir (build-path d))]
-   #:args (filename)
-   (build-path filename)))
+   [("-t" "--type") t "Set the application type"
+                    (app-compiler (lookup-app-type t))]
+   #:args (beginner-program-filename)
+   (build-path beginner-program-filename)))
 
 
-;; get-name: -> string
-(define (get-name)
-  (or (name)
-      (extract-name file-to-compile)))
 
-;; get-output-path: -> path
-(define (get-output-path)
- (or (dest-dir)
-     (build-path (current-directory)
-                 (upper-camel-case (get-name)))))
-
-(generate-android-application 
- (get-name)
- file-to-compile
- (get-output-path))
-
-
+(let ([compiler (app-compiler)]
+      [name (get-name)]
+      [output-path (get-output-path)])
+  (compiler name file-to-compile output-path))
