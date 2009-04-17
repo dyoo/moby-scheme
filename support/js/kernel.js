@@ -149,6 +149,10 @@ org.plt.types = {};
 })();
 
 
+org.plt.types.Logic = {
+    TRUE : true,
+    FALSE : false
+};
 
 
 

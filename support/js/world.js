@@ -112,6 +112,7 @@ org.plt.WorldKernel = {};
 	return new FileImage(path.toString());
     };
 
+
     org.plt.WorldKernel.nwRectangle = function(w, h, s, c) {
 	return new RectangleImage(
 	    org.plt.types.NumberTower.toInteger(w),
@@ -142,17 +143,23 @@ org.plt.WorldKernel = {};
 	var i;
 	var childImage, childX, childY;
 	// Clear the scene.
-	ctx.fillStyle = "lightgrey";
-	ctx.fillRect(x, y, x + this.width, y + this.height);
-
+	ctx.save();
+	ctx.fillStyle = "white";
+	ctx.fillRect(x, y, this.width, this.height);
+	ctx.fillStyle = "black";
+	ctx.strokeRect(x, y, this.width, this.height);
+	ctx.restore();
+	ctx.globalCompositeOperation = 'source-over';
 	// Then ask every object to render itself.
 	for(i = 0; i < this.children.length; i++) {
 	    childImage = this.children[i][0];
 	    childX = this.children[i][1];
 	    childY = this.children[i][2];
+	    ctx.save();
 	    childImage.render(ctx,
 			      childX + x,
 			      childY + y);
+	    ctx.restore();
 	}
     };
 
@@ -160,9 +167,11 @@ org.plt.WorldKernel = {};
     function FileImage(path) {
 	this.img = new Image();
 	this.img.src = path;
-	// We should do something asynchronous here
+	// We should do something blocking here
 	// for onload, since we don't know at
-	// this time what the file size should be.
+	// this time what the file size should be, nor
+	// will drawImage do the right thing until the
+	// file is loaded.
     }
 
     FileImage.prototype.render = function(ctx, x, y) {
@@ -179,12 +188,15 @@ org.plt.WorldKernel = {};
     }
 
     RectangleImage.prototype.render = function(ctx, x, y) {
-	this.fillStyle = this.color;
+	ctx.beginPath();
+	ctx.fillStyle = this.color;
+	ctx.rect(x, y, this.width, this.height);
 	if (this.style.toLowerCase() == "outline") {
-	    ctx.strokeRect(x, y, x+this.width, y+this.height);
+	    ctx.stroke();
 	} else {
-	    ctx.fillRect(x, y, x+this.width, y+this.height);
+	    ctx.fill();
 	}
+	ctx.closePath();
     };
 
 
