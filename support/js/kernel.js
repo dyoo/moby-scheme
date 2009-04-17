@@ -109,11 +109,49 @@ org.plt.Kernel = {
 
 
 
+
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // Types
 
 org.plt.types = {};
+
+
+
+// Posns
+(function() {
+    function posn(x,y) { this.x = x;
+			 this.y = y; }
+    posn.prototype = new org.plt.Kernel.Struct();
+    posn.prototype.isEqual = function(other) {
+        if (other instanceof posn) {
+            return (((org.plt.Kernel.equal_question_((posn_dash_y(this)),(posn_dash_y(other)))))&&((((org.plt.Kernel.equal_question_((posn_dash_x(this)),(posn_dash_x(other)))))&&(org.plt.types.Logic.TRUE))));
+        } else {
+            return false;
+        }
+    } 
+    function make_dash_posn(id0,id1) { return new posn(id0,id1); }
+    function posn_dash_x(obj) { return obj.x; }
+    function posn_dash_y(obj) { return obj.y; }
+    function posn_question_(obj) { 
+        return obj instanceof posn ; 
+    }
+
+    org.plt.Kernel.make_dash_posn = make_dash_posn;
+    org.plt.Kernel.posn_question_ = posn_question_;
+    org.plt.Kernel.posn_dash_x = posn_dash_x;
+    org.plt.Kernel.posn_dash_y = posn_dash_y;
+})();
+
+
+
+
+
 
 (function() {
     function gcd(a, b) {

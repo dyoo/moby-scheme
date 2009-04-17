@@ -154,4 +154,4 @@
   (a-test generate-javascript-application test-app-js-path))
 
 
-#;(run-all-tests)
+(run-all-tests)

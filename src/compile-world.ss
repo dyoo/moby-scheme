@@ -368,7 +368,8 @@
                   (ON-DESTROY (get-on-destroy-code pinfo)))])
     (fill-template-file (build-path dest-dir "main.js.template")
                         (build-path dest-dir "main.js")
-                        mappings)))
+                        mappings)
+    (delete-file (build-path dest-dir "main.js.template"))))
 
 
 ;; make-javascript-directories: path -> void
