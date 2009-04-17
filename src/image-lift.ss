@@ -31,7 +31,7 @@
               [bitmap (send a-snip get-bitmap)]
               [replacement-snip (make-object string-snip%
                                   (format "(-kernel-create-image ~s)" 
-                                          (string-append "/" file-name)))])
+                                          file-name))])
          (send a-text set-position 
                (send a-text get-snip-position a-snip)
                (+ (send a-text get-snip-position a-snip) 

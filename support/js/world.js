@@ -108,6 +108,19 @@ org.plt.WorldKernel = {};
     };
 
 
+    org.plt.WorldKernel._kernelCreateImage = function(path) {
+	return new FileImage(path.toString());
+    };
+
+    org.plt.WorldKernel.nwRectangle = function(w, h, s, c) {
+	return new RectangleImage(
+	    org.plt.types.NumberTower.toInteger(w),
+	    org.plt.types.NumberTower.toInteger(h),
+	    s,
+	    c);
+    }
+
+
     
     // SceneImage: primitive-number primitive-number (listof image) -> Scene
     function SceneImage(width, height, children) {
@@ -142,6 +155,39 @@ org.plt.WorldKernel = {};
 			      childY + y);
 	}
     };
+
+    
+    function FileImage(path) {
+	this.img = new Image();
+	this.img.src = path;
+	// We should do something asynchronous here
+	// for onload, since we don't know at
+	// this time what the file size should be.
+    }
+
+    FileImage.prototype.render = function(ctx, x, y) {
+	ctx.drawImage(this.img, x, y);
+    };
+
+
+
+    function RectangleImage(width, height, style, color) {
+	this.width = width;
+	this.height = height;
+	this.style = style;
+	this.color = color;
+    }
+
+    RectangleImage.prototype.render = function(ctx, x, y) {
+	this.fillStyle = this.color;
+	if (this.style.toLowerCase() == "outline") {
+	    ctx.strokeRect(x, y, x+this.width, y+this.height);
+	} else {
+	    ctx.fillRect(x, y, x+this.width, y+this.height);
+	}
+    };
+
+
 
     
     function TextImage(msg, size, color) {
