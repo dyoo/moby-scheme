@@ -106,6 +106,10 @@ org.plt.WorldKernel = {};
     };
 
 
+    org.plt.WorldKernel.isImage = function(thing) {
+	return 'render' in thing;
+    }
+
 
     // placeImage: image number number scene -> scene
     org.plt.WorldKernel.placeImage = function(picture, x, y, aScene) {
