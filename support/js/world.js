@@ -30,6 +30,10 @@ org.plt.WorldKernel = {};
 	for (i = 0; i < handlers.length; i++) {
 	    handlers[i]();
 	}
+	
+	window.onKeyDown = function(e) {
+	    alert("I see you");
+	}
 
 	addWorldListener(function (w) {
 	    if (org.plt.world.config.onRedraw) {
@@ -259,6 +263,7 @@ org.plt.world.config = {
     onRedraw: false,
     tickDelay: false,
     onTick: false,
+    onKey: false,
     stopWhen: false
 };
 
@@ -282,5 +287,12 @@ org.plt.world.config.Kernel.onTick = function(aDelay, handler) {
 org.plt.world.config.Kernel.stopWhen = function(handler) {
     return function() {
 	org.plt.world.config.stopWhen = handler;    
+    };
+};
+
+
+org.plt.world.config.Kernel.onKey = function(handler) {
+    return function() {
+	org.plt.world.config.onKey = handler;    
     };
 };

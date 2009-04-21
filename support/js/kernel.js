@@ -41,6 +41,12 @@ org.plt.Kernel = {
 	// FIXME: check against other args too.
 	return org.plt.types.NumberTower.equal(x, y);
     },
+
+    _equal__tilde_ : function(x, y, delta) {
+	// FIXME: check against other args too.
+	return org.plt.types.NumberTower.approxEqual(x, y, delta);
+    },
+
     
     sub1 : function(x) {
 	return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
@@ -286,6 +292,12 @@ org.plt.types.NumberTower.divide = function(x, y) {
 org.plt.types.NumberTower.equal = function(x, y) {
     return x.isEqual(y);
 };
+
+org.plt.types.NumberTower.approxEqual = function(x, y, delta) {
+    // fixme: use delta
+    return x.isEqual(y);
+};
+
 
 org.plt.types.NumberTower.toInteger = function(num) {
     return num.toInteger();
