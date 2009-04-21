@@ -22,23 +22,47 @@ org.plt.WorldKernel = {};
     }
     
 
+    // Given an event, try to get the name of the key.
+    function getKeyCodeName(e) {
+	var code = e.charCode || e.keyCode;
+	var keyname;
+	if (code == 37) {
+	    keyname = "left";
+	} else if (code == 38) {
+	    keyname = "up";
+	} else if (code == 39) {
+	    keyname = "right";
+	} else if (code == 40) {
+	    keyname = "down";
+	} else {
+	    keyname = String.fromCharCode(code); 
+	}
+	return keyname;
+    }
+
 
     org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
+	var canvas = 
+	    window.document.getElementById("canvas");
+
 	stopped = false;
 
 	for (i = 0; i < handlers.length; i++) {
 	    handlers[i]();
 	}
-	
-	window.onKeyDown = function(e) {
-	    alert("I see you");
+
+
+	if (org.plt.world.config.onKey) {
+	    window.onkeypress = function(e) {
+		var keyname = getKeyCodeName(e);
+		var newWorld = org.plt.world.config.onKey([world, keyname]);
+		changeWorld(newWorld);
+	    }
 	}
 
 	addWorldListener(function (w) {
 	    if (org.plt.world.config.onRedraw) {
-		var canvas = 
-		    window.document.getElementById("canvas");
 		var context = 
 		    canvas.getContext("2d");
 		var aScene = 
@@ -73,6 +97,12 @@ org.plt.WorldKernel = {};
 		org.plt.world.config.tickDelay);
 	}
 
+    };
+
+
+
+    org.plt.WorldKernel.isKeyEqual = function(key1, key2) {
+	return key1.toString() == key2.toString();
     };
 
 

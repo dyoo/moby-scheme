@@ -108,8 +108,6 @@ org.plt.Kernel = {
 	}
 	return true;
     }
-
-
 };
 
 
@@ -183,11 +181,31 @@ org.plt.types.Logic = {
     };
 
 
+    // Symbols
+    org.plt.types.Symbol = function(val) {
+	this.val = val;
+    }
+
+    // makeInstance: string -> Symbol.
+    org.plt.types.Symbol.makeInstance = function(val) {
+	return new org.plt.types.Symbol(val);
+    };
+
+    org.plt.types.Symbol.prototype.isEqual = function(other) {
+	return other instanceof org.plt.types.Symbol &&
+	    this.val == other.val;
+    };
+    
+    org.plt.types.Symbol.prototype.toString = function() {
+	return this.val;
+    };
+
+
 
     // Rationals
 
     org.plt.types.Rational = function(n, d) {
-	var divisor = gcd(n, d);
+	var divisor = gcd(Math.abs(n), Math.abs(d));
 	this.n = n / divisor;
 	this.d = d / divisor;
     };
@@ -229,11 +247,7 @@ org.plt.types.Logic = {
 
 
     org.plt.types.Rational.prototype.toInteger = function(other) {
-	if (this.n >= 0)
-	    return Math.floor(this.n / this.d);
-	else
-	    return Math.ceil(this.n / this.d);
-	
+	return Math.floor(this.n / this.d);	
     }
 
     org.plt.types.Rational.prototype.greaterThanOrEqual = function(other) {
@@ -242,12 +256,19 @@ org.plt.types.Logic = {
 
 
     org.plt.types.Rational.makeInstance = function(n, d) {
-	if (d == 1 && n < org.plt.types.Rational._cache.length)
-	    return org.plt.types.Rational._cache[n];
-	if (n == -1 && d == 1) {
-	    return org.plt.types.Rational.NEGATIVE_ONE;
+	if (d < 0) {
+	    n = -n;
+	    d = -d;
 	}
-	return new org.plt.types.Rational(n, d);
+
+	if (d == 1 && 
+	    0 <= n && 
+	    n < org.plt.types.Rational._cache.length)
+	    return org.plt.types.Rational._cache[n];
+	else if (n == -1 && d == 1) 
+	    return org.plt.types.Rational.NEGATIVE_ONE;
+	else
+	    return new org.plt.types.Rational(n, d);
     };
 
     org.plt.types.Rational.NEGATIVE_ONE = new org.plt.types.Rational(-1, 1);
