@@ -171,6 +171,14 @@ org.plt.WorldKernel = {};
 	    c);
     };
 
+    org.plt.WorldKernel.rectangle = function(w, h, s, c) {
+	// Fixme: get the pinholes!
+	return new RectangleImage(
+	    org.plt.types.NumberTower.toInteger(w),
+	    org.plt.types.NumberTower.toInteger(h),
+	    s,
+	    c);
+    };
 
     
     // SceneImage: primitive-number primitive-number (listof image) -> Scene

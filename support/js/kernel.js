@@ -99,6 +99,9 @@ org.plt = {};
 	    return org.plt.types.NumberTower.modulo(m, n);
 	},
 
+	zero_question_: function(m) {
+	    return org.plt.types.NumberTower.equal(m, org.plt.types.Rational.ZERO);
+	},
 
 
 	_equal__tilde_ : function(x, y, delta) {
@@ -206,6 +209,14 @@ org.plt = {};
 	
 	string_equal__question_: function(x, y) {
 	    return x.isEqual(y);
+	},
+
+	symbol_equal__question_: function(x, y) {
+	    return x.isEqual(y);
+	},
+
+	not : function(x) {
+	    return !x;
 	}
 
     };
