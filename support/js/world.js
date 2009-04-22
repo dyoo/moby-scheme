@@ -108,7 +108,17 @@ org.plt.WorldKernel = {};
 
     org.plt.WorldKernel.isImage = function(thing) {
 	return 'render' in thing;
-    }
+    };
+
+
+    org.plt.WorldKernel.imageWidth = function(thing) {
+	return org.plt.types.Rational.makeInstance(thing.getWidth(), 1);
+    };
+
+
+    org.plt.WorldKernel.imageHeight = function(thing) {
+	return org.plt.types.Rational.makeInstance(thing.getHeight(), 1);
+    };
 
 
     // placeImage: image number number scene -> scene
@@ -147,7 +157,7 @@ org.plt.WorldKernel = {};
 
 
     org.plt.WorldKernel._kernelCreateImage = function(path) {
-	return new FileImage(path.toString());
+	return FileImage.makeInstance(path.toString());
     };
 
 
@@ -157,7 +167,7 @@ org.plt.WorldKernel = {};
 	    org.plt.types.NumberTower.toInteger(h),
 	    s,
 	    c);
-    }
+    };
 
 
     
@@ -201,6 +211,15 @@ org.plt.WorldKernel = {};
 	}
     };
 
+    SceneImage.prototype.getWidth = function() {
+	return this.width;
+    };
+
+    SceneImage.prototype.getHeight = function() {
+	return this.height;
+    };
+
+
     
     function FileImage(path) {
 	this.img = new Image();
@@ -211,6 +230,15 @@ org.plt.WorldKernel = {};
 	// will drawImage do the right thing until the
 	// file is loaded.
     }
+    
+    var imageCache = {};
+    FileImage.makeInstance = function(path) {
+	if (! (path in imageCache)) {
+	    imageCache[path] = new FileImage(path);
+
+	} 
+	return imageCache[path];
+    };
 
 
     // wait: (-> boolean) (-> void) -> void
@@ -220,7 +248,7 @@ org.plt.WorldKernel = {};
 	if (predicate()) 
 	    return after();
 	else
-	    setTimeout(function() { waitForSomething(predicate, after); },
+	    setTimeout(function() { wait(predicate, after); },
 		       10);
     }
 
@@ -232,6 +260,16 @@ org.plt.WorldKernel = {};
 		 ctx.drawImage(self.img, x, y);
 	     });
     };
+
+    FileImage.prototype.getWidth = function() {
+	return this.img.width;
+    };
+
+    FileImage.prototype.getHeight = function() {
+	return this.img.height;
+    };
+
+
 
 
     function RectangleImage(width, height, style, color) {
@@ -251,6 +289,15 @@ org.plt.WorldKernel = {};
 	    ctx.fill();
 	}
 	ctx.closePath();
+    };
+
+    RectangleImage.prototype.getWidth = function() {
+	return this.width;
+    };
+
+
+    RectangleImage.prototype.getHeight = function() {
+	return this.height;
     };
 
 
@@ -279,6 +326,16 @@ org.plt.WorldKernel = {};
 	}
     };
     
+    TextImage.prototype.getWidth = function() {
+	// Fixme: we need the font metrics to do this right...
+	return this.size * this.msg.length;
+    };
+
+    TextImage.prototype.getHeight = function() {
+	return 10;
+	// Fixme: we need the font metrics to do this right...
+    };
+
 
     function CircleImage(radius, style, color) {
 	this.radius = radius;
@@ -298,10 +355,14 @@ org.plt.WorldKernel = {};
 	ctx.closePath();
     };
     
+    CircleImage.prototype.getWidth = function() {
+	return this.radius * 2;
+    };
 
+    CircleImage.prototype.getHeight = function() {
+	return this.radius * 2;
+    };
 
- 
- 
 
  
 })();
