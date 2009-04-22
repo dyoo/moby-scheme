@@ -212,10 +212,26 @@ org.plt.WorldKernel = {};
 	// file is loaded.
     }
 
-    FileImage.prototype.render = function(ctx, x, y) {
-	ctx.drawImage(this.img, x, y);
-    };
 
+    // wait: (-> boolean) (-> void) -> void
+    //
+    // Waits until boolean is true, then calls after.
+    function wait(predicate, after) {
+	if (predicate()) 
+	    return after();
+	else
+	    setTimeout(function() { waitForSomething(predicate, after); },
+		       10);
+    }
+
+
+    FileImage.prototype.render = function(ctx, x, y) {
+	var self = this;
+	wait(function() { return self.img.complete; },
+	     function() {
+		 ctx.drawImage(self.img, x, y);
+	     });
+    };
 
 
     function RectangleImage(width, height, style, color) {
