@@ -12,6 +12,7 @@ org.plt = {};
 //////////////////////////////////////////////////////////////////////
 // Kernel
 (function() {
+
     function chainTest(test, first, second, rest) {
 	if (! test(first, second))
 	    return false;
@@ -42,7 +43,7 @@ org.plt = {};
     org.plt.Kernel = {
 	Struct: function () {
 	},
-    
+	
 	struct_question_: function(thing) {
 	    return thing instanceof this.Struct;
 	},
@@ -57,7 +58,7 @@ org.plt = {};
 	    }
 	},
 
-    
+	
 	identity : function (x){
 	    return x;
 	},
@@ -80,11 +81,32 @@ org.plt = {};
 	},
 
 
+	second: function(thing) {
+	    return thing.rest().first();
+	},
+
+	third: function(thing) {
+	    return thing.rest().rest().first();
+	},
+
+	fourth: function(thing) {
+	    return thing.rest().rest().rest().first();
+	},
+
+	fifth: function(thing) {
+	    return thing.rest().rest().rest().rest().first();
+	},
+
+
 	random: function(x) {
 	    return org.plt.types.Rational.makeInstance
 	    (Math.floor(org.plt.types.NumberTower.toInteger(x) * 
 			Math.random()),
 	     1);
+	},
+
+	floor: function(x) {
+	    return org.plt.types.NumberTower.floor(x);
 	},
 
 	sqrt: function(x) {
@@ -112,7 +134,7 @@ org.plt = {};
 	abs: function(x) {
 	    return org.plt.types.NumberTower.abs(x);
 	},
-    
+	
 	sub1 : function(x) {
 	    return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
 	},
@@ -220,25 +242,21 @@ org.plt = {};
 	}
 
     };
-    })();
 
 
 
 
 
+    //////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    // Types
+
+    org.plt.types = {};
 
 
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-// Types
+    // Posns
 
-org.plt.types = {};
-
-
-
-// Posns
-(function() {
     function posn(x,y) { this.x = x;
 			 this.y = y; }
     posn.prototype = new org.plt.Kernel.Struct();
@@ -272,8 +290,22 @@ org.plt.types.Logic = {
 
 
 (function() {
+    function die(msg) {
+	// We're trying to error out so that we get a stack track from firebug.
+	console.trace();
+	throw new TypeError(msg.toString());
+    }
+
     function gcd(a, b) {
 	var t;
+	if (isNaN(a) || !isFinite(a)) {
+	    die("not a number: " + a);
+	}
+	if (isNaN(b) || !isFinite(b)) {
+	    die("not a number: " + b);
+	}
+	a = Math.floor(Math.abs(a));
+	b = Math.floor(Math.abs(b));
 	while (b != 0) {
 	    t = a;
 	    a = b;
@@ -320,10 +352,10 @@ org.plt.types.Logic = {
     org.plt.types.Empty = function() {};
     org.plt.types.Empty.EMPTY = new org.plt.types.Empty();
     org.plt.types.Empty.prototype.first = function() {
-	throw new Error("first can't be applied on empty.");
+	die("first can't be applied on empty.");
     };
     org.plt.types.Empty.prototype.rest = function() {
-	throw new Error("rest can't be applied on empty.");
+	die("rest can't be applied on empty.");
     };
     org.plt.types.Empty.prototype.isEmpty = function() {
 	return true;
@@ -370,6 +402,15 @@ org.plt.types.Logic = {
 	    return this.n + "/" + this.d;
 	}
     };
+
+    org.plt.types.Rational.prototype.level = function() {
+	return 0;
+    };
+
+
+    org.plt.types.Rational.prototype.lift = function() {
+	return org.plt.types.Floating.makeInstance(this.n / this.d);
+    }
 
     org.plt.types.Rational.prototype.isEqual = function(other) {
 	return other instanceof org.plt.types.Rational &&
@@ -431,8 +472,16 @@ org.plt.types.Logic = {
 						   this.d);
     };
 
+    org.plt.types.Rational.prototype.floor = function() {
+	return org.plt.types.Rational.makeInstance(Math.floor(this.n / this.d), 1);
+    };
+
 
     org.plt.types.Rational.makeInstance = function(n, d) {
+	if (n == undefined)
+	    die("n undefined");
+	if (d == undefined)
+	    die("d undefined");
 	if (d < 0) {
 	    n = -n;
 	    d = -d;
@@ -462,14 +511,20 @@ org.plt.types.Logic = {
     org.plt.types.Rational.ONE = org.plt.types.Rational._cache[1];
 
 
-})();
 
 
-//////////////////////////////////////////////////////////////////////
 
-(function() {
+
     org.plt.types.Floating = function(n) {
 	this.n = n;
+    };
+
+    org.plt.types.Floating.prototype.level = function() {
+	return 1;
+    };
+
+    org.plt.types.Floating.prototype.lift = function() {
+	throw new Error("Don't know how to lift Floating");
     };
 
     org.plt.types.Floating.prototype.toString = function() {
@@ -478,7 +533,7 @@ org.plt.types.Logic = {
 
     org.plt.types.Floating.prototype.isEqual = function(other) {
 	return other instanceof org.plt.types.Floating &&
-	this.n == other.n;
+	    this.n == other.n;
     };
 
     org.plt.types.Floating.prototype.add = function(other) {
@@ -506,6 +561,10 @@ org.plt.types.Logic = {
 	return this.n;
     };
 
+    org.plt.types.Floating.prototype.floor = function() {
+	return org.plt.types.Rational.makeInstance(Math.floor(this.n), 1);
+    };
+
     org.plt.types.Floating.prototype.greaterThanOrEqual = function(other) {
 	return this.n >= other.n;
     };
@@ -530,142 +589,154 @@ org.plt.types.Logic = {
 	return new org.plt.types.Floating(n);
     };
 
-})();    
 
 
-//////////////////////////////////////////////////////////////////////
-// NumberTower.
-// 
-// FIXME: hardcoded to handle rationals only.
-// We must do the numeric tower.
-org.plt.types.NumberTower = {};
-
-org.plt.types.NumberTower.toInteger = function(num) {
-    return num.toInteger();
-};
-
-org.plt.types.NumberTower.toFloat = function(num) {
-    return num.toFloat();
-};
-
-org.plt.types.NumberTower.abs = function(n) {
-    return n.abs();
-}
-
-org.plt.types.NumberTower.add = function(x, y) {
-    return x.add(y);
-};
-
-org.plt.types.NumberTower.subtract = function(x, y) {
-    return x.subtract(y);
-};
-
-org.plt.types.NumberTower.multiply = function(x, y) {
-    return x.multiply(y);
-};
-
-org.plt.types.NumberTower.divide = function(x, y) {
-    return x.divide(y);
-};
-
-org.plt.types.NumberTower.equal = function(x, y) {
-    return x.isEqual(y);
-};
-
-org.plt.types.NumberTower.approxEqual = function(x, y, delta) {
-    // fixme: use delta
-    return x.isEqual(y);
-};
-
-org.plt.types.NumberTower.greaterThanOrEqual = function(x, y) {
-    return x.toFloat() >= y.toFloat();
-};
-
-org.plt.types.NumberTower.lessThanOrEqual = function(x, y) {
-    return x.toFloat() <= y.toFloat();
-};
-
-org.plt.types.NumberTower.greaterThan = function(x, y) {
-    return x.toFloat() > y.toFloat();
-};
-
-org.plt.types.NumberTower.lessThan = function(x, y) {
-    return x.toFloat() < y.toFloat();
-};
-
-org.plt.types.NumberTower.sqrt = function(x) {
-    return x.sqrt();
-};
-
-org.plt.types.NumberTower.modulo = function(m, n) {
-    return org.plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
-					       1);
-};
-
-
-org.plt.types.NumberTower.sqr = function(x) {
-    return org.plt.types.NumberTower.multiply(x, x);
-};
-
-
-
-//////////////////////////////////////////////////////////////////////
-
-// World 
+    org.plt.Kernel.pi = org.plt.types.Floating.makeInstance(Math.PI);
+    org.plt.Kernel.e = org.plt.types.Floating.makeInstance(Math.E);
 
 
 
 
-//////////////////////////////////////////////////////////////////////
-// Platform-specific stuff.
-org.plt.platform = {};
 
-(function() {
-    
+
+    //////////////////////////////////////////////////////////////////////
+    // NumberTower.
+    // 
+    org.plt.types.NumberTower = {};
+
+
+    org.plt.types.NumberTower.toInteger = function(num) {
+	return num.toInteger();
+    };
+
+    org.plt.types.NumberTower.toFloat = function(num) {
+	return num.toFloat();
+    };
+
+    org.plt.types.NumberTower.abs = function(n) {
+	return n.abs();
+    }
+
+    org.plt.types.NumberTower.add = function(x, y) {
+	while (x.level() < y.level()) x = x.lift();
+	while (y.level() < x.level()) y = y.lift();
+	return x.add(y);
+    };
+
+    org.plt.types.NumberTower.subtract = function(x, y) {
+	while (x.level() < y.level()) x = x.lift();
+	while (y.level() < x.level()) y = y.lift();
+	return x.subtract(y);
+    };
+
+    org.plt.types.NumberTower.multiply = function(x, y) {
+	while (x.level() < y.level()) x = x.lift();
+	while (y.level() < x.level()) y = y.lift();
+	return x.multiply(y);
+    };
+
+    org.plt.types.NumberTower.divide = function(x, y) {
+	while (x.level() < y.level()) x = x.lift();
+	while (y.level() < x.level()) y = y.lift();
+	return x.divide(y);
+    };
+
+    org.plt.types.NumberTower.equal = function(x, y) {
+	return x.isEqual(y);
+    };
+
+    org.plt.types.NumberTower.approxEqual = function(x, y, delta) {
+	// fixme: use delta
+	return x.isEqual(y);
+    };
+
+    org.plt.types.NumberTower.greaterThanOrEqual = function(x, y) {
+	return x.toFloat() >= y.toFloat();
+    };
+
+    org.plt.types.NumberTower.lessThanOrEqual = function(x, y) {
+	return x.toFloat() <= y.toFloat();
+    };
+
+    org.plt.types.NumberTower.greaterThan = function(x, y) {
+	return x.toFloat() > y.toFloat();
+    };
+
+    org.plt.types.NumberTower.lessThan = function(x, y) {
+	return x.toFloat() < y.toFloat();
+    };
+
+    org.plt.types.NumberTower.sqrt = function(x) {
+	return x.sqrt();
+    };
+
+    org.plt.types.NumberTower.modulo = function(m, n) {
+	return org.plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
+						   1);
+    };
+
+    org.plt.types.NumberTower.sqr = function(x) {
+	return org.plt.types.NumberTower.multiply(x, x);
+    };
+
+    org.plt.types.NumberTower.floor = function(x) {
+	return x.floor();
+    };
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    // Platform-specific stuff.
+    org.plt.platform = {};
+
+
+    org.plt.platform.getInstance = function() {
+	return JavascriptPlatform;
+    };
+
+    var JavascriptPlatform = {};
+
+    JavascriptPlatform.getLocationService = function() {
+	return JavascriptLocationService;
+    };
+
+    JavascriptPlatform.getTiltService = function() {
+	return JavascriptTiltService;
+    };
+
+    var JavascriptLocationService = { 
+	startService : function() {
+	    // fill me in.
+	},
+	shutdownService : function() {
+	    // fill me in.
+	},
+
+	addLocationListener : function(listener) {
+	    // fill me in.
+
+	}
+    };
+
+    var JavascriptTiltService = { 
+	startService : function() {
+	    // fill me in.
+	},
+	shutdownService : function() {
+	    // fill me in.
+	},
+
+	addOrientationChangeListener : function(listener) {
+	    // fill me in.
+
+	},
+	addAccelerationChangeListener : function(listener) {
+	    // fill me in.
+	}
+    };
+
+
 })();
-org.plt.platform.getInstance = function() {
-    return JavascriptPlatform;
-};
-
-var JavascriptPlatform = {};
-
-JavascriptPlatform.getLocationService = function() {
-    return JavascriptLocationService;
-};
-
-JavascriptPlatform.getTiltService = function() {
-    return JavascriptTiltService;
-};
-
-var JavascriptLocationService = { 
-    startService : function() {
-	// fill me in.
-    },
-    shutdownService : function() {
-	// fill me in.
-    },
-
-    addLocationListener : function(listener) {
-	// fill me in.
-
-    }
-};
-
-var JavascriptTiltService = { 
-    startService : function() {
-	// fill me in.
-    },
-    shutdownService : function() {
-	// fill me in.
-    },
-
-    addOrientationChangeListener : function(listener) {
-	// fill me in.
-
-    },
-    addAccelerationChangeListener : function(listener) {
-	// fill me in.
-    }
-};
-
-
