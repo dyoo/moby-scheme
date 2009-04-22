@@ -246,7 +246,7 @@ org.plt.WorldKernel = {};
     // Waits until boolean is true, then calls after.
     function wait(predicate, after) {
 	if (predicate()) 
-	    return after();
+	    after();
 	else
 	    setTimeout(function() { wait(predicate, after); },
 		       10);

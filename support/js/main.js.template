@@ -1,4 +1,4 @@
-main = {};
+var main = {};
 
 
 (function() {

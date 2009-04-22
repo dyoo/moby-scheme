@@ -14,88 +14,8 @@ org.plt = {};
 
 //////////////////////////////////////////////////////////////////////
 // Kernel
-org.plt.Kernel = {
-    Struct: function () {
-    },
-    
-    struct_question_: function(thing) {
-	return thing instanceof this.Struct;
-    },
-
-    equal_question_ : function(x, y) {
-	if ("isEqual" in x) {
-	    return x.isEqual(y);
-	} else if ("isEqual" in y) {
-	    return y.isEqual(x);
-	} else {
-	    return x == y;
-	}
-    },
-
-    
-    identity : function (x){
-	return x;
-    },
-
-    _equal_ : function(x, y, args) {
-	// FIXME: check against other args too.
-	return org.plt.types.NumberTower.equal(x, y);
-    },
-
-    _equal__tilde_ : function(x, y, delta) {
-	// FIXME: check against other args too.
-	return org.plt.types.NumberTower.approxEqual(x, y, delta);
-    },
-
-    
-    sub1 : function(x) {
-	return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
-    },
-
-
-    _plus_ : function(args) {
-	var i, sum = org.plt.types.Rational.ZERO;
-	for(i = 0; i < args.length; i++) {
-	    sum = org.plt.types.NumberTower.add(sum, args[i]);
-	}
-	return sum;
-    },
-
-    _dash_ : function(first, args) {
-	if (args.length == 0) {
-	    return org.plt.types.NumberTower.subtract(
-		org.plt.types.Rational.ZERO, first);
-	}
-
-	var i, diff = first;
-	for(i = 0; i < args.length; i++) {
-	    diff = org.plt.types.NumberTower.subtract(
-		diff, args[i]);
-	}
-	return diff;
-    },
-
-
-    _star_ : function(args) {
-	var i, prod = org.plt.types.Rational.ONE;
-	for(i = 0; i < args.length; i++) {
-	    prod = org.plt.types.NumberTower.multiply(prod, args[i]);
-	}
-	return prod;    
-    },
-
-
-    _slash_ : function(first, args) {
-	var i, div = first;
-	for(i = 0; i < args.length; i++) {
-	    div = org.plt.types.NumberTower.divide(div, args[i]);
-	}
-	return div;    
-    },
-
-    _greaterthan__equal_: function(first, second, rest) {
-	var test = 
-	    org.plt.types.NumberTower.greaterThanOrEqual;
+(function() {
+    function chainTest(test, first, second, rest) {
 	if (! test(first, second))
 	    return false;
 	if (rest.length == 0)
@@ -108,9 +28,131 @@ org.plt.Kernel = {
 	}
 	return true;
     }
-};
 
 
+    org.plt.Kernel = {
+	Struct: function () {
+	},
+    
+	struct_question_: function(thing) {
+	    return thing instanceof this.Struct;
+	},
+
+	equal_question_ : function(x, y) {
+	    if ("isEqual" in x) {
+		return x.isEqual(y);
+	    } else if ("isEqual" in y) {
+		return y.isEqual(x);
+	    } else {
+		return x == y;
+	    }
+	},
+
+    
+	identity : function (x){
+	    return x;
+	},
+
+
+	cons: function(x, y) {
+	    return org.plt.types.Cons.makeInstance(x, y);
+	},
+
+	empty_question_: function(thing) {
+	    return thing.isEmpty();
+	},
+
+	first: function(thing) {
+	    return thing.first();
+	},
+
+	rest: function(thing) {
+	    return thing.rest();
+	},
+
+
+	random: function(x) {
+	    return org.plt.types.Rational.makeInstance
+	    (Math.floor(org.plt.types.NumberTower.toInteger(x) * 
+			Math.random()),
+	     1);
+	},
+
+	sqrt: function(x) {
+	    return org.plt.types.NumberTower.sqrt(x);
+	},
+
+	_equal_ : function(x, y, args) {
+	    // FIXME: check against other args too.
+	    return org.plt.types.NumberTower.equal(x, y);
+	},
+
+	_equal__tilde_ : function(x, y, delta) {
+	    // FIXME: check against other args too.
+	    return org.plt.types.NumberTower.approxEqual(x, y, delta);
+	},
+
+    
+	sub1 : function(x) {
+	    return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
+	},
+
+
+	_plus_ : function(args) {
+	    var i, sum = org.plt.types.Rational.ZERO;
+	    for(i = 0; i < args.length; i++) {
+		sum = org.plt.types.NumberTower.add(sum, args[i]);
+	    }
+	    return sum;
+	},
+
+	_dash_ : function(first, args) {
+	    if (args.length == 0) {
+		return org.plt.types.NumberTower.subtract(
+							  org.plt.types.Rational.ZERO, first);
+	    }
+
+	    var i, diff = first;
+	    for(i = 0; i < args.length; i++) {
+		diff = org.plt.types.NumberTower.subtract(
+							  diff, args[i]);
+	    }
+	    return diff;
+	},
+
+
+	_star_ : function(args) {
+	    var i, prod = org.plt.types.Rational.ONE;
+	    for(i = 0; i < args.length; i++) {
+		prod = org.plt.types.NumberTower.multiply(prod, args[i]);
+	    }
+	    return prod;    
+	},
+
+
+	_slash_ : function(first, args) {
+	    var i, div = first;
+	    for(i = 0; i < args.length; i++) {
+		div = org.plt.types.NumberTower.divide(div, args[i]);
+	    }
+	    return div;    
+	},
+
+	_greaterthan__equal_: function(first, second, rest) {
+	    return chainTest(org.plt.types.NumberTower.greaterThanOrEqual,
+			     first,
+			     second,
+			     rest);
+	},
+
+	_lessthan_: function(first, second, rest) {
+	    return chainTest(org.plt.types.NumberTower.lessThan,
+			     first,
+			     second,
+			     rest);
+	}
+    };
+    })();
 
 
 
@@ -202,6 +244,44 @@ org.plt.types.Logic = {
 
 
 
+    org.plt.types.Empty = function() {};
+    org.plt.types.Empty.EMPTY = new org.plt.types.Empty();
+    org.plt.types.Empty.prototype.first = function() {
+	throw new Error("first can't be applied on empty.");
+    };
+    org.plt.types.Empty.prototype.rest = function() {
+	throw new Error("rest can't be applied on empty.");
+    };
+    org.plt.types.Empty.prototype.isEmpty = function() {
+	return true;
+    };
+
+
+
+    org.plt.types.Cons = function(f, r) {
+	this.f = f;
+	this.r = r;
+    };
+
+    org.plt.types.Cons.makeInstance = function(f, r) {
+	return new org.plt.types.Cons(f, r);
+    };
+
+    org.plt.types.Cons.prototype.first = function() {
+	return this.f;
+    };
+
+    org.plt.types.Cons.prototype.rest = function() {
+	return this.r;
+    };
+
+    org.plt.types.Cons.prototype.isEmpty = function() {
+	return false;
+    };
+    
+
+
+
     // Rationals
 
     org.plt.types.Rational = function(n, d) {
@@ -223,6 +303,7 @@ org.plt.types.Logic = {
 	    this.n == other.n &&
 	    this.d == other.d;
     };
+
 
     org.plt.types.Rational.prototype.add = function(other) {
 	return org.plt.types.Rational.makeInstance(this.n * other.d + this.d * other.n,
@@ -248,10 +329,28 @@ org.plt.types.Logic = {
 
     org.plt.types.Rational.prototype.toInteger = function(other) {
 	return Math.floor(this.n / this.d);	
-    }
+    };
+
+    org.plt.types.Rational.prototype.toFloat = function(other) {
+	return this.n / this.d;
+    };
+
 
     org.plt.types.Rational.prototype.greaterThanOrEqual = function(other) {
 	return this.n*other.d >= this.d*other.n;
+    };
+
+    org.plt.types.Rational.prototype.lessThan = function(other) {
+	return this.n*other.d < this.d*other.n;
+    };
+
+    org.plt.types.Rational.prototype.sqrt = function() {
+	var result = Math.sqrt(this.n / this.d);
+	if (result == Math.floor(result)) {
+	    return org.plt.types.Rational.makeInstance(result, 1);
+	} else {
+	    return org.plt.types.Floating.makeInstance(result);
+	}
     };
 
 
@@ -284,9 +383,70 @@ org.plt.types.Logic = {
     org.plt.types.Rational.ZERO = org.plt.types.Rational._cache[0];
     org.plt.types.Rational.ONE = org.plt.types.Rational._cache[1];
 
+
 })();
 
 
+//////////////////////////////////////////////////////////////////////
+
+(function() {
+    org.plt.types.Floating = function(n) {
+	this.n = n;
+    };
+
+    org.plt.types.Floating.prototype.toString = function() {
+	return this.n.toString();
+    };
+
+    org.plt.types.Floating.prototype.isEqual = function(other) {
+	return other instanceof org.plt.types.Floating &&
+	this.n == other.n;
+    };
+
+    org.plt.types.Floating.prototype.add = function(other) {
+	return org.plt.types.Floating.makeInstance(this.n + other.n);
+    };
+
+    org.plt.types.Floating.prototype.subtract = function(other) {
+	return org.plt.types.Floating.makeInstance(this.n - other.n);
+    };
+
+    org.plt.types.Floating.prototype.multiply = function(other) {
+	return org.plt.types.Floating.makeInstance(this.n * other.n);
+    };
+
+    org.plt.types.Floating.prototype.divide = function(other) {
+	return org.plt.types.Floating.makeInstance(this.n / other.n);
+    };
+
+
+    org.plt.types.Floating.prototype.toInteger = function(other) {
+	return Math.floor(this.n);	
+    };
+
+    org.plt.types.Floating.prototype.toFloat = function(other) {
+	return this.n;
+    };
+
+    org.plt.types.Floating.prototype.greaterThanOrEqual = function(other) {
+	return this.n >= other.n;
+    };
+
+    org.plt.types.Floating.prototype.lessThan = function(other) {
+	return this.n < other.n;
+    };
+
+
+    org.plt.types.Floating.prototype.sqrt = function() {
+	return org.plt.types.Floating.makeInstance(Math.sqrt(this.n));
+    };
+
+
+    org.plt.types.Floating.makeInstance = function(n) {
+	return new org.plt.types.Floating(n);
+    };
+
+})();    
 
 
 //////////////////////////////////////////////////////////////////////
@@ -310,6 +470,7 @@ org.plt.types.NumberTower.multiply = function(x, y) {
 org.plt.types.NumberTower.divide = function(x, y) {
     return x.divide(y);
 };
+
 org.plt.types.NumberTower.equal = function(x, y) {
     return x.isEqual(y);
 };
@@ -324,8 +485,22 @@ org.plt.types.NumberTower.toInteger = function(num) {
     return num.toInteger();
 }
 
+org.plt.types.NumberTower.toFloat = function(num) {
+    return num.toFloat();
+}
+
+
 org.plt.types.NumberTower.greaterThanOrEqual = function(x, y) {
-    return x.greaterThanOrEqual(y);
+    return x.toFloat() >= y.toFloat();
+};
+
+org.plt.types.NumberTower.lessThan = function(x, y) {
+    return x.toFloat() < y.toFloat();
+};
+
+
+org.plt.types.NumberTower.sqrt = function(x) {
+    return x.sqrt();
 };
 
 
@@ -347,7 +522,7 @@ org.plt.platform.getInstance = function() {
     return JavascriptPlatform;
 };
 
-JavascriptPlatform = {};
+var JavascriptPlatform = {};
 
 JavascriptPlatform.getLocationService = function() {
     return JavascriptLocationService;
@@ -357,7 +532,7 @@ JavascriptPlatform.getTiltService = function() {
     return JavascriptTiltService;
 };
 
-JavascriptLocationService = { 
+var JavascriptLocationService = { 
     startService : function() {
 	// fill me in.
     },
@@ -371,7 +546,7 @@ JavascriptLocationService = {
     }
 };
 
-JavascriptTiltService = { 
+var JavascriptTiltService = { 
     startService : function() {
 	// fill me in.
     },
