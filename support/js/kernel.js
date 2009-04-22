@@ -109,12 +109,24 @@ org.plt = {};
 	    return org.plt.types.NumberTower.floor(x);
 	},
 
+	ceiling: function(x) {
+	    return org.plt.types.NumberTower.ceiling(x);
+	},
+
 	sqrt: function(x) {
 	    return org.plt.types.NumberTower.sqrt(x);
 	},
 
 	sqr: function(x) {
 	    return org.plt.types.NumberTower.sqr(x);
+	},
+
+	sin: function(x) {
+	    return org.plt.types.NumberTower.sin(x);
+	},
+
+	cos: function(x) {
+	    return org.plt.types.NumberTower.cos(x);
 	},
 
 	modulo: function(m, n) {
@@ -134,6 +146,11 @@ org.plt = {};
 	abs: function(x) {
 	    return org.plt.types.NumberTower.abs(x);
 	},
+
+	add1 : function(x) {
+	    return org.plt.types.NumberTower.add(x, org.plt.types.Rational.ONE);
+	},
+
 	
 	sub1 : function(x) {
 	    return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
@@ -239,6 +256,10 @@ org.plt = {};
 
 	not : function(x) {
 	    return !x;
+	},
+
+	number_dash__greaterthan_string: function(x) {
+	    return org.plt.types.String.makeInstance(x.toString());
 	}
 
     };
@@ -278,20 +299,23 @@ org.plt = {};
     org.plt.Kernel.posn_question_ = posn_question_;
     org.plt.Kernel.posn_dash_x = posn_dash_x;
     org.plt.Kernel.posn_dash_y = posn_dash_y;
-})();
 
 
-org.plt.types.Logic = {
-    TRUE : true,
-    FALSE : false
-};
+    org.plt.Kernel.error = function(msg) {
+	die(msg);
+    }
+
+
+    org.plt.types.Logic = {
+	TRUE : true,
+	FALSE : false
+    };
 
 
 
-
-(function() {
     function die(msg) {
 	// We're trying to error out so that we get a stack track from firebug.
+	console.log(msg);
 	console.trace();
 	throw new TypeError(msg.toString());
     }
@@ -477,6 +501,12 @@ org.plt.types.Logic = {
     };
 
 
+    org.plt.types.Rational.prototype.ceiling = function() {
+	return org.plt.types.Rational.makeInstance(Math.ceil(this.n / this.d), 1);
+    };
+
+
+
     org.plt.types.Rational.makeInstance = function(n, d) {
 	if (n == undefined)
 	    die("n undefined");
@@ -565,6 +595,11 @@ org.plt.types.Logic = {
 	return org.plt.types.Rational.makeInstance(Math.floor(this.n), 1);
     };
 
+    org.plt.types.Floating.prototype.ceiling = function() {
+	return org.plt.types.Rational.makeInstance(Math.ceil(this.n), 1);
+    };
+
+
     org.plt.types.Floating.prototype.greaterThanOrEqual = function(other) {
 	return this.n >= other.n;
     };
@@ -602,6 +637,7 @@ org.plt.types.Logic = {
     //////////////////////////////////////////////////////////////////////
     // NumberTower.
     // 
+    // Currently only support Rational and Floating.
     org.plt.types.NumberTower = {};
 
 
@@ -671,8 +707,13 @@ org.plt.types.Logic = {
     };
 
     org.plt.types.NumberTower.modulo = function(m, n) {
-	return org.plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
-						   1);
+	var result = 
+	    org.plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
+						1);
+	if (org.plt.types.NumberTower.lessThan(result, org.plt.types.Rational.ZERO)) {
+	    return org.plt.types.NumberTower.add(result, n);
+	}
+	return result;
     };
 
     org.plt.types.NumberTower.sqr = function(x) {
@@ -683,6 +724,17 @@ org.plt.types.Logic = {
 	return x.floor();
     };
 
+    org.plt.types.NumberTower.ceiling = function(x) {
+	return x.ceiling();
+    };
+
+    org.plt.types.NumberTower.sin = function(x) {
+	return org.plt.types.Floating.makeInstance(Math.sin(x.toFloat()));
+    };
+
+    org.plt.types.NumberTower.cos = function(x) {
+	return org.plt.types.Floating.makeInstance(Math.cos(x.toFloat()));
+    };
 
 
 
