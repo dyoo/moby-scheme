@@ -82,16 +82,14 @@ org.plt = {};
 	    return org.plt.types.NumberTower.sqrt(x);
 	},
 
-	_equal_ : function(x, y, args) {
-	    // FIXME: check against other args too.
-	    return org.plt.types.NumberTower.equal(x, y);
-	},
-
 	_equal__tilde_ : function(x, y, delta) {
 	    // FIXME: check against other args too.
 	    return org.plt.types.NumberTower.approxEqual(x, y, delta);
 	},
 
+	abs: function(x) {
+	    return org.plt.types.NumberTower.abs(x);
+	},
     
 	sub1 : function(x) {
 	    return org.plt.types.NumberTower.subtract(x, org.plt.types.Rational.ONE);
@@ -138,8 +136,32 @@ org.plt = {};
 	    return div;    
 	},
 
+
+	_equal_ : function(first, second, rest) {
+	    // FIXME: check against other args too.
+	    return chainTest(org.plt.types.NumberTower.equal,
+			     first,
+			     second,
+			     rest);
+	},
+
+
 	_greaterthan__equal_: function(first, second, rest) {
 	    return chainTest(org.plt.types.NumberTower.greaterThanOrEqual,
+			     first,
+			     second,
+			     rest);
+	},
+
+	_lessthan__equal_: function(first, second, rest) {
+	    return chainTest(org.plt.types.NumberTower.lessThanOrEqual,
+			     first,
+			     second,
+			     rest);
+	},
+
+	_greaterthan_: function(first, second, rest) {
+	    return chainTest(org.plt.types.NumberTower.greaterThan,
 			     first,
 			     second,
 			     rest);
@@ -150,7 +172,12 @@ org.plt = {};
 			     first,
 			     second,
 			     rest);
+	},
+	
+	string_equal__question_: function(x, y) {
+	    return x.isEqual(y);
 	}
+
     };
     })();
 
@@ -221,6 +248,11 @@ org.plt.types.Logic = {
     org.plt.types.String.makeInstance = function(s) {
 	return s;
     };
+    org.plt.types.String.prototype.isEqual = function(other) {
+	return this == other;
+    }
+
+
 
 
     // Symbols
@@ -237,7 +269,7 @@ org.plt.types.Logic = {
 	return other instanceof org.plt.types.Symbol &&
 	    this.val == other.val;
     };
-    
+
     org.plt.types.Symbol.prototype.toString = function() {
 	return this.val;
     };
@@ -353,6 +385,11 @@ org.plt.types.Logic = {
 	}
     };
 
+    org.plt.types.Rational.prototype.abs = function() {
+	return org.plt.types.Rational.makeInstance(Math.abs(this.n),
+						   this.d);
+    };
+
 
     org.plt.types.Rational.makeInstance = function(n, d) {
 	if (d < 0) {
@@ -442,6 +479,12 @@ org.plt.types.Logic = {
     };
 
 
+    org.plt.types.Floating.prototype.abs = function() {
+	return org.plt.types.Floating.makeInstance(Math.abs(this.n));
+    };
+
+
+
     org.plt.types.Floating.makeInstance = function(n) {
 	return new org.plt.types.Floating(n);
     };
@@ -455,6 +498,19 @@ org.plt.types.Logic = {
 // FIXME: hardcoded to handle rationals only.
 // We must do the numeric tower.
 org.plt.types.NumberTower = {};
+
+org.plt.types.NumberTower.toInteger = function(num) {
+    return num.toInteger();
+};
+
+org.plt.types.NumberTower.toFloat = function(num) {
+    return num.toFloat();
+};
+
+org.plt.types.NumberTower.abs = function(n) {
+    return n.abs();
+}
+
 org.plt.types.NumberTower.add = function(x, y) {
     return x.add(y);
 };
@@ -480,24 +536,21 @@ org.plt.types.NumberTower.approxEqual = function(x, y, delta) {
     return x.isEqual(y);
 };
 
-
-org.plt.types.NumberTower.toInteger = function(num) {
-    return num.toInteger();
-}
-
-org.plt.types.NumberTower.toFloat = function(num) {
-    return num.toFloat();
-}
-
-
 org.plt.types.NumberTower.greaterThanOrEqual = function(x, y) {
     return x.toFloat() >= y.toFloat();
+};
+
+org.plt.types.NumberTower.lessThanOrEqual = function(x, y) {
+    return x.toFloat() <= y.toFloat();
+};
+
+org.plt.types.NumberTower.greaterThan = function(x, y) {
+    return x.toFloat() > y.toFloat();
 };
 
 org.plt.types.NumberTower.lessThan = function(x, y) {
     return x.toFloat() < y.toFloat();
 };
-
 
 org.plt.types.NumberTower.sqrt = function(x) {
     return x.sqrt();
