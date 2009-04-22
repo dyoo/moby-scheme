@@ -1,9 +1,6 @@
 
 
 // Core classes
-// Struct: implemented by all structures
-// Equatable: implemented by things that can be compared by equal?
-
 
 
 // Fixme: figure out how to do packages properly.
@@ -27,6 +24,18 @@ org.plt = {};
 		return false;
 	}
 	return true;
+    }
+
+
+    function chainFind(comparator, first, rest) {
+	var i;
+	var best = first;
+	for(i = 0; i < rest.length; i++) {
+	    if (! comparator(best, rest[i])) {
+		best = rest[i];
+	    }
+	}
+	return best;
     }
 
 
@@ -82,6 +91,16 @@ org.plt = {};
 	    return org.plt.types.NumberTower.sqrt(x);
 	},
 
+	sqr: function(x) {
+	    return org.plt.types.NumberTower.sqr(x);
+	},
+
+	modulo: function(m, n) {
+	    return org.plt.types.NumberTower.modulo(m, n);
+	},
+
+
+
 	_equal__tilde_ : function(x, y, delta) {
 	    // FIXME: check against other args too.
 	    return org.plt.types.NumberTower.approxEqual(x, y, delta);
@@ -106,14 +125,13 @@ org.plt = {};
 
 	_dash_ : function(first, args) {
 	    if (args.length == 0) {
-		return org.plt.types.NumberTower.subtract(
-							  org.plt.types.Rational.ZERO, first);
+		return org.plt.types.NumberTower.subtract
+		(org.plt.types.Rational.ZERO, first);
 	    }
 
 	    var i, diff = first;
 	    for(i = 0; i < args.length; i++) {
-		diff = org.plt.types.NumberTower.subtract(
-							  diff, args[i]);
+		diff = org.plt.types.NumberTower.subtract(diff, args[i]);
 	    }
 	    return diff;
 	},
@@ -171,6 +189,18 @@ org.plt = {};
 	    return chainTest(org.plt.types.NumberTower.lessThan,
 			     first,
 			     second,
+			     rest);
+	},
+
+	min : function(first, rest) {
+	    return chainFind(org.plt.types.NumberTower.lessThanOrEqual,
+			     first, 
+			     rest);
+	},
+
+	max : function(first, rest) {
+	    return chainFind(org.plt.types.NumberTower.greaterThanOrEqual,
+			     first, 
 			     rest);
 	},
 	
@@ -555,6 +585,17 @@ org.plt.types.NumberTower.lessThan = function(x, y) {
 org.plt.types.NumberTower.sqrt = function(x) {
     return x.sqrt();
 };
+
+org.plt.types.NumberTower.modulo = function(m, n) {
+    return org.plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
+					       1);
+};
+
+
+org.plt.types.NumberTower.sqr = function(x) {
+    return org.plt.types.NumberTower.multiply(x, x);
+};
+
 
 
 //////////////////////////////////////////////////////////////////////

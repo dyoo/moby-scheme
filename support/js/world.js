@@ -55,9 +55,11 @@ org.plt.WorldKernel = {};
 
 	if (org.plt.world.config.onKey) {
 	    window.onkeypress = function(e) {
-		var keyname = getKeyCodeName(e);
-		var newWorld = org.plt.world.config.onKey([world, keyname]);
-		changeWorld(newWorld);
+		if (! stopped) {
+		    var keyname = getKeyCodeName(e);
+		    var newWorld = org.plt.world.config.onKey([world, keyname]);
+		    changeWorld(newWorld);
+		}
 	    }
 	}
 
