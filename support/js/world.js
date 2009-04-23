@@ -4,6 +4,16 @@ org.plt.WorldKernel = {};
     var world;
     var worldListeners = [];
     var stopped;
+
+
+    // Inheritance from pg 168: Javascript, the Definitive Guide.
+    function heir(p) {
+	function f() {}
+	f.prototype = p;
+	return new f();
+    }
+
+
     
     function changeWorld(newWorld) {
 	world = newWorld;
@@ -164,11 +174,12 @@ org.plt.WorldKernel = {};
 
 
     org.plt.WorldKernel.nwRectangle = function(w, h, s, c) {
-	return new RectangleImage(
-	    org.plt.types.NumberTower.toInteger(w),
-	    org.plt.types.NumberTower.toInteger(h),
-	    s,
-	    c);
+	var aRect = new RectangleImage
+	(org.plt.types.NumberTower.toInteger(w),
+	 org.plt.types.NumberTower.toInteger(h),
+	 s,
+	 c);
+	return updatePinhole(aRect, 0, 0);
     };
 
     org.plt.WorldKernel.rectangle = function(w, h, s, c) {
@@ -180,14 +191,35 @@ org.plt.WorldKernel = {};
 	    c);
     };
 
+
+    // Base class for all images.
+    function BaseImage(pinholeX, pinholeY) {
+	this.pinholeX = pinholeX;
+	this.pinholeY = pinholeY;
+    }
+
+
+    function updatePinhole(anImage, x, y) {
+	var aCopy = {};
+	for (attr in anImage) {
+	    aCopy[attr] = anImage[attr];
+	}
+	aCopy.pinholeX = x;
+	aCopy.pinholeY = y;
+	return aCopy;
+    }
+
+
     
     // SceneImage: primitive-number primitive-number (listof image) -> Scene
     function SceneImage(width, height, children) {
+	BaseImage.call(this, 0, 0);
 	this.width = width;
 	this.height = height;
 	this.children = children;
     }
-    
+    SceneImage.prototype = heir(BaseImage.prototype);
+
 
     // add: image primitive-number primitive-number -> Scene
     SceneImage.prototype.add = function(anImage, x, y) {
@@ -232,14 +264,22 @@ org.plt.WorldKernel = {};
 
     
     function FileImage(path) {
-	this.img = new Image();
-	this.img.src = path;
-	// We should do something blocking here
-	// for onload, since we don't know at
-	// this time what the file size should be, nor
-	// will drawImage do the right thing until the
+	BaseImage.call(this, 0, 0);
+	var self = this;
+	this.isLoaded = false;
+	// fixme: we may want to do something blocking here for
+	// onload, since we don't know at this time what the file size
+	// should be, nor will drawImage do the right thing until the
 	// file is loaded.
+	this.img = new Image();
+	this.img.onload = function() {
+	    self.isLoaded = true;
+	    self.pinholeX = self.img.width / 2;
+	    self.pinholeY = self.img.height / 2;
+	};
+	this.img.src = path;
     }
+    FileImage.prototype = heir(BaseImage.prototype);
     
     var imageCache = {};
     FileImage.makeInstance = function(path) {
@@ -265,7 +305,7 @@ org.plt.WorldKernel = {};
 
     FileImage.prototype.render = function(ctx, x, y) {
 	var self = this;
-	wait(function() { return self.img.complete; },
+	wait(function() { return self.isLoaded; },
 	     function() {
 		 ctx.drawImage(self.img, x, y);
 	     });
@@ -283,11 +323,14 @@ org.plt.WorldKernel = {};
 
 
     function RectangleImage(width, height, style, color) {
+	BaseImage.call(this, width/2, height/2);
 	this.width = width;
 	this.height = height;
 	this.style = style;
 	this.color = color;
     }
+    RectangleImage.prototype = heir(BaseImage.prototype);
+
 
     RectangleImage.prototype.render = function(ctx, x, y) {
 	ctx.beginPath();
@@ -314,11 +357,13 @@ org.plt.WorldKernel = {};
 
     
     function TextImage(msg, size, color) {
+	BaseImage.call(this, 0, 0);
 	this.msg = msg;
 	this.size = size;
 	this.color = color;
 	this.font = "Verdana";
     }
+    TextImage.prototype = heir(BaseImage.prototype);
 
     TextImage.prototype.render = function(ctx, x, y) {
 	// Fixme: not quite right yet.
@@ -348,10 +393,12 @@ org.plt.WorldKernel = {};
 
 
     function CircleImage(radius, style, color) {
+	BaseImage.call(this, radius, radius);
 	this.radius = radius;
 	this.style = style;
 	this.color = color;
     }
+    CircleImage.prototype = heir(BaseImage.prototype);
 
     CircleImage.prototype.render = function(ctx, x, y) {
 	ctx.translate(0, 0);
@@ -375,45 +422,48 @@ org.plt.WorldKernel = {};
 
 
  
-})();
 
 
-org.plt.world = {};
-org.plt.world.config = {
-    // onRedraw: world -> scene
-    onRedraw: false,
-    tickDelay: false,
-    onTick: false,
-    onKey: false,
-    stopWhen: false
-};
 
-org.plt.world.config.Kernel = {};
-org.plt.world.config.Kernel.onRedraw = function(handler) {
-    return function() {
-	org.plt.world.config.onRedraw = handler;    
+    org.plt.world = {};
+    org.plt.world.config = {
+	// onRedraw: world -> scene
+	onRedraw: false,
+	tickDelay: false,
+	onTick: false,
+	onKey: false,
+	stopWhen: false
     };
-};
-org.plt.world.config.Kernel.onTick = function(aDelay, handler) {
-    return function() {
-	org.plt.world.config.tickDelay =
+
+    org.plt.world.config.Kernel = {};
+    org.plt.world.config.Kernel.onRedraw = function(handler) {
+	return function() {
+	    org.plt.world.config.onRedraw = handler;    
+	};
+    };
+    org.plt.world.config.Kernel.onTick = function(aDelay, handler) {
+	return function() {
+	    org.plt.world.config.tickDelay =
 	    org.plt.types.NumberTower.toInteger
-	(org.plt.types.NumberTower.multiply(
-	    org.plt.types.Rational.makeInstance(1000, 1), 
-	    aDelay));
-	org.plt.world.config.onTick = handler;    
+	    (org.plt.types.NumberTower.multiply(
+						org.plt.types.Rational.makeInstance(1000, 1), 
+						aDelay));
+	    org.plt.world.config.onTick = handler;    
+	};
     };
-};
 
-org.plt.world.config.Kernel.stopWhen = function(handler) {
-    return function() {
-	org.plt.world.config.stopWhen = handler;    
+    org.plt.world.config.Kernel.stopWhen = function(handler) {
+	return function() {
+	    org.plt.world.config.stopWhen = handler;    
+	};
     };
-};
 
 
-org.plt.world.config.Kernel.onKey = function(handler) {
-    return function() {
-	org.plt.world.config.onKey = handler;    
+    org.plt.world.config.Kernel.onKey = function(handler) {
+	return function() {
+	    org.plt.world.config.onKey = handler;    
+	};
     };
-};
+
+
+})();
