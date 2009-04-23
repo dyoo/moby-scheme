@@ -304,7 +304,7 @@
                                        expr) 
                                   "||")
                     ")")]
-    
+        
     ;; Numbers
     [(? number?)
      (number->javascript-string expr)]
@@ -338,8 +338,8 @@
   (let ([operator-binding (env-lookup env id)]
         [operand-strings 
          (map (lambda (e) 
-                             (expression->javascript-string e env))
-                           exprs)])
+                (expression->javascript-string e env))
+              exprs)])
     (match operator-binding
       ['#f
        (error 'application-expression->java-string

@@ -17,9 +17,9 @@
                                  . -> . (listof named-bitmap?))])
 
 ;; lift-images!: text -> (listof named-bitmap)
-;; Lifts up the image snips in the text, writing them into the resource directory.
+;; Lifts up the image snips in the text.
 ;; The snips in the text will be replaced with the expression (-kernel-create-image <path>)
-;; where path refers to the file saves in the resource directory.
+;; where path refers to the file name of the named bitmap.
 ;; Mutates the text, and produces a list of bitmap objects that should be saved.
 (define (lift-images! a-text)
   (let loop ([a-snip (send a-text find-first-snip)])
