@@ -1,0 +1,74 @@
+Extending Moby with libraries
+----------------------------------------------------------------------
+
+Core classes: org.plt.platform.Platform
+              org.plt.platform.PlatformI
+              org.plt.platform.AndroidPlatform
+
+----------------------------------------------------------------------
+
+Writing an extension in Moby is very ugly at the moment; we haven't
+spent the necessary time to clear out the boilerplate yet.
+
+
+There are two things to do:
+
+    * Write the Java services for the behavior you want.
+
+    * Add name bindings so that Moby knows about the new functions.
+
+
+
+= Runtime ===========================================================
+
+
+Within the moby/support/common classes:
+
+    1.  Create an interface in org.plt.lib for the service you're
+    trying to create.  For example, org.plt.lib.LocationService is an
+    interface for the location service.
+
+
+    2.  Adjust the org.plt.platform.PlatformI interface and add a
+    method to get at an instance of that service.
+
+
+    3.  Add a helper class in org.plt.lib with static functions that
+    access that platform.  See org.plt.lib.Location for an example.
+    We'll be referring to these static methods when binding to the
+    Moby compiler.
+
+
+Be careful to avoid doing anything platform-specific within
+moby/support/common.
+
+
+
+4. For each platform implementation class:
+
+    * support/j2me/src/org/plt/platform/J2MEPlatform.java (deprecated
+      at the moment)
+
+    * support/android/skeleton/src/org/plt/platform/AndroidPlatform.java
+
+write an implementation of the service.  Within each PlatformI
+implementation, you're free to use the classes specific to that
+platform.  You'll notice that we've been ignoring the J2ME
+implementations of the services so far due to lack of time, so see the
+Android platform implementation for more interesting examples.
+
+
+
+
+= Compiler ===========================================================
+
+Now we teach the Moby compiler about the bindings.
+
+    1.  Open src/pinfo.ss.  This module contains mappings for the
+    mapped modules.  Within pinfo.ss:
+
+        2.  Add a module-binding definition Look at the definition of
+        modules like bootstrap-module, location-module, or sms-module for
+        examples.
+
+        3. Add that new module to the list known-modules.
