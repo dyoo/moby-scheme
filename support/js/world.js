@@ -4,6 +4,7 @@ org.plt.WorldKernel = {};
     var world;
     var worldListeners = [];
     var stopped;
+    var timerInterval = false;
 
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
@@ -56,6 +57,10 @@ org.plt.WorldKernel = {};
 	var canvas = 
 	    window.document.getElementById("canvas");
 
+	if (timerInterval) {
+	    clearInterval(timerInterval);
+	    timerInterval = false;
+	}
 	stopped = false;
 
 	for (i = 0; i < handlers.length; i++) {
@@ -97,10 +102,12 @@ org.plt.WorldKernel = {};
 
 	
 	if(org.plt.world.config.onTick) {
-	    var anInterval = window.setInterval(
+	    timerInterval = window.setInterval(
 		function() {
-		    if (stopped)
-			window.clearInterval(anInterval);
+		    if (stopped) {
+			window.clearInterval(timerInterval);
+			timerInterval = false;
+		    }
 		    else {
 			changeWorld(
 			    org.plt.world.config.onTick([world]));
@@ -312,11 +319,17 @@ org.plt.WorldKernel = {};
     };
 
     FileImage.prototype.getWidth = function() {
-	return this.img.width;
+	// FIXME: we should block until the image loads
+	if ('width' in this.img)
+	    return this.img.width;
+	return 0;
     };
 
     FileImage.prototype.getHeight = function() {
-	return this.img.height;
+	// FIXME: we should block until the image loads
+	if ('height' in this.img) 
+	    return this.img.height;
+	return 0;
     };
 
 
