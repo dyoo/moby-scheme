@@ -242,9 +242,11 @@ org.plt.WorldKernel = {};
 	// Clear the scene.
 	ctx.save();
 	ctx.fillStyle = "white";
-	ctx.fillRect(x, y, this.width, this.height);
+	ctx.fillRect(x - this.pinholeX, y - this.pinholeY,
+		     this.width, this.height);
 	ctx.fillStyle = "black";
-	ctx.strokeRect(x, y, this.width, this.height);
+	ctx.strokeRect(x - this.pinholeX, y - this.pinholeY, 
+		       this.width, this.height);
 	ctx.restore();
 	ctx.globalCompositeOperation = 'source-over';
 	// Then ask every object to render itself.
@@ -254,8 +256,8 @@ org.plt.WorldKernel = {};
 	    childY = this.children[i][2];
 	    ctx.save();
 	    childImage.render(ctx,
-			      childX + x,
-			      childY + y);
+			      childX + x - childImage.pinholeX,
+			      childY + y - childImage.pinholeY);
 	    ctx.restore();
 	}
     };
@@ -417,7 +419,9 @@ org.plt.WorldKernel = {};
 	ctx.translate(0, 0);
 	ctx.beginPath();
 	ctx.fillStyle = this.color;
-	ctx.arc(x, y, this.radius, 0, 2*Math.PI, false);
+	ctx.arc(x + this.radius,
+		y + this.radius, 
+		this.radius, 0, 2*Math.PI, false);
 	if (this.style.toLowerCase() == "outline")
 	    ctx.stroke();
 	else

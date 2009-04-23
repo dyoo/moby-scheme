@@ -433,7 +433,7 @@ org.plt = {};
 
 
     org.plt.types.Rational.prototype.lift = function() {
-	return org.plt.types.Floating.makeInstance(this.n / this.d);
+	return org.plt.types.FloatPoint.makeInstance(this.n / this.d);
     }
 
     org.plt.types.Rational.prototype.isEqual = function(other) {
@@ -487,7 +487,7 @@ org.plt = {};
 	if (result == Math.floor(result)) {
 	    return org.plt.types.Rational.makeInstance(result, 1);
 	} else {
-	    return org.plt.types.Floating.makeInstance(result);
+	    return org.plt.types.FloatPoint.makeInstance(result);
 	}
     };
 
@@ -545,89 +545,89 @@ org.plt = {};
 
 
 
-    org.plt.types.Floating = function(n) {
+    org.plt.types.FloatPoint = function(n) {
 	this.n = n;
     };
 
-    org.plt.types.Floating.prototype.level = function() {
+    org.plt.types.FloatPoint.prototype.level = function() {
 	return 1;
     };
 
-    org.plt.types.Floating.prototype.lift = function() {
+    org.plt.types.FloatPoint.prototype.lift = function() {
 	throw new Error("Don't know how to lift Floating");
     };
 
-    org.plt.types.Floating.prototype.toString = function() {
+    org.plt.types.FloatPoint.prototype.toString = function() {
 	return this.n.toString();
     };
 
-    org.plt.types.Floating.prototype.isEqual = function(other) {
-	return other instanceof org.plt.types.Floating &&
+    org.plt.types.FloatPoint.prototype.isEqual = function(other) {
+	return other instanceof org.plt.types.FloatPoint &&
 	    this.n == other.n;
     };
 
-    org.plt.types.Floating.prototype.add = function(other) {
-	return org.plt.types.Floating.makeInstance(this.n + other.n);
+    org.plt.types.FloatPoint.prototype.add = function(other) {
+	return org.plt.types.FloatPoint.makeInstance(this.n + other.n);
     };
 
-    org.plt.types.Floating.prototype.subtract = function(other) {
-	return org.plt.types.Floating.makeInstance(this.n - other.n);
+    org.plt.types.FloatPoint.prototype.subtract = function(other) {
+	return org.plt.types.FloatPoint.makeInstance(this.n - other.n);
     };
 
-    org.plt.types.Floating.prototype.multiply = function(other) {
-	return org.plt.types.Floating.makeInstance(this.n * other.n);
+    org.plt.types.FloatPoint.prototype.multiply = function(other) {
+	return org.plt.types.FloatPoint.makeInstance(this.n * other.n);
     };
 
-    org.plt.types.Floating.prototype.divide = function(other) {
-	return org.plt.types.Floating.makeInstance(this.n / other.n);
+    org.plt.types.FloatPoint.prototype.divide = function(other) {
+	return org.plt.types.FloatPoint.makeInstance(this.n / other.n);
     };
 
 
-    org.plt.types.Floating.prototype.toInteger = function(other) {
+    org.plt.types.FloatPoint.prototype.toInteger = function(other) {
 	return Math.floor(this.n);	
     };
 
-    org.plt.types.Floating.prototype.toFloat = function(other) {
+    org.plt.types.FloatPoint.prototype.toFloat = function(other) {
 	return this.n;
     };
 
-    org.plt.types.Floating.prototype.floor = function() {
+    org.plt.types.FloatPoint.prototype.floor = function() {
 	return org.plt.types.Rational.makeInstance(Math.floor(this.n), 1);
     };
 
-    org.plt.types.Floating.prototype.ceiling = function() {
+    org.plt.types.FloatPoint.prototype.ceiling = function() {
 	return org.plt.types.Rational.makeInstance(Math.ceil(this.n), 1);
     };
 
 
-    org.plt.types.Floating.prototype.greaterThanOrEqual = function(other) {
+    org.plt.types.FloatPoint.prototype.greaterThanOrEqual = function(other) {
 	return this.n >= other.n;
     };
 
-    org.plt.types.Floating.prototype.lessThan = function(other) {
+    org.plt.types.FloatPoint.prototype.lessThan = function(other) {
 	return this.n < other.n;
     };
 
 
-    org.plt.types.Floating.prototype.sqrt = function() {
-	return org.plt.types.Floating.makeInstance(Math.sqrt(this.n));
+    org.plt.types.FloatPoint.prototype.sqrt = function() {
+	return org.plt.types.FloatPoint.makeInstance(Math.sqrt(this.n));
     };
 
 
-    org.plt.types.Floating.prototype.abs = function() {
-	return org.plt.types.Floating.makeInstance(Math.abs(this.n));
-    };
-
-
-
-    org.plt.types.Floating.makeInstance = function(n) {
-	return new org.plt.types.Floating(n);
+    org.plt.types.FloatPoint.prototype.abs = function() {
+	return org.plt.types.FloatPoint.makeInstance(Math.abs(this.n));
     };
 
 
 
-    org.plt.Kernel.pi = org.plt.types.Floating.makeInstance(Math.PI);
-    org.plt.Kernel.e = org.plt.types.Floating.makeInstance(Math.E);
+    org.plt.types.FloatPoint.makeInstance = function(n) {
+	return new org.plt.types.FloatPoint(n);
+    };
+
+
+
+    org.plt.Kernel.pi = org.plt.types.FloatPoint.makeInstance(Math.PI);
+    org.plt.Kernel.e = org.plt.types.FloatPoint.makeInstance(Math.E);
 
 
 
@@ -729,11 +729,11 @@ org.plt = {};
     };
 
     org.plt.types.NumberTower.sin = function(x) {
-	return org.plt.types.Floating.makeInstance(Math.sin(x.toFloat()));
+	return org.plt.types.FloatPoint.makeInstance(Math.sin(x.toFloat()));
     };
 
     org.plt.types.NumberTower.cos = function(x) {
-	return org.plt.types.Floating.makeInstance(Math.cos(x.toFloat()));
+	return org.plt.types.FloatPoint.makeInstance(Math.cos(x.toFloat()));
     };
 
 
