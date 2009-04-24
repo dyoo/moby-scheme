@@ -24,28 +24,3 @@
 * placeImage breaks if the scene passed in is an Image, and not a
   Scene.
 
-
-
-
-Javascript:
-
-There's an issue having to do with asynchronous Javascript that can
-lead to a graphical glitch on the first run of a program.  If I'm
-loading a graphical image through JS, I don't yet know its width and
-height until the image is completely loaded.  This can be a problem
-because if the user's toplevel expressions try to use an image's width
-and height early on, I may induce a race condition.
-
-You can see this with the current version of cowabunga:
-
-     http://hashcollision.org/tmp/cowabunga/world.html
-
-If you press your brower's reload, it's possible for the cows to be
-plowing through the ground rather than leisurely prancing on it.  If
-you press "Run again", the glitch should clear since the images are
-cached and loaded by the time we re-evaluate the toplevel expressions.
-
-I know I can kludge things by having the compiler lift up graphical
-image expressions in a special way, so this isn't too big of a deal to
-fix.  But if anyone knew of any other ways of doing something akin to
-MrEd's "yield", that would be very useful.
