@@ -320,23 +320,6 @@ org.plt = {};
 	throw new TypeError(msg.toString());
     }
 
-    function gcd(a, b) {
-	var t;
-	if (isNaN(a) || !isFinite(a)) {
-	    die("not a number: " + a);
-	}
-	if (isNaN(b) || !isFinite(b)) {
-	    die("not a number: " + b);
-	}
-	a = Math.floor(Math.abs(a));
-	b = Math.floor(Math.abs(b));
-	while (b != 0) {
-	    t = a;
-	    a = b;
-	    b = t % b;
-	}
-	return a;
-    }
 
 
     // Strings
@@ -412,6 +395,22 @@ org.plt = {};
 
 
     // Rationals
+
+    function gcd(a, b) {
+	var t;
+	if (isNaN(a) || !isFinite(a)) {
+	    die("not a number: " + a);
+	}
+	if (isNaN(b) || !isFinite(b)) {
+	    die("not a number: " + b);
+	}
+	while (b != 0) {
+	    t = a;
+	    a = b;
+	    b = t % b;
+	}
+	return a;
+    }
 
     org.plt.types.Rational = function(n, d) {
 	var divisor = gcd(Math.abs(n), Math.abs(d));

@@ -52,21 +52,27 @@ org.plt.WorldKernel = {};
     }
 
 
-    org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
-	var i;
-	var canvas = 
-	    window.document.getElementById("canvas");
-
+    function resetWorld() {
 	if (timerInterval) {
 	    clearInterval(timerInterval);
 	    timerInterval = false;
 	}
 	stopped = false;
+	worldListeners = [];
+    }
+
+
+    org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
+	var i;
+	var canvas = 
+	    window.document.getElementById("canvas");
+
+	resetWorld();
+
 
 	for (i = 0; i < handlers.length; i++) {
 	    handlers[i]();
 	}
-
 
 	if (org.plt.world.config.onKey) {
 	    window.onkeypress = function(e) {
@@ -102,21 +108,25 @@ org.plt.WorldKernel = {};
 
 	
 	if(org.plt.world.config.onTick) {
-	    timerInterval = window.setInterval(
-		function() {
-		    if (stopped) {
-			window.clearInterval(timerInterval);
-			timerInterval = false;
-		    }
-		    else {
-			changeWorld(
-			    org.plt.world.config.onTick([world]));
-		    }
-		},
-		org.plt.world.config.tickDelay);
+	    scheduleTimerTick();
 	}
-
     };
+
+    function scheduleTimerTick() {
+	timerInterval = window.setTimeout(
+	    function() {
+		if (stopped) {
+		    window.clearTimeout(timerInterval);
+		    timerInterval = false;
+		}
+		else {
+		    changeWorld(
+			org.plt.world.config.onTick([world]));
+		    scheduleTimerTick();
+		}
+	    },
+	    org.plt.world.config.tickDelay);
+    }
 
 
 
@@ -240,15 +250,17 @@ org.plt.WorldKernel = {};
 	var i;
 	var childImage, childX, childY;
 	// Clear the scene.
-	ctx.save();
-	ctx.fillStyle = "white";
-	ctx.fillRect(x - this.pinholeX, y - this.pinholeY,
-		     this.width, this.height);
-	ctx.fillStyle = "black";
-	ctx.strokeRect(x - this.pinholeX, y - this.pinholeY, 
-		       this.width, this.height);
-	ctx.restore();
-	ctx.globalCompositeOperation = 'source-over';
+// 	ctx.save();
+// 	ctx.fillStyle = "white";
+// 	ctx.fillRect(x - this.pinholeX, y - this.pinholeY,
+// 		     this.width, this.height);
+// 	ctx.fillStyle = "black";
+// 	ctx.strokeRect(x - this.pinholeX, y - this.pinholeY, 
+// 		       this.width, this.height);
+// 	ctx.restore();
+// 	ctx.globalCompositeOperation = 'source-over';
+	ctx.clearRect(x - this.pinholeX, y - this.pinholeY, 
+ 		      this.width, this.height);
 	// Then ask every object to render itself.
 	for(i = 0; i < this.children.length; i++) {
 	    childImage = this.children[i][0];
@@ -300,8 +312,7 @@ org.plt.WorldKernel = {};
 
 
     FileImage.prototype.render = function(ctx, x, y) {
-	var self = this;
-	ctx.drawImage(self.img, x, y);
+	ctx.drawImage(this.img, x, y);
     };
 
 
@@ -328,15 +339,12 @@ org.plt.WorldKernel = {};
 
 
     RectangleImage.prototype.render = function(ctx, x, y) {
-	ctx.beginPath();
 	ctx.fillStyle = this.color;
-	ctx.rect(x, y, this.width, this.height);
 	if (this.style.toLowerCase() == "outline") {
-	    ctx.stroke();
+	    ctx.strokeRect(x, y, this.width, this.height);
 	} else {
-	    ctx.fill();
+	    ctx.fillRect(x, y, this.width, this.height);
 	}
-	ctx.closePath();
     };
 
     RectangleImage.prototype.getWidth = function() {
