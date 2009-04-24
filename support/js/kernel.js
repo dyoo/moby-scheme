@@ -443,7 +443,8 @@ org.plt = {};
 
 
     org.plt.types.Rational.prototype.add = function(other) {
-	return org.plt.types.Rational.makeInstance(this.n * other.d + this.d * other.n,
+	return org.plt.types.Rational.makeInstance(this.n * other.d + 
+						   this.d * other.n,
 						   this.d * other.d);
     };
 
@@ -505,39 +506,35 @@ org.plt = {};
     };
 
 
-
+    var _rationalCache = {};
     org.plt.types.Rational.makeInstance = function(n, d) {
 	if (n == undefined)
 	    die("n undefined");
 	if (d == undefined)
 	    die("d undefined");
+
 	if (d < 0) {
 	    n = -n;
 	    d = -d;
 	}
 
-	if (d == 1 && 
-	    0 <= n && 
-	    n < org.plt.types.Rational._cache.length)
-	    return org.plt.types.Rational._cache[n];
-	else if (n == -1 && d == 1) 
-	    return org.plt.types.Rational.NEGATIVE_ONE;
-	else
+	if (d == 1 && n in _rationalCache) {
+	    return _rationalCache[n];
+	}
+	else {
 	    return new org.plt.types.Rational(n, d);
+	}
     };
 
-    org.plt.types.Rational.NEGATIVE_ONE = new org.plt.types.Rational(-1, 1);
-
-    org.plt.types.Rational._cache = [];
+    _rationalCache = {};
     (function() {
 	var i;
-	for(i = 0; i < 100; i++)
-	    org.plt.types.Rational._cache.push(
-		new org.plt.types.Rational(i, 1));
+	for(i = -500; i < 500; i++)
+	    _rationalCache[i] = new org.plt.types.Rational(i, 1);
     })();
-    
-    org.plt.types.Rational.ZERO = org.plt.types.Rational._cache[0];
-    org.plt.types.Rational.ONE = org.plt.types.Rational._cache[1];
+    org.plt.types.Rational.NEGATIVE_ONE = _rationalCache[-1];
+    org.plt.types.Rational.ZERO = _rationalCache[0];
+    org.plt.types.Rational.ONE = _rationalCache[1];
 
 
 
