@@ -294,44 +294,24 @@ org.plt.WorldKernel = {};
     FileImage.makeInstance = function(path) {
 	if (! (path in imageCache)) {
 	    imageCache[path] = new FileImage(path);
-
 	} 
 	return imageCache[path];
     };
 
 
-    // wait: (-> boolean) (-> void) -> void
-    //
-    // Waits until boolean is true, then calls after.
-    function wait(predicate, after) {
-	if (predicate()) 
-	    after();
-	else
-	    setTimeout(function() { wait(predicate, after); },
-		       10);
-    }
-
-
     FileImage.prototype.render = function(ctx, x, y) {
 	var self = this;
-	wait(function() { return self.isLoaded; },
-	     function() {
-		 ctx.drawImage(self.img, x, y);
-	     });
+	ctx.drawImage(self.img, x, y);
     };
+
 
     FileImage.prototype.getWidth = function() {
-	// FIXME: we should block until the image loads
-	if ('width' in this.img)
-	    return this.img.width;
-	return 0;
+	return this.img.width;
     };
 
+
     FileImage.prototype.getHeight = function() {
-	// FIXME: we should block until the image loads
-	if ('height' in this.img) 
-	    return this.img.height;
-	return 0;
+	return this.img.height;
     };
 
 

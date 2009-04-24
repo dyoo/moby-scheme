@@ -1,8 +1,6 @@
 #lang scheme/base
-(require scheme/gui/base
-         scheme/contract
-         scheme/class
-         scheme/match
+(require scheme/contract
+         scheme/string
          scheme/file
          scheme/runtime-path
          (only-in xml xexpr->string)
@@ -349,8 +347,9 @@
 (define (compile-program-to-javascript text name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
-  (lift-images-to-directory text (build-path dest-dir))
-  (let*-values ([(program)
+  (let*-values ([(named-bitmaps)
+                 (lift-images-to-directory text (build-path dest-dir))]
+                [(program)
                  (parse-text-as-program text)]
                 [(compiled-program)
                  (javascript:program->compiled-program program)]
@@ -360,6 +359,12 @@
                 [(mappings) 
                  (build-mappings 
                   (PROGRAM-DEFINITIONS defns)
+                  (IMAGES (string-append "["
+                                         (string-join (map (lambda (b) 
+                                                             (format "~s" (named-bitmap-name b)))
+                                                           named-bitmaps) 
+                                                      ", ")
+                                         "]"))
                   (PROGRAM-TOPLEVEL-EXPRESSIONS
                    (javascript:compiled-program-toplevel-exprs
                     compiled-program))

@@ -19,6 +19,38 @@ main.destroy = function() {
 };
 
 
+// Waits until all images are loaded, after which we
+// evaluate the after thunk.
+main.afterPreloadImages = function(after) {
+  var imagePaths = <<IMAGES>>;
+  var images = [];
+  function wait(predicate, after) {
+      if (predicate()) 
+	  after();
+      else
+	  setTimeout(function() { wait(predicate, after); },
+		     100);
+  }
+
+  function isAllLoaded() {
+      var i;
+      for (i = 0; i < images.length; i++) {
+	  if (! (images[i].isLoaded)) {
+	      return false;
+	  }
+      }
+      return true;
+  }
+
+  var i;
+  for (i = 0; i < imagePaths.length; i++) {
+      images.push(org.plt.WorldKernel._kernelCreateImage
+		  (org.plt.types.String.makeInstance(imagePaths[i])));
+  }
+  wait(isAllLoaded, after);
+};
+
+
 main.runToplevel = function() {
    <<PROGRAM-TOPLEVEL-EXPRESSIONS>>
 };

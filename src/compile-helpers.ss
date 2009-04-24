@@ -103,14 +103,16 @@
 
 
 
-;; lift-images: text path -> void
+;; lift-images: text path -> (listof named-bitmap)
 ;; Lifts up the image snips in the text, writing them into the resource directory.
 ;; The snips in the text will be replaced with the expression (create-image <path>)
 ;; where path refers to the file saves in the resource directory.
 (define (lift-images-to-directory a-text resource-dir)
   (make-directory* resource-dir)
-  (for ([nb (lift-images! a-text)])
-    (named-bitmap-save nb resource-dir)))
+  (let ([named-bitmaps (lift-images! a-text)])
+    (for ([nb named-bitmaps])
+      (named-bitmap-save nb resource-dir))
+    named-bitmaps))
 
 
 
