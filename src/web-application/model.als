@@ -2,17 +2,36 @@ open util/ordering[State] as S
 
 -- A small model of WeScheme.
 
-sig User {}
-sig Source {}
+-- A message represents some string in the system.
+sig Message {}
 
+
+-- A User can invoke actions on the system, and own data.
+sig User {}
+
+-- A Source is some source code written by a user.
+sig Source {
+    sourceUser : User
+}
+
+
+-- A Binary is a compilation of some source.
 sig Binary {}
+
+
+-- A comment is associated to the user making the comment.
+sig Comment {
+    commentUser : User,
+    commentSource : Source,
+    commentMessage : Message
+}
 
 
 -- A state consists of a set of users, a set of sources, comments associated to those
 -- sources, and binaries.
 sig State {
    users: set User,
-   sources: users -> Source,
+   sources: set Source,
    comments: set Comment,
    binaries: sources -> lone Binary,
 }
@@ -33,13 +52,7 @@ fact BinaryToOneSourcePerState{
 
 
 
-sig Comment {
-    commentUser : User,
-    commentSource : Source,
-    commentMessage : Message
-}
 
-sig Message {}
 
 
 
@@ -48,13 +61,15 @@ sig Message {}
 
 ----------------------------------------------------------------------
 
-
+-- Every action is initiated by a user, and is a transition from state to state'.
 abstract sig Action {
     user: User,
     state: one State,
     state': one State
 }
 
+
+-- Add a new user
 sig AddUser extends Action {
     userToAdd : User
 } {
@@ -67,18 +82,24 @@ sig AddUser extends Action {
 }
 
 
+-- Add a new source.
 sig AddSource extends Action {
   source: Source
 } {
      -- fixme: add check for either ownership or admin permission
-      (user->source) not in state.sources
-      state'.sources = state.sources + (user->source)
+      source not in state.sources
+      source.sourceUser in state.users
+
+      state'.sources = state.sources + source
       state.users = state'.users
       state.comments = state'.comments
       state.binaries = state'.binaries
 }
 
 
+
+
+-- Add a new comment to an existing source.
 sig AddComment extends Action {
     source: Source,
     message: Message
@@ -108,6 +129,11 @@ pred init(s : State) {
     no s.comments
     no s.binaries
 }
+
+
+
+----------------------------------------------------------------------
+-- Tracing
 ----------------------------------------------------------------------
 
 -- TraceActions forces a trace along a legal action sequence.
@@ -133,15 +159,32 @@ pred ExhaustiveTraceActions {
 
 
 
+
+------------------------------------------------------------------------------
+-- Test Assersions
+-------------------------------------------------------------------------------
+
 -- Make sure that the only comments that get in are those annotating
 -- an existing source.
 assert commentsOnlyOnStateSources {
    ExhaustiveTraceActions[] implies {
      all s : State {
-         s.comments.commentSource = s.sources[s.users]
+         s.comments.commentSource = s.sources
      }
    }
 }
+
+
+
+-- Make sure that source refer to existing users.
+assert sourceUsersAreInStates {
+   ExhaustiveTraceActions[] implies {
+     all s : State {
+         s.sources.sourceUser = s.users
+     }
+   }
+}
+
 
 
 -- Reminder: bump up the scope as we add more Actions.
@@ -149,3 +192,4 @@ run ExhaustiveTraceActions for 4
 
 
 check commentsOnlyOnStateSources
+check sourceUsersAreInStates
