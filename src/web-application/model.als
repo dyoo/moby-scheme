@@ -1,17 +1,18 @@
-
+open util/ordering[State] as S
 
 -- A small model of WeScheme.
 
 sig User {}
 sig Source {}
-sig Comment {}
+
 sig Binary {}
+
 
 
 sig State {
    users: set User,
    sources: users -> Source,
-   comments: sources -> Comment,
+   comments: set Comment,
    binaries: sources -> lone Binary,
 }
 
@@ -20,7 +21,7 @@ fact ThingsNeedToBeOwnedBySomeState {
     all u: User | some users.u
     all s: Source | some sources.s
     all c: Comment | some comments.c
-   all b: Binary | some binaries.b
+    all b: Binary | some binaries.b
 }
 
 
@@ -29,10 +30,16 @@ fact BinaryToOneSourcePerState{
   all b : Binary | some binaries.b
 }
 
-fact CommentsToOneSourcePerState {
-  all s:State, c: Comment | lone s.comments.c
-  all c: Comment | some comments.c
+
+
+sig Comment {
+    commentUser : User,
+    commentSource : Source,
+    commentMessage : Message
 }
+
+sig Message {}
+
 
 
 
@@ -42,67 +49,83 @@ fact CommentsToOneSourcePerState {
 
 
 abstract sig Action {
-    s: one State,
-    s': one State
+    user: User,
+    state: one State,
+    state': one State
 }
 
 sig AddUser extends Action {
-    u: one User
+    userToAdd : User
 } {
-      u not in s.users 
-      s'.users = s.users + u
-      s.sources = s'.sources
-      s.comments = s'.comments
-      s.binaries = s'.binaries
+      -- fixme: add check for admin permission
+      userToAdd not in state.users 
+      state'.users = state.users + userToAdd
+      state.sources = state'.sources
+      state.comments = state'.comments
+      state.binaries = state'.binaries
 }
 
---sig AddSource extends Action {
- -- u: User,
- -- s: Source
---} {
- --   all state, state': State {
-  --      ApplyAction[state, state', this] implies {
-  --          (u->s) not in state.sources
-   --         state'.sources = state.sources + (u->s)
-    --        state.users = state'.users
-    --        state.comments = state'.comments
-     --       state.binaries = state'.binaries
-      --  }
-   -- }
---}
 
---sig AddComment extends Action {
- -- u: User,
- -- s: Source,
-  --c: Comment
---}
+sig AddSource extends Action {
+  source: Source
+} {
+     -- fixme: add check for either ownership or admin permission
+      (user->source) not in state.sources
+      state'.sources = state.sources + (user->source)
+      state.users = state'.users
+      state.comments = state'.comments
+      state.binaries = state'.binaries
+}
+
+
+sig AddComment extends Action {
+    source: Source,
+    message: Message
+} {
+    some comment: Comment {
+        comment.commentUser = user
+        comment.commentSource = source
+        comment.commentMessage = message
+
+        state.sources = state'.sources
+        state.users = state'.users
+        state'.comments = state'.comments + comment
+        state.binaries = state'.binaries        
+    }
+}
+
 
 --sig CompileSource extends Action {
   --u: User,
   --s: Source
 --}
 
-pred AddUserPred(s, s': State, u: User) {
-    u not in s.users
-    s'.users = s.users + u
-    s.sources = s'.sources
-    s.comments = s'.comments
-    s.binaries = s'.binaries
-}
 
+pred init(s : State) {
+    no s.users
+    no s.sources
+    no s.comments
+    no s.binaries
+}
 ----------------------------------------------------------------------
 
-pred TryAddingUser {
-    some s, s': State, u: User | AddUserPred[s, s', u]
-}
 
-pred TryAddingUser2 {
-    some a: Action, state, state': State {
-      a.s = state
-      a.s' = state'
+pred TraceActions {
+    init[S/first[]]
+    all s: State - last[] | let s' = S/next [s] |
+    some a: Action {
+      a.state = s
+      a.state' = s'
     }
+
+    -- Make sure all Actions are represented.
+    all a: Action | some s : State | a.state = s or a.state' = s
+    some AddUser
+    some AddSource
+    some AddComment
 }
 
 
-run TryAddingUser
-run TryAddingUser2
+
+-- Reminder: bump up the scope as we add more Actions.
+run TraceActions for 4
