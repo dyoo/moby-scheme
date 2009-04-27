@@ -8,7 +8,8 @@ sig Source {}
 sig Binary {}
 
 
-
+-- A state consists of a set of users, a set of sources, comments associated to those
+-- sources, and binaries.
 sig State {
    users: set User,
    sources: users -> Source,
@@ -109,7 +110,7 @@ pred init(s : State) {
 }
 ----------------------------------------------------------------------
 
-
+-- TraceActions forces a trace along a legal action sequence.
 pred TraceActions {
     init[S/first[]]
     all s: State - last[] | let s' = S/next [s] |
@@ -118,8 +119,13 @@ pred TraceActions {
       a.state' = s'
     }
 
-    -- Make sure all Actions are represented.
-    all a: Action | some s : State | a.state = s or a.state' = s
+}
+
+
+-- We make sure all Actions are represented.  As more actions are defined,
+-- add them here.
+pred ExhaustiveTraceActions {
+    TraceActions[]
     some AddUser
     some AddSource
     some AddComment
@@ -127,5 +133,19 @@ pred TraceActions {
 
 
 
+-- Make sure that the only comments that get in are those annotating
+-- an existing source.
+assert commentsOnlyOnStateSources {
+   ExhaustiveTraceActions[] implies {
+     all s : State {
+         s.comments.commentSource = s.sources[s.users]
+     }
+   }
+}
+
+
 -- Reminder: bump up the scope as we add more Actions.
-run TraceActions for 4
+run ExhaustiveTraceActions for 4
+
+
+check commentsOnlyOnStateSources
