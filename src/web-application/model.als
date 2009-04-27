@@ -1,3 +1,5 @@
+
+
 -- A small model of WeScheme.
 
 sig User {}
@@ -40,20 +42,18 @@ fact CommentsToOneSourcePerState {
 
 
 abstract sig Action {
+    s: one State,
+    s': one State
 }
 
 sig AddUser extends Action {
     u: one User
 } {
-    all s, s': State {
-      ApplyAction[s, s', this] implies {
-          u not in s.users 
-          s'.users = s.users + u
-          s.sources = s'.sources
-          s.comments = s'.comments
-          s.binaries = s'.binaries
-      }
-  }
+      u not in s.users 
+      s'.users = s.users + u
+      s.sources = s'.sources
+      s.comments = s'.comments
+      s.binaries = s'.binaries
 }
 
 --sig AddSource extends Action {
@@ -82,11 +82,6 @@ sig AddUser extends Action {
   --s: Source
 --}
 
-
-pred ApplyAction(s, s': State, a: Action) {
-    s != s'
-}
-
 pred AddUserPred(s, s': State, u: User) {
     u not in s.users
     s'.users = s.users + u
@@ -97,14 +92,15 @@ pred AddUserPred(s, s': State, u: User) {
 
 ----------------------------------------------------------------------
 
-
 pred TryAddingUser {
     some s, s': State, u: User | AddUserPred[s, s', u]
 }
 
 pred TryAddingUser2 {
-    some a: Action, s, s': State {
-      ApplyAction[s, s', a]}
+    some a: Action, state, state': State {
+      a.s = state
+      a.s' = state'
+    }
 }
 
 
