@@ -1,0 +1,104 @@
+<!--
+    ***** BEGIN LICENSE BLOCK *****
+    Version: MPL 1.1
+
+    The contents of this file are subject to the Mozilla Public License Version
+    1.1 (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+    http://www.mozilla.org/MPL/
+
+    Software distributed under the License is distributed on an "AS IS" basis,
+    WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+    for the specific language governing rights and limitations under the
+    License.
+
+    The Original Code is Bespin.
+
+    The Initial Developer of the Original Code is Mozilla.
+    Portions created by the Initial Developer are Copyright (C) 2009
+    the Initial Developer. All Rights Reserved.
+
+    Contributor(s):
+        Bespin Team (bespin@mozilla.com)
+
+    ***** END LICENSE BLOCK *****
+-->
+<!doctype html>
+<html>
+<head>
+    <title>WeScheme</title>
+    <style type="text/css">*:focus { outline: 0; }</style>
+
+    <!-- begin script tags -->
+    <script>
+      var djConfig = { parseOnLoad: false, isDebug: false, debugAtAllCosts: false };
+      </script>
+
+    <script src="bespin-js/dojo/dojo.js"></script>
+    <script src="bespin-js/bespin/editor/embed.js"></script>
+
+    <script>
+        var _editorComponent;
+
+        // Loads and configures the objects that the editor needs
+        // You can use dojo.addOnLoad(...); but for that you will need to load up dojo.js first
+        window.onload = function() {
+            _editorComponent = new bespin.editor.Component('editor', {
+                language: "js",
+                loadfromdiv: true,
+                set: {
+                    strictlines: 'off'
+                }
+            });
+        };
+
+        function copyToTextarea() {
+            dojo.byId('inandout').value = _editorComponent.getContent();
+        }
+
+        function copyToEditor() {
+            _editorComponent.setContent(dojo.byId('inandout').value);
+        }
+
+        function setSyntax(value) {
+            bespin.publish("settings:language", { language: value });
+        }
+	</script>
+    <!-- end script tags -->
+</head>
+<body>
+    <h3>WeScheme</h3>
+
+    <div style="padding: 20px">
+      <input type="button" value="Run" onclick="copyToEditor()">
+    </div>
+
+
+    <div id="editor" style="margin: 0; padding: 0; border: 0; height: 550px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">;; Enter your world program here.
+(require (lib "world.ss" "moby" "stub"))
+
+(define WIDTH 320)
+(define HEIGHT 480)
+
+(define initial-world 150)
+
+(define (tick w)
+  (sub1 w))
+
+(define (render w)
+  (place-image (circle w "solid" "purple")
+               (quotient WIDTH 2)
+               (quotient HEIGHT 2)
+               (empty-scene WIDTH HEIGHT)))
+
+(define (done? w)
+  (= w 0))
+
+(big-bang WIDTH HEIGHT initial-world
+          (on-tick (/ 1 10) tick)
+          (on-redraw render)
+          (stop-when done?))
+</div>
+
+</body>
+</html>

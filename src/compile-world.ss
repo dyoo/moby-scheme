@@ -21,7 +21,11 @@
                    (string? path-string? path-string? . -> . any)]
                   
                   [generate-javascript-application
-                   (string? path-string? path-string? . -> . any)])
+                   (string? path-string? path-string? . -> . any)]
+                  
+                  
+                  [compiled-program->main.js
+                   (javascript:compiled-program? (listof named-bitmap?) . -> . string?)])
 
 
 

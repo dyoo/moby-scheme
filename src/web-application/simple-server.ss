@@ -2,6 +2,8 @@
 (require "model.ss"
          "server-helper.ss"
          "sendmail.ss"
+         "../compile-world.ss"
+         (prefix-in javascript: "../beginner-to-javascript.ss")
          web-server/servlet-env
          web-server/servlet
          scheme/runtime-path
@@ -39,7 +41,7 @@
          [first-part (path/param-path (first (url-path url)))])
     (cond
       [(not (string? first-part))
-       (error 'start "Must be /compile/ or /get/ or /js-compile")]
+       (error 'start "Must be /compile/ or /get/ or /js-compile/")]
       [(string=? first-part "compile")
        (handle-compile a-request)]
       [(string=? first-part "get")
@@ -97,7 +99,25 @@
 ;; Generates a response where the user's program is translated to a world program.
 ;; VERY HACKY.
 (define (handle-js-compile a-request)
-  (void))
+  (let* ([a-program (read* (open-input-string
+                            (extract-binding/single 'program
+                                                    (request-bindings a-request))))]
+         [a-compiled-program
+          (javascript:program->compiled-program a-program)]
+         [a-main.js (compiled-program->main.js a-compiled-program '())])
+    (void)))
+
+
+
+
+;; read*: input-port -> (listof sexp)
+(define (read* inp)
+  (let ([next-sexp (read inp)])
+    (cond
+      [(eof-object? next-sexp)
+       '()]
+      [else
+       (cons next-sexp (read* inp))])))
 
 
 
@@ -202,5 +222,5 @@
                #:port port-number
                #:command-line? #t
                #:listen-ip #f
-               #:servlet-regexp #rx"^/(compile|get)/"
+               #:servlet-regexp #rx"^/(compile|get|js-compile)/"
                #:extra-files-paths (list htdocs-path))
