@@ -131,7 +131,6 @@ EOF
          [response-body (string-append header
                           "\n<script language='javascript'>\n"
                           a-main.js
-                          "alert('main loaded');"
                           "\n</script>\n"
                           footer)])
     (cons #"text/html" (list (string->bytes/utf-8 response-body)))))
