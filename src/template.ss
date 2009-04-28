@@ -5,6 +5,7 @@
          scheme/contract)
 
 (provide/contract [fill-template (string? hash? . -> . string?)]
+                  [fill-template-port (input-port? output-port? hash? . -> . any)]
                   [fill-template-file (path-string? path-string? hash? . -> . any)]
                   [replace-template-file (path-string? path-string? hash? . -> . any)])
 
@@ -39,6 +40,15 @@
      (path->string thing)]
     [else
      (format "~a" thing)]))
+
+
+
+;; fill-template-port: input-port output-port hashtable -> void
+(define (fill-template-port inp outp mappings)
+  (for ([line (in-lines inp)])
+    (display (fill-template line mappings) outp)
+    (newline outp)))
+
 
 
 ;; fill-template-file: path path mappings -> void

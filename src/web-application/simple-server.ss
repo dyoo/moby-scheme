@@ -39,11 +39,14 @@
          [first-part (path/param-path (first (url-path url)))])
     (cond
       [(not (string? first-part))
-       (error 'start "Must be /compile/ or /get/")]
+       (error 'start "Must be /compile/ or /get/ or /js-compile")]
       [(string=? first-part "compile")
        (handle-compile a-request)]
       [(string=? first-part "get")
-       (handle-get (path/param-path (second  (url-path url))))])))
+       (handle-get (path/param-path (second  (url-path url))))]
+      [(string=? first-part "js-compile")
+       (handle-js-compile a-request)])))
+
 
 ;; good-email-address
 (define (good-email-address? an-email)
@@ -86,6 +89,17 @@
           (error 'start "Not a file: ~s" a-file-binding)]))]
     [else
      (error 'handle-compile)]))
+
+
+
+
+;; handle-js-compile: request -> response
+;; Generates a response where the user's program is translated to a world program.
+;; VERY HACKY.
+(define (handle-js-compile a-request)
+  (void))
+
+
 
 
 ;; we-will-call-you-response: string -> response

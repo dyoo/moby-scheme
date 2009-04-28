@@ -3,6 +3,7 @@
          scheme/string
          scheme/file
          scheme/runtime-path
+         scheme/port
          (only-in xml xexpr->string)
          "compile-helpers.ss"
          "image-lift.ss"
@@ -36,6 +37,8 @@
 (define-runtime-path j2me-support-src-path "../support/j2me/src")
 (define-runtime-path j2me-support-res-path "../support/j2me/res")
 (define-runtime-path javascript-support-path "../support/js")
+
+(define-runtime-path javascript-main-template "../support/js/main.js.template")
 
 (define-runtime-path j2me-world-stub-path
   "../support/j2me/MidletStub.java.template")
@@ -352,29 +355,41 @@
                 [(program)
                  (parse-text-as-program text)]
                 [(compiled-program)
-                 (javascript:program->compiled-program program)]
-                [(defns pinfo)
-                 (values (javascript:compiled-program-defns compiled-program)
-                         (javascript:compiled-program-pinfo compiled-program))]
-                [(mappings) 
-                 (build-mappings 
-                  (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "["
-                                         (string-join (map (lambda (b) 
-                                                             (format "~s" (named-bitmap-name b)))
-                                                           named-bitmaps) 
-                                                      ", ")
-                                         "]"))
-                  (PROGRAM-TOPLEVEL-EXPRESSIONS
-                   (javascript:compiled-program-toplevel-exprs
-                    compiled-program))
-                  (ON-START (get-on-start-code pinfo))
-                  (ON-PAUSE (get-on-pause-code pinfo))
-                  (ON-DESTROY (get-on-destroy-code pinfo)))])
-    (fill-template-file (build-path dest-dir "main.js.template")
-                        (build-path dest-dir "main.js")
-                        mappings)
+                 (javascript:program->compiled-program program)])
+    (call-with-output-file (build-path dest-dir "main.js")
+      (lambda (op)
+        (copy-port (open-input-string 
+                    (compiled-program->main.js compiled-program named-bitmaps))
+                   op))
+      #:exists 'replace)
     (delete-file (build-path dest-dir "main.js.template"))))
+
+
+
+(define (compiled-program->main.js compiled-program named-bitmaps)
+  (let*-values ([(defns pinfo)
+                (values (javascript:compiled-program-defns compiled-program)
+                        (javascript:compiled-program-pinfo compiled-program))]
+               [(output-port) (open-output-string)]
+               [(mappings) 
+                (build-mappings 
+                 (PROGRAM-DEFINITIONS defns)
+                 (IMAGES (string-append "["
+                                        (string-join (map (lambda (b) 
+                                                            (format "~s" (named-bitmap-name b)))
+                                                          named-bitmaps) 
+                                                     ", ")
+                                        "]"))
+                 (PROGRAM-TOPLEVEL-EXPRESSIONS
+                  (javascript:compiled-program-toplevel-exprs
+                   compiled-program))
+                 (ON-START (get-on-start-code pinfo))
+                 (ON-PAUSE (get-on-pause-code pinfo))
+                 (ON-DESTROY (get-on-destroy-code pinfo)))])
+    (fill-template-port (open-input-file javascript-main-template)
+                        output-port
+                        mappings)
+    (get-output-string output-port)))
 
 
 ;; make-javascript-directories: path -> void
