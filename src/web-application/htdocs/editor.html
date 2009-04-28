@@ -52,16 +52,17 @@
             });
         };
 
-        function copyToTextarea() {
-            dojo.byId('inandout').value = _editorComponent.getContent();
-        }
-
-        function copyToEditor() {
-            _editorComponent.setContent(dojo.byId('inandout').value);
-        }
-
-        function setSyntax(value) {
-            bespin.publish("settings:language", { language: value });
+        function compile() {
+            var content = _editorComponent.getContent();
+            var form = document.createElement("form");
+	    form.setAttribute("method", "post");
+            form.setAttribute("action", "/js-compile/world.html")
+            var hiddenField = document.createElement("input");
+	    hiddenField.setAttribute("type", "hidden");
+	    hiddenField.setAttribute("name", "program");
+	    hiddenField.setAttribute("value", content);
+            form.appendChild(hiddenField);
+            form.submit();
         }
 	</script>
     <!-- end script tags -->
@@ -70,7 +71,7 @@
     <h3>WeScheme</h3>
 
     <div style="padding: 20px">
-      <input type="button" value="Run" onclick="copyToEditor()">
+      <input type="button" value="Run" onclick="compile()">
     </div>
 
 

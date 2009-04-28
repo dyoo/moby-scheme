@@ -104,8 +104,38 @@
                                                     (request-bindings a-request))))]
          [a-compiled-program
           (javascript:program->compiled-program a-program)]
-         [a-main.js (compiled-program->main.js a-compiled-program '())])
-    (void)))
+         [a-main.js (compiled-program->main.js a-compiled-program '())]
+         [header #<<EOF
+<html>
+<head>
+<script src="/js/kernel.js"></script>
+<script src="/js/world.js"></script>
+EOF
+                 ]
+         [footer #<<EOF
+</head>
+
+<body id="body" onload="main.startup(); main.afterPreloadImages(main.runToplevel);" 
+                onunload="main.shutdown(); main.destroy();">
+
+<canvas id="canvas" width="320" height="480">
+</canvas>
+
+<input type="button" value="Run again"
+       onclick="main.afterPreloadImages(main.runToplevel);">
+
+</body>
+</html>
+EOF
+                 ]
+         [response-body (string-append header
+                          "\n<script language='javascript'>\n"
+                          a-main.js
+                          "alert('main loaded');"
+                          "\n</script>\n"
+                          footer)])
+    (cons #"text/html" (list (string->bytes/utf-8 response-body)))))
+
 
 
 
