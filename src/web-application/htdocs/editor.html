@@ -62,6 +62,10 @@
 	    hiddenField.setAttribute("name", "program");
 	    hiddenField.setAttribute("value", content);
             form.appendChild(hiddenField);
+
+            // this line is necessary for firefox
+	    document.body.appendChild(form);
+
             form.submit();
         }
 	</script>
@@ -88,8 +92,8 @@
 
 (define (render w)
   (place-image (circle w "solid" "purple")
-               (quotient WIDTH 2)
-               (quotient HEIGHT 2)
+               (/ WIDTH 2)
+               (/ HEIGHT 2)
                (empty-scene WIDTH HEIGHT)))
 
 (define (done? w)
