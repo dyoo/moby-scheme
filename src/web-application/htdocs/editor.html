@@ -20,6 +20,8 @@ function compile() {
     var editor = xinha_editors.sourceEditor;
     var content = editor.plugins.GetCode.instance.getCode(editor);
     var form = document.createElement("form");
+
+    alert("content: " + content);
     form.setAttribute("method", "post");
     form.setAttribute("action", "/js-compile/world.html")
     var hiddenField = document.createElement("input");

@@ -38,7 +38,7 @@ InsertSmiley.prototype._lc = function(string) {
   return Xinha._lc(string, 'InsertSmiley');
 };
 Xinha.Config.prototype.InsertSmiley=  {
-  smileyURL : "http://www.x-webservice.net/storage/xinha/plugins/InsertSmiley/"
+  smileyURL : "/xinha/plugins/InsertSmiley/img/"
 };
 
 InsertSmiley.prototype.buttonPress = function(editor) {
@@ -46,7 +46,8 @@ InsertSmiley.prototype.buttonPress = function(editor) {
   var sel = editor.getSelectedHTML().replace(/(<[^>]*>|&nbsp;|\n|\r)/g,"");
   var param = {};
   param.editor = editor;
-  editor._popupDialog("plugin://InsertSmiley/insertsmiley", function(param) {
-    editor.insertHTML("<img src=\"" + editor.config.InsertSmiley.smileyURL + param.smileyfile + "\" alt=\"Smiley\" />");
-  }, param);
+    editor.insertHTML("<img src='" + editor.imgURL("ed_smiley.gif", "InsertSmiley") + "' alt='Smiley'>");
+//  editor._popupDialog("plugin://InsertSmiley/insertsmiley", function(param) {
+//    editor.insertHTML("<img src=\"" + editor.config.InsertSmiley.smileyURL + param.smileyfile + "\" alt=\"Smiley\" />");
+//  }, param);
 };

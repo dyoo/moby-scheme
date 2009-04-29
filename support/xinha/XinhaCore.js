@@ -264,6 +264,8 @@ function Xinha(textarea, config)
   {
     textarea = Xinha.getElementById('textarea', textarea);
   }
+
+
   /** This property references the original textarea, which is at the same time the editor in text mode
    * @type DomNode textarea
    */

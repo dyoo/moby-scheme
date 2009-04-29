@@ -36,7 +36,8 @@ xinha_init = xinha_init ? xinha_init : function()
 
     xinha_plugins = xinha_plugins ? xinha_plugins :
 	[
-	    'GetCode'
+	    'GetCode',
+	    'InsertSmiley'
 	    //   'CharacterMap',
 	    //   'ContextMenu',
 	    //   'ListType',
@@ -66,7 +67,7 @@ xinha_init = xinha_init ? xinha_init : function()
     xinha_config = xinha_config ? xinha_config() : new Xinha.Config();
     
 
-    xinha_config.toolbar = [];
+    xinha_config.toolbar = [["separator"]];
     xinha_config.statusBar = false;
 
 
