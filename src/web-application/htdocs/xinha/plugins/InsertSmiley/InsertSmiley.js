@@ -5,6 +5,7 @@
  e-mail: kimastergeorge@gmail.com
 \*---------------------------------------*/
 
+
 function InsertSmiley(editor) {
   this.editor = editor;
   var cfg = editor.config;
@@ -23,30 +24,70 @@ function InsertSmiley(editor) {
   cfg.addToolbarElement("insertsmiley", "inserthorizontalrule", 1);
 }
 
-InsertSmiley._pluginInfo = {
-  name          : "InsertSmiley",
-  version       : "1.0",
-  developer     : "Ki Master George",
-  developer_url : "http://kimastergeorge.i4host.com/",
-  c_owner       : "Ki Master George",
-  sponsor       : "Ki Master George",
-  sponsor_url   : "http://kimastergeorge.i4host.com/",
-  license       : "htmlArea"
-};
+(function() {
+    function getElementsByClass(theClass) {
+	var elts = [];
+	//Create Array of All HTML Tags
+	var allHTMLTags=document.getElementsByTagName("*");
 
-InsertSmiley.prototype._lc = function(string) {
-  return Xinha._lc(string, 'InsertSmiley');
-};
-Xinha.Config.prototype.InsertSmiley=  {
-  smileyURL : "/xinha/plugins/InsertSmiley/img/"
-};
+	//Loop through all tags using a for loop
+	for (i=0; i<allHTMLTags.length; i++) {
 
-InsertSmiley.prototype.buttonPress = function(editor) {
-    var self = this;
-    var sel = editor.getSelectedHTML().replace(/(<[^>]*>|&nbsp;|\n|\r)/g,"");
-    var img = new Image();
-    img.src = editor.imgURL("ed_smiley.gif", "InsertSmiley");
-    var selection = editor.saveSelection();
-    editor.insertNodeAtSelection(img);
-    editor.restoreSelection();
-};
+	    //Get all tags with the specified class name.
+	    if (allHTMLTags[i].className==theClass) {
+		elts.push(allHTMLTags[i]);
+	    }
+	}
+	return elts; 
+    }
+
+
+    InsertSmiley._pluginInfo = {
+	name          : "InsertSmiley",
+	version       : "1.0",
+	developer     : "Ki Master George",
+	developer_url : "http://kimastergeorge.i4host.com/",
+	c_owner       : "Ki Master George",
+	sponsor       : "Ki Master George",
+	sponsor_url   : "http://kimastergeorge.i4host.com/",
+	license       : "htmlArea"
+    };
+
+
+    var placeholderImg = '<img class="InsertSmiley_placeholder" src="'+
+	Xinha.getPluginDir("InsertSmiley")+'/img/ed_smiley.gif" />';
+
+
+    InsertSmiley.prototype._lc = function(string) {
+	return Xinha._lc(string, 'InsertSmiley');
+    };
+
+
+
+    InsertSmiley.prototype.onGenerate = function() {
+	// Fill me in.
+    };
+
+
+
+    InsertSmiley.prototype.inwardHtml = function(html)
+    {
+	return html;
+    };
+    
+
+    InsertSmiley.prototype.outwardHtml = function(html)
+    {
+	return html;
+    };
+
+
+    InsertSmiley.prototype.buttonPress = function(editor) {
+	var self = this;
+	var img = new Image();
+	img.src = editor.imgURL("ed_smiley.gif", "InsertSmiley");
+	img.setAttribute("class", "InsertSmiley_placeholder");
+	editor.insertNodeAtSelection(img);
+    };
+
+})();
