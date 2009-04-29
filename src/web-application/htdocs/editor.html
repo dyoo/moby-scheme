@@ -8,7 +8,6 @@
     <script language="javascript">
     var _editor_url  = "/xinha/";
     var _editor_lang = "en";
-//    var _editor_skin = "silva";
     </script>
     <script type="text/javascript" src="xinha/XinhaCore.js"></script>
 
@@ -19,8 +18,7 @@
 <script language="javascript">
 function compile() {
     var editor = xinha_editors.sourceEditor;
-    var getCode = editor.plugins.GetCode.instance.getCode;
-    var content = getCode(editor);
+    var content = editor.plugins.GetCode.instance.getCode(editor);
     var form = document.createElement("form");
     form.setAttribute("method", "post");
     form.setAttribute("action", "/js-compile/world.html")
@@ -50,6 +48,18 @@ function compile() {
 
 
     <textarea id="sourceEditor" style="width: 100%; height: 100%">;; Enter your world program here.
+(require (lib "world.ss" "moby" "stub"))
+
+(define WIDTH 320)
+(define HEIGHT 480)
+
+(define INITIAL-WORLD 0)
+
+(define (draw w)
+  (empty-scene WIDTH HEIGHT))
+
+(big-bang WIDTH HEIGHT INITIAL-WORLD
+          (on-redraw draw))
 </textarea>
 
 </body>

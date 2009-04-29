@@ -29,7 +29,6 @@ GetCode._pluginInfo = {
     // Wrapper legacy see #442
     GetCode.prototype.getCode = function(editor)
     {
-	alert(editor._doc.body.innerHTML);
 	return _getCode(editor._doc.body, false, editor).join("");
     };
 

@@ -3336,6 +3336,10 @@ Xinha.prototype.initIframe = function()
     editor.focusEditor();
   }
 };
+
+
+
+
   
 /**
  * Delay a function until the document is ready for operations.
