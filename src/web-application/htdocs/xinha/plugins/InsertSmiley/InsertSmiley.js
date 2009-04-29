@@ -42,12 +42,11 @@ Xinha.Config.prototype.InsertSmiley=  {
 };
 
 InsertSmiley.prototype.buttonPress = function(editor) {
-  var self = this;
-  var sel = editor.getSelectedHTML().replace(/(<[^>]*>|&nbsp;|\n|\r)/g,"");
-  var param = {};
-  param.editor = editor;
-    editor.insertHTML("<img src='" + editor.imgURL("ed_smiley.gif", "InsertSmiley") + "' alt='Smiley'>");
-//  editor._popupDialog("plugin://InsertSmiley/insertsmiley", function(param) {
-//    editor.insertHTML("<img src=\"" + editor.config.InsertSmiley.smileyURL + param.smileyfile + "\" alt=\"Smiley\" />");
-//  }, param);
+    var self = this;
+    var sel = editor.getSelectedHTML().replace(/(<[^>]*>|&nbsp;|\n|\r)/g,"");
+    var img = new Image();
+    img.src = editor.imgURL("ed_smiley.gif", "InsertSmiley");
+    var selection = editor.saveSelection();
+    editor.insertNodeAtSelection(img);
+    editor.restoreSelection();
 };

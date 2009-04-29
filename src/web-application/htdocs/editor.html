@@ -49,19 +49,31 @@ function compile() {
     </div>
 
 
-    <textarea id="sourceEditor" style="width: 100%; height: 100%">;; Enter your world program here.
-(require (lib "world.ss" "moby" "stub"))
-
+    <textarea id="sourceEditor" style="width: 100%; height: 500px">;; Enter your world program here.<br>
+(require (lib "world.ss" "moby" "stub"))<br>
+<br>
 (define WIDTH 320)
 (define HEIGHT 480)
-
-(define INITIAL-WORLD 0)
-
+<br>
+(define INITIAL-WORLD 100)
+<br>
 (define (draw w)
-  (empty-scene WIDTH HEIGHT))
-
+  (place-image (circle w "solid" "blue")
+               (/ WIDTH 2)
+               (/ HEIGHT 2)
+               (empty-scene WIDTH HEIGHT)))
+<br>
+<br>
+(define (tick w)
+  (sub1 w))
+<br><br>
+(define (done? w)
+  (= w 1))
+<br><br>
 (big-bang WIDTH HEIGHT INITIAL-WORLD
-          (on-redraw draw))
+          (on-tick 1/20 tick)
+          (on-redraw draw)
+          (stop-when done?))
 </textarea>
 
 </body>
