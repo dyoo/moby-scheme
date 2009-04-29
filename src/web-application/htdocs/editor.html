@@ -18,15 +18,13 @@
     <script>
 
 
-function htmlToCode(html) {
-    return html;
-}
+
 
 
 function compile() {
     var editor = xinha_editors.sourceEditor;
-    alert(editor.getEditorContent());
-    alert(htmlToCode(editor.getEditorContent()));
+    var getCode = editor.plugins.GetCode.instance.getCode;
+    alert(getCode(editor));
 //        var content = _editorComponent.getContent();
 //        var form = document.createElement("form");
 //        form.setAttribute("method", "post");

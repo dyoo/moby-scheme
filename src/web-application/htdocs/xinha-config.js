@@ -36,6 +36,7 @@ xinha_init = xinha_init ? xinha_init : function()
 
     xinha_plugins = xinha_plugins ? xinha_plugins :
 	[
+	    'GetCode'
 	    //   'CharacterMap',
 	    //   'ContextMenu',
 	    //   'ListType',
