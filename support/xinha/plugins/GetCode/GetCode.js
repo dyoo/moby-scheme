@@ -29,7 +29,7 @@ GetCode._pluginInfo = {
     // Wrapper legacy see #442
     GetCode.prototype.getCode = function(editor)
     {
-	return _getCode(editor._doc.body, false, editor);
+	return _getCode(editor._doc.body, false, editor).join("");
     };
 
     var emptyAttributes = " checked disabled ismap readonly nowrap compact declare selected defer multiple noresize noshade "
@@ -38,7 +38,7 @@ GetCode._pluginInfo = {
     {
 
 
-	var html = "";
+	var html = [];
 	if ( !indent )
 	{
 	    indent = '';
@@ -63,17 +63,17 @@ GetCode._pluginInfo = {
 	case 4: // Node.CDATA_SECTION_NODE
 	    // Mozilla seems to convert CDATA into a comment when going into wysiwyg mode,
 	    //  don't know about IE
-	    html += (Xinha.is_ie ? ('\n' + indent) : '') + '<![CDATA[' + root.data + ']]>' ;
+	    html.push((Xinha.is_ie ? ('\n' + indent) : '') + '<![CDATA[' + root.data + ']]>');
 	    break;
 
 	case 5: // Node.ENTITY_REFERENCE_NODE
-	    html += '&' + root.nodeValue + ';';
+	    html.push('&' + root.nodeValue + ';');
 	    break;
 
 	case 7: // Node.PROCESSING_INSTRUCTION_NODE
 	    // PI's don't seem to survive going into the wysiwyg mode, (at least in moz)
 	    // so this is purely academic
-	    html += (Xinha.is_ie ? ('\n' + indent) : '') + '<'+'?' + root.target + ' ' + root.data + ' ?>';
+	    html.push((Xinha.is_ie ? ('\n' + indent) : '') + '<'+'?' + root.target + ' ' + root.data + ' ?>');
 	    break;
 
 	case 1: // Node.ELEMENT_NODE
@@ -94,7 +94,7 @@ GetCode._pluginInfo = {
 	    {
 		if ( outputRoot )
 		{
-		    html += (Xinha.is_ie ? ('\n' + indent) : '') + "<head>";
+		    html.push((Xinha.is_ie ? ('\n' + indent) : '') + "<head>");
 		}
 		
 		var save_multiline = RegExp.multiline;
@@ -105,17 +105,17 @@ GetCode._pluginInfo = {
 		    .replace(/\s*=\s*(([^'"][^>\s]*)([>\s])|"([^"]+)"|'([^']+)')/g, '="$2$4$5"$3') //add attribute quotes
 					.replace(/<(link|meta)((\s*\S*="[^"]*")*)>([\n\r]*)/g, '<$1$2 />\n'); //terminate singlet tags
         RegExp.multiline = save_multiline;
-        html += txt + '\n';
+        html.push(txt + '\n');
         if ( outputRoot )
         {
-          html += (Xinha.is_ie ? ('\n' + indent) : '') + "</head>";
+          html.push((Xinha.is_ie ? ('\n' + indent) : '') + "</head>");
         }
         break;
       }
       else if ( outputRoot )
       {
         closed = (!(root.hasChildNodes() || Xinha.needsClosingTag(root)));
-        html += ((Xinha.isBlockElement(root)) ? ('\n' + indent) : '') + "<" + root.tagName.toLowerCase();
+        html.push(((Xinha.isBlockElement(root)) ? ('\n' + indent) : '') + "<" + root.tagName.toLowerCase());
         var attrs = root.attributes;
         
         for ( i = 0; i < attrs.length; ++i )
@@ -153,7 +153,7 @@ GetCode._pluginInfo = {
           var name = a.nodeName.toLowerCase();
           if ( /_moz_editor_bogus_node/.test(name) || ( name == 'class' && a.nodeValue == 'webkit-block-placeholder') )
           {
-            html = "";
+            html = [];
             break;
           }
           if ( /(_moz)|(contenteditable)|(_msh)/.test(name) )
@@ -232,31 +232,31 @@ GetCode._pluginInfo = {
             // here; we don't need them.
             continue;
           }
-          html += " " + name + '="' + Xinha.htmlEncode(value) + '"';
+          html.push(" " + name + '="' + Xinha.htmlEncode(value) + '"');
         }
         //IE fails to put style in attributes list & cssText is UPPERCASE
         if ( Xinha.is_ie && root.style.cssText )
         {
-          html += ' style="' + root.style.cssText.replace(/(^)?([^:]*):(.*?)(;|$)/g, function(m0, m1,m2,m3, m4){return m2.toLowerCase() + ':' + m3 + m4;}) + '"';
+          html.push(' style="' + root.style.cssText.replace(/(^)?([^:]*):(.*?)(;|$)/g, function(m0, m1,m2,m3, m4){return m2.toLowerCase() + ':' + m3 + m4;}) + '"');
         }
         if ( Xinha.is_ie && root.tagName.toLowerCase() == "option" && root.selected )
         {
-          html += ' selected="selected"';
+          html.push(' selected="selected"');
         }
-        if ( html !== "" )
+        if ( html !== [] )
         {
           if ( closed && root_tag=="p" )
           {
             //never use <p /> as empty paragraphs won't be visible
-            html += ">&nbsp;</p>";
+            html.push(">&nbsp;</p>");
           }
           else if ( closed )
           {
-            html += " />";
+            html.push(" />");
           }
           else
           {
-            html += ">";
+            html.push(">");
           }
         }
       }
@@ -273,12 +273,12 @@ GetCode._pluginInfo = {
           {
             var innerText = (root.hasChildNodes()) ? root.firstChild.nodeValue : '';
           }
-          html += innerText + '</'+root_tag+'>' + ((Xinha.is_ie) ? '\n' : '');
+          html.push(innerText + '</'+root_tag+'>' + ((Xinha.is_ie) ? '\n' : ''));
         }
       }
       else if (root_tag == "pre")
       {
-        html += ((Xinha.is_ie) ? '\n' : '') + root.innerHTML.replace(/<br>/g,'\n') + '</'+root_tag+'>';
+        html.push(((Xinha.is_ie) ? '\n' : '') + root.innerHTML.replace(/<br>/g,'\n') + '</'+root_tag+'>');
       }
       else
       {
@@ -288,11 +288,11 @@ GetCode._pluginInfo = {
           {
             containsBlock = true;
           }
-          html += _getCode(i, true, editor, indent + '  ');
+          html = html.concat(_getCode(i, true, editor, indent + '  '));
         }
         if ( outputRoot && !closed )
         {
-          html += (((Xinha.isBlockElement(root) && containsBlock) || root_tag == 'head' || root_tag == 'html') ? ('\n' + indent) : '') + "</" + root.tagName.toLowerCase() + ">";
+          html.push((((Xinha.isBlockElement(root) && containsBlock) || root_tag == 'head' || root_tag == 'html') ? ('\n' + indent) : '') + "</" + root.tagName.toLowerCase() + ">");
         }
       }
     break;
@@ -300,27 +300,27 @@ GetCode._pluginInfo = {
     case 3: // Node.TEXT_NODE
       if ( /^script|noscript|style$/i.test(root.parentNode.tagName) )
       {
-        html = root.data;
+        html = [root.data];
       }
       else if(root.data.trim() == '')
       {
         if(root.data)
         {
-          html = ' ';
+          html = [' '];
         }
         else
         {
-          html = '';
+          html = [''];
         }
       }
       else
       {
-        html = Xinha.htmlEncode(root.data);
+        html = [Xinha.htmlEncode(root.data)];
       }
     break;
 
     case 8: // Node.COMMENT_NODE
-      html = "<!--" + root.data + "-->";
+      html = ["<!--" + root.data + "-->"];
     break;
   }
   return html;
