@@ -10,3 +10,8 @@ location services to arrange the world in a grid.
 
 rock-paper-scissors: Implement rock-paper-scissors using Universe.
 Conflict resolution using rock-paper-scissors.
+
+
+ipov: an intent-driven program.  Have a program listen to SMS intents:
+if a particular SMS intent is received, the program should respond by
+sending an SMS of the current location.
