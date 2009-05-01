@@ -9,6 +9,10 @@ sig Message {}
 -- A User can invoke actions on the system, and own data.
 sig User {}
 
+-- An Administrator has superuser privileges.
+sig Admin extends User {}
+
+
 -- A Source is some source code written by a user.
 sig Source {
     sourceUser : User
@@ -16,7 +20,9 @@ sig Source {
 
 
 -- A Binary is a compilation of some source.
-sig Binary {}
+sig Binary {
+    binarySource: Source
+}
 
 
 -- A comment is associated to the user making the comment.
@@ -31,9 +37,10 @@ sig Comment {
 -- sources, and binaries.
 sig State {
    users: set User,
+   admins: set users,
    sources: set Source,
    comments: set Comment,
-   binaries: sources -> lone Binary,
+   binaries: set Binary
 }
 
 
@@ -48,19 +55,35 @@ abstract sig Action {
     user: User,
     state: one State,
     state': one State
+} {
+    user in state.users
+    permit[state, this]
 }
 
 
--- Add a new user
+-- Add a new normal user
 sig AddUser extends Action {
     userToAdd : User
 } {
-      -- fixme: add check for admin permission
-      userToAdd not in state.users 
+      userToAdd not in state.users
+ 
       state'.users = state.users + userToAdd
+      state'.admins = state.admins
       state.sources = state'.sources
       state.comments = state'.comments
       state.binaries = state'.binaries
+}
+
+sig AssignAsAdmin extends Action {
+    superUser: User
+} {
+    superUser not in state.admins
+
+    state'.users = state.users
+    state'.admins = state.admins + superUser
+    state.sources = state'.sources
+    state.comments = state'.comments
+    state.binaries = state'.binaries
 }
 
 
@@ -74,6 +97,7 @@ sig AddSource extends Action {
 
       state'.sources = state.sources + source
       state.users = state'.users
+      state.admins = state'.admins
       state.comments = state'.comments
       state.binaries = state'.binaries
 }
@@ -86,6 +110,8 @@ sig AddComment extends Action {
     source: Source,
     message: Message
 } {
+    source in state.sources
+
     some comment: Comment {
         comment.commentUser = user
         comment.commentSource = source
@@ -93,25 +119,54 @@ sig AddComment extends Action {
 
         state.sources = state'.sources
         state.users = state'.users
-        state'.comments = state'.comments + comment
+        state.admins = state'.admins
+        state'.comments = state.comments + comment
         state.binaries = state'.binaries        
     }
 }
 
 
---sig CompileSource extends Action {
-  --u: User,
-  --s: Source
---}
+sig CompileSource extends Action {
+    compiledSource: Source,
+    resultBinary: Binary
+} {
+    compiledSource in state.sources
+    resultBinary in Binary - state.binaries
+
+    state.sources = state'.sources
+    state.users = state'.users
+    state.admins = state'.admins
+    state'.comments = state.comments
+    state'.binaries = state.binaries + resultBinary
+}
+
+
+
+-----------------------------------------------------------------------------------
 
 
 pred init(s : State) {
-    no s.users
+    one Admin
+    s.users = Admin
+    s.admins = Admin
     no s.sources
     no s.comments
     no s.binaries
 }
 
+
+-- Permission model.
+pred permit(s : State, a: Action) {
+    a in AddUser implies { a.user in s.admins }
+
+    a in AssignAsAdmin implies { a.user in s.admins }
+
+    a in AddSource implies { a.user in s.admins or a.user = (a <: AddSource).source.sourceUser }
+
+    a in AddComment implies {}
+
+    a in CompileSource implies { a.user in s.admins or a.user = a.resultBinary.binarySource.sourceUser}
+}
 
 
 ----------------------------------------------------------------------
@@ -121,18 +176,43 @@ pred init(s : State) {
 -- TraceActions forces a trace along a legal action sequence.
 pred TraceActions {
     init[S/first[]]
-    all s: State - last[] | let s' = S/next [s] |
+    all s: State - S/last[] | let s' = S/next [s] |
+    // All states are involved in an action.
     some a: Action {
       a.state = s
       a.state' = s'
     }
+    // All actions pair up the states (except the last).
+    State - S/last[] = Action.state
 
+}
+
+
+--- See that we can create a model where there are real non-admin users.
+pred exerciseNonAdmins {
+    TraceActions[]
+    all s: State - S/first[] | some s.users - Admin
+}
+
+
+-- See that non-admins can add sources
+pred exerciseAddSourceByNonAdmin {
+    TraceActions[]
+    AddSource in Action
+    no (AddSource.user & Admin)
+}
+
+-- See that non-admins can add sources
+pred exerciseCompileSourceByNonAdmin {
+    TraceActions[]
+    CompileSource in Action
+    no (CompileSource.user & Admin)
 }
 
 
 -- We make sure all Actions are represented.  As more actions are defined,
 -- add them here.
-pred ExhaustiveTraceActions {
+pred exhaustiveTraceActions {
     TraceActions[]
     some AddUser
     some AddSource
@@ -143,25 +223,16 @@ pred ExhaustiveTraceActions {
 
 
 ------------------------------------------------------------------------------
--- Test Assersions
+-- Tests, assersions and predicates
 -------------------------------------------------------------------------------
 
 -- Make sure that the only comments that get in are those annotating
 -- an existing source.
 assert commentsOnlyOnStateSources {
-   ExhaustiveTraceActions[] implies {
+   TraceActions[] implies {
      all s : State {
-         s.comments.commentSource = s.sources
+         s.comments.commentSource in s.sources
      }
-   }
-}
-
-
-/* We want to ensure that a binary can't be shared by multiple
-sources.  */
-assert binaryToOneSourcePerState{
-   ExhaustiveTraceActions[] implies {
-      all s:State, b: Binary | lone s.binaries.b
    }
 }
 
@@ -169,12 +240,33 @@ assert binaryToOneSourcePerState{
 
 -- Make sure that source refer to existing users.
 assert sourceUsersAreInStates {
-   ExhaustiveTraceActions[] implies {
+   TraceActions[] implies {
      all s : State {
-         s.sources.sourceUser = s.users
+         s.sources.sourceUser in s.users
      }
    }
 }
+
+
+-- Make sure privileges can't be raised except by using AssignAsAdmin
+assert regularUsersCannotMagicallyBecomeAdmins {
+    TraceActions[] implies {
+        all s : State,  u: s.users {
+            u not in s.admins implies {all s': S/nexts[s] | u in s'.admins implies some a: AssignAsAdmin | a.superUser = u }
+        }
+    }
+}
+
+
+-- Sources never get removed.
+assert sourcesNeverGetRemoved {
+    TraceActions[] implies {
+        all s: State, s':S/nexts[s] { s.sources in s'.sources }
+    }
+}
+
+
+
 
 
 /* Just so we don't see extraneous objects in the model.  Not
@@ -191,9 +283,12 @@ pred ThingsNeedToBeOwnedBySomeState {
 
 
 -- Reminder: bump up the scope as we add more Actions.
-run ExhaustiveTraceActions for 4
-
+run exhaustiveTraceActions for 4
+run exerciseAddSourceByNonAdmin
+run exerciseCompileSourceByNonAdmin
+run exerciseNonAdmins
 
 check commentsOnlyOnStateSources
 check sourceUsersAreInStates
-check binaryToOneSourcePerState
+check regularUsersCannotMagicallyBecomeAdmins
+check sourcesNeverGetRemoved
