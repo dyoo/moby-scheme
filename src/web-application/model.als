@@ -37,24 +37,6 @@ sig State {
 }
 
 
-fact ThingsNeedToBeOwnedBySomeState {
-    all u: User | some users.u
-    all s: Source | some sources.s
-    all c: Comment | some comments.c
-    all b: Binary | some binaries.b
-}
-
-
-fact BinaryToOneSourcePerState{
-  all s:State, b: Binary | lone s.binaries.b
-  all b : Binary | some binaries.b
-}
-
-
-
-
-
-
 
 
 
@@ -175,6 +157,15 @@ assert commentsOnlyOnStateSources {
 }
 
 
+/* We want to ensure that a binary can't be shared by multiple
+sources.  */
+assert binaryToOneSourcePerState{
+   ExhaustiveTraceActions[] implies {
+      all s:State, b: Binary | lone s.binaries.b
+   }
+}
+
+
 
 -- Make sure that source refer to existing users.
 assert sourceUsersAreInStates {
@@ -186,6 +177,18 @@ assert sourceUsersAreInStates {
 }
 
 
+/* Just so we don't see extraneous objects in the model.  Not
+essential.*/
+
+pred ThingsNeedToBeOwnedBySomeState {
+    all u: User | some users.u
+    all s: Source | some sources.s
+    all c: Comment | some comments.c
+    all b: Binary | some binaries.b
+}
+
+
+
 
 -- Reminder: bump up the scope as we add more Actions.
 run ExhaustiveTraceActions for 4
@@ -193,3 +196,4 @@ run ExhaustiveTraceActions for 4
 
 check commentsOnlyOnStateSources
 check sourceUsersAreInStates
+check binaryToOneSourcePerState
