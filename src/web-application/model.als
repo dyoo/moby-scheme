@@ -12,6 +12,9 @@ sig User {}
 -- An Administrator has superuser privileges.
 sig Admin extends User {}
 
+-- An anonymous user
+sig AnonymousUser extends User {}
+
 
 -- A Source is some source code written by a user.
 sig Source {
@@ -157,15 +160,18 @@ pred init(s : State) {
 
 -- Permission model.
 pred permit(s : State, a: Action) {
-    a in AddUser implies { a.user in s.admins }
+    a in AddUser implies {a.user in s.admins }
 
     a in AssignAsAdmin implies { a.user in s.admins }
 
-    a in AddSource implies { a.user in s.admins or a.user = (a <: AddSource).source.sourceUser }
+    a in AddSource implies { a.user not in AnonymousUser and
+                                             (a.user in s.admins or a.user = (a <: AddSource).source.sourceUser)
+                                         }
 
-    a in AddComment implies {}
+    a in AddComment implies { a.user not in AnonymousUser }
 
-    a in CompileSource implies { a.user in s.admins or a.user = a.resultBinary.binarySource.sourceUser}
+    a in CompileSource implies { a.user not in AnonymousUser and
+                                                   (a.user in s.admins or a.user = a.resultBinary.binarySource.sourceUser) }
 }
 
 
