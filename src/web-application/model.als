@@ -94,7 +94,6 @@ sig AssignAsAdmin extends Action {
 sig AddSource extends Action {
   source: Source
 } {
-     -- fixme: add check for either ownership or admin permission
       source not in state.sources
       source.sourceUser in state.users
 
@@ -165,13 +164,13 @@ pred permit(s : State, a: Action) {
     a in AssignAsAdmin implies { a.user in s.admins }
 
     a in AddSource implies { a.user not in AnonymousUser and
-                                             (a.user in s.admins or a.user = (a <: AddSource).source.sourceUser)
+                             (a.user in s.admins or a.user = (a <: AddSource).source.sourceUser)
                                          }
 
     a in AddComment implies { a.user not in AnonymousUser }
 
     a in CompileSource implies { a.user not in AnonymousUser and
-                                                   (a.user in s.admins or a.user = a.resultBinary.binarySource.sourceUser) }
+                                 (a.user in s.admins or a.user = a.resultBinary.binarySource.sourceUser) }
 }
 
 
