@@ -624,8 +624,8 @@ org.plt = {};
     org.plt.Kernel.e = org.plt.types.FloatPoint.makeInstance(Math.E);
  
 	org.plt.types.Complex = function(r, i){
-		this.r = r;
-		this.i = i;
+		this.r = org.plt.types.FloatPoint.makeInstance(r);
+		this.i = org.plt.types.FloatPoint.makeInstance(i);
 	};
  
 	org.plt.types.Complex.makeInstance = function(r, i){
@@ -641,11 +641,11 @@ org.plt = {};
 	};
  
 	org.plt.types.Complex.prototype.isEqual = function(other){
-		return other instanceof org.plt.types.Complex  && this.r == other.r && this.i == other.i;
+		return other instanceof org.plt.types.Complex  && this.r.isEqual(other.r) && this.i.isEqual(other.i);
     };
 	
 	org.plt.types.Complex.prototype.abs = function(){
-		if (!org.plt.types.NumberTower.equal(this.i, 0))
+		if (!org.plt.types.NumberTower.equal(this.i, org.plt.types.Rational.ZERO))
 			throw new Error("abs: expects argument of type real number");
 		return this.r.abs();
 	};

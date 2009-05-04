@@ -67,7 +67,7 @@
 	testAbs : function(){
 		var n1 = Rational.makeInstance(-2,1);
 		var n2 = Rational.makeInstance(4, 2);
-		var n3 = Complex.makeInstance(-2.0, 0);
+		var n3 = Complex.makeInstance(2.0, 0);
 		this.assert(Kernel.equal_question_(Kernel.abs(n1), n2));
 		this.assert(Kernel.equal_question_(Kernel.abs(n3), n2));
 	}
