@@ -33,6 +33,8 @@
 <script type="text/javascript">
 // <![CDATA[
   var Rational = org.plt.types.Rational;
+  var FloatPoint = org.plt.types.FloatPoint;
+  var Kernel = org.plt.Kernel;
 
   new Test.Unit.Runner({
     setup: function() {
@@ -48,10 +50,15 @@
         var n3 = Rational.makeInstance(5, 12);
         this.assert(n1.isEqual(n2));
         this.assert(! n2.isEqual(n3));
-    }
+    },
 
-
+	testEqual: function(){
+		var n1 = Rational.makeInstance(2,1);
+		var n2 = FloatPoint.makeInstance(2.0);
+		this.assert(Kernel.my_eq(n1, n2));
+	}
   }); 
+  
 // ]]>
 </script>
 </body>

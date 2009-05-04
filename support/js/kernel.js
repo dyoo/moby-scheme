@@ -260,6 +260,10 @@ org.plt = {};
 
 	number_dash__greaterthan_string: function(x) {
 	    return org.plt.types.String.makeInstance(x.toString());
+	},
+	
+	my_eq : function(x, y){
+		return org.plt.types.NumberTower.equal(x, y);
 	}
 
     };
@@ -390,8 +394,6 @@ org.plt = {};
     org.plt.types.Cons.prototype.isEmpty = function() {
 	return false;
     };
-    
-
 
 
     // Rationals
@@ -431,8 +433,11 @@ org.plt = {};
     };
 
 
-    org.plt.types.Rational.prototype.lift = function() {
-	return org.plt.types.FloatPoint.makeInstance(this.n / this.d);
+    org.plt.types.Rational.prototype.lift = function(target) {
+		if (target.level() == 1)
+			return org.plt.types.FloatPoint.makeInstance(this.n / this.d);
+		if (target.level() == 2)
+			return org.plt.types.Complex.makeInstance(this.n / this.d, 0); 
     }
 
     org.plt.types.Rational.prototype.isEqual = function(other) {
@@ -549,8 +554,8 @@ org.plt = {};
 	return 1;
     };
 
-    org.plt.types.FloatPoint.prototype.lift = function() {
-	throw new Error("Don't know how to lift Floating");
+    org.plt.types.FloatPoint.prototype.lift = function(target) {
+		return new org.plt.types.Complex.makeInstance(this, 0);
     };
 
     org.plt.types.FloatPoint.prototype.toString = function() {
@@ -626,9 +631,27 @@ org.plt = {};
     org.plt.Kernel.e = org.plt.types.FloatPoint.makeInstance(Math.E);
 
 
+	// Complex numbers
+	org.plt.types.Complex.makeInstance = function(r, i){
+		return new org.plt.types.Complex(r, i);
+	}
+	
+	org.plt.types.Complex = function(r, i){
+		this.r = org.plt.types.FloatPoint.makeInstance(r);
+		this.i = org.plt.types.FloatPoint.makeInstance(i);
+	}		
+	
+	org.plt.types.Complex.prototype.level = function(){
+		return 2;
+	}
 
-
-
+	org.plt.types.Complex.prototype.lift = function(target){
+		throw new Error("Don't know how to lift Complex number");
+	}
+	
+	org.plt.types.Complex.prototype.toInteger = function(){
+		
+	}
 
     //////////////////////////////////////////////////////////////////////
     // NumberTower.
@@ -650,30 +673,32 @@ org.plt = {};
     }
 
     org.plt.types.NumberTower.add = function(x, y) {
-	while (x.level() < y.level()) x = x.lift();
-	while (y.level() < x.level()) y = y.lift();
+	while (x.level() < y.level()) x = x.lift(y);
+	while (y.level() < x.level()) y = y.lift(x);
 	return x.add(y);
     };
 
     org.plt.types.NumberTower.subtract = function(x, y) {
-	while (x.level() < y.level()) x = x.lift();
-	while (y.level() < x.level()) y = y.lift();
+	while (x.level() < y.level()) x = x.lift(y);
+	while (y.level() < x.level()) y = y.lift(x);
 	return x.subtract(y);
     };
 
     org.plt.types.NumberTower.multiply = function(x, y) {
-	while (x.level() < y.level()) x = x.lift();
-	while (y.level() < x.level()) y = y.lift();
+	while (x.level() < y.level()) x = x.lift(y);
+	while (y.level() < x.level()) y = y.lift(x);
 	return x.multiply(y);
     };
 
     org.plt.types.NumberTower.divide = function(x, y) {
-	while (x.level() < y.level()) x = x.lift();
-	while (y.level() < x.level()) y = y.lift();
+	while (x.level() < y.level()) x = x.lift(y);
+	while (y.level() < x.level()) y = y.lift(x);
 	return x.divide(y);
     };
 
     org.plt.types.NumberTower.equal = function(x, y) {
+	while (x.level() < y.level()) x = x.lift(y);
+	while (y.level() < x.level()) y = y.lift(x);
 	return x.isEqual(y);
     };
 
@@ -785,6 +810,10 @@ org.plt = {};
 	    // fill me in.
 	}
     };
+	
+	////////////zhe
+	
+	
 
 
 })();
