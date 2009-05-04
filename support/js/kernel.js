@@ -649,6 +649,28 @@ org.plt = {};
 			throw new Error("abs: expects argument of type real number");
 		return this.r.abs();
 	};
+	
+	org.plt.types.Complex.prototype.toInteger = function(){
+		if (!org.plt.types.NumberTower.equal(this.i, org.plt.types.Rational.ZERO))
+			throw new Error("toInteger: expects argument of type real number");
+		return this.r.toInteger();
+	};
+	
+	org.plt.types.Complex.prototype.toFloat = function(){
+		if (!org.plt.types.NumberTower.equal(this.i, org.plt.types.Rational.ZERO))
+			throw new Error("toFloat: expects argument of type real number");
+		return this.r.toFloat();
+	};
+	
+	org.plt.types.Complex.prototype.add = function(other){
+		return org.plt.types.Complex.makeInstance(org.plt.types.NumberTower.add(this.r, other.r),
+		org.plt.types.NumberTower.add(this.i, other.i));
+	};
+	
+	org.plt.types.Complex.prototype.subtract = function(other){
+		return org.plt.types.Complex.makeInstance(org.plt.types.NumberTower.subtract(this.r, other.r),
+		org.plt.types.NumberTower.subtract(this.i, other.i));
+	};
  
     //////////////////////////////////////////////////////////////////////
     // NumberTower.
