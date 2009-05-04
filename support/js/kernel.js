@@ -254,6 +254,14 @@ org.plt = {};
  
   number_dash__greaterthan_string: function(x) {
       return org.plt.types.String.makeInstance(x.toString());
+  },
+  
+  conjugate: function(x){
+	return x.conjugate();
+  },
+  
+  magnitude: function(x){
+	return x.magnitude();
   }
  
     };
@@ -502,6 +510,10 @@ org.plt = {};
     org.plt.types.Rational.prototype.ceiling = function() {
   return org.plt.types.Rational.makeInstance(Math.ceil(this.n / this.d), 1);
     };
+	
+	org.plt.types.Rational.prototype.conjugate = org.plt.types.Rational.prototype.abs;
+	
+	org.plt.types.Rational.prototype.magnitude = org.plt.types.Rational.prototype.abs;
  
  
     var _rationalCache = {};
@@ -548,7 +560,7 @@ org.plt = {};
     };
  
     org.plt.types.FloatPoint.prototype.lift = function(target) {
-		return org.plt.types.Complex.makeInstance(this, 0);
+		return org.plt.types.Complex.makeInstance(this.n, 0);
     };
  
     org.plt.types.FloatPoint.prototype.toString = function() {
@@ -617,8 +629,10 @@ org.plt = {};
     org.plt.types.FloatPoint.makeInstance = function(n) {
   return new org.plt.types.FloatPoint(n);
     };
- 
- 
+	
+	org.plt.types.FloatPoint.prototype.conjugate = org.plt.types.FloatPoint.prototype.abs;
+	
+	org.plt.types.FloatPoint.prototype.magnitude = org.plt.types.FloatPoint.prototype.abs;
  
     org.plt.Kernel.pi = org.plt.types.FloatPoint.makeInstance(Math.PI);
     org.plt.Kernel.e = org.plt.types.FloatPoint.makeInstance(Math.E);
@@ -663,17 +677,26 @@ org.plt = {};
 	};
 	
 	org.plt.types.Complex.prototype.add = function(other){
-		return org.plt.types.Complex.makeInstance(this.r.add(other.r), this.i.add(other.i));
+		return org.plt.types.Complex.makeInstance(this.r.n + other.r.n, this.i.n + other.i.n);
 	};
 	
 	org.plt.types.Complex.prototype.subtract = function(other){
-		return org.plt.types.Complex.makeInstance(this.r.subtract(other.r), this.i.subtract(other.i));
+		return org.plt.types.Complex.makeInstance(this.r.n - other.r.n, this.i.n - other.i.n);
 	};
 	
 	org.plt.types.Complex.prototype.multiply = function(other){
-		var r = this.r.multiply(other.r).subtract(this.i.multiply(other.i));
-		var i = this.r.multiply(other.i).add(this.i.multiply(other.r));
+		var r = this.r.n * other.r.n - this.i.n * other.i.n;
+		var i = this.r.n * other.i.n + this.i.n * other.r.n;
 		return org.plt.types.Complex.makeInstance(r, i);
+	};
+	
+	org.plt.types.Complex.prototype.conjugate = function(){
+		return org.plt.types.Complex.makeInstance(this.r.n, 0 - this.i.n);
+	};
+	
+	org.plt.types.Complex.prototype.magnitude = function(){
+		var sum = org.plt.types.FloatPoint.makeInstance(this.r.n*this.r.n + this.i.n * this.i.n);
+		return org.plt.types.FloatPoint.makeInstance(sum.sqrt().n);
 	};
  
     //////////////////////////////////////////////////////////////////////
