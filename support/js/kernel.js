@@ -643,6 +643,12 @@ org.plt = {};
 	org.plt.types.Complex.prototype.isEqual = function(other){
 		return other instanceof org.plt.types.Complex  && this.r == other.r && this.i == other.i;
     };
+	
+	org.plt.types.Complex.prototype.abs = function(){
+		if (!org.plt.types.NumberTower.equal(this.i, 0))
+			throw new Error("abs: expects argument of type real number");
+		return this.r.abs();
+	};
  
     //////////////////////////////////////////////////////////////////////
     // NumberTower.
