@@ -34,6 +34,7 @@
 // <![CDATA[
   var Rational = org.plt.types.Rational;
   var FloatPoint = org.plt.types.FloatPoint;
+  var Complex = org.plt.types.Complex;
   var Kernel = org.plt.Kernel;
 
   new Test.Unit.Runner({
@@ -56,6 +57,11 @@
 		var n1 = Rational.makeInstance(2,1);
 		var n2 = FloatPoint.makeInstance(2.0);
 		this.assert(Kernel.equal_question_(n1, n2));
+		
+		var n3 = Complex.makeInstance(2,0);
+		var n4 = Complex.makeInstance(2,1);
+		this.assert(Kernel.equal_question_(n1, n3));
+		this.assert(!Kernel.equal_question_(n3, n4));
 	}
   }); 
   

@@ -428,9 +428,10 @@ org.plt = {};
     org.plt.types.Rational.prototype.lift = function(target) {
 		if (target.level() == 1)
 			return org.plt.types.FloatPoint.makeInstance(this.n / this.d);
-		else
+		if (target.level() == 2)	
 			return org.plt.types.Complex.makeInstance(this.n / this.d, 0);
-    }
+		throw new Error("invalid level of Number");
+    };
  
     org.plt.types.Rational.prototype.isEqual = function(other) {
   return other instanceof org.plt.types.Rational &&
@@ -622,10 +623,26 @@ org.plt = {};
     org.plt.Kernel.pi = org.plt.types.FloatPoint.makeInstance(Math.PI);
     org.plt.Kernel.e = org.plt.types.FloatPoint.makeInstance(Math.E);
  
+	org.plt.types.Complex = function(r, i){
+		this.r = r;
+		this.i = i;
+	};
  
+	org.plt.types.Complex.makeInstance = function(r, i){
+		return new org.plt.types.Complex(r, i);
+	};
+	
+	org.plt.types.Complex.prototype.level = function(){
+		return 2;
+	};
  
+	org.plt.types.Complex.prototype.lift = function(target){
+		throw new Error("Don't know how to lift Complex number");
+	};
  
- 
+	org.plt.types.Complex.prototype.isEqual = function(other){
+		return other instanceof org.plt.types.Complex  && this.r == other.r && this.i == other.i;
+    };
  
     //////////////////////////////////////////////////////////////////////
     // NumberTower.
