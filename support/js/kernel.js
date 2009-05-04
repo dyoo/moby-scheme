@@ -663,13 +663,17 @@ org.plt = {};
 	};
 	
 	org.plt.types.Complex.prototype.add = function(other){
-		return org.plt.types.Complex.makeInstance(org.plt.types.NumberTower.add(this.r, other.r),
-		org.plt.types.NumberTower.add(this.i, other.i));
+		return org.plt.types.Complex.makeInstance(this.r.add(other.r), this.i.add(other.i));
 	};
 	
 	org.plt.types.Complex.prototype.subtract = function(other){
-		return org.plt.types.Complex.makeInstance(org.plt.types.NumberTower.subtract(this.r, other.r),
-		org.plt.types.NumberTower.subtract(this.i, other.i));
+		return org.plt.types.Complex.makeInstance(this.r.subtract(other.r), this.i.subtract(other.i));
+	};
+	
+	org.plt.types.Complex.prototype.multiply = function(other){
+		var r = this.r.multiply(other.r).subtract(this.i.multiply(other.i));
+		var i = this.r.multiply(other.i).add(this.i.multiply(other.r));
+		return org.plt.types.Complex.makeInstance(r, i);
 	};
  
     //////////////////////////////////////////////////////////////////////

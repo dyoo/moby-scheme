@@ -97,7 +97,21 @@
 		var n5 = [Complex.makeInstance(2, 2), Complex.makeInstance(3, 2)];
 		this.assert(Kernel._dash_(Rational.ZERO, n5), Complex.makeInstance(-2, 0));
 		
+	},
+	
+	testMultiply : function(){
+		var n1 = [Rational.makeInstance(2,1), Rational.makeInstance(3,1)];
+		this.assert(Kernel._star_(n1), Rational.makeInstance(6,1));
+		var n2 = [Rational.makeInstance(2,1), FloatPoint.makeInstance(2.1)];
+		this.assert(Kernel._star_(n2), FloatPoint.makeInstance(4.2));
+		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(2, 2)];
+		this.assert(Kernel._star_(n3), Complex.makeInstance(4, 4));
+		var n4 = [FloatPoint.makeInstance(2.1), Complex.makeInstance(2, 2)];
+		this.assert(Kernel._star_(n4), Complex.makeInstance(4.2, 4.2));
+		var n5 = [Complex.makeInstance(2, 2), Complex.makeInstance(3, 2)];
+		this.assert(Kernel._star_(n5), Complex.makeInstance(2, 10));
 	}
+	
   }); 
   
 // ]]>
