@@ -113,6 +113,18 @@
 		this.assert(Kernel.equal_question_(Kernel._star_(n5), Complex.makeInstance(2, 10)));
 	},
 	
+	
+	testDivide : function(){
+		var n1 = [Rational.makeInstance(2,1), Rational.makeInstance(3,1)];
+		var six = Rational.makeInstance(6, 1);
+		this.assert(Kernel.equal_question_(Kernel._slash_(six, n1), Rational.ONE));
+		var n2 = [FloatPoint.makeInstance(1.5), FloatPoint.makeInstance(4.0)];
+		this.assert(Kernel.equal_question_(Kernel._slash_(six, n2), Rational.ONE));
+		var n3 = [Complex.makeInstance(3, 4), Complex.makeInstance(3, -4)];
+		this.assert(Kernel.equal_question_(Kernel._slash_(FloatPoint.makeInstance(150), n3), six));
+	},
+	
+	
 	testConjugate : function(){
 		var n1 = Rational.makeInstance(2,1);
 		var n2 = FloatPoint.makeInstance(2.1);
@@ -127,7 +139,7 @@
 		this.assert(Kernel.equal_question_(n1, Kernel.magnitude(n1)));
 		this.assert(Kernel.equal_question_(n2, Kernel.magnitude(n2)));
 		this.assert(Kernel.equal_question_(Complex.makeInstance(5, 0), Kernel.magnitude(Complex.makeInstance(3, -4))));
-	}	
+	}
   }); 
   
 // ]]>

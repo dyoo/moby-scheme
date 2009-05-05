@@ -690,6 +690,13 @@ org.plt = {};
 		return org.plt.types.Complex.makeInstance(r, i);
 	};
 	
+	org.plt.types.Complex.prototype.divide = function(other){
+		var con = other.conjugate();
+		var up =  org.plt.types.NumberTower.multiply(this, con);
+		var down = org.plt.types.NumberTower.multiply(other, con);
+		return org.plt.types.Complex.makeInstance(up.r.n / down.r.n, up.i.n / down.r.n);
+	};
+	
 	org.plt.types.Complex.prototype.conjugate = function(){
 		return org.plt.types.Complex.makeInstance(this.r.n, 0 - this.i.n);
 	};
