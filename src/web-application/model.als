@@ -150,7 +150,11 @@ sig AddSource extends Action {
       source.sourceUser in state.users
 
       state'.sources = state.sources + source
-      state'.visibleSources = state.visibleSources  + source
+
+      source.sourceUser in state.moderated implies
+          state'.visibleSources = state.visibleSources  - source
+      source.sourceUser not in state.moderated implies
+          state'.visibleSources = state.visibleSources + source
 
       state.users = state'.users
       state.admins = state'.admins
@@ -186,6 +190,7 @@ sig UnhideSource extends Action {
 } {
       unhiddenSource in state.sources
       unhiddenSource not in state.visibleSources
+      unhiddenSource.sourceUser not in state.moderated
 
       state'.sources = state.sources
       state'.visibleSources = state.visibleSources + unhiddenSource
@@ -463,6 +468,14 @@ assert moderatedUsersAreInvisible {
 }
 
 
+assert moderatedUsersDontHaveVisibleSources {
+    TraceActions[] implies {
+         all s: State, u: s.moderated {
+             u not in s.visibleSources.sourceUser
+         }
+    }
+}
+
 
 /* Just so we don't see extraneous objects in the model.  Not
 essential.*/
@@ -494,3 +507,4 @@ check regularUsersCannotMagicallyBecomeAdmins for 5
 check sourcesNeverGetRemoved for 5
 check adminsCantBeModerated for 5
 check moderatedUsersAreInvisible for 5
+check moderatedUsersDontHaveVisibleSources for 5
