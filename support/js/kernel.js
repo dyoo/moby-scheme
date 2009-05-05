@@ -317,6 +317,14 @@ org.plt = {};
 	return org.plt.types.Rational.makeInstance(x.n, 1);
   },
   
+  odd_question_ : function(x){
+	return (x.toInteger() % 2 == 1);
+  },
+  
+  even_question_ : function(x) {
+	return (x.toInteger() % 2 == 0);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
