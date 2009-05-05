@@ -1,6 +1,24 @@
+-- A small model of WeScheme.
+
+-- TODO:
+--
+-- Add more interesting operations
+--
+-- Rate a program.
+--
+-- Hide a comment.
+--
+-- Blacklist a user.
+--
+-- Moderate an application.
+
+
+
+
+
 open util/ordering[State] as S
 
--- A small model of WeScheme.
+
 
 -- A message represents some string in the system.
 sig Message {}
@@ -41,8 +59,11 @@ sig Comment {
 sig State {
    users: set User,
    admins: set users,
+   moderated: set users,             -- moderated is the set of users
+                                                    -- that are suspect.
    sources: set Source,
    comments: set Comment,
+   visibleComments: set comments,
    binaries: set Binary
 }
 
@@ -72,8 +93,10 @@ sig AddUser extends Action {
  
       state'.users = state.users + userToAdd
       state'.admins = state.admins
+      state'.moderated = state.moderated
       state.sources = state'.sources
       state.comments = state'.comments
+      state'.visibleComments = state.visibleComments
       state.binaries = state'.binaries
 }
 
@@ -84,8 +107,10 @@ sig AssignAsAdmin extends Action {
 
     state'.users = state.users
     state'.admins = state.admins + superUser
+    state'.moderated = state.moderated
     state.sources = state'.sources
     state.comments = state'.comments
+    state'.visibleComments = state.visibleComments
     state.binaries = state'.binaries
 }
 
@@ -100,7 +125,9 @@ sig AddSource extends Action {
       state'.sources = state.sources + source
       state.users = state'.users
       state.admins = state'.admins
+      state'.moderated = state.moderated
       state.comments = state'.comments
+      state'.visibleComments = state.visibleComments
       state.binaries = state'.binaries
 }
 
@@ -122,7 +149,10 @@ sig AddComment extends Action {
         state.sources = state'.sources
         state.users = state'.users
         state.admins = state'.admins
+        state'.moderated = state.moderated
         state'.comments = state.comments + comment
+        user in state.moderated implies { state'.visibleComments = state.visibleComments }
+        user not in state.moderated implies {state'.visibleComments = state.visibleComments + comment }
         state.binaries = state'.binaries        
     }
 }
@@ -138,7 +168,9 @@ sig CompileSource extends Action {
     state.sources = state'.sources
     state.users = state'.users
     state.admins = state'.admins
+    state'.moderated = state.moderated
     state'.comments = state.comments
+    state'.visibleComments = state.visibleComments
     state'.binaries = state.binaries + resultBinary
 }
 
@@ -154,6 +186,7 @@ pred init(s : State) {
     no s.sources
     no s.comments
     no s.binaries
+    no s.moderated
 }
 
 
@@ -263,6 +296,7 @@ assert regularUsersCannotMagicallyBecomeAdmins {
 }
 
 
+
 -- Sources never get removed.
 assert sourcesNeverGetRemoved {
     TraceActions[] implies {
@@ -271,6 +305,11 @@ assert sourcesNeverGetRemoved {
 }
 
 
+assert adminsCantBeModerated {
+    TraceActions[] implies {
+        no s: State {some s.moderated & s.admins}
+    }
+}
 
 
 
@@ -297,3 +336,4 @@ check commentsOnlyOnStateSources
 check sourceUsersAreInStates
 check regularUsersCannotMagicallyBecomeAdmins
 check sourcesNeverGetRemoved
+check adminsCantBeModerated
