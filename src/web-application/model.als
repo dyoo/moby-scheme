@@ -4,14 +4,7 @@
 --
 -- Add more interesting operations
 --
--- Rate a program.
---
--- Hide a comment.
---
--- Blacklist a user.
---
--- Moderate an application.
-
+--     Rate a program?
 
 
 
