@@ -289,6 +289,10 @@ org.plt = {};
 	return x.acos();
   },
   
+  asin : function(x){
+	return x.asin();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
@@ -585,12 +589,20 @@ org.plt = {};
 		return org.plt.types.FloatPoint.makeInstance(Math.acos(this.n / this.d));
 	};
 	
+	org.plt.types.Rational.prototype.asin = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.asin(this.n / this.d));
+	};
+	
 	org.plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){
 	
 	};
 	
 	org.plt.types.Rational.prototype.half = function(){
 		return org.plt.types.Rational.makeInstance(this.n, this.d * 2);
+	};
+	
+	org.plt.types.Rational.prototype.minus = function(){
+		return org.plt.types.Rational.makeInstance(0 - this.n, this.d);
 	};
  
  
@@ -750,6 +762,10 @@ org.plt = {};
 	
 	org.plt.types.FloatPoint.prototype.acos = function(){
 		return org.plt.types.FloatPoint.makeInstance(Math.acos(this.n));
+	};
+	
+	org.plt.types.FloatPoint.prototype.asin = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.asin(this.n));
 	};
 	
 	org.plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
@@ -932,6 +948,14 @@ org.plt = {};
 		var root = org.plt.types.NumberTower.subtract(Rational.ONE, this.multiply(this)).sqrt();
 		var l = org.plt.types.NumberTower.add(iz, root).log().timesI();
 		return org.plt.types.NumberTower.add(pi_half, l);
+	};
+	
+	org.plt.types.Complex.prototype.asin = function(){
+		if (this.isReal())
+			return this.r.asin();
+		var iz = this.timesI();
+		var root = org.plt.types.NumberTower.subtract(Rational.ONE, this.multiply(this)).sqrt();
+		var ret = org.plt.types.NumberTower.add(iz, root).log().timesI().minus();
 	};
 	
 	org.plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};

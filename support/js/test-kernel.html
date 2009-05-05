@@ -196,6 +196,12 @@
 	testAcos : function(){
 		this.assert(Kernel.equal_question_(Kernel.acos(Rational.ONE), Rational.ZERO));
 		this.assert(Kernel.equal_question_(Kernel.acos(FloatPoint.makeInstance(-1)), PI));
+	},
+	
+	testAsin : function(){
+		this.assert(Kernel.equal_question_(Kernel.asin(Rational.ZERO), Rational.ZERO));
+		this.assert(Kernel.equal_question_(Kernel.asin(Rational.ONE.minus()), PI.half().minus()));
+		this.assert(Kernel.equal_question_(Kernel.asin(Rational.ONE), PI.half()));
 	}
 	
   }); 
