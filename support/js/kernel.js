@@ -297,6 +297,10 @@ org.plt = {};
 	return org.plt.types.NumberTower.divide(x.sin(), x.cos());
   },
   
+  complex_question_ : function(x){
+	return x instanceof org.plt.types.Complex || x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

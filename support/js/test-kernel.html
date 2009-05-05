@@ -37,6 +37,8 @@
   var Complex = org.plt.types.Complex;
   var Kernel = org.plt.Kernel;
   var PI = org.plt.Kernel.pi;
+  var String = org.plt.types.String;
+  var Symbol = org.plt.types.Symbol;
 	
   new Test.Unit.Runner({
     setup: function() {
@@ -206,6 +208,15 @@
 	
 	testTan : function(){
 		this.assert(Kernel.equal_question_(Kernel.tan(Rational.ZERO), Rational.ZERO));
+	},
+	
+	testComplex_question_ : function(){
+		this.assert(Kernel.complex_question_(PI));
+		this.assert(Kernel.complex_question_(Rational.ONE));
+		this.assert(Kernel.complex_question_(Complex.makeInstance(0,1)));
+		this.assert(!Kernel.complex_question_(org.plt.types.Empty.EMPTY));
+		this.assert(!Kernel.complex_question_(String.makeInstance("hi")));
+		this.assert(!Kernel.complex_question_(Symbol.makeInstance('h')));
 	}
 	
   }); 
