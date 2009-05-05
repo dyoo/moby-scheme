@@ -325,6 +325,14 @@ org.plt = {};
 	return (x.toInteger() % 2 == 0);
   },
   
+  positive_question_ : function(x){
+	return this._greaterthan_(x, Rational.ZERO, []);
+  },
+  
+  negative_question_ : function(x){
+	return this._lessthan_(x, Rational.ZERO, []);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
