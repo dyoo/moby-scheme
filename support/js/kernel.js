@@ -108,7 +108,7 @@ org.plt = {};
   },
  
   sqrt: function(x) {
-      return org.plt.types.NumberTower.sqrt(x);
+	return x.sqrt();
   },
  
   sqr: function(x) {
@@ -283,6 +283,10 @@ org.plt = {};
   
   exp : function(x){
 	return x.exp();
+  },
+  
+  acos : function(x){
+	return x.acos();
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
@@ -577,6 +581,10 @@ org.plt = {};
 		return org.plt.types.FloatPoint.makeInstance(Math.exp(this.n / this.d));
 	};
 	
+	org.plt.types.Rational.prototype.acos = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.acos(this.n / this.d));
+	};
+	
 	org.plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){
 	
 	};
@@ -740,6 +748,10 @@ org.plt = {};
 		return org.plt.types.FloatPoint.makeInstance(Math.exp(this.n));
 	};
 	
+	org.plt.types.FloatPoint.prototype.acos = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.acos(this.n));
+	};
+	
 	org.plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	org.plt.types.FloatPoint.prototype.conjugate = org.plt.types.FloatPoint.prototype.abs;
@@ -841,21 +853,17 @@ org.plt = {};
 	org.plt.types.Complex.prototype.sqrt = function(){
 		if (this.isReal())
 			return this.r.sqrt();
+			
+		// http://en.wikipedia.org/wiki/Square_root#Square_roots_of_negative_and_complex_numbers	
+		var r_plus_x = org.plt.types.NumberTower.add(this.magnitude(), this.r);
+
+		var r = r_plus_x.half().sqrt();
+		var i = org.plt.types.NumberTower.divide(this.i, org.plt.types.NumberTower.multiply(r_plus_x, org.plt.types.FloatPoint.makeInstance(2)).sqrt());
 		
-		var part1 = this.magnitude().sqrt();
-		var part2 = this.i.divide(this.r).atan().half();
+		return org.plt.types.Complex.makeInstance(r.toFloat(), i.toFloat());
 	};
 	
 	org.plt.types.Complex.prototype.log = function(){
-	/*
-		var m = this.magnitude();
-		var l = m.log();
-		var r = l.toFloat();
-		var i = this.angle().toFloat();
-		var ret = org.plt.types.Complex.makeInstance(r, i);
-		return ret;
-		*/
-		
 		return org.plt.types.Complex.makeInstance(this.magnitude().log().toFloat(), this.angle().toFloat());
 	};
 	
@@ -914,6 +922,16 @@ org.plt = {};
 		var part2 = org.plt.types.Complex.makeInstance(this.i.cos(), this.i.sin().timesI());
 		
 		return org.plt.types.NumberTower.multiply(part1, part2);
+	};
+	
+	org.plt.types.Complex.prototype.acos = function(){
+		if (this.isReal())
+			return this.r.acos();
+		var pi_half = org.plt.Kernel.pi.half();
+		var iz = this.timesI();
+		var root = org.plt.types.NumberTower.subtract(Rational.ONE, this.multiply(this)).sqrt();
+		var l = org.plt.types.NumberTower.add(iz, root).log().timesI();
+		return org.plt.types.NumberTower.add(pi_half, l);
 	};
 	
 	org.plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
@@ -1018,10 +1036,6 @@ org.plt = {};
 			throw new Error("lessThan: couldn't be applied to complex number");
 		return x.r < y.r;
 	};
- 
-    org.plt.types.NumberTower.sqrt = function(x) {
-  return x.sqrt();
-    };
  
     org.plt.types.NumberTower.modulo = function(m, n) {
   var result = 

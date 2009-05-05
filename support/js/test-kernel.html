@@ -186,6 +186,11 @@
 	
 	testCos : function(){
 		this.assert(Kernel.equal_question_(Kernel.cos(Rational.ZERO), Rational.ONE));
+	},
+	
+	testSqrt : function(){
+		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(4)), FloatPoint.makeInstance(2)));
+		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(-1)), Complex.makeInstance(0,1)));
 	}
 	
   }); 
