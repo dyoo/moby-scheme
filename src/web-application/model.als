@@ -104,6 +104,9 @@ sig AssignAsAdmin extends Action {
     superUser: User
 } {
     superUser not in state.admins
+    -- If the one being made a superUser is moderated, they're not trustworthy enough to be an
+    -- administrator.
+    superUser not in state.moderated
 
     state'.users = state.users
     state'.admins = state.admins + superUser
@@ -334,7 +337,7 @@ assert sourcesNeverGetRemoved {
 
 assert adminsCantBeModerated {
     TraceActions[] implies {
-        no s: State {some s.moderated & s.admins}
+        no s: State {some (s.moderated & s.admins)}
     }
 }
 
