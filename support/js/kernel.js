@@ -306,9 +306,15 @@ org.plt = {};
   },
   
   sinh : function(x) {
-	var a = this.exp(x);
-	var b = this.exp(x.minus());
-	return org.plt.types.NumberTower.subtract(a, b).half();
+	return org.plt.types.NumberTower.subtract(this.exp(x), this.exp(x.minus())).half();
+  },
+  
+  denominator : function(x) {
+	return org.plt.types.Rational.makeInstance(x.d, 1);
+  },
+  
+  numerator : function(x){
+	return org.plt.types.Rational.makeInstance(x.n, 1);
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
