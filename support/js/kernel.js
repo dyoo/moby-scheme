@@ -293,6 +293,10 @@ org.plt = {};
 	return x.asin();
   },
   
+  tan : function(x){
+	return org.plt.types.NumberTower.divide(x.sin(), x.cos());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
