@@ -471,14 +471,17 @@ org.plt = {};
     };
  
  
-    org.plt.types.Rational.prototype.toInteger = function(other) {
+    org.plt.types.Rational.prototype.toInteger = function() {
   return Math.floor(this.n / this.d);  
     };
  
-    org.plt.types.Rational.prototype.toFloat = function(other) {
+    org.plt.types.Rational.prototype.toFloat = function() {
   return this.n / this.d;
     };
  
+	org.plt.types.Rational.prototype.toComplex = function(){
+		return org.plt.types.Complex.makeInstance(this.n / this.d, 0);
+	};
  
     org.plt.types.Rational.prototype.greaterThanOrEqual = function(other) {
   return this.n*other.d >= this.d*other.n;
@@ -589,13 +592,17 @@ org.plt = {};
     };
  
  
-    org.plt.types.FloatPoint.prototype.toInteger = function(other) {
+    org.plt.types.FloatPoint.prototype.toInteger = function() {
   return Math.floor(this.n);  
     };
  
-    org.plt.types.FloatPoint.prototype.toFloat = function(other) {
+    org.plt.types.FloatPoint.prototype.toFloat = function() {
   return this.n;
     };
+	
+	org.plt.types.FloatPoint.prototype.toComplex = function(){
+		return org.plt.types.Complex.makeInstance(this.n, 0);
+	};
  
     org.plt.types.FloatPoint.prototype.floor = function() {
   return org.plt.types.Rational.makeInstance(Math.floor(this.n), 1);
@@ -623,8 +630,6 @@ org.plt = {};
     org.plt.types.FloatPoint.prototype.abs = function() {
   return org.plt.types.FloatPoint.makeInstance(Math.abs(this.n));
     };
- 
- 
  
     org.plt.types.FloatPoint.makeInstance = function(n) {
   return new org.plt.types.FloatPoint(n);
@@ -676,6 +681,10 @@ org.plt = {};
 		return this.r.toFloat();
 	};
 	
+	org.plt.types.Complex.prototype.toComplex = function(){
+		return org.plt.types.Complex.makeInstance(this.r.n, this.i.n);
+	};
+	
 	org.plt.types.Complex.prototype.add = function(other){
 		return org.plt.types.Complex.makeInstance(this.r.n + other.r.n, this.i.n + other.i.n);
 	};
@@ -704,6 +713,10 @@ org.plt = {};
 	org.plt.types.Complex.prototype.magnitude = function(){
 		var sum = org.plt.types.FloatPoint.makeInstance(this.r.n*this.r.n + this.i.n * this.i.n);
 		return org.plt.types.FloatPoint.makeInstance(sum.sqrt().n);
+	};
+	
+	org.plt.types.Complex.prototype.isReal = function(){
+		return this.i.n == 0;
 	};
  
     //////////////////////////////////////////////////////////////////////
@@ -760,22 +773,40 @@ org.plt = {};
   // fixme: use delta
   return x.isEqual(y);
     };
- 
-    org.plt.types.NumberTower.greaterThanOrEqual = function(x, y) {
-  return x.toFloat() >= y.toFloat();
-    };
- 
-    org.plt.types.NumberTower.lessThanOrEqual = function(x, y) {
-  return x.toFloat() <= y.toFloat();
-    };
- 
-    org.plt.types.NumberTower.greaterThan = function(x, y) {
-  return x.toFloat() > y.toFloat();
-    };
- 
-    org.plt.types.NumberTower.lessThan = function(x, y) {
-  return x.toFloat() < y.toFloat();
-    };
+	
+	org.plt.types.NumberTower.greaterThanOrEqual = function(x, y){
+		x = x.toComplex();
+		y = y.toComplex();
+		if (!(x.isReal() && y.isReal()))
+			throw new Error("greaterThanOrEqual: couldn't be applied to complex number");
+		return x.r >= y.r;
+	};
+	
+	org.plt.types.NumberTower.lessThanOrEqual = function(x, y){
+		x = x.toComplex();
+		y = y.toComplex();
+		if (!(x.isReal() && y.isReal()))
+			throw new Error("lessThanOrEqual: couldn't be applied to complex number");
+		return x.r <= y.r;
+	};
+	
+	org.plt.types.NumberTower.greaterThan = function(x, y){
+		x = x.toComplex();
+		y = y.toComplex();
+		
+		if (!(x.isReal() && y.isReal()))
+			throw new Error("greaterThan: couldn't be applied to complex number");
+		return x.r > y.r;
+		
+	};
+	
+	org.plt.types.NumberTower.lessThan = function(x, y){
+		x = x.toComplex();
+		y = y.toComplex();
+		if (!(x.isReal() && y.isReal()))
+			throw new Error("lessThan: couldn't be applied to complex number");
+		return x.r < y.r;
+	};
  
     org.plt.types.NumberTower.sqrt = function(x) {
   return x.sqrt();

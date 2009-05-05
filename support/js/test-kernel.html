@@ -139,7 +139,15 @@
 		this.assert(Kernel.equal_question_(n1, Kernel.magnitude(n1)));
 		this.assert(Kernel.equal_question_(n2, Kernel.magnitude(n2)));
 		this.assert(Kernel.equal_question_(Complex.makeInstance(5, 0), Kernel.magnitude(Complex.makeInstance(3, -4))));
+	},
+	
+	testComparison : function(){	
+		this.assert(Kernel._greaterthan_(Rational.makeInstance(2,1), Rational.makeInstance(1,1), []));
+		this.assert(Kernel._greaterthan_(FloatPoint.makeInstance(2.1), Rational.makeInstance(2,1), []));
+		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0), Rational.makeInstance(2,1), []));
+		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0), Rational.makeInstance(2,1), []));
 	}
+	
   }); 
   
 // ]]>
