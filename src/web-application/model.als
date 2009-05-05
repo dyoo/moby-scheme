@@ -115,6 +115,24 @@ sig AssignAsAdmin extends Action {
 }
 
 
+-- Changes a user so that he or she is now moderated.
+sig AssignAsModerated extends Action {
+    moderatedUser : User
+} {
+    moderatedUser not in state.admins
+    moderatedUser not in state.moderated
+
+    state'.users = state.users
+    state'.admins = state.admins
+    state'.moderated = state.moderated + moderatedUser
+    state.sources = state'.sources
+    state.comments = state'.comments
+    state'.visibleComments = state.visibleComments
+    state.binaries = state'.binaries
+}
+
+
+
 -- Add a new source.
 sig AddSource extends Action {
   source: Source
@@ -196,6 +214,8 @@ pred permit(s : State, a: Action) {
 
     a in AssignAsAdmin implies { a.user in s.admins }
 
+    a in AssignAsModerated implies { a.user in s.admins }
+
     a in AddSource implies { a.user not in AnonymousUser and
                              (a.user in s.admins or a.user = (a <: AddSource).source.sourceUser)
                                          }
@@ -245,6 +265,13 @@ pred exerciseCompileSourceByNonAdmin {
     TraceActions[]
     CompileSource in Action
     no (CompileSource.user & Admin)
+}
+
+
+pred exerciseAddCommentsByNonAdmin {
+    TraceActions[]
+    AddComment in Action
+    no (AddComment.user & Admin)
 }
 
 
@@ -312,6 +339,15 @@ assert adminsCantBeModerated {
 }
 
 
+--- Check that moderated users don't have their comments shown.
+assert moderatedUsersAreInvisible {
+    TraceActions[] implies {
+         all s: State, u: s.moderated {
+             u not in s.visibleComments.commentUser
+         }
+    }
+}
+
 
 /* Just so we don't see extraneous objects in the model.  Not
 essential.*/
@@ -330,10 +366,12 @@ pred ThingsNeedToBeOwnedBySomeState {
 run exhaustiveTraceActions for 4
 run exerciseAddSourceByNonAdmin
 run exerciseCompileSourceByNonAdmin
+run exerciseAddCommentsByNonAdmin
 run exerciseNonAdmins
 
-check commentsOnlyOnStateSources
-check sourceUsersAreInStates
-check regularUsersCannotMagicallyBecomeAdmins
-check sourcesNeverGetRemoved
-check adminsCantBeModerated
+check commentsOnlyOnStateSources for 5
+check sourceUsersAreInStates for 5
+check regularUsersCannotMagicallyBecomeAdmins for 5
+check sourcesNeverGetRemoved for 5
+check adminsCantBeModerated for 5
+check moderatedUsersAreInvisible for 5
