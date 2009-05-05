@@ -62,8 +62,11 @@ sig State {
    moderated: set users,             -- moderated is the set of users
                                                     -- that are suspect.
    sources: set Source,
+   visibleSources: set sources,
+
    comments: set Comment,
    visibleComments: set comments,
+
    binaries: set Binary
 }
 
@@ -95,6 +98,7 @@ sig AddUser extends Action {
       state'.admins = state.admins
       state'.moderated = state.moderated
       state.sources = state'.sources
+      state.visibleSources = state'.visibleSources
       state.comments = state'.comments
       state'.visibleComments = state.visibleComments
       state.binaries = state'.binaries
@@ -112,13 +116,14 @@ sig AssignAsAdmin extends Action {
     state'.admins = state.admins + superUser
     state'.moderated = state.moderated
     state.sources = state'.sources
+    state.visibleSources = state'.visibleSources
     state.comments = state'.comments
     state'.visibleComments = state.visibleComments
     state.binaries = state'.binaries
 }
 
 
--- Changes a user so that he or she is now moderated.
+-- Changes the status of user so that he or she is now moderated since they misbehaved.
 sig AssignAsModerated extends Action {
     moderatedUser : User
 } {
@@ -129,9 +134,16 @@ sig AssignAsModerated extends Action {
     state'.admins = state.admins
     state'.moderated = state.moderated + moderatedUser
     state.sources = state'.sources
+    -- Collect all of the sources of the moderated user, and remove them from visibility.
+    let hiddenSources = state.sources & moderatedUser[sourceUser] {
+        state'.visibleSources = state.visibleSources - hiddenSources
+    }
+
     state.comments = state'.comments
+    -- Similarly, hide all the comments of the moderated user.
     let hiddenComments = state.comments & moderatedUser[commentUser] {
-        state'.visibleComments = state.visibleComments - hiddenComments }
+        state'.visibleComments = state.visibleComments - hiddenComments
+    }
     state.binaries = state'.binaries
 }
 
@@ -145,6 +157,8 @@ sig AddSource extends Action {
       source.sourceUser in state.users
 
       state'.sources = state.sources + source
+      state'.visibleSources = state.visibleSources  + source
+
       state.users = state'.users
       state.admins = state'.admins
       state'.moderated = state.moderated
@@ -152,6 +166,45 @@ sig AddSource extends Action {
       state'.visibleComments = state.visibleComments
       state.binaries = state'.binaries
 }
+
+
+-- Hide a source.
+sig HideSource extends Action {
+  hiddenSource: Source
+} {
+      hiddenSource in state.sources
+      hiddenSource in state.visibleSources
+
+      state'.sources = state.sources
+      state'.visibleSources = state.visibleSources  - hiddenSource
+
+      state.users = state'.users
+      state.admins = state'.admins
+      state'.moderated = state.moderated
+      state.comments = state'.comments
+      state'.visibleComments = state.visibleComments
+      state.binaries = state'.binaries
+}
+
+
+-- Unhide a source.
+sig UnhideSource extends Action {
+  unhiddenSource: Source
+} {
+      unhiddenSource in state.sources
+      unhiddenSource not in state.visibleSources
+
+      state'.sources = state.sources
+      state'.visibleSources = state.visibleSources + unhiddenSource
+
+      state.users = state'.users
+      state.admins = state'.admins
+      state'.moderated = state.moderated
+      state.comments = state'.comments
+      state'.visibleComments = state.visibleComments
+      state.binaries = state'.binaries
+}
+
 
 
 
@@ -169,6 +222,7 @@ sig AddComment extends Action {
         comment.commentMessage = message
 
         state.sources = state'.sources
+        state.visibleSources = state'.visibleSources
         state.users = state'.users
         state.admins = state'.admins
         state'.moderated = state.moderated
@@ -189,6 +243,7 @@ sig HideComment extends Action {
         hiddenComment in state.visibleComments
 
         state.sources = state'.sources
+        state.visibleSources = state'.visibleSources
         state.users = state'.users
         state.admins = state'.admins
         state'.moderated = state.moderated
@@ -206,6 +261,7 @@ sig CompileSource extends Action {
     resultBinary in Binary - state.binaries
 
     state.sources = state'.sources
+    state.visibleSources = state'.visibleSources
     state.users = state'.users
     state.admins = state'.admins
     state'.moderated = state.moderated
@@ -224,6 +280,7 @@ pred init(s : State) {
     s.users = Admin
     s.admins = Admin
     no s.sources
+    no s.visibleSources
     no s.comments
     no s.binaries
     no s.moderated
@@ -241,6 +298,11 @@ pred permit(s : State, a: Action) {
     a in AddSource implies { a.user not in AnonymousUser and
                              (a.user in s.admins or a.user = (a <: AddSource).source.sourceUser)
                                          }
+    a in HideSource implies { a.user in s.admins or
+                                              a.user = a.hiddenSource.sourceUser}
+
+    a in UnhideSource implies { a.user in s.admins or
+                                                  a.user = a.hiddenSource.sourceUser }
 
     a in AddComment implies { a.user not in AnonymousUser }
 
@@ -307,12 +369,30 @@ pred exerciseHideCommentByNonAdmin {
     no (HideComment.user & Admin)
 }
 
+pred exerciseHideAndUnhideSource {
+     TraceActions[]
+     some hidden: Source, s, s': State {
+         hidden in s.sources
+         hidden in s'.sources
+         hidden not in s.visibleSources
+         hidden in s'.visibleSources
+         s' in S/nexts[s]
+     }
+}
+
 
 -- Make sure moderation still means other people can post.
 pred someoneIsModeratedButSomeoneElseIsVisible {
     TraceActions[]
     AssignAsModerated in Action
    some s:State { some s.moderated and some s.visibleComments }
+}
+
+
+pred sourceIsHiddenButNotBecauseOfHideSource {
+    TraceActions[]
+     no HideSource
+     some s: State { some s.sources - s.visibleSources }
 }
 
 
@@ -411,6 +491,8 @@ run exerciseCompileSourceByNonAdmin
 run exerciseAddCommentsByNonAdmin
 run exerciseHideCommentByNonAdmin
 run exerciseNonAdmins
+run exerciseHideAndUnhideSource for 5
+run sourceIsHiddenButNotBecauseOfHideSource for 5
 run someoneIsModeratedButSomeoneElseIsVisible for 5
 
 check commentsOnlyOnStateSources for 5
