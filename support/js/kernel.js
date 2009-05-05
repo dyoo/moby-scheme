@@ -820,7 +820,7 @@ org.plt = {};
 		} else {
 			var tmp = org.plt.types.NumberTower.divide(this.i.abs(), this.r.abs()).atan();
 			if (this.r.n > 0)
-				return this.i.n > 0 ? tmp : minus(tmp);
+				return this.i.n > 0 ? tmp : tmp.minus();
 			else
 				return this.i.n > 0 ? org.plt.Kernel.pi.subtract(tmp) : tmp.subtract(org.plt.Kernel.pi);
 		}

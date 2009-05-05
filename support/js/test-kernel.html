@@ -36,7 +36,8 @@
   var FloatPoint = org.plt.types.FloatPoint;
   var Complex = org.plt.types.Complex;
   var Kernel = org.plt.Kernel;
-
+  var PI = org.plt.Kernel.pi;
+	
   new Test.Unit.Runner({
     setup: function() {
     },
@@ -156,10 +157,16 @@
 		this.assert(Kernel.equal_question_(Kernel.log(Rational.ONE), Rational.ZERO));		
 		this.assert(Kernel.equal_question_(Kernel.log(Complex.makeInstance(0,1)), org.plt.Kernel.pi.toComplex().timesI().half()));
 		this.assert(Kernel.equal_question_(Kernel.log(FloatPoint.makeInstance(-1)), org.plt.Kernel.pi.toComplex().timesI()));
-	}
+	},
 	
-	// testLog
-	// testAngle
+	testAngle : function(){
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(0,1)), PI.half()));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(1,1)), PI.half().half()));
+		this.assert(Kernel.equal_question_(Kernel.angle(FloatPoint.makeInstance(-1)), PI));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(-1, 1)), PI.multiply(FloatPoint.makeInstance(0.75))));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(-1, -1)), PI.multiply(FloatPoint.makeInstance(-0.75))));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(1, -1)), PI.half().half().minus()));
+	}
 	
   }); 
   
