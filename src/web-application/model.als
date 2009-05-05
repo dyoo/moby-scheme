@@ -180,6 +180,24 @@ sig AddComment extends Action {
 }
 
 
+-- If you're the owner of a comment, you can hide the comment.
+-- If you're the owner of the commented item, you can hide the comment.
+-- Finally, if you're the admin, you can do anything.
+sig HideComment extends Action {
+        hiddenComment: Comment
+} {
+        hiddenComment in state.visibleComments
+
+        state.sources = state'.sources
+        state.users = state'.users
+        state.admins = state'.admins
+        state'.moderated = state.moderated
+        state'.comments = state.comments
+        state'.visibleComments = state.visibleComments - hiddenComment
+        state.binaries = state'.binaries   
+}
+
+
 sig CompileSource extends Action {
     compiledSource: Source,
     resultBinary: Binary
@@ -225,6 +243,10 @@ pred permit(s : State, a: Action) {
                                          }
 
     a in AddComment implies { a.user not in AnonymousUser }
+
+    a in HideComment implies {a.user in s.admins or
+                                                a.user = a.hiddenComment.commentUser or
+                                                a.user = a.hiddenComment.commentSource.sourceUser}
 
     a in CompileSource implies { a.user not in AnonymousUser and
                                  (a.user in s.admins or a.user = a.resultBinary.binarySource.sourceUser) }
@@ -276,6 +298,13 @@ pred exerciseAddCommentsByNonAdmin {
     TraceActions[]
     AddComment in Action
     no (AddComment.user & Admin)
+}
+
+
+pred exerciseHideCommentByNonAdmin {
+    TraceActions[]
+    HideComment in Action
+    no (HideComment.user & Admin)
 }
 
 
@@ -380,6 +409,7 @@ run exhaustiveTraceActions for 4
 run exerciseAddSourceByNonAdmin
 run exerciseCompileSourceByNonAdmin
 run exerciseAddCommentsByNonAdmin
+run exerciseHideCommentByNonAdmin
 run exerciseNonAdmins
 run someoneIsModeratedButSomeoneElseIsVisible for 5
 
