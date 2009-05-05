@@ -191,6 +191,11 @@
 	testSqrt : function(){
 		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(4)), FloatPoint.makeInstance(2)));
 		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(-1)), Complex.makeInstance(0,1)));
+	},
+	
+	testAcos : function(){
+		this.assert(Kernel.equal_question_(Kernel.acos(Rational.ONE), Rational.ZERO));
+		this.assert(Kernel.equal_question_(Kernel.acos(FloatPoint.makeInstance(-1)), PI));
 	}
 	
   }); 
