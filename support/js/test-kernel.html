@@ -166,6 +166,26 @@
 		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(-1, 1)), PI.multiply(FloatPoint.makeInstance(0.75))));
 		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(-1, -1)), PI.multiply(FloatPoint.makeInstance(-0.75))));
 		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(1, -1)), PI.half().half().minus()));
+	},
+	
+	testExp : function(){
+		this.assert(Kernel.equal_question_(Kernel.exp(Rational.ZERO), Rational.ONE));
+	},
+	
+	
+	testExpt : function(){
+		//var i = org.plt.types.Complex.makeInstance(0, 1);
+		//this.assert(Kernel.equal_question_(Kernel.expt(i, i), Kernel.exp(PI.half().minus())));
+		this.assert(Kernel.equal_question_(Kernel.expt(FloatPoint.makeInstance(2), FloatPoint.makeInstance(3)), FloatPoint.makeInstance(8)));
+	},
+	
+	
+	testSin : function(){
+		this.assert(Kernel.equal_question_(Kernel.sin(PI.divide(FloatPoint.makeInstance(2))), Rational.ONE));
+	},
+	
+	testCos : function(){
+		this.assert(Kernel.equal_question_(Kernel.cos(Rational.ZERO), Rational.ONE));
 	}
 	
   }); 

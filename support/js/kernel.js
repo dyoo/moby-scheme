@@ -116,11 +116,12 @@ org.plt = {};
   },
  
   sin: function(x) {
-      return org.plt.types.NumberTower.sin(x);
+	return x.sin();
+      //return org.plt.types.NumberTower.sin(x);
   },
  
   cos: function(x) {
-      return org.plt.types.NumberTower.cos(x);
+	return x.cos();
   },
  
   modulo: function(m, n) {
@@ -276,7 +277,15 @@ org.plt = {};
 	return x.atan();
   },
   
-  HERE : function(){}
+  expt : function(x, y){
+	return org.plt.types.NumberTower.expt(x, y);
+  },
+  
+  exp : function(x){
+	return x.exp();
+  },
+  
+  HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
  
@@ -552,8 +561,28 @@ org.plt = {};
 		return org.plt.types.FloatPoint.makeInstance(Math.atan(this.n / this.d));
 	};
 	
-	org.plt.types.Rational.prototype.HERE = function(){
+	org.plt.types.Rational.prototype.cos = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.cos(this.n / this.d));
+	};
 	
+	org.plt.types.Rational.prototype.sin = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.sin(this.n / this.d));
+	};
+	
+	org.plt.types.Rational.prototype.expt = function(a){
+		return org.plt.types.FloatPoint.makeInstance(Math.pow(this.n / this.d, a.n / a.d));
+	};
+	
+	org.plt.types.Rational.prototype.exp = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.exp(this.n / this.d));
+	};
+	
+	org.plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){
+	
+	};
+	
+	org.plt.types.Rational.prototype.half = function(){
+		return org.plt.types.Rational.makeInstance(this.n, this.d * 2);
 	};
  
  
@@ -695,7 +724,23 @@ org.plt = {};
 		return org.plt.types.FloatPoint.makeInstance(Math.atan(this.n));
 	};
 	
-	org.plt.types.FloatPoint.prototype.HERE = function(){};
+	org.plt.types.FloatPoint.prototype.cos = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.cos(this.n));
+	};
+	
+	org.plt.types.FloatPoint.prototype.sin = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.sin(this.n));
+	};
+	
+	org.plt.types.FloatPoint.prototype.expt = function(a){
+		return org.plt.types.FloatPoint.makeInstance(Math.pow(this.n, a.n));
+	};
+	
+	org.plt.types.FloatPoint.prototype.exp = function(){
+		return org.plt.types.FloatPoint.makeInstance(Math.exp(this.n));
+	};
+	
+	org.plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	org.plt.types.FloatPoint.prototype.conjugate = org.plt.types.FloatPoint.prototype.abs;
 	
@@ -707,8 +752,11 @@ org.plt = {};
 	
 	org.plt.types.FloatPoint.prototype.half = function(){
 		return org.plt.types.FloatPoint.makeInstance(this.n / 2);
-	};
+	};	
 	
+	org.plt.types.FloatPoint.prototype.timesI = function(){
+		return org.plt.types.Complex.makeInstance(0, this.n);
+	};
  
     org.plt.Kernel.pi = org.plt.types.FloatPoint.makeInstance(Math.PI);
     org.plt.Kernel.e = org.plt.types.FloatPoint.makeInstance(Math.E);
@@ -795,7 +843,7 @@ org.plt = {};
 			return this.r.sqrt();
 		
 		var part1 = this.magnitude().sqrt();
-		//var part2 = 
+		var part2 = this.i.divide(this.r).atan().half();
 	};
 	
 	org.plt.types.Complex.prototype.log = function(){
@@ -827,7 +875,7 @@ org.plt = {};
 	};
 	
 	org.plt.types.Complex.prototype.atan = function(){
-		if (isReal())
+		if (this.isReal())
 			return this.r.atan();
 		var iz = this.timesI();
 		var part1 = org.plt.types.Complex.makeInstance(1, iz.minus()).log();
@@ -835,7 +883,40 @@ org.plt = {};
 		return part1.subtract(part2).timesI().half();
 	};
 	
-	org.plt.types.Complex.prototype.HERE = function(){};
+	org.plt.types.Complex.prototype.cos = function(){
+		if (this.isReal())
+			return this.r.cos();
+		var iz = this.timesI();
+		var iz_minus = iz.minus();
+		
+		return org.plt.types.NumberTower.add(iz.exp(), iz_minus.exp()).half();
+	};
+	
+	org.plt.types.Complex.prototype.sin = function(){
+		if (this.isReal())
+			return this.r.sin();
+		var iz = this.timesI();
+		var iz_minus = iz.minus();
+		var z2 = org.plt.types.Complex.makeInstance(0, 2);
+		
+		var exp_minus = org.plt.types.NumberTower.subtract(iz.exp(), iz_minus.exp());
+		
+		return org.plt.types.NumberTower.divide(exp_minus, z2);
+	};
+	
+	org.plt.types.Complex.prototype.expt= function(y){
+		var expo = y.multiply(this.log());
+		return expo.exp();
+	};
+	
+	org.plt.types.Complex.prototype.exp = function(){
+		var part1 = this.r.exp();
+		var part2 = org.plt.types.Complex.makeInstance(this.i.cos(), this.i.sin().timesI());
+		
+		return org.plt.types.NumberTower.multiply(part1, part2);
+	};
+	
+	org.plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	org.plt.types.Complex.prototype.timesI = function(){
 		return this.multiply(org.plt.types.Complex.makeInstance(0, 1));
@@ -869,32 +950,32 @@ org.plt = {};
     }
  
     org.plt.types.NumberTower.add = function(x, y) {
-  while (x.level() < y.level()) x = x.lift(y);
-  while (y.level() < x.level()) y = y.lift(x);
+  if (x.level() < y.level()) x = x.lift(y);
+  if (y.level() < x.level()) y = y.lift(x);
   return x.add(y);
     };
  
     org.plt.types.NumberTower.subtract = function(x, y) {
-  while (x.level() < y.level()) x = x.lift(y);
-  while (y.level() < x.level()) y = y.lift(x);
+  if (x.level() < y.level()) x = x.lift(y);
+  if (y.level() < x.level()) y = y.lift(x);
   return x.subtract(y);
     };
  
     org.plt.types.NumberTower.multiply = function(x, y) {
-  while (x.level() < y.level()) x = x.lift(y);
-  while (y.level() < x.level()) y = y.lift(x);
+  if (x.level() < y.level()) x = x.lift(y);
+  if (y.level() < x.level()) y = y.lift(x);
   return x.multiply(y);
     };
  
     org.plt.types.NumberTower.divide = function(x, y) {
-  while (x.level() < y.level()) x = x.lift(y);
-  while (y.level() < x.level()) y = y.lift(x);
+  if (x.level() < y.level()) x = x.lift(y);
+  if (y.level() < x.level()) y = y.lift(x);
   return x.divide(y);
     };
  
     org.plt.types.NumberTower.equal = function(x, y) {
-	while (x.level() < y.level()) x = x.lift(y);
-  while (y.level() < x.level()) y = y.lift(x);
+	if (x.level() < y.level()) x = x.lift(y);
+  if (y.level() < x.level()) y = y.lift(x);
 	
   return x.isEqual(y);
     };
@@ -963,14 +1044,12 @@ org.plt = {};
     org.plt.types.NumberTower.ceiling = function(x) {
   return x.ceiling();
     };
- 
-    org.plt.types.NumberTower.sin = function(x) {
-  return org.plt.types.FloatPoint.makeInstance(Math.sin(x.toFloat()));
-    };
- 
-    org.plt.types.NumberTower.cos = function(x) {
-  return org.plt.types.FloatPoint.makeInstance(Math.cos(x.toFloat()));
-    };
+	
+	org.plt.types.NumberTower.expt = function(x, y){
+		if (x.level() < y.level()) x = x.lift(y);
+		if (y.level() < x.level()) y = y.lift(x);
+		return x.expt(y);
+	};
  
  
  
