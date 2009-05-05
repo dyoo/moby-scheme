@@ -301,6 +301,16 @@ org.plt = {};
 	return x instanceof org.plt.types.Complex || x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint;
   },
   
+  cosh : function(x) {
+	return this._plus_([this.exp(x), this.exp(x.minus())]).half();
+  },
+  
+  sinh : function(x) {
+	var a = this.exp(x);
+	var b = this.exp(x.minus());
+	return org.plt.types.NumberTower.subtract(a, b).half();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

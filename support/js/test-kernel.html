@@ -217,6 +217,14 @@
 		this.assert(!Kernel.complex_question_(org.plt.types.Empty.EMPTY));
 		this.assert(!Kernel.complex_question_(String.makeInstance("hi")));
 		this.assert(!Kernel.complex_question_(Symbol.makeInstance('h')));
+	},
+	
+	testCosh : function(){
+		this.assert(Kernel.equal_question_(Kernel.cosh(Rational.ZERO), Rational.ONE));
+	},
+	
+	testSinh : function(){
+		this.assert(Kernel.equal_question_(Kernel.sinh(Rational.ZERO), Rational.ZERO));
 	}
 	
   }); 
