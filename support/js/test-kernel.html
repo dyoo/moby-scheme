@@ -146,7 +146,20 @@
 		this.assert(Kernel._greaterthan_(FloatPoint.makeInstance(2.1), Rational.makeInstance(2,1), []));
 		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0), Rational.makeInstance(2,1), []));
 		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0), Rational.makeInstance(2,1), []));
+	},
+	
+	testAtan : function(){
+		this.assert(Kernel.equal_question_(Kernel.atan(Rational.ONE), org.plt.Kernel.pi.half().half()));
+	},
+	
+	testLog : function(){
+		this.assert(Kernel.equal_question_(Kernel.log(Rational.ONE), Rational.ZERO));		
+		this.assert(Kernel.equal_question_(Kernel.log(Complex.makeInstance(0,1)), org.plt.Kernel.pi.toComplex().timesI().half()));
+		this.assert(Kernel.equal_question_(Kernel.log(FloatPoint.makeInstance(-1)), org.plt.Kernel.pi.toComplex().timesI()));
 	}
+	
+	// testLog
+	// testAngle
 	
   }); 
   
