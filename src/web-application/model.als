@@ -130,7 +130,8 @@ sig AssignAsModerated extends Action {
     state'.moderated = state.moderated + moderatedUser
     state.sources = state'.sources
     state.comments = state'.comments
-    state'.visibleComments = state.visibleComments
+    let hiddenComments = state.comments & moderatedUser[commentUser] {
+        state'.visibleComments = state.visibleComments - hiddenComments }
     state.binaries = state'.binaries
 }
 
@@ -278,6 +279,14 @@ pred exerciseAddCommentsByNonAdmin {
 }
 
 
+-- Make sure moderation still means other people can post.
+pred someoneIsModeratedButSomeoneElseIsVisible {
+    TraceActions[]
+    AssignAsModerated in Action
+   some s:State { some s.moderated and some s.visibleComments }
+}
+
+
 -- We make sure all Actions are represented.  As more actions are defined,
 -- add them here.
 pred exhaustiveTraceActions {
@@ -352,6 +361,7 @@ assert moderatedUsersAreInvisible {
 }
 
 
+
 /* Just so we don't see extraneous objects in the model.  Not
 essential.*/
 
@@ -371,6 +381,7 @@ run exerciseAddSourceByNonAdmin
 run exerciseCompileSourceByNonAdmin
 run exerciseAddCommentsByNonAdmin
 run exerciseNonAdmins
+run someoneIsModeratedButSomeoneElseIsVisible for 5
 
 check commentsOnlyOnStateSources for 5
 check sourceUsersAreInStates for 5
