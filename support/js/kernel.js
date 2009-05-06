@@ -345,6 +345,10 @@ org.plt = {};
 	return this.equal_question_(x, x.floor());
   },
   
+  make_dash_rectangular : function(x, y){
+	return org.plt.types.Complex.makeInstance(x.toFloat(), y.toFloat());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

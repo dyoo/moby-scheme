@@ -291,6 +291,10 @@
 		this.assert(!Kernel.integer_question_(FloatPoint.makeInstance(3.1)));
 		this.assert(Kernel.integer_question_(Complex.makeInstance(3,0)));
 		this.assert(!Kernel.integer_question_(Complex.makeInstance(3.1,0)));
+	},
+	
+	testMake_dash_rectangular: function(){
+		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular(Rational.ONE, Rational.ONE), Complex.makeInstance(1,1)));
 	}
 	
   }); 
