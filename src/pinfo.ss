@@ -184,6 +184,7 @@
      pinfo]))
 
 
+;; function-definition-analyze-uses: symbol (listof symbol) expression program-info -> program-info
 (define (function-definition-analyze-uses fun args body pinfo)
   (let* ([env (pinfo-env pinfo)]
          [env 
@@ -203,8 +204,18 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; expression-analyze-uses: expression program-info env -> program-info
 (define (expression-analyze-uses an-expression pinfo env)
   (match an-expression
+    
+    [(list 'local [list defns ...] body)
+     (let ([nested-pinfo (foldl (lambda (a-defn a-pinfo)
+                                  (definition-analyze-uses a-defn a-pinfo))
+                                pinfo
+                                defns)])
+       (expression-analyze-uses body
+                                nested-pinfo
+                                (pinfo-env nested-pinfo)))]
     
     [(list 'cond [list questions answers] ... [list 'else answer-last])
      (foldl (lambda (e p)
