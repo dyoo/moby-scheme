@@ -386,6 +386,12 @@
 		this.assert(Kernel.equal_question_(Kernel.sgn(FloatPoint.makeInstance(4)), Rational.ONE));
 		this.assert(Kernel.equal_question_(Kernel.sgn(FloatPoint.makeInstance(-4)), Rational.NEGATIVE_ONE));
 		this.assert(Kernel.equal_question_(Kernel.sgn(Rational.ZERO), Rational.ZERO));
+	},
+	
+	testZero_question_ : function(){
+		this.assert(Kernel.zero_question_(Rational.ZERO));
+		this.assert(!Kernel.zero_question_(Rational.ONE));
+		this.assert(Kernel.zero_question_(Complex.makeInstance(0,0)));
 	}
   }); 
   

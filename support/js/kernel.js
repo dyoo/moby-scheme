@@ -415,6 +415,10 @@ org.plt = {};
 		return Rational.ZERO;
   },
   
+  zero_question_ : function(x){
+		return org.plt.types.NumberTower.equal(x, Rational.ZERO);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
