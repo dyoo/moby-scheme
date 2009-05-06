@@ -333,7 +333,13 @@ org.plt = {};
 	return this._lessthan_(x, Rational.ZERO, []);
   },
   
+  imag_dash_part : function(x){
+	return x.imag_dash_part();
+  },
   
+  real_dash_part : function(x){
+	return x.real_dash_part();
+  },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
  
@@ -635,9 +641,15 @@ org.plt = {};
 		return org.plt.types.FloatPoint.makeInstance(Math.asin(this.n / this.d));
 	};
 	
-	org.plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){
-	
+	org.plt.types.Rational.prototype.imag_dash_part = function(){
+		return Rational.ZERO;
 	};
+	
+	org.plt.types.Rational.prototype.real_dash_part = function(){
+		return this;
+	};
+	
+	org.plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	org.plt.types.Rational.prototype.half = function(){
 		return org.plt.types.Rational.makeInstance(this.n, this.d * 2);
@@ -808,6 +820,14 @@ org.plt = {};
 	
 	org.plt.types.FloatPoint.prototype.asin = function(){
 		return org.plt.types.FloatPoint.makeInstance(Math.asin(this.n));
+	};
+	
+	org.plt.types.FloatPoint.prototype.imag_dash_part = function(){
+		return Rational.ZERO;
+	};
+	
+	org.plt.types.FloatPoint.prototype.real_dash_part = function(){
+		return this;
 	};
 	
 	org.plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
@@ -1010,6 +1030,14 @@ org.plt = {};
 		if (!this.isReal())
 			throw new Error("floor: can only be applied to real number");
 		return this.r.floor();
+	};
+	
+	org.plt.types.Complex.prototype.imag_dash_part = function(){
+		return this.i;
+	};
+	
+	org.plt.types.Complex.prototype.real_dash_part = function(){
+		return this.r;
 	};
 	
 	org.plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
