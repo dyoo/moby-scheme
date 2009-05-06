@@ -416,7 +416,13 @@
 	testNot : function(){
 		this.assert(Kernel.not(Logic.FALSE));
 		this.assert(!Kernel.not(Logic.TRUE));
-	}
+	},
+	
+	testSymbol_dash__greaterthan_string : function(){
+		this.assert(Kernel.string_equal__question_(Kernel.symbol_dash__greaterthan_string(Symbol.makeInstance("ha")), String.makeInstance("ha"), []));
+	},
+	
+	
   }); 
   
 // ]]>

@@ -435,11 +435,19 @@ org.plt = {};
 	return x == org.plt.types.Logic.FALSE ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE;
   },
   
+  symbol_dash__greaterthan_string : function(x){
+	return org.plt.types.String.makeInstance(x);
+  },
+  
+  symbol_equal__question_ : function(x){
+	return x instanceof org.plt.types.Symbol;
+  },
+  
+  
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
- 
- 
  
  
  
