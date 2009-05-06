@@ -419,6 +419,22 @@ org.plt = {};
 		return org.plt.types.NumberTower.equal(x, Rational.ZERO);
   },
   
+  boolean_equal__question_ : function(x, y){
+	return x == y;
+  },
+  
+  boolean_question_ : function(x){
+	return x == org.plt.types.Logic.TRUE || x == org.plt.types.Logic.FALSE;
+  },
+  
+  false_question_ : function(x){
+	return  x == org.plt.types.Logic.FALSE;
+  },
+  
+  not : function(x){
+	return x == org.plt.types.Logic.FALSE ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
@@ -469,7 +485,6 @@ org.plt = {};
   TRUE : true,
   FALSE : false
     };
- 
  
  
     function die(msg) {

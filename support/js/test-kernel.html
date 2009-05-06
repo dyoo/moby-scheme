@@ -39,6 +39,7 @@
   var PI = org.plt.Kernel.pi;
   var String = org.plt.types.String;
   var Symbol = org.plt.types.Symbol;
+  var Logic = org.plt.types.Logic;
 	
   new Test.Unit.Runner({
     setup: function() {
@@ -392,6 +393,29 @@
 		this.assert(Kernel.zero_question_(Rational.ZERO));
 		this.assert(!Kernel.zero_question_(Rational.ONE));
 		this.assert(Kernel.zero_question_(Complex.makeInstance(0,0)));
+	},
+	
+	testBoolean_equal__question_ : function(){
+		this.assert(Kernel.boolean_equal__question_(Logic.TRUE, Logic.TRUE));
+		this.assert(!Kernel.boolean_equal__question_(Logic.TRUE, Logic.FALSE));
+		this.assert(Kernel.boolean_equal__question_(Logic.FALSE, Logic.FALSE));	
+	},
+	
+	testBoolean_question_ : function(){
+		this.assert(Kernel.boolean_question_(Logic.TRUE));
+		this.assert(Kernel.boolean_question_(Logic.FALSE));
+		this.assert(!Kernel.boolean_question_(PI));
+	},
+	
+	testFalse_question_: function(){
+		this.assert(Kernel.false_question_(Logic.FALSE));
+		this.assert(!Kernel.false_question_(Logic.TRUE));
+		this.assert(!Kernel.false_question_(PI));
+	},
+	
+	testNot : function(){
+		this.assert(Kernel.not(Logic.FALSE));
+		this.assert(!Kernel.not(Logic.TRUE));
 	}
   }); 
   
