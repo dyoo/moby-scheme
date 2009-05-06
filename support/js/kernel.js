@@ -373,6 +373,22 @@ org.plt = {};
 	return chainTest(function(x, y){return x == y;}, first, second, rest);
   },
   
+  string_lessthan__equal__question_: function(first, second, rest){
+	return chainTest(function(x, y){return x <= y;}, first, second, rest);
+  },
+  
+  string_lessthan__question_: function(first, second, rest){
+	return chainTest(function(x, y){return x < y;}, first, second, rest);
+  },
+  
+  string_greaterthan__equal__question_: function(first, second, rest){
+	return chainTest(function(x, y){return x >= y;}, first, second, rest);
+  },
+  
+  string_greaterthan__question_: function(first, second, rest){
+	return chainTest(function(x, y){return x > y;}, first, second, rest);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

@@ -318,6 +318,42 @@
 		var s4 = "hi2";
 		this.assert(Kernel.string_equal__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_equal__question_(s1,s2,[s4]));
+	},
+	
+	testString_lessthan__equal__question_: function(){
+		var s1 = "hi";
+		var s2 = "hi";
+		var s3 = "hi2";
+		var s4 = "a";
+		this.assert(Kernel.string_lessthan__equal__question_(s1, s2, [s3]));
+		this.assert(!Kernel.string_lessthan__equal__question_(s1,s2,[s4]));
+	},
+	
+	testString_lessthan__question_: function(){
+		var s1 = "ha";
+		var s2 = "hi";
+		var s3 = "hi2";
+		var s4 = "hi";
+		this.assert(Kernel.string_lessthan__question_(s1, s2, [s3]));
+		this.assert(!Kernel.string_lessthan__question_(s1,s2,[s4]));
+	},
+	
+	testString_greaterthan__equal__question_: function(){
+		var s1 = "hi";
+		var s2 = "ha";
+		var s3 = "ha";
+		var s4 = "hi";
+		this.assert(Kernel.string_greaterthan__equal__question_(s1, s2, [s3]));
+		this.assert(!Kernel.string_greaterthan__equal__question_(s1,s2,[s4]));
+	},
+	
+	testString_greaterthan__question_: function(){
+		var s1 = "hi";
+		var s2 = "hb";
+		var s3 = "ha";
+		var s4 = "hb";
+		this.assert(Kernel.string_greaterthan__question_(s1, s2, [s3]));
+		this.assert(!Kernel.string_greaterthan__question_(s1,s2,[s4]));
 	}
 	
   }); 
