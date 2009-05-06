@@ -397,6 +397,10 @@ org.plt = {};
 	return org.plt.types.Rational.makeInstance(x.toInteger() % y.toInteger(), 1);
   },
   
+  real_question_ : function(x){
+	return x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint || (x instanceof org.plt.types.Complex && x.isReal());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
