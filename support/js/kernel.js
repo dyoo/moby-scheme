@@ -365,6 +365,14 @@ org.plt = {};
 	return ret;
   },
   
+  number_dash__greaterthan_string : function(n){
+	return org.plt.types.String.makeInstance(n);
+  },
+  
+  string_equal__question_ : function(first, second, rest){
+	return chainTest(function(x, y){return x == y;}, first, second, rest);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

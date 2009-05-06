@@ -304,6 +304,20 @@
 		var n4 = Complex.makeInstance(4,0);
 		this.assert(Kernel.equal_question_(n4, Kernel.max(n1, [n2,n3,n4])));
 		this.assert(Kernel.equal_question_(n1, Kernel.min(n1, [n2,n3,n4])));
+	},
+	
+	testNumber_dash__greaterthan_string : function(){
+		this.assert(Kernel.string_equal__question_(String.makeInstance("1"), Kernel.number_dash__greaterthan_string(Rational.ONE),[]));
+		this.assert(!Kernel.string_equal__question_(String.makeInstance("2"), Kernel.number_dash__greaterthan_string(Rational.ONE),[]));
+	},
+	
+	testString_equal__question_	: function(){
+		var s1 = "hi";
+		var s2 = "hi";
+		var s3 = "hi";
+		var s4 = "hi2";
+		this.assert(Kernel.string_equal__question_(s1, s2, [s3]));
+		this.assert(!Kernel.string_equal__question_(s1,s2,[s4]));
 	}
 	
   }); 
