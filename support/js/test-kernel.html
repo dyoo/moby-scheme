@@ -259,7 +259,20 @@
 		this.assert(!Kernel.negative_question_(Rational.ZERO));
 		this.assert(!Kernel.negative_question_(FloatPoint.makeInstance(1.1)));
 		this.assert(!Kernel.negative_question_(Complex.makeInstance(1,0)));
+	},
+	
+	testCeiling : function(){
+		this.assert(Kernel.equal_question_(Kernel.ceiling(Rational.ONE), Rational.ONE));
+		this.assert(Kernel.equal_question_(Kernel.ceiling(PI), FloatPoint.makeInstance(4)));
+		this.assert(Kernel.equal_question_(Kernel.ceiling(Complex.makeInstance(3.1,0)), FloatPoint.makeInstance(4)));
+	},
+	
+	testFloor : function(){
+		this.assert(Kernel.equal_question_(Kernel.floor(Rational.ONE), Rational.ONE));
+		this.assert(Kernel.equal_question_(Kernel.floor(PI), FloatPoint.makeInstance(3)));
+		this.assert(Kernel.equal_question_(Kernel.floor(Complex.makeInstance(3.1,0)), FloatPoint.makeInstance(3)));
 	}
+	
   }); 
   
 // ]]>

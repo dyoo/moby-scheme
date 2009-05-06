@@ -100,11 +100,11 @@ org.plt = {};
   },
  
   floor: function(x) {
-      return org.plt.types.NumberTower.floor(x);
+  return x.floor();
   },
  
   ceiling: function(x) {
-      return org.plt.types.NumberTower.ceiling(x);
+  return x.ceiling();
   },
  
   sqrt: function(x) {
@@ -332,6 +332,8 @@ org.plt = {};
   negative_question_ : function(x){
 	return this._lessthan_(x, Rational.ZERO, []);
   },
+  
+  
   
   HEREEEEEEEEEEEEEEEEE : function(){}
  
@@ -998,6 +1000,18 @@ org.plt = {};
 		var ret = org.plt.types.NumberTower.add(iz, root).log().timesI().minus();
 	};
 	
+	org.plt.types.Complex.prototype.ceiling = function(){
+		if (!this.isReal())
+			throw new Error("ceiling: can only be applied to real number");
+		return this.r.ceiling();
+	};
+	
+	org.plt.types.Complex.prototype.floor = function(){
+		if (!this.isReal())
+			throw new Error("floor: can only be applied to real number");
+		return this.r.floor();
+	};
+	
 	org.plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	org.plt.types.Complex.prototype.timesI = function(){
@@ -1113,14 +1127,6 @@ org.plt = {};
  
     org.plt.types.NumberTower.sqr = function(x) {
   return org.plt.types.NumberTower.multiply(x, x);
-    };
- 
-    org.plt.types.NumberTower.floor = function(x) {
-  return x.floor();
-    };
- 
-    org.plt.types.NumberTower.ceiling = function(x) {
-  return x.ceiling();
     };
 	
 	org.plt.types.NumberTower.expt = function(x, y){
