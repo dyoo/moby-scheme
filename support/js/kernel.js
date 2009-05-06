@@ -348,6 +348,22 @@ org.plt = {};
   make_dash_rectangular : function(x, y){
 	return org.plt.types.Complex.makeInstance(x.toFloat(), y.toFloat());
   },
+ 
+  max : function(first, rest){
+	var i, ret = first;
+	for (i = 0; i < rest.length; i++)
+		if (org.plt.types.NumberTower.greaterThan(rest[i], ret))
+			ret = rest[i];
+	return ret;
+  },
+  
+  min : function(first, rest){
+	var i, ret = first;
+	for (i = 0; i < rest.length; i++)
+		if (org.plt.types.NumberTower.lessThan(rest[i], ret))
+			ret = rest[i];
+	return ret;
+  },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
  

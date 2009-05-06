@@ -295,6 +295,15 @@
 	
 	testMake_dash_rectangular: function(){
 		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular(Rational.ONE, Rational.ONE), Complex.makeInstance(1,1)));
+	},
+	
+	testMaxAndMin : function(){
+		var n1 = FloatPoint.makeInstance(-1);
+		var n2 = Rational.ZERO;
+		var n3 = Rational.ONE;
+		var n4 = Complex.makeInstance(4,0);
+		this.assert(Kernel.equal_question_(n4, Kernel.max(n1, [n2,n3,n4])));
+		this.assert(Kernel.equal_question_(n1, Kernel.min(n1, [n2,n3,n4])));
 	}
 	
   }); 
