@@ -422,7 +422,15 @@
 		this.assert(Kernel.string_equal__question_(Kernel.symbol_dash__greaterthan_string(Symbol.makeInstance("ha")), String.makeInstance("ha"), []));
 	},
 	
+	testSymbol_equal__question_ : function(){
+		this.assert(Kernel.symbol_equal__question_(Symbol.makeInstance("hi"), Symbol.makeInstance("hi")));
+		this.assert(!Kernel.symbol_equal__question_(Symbol.makeInstance("hi"), Symbol.makeInstance("hi1")));
+	},
 	
+	testSymbol_question_ : function(){
+		this.assert(Kernel.symbol_question_(Symbol.makeInstance("hi")));
+		this.assert(!Kernel.symbol_question_(String.makeInstance("hi")));
+	}
   }); 
   
 // ]]>

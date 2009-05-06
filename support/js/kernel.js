@@ -439,10 +439,13 @@ org.plt = {};
 	return org.plt.types.String.makeInstance(x);
   },
   
-  symbol_equal__question_ : function(x){
-	return x instanceof org.plt.types.Symbol;
+  symbol_equal__question_ : function(x, y){
+	return x.val == y.val;
   },
   
+  symbol_question_ : function(x){
+	return x instanceof org.plt.types.Symbol;
+  },
   
   
   HEREEEEEEEEEEEEEEEEE : function(){}
