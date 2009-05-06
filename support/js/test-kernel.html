@@ -283,6 +283,14 @@
 		this.assert(Kernel.equal_question_(Kernel.real_dash_part(Rational.ONE), Rational.ONE));
 		this.assert(Kernel.equal_question_(Kernel.real_dash_part(PI), PI));
 		this.assert(Kernel.equal_question_(Kernel.real_dash_part(Complex.makeInstance(0,1)), Rational.ZERO));
+	},
+	
+	testInteger_question_ : function(){
+		this.assert(Kernel.integer_question_(Rational.ONE));
+		this.assert(Kernel.integer_question_(FloatPoint.makeInstance(3.0)));
+		this.assert(!Kernel.integer_question_(FloatPoint.makeInstance(3.1)));
+		this.assert(Kernel.integer_question_(Complex.makeInstance(3,0)));
+		this.assert(!Kernel.integer_question_(Complex.makeInstance(3.1,0)));
 	}
 	
   }); 

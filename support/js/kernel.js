@@ -341,6 +341,10 @@ org.plt = {};
 	return x.real_dash_part();
   },
   
+  integer_question_ : function(x){
+	return this.equal_question_(x, x.floor());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
