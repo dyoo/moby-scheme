@@ -40,6 +40,8 @@
   var String = org.plt.types.String;
   var Symbol = org.plt.types.Symbol;
   var Logic = org.plt.types.Logic;
+  var Cons = org.plt.types.Cons;
+  var Empty = org.plt.types.Empty;
 	
   new Test.Unit.Runner({
     setup: function() {
@@ -430,6 +432,11 @@
 	testSymbol_question_ : function(){
 		this.assert(Kernel.symbol_question_(Symbol.makeInstance("hi")));
 		this.assert(!Kernel.symbol_question_(String.makeInstance("hi")));
+	},
+	
+	testEmpty_question_ : function(){
+		this.assert(Kernel.empty_question_(Empty.EMPTY));
+		this.assert(!Kernel.empty_question_(Cons.makeInstance(Rational.ONE, Empty.EMPTY)));
 	}
   }); 
   

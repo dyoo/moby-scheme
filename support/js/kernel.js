@@ -447,10 +447,18 @@ org.plt = {};
 	return x instanceof org.plt.types.Symbol;
   },
   
+  empty_question_ : function(x){
+	return x instanceof org.plt.types.Empty;
+  },
+  
+  /*
+  append : function(first, second, rest){
+	
+  },*/
   
   HEREEEEEEEEEEEEEEEEE : function(){}
  
-    };
+  };
  
  
  
