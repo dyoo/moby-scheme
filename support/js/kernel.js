@@ -406,6 +406,15 @@ org.plt = {};
 	return x.round();
   },
   
+  sgn : function(x){
+	if (this.positive_question_(x))
+		return Rational.ONE;
+	if (this.negative_question_(x))
+		return Rational.NEGATIVE_ONE;
+	else
+		return Rational.ZERO;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

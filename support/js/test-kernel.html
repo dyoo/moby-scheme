@@ -380,6 +380,12 @@
 		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.499999)), FloatPoint.makeInstance(3), []));
 		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.5)), FloatPoint.makeInstance(4), []));
 		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.51)), FloatPoint.makeInstance(4), []));
+	},
+	
+	testSgn : function(){
+		this.assert(Kernel.equal_question_(Kernel.sgn(FloatPoint.makeInstance(4)), Rational.ONE));
+		this.assert(Kernel.equal_question_(Kernel.sgn(FloatPoint.makeInstance(-4)), Rational.NEGATIVE_ONE));
+		this.assert(Kernel.equal_question_(Kernel.sgn(Rational.ZERO), Rational.ZERO));
 	}
   }); 
   
