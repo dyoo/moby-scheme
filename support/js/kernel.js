@@ -401,6 +401,11 @@ org.plt = {};
 	return x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint || (x instanceof org.plt.types.Complex && x.isReal());
   },
   
+  
+  round : function(x){
+	return x.round();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };
@@ -709,6 +714,10 @@ org.plt = {};
 		return this;
 	};
 	
+	org.plt.types.Rational.prototype.round = function(){
+		return this;
+	};
+	
 	org.plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	org.plt.types.Rational.prototype.half = function(){
@@ -888,6 +897,15 @@ org.plt = {};
 	
 	org.plt.types.FloatPoint.prototype.real_dash_part = function(){
 		return this;
+	};
+	
+	
+	org.plt.types.FloatPoint.prototype.round = function(){
+		if (org.plt.types.NumberTower.lessThan(this.subtract(FloatPoint.makeInstance(0.5)).floor(), this.floor()))
+			return this.floor();
+		else 
+			return this.ceiling();
+			
 	};
 	
 	org.plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
@@ -1098,6 +1116,10 @@ org.plt = {};
 	
 	org.plt.types.Complex.prototype.real_dash_part = function(){
 		return this.r;
+	};
+	
+	org.plt.types.Complex.prototype.round = function(){
+		return this.r.round();
 	};
 	
 	org.plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};

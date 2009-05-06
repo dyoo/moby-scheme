@@ -374,8 +374,13 @@
 		this.assert(!Kernel.real_question_(org.plt.types.Empty.EMPTY));
 		this.assert(!Kernel.real_question_(String.makeInstance("hi")));
 		this.assert(!Kernel.real_question_(Symbol.makeInstance('h')));
-	}
+	},
 	
+	testRound : function(){
+		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.499999)), FloatPoint.makeInstance(3), []));
+		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.5)), FloatPoint.makeInstance(4), []));
+		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.51)), FloatPoint.makeInstance(4), []));
+	}
   }); 
   
 // ]]>
