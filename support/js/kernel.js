@@ -389,6 +389,14 @@ org.plt = {};
 	return chainTest(function(x, y){return x > y;}, first, second, rest);
   },
   
+  quotient : function(x, y){
+	return org.plt.types.Rational.makeInstance(org.plt.types.NumberTower.divide(x,y).floor(), 1);
+  },
+  
+  remainder : function(x, y) {
+	return org.plt.types.Rational.makeInstance(x.toInteger() % y.toInteger(), 1);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
     };

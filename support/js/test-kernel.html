@@ -354,7 +354,17 @@
 		var s4 = "hb";
 		this.assert(Kernel.string_greaterthan__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_greaterthan__question_(s1,s2,[s4]));
-	}
+	},
+	
+	testQuotient : function(){
+	this.assert(Kernel.equal_question_(Kernel.quotient(FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)), Rational.ZERO));	
+		this.assert(Kernel.equal_question_(Kernel.quotient(FloatPoint.makeInstance(4), FloatPoint.makeInstance(3)), Rational.ONE));
+	},
+	
+	testRemainder : function(){
+		this.assert(Kernel.equal_question_(Kernel.remainder(FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)), FloatPoint.makeInstance(3)));	
+		this.assert(Kernel.equal_question_(Kernel.remainder(FloatPoint.makeInstance(4), FloatPoint.makeInstance(3)), FloatPoint.makeInstance(1)));
+	},
 	
   }); 
   
