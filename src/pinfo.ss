@@ -578,8 +578,8 @@
                                  [used-bindings hash?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (-> pinfo?)]
-                  
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
+                  [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   
                   [program-analyze ((program?) (pinfo?) . ->* . pinfo?)]
                   

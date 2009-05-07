@@ -18,8 +18,8 @@
 
 ;; A compiled program is a:
 (define-struct compiled-program
-  (defns           ;; (listof string)
-    toplevel-exprs ;; (listof string)
+  (defns           ;; string
+    toplevel-exprs ;; string
     pinfo          ;; pinfo
     ))
 
@@ -339,7 +339,19 @@
 
 ;; local-expression->javascript-string: (listof defn) expr env -> string
 (define (local-expression->javascript-string defns body env a-pinfo)
- 'fixme #;...)
+  (let ([inner-compiled-program 
+         (program->compiled-program (append defns (list body)) 
+                                    (pinfo-update-env a-pinfo env))])
+    (format "(function() {
+               ~a
+
+               return ~a
+              })()"
+            (compiled-program-defns inner-compiled-program)
+            ;; Complete kludge... How do we do this better?
+            (regexp-replace #px"^\\s+"
+                            (compiled-program-toplevel-exprs inner-compiled-program)
+                            ""))))
 
 
 
