@@ -4,7 +4,7 @@ public class FilePicture extends BasicPicture {
     javax.microedition.lcdui.Image img;
     public FilePicture(String filename) {
 	try {
-	    this.img = javax.microedition.lcdui.Image.createImage(filename);
+	    this.img = javax.microedition.lcdui.Image.createImage("/"+filename);
 	} catch (java.io.IOException e) {
 	    throw new RuntimeException("Can't find image " + filename);
 	}
