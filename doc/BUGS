@@ -24,3 +24,7 @@
 * placeImage breaks if the scene passed in is an Image, and not a
   Scene.
 
+* apks hosted on a web server may not be hosted properly.  This may be
+  a consequence of
+  http://code.google.com/p/android/issues/detail?id=1085, but I'm not
+  sure.
