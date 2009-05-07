@@ -140,7 +140,7 @@
   (test-all generate-javascript-application test-app-js-path)
   
   ;; If you do not have the Android SDK, change the value in config.ss.
-  #;(when (current-has-android-sdk?)
+  (when (current-has-android-sdk?)
     (test-all generate-android-application test-app-android-path)))
 
 

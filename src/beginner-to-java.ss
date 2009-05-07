@@ -18,8 +18,8 @@
 
 ;; A compiled program is a:
 (define-struct compiled-program
-  (defns           ;; (listof string)
-    toplevel-exprs ;; (listof string)
+  (defns           ;; string
+    toplevel-exprs ;; string
     pinfo          ;; pinfo
     ))
 
@@ -27,8 +27,8 @@
 
 ;; program->compiled-program: program -> compiled-program
 ;; Consumes a program and returns a compiled program.
-(define (program->compiled-program program)
-  (let* ([a-pinfo (program-analyze program)]
+(define (program->compiled-program program [input-pinfo (get-base-pinfo)])
+  (let* ([a-pinfo (program-analyze program input-pinfo)]
          [toplevel-env (pinfo-env a-pinfo)])
     
     (let loop ([program program]
@@ -40,16 +40,17 @@
              (cond [(defn? (first program))
                     (let-values ([(defn-string expr-string)
                                   (definition->java-strings 
-                                           (first program) 
-                                           toplevel-env)])
-                                         
-                    (loop (rest program)
-                          (string-append defns
-                                         "\n"
-                                         defn-string)
-                          (string-append tops
-                                         "\n"
-                                         expr-string)))]
+                                    (first program) 
+                                    toplevel-env
+                                    a-pinfo)])
+                      
+                      (loop (rest program)
+                            (string-append defns
+                                           "\n"
+                                           defn-string)
+                            (string-append tops
+                                           "\n"
+                                           expr-string)))]
                    
                    [(test-case? (first program))
                     (loop (rest program)
@@ -73,7 +74,8 @@
                                          "org.plt.Kernel.identity("
                                          (expression->java-string 
                                           (first program) 
-                                          toplevel-env)
+                                          toplevel-env
+                                          a-pinfo)
                                          ");"))])]))))
 
 
@@ -84,26 +86,26 @@
 ;; The second value is the expression that will be evaluated at the toplevel.
 ;;
 ;; Structure definitions map to static inner classes with transparent fields.
-(define (definition->java-strings defn env)
+(define (definition->java-strings defn env a-pinfo)
   (match defn
     [(list 'define (list fun args ...) body)
-     (values (function-definition->java-string fun args body env)
+     (values (function-definition->java-string fun args body env a-pinfo)
              "")]
     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
-     (values (function-definition->java-string fun args body env)
+     (values (function-definition->java-string fun args body env a-pinfo)
              "")]
     [(list 'define (? symbol? id) body)
-     (variable-definition->java-strings id body env)]
+     (variable-definition->java-strings id body env a-pinfo)]
 
     [(list 'define-struct id (list fields ...))
-     (values (struct-definition->java-string id fields env)
+     (values (struct-definition->java-string id fields env a-pinfo)
              "")]))
 
 
 ;; function-definition->java-string: symbol (listof symbol) expr env -> string
 ;; Converts the function definition into a static function declaration whose
 ;; return value is an object.
-(define (function-definition->java-string fun args body env)
+(define (function-definition->java-string fun args body env a-pinfo)
   (let* ([munged-fun-id
           (identifier->munged-java-identifier fun)]
          [munged-arg-ids
@@ -126,14 +128,14 @@
                                 (string-append "Object " (symbol->string arg-id)))
                               munged-arg-ids)
                          ", ")
-            (expression->java-string body new-env))))
+            (expression->java-string body new-env a-pinfo))))
 
 
 
 ;; variable-definition->java-string: symbol expr env -> (values string string)
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
-(define (variable-definition->java-strings id body env)
+(define (variable-definition->java-strings id body env a-pinfo)
   (let* ([munged-id (identifier->munged-java-identifier id)]
          [new-env (env-extend env (make-binding:constant id 
                                                          (symbol->string munged-id)
@@ -142,13 +144,13 @@
                     munged-id)
             (format "~a = ~a;" 
                     munged-id
-                    (expression->java-string body new-env)))))
+                    (expression->java-string body new-env a-pinfo)))))
 
 
 
 
 ;; struct-definition->java-string: symbol (listof symbol) env -> string
-(define (struct-definition->java-string id fields env)
+(define (struct-definition->java-string id fields env a-pinfo)
   
   ;; field->accessor-name: symbol symbol -> symbol
   ;; Given a structure name and a field, return the accessor.
@@ -208,7 +210,8 @@
                                                                         (symbol->string
                                                                          (identifier->munged-java-identifier 'other))
                                                                         empty))])
-                                             new-env)))
+                                             new-env)
+                                           a-pinfo))
           
           ;; make-id
           (format "static public Object ~a(~a) { return new ~a(~a); }"
@@ -245,18 +248,20 @@
 ;; expression->java-string: expr env -> string
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
-(define (expression->java-string expr env)
+(define (expression->java-string expr env a-pinfo)
   (match expr
+    [(list 'local [list defns ...] body)
+     (local-expression->java-string defns body env a-pinfo)]
     [(list 'cond [list questions answers] ... [list 'else answer-last])
      (let loop ([questions questions]
                 [answers answers])
        (cond
          [(empty? questions)
-          (expression->java-string answer-last env)]
+          (expression->java-string answer-last env a-pinfo)]
          [else
           (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-                  (expression->java-string (first questions) env)
-                  (expression->java-string (first answers) env)
+                  (expression->java-string (first questions) env a-pinfo)
+                  (expression->java-string (first answers) env a-pinfo)
                   (loop (rest questions) (rest answers)))]))]
     
     
@@ -267,25 +272,25 @@
          [(empty? questions)
           (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : 
                       org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
-                  (expression->java-string question-last env)
-                  (expression->java-string answer-last env))]
+                  (expression->java-string question-last env a-pinfo)
+                  (expression->java-string answer-last env a-pinfo))]
          [else
           (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-                  (expression->java-string (first questions) env)
-                  (expression->java-string (first answers) env)
+                  (expression->java-string (first questions) env a-pinfo)
+                  (expression->java-string (first answers) env a-pinfo)
                   (loop (rest questions) (rest answers)))]))]
     
     [(list 'if test consequent alternative)
      (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
-             (expression->java-string test env)
-             (expression->java-string consequent env)
-             (expression->java-string alternative env))]
+             (expression->java-string test env a-pinfo)
+             (expression->java-string consequent env a-pinfo)
+             (expression->java-string alternative env a-pinfo))]
     
     [(list 'and expr ...)
      (string-append "(("
                     (string-join (map (lambda (e)
                                         (format "(((org.plt.types.Logic)~a).isTrue())"
-                                                (expression->java-string e env)))
+                                                (expression->java-string e env a-pinfo)))
                                       expr) 
                                  "&&")
                     ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
@@ -294,7 +299,7 @@
      (string-append "(("
                     (string-join  (map (lambda (e)
                                          (format "(((org.plt.types.Logic)~a).isTrue())"
-                                                 (expression->java-string e env)))
+                                                 (expression->java-string e env a-pinfo)))
                                        expr) 
                                   "||")
                     ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
@@ -315,7 +320,7 @@
     
     ;; Identifiers
     [(? symbol?)
-     (identifier-expression->java-string expr env)]
+     (identifier-expression->java-string expr env a-pinfo)]
     
     ;; Quoted symbols
     [(list 'quote datum)
@@ -324,17 +329,23 @@
     
     ;; Function call/primitive operation call
     [(list (? symbol? id) exprs ...)
-     (application-expression->java-string id exprs env)]))
+     (application-expression->java-string id exprs env a-pinfo)]))
+
+
+
+;; local-expression->java-string: (listof defn) expr env pinfo -> string
+(define (local-expression->java-string defns body env a-pinfo)
+  (void))
 
 
 
 ;; application-expression->java-string: symbol (listof expr) env -> string
 ;; Converts the function application to a string.
-(define (application-expression->java-string id exprs env)
+(define (application-expression->java-string id exprs env a-pinfo)
   (let ([operator-binding (env-lookup env id)]
         [operand-strings 
          (map (lambda (e) 
-                             (expression->java-string e env))
+                             (expression->java-string e env a-pinfo))
                            exprs)])
     (match operator-binding
       ['#f
@@ -377,7 +388,7 @@
 ;; identifier-expression->java-string: symbol -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
-(define (identifier-expression->java-string an-id an-env)
+(define (identifier-expression->java-string an-id an-env a-pinfo)
   (match (env-lookup an-env an-id)
     ['#f
      (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
