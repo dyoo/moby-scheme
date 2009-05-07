@@ -25,8 +25,9 @@
 
 
 
-;; program->compiled-program: program -> compiled-program
+;; program->compiled-program: program [pinfo] -> compiled-program
 ;; Consumes a program and returns a compiled program.
+;; If pinfo is provided, uses that as the base set of known toplevel definitions.
 (define (program->compiled-program program [input-pinfo (get-base-pinfo)])
   (let* ([a-pinfo (program-analyze program input-pinfo)]
          [toplevel-env (pinfo-env a-pinfo)])
@@ -80,7 +81,7 @@
 
 
 
-;; definition->java-string: definition env -> (values string string)
+;; definition->java-string: definition env pinfo -> (values string string)
 ;; Consumes a definition (define or define-struct) and produces two strings.
 ;; The first maps a definitions string.
 ;; The second value is the expression that will be evaluated at the toplevel.
@@ -102,7 +103,7 @@
              "")]))
 
 
-;; function-definition->java-string: symbol (listof symbol) expr env -> string
+;; function-definition->java-string: symbol (listof symbol) expr env pinfo -> string
 ;; Converts the function definition into a method declaration whose
 ;; return value is an object.
 (define (function-definition->java-string fun args body env a-pinfo)
@@ -132,7 +133,7 @@
 
 
 
-;; variable-definition->java-string: symbol expr env -> (values string string)
+;; variable-definition->java-string: symbol expr env pinfo -> (values string string)
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
 (define (variable-definition->java-strings id body env a-pinfo)
@@ -149,7 +150,7 @@
 
 
 
-;; struct-definition->java-string: symbol (listof symbol) env -> string
+;; struct-definition->java-string: symbol (listof symbol) env pinfo -> string
 (define (struct-definition->java-string id fields env a-pinfo)
   
   ;; field->accessor-name: symbol symbol -> symbol
@@ -245,7 +246,7 @@
 
 
 
-;; expression->java-string: expr env -> string
+;; expression->java-string: expr env pinfo -> string
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (expression->java-string expr env a-pinfo)
@@ -352,7 +353,7 @@
 
 
 
-;; application-expression->java-string: symbol (listof expr) env -> string
+;; application-expression->java-string: symbol (listof expr) env pinfo -> string
 ;; Converts the function application to a string.
 (define (application-expression->java-string id exprs env a-pinfo)
   (let ([operator-binding (env-lookup env id)]
@@ -398,7 +399,7 @@
 
 
 
-;; identifier-expression->java-string: symbol -> string
+;; identifier-expression->java-string: symbol env pinfo -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
 (define (identifier-expression->java-string an-id an-env a-pinfo)
