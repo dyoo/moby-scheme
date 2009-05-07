@@ -24,6 +24,13 @@
   (make-pinfo (get-toplevel-env) empty (make-immutable-hash empty)))
 
 
+;; pinfo-update-env: pinfo env -> pinfo
+(define (pinfo-update-env a-pinfo an-env)
+  (make-pinfo
+   an-env
+   (pinfo-modules a-pinfo)
+   (pinfo-used-bindings a-pinfo)))
+
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
@@ -141,32 +148,40 @@
     
     
     [(list 'define-struct id (list fields ...))
-     (let* ([constructor-id 
-             (string->symbol (format "make-~a" id))]
-            [constructor-binding 
-             (bf constructor-id #f (length fields) #f
-                                    (symbol->string
-                                     (identifier->munged-java-identifier constructor-id)))]
-            [predicate-id
-             (string->symbol (format "~a?" id))]
-            [predicate-binding
-             (bf predicate-id #f 1 #f
-                                    (symbol->string
-                                     (identifier->munged-java-identifier predicate-id)))]
-            
-            
-            [selector-ids
-             (map (lambda (f)
-                    (string->symbol (format "~a-~a" id f)))
-                  fields)]
-            [selector-bindings
-             (map (lambda (sel-id) 
-                    (bf sel-id #f 1 #f 
-                                           (symbol->string
-                                            (identifier->munged-java-identifier sel-id))))
-                  selector-ids)])
-       (foldl pinfo-accumulate-binding pinfo 
-              (list* constructor-binding predicate-binding selector-bindings)))]))
+     (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) id fields))]))
+
+
+
+;; extend-env/struct-defns: env symbol (listof symbol) -> env
+(define (extend-env/struct-defns an-env id fields)
+  (let* ([constructor-id 
+          (string->symbol (format "make-~a" id))]
+         [constructor-binding 
+          (bf constructor-id #f (length fields) #f
+              (symbol->string
+               (identifier->munged-java-identifier constructor-id)))]
+         [predicate-id
+          (string->symbol (format "~a?" id))]
+         [predicate-binding
+          (bf predicate-id #f 1 #f
+              (symbol->string
+               (identifier->munged-java-identifier predicate-id)))]
+         [selector-ids
+          (map (lambda (f)
+                 (string->symbol (format "~a-~a" id f)))
+               fields)]
+         [selector-bindings
+          (map (lambda (sel-id) 
+                 (bf sel-id #f 1 #f 
+                     (symbol->string
+                      (identifier->munged-java-identifier sel-id))))
+               selector-ids)])
+    (foldl (lambda (a-binding an-env)
+             (env-extend an-env a-binding))
+           an-env
+           (list* constructor-binding predicate-binding selector-bindings))))
+
+           
 
 
 

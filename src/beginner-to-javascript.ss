@@ -27,8 +27,8 @@
 
 ;; program->compiled-program: program -> compiled-program
 ;; Consumes a program and returns a compiled program.
-(define (program->compiled-program program)
-  (let* ([a-pinfo (program-analyze program)]
+(define (program->compiled-program program [input-pinfo #f])
+  (let* ([a-pinfo (if input-pinfo input-pinfo (program-analyze program))]
          [toplevel-env (pinfo-env a-pinfo)])
     
     (let loop ([program program]
