@@ -103,7 +103,7 @@
 
 
 ;; function-definition->java-string: symbol (listof symbol) expr env -> string
-;; Converts the function definition into a static function declaration whose
+;; Converts the function definition into a method declaration whose
 ;; return value is an object.
 (define (function-definition->java-string fun args body env a-pinfo)
   (let* ([munged-fun-id
@@ -122,7 +122,7 @@
                                                           empty)))
                  new-env
                  args)])
-    (format "static public Object ~a(~a) { return ~a; }"
+    (format "public Object ~a(~a) { return ~a; }"
             munged-fun-id
             (string-join (map (lambda (arg-id)
                                 (string-append "Object " (symbol->string arg-id)))
@@ -140,7 +140,7 @@
          [new-env (env-extend env (make-binding:constant id 
                                                          (symbol->string munged-id)
                                                          empty))])
-    (values (format "static Object ~a; "
+    (values (format "Object ~a; "
                     munged-id)
             (format "~a = ~a;" 
                     munged-id
@@ -160,7 +160,7 @@
                     "-"
                     (symbol->string field-name))))
   
-  (format "static public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a\n ~a" 
+  (format "public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a\n ~a" 
           (identifier->munged-java-identifier id)
           (string-join (map (lambda (a-field)
                               (format "public Object ~a;"
@@ -214,7 +214,7 @@
                                            a-pinfo))
           
           ;; make-id
-          (format "static public Object ~a(~a) { return new ~a(~a); }"
+          (format "public Object ~a(~a) { return new ~a(~a); }"
                   (let ([make-id (string->symbol 
                                   (string-append "make-" (symbol->string id)))])
                     (identifier->munged-java-identifier  make-id))
@@ -227,7 +227,7 @@
           ;; accessors
           (string-join 
            (map (lambda (a-field)
-                  (format "static public Object ~a(Object obj) { return ((~a)obj).~a; }"
+                  (format "public Object ~a(Object obj) { return ((~a)obj).~a; }"
                           (let ([acc-id (string->symbol
                                          (string-append (symbol->string id)
                                                         "-"
@@ -239,7 +239,7 @@
            "\n")
           
           ;; predicate
-          (format "static public org.plt.types.Logic ~a(Object obj) { return obj instanceof ~a ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE; }"
+          (format "public org.plt.types.Logic ~a(Object obj) { return obj instanceof ~a ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE; }"
                   (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
                   (identifier->munged-java-identifier id))))
 
@@ -335,7 +335,20 @@
 
 ;; local-expression->java-string: (listof defn) expr env pinfo -> string
 (define (local-expression->java-string defns body env a-pinfo)
-  (void))
+  (let ([inner-compiled-program 
+         (program->compiled-program (append defns (list body)) 
+                                    (pinfo-update-env a-pinfo env))])
+    (format "(new org.plt.types.Callable() {
+               ~a
+               public Object call(Object[] args) {
+                 return ~a
+               }
+              }).call(new Object[] {})"
+            (compiled-program-defns inner-compiled-program)
+            ;; Complete kludge... How do we do this better?
+            (regexp-replace #px"^\\s+"
+                            (compiled-program-toplevel-exprs inner-compiled-program)
+                            ""))))
 
 
 

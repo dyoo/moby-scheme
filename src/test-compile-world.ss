@@ -66,6 +66,7 @@
 (define test-get-ip-address (make-test "get-ip-address.ss"))
 (define test-parse-google-maps-places (make-test "parse-google-maps-places.ss"))
 (define test-grocery-shopper (make-test "grocery-shopper.ss"))
+(define test-local (make-test "local.ss"))
 
 (define test-gui-world-hello-world (make-test "gui-world-hello-world.ss"))
 (define test-gui-world-drop-down (make-test "gui-world-drop-down.ss"))
@@ -98,7 +99,8 @@
                     test-struct-question
                     test-move-ball
                     test-image-question
- 
+                    test-local
+                    
                     test-location
                     test-location-2
                     test-tilt
@@ -132,26 +134,34 @@
     (test g w)))
 
 
-(define (run-all-tests)
-  ;; If you do not have the Sun Wireless SDK, change the value in config.ss.
-  #;(when (current-has-sun-wireless-sdk?)
-      (test-all generate-j2me-application test-app-j2me-path))
+(define (run-all-tests #:j2me (with-j2me? #f)
+                       #:android (with-android? #f)
+                       #:js (with-js? #t))
+
+  ;; Compile with javascript backend.
+  (when with-js?
+    (test-all generate-javascript-application test-app-js-path))
   
-  (test-all generate-javascript-application test-app-js-path)
+  ;; If you do not have the Sun Wireless SDK, change the value in config.ss.
+  (when (and (current-has-sun-wireless-sdk?) with-j2me?)
+    (test-all generate-j2me-application test-app-j2me-path))
   
   ;; If you do not have the Android SDK, change the value in config.ss.
-  (when (current-has-android-sdk?)
+  (when (and (current-has-android-sdk?) with-android?)
     (test-all generate-android-application test-app-android-path)))
 
 
 
-(define (run-single-test a-test)
-  #;(when (current-has-sun-wireless-sdk?)
-      (a-test generate-j2me-application test-app-j2me-path))
-  #;(when (current-has-android-sdk?)
-    (a-test generate-android-application test-app-android-path))
-  
-  (a-test generate-javascript-application test-app-js-path))
+(define (run-single-test a-test 
+                         #:j2me (with-j2me? #f)
+                         #:android (with-android? #f)
+                         #:js (with-js? #t))
+  (when with-js?
+    (a-test generate-javascript-application test-app-js-path))
+  (when (and (current-has-sun-wireless-sdk?) with-j2me?)
+    (a-test generate-j2me-application test-app-j2me-path))
+  (when (and (current-has-android-sdk?) with-android?)
+    (a-test generate-android-application test-app-android-path)))
 
 
 (run-all-tests)

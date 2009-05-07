@@ -40,7 +40,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
         // include static blocks that initialize values that
         // we depend on later!
         <<PROGRAM-DEFINITIONS>>
-        public static void runToplevel() {
+        public void runToplevel() {
 	    <<PROGRAM-TOPLEVEL-EXPRESSIONS>>;
 	}
     }
@@ -85,7 +85,7 @@ public class <<PROGRAM-NAME>> extends MIDlet
 
 	new Thread() {
 	    public void run() {
-		UserProgram.runToplevel();
+		(new UserProgram()).runToplevel();
 	    }
 	}.start();
     }

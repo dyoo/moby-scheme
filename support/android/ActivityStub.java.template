@@ -46,7 +46,7 @@ public class <<PROGRAM-NAME>>
         // include static blocks that initialize values that
         // we depend on later!
         <<PROGRAM-DEFINITIONS>>
-        public static void runToplevel() {
+        public void runToplevel() {
 	    <<PROGRAM-TOPLEVEL-EXPRESSIONS>>;
 	}
     }
@@ -90,7 +90,7 @@ public class <<PROGRAM-NAME>>
 	GuiWorld.setRunner(this.runner);
 	Thread userThread = new Thread() {
 		public void run() {
-		    UserProgram.runToplevel();
+		    (new UserProgram()).runToplevel();
 		}
 	    };
 	userThread.start();
