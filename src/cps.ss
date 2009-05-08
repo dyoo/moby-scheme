@@ -1,41 +1,92 @@
 #lang scheme/base
 (require scheme/match
          scheme/list
-         "pinfo.ss"
-         "env.ss")
+         (prefix-in primitive-pinfo: "pinfo.ss")
+         (prefix-in primitive-env: "env.ss"))
 
 ;; CPSing intermediate-level programs
 
-#;(define (cps-program a-program an-env)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; An env collects a set of bindings.
+(define-struct env (bindings) #:transparent)
+(define empty-env (make-env (make-immutable-hasheq '())))
+
+;; A binding associates a symbol with some value.
+(define-struct binding (id) #:transparent)
+(define-struct (binding:defined binding) () #:transparent)
+(define-struct (binding:primitive binding) () #:transparent)
+
+;; env-extend: env binding -> env
+(define (env-extend an-env new-binding)
+  (make-env (hash-set (env-bindings an-env) 
+                      (binding-id new-binding)
+                      new-binding)))
+
+;; env-lookup: env symbol -> (or/c binding #f)
+(define (env-lookup an-env name)
+  (match an-env
+    [(struct env (bindings))
+     (hash-ref (env-bindings an-env) name #f)]))
+
+;; Translates the env structure in env.ss to a simpler one here.
+(define (translate-primitive-env a-primitive-env)
+  (define (translate-primitive-binding a-binding)
+    (match a-binding
+      [(struct primitive-env:binding:constant (_ _ _))
+       (make-binding:defined (primitive-env:binding-id a-binding))]
+      [(struct primitive-env:binding:function (_ _ _ _ _ _))
+       (make-binding:primitive (primitive-env:binding-id a-binding))]))
+
+  (foldl (lambda (k env)
+           (env-extend env (translate-primitive-binding
+                            (primitive-env:env-lookup a-primitive-env k))))
+         empty-env
+         (primitive-env:env-keys a-primitive-env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define (cps-program a-program 
+                     #:pinfo (pinfo (primitive-pinfo:get-base-pinfo)))
+  (let* ([pinfo (primitive-pinfo:program-analyze a-program pinfo)]
+         [env (translate-primitive-env 
+               (primitive-pinfo:pinfo-env pinfo))])
+
+    ;; fixme: handle definitions!
+    (map (lambda (e) 
+           (cps-expression e env))
+         a-program)))
+
+
+#;(define (cps-definition a-defn an-env)
   ...)
 
-#;(define (cps-definition a-defn an-env a-pinfo)
-  ...)
 
 ;; cps-expression: expr env -> expr
 ;; Translates an expression into CPS form.
-(define (cps-expression an-expr an-env a-pinfo)
+(define (cps-expression an-expr an-env)
   (match an-expr
 
     [(list 'local [list defns ...] body)
-     'fixme]
+     (cps-local-expression defns body an-env)]
     
     [(list 'cond [list questions answers] ... [list 'else answer-last])
-     (cps-expression (desugar-cond an-expr) an-env a-pinfo)]
+     (cps-expression (desugar-cond an-expr) an-env)]
     
     [(list 'cond [list questions answers] ... [list question-last answer-last])
-     (cps-expression (desugar-cond an-expr) an-env a-pinfo)]
+     (cps-expression (desugar-cond an-expr) an-env)]
     
     [(list 'if test consequent alternative)
-     (cps-if-expression test consequent alternative an-env a-pinfo)]
+     (cps-if-expression test consequent alternative an-env)]
 
-    
     [(list 'and expr ...)
-     (cps-and-expression expr an-env a-pinfo)]
+     (cps-and-expression expr an-env)]
 
     
     [(list 'or expr ...)
-     (cps-or-expression expr an-env a-pinfo)]
+     (cps-or-expression expr an-env)]
         
     ;; Numbers
     [(? number?)
@@ -56,24 +107,26 @@
     [(? symbol?)
      `(lambda (k)
         (k ,an-expr))]
-
     
     ;; Quoted datum.
     [(list 'quote datum)
      `(lambda (k)
         (k ',an-expr))]
 
-    
     ;; Function call/primitive operation call
-    [(list (? symbol? id) exprs ...)
-     'fixme]))
+    [(list operator-expr operand-exprs ...)
+     (cps-application-expression operator-expr operand-exprs an-env)]))
 
 
+    
+(define (cps-local-expression defns body env)
+  'fixme)
 
-(define (cps-if-expression test consequent alternative env a-pinfo)
-  (let ([cps-test (cps-expression test env a-pinfo)]
-        [cps-consequent (cps-expression consequent env a-pinfo)]
-        [cps-alternative (cps-expression alternative env a-pinfo)])
+
+(define (cps-if-expression test consequent alternative env)
+  (let ([cps-test (cps-expression test env)]
+        [cps-consequent (cps-expression consequent env)]
+        [cps-alternative (cps-expression alternative env)])
     `(lambda (k)
        (,cps-test (lambda (test-val)
                     (if test-val
@@ -81,8 +134,8 @@
                         (,cps-alternative k)))))))
 
 
-(define (cps-and-expression conjuncts env a-pinfo)
-  (let ([cps-conjuncts (map (lambda (e) (cps-expression e env a-pinfo))
+(define (cps-and-expression conjuncts env)
+  (let ([cps-conjuncts (map (lambda (e) (cps-expression e env))
                             conjuncts)])
     (cond [(empty? cps-conjuncts)
            `(lambda (k)
@@ -101,8 +154,8 @@
                           v))))]))])))
 
 
-(define (cps-or-expression disjuncts env a-pinfo)
-  (let ([cps-disjuncts (map (lambda (e) (cps-expression e env a-pinfo))
+(define (cps-or-expression disjuncts env)
+  (let ([cps-disjuncts (map (lambda (e) (cps-expression e env))
                             disjuncts)])
     (let loop ([cps-disjuncts cps-disjuncts])
       (cond
@@ -114,6 +167,28 @@
             (,(first cps-disjuncts) 
              (lambda (v)
                (if v v (,(loop (rest cps-disjuncts)) k)))))]))))
+
+
+
+
+(define (cps-application-expression operator-expr operand-exprs env)
+  (let ([cps-operator (cps-expression operator-expr env)]
+        [cps-operands (map (lambda (e) (cps-expression e env))
+                           operand-exprs)])
+    (cond
+      [(symbol? operator-expr)
+       (let ([operator-binding (match (env-lookup env operator-expr))])
+         (match operator-binding
+           ['#f
+            (error 'cps-application "Unknown operator: ~s" operator-expr)]
+           
+           [(struct binding:primitive (id))
+            'fixme]
+           
+           [(struct binding:defined (id))            
+            'fixme]))])))
+
+
 
 
 
@@ -144,3 +219,6 @@
                ,(first answers)
                ,(loop (rest questions)
                       (rest answers)))]))]))
+
+
+

@@ -47,7 +47,16 @@
   (match an-env
     [(struct env (bindings))
      (hash-ref (env-bindings an-env) name #f)]))
-               
+       
+
+;; env-keys: env -> (listof symbol)
+;; Produces the keys in the environment.
+(define (env-keys an-env)
+  (match an-env
+    [(struct env (bindings))
+     (for/list ([k (in-hash-keys bindings)])
+       k)]))
+
 
 
 
@@ -82,12 +91,14 @@
                                      [var-arity? boolean?]
                                      [java-string string?]
                                      [permissions (listof permission?)])]
-
+ [binding-id (binding? . -> . symbol?)]
+ 
  
  [struct env ([bindings (listof binding?)])]
  [empty-env env?]
  [env-extend (env? binding? . -> . env?)]
  [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
+ [env-keys (env? . -> . (listof symbol?))]
  
  [env-extend-constant (env? symbol? string? . -> . env?)]
  [env-extend-function (env? symbol? (or/c false/c path?) number? boolean? string? . -> . env?)])
