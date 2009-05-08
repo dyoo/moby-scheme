@@ -3,16 +3,15 @@
 
 <script src="cheney-test.js"></script>
 <script language="javascript">
-function identity(x) { return x; }
 
 // User functions should be in CPS form.
 function fact(n, k) {
   if (n == 0) {
-      return applyContinuation(k, 1);
+      applyContinuation(k, 1);
   } else {
       var k1 = makeContinuation(
-                 function(val) { return applyContinuation(k, val * n); });
-      return applyContinuation(function(val) {return fact(val, k1); },
+                 function(val) { applyContinuation(k, val * n); });
+      applyContinuation(function(val) { fact(val, k1); },
                                n-1);
   }
 }
@@ -22,8 +21,8 @@ function sum(n, k) {
       return applyContinuation(k, 0);
   } else {
       var k1 = makeContinuation(
-                 function(val) { return applyContinuation(k, val + n); });
-      return applyContinuation(function(val) { return sum(val, k1); },
+                 function(val) { applyContinuation(k, val + n); });
+      applyContinuation(function(val) { sum(val, k1); },
                                 n-1);
   }
 }
@@ -34,10 +33,9 @@ function compute(f) {
    var inputElt = document.getElementById('input');
    var outputElt = document.getElementById('output');
    trampolineThreshold = Number(document.getElementById('trampolineDepth').value);
-
-   var val = startTrampoline(function(arg) { return f(Number(arg), identity)},
-                             inputElt.value);
-   outputElt.value = val.toString();
+   var assignToOutputElt = function(val) { outputElt.value = val.toString(); };
+   startTrampoline(function(arg) { f(Number(arg), assignToOutputElt)},
+                   inputElt.value);
 }
 </script>
 </head>
@@ -47,7 +45,7 @@ function compute(f) {
 <form>
   <div>Trampoline depth: <input type="text" id="trampolineDepth" value="10"></div>
 
-  <div>f <input type="text" id="input" value="3"></div>
+  <div>f <input type="text" id="input" value="50"></div>
   <div>Output: <input type="text" id="output" value="??"></div>
   <input type="button" value="Compute Factorial" onClick="compute(fact)">
   <input type="button" value="Compute Sum" onClick="compute(sum)">

@@ -11,7 +11,7 @@ function Bounce(continuation, arg) {
 
     
     
-// startTrampoline: continuation arg ->  a continuation around.
+// startTrampoline: continuation arg ->  void
 // If we come out with a value, return it.  Otherwise, bounce off the
 // trampoline and continue working.
 //
@@ -22,8 +22,8 @@ function startTrampoline(aContinuation, arg) {
     currentDepth = 0;
     while(true) {
         try {
-            var lastValue = applyContinuation(currentBouncing, currentArg);
-            return lastValue;
+            applyContinuation(currentBouncing, currentArg);
+            break;
         } catch (e) {
             if (e instanceof Bounce) {
 		currentBouncing = e.continuation;
@@ -42,10 +42,10 @@ function applyContinuation(aContinuation, arg) {
     // Otherwise, just apply and continue.
     currentDepth = currentDepth + 1;
     if (currentDepth < trampolineThreshold) {
-	console.debug("not bouncing");
-	return aContinuation.apply(null, [arg]);
+//	console.debug("not bouncing");
+	aContinuation.apply(null, [arg]);
     } else {
-	console.log("bouncing");
+//	console.log("bouncing");
 	throw new Bounce(aContinuation, arg);
     }
 }
