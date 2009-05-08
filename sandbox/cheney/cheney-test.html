@@ -12,7 +12,8 @@ function fact(n, k) {
   } else {
       var k1 = makeContinuation(
                  function(val) { return applyContinuation(k, val * n); });
-      return fact(n - 1, k1);
+      return applyContinuation(function(val) {return fact(val, k1); },
+                               n-1);
   }
 }
 
@@ -22,7 +23,8 @@ function sum(n, k) {
   } else {
       var k1 = makeContinuation(
                  function(val) { return applyContinuation(k, val + n); });
-      return sum(n - 1, k1);
+      return applyContinuation(function(val) { return sum(val, k1); },
+                                n-1);
   }
 }
 
