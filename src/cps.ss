@@ -4,6 +4,7 @@
          (prefix-in primitive-pinfo: "pinfo.ss")
          (prefix-in primitive-env: "env.ss"))
 
+
 ;; CPSing intermediate-level programs
 
 
@@ -48,16 +49,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define (cps-program a-program 
-                     #:pinfo (pinfo (primitive-pinfo:get-base-pinfo)))
-  (let* ([pinfo (primitive-pinfo:program-analyze a-program pinfo)]
-         [env (translate-primitive-env 
-               (primitive-pinfo:pinfo-env pinfo))])
-
-    ;; fixme: handle definitions!
-    (map (lambda (e) 
-           (cps-expression e env))
-         a-program)))
+(define (cps-program a-program (env (translate-primitive-env 
+                                     (primitive-pinfo:pinfo-env
+                                      (primitive-pinfo:get-base-pinfo)))))
+  ;; fixme: handle definitions!
+  (map (lambda (e) 
+         (cps-expression e env))
+       a-program))
 
 
 #;(define (cps-definition a-defn an-env)
@@ -177,14 +175,17 @@
                            operand-exprs)])
     (cond
       [(symbol? operator-expr)
-       (let ([operator-binding (match (env-lookup env operator-expr))])
+       (let ([operator-binding (env-lookup env operator-expr)])
          (match operator-binding
            ['#f
             (error 'cps-application "Unknown operator: ~s" operator-expr)]
            
            [(struct binding:primitive (id))
-            'fixme]
-           
+            `(lambda (k)
+               ,(let loop ()
+                  ;; fixme: not done yet.
+                  `(k (,operator-expr))))]
+
            [(struct binding:defined (id))            
             'fixme]))])))
 
