@@ -168,6 +168,7 @@
 
 
 
+  
 
 (define (cps-application-expression operator-expr operand-exprs env)
   (let ([cps-operator (cps-expression operator-expr env)]
@@ -182,12 +183,25 @@
            
            [(struct binding:primitive (id))
             `(lambda (k)
-               ,(let loop ()
-                  ;; fixme: not done yet.
-                  `(k (,operator-expr))))]
-
+               ,(let loop ([i 0]
+                           [cps-operands cps-operands]
+                           [args/rev empty])
+                  (cond
+                    [(empty? cps-operands)
+                     `(k (,operator-expr ,@(reverse args/rev)))]
+                    [else
+                     (let ([arg (string->symbol
+                                 (string-append "_" (number->string i)))])
+                       `(,(first cps-operands)
+                         (lambda (,arg)
+                           ,(loop (add1 i) 
+                                  (rest cps-operands)
+                                  (cons arg args/rev)))))])))]
+           
            [(struct binding:defined (id))            
-            'fixme]))])))
+            'fixme]))]
+      [else
+       'fixme])))
 
 
 
