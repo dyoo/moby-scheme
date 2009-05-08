@@ -2,7 +2,8 @@
 
 var trampolineThreshold = 3;
 var currentDepth = 0;
-
+var currentContinuation;
+var currentArg;
 
 // startTrampoline: continuation arg ->  void
 // If we come out with a value, return it.  Otherwise, bounce off the
@@ -10,8 +11,8 @@ var currentDepth = 0;
 //
 // WARNING: startTrampoline is NOT reentrant!
 function startTrampoline(aContinuation, arg) {
-    setTimeout(function() { currentDepth = 0; applyContinuation(aContinuation, arg); }, 
-               0);
+    currentDepth = 0; 
+    applyContinuation(aContinuation, arg);
 }
 
 
@@ -21,17 +22,34 @@ function applyContinuation(aContinuation, arg) {
     // Otherwise, just apply and continue.
     currentDepth = currentDepth + 1;
     if (currentDepth < trampolineThreshold) {
-//	console.debug("not bouncing");
-	aContinuation.apply(null, [arg]);
+	aContinuation.restart(arg);
     } else {
-//	console.log("bouncing");
-	setTimeout(function() { currentDepth = 0; aContinuation.apply(null, [arg]) },
-                   0);
+	currentContinuation = aContinuation;
+	currentArg = arg;
+	setTimeout(continueApplication, 0);
     }
 }
 
+function continueApplication() {
+    currentDepth = 0;
+    currentContinuation.restart(currentArg);
+}
 
-function makeContinuation(f) {
-  // TODO: we may want a separate continuation object.
-  return f;
+
+
+function Continuation(f, env) {
+    this.f = f;
+    this.env = env;
+}
+
+
+// Continuation.restart: X -> void
+Continuation.prototype.restart = function(arg) {
+    this.f.apply(null, [arg].concat([this.env]));
+}
+
+
+// makeContinuation: (X env -> void) env -> Continuation
+function makeContinuation(f, env) {
+    return new Continuation(f, env);
 }

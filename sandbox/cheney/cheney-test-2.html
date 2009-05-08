@@ -9,24 +9,40 @@ function fact(n, k) {
   if (n == 0) {
       applyContinuation(k, 1);
   } else {
-      var k1 = makeContinuation(
-                 function(val) { applyContinuation(k, val * n); });
-      applyContinuation(function(val) { fact(val, k1); },
-                               n-1);
+     // n * fact(n-1)
+      var k1 = makeContinuation(fact_lift_1, { k: k, n: n });
+      var k2 = makeContinuation(fact_lift_2, { k1: k1 });
+      applyContinuation(k2, n-1);
   }
 }
+
+function fact_lift_1(val, env) {
+  applyContinuation(env.k, val * env.n);
+}
+
+function fact_lift_2(val, env) {
+  fact(val, env.k1);
+}
+
 
 function sum(n, k) {
   if (n == 0) {
-      return applyContinuation(k, 0);
+      applyContinuation(k, 0);
   } else {
-      var k1 = makeContinuation(
-                 function(val) { applyContinuation(k, val + n); });
-      applyContinuation(function(val) { sum(val, k1); },
-                                n-1);
+     // n * fact(n-1)
+      var k1 = makeContinuation(sum_lift_1, { k: k, n: n });
+      var k2 = makeContinuation(sum_lift_2, { k1: k1 });
+      applyContinuation(k2, n-1);
   }
 }
 
+function sum_lift_1(val, env) {
+  applyContinuation(env.k, val + env.n);
+}
+
+function sum_lift_2(val, env) {
+  sum(val, env.k1);
+}
 
 
 function compute(f) {
@@ -35,8 +51,12 @@ function compute(f) {
    outputElt.value = "Computing...";
    var d = new Date().getTime();
    trampolineThreshold = Number(document.getElementById('trampolineDepth').value);
-   var assignToOutputElt = function(val) { outputElt.value = val.toString() + " (computed in " + ((new Date()).getTime() - d) + " milliseconds)"; };
-   startTrampoline(function(arg) { f(Number(arg), assignToOutputElt)},
+   var assignToOutputElt = function(val, env) {
+       outputElt.value = (val.toString() + 
+                          " (computed in " + ((new Date()).getTime() - d) + " milliseconds)");
+   };
+   startTrampoline(makeContinuation(function(arg, env) { 
+                      f(Number(arg), makeContinuation(assignToOutputElt, {}))}),
                    inputElt.value);
 }
 </script>
