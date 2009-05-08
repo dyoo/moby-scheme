@@ -42,10 +42,10 @@ function applyContinuation(aContinuation, arg) {
     // Otherwise, just apply and continue.
     currentDepth = currentDepth + 1;
     if (currentDepth < trampolineThreshold) {
-//	console.debug("not bouncing");
+	console.debug("not bouncing");
 	return aContinuation.apply(null, [arg]);
     } else {
-//	console.log("bouncing");
+	console.log("bouncing");
 	throw new Bounce(aContinuation, arg);
     }
 }

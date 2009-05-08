@@ -33,6 +33,7 @@ function sum(n, k) {
 function compute(f) {
    var inputElt = document.getElementById('input');
    var outputElt = document.getElementById('output');
+   trampolineThreshold = Number(document.getElementById('trampolineDepth').value);
 
    var val = startTrampoline(function(arg) { return f(Number(arg), identity)},
                              inputElt.value);
@@ -44,7 +45,9 @@ function compute(f) {
 
 
 <form>
-  <div>Factorial <input type="text" id="input" value="3"></div>
+  <div>Trampoline depth: <input type="text" id="trampolineDepth" value="10"></div>
+
+  <div>f <input type="text" id="input" value="3"></div>
   <div>Output: <input type="text" id="output" value="??"></div>
   <input type="button" value="Compute Factorial" onClick="compute(fact)">
   <input type="button" value="Compute Sum" onClick="compute(sum)">
