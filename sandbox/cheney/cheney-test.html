@@ -1,0 +1,40 @@
+<html>
+<head>
+
+<script src="cheney-test.js"></script>
+<script language="javascript">
+function identity(x) { return x; }
+
+// User functions should be in CPS form.
+function fact(n, k) {
+  if (n == 0) {
+      return applyContinuation(k, 1);
+  } else {
+      var k1 = makeContinuation(
+                 function(val) { return applyContinuation(k, val * n); });
+      return fact(n - 1, k1);
+  }
+}
+
+function compute() {
+   var inputElt = document.getElementById('input');
+   var outputElt = document.getElementById('output');
+
+   var val = startTrampoline
+    (function(arg) { return fact(Number(arg), identity)},
+     inputElt.value);
+   outputElt.value = val.toString();
+}
+</script>
+</head>
+<body>
+
+
+<form>
+  <div>Factorial <input type="text" id="input" value="3"></div>
+  <div>Output: <input type="text" id="output" value="??"></div>
+  <input type="button" value="Compute" onClick="compute()">
+</form>
+
+</body>
+</html>
