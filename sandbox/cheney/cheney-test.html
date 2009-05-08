@@ -16,13 +16,24 @@ function fact(n, k) {
   }
 }
 
-function compute() {
+function sum(n, k) {
+  if (n == 0) {
+      return applyContinuation(k, 0);
+  } else {
+      var k1 = makeContinuation(
+                 function(val) { return applyContinuation(k, val + n); });
+      return sum(n - 1, k1);
+  }
+}
+
+
+
+function compute(f) {
    var inputElt = document.getElementById('input');
    var outputElt = document.getElementById('output');
 
-   var val = startTrampoline
-    (function(arg) { return fact(Number(arg), identity)},
-     inputElt.value);
+   var val = startTrampoline(function(arg) { return f(Number(arg), identity)},
+                             inputElt.value);
    outputElt.value = val.toString();
 }
 </script>
@@ -33,7 +44,8 @@ function compute() {
 <form>
   <div>Factorial <input type="text" id="input" value="3"></div>
   <div>Output: <input type="text" id="output" value="??"></div>
-  <input type="button" value="Compute" onClick="compute()">
+  <input type="button" value="Compute Factorial" onClick="compute(fact)">
+  <input type="button" value="Compute Sum" onClick="compute(sum)">
 </form>
 
 </body>
