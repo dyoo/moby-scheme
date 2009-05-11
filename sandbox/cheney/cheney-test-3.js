@@ -295,7 +295,8 @@ function performanceTest(label, driver, f) {
 	    driver(f, inputElt.value, threshold, assignToOutputElt);
 	}
     }
-    outputElt.innerHTML = (outputElt.innerHTML + "<br>Performance test of " + label);
+    outputElt.innerHTML = (outputElt.innerHTML + "<br>Performance test of " + label + 
+			   " (n =" + inputElt.value + ")");
     outputElt.innerHTML = (outputElt.innerHTML + "<br/>threshold time(ms)");     
     measure(1, 1);
 }
