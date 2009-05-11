@@ -47,7 +47,7 @@ var usingException = {};
 	currentDepth = currentDepth + 1;
 	if (currentDepth < trampolineThreshold) {
 	    //	console.debug("not bouncing");
-	    aContinuation.apply(null, [arg]);
+	    aContinuation.restart(arg);
 	} else {
 	    //	console.log("bouncing");
 	    throw new Bounce(aContinuation, arg);
@@ -55,11 +55,22 @@ var usingException = {};
     }
 
 
-    function makeContinuation(f) {
-	// TODO: we may want a separate continuation object.
-	return f;
+    function Continuation(f, env) {
+	this.f = f;
+	this.env = env;
     }
 
+
+    // Continuation.restart: X -> void
+    Continuation.prototype.restart = function(arg) {
+	this.f.apply(null, [arg].concat([this.env]));
+    }
+
+
+    // makeContinuation: (X env -> void) env -> Continuation
+    function makeContinuation(f, env) {
+	return new Continuation(f, env);
+    }
 
 
     usingException.startTrampoline = startTrampoline;
