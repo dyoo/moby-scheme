@@ -45,7 +45,7 @@ var usingException = {};
 	// If the depth goes beyond the threshold, throw an exception.
 	// Otherwise, just apply and continue.
 	currentDepth = currentDepth + 1;
-	if (currentDepth < trampolineThreshold) {
+	if (currentDepth <= trampolineThreshold) {
 	    //	console.debug("not bouncing");
 	    aContinuation.restart(arg);
 	} else {
@@ -223,9 +223,9 @@ function sumLoop(n, k) {
 function exceptionDriver(f, inputValue, threshold, withResultTo) {
     makeContinuation = usingException.makeContinuation;
     applyContinuation = usingException.applyContinuation;
-    usingException.threshold = threshold;
-    startTrampoline = usingException.startTrampoline;
-    startTrampoline(makeContinuation(function(arg, env) { 
+
+    usingException.setThreshold(threshold);
+    usingException.startTrampoline(makeContinuation(function(arg, env) { 
         f(Number(arg), makeContinuation(withResultTo, {}))}),
                     inputValue);
 }
@@ -233,10 +233,9 @@ function exceptionDriver(f, inputValue, threshold, withResultTo) {
 function timeoutDriver(f, inputValue, threshold, withResultTo) {
     makeContinuation = usingTimeout.makeContinuation;
     applyContinuation = usingTimeout.applyContinuation;
-    usingTimeout.threshold = threshold;
-    startTrampoline = usingTimeout.startTrampoline;
 
-    startTrampoline(makeContinuation(function(arg, env) { 
+    usingTimeout.setThreshold(threshold);
+    usingTimeout.startTrampoline(makeContinuation(function(arg, env) { 
         f(Number(arg), makeContinuation(withResultTo, {}))}),
                     inputValue);
 }
@@ -270,13 +269,14 @@ function performanceTest(label, driver, f) {
     // maximum threshold
     var MAX_THRESHOLD = new Number(document.getElementById('trampolineDepth').value);
     // Number of trials per threshold
-    var MAX_TRIALS = 10;
+    var MAX_TRIALS = 5;
+    var THRESHOLD_INCREMENT = 10;
 
 
     function measure(threshold, nTrial) {
 
 	if (nTrial > MAX_TRIALS) {
-	    measure(threshold+1, 0);
+	    measure(threshold+THRESHOLD_INCREMENT, 0);
 	    return;
 	}
 	else if (threshold > MAX_THRESHOLD) {
@@ -295,6 +295,7 @@ function performanceTest(label, driver, f) {
 	    driver(f, inputElt.value, threshold, assignToOutputElt);
 	}
     }
+    outputElt.innerHTML = (outputElt.innerHTML + "<br>Performance test of " + label);
     outputElt.innerHTML = (outputElt.innerHTML + "<br/>threshold time(ms)");     
     measure(1, 1);
 }
