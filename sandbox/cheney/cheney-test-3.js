@@ -191,7 +191,7 @@ function sum_lift_2(val, env) {
 
 //////////////////////////////////////////////////////////////////////
 function sumIter(n, k) {
-    sumIter(n, 0, k);
+    _sumIter(n, 0, k);
 }
 
 function _sumIter(n, acc, k) {
@@ -249,7 +249,7 @@ function plainDriver(f, inputValue, threshold, withResultTo) {
 function compute(driver, f) {
     var inputElt = document.getElementById('input');
     var outputElt = document.getElementById('output');
-    outputElt.innerHTML = "Computing...";
+
     var d = new Date().getTime();
     var threshold = Number(document.getElementById('trampolineDepth').value);
     var assignToOutputElt = function(val, env) {	
