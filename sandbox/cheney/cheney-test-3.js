@@ -250,12 +250,51 @@ function compute(driver, f) {
     var inputElt = document.getElementById('input');
     var outputElt = document.getElementById('output');
 
-    var d = new Date().getTime();
+    var startTime = new Date().getTime();
     var threshold = Number(document.getElementById('trampolineDepth').value);
-    var assignToOutputElt = function(val, env) {	
+    var assignToOutputElt = function(val, env) {
+	var endTime = (new Date()).getTime();
 	outputElt.innerHTML = outputElt.innerHTML + "<br>" + (val.toString() + 
-                               " (computed in " + ((new Date()).getTime() - d) 
+                               " (computed in " + (endTime - startTime) 
 			       + " milliseconds)");
     };
     driver(f, inputElt.value, threshold, assignToOutputElt);
+}
+
+
+// Exercise and produce table output.
+function performanceTest(label, driver, f) {
+    var inputElt = document.getElementById('input');
+    var outputElt = document.getElementById('output');
+
+    // maximum threshold
+    var MAX_THRESHOLD = new Number(document.getElementById('trampolineDepth').value);
+    // Number of trials per threshold
+    var MAX_TRIALS = 10;
+
+
+    function measure(threshold, nTrial) {
+
+	if (nTrial > MAX_TRIALS) {
+	    measure(threshold+1, 0);
+	    return;
+	}
+	else if (threshold > MAX_THRESHOLD) {
+	    return;
+	} else {
+	    var startTime = new Date().getTime();
+	    document.getElementById('trampolineDepth').value = threshold;
+	    var assignToOutputElt = function(val, env) {
+		var endTime = (new Date()).getTime();
+		outputElt.innerHTML = (outputElt.innerHTML + "<br/>" + 
+				       threshold + " " + 
+				       (endTime - startTime));
+		setTimeout(function() { measure(threshold, nTrial+1) },
+			   0);
+	    };
+	    driver(f, inputElt.value, threshold, assignToOutputElt);
+	}
+    }
+    outputElt.innerHTML = (outputElt.innerHTML + "<br/>threshold time(ms)");     
+    measure(1, 1);
 }

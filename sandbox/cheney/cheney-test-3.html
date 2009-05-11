@@ -9,7 +9,7 @@
   <div>Trampoline depth: <input type="text" id="trampolineDepth" value="10"></div>
   <div>f <input type="text" id="input" value="5000"></div>
   
-
+  <h1>Single test</h1>
   <input type="button" value="sumUsingException"
          onClick="compute(exceptionDriver, sum)">
 
@@ -24,6 +24,19 @@
 
   <input type="button" value="sumLoop" 
          onClick="compute(plainDriver, sumLoop)">
+  <br>
+
+  <h1>Performance trial</h1>
+  <input type="button" value="sumUsingException"
+         onClick="performanceTest('sumUsingException', exceptionDriver, sum)">
+  <input type="button" value="sumUsingTimeout"
+         onClick="performanceTest('sumUsingTimeout', timeoutDriver, sum)">
+  <input type="button" value="sumIterUsingException"
+         onClick="performanceTest('sumIterUsingException', exceptionDriver, sumIter)">
+  <input type="button" value="sumIterUsingTimeout"
+         onClick="performanceTest('sumIterUsinTimeout', timeoutDriver, sumIter)">
+  <input type="button" value="sumLoop"
+         onClick="performanceTest('sumLoop', plainDriver, sumLoop)">
 
   <hr>
   Output: <div id="output"></div>
