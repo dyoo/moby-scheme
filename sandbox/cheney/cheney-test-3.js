@@ -163,13 +163,14 @@ var usingException = {};
 //////////////////////////////////////////////////////////////////////
 
 
-    var makeContinuation;
-    var applyContinuation;
-    var startTrampoline;
+var makeContinuation;
+var applyContinuation;
+var startTrampoline;
 
 // User functions should be in CPS form, and all functions should be
 // lifted to the toplevel.
 
+//////////////////////////////////////////////////////////////////////
 function sum(n, k) {
   if (n == 0) {
       applyContinuation(k, 0);
@@ -188,40 +189,98 @@ function sum_lift_2(val, env) {
   sum(val, env.k1);
 }
 
+//////////////////////////////////////////////////////////////////////
+function sumIter(n, acc, k) {
+    if (n == 0) {
+	applyContinuation(k, acc);
+    } else {
+	applyContinuation(
+	    makeContinuation(sumIter_lift_1, {n:n, acc:acc, k:k}));
+    }
+}
+
+function sumIter_lift_1(val, env) {
+    sumIter(env.n-1, env.acc+env.n, env.k)
+}
+
+    
+//////////////////////////////////////////////////////////////////////
+function sumLoop(n, k) {
+  var result = 0;
+  for(var i = 1; i <= n; i++) {
+    result += i;
+  }
+  k(result);
+}
+
+//////////////////////////////////////////////////////////////////////
 
   
-function testUsingException(inputValue, withResultTo) {
+function exceptionDriver(f, inputValue, threshold, withResultTo) {
     makeContinuation = usingException.makeContinuation;
     applyContinuation = usingException.applyContinuation;
+    usingException.threshold = threshold;
     startTrampoline = usingException.startTrampoline;
     startTrampoline(makeContinuation(function(arg, env) { 
-        sum(Number(arg), makeContinuation(withResultTo, {}))}),
+        f(Number(arg), makeContinuation(withResultTo, {}))}),
                     inputValue);
 }
+
+function timeoutDriver(f, inputValue, threshold, withResultTo) {
+    makeContinuation = usingTimeout.makeContinuation;
+    applyContinuation = usingTimeout.applyContinuation;
+    usingTimeout.threshold = threshold;
+    startTrampoline = usingTimeout.startTrampoline;
+
+    startTrampoline(makeContinuation(function(arg, env) { 
+        f(Number(arg), makeContinuation(withResultTo, {}))}),
+                    inputValue);
+}
+
 
 
 
 function compute() {
     var inputElt = document.getElementById('input');
     var outputElt = document.getElementById('output');
-    outputElt.value = "Computing...";
+    outputElt.innerHTML = "Computing...";
     var d = new Date().getTime();
-    trampolineThreshold = Number(document.getElementById('trampolineDepth').value);
-    var assignToOutputElt = function(val, env) {
-	outputElt.value = (val.toString() + 
-                           " (computed in " + ((new Date()).getTime() - d) + " milliseconds)");
+    var threshold = Number(document.getElementById('trampolineDepth').value);
+    var assignToOutputElt = function(val, env) {	
+	outputElt.innerHTML = outputElt.innerHTML + "<br>" + (val.toString() + 
+                               " (computed in " + ((new Date()).getTime() - d) 
+			       + " milliseconds)");
     };
-    testUsingException(inputElt.value, assignToOutputElt);
+    exceptionDriver(function(n, k) {sumIter(n, 0, k);}, 
+		       inputElt.value, threshold, assignToOutputElt);
 }
 
 
 
-function sumLoop(n) {
-  var result = 0;
-  for(var i = 1; i <= n; i++) {
-    result += i;
-  }
+function exerciseWithSumException(input, threshold, assignToOutput) {
+    exceptionDriver(function(n, k) {sum(n, k);}, 
+		    input, 
+		    threshold,
+		    assignToOutput);    
 }
 
-function performanceTest() {
+function exerciseWithSumTimeout(input, threshold, assignToOutput) {
+    timeoutDriver(function(n, k) {sum(n, k);}, 
+		  input,
+		  threshold, 
+		  assignToOutput);    
+}
+
+function exerciseWithSumIterException(input, threshold, assignToOutput) {
+    exceptionDriver(function(n, k) {sumIter(n, 0, k);}, 
+		    input,
+		    threshold,
+		    assignToOutput);    
+}
+
+function exerciseWithSumIterTimeout(input, threshold, assignToOutput) {
+    timeoutDriver(function(n, k) {sumIter(n, 0, k);}, 
+		  input,
+		  threshold,
+		  assignToOutput);
 }

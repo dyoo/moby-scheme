@@ -8,10 +8,16 @@
 
   <div>Trampoline depth: <input type="text" id="trampolineDepth" value="10"></div>
   <div>f <input type="text" id="input" value="50000"></div>
-  <div>Output: <input type="text" id="output" value="??" size="80"></div>
+  
 
-  <input type="button" value="Compute Sum" onClick="compute()">
-  <input type="button" value="Performance test" onClick="performanceTest()">
+  <input type="button" value="sumUsingException" onClick="compute()">
+  <input type="button" value="sumUsingTimeout" onClick="compute()">
+  <input type="button" value="sumIterUsingException" onClick="compute()">
+  <input type="button" value="sumIterUsingTimeout" onClick="compute()">
+  <input type="button" value="sumLoop" onClick="compute()">
+
+  <hr>
+  Output: <div id="output"></div>
 
 </body>
 </html>
