@@ -1,8 +1,81 @@
 // Test of possible Cheney on the MTA for tail calls.
 
-usingTimeout = {};
-
+var usingException = {};
 (function() {
+    // Test of possible Cheney on the MTA for tail calls.
+
+    var trampolineThreshold = 3;
+    var currentDepth = 0;
+
+
+    function Bounce(continuation, arg) {
+	this.continuation = continuation;
+	this.arg = arg;
+    }
+
+    
+    
+    // startTrampoline: continuation arg ->  void
+    // If we come out with a value, return it.  Otherwise, bounce off the
+    // trampoline and continue working.
+    //
+    // WARNING: startTrampoline is NOT reentrant!
+    function startTrampoline(aContinuation, arg) {
+	var currentBouncing = aContinuation;
+	var currentArg = arg;
+	currentDepth = 0;
+	while(true) {
+            try {
+		applyContinuation(currentBouncing, currentArg);
+		break;
+            } catch (e) {
+		if (e instanceof Bounce) {
+		    currentBouncing = e.continuation;
+		    currentArg = e.arg;
+                    currentDepth = 0;
+		} else {
+		    throw e;
+		}
+            }
+	}
+    }
+
+    // Apply a continuation.
+    function applyContinuation(aContinuation, arg) {
+	// If the depth goes beyond the threshold, throw an exception.
+	// Otherwise, just apply and continue.
+	currentDepth = currentDepth + 1;
+	if (currentDepth < trampolineThreshold) {
+	    //	console.debug("not bouncing");
+	    aContinuation.apply(null, [arg]);
+	} else {
+	    //	console.log("bouncing");
+	    throw new Bounce(aContinuation, arg);
+	}
+    }
+
+
+    function makeContinuation(f) {
+	// TODO: we may want a separate continuation object.
+	return f;
+    }
+
+
+
+    usingException.startTrampoline = startTrampoline;
+    usingException.applyContinuation = applyContinuation;
+    usingException.makeContinuation = makeContinuation;
+    usingException.setThreshold = function(n) {
+	trampolineThreshold = n;
+    };
+    
+})();    
+    
+    
+    //////////////////////////////////////////////////////////////////////
+    var usingTimeout = {};
+    
+    (function() {
 
     var trampolineThreshold = 3;
     var currentDepth = 0;
@@ -21,7 +94,7 @@ usingTimeout = {};
 
 
     // Apply a continuation.
-    function applyContinuation = function(aContinuation, arg) {
+    function applyContinuation(aContinuation, arg) {
 	// If the depth goes beyond the threshold, set up a timeout
 	// Otherwise, just apply and continue.
 	currentDepth = currentDepth + 1;
@@ -65,3 +138,79 @@ usingTimeout = {};
 	trampolineThreshold = n;
     };
 })();
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+
+    var makeContinuation;
+    var applyContinuation;
+    var startTrampoline;
+
+// User functions should be in CPS form, and all functions should be
+// lifted to the toplevel.
+
+function sum(n, k) {
+  if (n == 0) {
+      applyContinuation(k, 0);
+  } else {
+      var k1 = makeContinuation(sum_lift_1, { k: k, n: n });
+      var k2 = makeContinuation(sum_lift_2, { k1: k1 });
+      applyContinuation(k2, n-1);
+  }
+}
+
+function sum_lift_1(val, env) {
+  applyContinuation(env.k, val + env.n);
+}
+
+function sum_lift_2(val, env) {
+  sum(val, env.k1);
+}
+
+
+  
+function testUsingException(inputValue, withResultTo) {
+    makeContinuation = usingException.makeContinuation;
+    applyContinuation = usingException.applyContinuation;
+    startTrampoline = usingException.startTrampoline;
+    startTrampoline(makeContinuation(function(arg, env) { 
+        sum(Number(arg), makeContinuation(withResultTo, {}))}),
+                    inputValue);
+}
+
+
+
+function compute() {
+    var inputElt = document.getElementById('input');
+    var outputElt = document.getElementById('output');
+    outputElt.value = "Computing...";
+    var d = new Date().getTime();
+    trampolineThreshold = Number(document.getElementById('trampolineDepth').value);
+    var assignToOutputElt = function(val, env) {
+	outputElt.value = (val.toString() + 
+                           " (computed in " + ((new Date()).getTime() - d) + " milliseconds)");
+    };
+    testUsingException(inputElt.value, assignToOutputElt);
+}
+
+
+
+function sumLoop(n) {
+  var result = 0;
+  for(var i = 1; i <= n; i++) {
+    result += i;
+  }
+}
+
+function performanceTest() {
+}
