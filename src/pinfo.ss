@@ -5,8 +5,7 @@
          "helpers.ss"
          "permission.ss"
          syntax/modresolve
-         scheme/contract
-         scheme/runtime-path)
+         scheme/contract)
 
 
 
@@ -116,7 +115,7 @@
 
 
 (define (bf name module-path arity vararity? java-string)
-  (make-binding:function name module-path arity vararity? java-string empty))
+  (make-binding:function name module-path arity vararity? java-string empty #t))
 
 
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
@@ -324,17 +323,20 @@
                                (make-binding:function
                                 'on-location-change module-path 1 #f
                                 "org.plt.world.config.Kernel.onLocationChange"
-                                (list PERMISSION:LOCATION))
+                                (list PERMISSION:LOCATION)
+                                #t)
                                
                                (make-binding:function
                                 'on-tilt module-path 1 #f
                                 "org.plt.world.config.Kernel.onTilt"
-                                (list PERMISSION:TILT))
+                                (list PERMISSION:TILT)
+                                #t)
                                
                                (make-binding:function
                                 'on-acceleration module-path 1 #f
                                 "org.plt.world.config.Kernel.onAcceleration"
-                                (list PERMISSION:TILT))
+                                (list PERMISSION:TILT)
+                                #t)
                                
                                (bf 'on-redraw module-path 1 #f "org.plt.world.config.Kernel.onRedraw")
                                (bf 'stop-when module-path 1 #f "org.plt.world.config.Kernel.stopWhen")))))
@@ -413,7 +415,8 @@
           (resolve-module-path '(lib "location.ss" "moby" "stub") #f)]
          [bf (lambda (name module-path arity vararity? java-string)
                (make-binding:function name module-path arity vararity? java-string 
-                                      (list PERMISSION:LOCATION)))])
+                                      (list PERMISSION:LOCATION)
+                                      #t))])
     (make-module-binding 'location
                          module-path
                          (list (bf 'get-latitude module-path 0 #f 
@@ -436,7 +439,8 @@
           (resolve-module-path '(lib "tilt.ss" "moby" "stub") #f)]
          [bf (lambda (name module-path arity vararity? java-string)
                (make-binding:function name module-path arity vararity? java-string
-                                      (list PERMISSION:TILT)))])
+                                      (list PERMISSION:TILT)
+                                      #t))])
     (make-module-binding 'tilt
                          module-path
                          (list (bf 'get-x-acceleration module-path 0 #f 
@@ -483,7 +487,8 @@
                                                       3 
                                                       #f 
                                                       "org.plt.lib.Sms.sendTextMessage"
-                                                      (list PERMISSION:SMS))))))
+                                                      (list PERMISSION:SMS)
+                                                      #t)))))
 
 
 (define net-module
@@ -497,7 +502,8 @@
                                                       1 
                                                       #f 
                                                       "org.plt.lib.Net.getUrl"
-                                                      (list PERMISSION:INTERNET))))))
+                                                      (list PERMISSION:INTERNET)
+                                                      #t)))))
 
 (define parser-module
   (let ([module-path
@@ -510,13 +516,15 @@
                                                       1 
                                                       #f 
                                                       "org.plt.lib.Parser.parseXml"
-                                                      (list))
+                                                      empty
+                                                      #t)
                                (make-binding:function 'split-whitespace
                                                       module-path
                                                       1
                                                       #f
                                                       "org.plt.lib.Parser.splitWhitespace"
-                                                      (list))))))
+                                                      empty
+                                                      #t)))))
 
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.

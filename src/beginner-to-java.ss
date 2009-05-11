@@ -112,9 +112,9 @@
          [munged-arg-ids
           (map identifier->munged-java-identifier args)]
          [new-env 
-          (env-extend env (make-binding:function fun #f (length args) #f
-                                                 (symbol->string munged-fun-id)
-                                                 empty))]
+          (env-extend-function env fun #f (length args) #f
+                               (symbol->string munged-fun-id)
+                               #:primitive? #f)]
          [new-env
           (foldl (lambda (arg-id env) 
                    (env-extend env (make-binding:constant arg-id 
@@ -372,7 +372,7 @@
                (string-join operand-strings ", "))]
       
       [(struct binding:function (name module-path min-arity var-arity? 
-                                      java-string permissions))
+                                      java-string permissions primitive?))
        (unless (>= (length exprs)
                    min-arity)
          (error 'application-expression->java-string
@@ -408,7 +408,7 @@
      (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
     [(struct binding:constant (name java-string permissions))
      java-string]
-    [(struct binding:function (name module-path min-arity var-arity? java-string permissions))
+    [(struct binding:function (name module-path min-arity var-arity? java-string permissions primitive?))
      (cond
        [var-arity?
         (format "(new org.plt.types.Callable() {

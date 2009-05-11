@@ -22,7 +22,8 @@
 
 ;; Function bindings try to record more information.
 (define-struct (binding:function binding) 
-  (name module-path min-arity var-arity? java-string permissions)
+  (name module-path min-arity var-arity? java-string permissions
+        primitive?)
   #:transparent)
 
 
@@ -31,7 +32,7 @@
   (match a-binding
     [(struct binding:constant (name-2 _ _))
      name-2]
-    [(struct binding:function (name-2 _ _ _ _ _))
+    [(struct binding:function (name-2 _ _ _ _ _ _))
      name-2]))
 
 
@@ -69,14 +70,16 @@
 
 ;; env-extend-function: env symbol (or/c module-path #f) number boolean? string? -> env
 ;; Extends the environment with a new function binding
-(define (env-extend-function an-env id module-path min-arity var-arity? java-string)
+(define (env-extend-function an-env id module-path min-arity var-arity? java-string 
+                             #:primitive? (primitive? #t))
   (env-extend an-env
               (make-binding:function id 
                                      module-path
                                      min-arity 
                                      var-arity?
                                      java-string
-                                     empty)))
+                                     empty
+                                     primitive?)))
 
 
 
@@ -90,7 +93,8 @@
                                      [min-arity natural-number/c]
                                      [var-arity? boolean?]
                                      [java-string string?]
-                                     [permissions (listof permission?)])]
+                                     [permissions (listof permission?)]
+                                     [primitive? boolean?])]
  [binding-id (binding? . -> . symbol?)]
  
  
@@ -101,4 +105,6 @@
  [env-keys (env? . -> . (listof symbol?))]
  
  [env-extend-constant (env? symbol? string? . -> . env?)]
- [env-extend-function (env? symbol? (or/c false/c path?) number? boolean? string? . -> . env?)])
+ [env-extend-function ((env? symbol? (or/c false/c path?) number? boolean? string?)
+                       (#:primitive? boolean?)
+                       . ->* . env?)])
