@@ -37,9 +37,12 @@
     (match a-binding
       [(struct primitive-env:binding:constant (_ _ _))
        (make-binding:defined (primitive-env:binding-id a-binding))]
-      [(struct primitive-env:binding:function (_ _ _ _ _ _))
-       (make-binding:primitive (primitive-env:binding-id a-binding))]))
-
+      [(struct primitive-env:binding:function (_ _ _ _ _ _ primitive?))
+       (cond [primitive?
+              (make-binding:primitive (primitive-env:binding-id a-binding))]
+             [else
+              (make-binding:defined (primitive-env:binding-id a-binding))])]))
+  
   (foldl (lambda (k env)
            (env-extend env (translate-primitive-binding
                             (primitive-env:env-lookup a-primitive-env k))))
