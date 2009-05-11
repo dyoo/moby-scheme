@@ -10,11 +10,20 @@
   <div>f <input type="text" id="input" value="50000"></div>
   
 
-  <input type="button" value="sumUsingException" onClick="compute()">
-  <input type="button" value="sumUsingTimeout" onClick="compute()">
-  <input type="button" value="sumIterUsingException" onClick="compute()">
-  <input type="button" value="sumIterUsingTimeout" onClick="compute()">
-  <input type="button" value="sumLoop" onClick="compute()">
+  <input type="button" value="sumUsingException"
+         onClick="compute(exceptionDriver, sum)">
+
+  <input type="button" value="sumUsingTimeout" 
+         onClick="compute(timeoutDriver, sum)">
+
+  <input type="button" value="sumIterUsingException"
+         onClick="compute(exceptionDriver, sumIter)">
+
+  <input type="button" value="sumIterUsingTimeout"
+         onClick="compute(timeoutDriver, sumIter)">
+
+  <input type="button" value="sumLoop" 
+         onClick="compute(plainDriver, sumLoop)">
 
   <hr>
   Output: <div id="output"></div>

@@ -190,17 +190,21 @@ function sum_lift_2(val, env) {
 }
 
 //////////////////////////////////////////////////////////////////////
-function sumIter(n, acc, k) {
+function sumIter(n, k) {
+    sumIter(n, 0, k);
+}
+
+function _sumIter(n, acc, k) {
     if (n == 0) {
 	applyContinuation(k, acc);
     } else {
 	applyContinuation(
-	    makeContinuation(sumIter_lift_1, {n:n, acc:acc, k:k}));
+	    makeContinuation(sumIter_lift_2, {n:n, acc:acc, k:k}));
     }
 }
 
-function sumIter_lift_1(val, env) {
-    sumIter(env.n-1, env.acc+env.n, env.k)
+function sumIter_lift_2(val, env) {
+    _sumIter(env.n-1, env.acc+env.n, env.k)
 }
 
     
@@ -237,10 +241,12 @@ function timeoutDriver(f, inputValue, threshold, withResultTo) {
                     inputValue);
 }
 
+function plainDriver(f, inputValue, threshold, withResultTo) {
+    f(inputValue, withResultTo);
+}
 
 
-
-function compute() {
+function compute(driver, f) {
     var inputElt = document.getElementById('input');
     var outputElt = document.getElementById('output');
     outputElt.innerHTML = "Computing...";
@@ -251,36 +257,5 @@ function compute() {
                                " (computed in " + ((new Date()).getTime() - d) 
 			       + " milliseconds)");
     };
-    exceptionDriver(function(n, k) {sumIter(n, 0, k);}, 
-		       inputElt.value, threshold, assignToOutputElt);
-}
-
-
-
-function exerciseWithSumException(input, threshold, assignToOutput) {
-    exceptionDriver(function(n, k) {sum(n, k);}, 
-		    input, 
-		    threshold,
-		    assignToOutput);    
-}
-
-function exerciseWithSumTimeout(input, threshold, assignToOutput) {
-    timeoutDriver(function(n, k) {sum(n, k);}, 
-		  input,
-		  threshold, 
-		  assignToOutput);    
-}
-
-function exerciseWithSumIterException(input, threshold, assignToOutput) {
-    exceptionDriver(function(n, k) {sumIter(n, 0, k);}, 
-		    input,
-		    threshold,
-		    assignToOutput);    
-}
-
-function exerciseWithSumIterTimeout(input, threshold, assignToOutput) {
-    timeoutDriver(function(n, k) {sumIter(n, 0, k);}, 
-		  input,
-		  threshold,
-		  assignToOutput);
+    driver(f, inputElt.value, threshold, assignToOutputElt);
 }
