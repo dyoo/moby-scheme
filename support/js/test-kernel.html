@@ -500,6 +500,11 @@
 	testCadar : function(){
 		var lst = Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2, Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY))), EMPTY));
 		this.assert(Kernel.equal_question_(Kernel.cadar(lst), FloatPoint.makeInstance(2)));
+	},
+	
+	testCadddr : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY))));
+		this.assert(Kernel.equal_question_(Kernel.cadddr(lst), FloatPoint.makeInstance(4)));
 	}
   }); 
   
