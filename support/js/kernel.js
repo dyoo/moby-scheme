@@ -508,6 +508,10 @@ org.plt = {};
 	return lst.rest().first();
   },
   
+  car : function(lst){
+	return lst.first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };

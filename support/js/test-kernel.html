@@ -515,6 +515,11 @@
 	testCadr : function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY));
 		this.assert(Kernel.equal_question_(Kernel.cadr(lst), FloatPoint.makeInstance(2)));
+	},
+	
+	testCar : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), EMPTY);
+		this.assert(Kernel.equal_question_(Kernel.car(lst), FloatPoint.makeInstance(1)));
 	}
   }); 
   
