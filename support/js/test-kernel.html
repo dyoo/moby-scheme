@@ -42,6 +42,7 @@
   var Logic = org.plt.types.Logic;
   var Cons = org.plt.types.Cons;
   var Empty = org.plt.types.Empty;
+  var EMPTY = Empty.EMPTY;
 	
   new Test.Unit.Runner({
     setup: function() {
@@ -437,6 +438,35 @@
 	testEmpty_question_ : function(){
 		this.assert(Kernel.empty_question_(Empty.EMPTY));
 		this.assert(!Kernel.empty_question_(Cons.makeInstance(Rational.ONE, Empty.EMPTY)));
+	},
+	
+	testReverse : function(){
+		var lst1 = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2),
+					Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY))));
+		var lst2 = Cons.makeInstance(FloatPoint.makeInstance(4), Cons.makeInstance(FloatPoint.makeInstance(3),
+					Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(1), EMPTY))));
+		var lst3 = Kernel.reverse(lst1);
+		while (!lst2.isEmpty()){
+			this.assert(Kernel.equal_question_(lst2.first(), lst3.first()));
+			lst2 = lst2.rest();
+			lst3 = lst3.rest();
+		}
+	},
+	
+	testAppend : function(){
+		
+		var lst1 = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY));
+		var lst2 = Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY));
+		var lst3 = Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), EMPTY));
+		var lst4 = Cons.makeInstance(FloatPoint.makeInstance(7), Cons.makeInstance(FloatPoint.makeInstance(8), EMPTY));
+		
+		var lst6 = Kernel.append(lst1, lst2, [lst3, lst4]);
+	
+		var i;
+		for (i = 1; i < 9; i++){
+			this.assert(Kernel.equal_question_(lst6.first(), FloatPoint.makeInstance(i), []));
+			lst6 = lst6.rest();
+		}
 	}
   }); 
   
