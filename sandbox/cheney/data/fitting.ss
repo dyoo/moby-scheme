@@ -6,12 +6,40 @@
   (for/list ([line (in-lines (open-input-file path))])
     (list->vector (append (map string->number (regexp-split #px"\\s+" line)) (list 1)))))
 
+
 (define sum-using-exception
   (read-data "safari/sumUsingException.txt"))
+
 (define sum-iter-using-exception
   (read-data "safari/sumIterUsingException.txt"))
+
 (define sum-using-timeout
   (read-data "safari/sumUsingTimeout.txt"))
+
+#;(define sum-iter-using-timeout
+  (read-data "safari/sumIterUsingTimeout.txt"))
+
+
+(define (sequence->list a-seq)
+  (for/list ((x a-seq))
+    x))
+
+(define (generate-table data)
+  (let ([ht (make-hash)]
+        [counts (make-hash)])
+    (for ([row data])
+      (let ([key (vector-ref row 0)]
+            [value (vector-ref row 1)])
+        (hash-set! ht  
+                   key 
+                   (+ value (hash-ref ht key 0)))
+        (hash-set! counts key (add1 (hash-ref counts key 0)))))
+    (for/list ([key (sort (sequence->list (in-hash-keys ht)) <)])
+      (vector key (exact->inexact (/ (hash-ref ht key)
+                                     (hash-ref counts key)))))))
+
+
+
 
 ;; Assumption: the function is linear?
 (define (fit-fun number-of-trampolines cost-of-summation-work cost-of-single-trampoline)
