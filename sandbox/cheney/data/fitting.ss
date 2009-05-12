@@ -26,6 +26,13 @@
 (define firefox-sum-iter-using-exception
   (read-data "firefox-3.1/sumIterUsingException.txt"))
 
+(define firefox-sum-using-timeout
+  (read-data "firefox-3.1/sumUsingTimeout.txt"))
+
+(define firefox-sum-iter-using-timeout
+  (read-data "firefox-3.1/sumIterUsingTimeout.txt"))
+
+
 
 
 (define (sequence->list a-seq)
