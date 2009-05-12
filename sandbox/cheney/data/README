@@ -1,0 +1,3 @@
+Measurements made on a Macbook Pro 2.33 Ghz Intel Core 2 Duo, 2GB 667 MHz DDR2 SDRAM.
+
+With the timeout-based approaches, CPU usage is almost zero; it appears that a call to setTimeout(..., 0) does not immediately execute at high priority.
