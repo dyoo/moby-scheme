@@ -266,11 +266,11 @@ function performanceTest(label, driver, f) {
     var inputElt = document.getElementById('input');
     var outputElt = document.getElementById('output');
 
-    // maximum threshold
-    var MAX_THRESHOLD = new Number(document.getElementById('trampolineDepth').value);
+    var MIN_THRESHOLD = new Number(document.getElementById('min_threshold').value);
+    var MAX_THRESHOLD = new Number(document.getElementById('max_threshold').value);
     // Number of trials per threshold
     var MAX_TRIALS = 5;
-    var THRESHOLD_INCREMENT = 10;
+    var THRESHOLD_INCREMENT = new Number(document.getElementById('threshold_increment').value);
 
 
     function measure(threshold, nTrial) {
@@ -296,7 +296,7 @@ function performanceTest(label, driver, f) {
 	}
     }
     outputElt.innerHTML = (outputElt.innerHTML + "<br>Performance test of " + label + 
-			   " (n =" + inputElt.value + ")");
+			   " (n = " + inputElt.value + ")");
     outputElt.innerHTML = (outputElt.innerHTML + "<br/>threshold time(ms)");     
-    measure(1, 1);
+    measure(MIN_THRESHOLD, 1);
 }
