@@ -7,17 +7,25 @@
     (list->vector (append (map string->number (regexp-split #px"\\s+" line)) (list 1)))))
 
 
-(define sum-using-exception
+(define safari-sum-using-exception
   (read-data "safari/sumUsingException.txt"))
 
-(define sum-iter-using-exception
+(define safari-sum-iter-using-exception
   (read-data "safari/sumIterUsingException.txt"))
 
-(define sum-using-timeout
+(define safari-sum-using-timeout
   (read-data "safari/sumUsingTimeout.txt"))
 
-(define sum-iter-using-timeout
+(define safari-sum-iter-using-timeout
   (read-data "safari/sumIterUsingTimeout.txt"))
+
+
+(define firefox-sum-using-exception
+  (read-data "firefox-3.1/sumUsingException.txt"))
+
+(define firefox-sum-iter-using-exception
+  (read-data "firefox-3.1/sumIterUsingException.txt"))
+
 
 
 (define (sequence->list a-seq)
