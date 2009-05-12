@@ -473,6 +473,13 @@
 		var b = FloatPoint.makeInstance(3);
 		this.assert(!Kernel.eq_question_(a, b));
 		this.assert(Kernel.eq_question_(a,a));
+	},
+	
+	testAssq : function(){
+		var lst = Cons.makeInstance(Cons.makeInstance(Rational.ONE, EMPTY), Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY), Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY), EMPTY)));
+		
+		this.assert(Kernel.false_question_(Kernel.assq(FloatPoint.makeInstance(4), lst)));
+		this.assert(!Kernel.assq(Rational.ONE, lst).isEmpty());
 	}
   }); 
   

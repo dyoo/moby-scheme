@@ -470,6 +470,14 @@ org.plt = {};
 	}
 	
 	return ret;
+  }, 
+    
+  assq : function(x, lst){
+	while (!lst.isEmpty() && !Kernel.eq_question_(x, lst.first().first()))
+		lst = lst.rest();
+	if (lst.isEmpty())
+		return org.plt.types.Logic.FALSE;
+	else return lst.first();
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
