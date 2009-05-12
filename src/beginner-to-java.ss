@@ -114,7 +114,7 @@
          [new-env 
           (env-extend-function env fun #f (length args) #f
                                (symbol->string munged-fun-id)
-                               #:primitive? #f)]
+                               #:cps? #f)]
          [new-env
           (foldl (lambda (arg-id env) 
                    (env-extend env (make-binding:constant arg-id 

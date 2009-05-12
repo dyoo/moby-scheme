@@ -20,10 +20,17 @@
   (name java-string permissions)
   #:transparent)
 
+
 ;; Function bindings try to record more information.
 (define-struct (binding:function binding) 
-  (name module-path min-arity var-arity? java-string permissions
-        primitive?)
+  (name         ;; name of the function
+   module-path  ;; path where the function's really defined
+   min-arity    ;; minimal arity to call
+   var-arity?   ;; is this vararity?
+   java-string  ;; the java-string name of the function
+   permissions  ;; what permissions do we need to call this function?
+   cps?         ;; does the function respect CPS calling conventions?
+   )
   #:transparent)
 
 
@@ -71,7 +78,7 @@
 ;; env-extend-function: env symbol (or/c module-path #f) number boolean? string? -> env
 ;; Extends the environment with a new function binding
 (define (env-extend-function an-env id module-path min-arity var-arity? java-string 
-                             #:primitive? (primitive? #t))
+                             #:cps? (cps? #f))
   (env-extend an-env
               (make-binding:function id 
                                      module-path
@@ -79,7 +86,7 @@
                                      var-arity?
                                      java-string
                                      empty
-                                     primitive?)))
+                                     cps?)))
 
 
 
@@ -94,7 +101,7 @@
                                      [var-arity? boolean?]
                                      [java-string string?]
                                      [permissions (listof permission?)]
-                                     [primitive? boolean?])]
+                                     [cps? boolean?])]
  [binding-id (binding? . -> . symbol?)]
  
  
@@ -106,5 +113,5 @@
  
  [env-extend-constant (env? symbol? string? . -> . env?)]
  [env-extend-function ((env? symbol? (or/c false/c path?) number? boolean? string?)
-                       (#:primitive? boolean?)
+                       (#:cps? boolean?)
                        . ->* . env?)])

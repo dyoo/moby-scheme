@@ -61,8 +61,48 @@
        a-program))
 
 
-#;(define (cps-definition a-defn an-env)
-  ...)
+;; cps-definition: defn env -> defn
+(define (cps-definition a-defn an-env)
+  (match defn
+    [(list 'define (list fun args ...) body)
+     (cps-function-definition fun args body an-env)]
+
+    [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
+     (cps-function-definition fun args body an-env)]
+
+    [(list 'define (? symbol? id) body)
+     `(define ,id
+        ,(cps-expression body an-env))]
+
+    [(list 'define-struct id (list fields ...))
+     a-defn]))
+
+
+;; cps-function-definition: symbol (listof symbol) expr env -> defn
+;; Given a function definition, produces a CPSed version of that definition
+(define (cps-function-definition id args body env)
+  (let* ([cps-arg (generate-unique-arg args)]
+         [new-env (foldl (lambda (a env)  ...)
+                         env
+                         args)]
+         [new-body ()])
+    `(define (id ,@args cps-arg)
+       ...)))
+
+
+;; generate-unique-arg: (listof symbol) -> symbol
+;; Produces a unique symbol distinct from the given ones.
+(define (generate-unique-arg args)
+  (let ([arg (gensym 'k)])
+      (cond
+        [(member arg args)
+         (generate-unique-arg)]
+        [else
+         arg])))
+
+
+
+
 
 
 ;; cps-expression: expr env -> expr
@@ -202,9 +242,11 @@
                                   (cons arg args/rev)))))])))]
            
            [(struct binding:defined (id))            
-            'fixme]))]
+            `(lambda (k)
+               'fixme)]))]
       [else
-       'fixme])))
+       `(lambda (k)
+          'fixme)])))
 
 
 

@@ -115,7 +115,7 @@
 
 
 (define (bf name module-path arity vararity? java-string)
-  (make-binding:function name module-path arity vararity? java-string empty #t))
+  (make-binding:function name module-path arity vararity? java-string empty #f))
 
 
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
@@ -324,19 +324,19 @@
                                 'on-location-change module-path 1 #f
                                 "org.plt.world.config.Kernel.onLocationChange"
                                 (list PERMISSION:LOCATION)
-                                #t)
+                                #f)
                                
                                (make-binding:function
                                 'on-tilt module-path 1 #f
                                 "org.plt.world.config.Kernel.onTilt"
                                 (list PERMISSION:TILT)
-                                #t)
+                                #f)
                                
                                (make-binding:function
                                 'on-acceleration module-path 1 #f
                                 "org.plt.world.config.Kernel.onAcceleration"
                                 (list PERMISSION:TILT)
-                                #t)
+                                #f)
                                
                                (bf 'on-redraw module-path 1 #f "org.plt.world.config.Kernel.onRedraw")
                                (bf 'stop-when module-path 1 #f "org.plt.world.config.Kernel.stopWhen")))))
@@ -416,7 +416,7 @@
          [bf (lambda (name module-path arity vararity? java-string)
                (make-binding:function name module-path arity vararity? java-string 
                                       (list PERMISSION:LOCATION)
-                                      #t))])
+                                      #f))])
     (make-module-binding 'location
                          module-path
                          (list (bf 'get-latitude module-path 0 #f 
@@ -488,7 +488,7 @@
                                                       #f 
                                                       "org.plt.lib.Sms.sendTextMessage"
                                                       (list PERMISSION:SMS)
-                                                      #t)))))
+                                                      #f)))))
 
 
 (define net-module
@@ -503,7 +503,7 @@
                                                       #f 
                                                       "org.plt.lib.Net.getUrl"
                                                       (list PERMISSION:INTERNET)
-                                                      #t)))))
+                                                      #f)))))
 
 (define parser-module
   (let ([module-path
@@ -517,14 +517,14 @@
                                                       #f 
                                                       "org.plt.lib.Parser.parseXml"
                                                       empty
-                                                      #t)
+                                                      #f)
                                (make-binding:function 'split-whitespace
                                                       module-path
                                                       1
                                                       #f
                                                       "org.plt.lib.Parser.splitWhitespace"
                                                       empty
-                                                      #t)))))
+                                                      #f)))))
 
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
