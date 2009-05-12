@@ -488,6 +488,10 @@ org.plt = {};
 	return lst.first().first().rest();
   },
   
+  caar : function(lst){
+	return lst.first().first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };

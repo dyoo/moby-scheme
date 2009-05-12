@@ -490,7 +490,12 @@
 	testCaadr : function(){
 		var lst = Cons.makeInstance(Cons.makeInstance(Cons.makeInstance(Rational.ONE, Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY)), EMPTY), EMPTY);
 		this.assert(Kernel.equal_question_(Kernel.caadr(lst).first(), FloatPoint.makeInstance(2)));
-	}
+	}, 
+	
+	testCaar : function(){
+		var lst = Cons.makeInstance(Cons.makeInstance(Rational.ONE, EMPTY), EMPTY)
+		this.assert(Kernel.equal_question_(Kernel.caar(lst), FloatPoint.makeInstance(1)));
+	},
   }); 
   
 // ]]>
