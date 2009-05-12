@@ -268,8 +268,7 @@ function performanceTest(label, driver, f) {
 
     var MIN_THRESHOLD = new Number(document.getElementById('min_threshold').value);
     var MAX_THRESHOLD = new Number(document.getElementById('max_threshold').value);
-    // Number of trials per threshold
-    var MAX_TRIALS = 5;
+    var MAX_TRIALS = new Number(document.getElementById('trials_per_threshold').value);
     var THRESHOLD_INCREMENT = new Number(document.getElementById('threshold_increment').value);
 
 

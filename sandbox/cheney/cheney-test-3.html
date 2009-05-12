@@ -7,7 +7,7 @@
 
 
   <div>Trampoline depth: <input type="text" id="trampolineDepth" value="100"></div>
-  <div>f <input type="text" id="input" value="5000"></div>
+  <div>f <input type="text" id="input" value="10000"></div>
   
   <h1>Single test</h1>
   <input type="button" value="sumUsingException"
@@ -30,6 +30,7 @@
   <div>min threshold: <input type="text" id="min_threshold" value="1"></div>
   <div>max threshold: <input type="text" id="max_threshold" value="100"></div>
   <div>threshold increment: <input type="text" id="threshold_increment" value="1"></div>
+  <div>#trials for each threshold: <input type="text" id="trials_per_threshold" value="5"></div>
   <br>
   <input type="button" value="sumUsingException"
          onClick="performanceTest('sumUsingException', exceptionDriver, sum)">
