@@ -16,7 +16,7 @@
 (define sum-using-timeout
   (read-data "safari/sumUsingTimeout.txt"))
 
-#;(define sum-iter-using-timeout
+(define sum-iter-using-timeout
   (read-data "safari/sumIterUsingTimeout.txt"))
 
 
@@ -38,6 +38,9 @@
       (vector key (exact->inexact (/ (hash-ref ht key)
                                      (hash-ref counts key)))))))
 
+(define (print-table a-table)
+  (for ([row a-table])
+    (printf "~a\t~a~n" (vector-ref row 0) (vector-ref row 1))))
 
 
 
