@@ -492,6 +492,10 @@ org.plt = {};
 	return lst.first().first();
   },
   
+  cadar : function(lst){
+	return lst.first().rest().first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
