@@ -6,3 +6,7 @@ is almost zero; it appears that a call to setTimeout(..., 0) does not
 immediately execute at high priority.  The browser appears to freeze
 under the exception handling approach, whereas under setTimeout, the
 browser regains control immediately.
+
+Under Safari 3, stack height is limited to a ceiling around 90-100;
+going beyond that will kill whatever computation is being done without
+an error message.
