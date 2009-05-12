@@ -500,6 +500,14 @@ org.plt = {};
 	return lst.rest().rest().rest().first();
   },
   
+  caddr : function(lst){
+	return lst.rest().rest().first();
+  },
+  
+  cadr : function(lst){
+	return lst.rest().first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };

@@ -505,6 +505,16 @@
 	testCadddr : function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY))));
 		this.assert(Kernel.equal_question_(Kernel.cadddr(lst), FloatPoint.makeInstance(4)));
+	},
+	
+	testCaddr : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY)));
+		this.assert(Kernel.equal_question_(Kernel.caddr(lst), FloatPoint.makeInstance(3)));
+	},
+	
+	testCadr : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY));
+		this.assert(Kernel.equal_question_(Kernel.cadr(lst), FloatPoint.makeInstance(2)));
 	}
   }); 
   
