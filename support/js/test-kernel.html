@@ -520,6 +520,11 @@
 	testCar : function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), EMPTY);
 		this.assert(Kernel.equal_question_(Kernel.car(lst), FloatPoint.makeInstance(1)));
+	},
+	
+	testCdaar : function(){
+		var lst = Cons.makeInstance(Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY)), EMPTY), EMPTY);
+		this.assert(Kernel.equal_question_(Kernel.cdaar(lst).first(), FloatPoint.makeInstance(2)));
 	}
   }); 
   
