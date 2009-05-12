@@ -51,6 +51,10 @@ org.plt = {};
     return x == y;
       }
   },
+  
+  eq_question_ : function(x, y){
+	return x == y;
+  }, 
  
   
   identity : function (x){
@@ -117,7 +121,6 @@ org.plt = {};
  
   sin: function(x) {
 	return x.sin();
-      //return org.plt.types.NumberTower.sin(x);
   },
  
   cos: function(x) {
@@ -612,16 +615,6 @@ org.plt = {};
 		}
 		
 		return ret;
-		
-		/*
-		var ret = this;
-		while (!Kernel.empty_question_(b)){
-			ret = org.plt.types.Cons.makeInstance(ret, b.first());
-			b = b.rest();
-		}
-		
-		return ret;
-		*/
 	};
  
     // Rationals

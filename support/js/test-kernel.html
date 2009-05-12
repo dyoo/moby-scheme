@@ -453,8 +453,7 @@
 		}
 	},
 	
-	testAppend : function(){
-		
+	testAppend : function(){		
 		var lst1 = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY));
 		var lst2 = Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY));
 		var lst3 = Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), EMPTY));
@@ -467,6 +466,13 @@
 			this.assert(Kernel.equal_question_(lst6.first(), FloatPoint.makeInstance(i), []));
 			lst6 = lst6.rest();
 		}
+	},
+	
+	testEq_question_ : function(){
+		var a = FloatPoint.makeInstance(2);
+		var b = FloatPoint.makeInstance(3);
+		this.assert(!Kernel.eq_question_(a, b));
+		this.assert(Kernel.eq_question_(a,a));
 	}
   }); 
   
