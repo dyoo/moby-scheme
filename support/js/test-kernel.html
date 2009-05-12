@@ -480,6 +480,11 @@
 		
 		this.assert(Kernel.false_question_(Kernel.assq(FloatPoint.makeInstance(4), lst)));
 		this.assert(!Kernel.assq(Rational.ONE, lst).isEmpty());
+	},
+	
+	testCaaar : function(){
+		var lst = Cons.makeInstance(Cons.makeInstance(Cons.makeInstance(Rational.ONE, EMPTY), EMPTY), EMPTY);
+		this.assert(Kernel.equal_question_(Kernel.caaar(lst), FloatPoint.makeInstance(1)));
 	}
   }); 
   

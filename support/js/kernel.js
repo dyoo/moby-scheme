@@ -480,6 +480,10 @@ org.plt = {};
 	else return lst.first();
   },
   
+  caaar : function(lst){
+	return lst.first().first().first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
