@@ -673,6 +673,10 @@ org.plt = {};
 	return !Kernel.string_dash_ci_lessthan__question_(first, second, rest);
   },
   
+  string_dash_copy : function(str){
+	return org.plt.types.String.makeInstance(str.valueOf());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

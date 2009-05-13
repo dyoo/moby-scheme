@@ -471,8 +471,10 @@
 	testEq_question_ : function(){
 		var a = FloatPoint.makeInstance(2);
 		var b = FloatPoint.makeInstance(3);
+		var c = FloatPoint.makeInstance(2);
 		this.assert(!Kernel.eq_question_(a, b));
 		this.assert(Kernel.eq_question_(a,a));
+		this.assert(!Kernel.eq_question_(a, c));
 	},
 	
 	testAssq : function(){
@@ -673,6 +675,11 @@
 		this.assert(!Kernel.string_dash_ci_lessthan__question_(String.makeInstance("hi1"), String.makeInstance("Hi"), []));	
 	},
 	
+	testString_dash_copy : function(){
+		var str1 = String.makeInstance("hi");
+		var str2 = Kernel.string_dash_copy(str1);
+		this.assert(Kernel.string_equal__question_(str1, str2, []));
+	},
   }); 
   
 // ]]>
