@@ -681,6 +681,10 @@ org.plt = {};
 	return org.plt.types.Rational.makeInstance(str.length, 1);
   },
   
+  string_dash_ref : function(str, i){
+	return str.charAt(i.toInteger());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

@@ -684,6 +684,12 @@
 	testString_dash_length : function(){
 		this.assert(Kernel.equal_question_(Kernel.string_dash_length(String.makeInstance("")), Rational.ZERO));
 		this.assert(Kernel.equal_question_(Kernel.string_dash_length(String.makeInstance("hi")), FloatPoint.makeInstance(2)));
+	},
+	
+	testString_dash_ref : function(){
+		var zhe = String.makeInstance("zhe");
+		var i = FloatPoint.makeInstance(2);
+		this.assert(Kernel.string_equal__question_(String.makeInstance("e"), Kernel.string_dash_ref(zhe, i), []));
 	}	
   }); 
   
