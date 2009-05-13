@@ -545,6 +545,11 @@
 	testCdddr: function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY))));
 		this.assert(Kernel.equal_question_(Kernel.cdddr(lst).first(), FloatPoint.makeInstance(4)));
+	},
+	
+	testCddr : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY)));
+		this.assert(Kernel.equal_question_(Kernel.cddr(lst).first(), FloatPoint.makeInstance(3)));
 	}
   }); 
   
