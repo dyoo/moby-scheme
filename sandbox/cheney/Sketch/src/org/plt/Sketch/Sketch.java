@@ -148,6 +148,21 @@ public Object move_dash_by_dash_drifting(Object a_dash_world) { return (((org.pl
 			}
 		    });
 	    }
+
+
+// 	    // Iterative version of the code:
+// 	    org.plt.types.List d = (org.plt.types.List) dots;
+// 	    Object s = a_dash_scene;
+// 	    while (!(d.isEmpty())) {
+// 		s = (org.plt.WorldKernel.placeImage
+// 		     ((org.plt.WorldKernel.circle(DOT_dash_RADIUS,
+// 						  (new String("solid")),DRAW_dash_COLOR)),
+// 		      (org.plt.Kernel.posn_dash_x((org.plt.Kernel.first(d)))),
+// 		      (org.plt.Kernel.posn_dash_y((org.plt.Kernel.first(d)))),
+// 		      s));
+// 		d = org.plt.Kernel.rest(d);
+// 	    }
+// 	    return s;
 	}
 
 	public Object maybeBounce(Callable c) {
@@ -193,7 +208,7 @@ org.plt.Kernel.identity(org.plt.WorldKernel.bigBang(WIDTH,HEIGHT,initial_dash_wo
                    public Object call(Object[] args) {
                        return render_dash_etch_dash_a_dash_sketch(args[0]);
                    }
-                 }))),(org.plt.world.config.Kernel.onTick((new org.plt.types.Rational(1, 20)),(new org.plt.types.Callable() {
+                 }))),(org.plt.world.config.Kernel.onTick((new org.plt.types.Rational(1, 10)),(new org.plt.types.Callable() {
                    public Object call(Object[] args) {
                        return move_dash_by_dash_drifting(args[0]);
                    }
