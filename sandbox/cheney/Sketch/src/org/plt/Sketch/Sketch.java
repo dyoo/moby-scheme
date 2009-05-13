@@ -106,7 +106,9 @@ public Object move_dash_by_dash_drifting(Object a_dash_world) { return (((org.pl
 					      dotsOnBackground));
 	    
 	}
+	
 	int stackDepth = 0;
+	int THRESHOLD = 20;
 
 	public Object trampoline(Callable initialC) {
 	    Callable c = initialC;
@@ -129,20 +131,34 @@ public Object move_dash_by_dash_drifting(Object a_dash_world) { return (((org.pl
 	}
 
 
-	public Object draw_dash_dots(Object dots, Object a_dash_scene) {
+	public Object draw_dash_dots(final Object dots, final Object a_dash_scene) {
 	    if(org.plt.Kernel.empty_question_(dots).isTrue()) {
 		return a_dash_scene;
 	    } else {
-		return 
-		    ((draw_dash_dots((org.plt.Kernel.rest(dots)),
-				     (org.plt.WorldKernel.placeImage
-				      ((org.plt.WorldKernel.circle(DOT_dash_RADIUS,
-								   (new String("solid")),DRAW_dash_COLOR)),
-				       (org.plt.Kernel.posn_dash_x((org.plt.Kernel.first(dots)))),
-				       (org.plt.Kernel.posn_dash_y((org.plt.Kernel.first(dots)))),
-				       a_dash_scene)))));
+		return maybeBounce(new Callable() {
+			public Object call(Object[] args) {
+			    return 
+				((draw_dash_dots((org.plt.Kernel.rest(dots)),
+						 (org.plt.WorldKernel.placeImage
+						  ((org.plt.WorldKernel.circle(DOT_dash_RADIUS,
+									       (new String("solid")),DRAW_dash_COLOR)),
+						   (org.plt.Kernel.posn_dash_x((org.plt.Kernel.first(dots)))),
+						   (org.plt.Kernel.posn_dash_y((org.plt.Kernel.first(dots)))),
+						   a_dash_scene)))));
+			}
+		    });
 	    }
 	}
+
+	public Object maybeBounce(Callable c) {
+	    stackDepth++;
+	    if (stackDepth > THRESHOLD) {
+		throw new Bounce(c);
+	    } else {
+		return c.call(new Object[] {});
+	    }
+	}
+
 
 
 
