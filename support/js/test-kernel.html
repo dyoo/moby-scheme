@@ -591,6 +591,17 @@
 			this.assert(Kernel.equal_question_(lst.first(), FloatPoint.makeInstance(i)));
 			lst = lst.rest();
 		}
+	},
+	
+	testList_star_ : function(){
+		var arr = [FloatPoint.makeInstance(1), FloatPoint.makeInstance(2)];
+		var lst1 = Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY));
+		
+		var lst2 = Kernel.list_star_(arr, lst1);
+		for (var i = 1; i <= 4; i++){
+			this.assert(Kernel.equal_question_(lst2.first(), FloatPoint.makeInstance(i)));
+			lst2 = lst2.rest();
+		}
 	}
   }); 
   

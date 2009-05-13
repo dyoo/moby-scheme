@@ -570,6 +570,10 @@ org.plt = {};
 	return ret;
   },
   
+  list_star_ : function(items, lst){
+	return Kernel.append(Kernel.list(items), lst, []);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
