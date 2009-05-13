@@ -642,6 +642,11 @@
 		this.assert(Kernel.equal_question_(Kernel.string_dash__greaterthan_number("5"), FloatPoint.makeInstance(5)));
 	},
 	
+	testString_dash__greaterthan_symbol : function(){
+		this.assert(Kernel.symbol_equal__question_(Kernel.string_dash__greaterthan_symbol(String.makeInstance("hi")), Symbol.makeInstance("hi")));
+		this.assert(!Kernel.symbol_equal__question_(Kernel.string_dash__greaterthan_symbol(String.makeInstance("hi")), Symbol.makeInstance("hi5")));
+	},
+	
 	
 	testChar : function(){
 		var str1 = new String("hi");

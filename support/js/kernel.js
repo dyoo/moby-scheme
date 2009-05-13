@@ -630,6 +630,10 @@ org.plt = {};
 	return org.plt.types.FloatPoint.makeInstance(val);
   },
   
+  string_dash__greaterthan_symbol : function(str){
+	return org.plt.types.Symbol.makeInstance(str);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
