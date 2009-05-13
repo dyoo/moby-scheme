@@ -624,6 +624,11 @@
 		var lst = Kernel.list(arr);
 		this.assert(Kernel.equal_question_(Kernel.memq(a, lst).first(), a));
 		this.assert(!Kernel.memq(FloatPoint.makeInstance(5), lst));
+	},
+	
+	testNull_question_: function(){
+		this.assert(!Kernel.null_question_(Rational.ONE));
+		this.assert(Kernel.null_question_(EMPTY));
 	}
 	
   }); 

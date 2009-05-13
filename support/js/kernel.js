@@ -615,6 +615,10 @@ org.plt = {};
 	return false;
   },
   
+  null_question_ : function(x){
+	return x instanceof org.plt.types.Empty;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
