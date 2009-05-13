@@ -634,6 +634,21 @@
 	testPair_question_ : function(){
 		this.assert(!Kernel.pair_question_(EMPTY));
 		this.assert(Kernel.pair_question_(Cons.makeInstance(1, EMPTY)));
+	},
+	
+	
+	testString_dash__greaterthan_number : function(){
+		this.assert(!Kernel.string_dash__greaterthan_number("hi"));
+		this.assert(Kernel.equal_question_(Kernel.string_dash__greaterthan_number("5"), FloatPoint.makeInstance(5)));
+	},
+	
+	
+	testChar : function(){
+		var str1 = new String("hi");
+		var str2 = new String("56");
+		
+		var v1 = str1 * 1;
+		var v2 = str2 * 1;
 	}
 	
   }); 

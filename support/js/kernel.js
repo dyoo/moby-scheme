@@ -623,6 +623,13 @@ org.plt = {};
 	return x instanceof org.plt.types.Cons;
   },
   
+  string_dash__greaterthan_number : function(str){
+	var val = str * 1;
+	if (isNaN(val))
+		return false;
+	return org.plt.types.FloatPoint.makeInstance(val);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
@@ -691,10 +698,7 @@ org.plt = {};
     org.plt.types.String.prototype.isEqual = function(other) {
   return this == other;
     }
- 
- 
- 
- 
+	
     // Symbols
     org.plt.types.Symbol = function(val) {
   this.val = val;
