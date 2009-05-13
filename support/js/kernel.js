@@ -641,6 +641,38 @@ org.plt = {};
 	return ret;
   },
   
+  string_dash_ci_equal__question_ : function(first, second, rest){
+	first = first.toUpperCase();
+	second = second.toUpperCase();
+	for (var i = 0; i < rest.length; i++)
+		rest[i] = rest[i].toUpperCase();
+	return Kernel.string_equal__question_(first, second, rest);
+  },
+  
+  string_dash_ci_lessthan__equal__question_ : function(first, second, rest){
+	first = first.toUpperCase();
+	second = second.toUpperCase();
+	for (var i = 0; i < rest.length; i++)
+		rest[i] = rest[i].toUpperCase();
+	return Kernel.string_lessthan__equal__question_(first, second, rest);
+  },
+  
+  string_dash_ci_lessthan__question_ : function(first, second, rest){
+	first = first.toUpperCase();
+	second = second.toUpperCase();
+	for (var i = 0; i < rest.length; i++)
+		rest[i] = rest[i].toUpperCase();
+	return Kernel.string_lessthan__question_(first, second, rest);
+  },
+  
+  string_dash_ci_greaterthan__question_ : function(first, second, rest){
+	return !Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
+  },
+  
+  string_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
+	return !Kernel.string_dash_ci_lessthan__question_(first, second, rest);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

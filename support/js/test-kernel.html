@@ -654,13 +654,24 @@
 		this.assert(!Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang1"), []));
 	},
 	
-	testChar : function(){
-		var str1 = new String("hi");
-		var str2 = new String("56");
+	testString_dash_ci_equal__question_ : function(){
+		this.assert(Kernel.string_dash_ci_equal__question_(String.makeInstance("hi"), String.makeInstance("Hi"), []));
+		this.assert(!Kernel.string_dash_ci_equal__question_(String.makeInstance("hi"), String.makeInstance("Hi1"), []));
+	},
+	
+	testString_dash_ci_lessthan__equal__question_ : function(){
+		this.assert(Kernel.string_dash_ci_lessthan__equal__question_(String.makeInstance("hi"), String.makeInstance("Hi1"), []));
 		
-		var v1 = str1 * 1;
-		var v2 = str2 * 1;
-	}
+		this.assert(Kernel.string_dash_ci_lessthan__equal__question_(String.makeInstance("hi"), String.makeInstance("Hi"), []));
+		this.assert(!Kernel.string_dash_ci_lessthan__equal__question_(String.makeInstance("hi1"), String.makeInstance("Hi"), []));	
+	},
+	
+	testString_dash_ci_lessthan__question_ : function(){
+		this.assert(Kernel.string_dash_ci_lessthan__question_(String.makeInstance("hi"), String.makeInstance("Hi1"), []));
+		
+		this.assert(!Kernel.string_dash_ci_lessthan__question_(String.makeInstance("hi"), String.makeInstance("Hi"), []));
+		this.assert(!Kernel.string_dash_ci_lessthan__question_(String.makeInstance("hi1"), String.makeInstance("Hi"), []));	
+	},
 	
   }); 
   
