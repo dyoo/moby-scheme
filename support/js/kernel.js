@@ -619,6 +619,10 @@ org.plt = {};
 	return x instanceof org.plt.types.Empty;
   },
   
+  pair_question_ : function(x){
+	return x instanceof org.plt.types.Cons;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

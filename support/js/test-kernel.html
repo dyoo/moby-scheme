@@ -629,6 +629,11 @@
 	testNull_question_: function(){
 		this.assert(!Kernel.null_question_(Rational.ONE));
 		this.assert(Kernel.null_question_(EMPTY));
+	},
+	
+	testPair_question_ : function(){
+		this.assert(!Kernel.pair_question_(EMPTY));
+		this.assert(Kernel.pair_question_(Cons.makeInstance(1, EMPTY)));
 	}
 	
   }); 
