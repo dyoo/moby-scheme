@@ -516,6 +516,10 @@ org.plt = {};
 	return lst.first().first().rest();
   },
   
+  cdadr : function(lst){
+	return lst.rest().first().rest();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
