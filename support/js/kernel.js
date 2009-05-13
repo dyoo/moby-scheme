@@ -689,6 +689,10 @@ org.plt = {};
 	return str instanceof org.plt.types.String;
   },
   
+  substring : function(str, begin, end){
+	return str.toString().substring(begin.toInteger(), end.toInteger());
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

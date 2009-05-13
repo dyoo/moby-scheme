@@ -696,6 +696,14 @@
 	testString_question_ : function(){
 		this.assert(!Kernel.string_question_(Rational.ONE));
 		this.assert(Kernel.string_question_(String.makeInstance("hi")));
+	},
+	
+	testSubstring : function(){
+		var str1 = String.makeInstance("he");
+		var str2 = String.makeInstance("hello");
+		var str3 = Kernel.substring(str2, FloatPoint.makeInstance(0), FloatPoint.makeInstance(2));
+		
+		this.assert(Kernel.string_equal__question_(str1, str3, []));
 	}
   }); 
   
