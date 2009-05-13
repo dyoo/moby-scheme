@@ -544,6 +544,18 @@ org.plt = {};
 	return lst instanceof org.plt.types.Cons;
   },
   
+  sixth : function(lst){
+	return lst.rest().rest().rest().rest().rest().first();
+  },
+  
+  seventh: function(lst){
+	return lst.rest().rest().rest().rest().rest().rest().first();
+  },
+  
+  eighth : function(lst){
+	return lst.rest().rest().rest().rest().rest().rest().rest().first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };

@@ -560,6 +560,21 @@
 	testCons_question_ : function(){
 		this.assert(Kernel.cons_question_(Cons.makeInstance(Rational.ONE, EMPTY)));
 		this.assert(!Kernel.cons_question_(EMPTY));
+	},
+	
+	testSixth : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), EMPTY))))));
+		this.assert(Kernel.equal_question_(Kernel.sixth(lst), FloatPoint.makeInstance(6)));
+	},
+	
+	testSeventh : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), Cons.makeInstance(FloatPoint.makeInstance(7), EMPTY)))))));
+		this.assert(Kernel.equal_question_(Kernel.seventh(lst), FloatPoint.makeInstance(7)));
+	},
+	
+	testEighth : function(){
+		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), Cons.makeInstance(FloatPoint.makeInstance(7), Cons.makeInstance(FloatPoint.makeInstance(8), EMPTY))))))));
+		this.assert(Kernel.equal_question_(Kernel.eighth(lst), FloatPoint.makeInstance(8)));
 	}
   }); 
   
