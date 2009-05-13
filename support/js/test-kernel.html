@@ -575,6 +575,13 @@
 	testEighth : function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), Cons.makeInstance(FloatPoint.makeInstance(7), Cons.makeInstance(FloatPoint.makeInstance(8), EMPTY))))))));
 		this.assert(Kernel.equal_question_(Kernel.eighth(lst), FloatPoint.makeInstance(8)));
+	},
+	
+	testLength : function(){
+		var lst1 = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY)));
+		var lst2 = EMPTY;
+		this.assert(Kernel.equal_question_(Kernel.length(lst1), FloatPoint.makeInstance(3)));
+		this.assert(Kernel.equal_question_(Kernel.length(lst2), FloatPoint.makeInstance(0)));
 	}
   }); 
   

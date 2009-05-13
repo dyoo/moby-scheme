@@ -556,6 +556,13 @@ org.plt = {};
 	return lst.rest().rest().rest().rest().rest().rest().rest().first();
   },
   
+  length : function(lst){
+	var ret = Rational.ZERO;
+	for (; !lst.isEmpty(); lst = lst.rest())
+		ret = Kernel.add1(ret);
+	return ret;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
