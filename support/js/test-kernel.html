@@ -582,6 +582,15 @@
 		var lst2 = EMPTY;
 		this.assert(Kernel.equal_question_(Kernel.length(lst1), FloatPoint.makeInstance(3)));
 		this.assert(Kernel.equal_question_(Kernel.length(lst2), FloatPoint.makeInstance(0)));
+	},
+	
+	testList : function(){
+		var arr = [FloatPoint.makeInstance(1), FloatPoint.makeInstance(2)];
+		var lst = Kernel.list(arr);
+		for (var i = 1; i <= 2; i++){
+			this.assert(Kernel.equal_question_(lst.first(), FloatPoint.makeInstance(i)));
+			lst = lst.rest();
+		}
 	}
   }); 
   

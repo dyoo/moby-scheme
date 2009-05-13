@@ -563,6 +563,13 @@ org.plt = {};
 	return ret;
   },
   
+  list : function(items){
+	var ret = org.plt.types.Empty.EMPTY;
+	for (var i = items.length - 1; i >=0; i--)
+		ret = org.plt.types.Cons.makeInstance(items[i], ret);
+	return ret;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
