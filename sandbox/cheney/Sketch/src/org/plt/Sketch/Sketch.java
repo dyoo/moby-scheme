@@ -73,7 +73,6 @@ public Object update_dash_posn_dash_x(Object a_dash_posn, Object x) { return (or
 public Object update_dash_posn_dash_y(Object a_dash_posn, Object y) { return (org.plt.Kernel.make_dash_posn((org.plt.Kernel.posn_dash_x(a_dash_posn)),y)); }
 Object initial_dash_world; 
 public Object draw_dash_world_dash_posn(Object a_dash_posn, Object a_dash_scene) { return (org.plt.WorldKernel.placeImage((org.plt.WorldKernel.nwRectangle((new org.plt.types.Rational(1, 1)),(new org.plt.types.Rational(3, 1)),(new String("solid")),(new String("black")))),(org.plt.Kernel.posn_dash_x(a_dash_posn)),(org.plt.Kernel.posn_dash_y(a_dash_posn)),a_dash_scene)); }
-public Object draw_dash_dots(Object dots, Object a_dash_scene) { return (((org.plt.types.Logic)((org.plt.Kernel.empty_question_(dots)))).isTrue() ? (a_dash_scene) : ((draw_dash_dots((org.plt.Kernel.rest(dots)),(org.plt.WorldKernel.placeImage((org.plt.WorldKernel.circle(DOT_dash_RADIUS,(new String("solid")),DRAW_dash_COLOR)),(org.plt.Kernel.posn_dash_x((org.plt.Kernel.first(dots)))),(org.plt.Kernel.posn_dash_y((org.plt.Kernel.first(dots)))),a_dash_scene)))))); }
 public Object add_dash_posn_dash_to_dash_dots(Object a_dash_world) { return (update_dash_world_dash_dots(a_dash_world,(org.plt.Kernel.cons((world_dash_posn(a_dash_world)),(world_dash_dots(a_dash_world)))))); }
 public Object move_dash_left(Object a_dash_world) { return (add_dash_posn_dash_to_dash_dots((update_dash_world_dash_posn(a_dash_world,(update_dash_posn_dash_x((world_dash_posn(a_dash_world)),org.plt.Kernel.max((new org.plt.types.Rational(0, 1)), new Object[] {org.plt.Kernel._dash_((org.plt.Kernel.posn_dash_x((world_dash_posn(a_dash_world)))), new Object[] {DOT_dash_RADIUS})}))))))); }
 public Object move_dash_right(Object a_dash_world) { return (add_dash_posn_dash_to_dash_dots((update_dash_world_dash_posn(a_dash_world,(update_dash_posn_dash_x((world_dash_posn(a_dash_world)),org.plt.Kernel.min((org.plt.Kernel.sub1(WIDTH)), new Object[] {org.plt.Kernel._plus_(new Object[] {(org.plt.Kernel.posn_dash_x((world_dash_posn(a_dash_world)))),DOT_dash_RADIUS})}))))))); }
@@ -81,7 +80,43 @@ public Object move_dash_up(Object a_dash_world) { return (add_dash_posn_dash_to_
 public Object move_dash_down(Object a_dash_world) { return (add_dash_posn_dash_to_dash_dots((update_dash_world_dash_posn(a_dash_world,(update_dash_posn_dash_y((world_dash_posn(a_dash_world)),org.plt.Kernel.min((org.plt.Kernel.sub1(HEIGHT)), new Object[] {org.plt.Kernel._plus_(new Object[] {(org.plt.Kernel.posn_dash_y((world_dash_posn(a_dash_world)))),DOT_dash_RADIUS})}))))))); }
 public Object move_dash_by_dash_drifting(Object a_dash_world) { return (((org.plt.types.Logic)(org.plt.Kernel.string_equal__question_((world_dash_direction(a_dash_world)),(new String("stable")), new Object[] {}))).isTrue() ? (a_dash_world) : ((((org.plt.types.Logic)(org.plt.Kernel.string_equal__question_((world_dash_direction(a_dash_world)),(new String("left")), new Object[] {}))).isTrue() ? ((move_dash_left(a_dash_world))) : ((((org.plt.types.Logic)(org.plt.Kernel.string_equal__question_((world_dash_direction(a_dash_world)),(new String("right")), new Object[] {}))).isTrue() ? ((move_dash_right(a_dash_world))) : ((((org.plt.types.Logic)(org.plt.Kernel.string_equal__question_((world_dash_direction(a_dash_world)),(new String("up")), new Object[] {}))).isTrue() ? ((move_dash_up(a_dash_world))) : ((((org.plt.types.Logic)(org.plt.Kernel.string_equal__question_((world_dash_direction(a_dash_world)),(new String("down")), new Object[] {}))).isTrue() ? ((move_dash_down(a_dash_world))) : 
                       org.plt.Kernel.error(org.plt.types.Symbol.makeInstance("cond"), "Fell out of cond")))))))))); }
-public Object render_dash_etch_dash_a_dash_sketch(Object a_dash_world) { return (draw_dash_world_dash_posn((world_dash_posn(a_dash_world)),(draw_dash_dots((world_dash_dots(a_dash_world)),(org.plt.WorldKernel.placeImage((org.plt.WorldKernel.nwRectangle(WIDTH,HEIGHT,(new String("solid")),BLANK_dash_COLOR)),(new org.plt.types.Rational(0, 1)),(new org.plt.types.Rational(0, 1)),(org.plt.WorldKernel.emptyScene(WIDTH,HEIGHT)))))))); }
+
+
+
+	public Object render_dash_etch_dash_a_dash_sketch(Object a_dash_world) { 
+	    Object backgroundScene = 
+		(org.plt.WorldKernel.placeImage((org.plt.WorldKernel.nwRectangle(WIDTH,HEIGHT,(new String("solid")),
+										 BLANK_dash_COLOR)),
+						(new org.plt.types.Rational(0, 1)),
+						(new org.plt.types.Rational(0, 1)),
+						(org.plt.WorldKernel.emptyScene(WIDTH,HEIGHT))));
+	    Object dotsOnBackground;
+	    dotsOnBackground = draw_dash_dots((world_dash_dots(a_dash_world)),
+					      backgroundScene);
+	    
+	    
+	    return (draw_dash_world_dash_posn((world_dash_posn(a_dash_world)),
+					      dotsOnBackground));
+				
+	}
+
+
+	public Object draw_dash_dots(Object dots, Object a_dash_scene) {
+	    return (((org.plt.types.Logic)((org.plt.Kernel.empty_question_(dots)))).isTrue() ?
+		    (a_dash_scene) : 
+		    ((draw_dash_dots((org.plt.Kernel.rest(dots)),
+				     (org.plt.WorldKernel.placeImage
+				      ((org.plt.WorldKernel.circle(DOT_dash_RADIUS,
+								   (new String("solid")),DRAW_dash_COLOR)),
+				       (org.plt.Kernel.posn_dash_x((org.plt.Kernel.first(dots)))),
+				       (org.plt.Kernel.posn_dash_y((org.plt.Kernel.first(dots)))),
+				       a_dash_scene)))))); 
+	}
+
+
+
+
+
 public Object change_dash_direction(Object w, Object k) { return (((org.plt.types.Logic)((org.plt.WorldKernel.isKeyEqual(k,(org.plt.types.Symbol.makeInstance("left")))))).isTrue() ? ((update_dash_world_dash_direction(w,(new String("left"))))) : ((((org.plt.types.Logic)((org.plt.WorldKernel.isKeyEqual(k,(org.plt.types.Symbol.makeInstance("right")))))).isTrue() ? ((update_dash_world_dash_direction(w,(new String("right"))))) : ((((org.plt.types.Logic)((org.plt.WorldKernel.isKeyEqual(k,(org.plt.types.Symbol.makeInstance("up")))))).isTrue() ? ((update_dash_world_dash_direction(w,(new String("up"))))) : ((((org.plt.types.Logic)((org.plt.WorldKernel.isKeyEqual(k,(org.plt.types.Symbol.makeInstance("down")))))).isTrue() ? ((update_dash_world_dash_direction(w,(new String("down"))))) : (w)))))))); }
         public void runToplevel() {
 	    
