@@ -581,6 +581,40 @@ org.plt = {};
 	return lst.first();
   },
   
+  member : function(item, lst){
+	while (!lst.isEmpty()){
+		if (Kernel.equal_question_(item, lst.first()))
+			return true;
+		lst = lst.rest();
+	}
+	
+	return false;
+  },
+  
+  memq : function(item, lst){
+	while (!lst.isEmpty()){
+		if (Kernel.eq_question_(item, lst.first()))
+			return lst;
+		lst = lst.rest();
+	}
+	
+	return false;
+  },
+  
+  eqv_question_ : function(x, y){
+	return x == y;
+  },
+  
+  memv : function(item, lst){
+	while (!lst.isEmpty()){
+		if (Kernel.eqv_question_(item, lst.first()))
+			return lst;
+		lst = lst.rest();
+	}
+	
+	return false;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

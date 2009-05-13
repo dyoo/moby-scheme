@@ -608,9 +608,24 @@
 		var arr = [FloatPoint.makeInstance(2), FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)];
 		var lst = Kernel.list(arr);
 
-		this.assert(Kernel.equal_question_(Kernel.list_dash_ref(lst, Rational.makeInstance(2, 1)), FloatPoint.makeInstance(4)));
-		
+		this.assert(Kernel.equal_question_(Kernel.list_dash_ref(lst, Rational.makeInstance(2, 1)), FloatPoint.makeInstance(4)));	
+	},
+	
+	testMember : function(){
+		var arr = [FloatPoint.makeInstance(2), FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)];
+		var lst = Kernel.list(arr);
+		this.assert(Kernel.member(FloatPoint.makeInstance(4), lst));
+		this.assert(!Kernel.member(FloatPoint.makeInstance(5), lst));
+	},
+	
+	testMemq : function(){
+		var a = FloatPoint.makeInstance(3);
+		var arr = [FloatPoint.makeInstance(2), a, FloatPoint.makeInstance(4)];
+		var lst = Kernel.list(arr);
+		this.assert(Kernel.equal_question_(Kernel.memq(a, lst).first(), a));
+		this.assert(!Kernel.memq(FloatPoint.makeInstance(5), lst));
 	}
+	
   }); 
   
 // ]]>
