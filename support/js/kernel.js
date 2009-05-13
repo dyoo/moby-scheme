@@ -373,23 +373,23 @@ org.plt = {};
   },
   
   string_equal__question_ : function(first, second, rest){
-	return chainTest(function(x, y){return x == y;}, first, second, rest);
+	return chainTest(function(x, y){return x.toString() == y.toString();}, first, second, rest);
   },
   
   string_lessthan__equal__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x <= y;}, first, second, rest);
+	return chainTest(function(x, y){return x.toString() <= y.toString();}, first, second, rest);
   },
   
   string_lessthan__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x < y;}, first, second, rest);
+	return chainTest(function(x, y){return x.toString() < y.toString();}, first, second, rest);
   },
   
   string_greaterthan__equal__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x >= y;}, first, second, rest);
+	return chainTest(function(x, y){return x.toString() >= y.toString();}, first, second, rest);
   },
   
   string_greaterthan__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x > y;}, first, second, rest);
+	return chainTest(function(x, y){return x.toString() > y.toString();}, first, second, rest);
   },
   
   quotient : function(x, y){
@@ -674,7 +674,7 @@ org.plt = {};
   },
   
   string_dash_copy : function(str){
-	return org.plt.types.String.makeInstance(str.valueOf());
+	return org.plt.types.String.makeInstance(str);
   },
   
   string_dash_length : function(str){
@@ -683,6 +683,10 @@ org.plt = {};
   
   string_dash_ref : function(str, i){
 	return str.charAt(i.toInteger());
+  },
+  
+  string_question_ : function(str){
+	return str instanceof org.plt.types.String;
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
@@ -748,11 +752,8 @@ org.plt = {};
     // For the moment, we just reuse Javascript strings.
     org.plt.types.String = String;
     org.plt.types.String.makeInstance = function(s) {
-  return s;
+  return new String(s);
     };
-    org.plt.types.String.prototype.isEqual = function(other) {
-  return this == other;
-    }
 	
     // Symbols
     org.plt.types.Symbol = function(val) {

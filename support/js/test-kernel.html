@@ -679,6 +679,7 @@
 		var str1 = String.makeInstance("hi");
 		var str2 = Kernel.string_dash_copy(str1);
 		this.assert(Kernel.string_equal__question_(str1, str2, []));
+		this.assert(!Kernel.eq_question_(str1, str2));
 	},
 	
 	testString_dash_length : function(){
@@ -690,7 +691,12 @@
 		var zhe = String.makeInstance("zhe");
 		var i = FloatPoint.makeInstance(2);
 		this.assert(Kernel.string_equal__question_(String.makeInstance("e"), Kernel.string_dash_ref(zhe, i), []));
-	}	
+	}, 
+	
+	testString_question_ : function(){
+		this.assert(!Kernel.string_question_(Rational.ONE));
+		this.assert(Kernel.string_question_(String.makeInstance("hi")));
+	}
   }); 
   
 // ]]>
