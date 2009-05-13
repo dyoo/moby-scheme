@@ -647,6 +647,12 @@
 		this.assert(!Kernel.symbol_equal__question_(Kernel.string_dash__greaterthan_symbol(String.makeInstance("hi")), Symbol.makeInstance("hi5")));
 	},
 	
+	testString_dash_append : function(){
+		var arr = [String.makeInstance("hello"),String.makeInstance("zhe"),String.makeInstance("zhang")];
+		var str = Kernel.string_dash_append(arr);
+		this.assert(Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang"), []));
+		this.assert(!Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang1"), []));
+	},
 	
 	testChar : function(){
 		var str1 = new String("hi");

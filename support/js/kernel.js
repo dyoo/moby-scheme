@@ -634,6 +634,13 @@ org.plt = {};
 	return org.plt.types.Symbol.makeInstance(str);
   },
   
+  string_dash_append : function(arr){
+	var ret = "";
+	for (var i = 0; i < arr.length; i++)
+		ret += arr[i];
+	return ret;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
