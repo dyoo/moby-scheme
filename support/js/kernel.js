@@ -574,8 +574,15 @@ org.plt = {};
 	return Kernel.append(Kernel.list(items), lst, []);
   },
   
+  list_dash_ref : function(lst, x){
+	var i = org.plt.types.Rational.ZERO;
+	for (; Kernel._lessthan_(i, x,[]); i = Kernel.add1(i))
+		lst = lst.rest();
+	return lst.first();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
- 
+	
   };
  
  

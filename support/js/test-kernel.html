@@ -602,6 +602,14 @@
 			this.assert(Kernel.equal_question_(lst2.first(), FloatPoint.makeInstance(i)));
 			lst2 = lst2.rest();
 		}
+	},
+	
+	testList_dash_ref : function(){
+		var arr = [FloatPoint.makeInstance(2), FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)];
+		var lst = Kernel.list(arr);
+
+		this.assert(Kernel.equal_question_(Kernel.list_dash_ref(lst, Rational.makeInstance(2, 1)), FloatPoint.makeInstance(4)));
+		
 	}
   }); 
   
