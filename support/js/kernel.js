@@ -677,6 +677,10 @@ org.plt = {};
 	return org.plt.types.String.makeInstance(str.valueOf());
   },
   
+  string_dash_length : function(str){
+	return org.plt.types.Rational.makeInstance(str.length, 1);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

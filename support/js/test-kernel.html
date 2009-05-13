@@ -680,6 +680,11 @@
 		var str2 = Kernel.string_dash_copy(str1);
 		this.assert(Kernel.string_equal__question_(str1, str2, []));
 	},
+	
+	testString_dash_length : function(){
+		this.assert(Kernel.equal_question_(Kernel.string_dash_length(String.makeInstance("")), Rational.ZERO));
+		this.assert(Kernel.equal_question_(Kernel.string_dash_length(String.makeInstance("hi")), FloatPoint.makeInstance(2)));
+	}	
   }); 
   
 // ]]>
