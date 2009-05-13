@@ -520,6 +520,10 @@ org.plt = {};
 	return lst.rest().first().rest();
   },
   
+  cdar : function(lst){
+	return lst.first().rest();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
