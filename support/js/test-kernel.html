@@ -555,6 +555,11 @@
 	testCdr : function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY));
 		this.assert(Kernel.equal_question_(Kernel.cdr(lst).first(), FloatPoint.makeInstance(2)));
+	},
+	
+	testCons_question_ : function(){
+		this.assert(Kernel.cons_question_(Cons.makeInstance(Rational.ONE, EMPTY)));
+		this.assert(!Kernel.cons_question_(EMPTY));
 	}
   }); 
   

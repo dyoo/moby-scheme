@@ -540,6 +540,10 @@ org.plt = {};
 	return lst.rest();
   },
   
+  cons_question_: function(lst){
+	return lst instanceof org.plt.types.Cons;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
