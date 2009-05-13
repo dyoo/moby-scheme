@@ -535,6 +535,11 @@
 	testCdar : function(){
 		var lst = Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY)), EMPTY);
 		this.assert(Kernel.equal_question_(Kernel.cdar(lst).first(), FloatPoint.makeInstance(3)));
+	},
+	
+	testCddar : function(){
+		var lst = Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY))), EMPTY);
+		this.assert(Kernel.equal_question_(Kernel.cddar(lst).first(), FloatPoint.makeInstance(3)));
 	}
   }); 
   

@@ -524,6 +524,10 @@ org.plt = {};
 	return lst.first().rest();
   },
   
+  cddar : function(lst){
+	return lst.first().rest().rest();
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
  
   };
