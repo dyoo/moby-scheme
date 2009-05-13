@@ -16,6 +16,8 @@ import org.plt.world.LocationChangeListener;
 import org.plt.world.OrientationChangeListener;
 import org.plt.world.AccelerationChangeListener;
 
+import org.plt.types.Callable;
+
 
 
 // This is stub code.
@@ -83,34 +85,63 @@ public Object move_dash_by_dash_drifting(Object a_dash_world) { return (((org.pl
 
 
 
-	public Object render_dash_etch_dash_a_dash_sketch(Object a_dash_world) { 
-	    Object backgroundScene = 
+
+	public Object render_dash_etch_dash_a_dash_sketch(final Object a_dash_world) { 
+	    final Object backgroundScene = 
 		(org.plt.WorldKernel.placeImage((org.plt.WorldKernel.nwRectangle(WIDTH,HEIGHT,(new String("solid")),
 										 BLANK_dash_COLOR)),
 						(new org.plt.types.Rational(0, 1)),
 						(new org.plt.types.Rational(0, 1)),
 						(org.plt.WorldKernel.emptyScene(WIDTH,HEIGHT))));
 	    Object dotsOnBackground;
-	    dotsOnBackground = draw_dash_dots((world_dash_dots(a_dash_world)),
+	    dotsOnBackground = trampoline(new Callable() { 
+		    public Object call(Object[] args) {
+			return draw_dash_dots((world_dash_dots(a_dash_world)),
 					      backgroundScene);
-	    
-	    
+		    }
+		});
+					  
+					  
 	    return (draw_dash_world_dash_posn((world_dash_posn(a_dash_world)),
 					      dotsOnBackground));
-				
+	    
+	}
+	int stackDepth = 0;
+
+	public Object trampoline(Callable initialC) {
+	    Callable c = initialC;
+	    while (true) {
+		try {
+		    return c.call(new Object[]{});
+		} catch (Bounce e) {
+		    c = e.c;
+		    stackDepth = 0;
+		}
+	    }
+	}
+
+	public class Bounce extends RuntimeException {
+	    Callable c;
+	    public Bounce(Callable c) {
+		super();
+		this.c = c;
+	    }
 	}
 
 
 	public Object draw_dash_dots(Object dots, Object a_dash_scene) {
-	    return (((org.plt.types.Logic)((org.plt.Kernel.empty_question_(dots)))).isTrue() ?
-		    (a_dash_scene) : 
+	    if(org.plt.Kernel.empty_question_(dots).isTrue()) {
+		return a_dash_scene;
+	    } else {
+		return 
 		    ((draw_dash_dots((org.plt.Kernel.rest(dots)),
 				     (org.plt.WorldKernel.placeImage
 				      ((org.plt.WorldKernel.circle(DOT_dash_RADIUS,
 								   (new String("solid")),DRAW_dash_COLOR)),
 				       (org.plt.Kernel.posn_dash_x((org.plt.Kernel.first(dots)))),
 				       (org.plt.Kernel.posn_dash_y((org.plt.Kernel.first(dots)))),
-				       a_dash_scene)))))); 
+				       a_dash_scene)))));
+	    }
 	}
 
 
