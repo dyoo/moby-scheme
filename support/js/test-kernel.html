@@ -319,46 +319,46 @@
 	},
 	
 	testString_equal__question_	: function(){
-		var s1 = "hi";
-		var s2 = "hi";
-		var s3 = "hi";
-		var s4 = "hi2";
+		var s1 = String.makeInstance("hi");
+		var s2 = String.makeInstance("hi");
+		var s3 = String.makeInstance("hi");
+		var s4 = String.makeInstance("hi2");
 		this.assert(Kernel.string_equal__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_equal__question_(s1,s2,[s4]));
 	},
 	
 	testString_lessthan__equal__question_: function(){
-		var s1 = "hi";
-		var s2 = "hi";
-		var s3 = "hi2";
-		var s4 = "a";
+		var s1 = String.makeInstance("hi");
+		var s2 = String.makeInstance("hi");
+		var s3 = String.makeInstance("hi2");
+		var s4 = String.makeInstance("a");
 		this.assert(Kernel.string_lessthan__equal__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_lessthan__equal__question_(s1,s2,[s4]));
 	},
 	
 	testString_lessthan__question_: function(){
-		var s1 = "ha";
-		var s2 = "hi";
-		var s3 = "hi2";
-		var s4 = "hi";
+		var s1 = String.makeInstance("ha");
+		var s2 = String.makeInstance("hi");
+		var s3 = String.makeInstance("hi2");
+		var s4 = String.makeInstance("hi");
 		this.assert(Kernel.string_lessthan__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_lessthan__question_(s1,s2,[s4]));
 	},
 	
 	testString_greaterthan__equal__question_: function(){
-		var s1 = "hi";
-		var s2 = "ha";
-		var s3 = "ha";
-		var s4 = "hi";
+		var s1 = String.makeInstance("hi");
+		var s2 = String.makeInstance("ha");
+		var s3 = String.makeInstance("ha");
+		var s4 = String.makeInstance("hi");
 		this.assert(Kernel.string_greaterthan__equal__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_greaterthan__equal__question_(s1,s2,[s4]));
 	},
 	
 	testString_greaterthan__question_: function(){
-		var s1 = "hi";
-		var s2 = "hb";
-		var s3 = "ha";
-		var s4 = "hb";
+		var s1 = String.makeInstance("hi");
+		var s2 = String.makeInstance("hb");
+		var s3 = String.makeInstance("ha");
+		var s4 = String.makeInstance("hb");
 		this.assert(Kernel.string_greaterthan__question_(s1, s2, [s3]));
 		this.assert(!Kernel.string_greaterthan__question_(s1,s2,[s4]));
 	},
@@ -720,7 +720,17 @@
 	testChar_dash_alphabetic_question_ : function(){
 		this.assert(Kernel.char_dash_alphabetic_question_(Char.makeInstance("e")));
 		this.assert(!Kernel.char_dash_alphabetic_question_(Char.makeInstance("1")));
-	}
+	},
+	
+	testChar_equal__question_ : function(){
+		var s1 = Char.makeInstance("h");
+		var s2 = Char.makeInstance("h");
+		var s3 = Char.makeInstance("h");
+		var s4 = Char.makeInstance("g");
+		this.assert(Kernel.char_equal__question_(s1, s2, [s3]));
+		this.assert(!Kernel.char_equal__question_(s1,s2,[s4]));
+
+	},
 	
   }); 
   

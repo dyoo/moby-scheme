@@ -251,10 +251,6 @@ org.plt = {};
            first, 
            rest);
   },
-  
-  string_equal__question_: function(x, y) {
-      return x.isEqual(y);
-  },
  
   symbol_equal__question_: function(x, y) {
       return x.isEqual(y);
@@ -714,6 +710,10 @@ org.plt = {};
   char_dash_alphabetic_question_ : function(c){
 	var str = c.val.toString();
 	return (str >= "a" && str <= "z") || (str >= "A" && str <= "Z");
+  },
+  
+  char_equal__question_ : function(first, second, rest){
+	return chainTest(function(x, y){return x.isEqual(y);}, first, second, rest);
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
