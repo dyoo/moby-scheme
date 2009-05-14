@@ -773,6 +773,11 @@ org.plt = {};
 	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_downcase(ch));
   },
   
+  char_dash_numeric_question_ : function(ch){
+	var str = ch.val.toString();
+	return (str >= "0" && str <= "9");
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
