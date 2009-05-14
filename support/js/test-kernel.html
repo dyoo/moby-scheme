@@ -70,6 +70,8 @@
 		var n4 = Complex.makeInstance(2,1);
 		this.assert(Kernel.equal_question_(n1, n3));
 		this.assert(!Kernel.equal_question_(n3, n4));
+		
+		this.assert(Kernel.equal_question_(String.makeInstance("hi"), String.makeInstance("hi")));
 	},
 	
 	testAbs : function(){

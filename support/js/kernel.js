@@ -41,15 +41,23 @@ org.plt = {};
   struct_question_: function(thing) {
       return thing instanceof this.Struct;
   },
+  
+  number_question_ : function(x){
+	return x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint || x instanceof org.plt.types.Complex;
+  },
  
   equal_question_ : function(x, y) {
-      if ("isEqual" in x) {
+	if (Kernel.number_question_(x) && Kernel.number_question_(y)){
+		 if ("isEqual" in x) {
 		return org.plt.types.NumberTower.equal(x, y);
       } else if ("isEqual" in y) {
 		return org.plt.types.NumberTower.equal(y, x);
       } else {
-    return x == y;
-      }
+		return x == y;
+	  }
+	} else {
+		return x.isEqual(y);
+	}
   },
   
   eq_question_ : function(x, y){
@@ -698,6 +706,11 @@ org.plt = {};
 	return org.plt.types.Rational.makeInstance(str.charCodeAt(0), 1);
   },
   
+  integer_dash__greaterthan_char : function(n){
+	var str = String.fromCharCode(n.toInteger());
+	return org.plt.types.Char.makeInstance(str);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
@@ -763,6 +776,10 @@ org.plt = {};
     org.plt.types.String.makeInstance = function(s) {
   return new String(s);
     };
+	
+	org.plt.types.String.prototype.isEqual = function(other){
+		return this.toString() == other.toString();
+	};
 	
 	// Chars
 	org.plt.types.Char = function(val){
