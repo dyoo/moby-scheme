@@ -831,6 +831,15 @@
 		var n = Rational.makeInstance(2, 1);
 		var str2 = Kernel.make_dash_string(n, c);
 		this.assert(Kernel.equal_question_(str, str2));
+	},
+	
+	testString_dash__greaterthan_list : function(){
+		var lst = Kernel.string_dash__greaterthan_list(String.makeInstance("zhe"));
+		Kernel.equal_question_(lst.first(), Char.makeInstance("z"));
+		lst = lst.rest();
+		Kernel.equal_question_(lst.first(), Char.makeInstance("h"));
+		lst = lst.rest();
+		Kernel.equal_question_(lst.first(), Char.makeInstance("e"));
 	}	
 	
   }); 

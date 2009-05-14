@@ -809,6 +809,15 @@ org.plt = {};
 	return org.plt.types.String.makeInstance(ret);
   },
   
+  string_dash__greaterthan_list : function(str){
+	var s = str.toString();
+	var ret = org.plt.types.Empty.EMPTY;
+	for (var i = s.length - 1; i >= 0; i--){
+		ret = org.plt.types.Cons.makeInstance(s.charAt(i), ret);
+	}
+	return ret;
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
