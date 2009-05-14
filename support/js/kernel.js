@@ -731,7 +731,38 @@ org.plt = {};
   char_greaterthan__equal__question_ : function(first, second, rest){
 	return !char_lessthan__question_(first, second, rest);
   },
+  
+  char_dash_ci_equal__question_ : function(first, second, rest){
+	first = org.plt.types.Char.makeInstance(first.val.toUpperCase());
+	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
+	for (var i = 0; i < rest.length; i++)
+		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
+	return Kernel.char_equal__question_(first, second, rest);
+  },
+  
+  char_dash_ci_lessthan__question_ : function(first, second, rest){
+	first = org.plt.types.Char.makeInstance(first.val.toUpperCase());
+	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
+	for (var i = 0; i < rest.length; i++)
+		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
+	return Kernel.char_lessthan__question_(first, second, rest);
+  },
 
+  char_dash_ci_lessthan__equal__question_ : function(first, second, rest){
+	first = org.plt.types.Char.makeInstance(first.val.toUpperCase());
+	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
+	for (var i = 0; i < rest.length; i++)
+		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
+	return Kernel.char_lessthan__equal__question_(first, second, rest);
+  },
+  
+  char_dash_ci_greaterthan__question_ : function(first, second, rest){
+	return !Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
+  },
+  
+  char_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
+	return !Kernel.char_dash_ci_lessthan__question_(first,second,rest);
+  },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
 	

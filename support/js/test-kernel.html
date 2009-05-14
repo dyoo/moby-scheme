@@ -746,6 +746,34 @@
 		this.assert(Kernel.char_lessthan__equal__question_(s2, s1, []));
 		this.assert(Kernel.char_lessthan__equal__question_(s2, s3, []));
 		this.assert(!Kernel.char_lessthan__equal__question_(s1, s2, []));
+	},
+	
+	testChar_dash_ci_equal__question_ : function(){
+		var s1 = Char.makeInstance("h");
+		var s2 = Char.makeInstance("H");
+		var s3 = Char.makeInstance("g");
+		this.assert(Kernel.char_dash_ci_equal__question_(s1, s2, []));
+		this.assert(!Kernel.char_dash_ci_equal__question_(s1, s3, []));
+	},
+	
+	testChar_dash_ci_lessthan__question_ : function(){
+		var s1 = Char.makeInstance("h");
+		var s2 = Char.makeInstance("H");
+		var s3 = Char.makeInstance("g");
+		this.assert(Kernel.char_dash_ci_lessthan__question_(s3, s1, []));
+		this.assert(Kernel.char_dash_ci_lessthan__question_(s3, s2, []));
+		this.assert(!Kernel.char_dash_ci_lessthan__question_(s3, s3, []));
+		this.assert(!Kernel.char_dash_ci_lessthan__question_(s1, s3, []));
+	},
+	
+	testChar_dash_ci_lessthan__equal__question_ : function(){
+		var s1 = Char.makeInstance("h");
+		var s2 = Char.makeInstance("H");
+		var s3 = Char.makeInstance("g");
+		this.assert(Kernel.char_dash_ci_lessthan__equal__question_(s3, s1, []));
+		this.assert(Kernel.char_dash_ci_lessthan__equal__question_(s3, s2, []));
+		this.assert(Kernel.char_dash_ci_lessthan__equal__question_(s3, s3, []));
+		this.assert(!Kernel.char_dash_ci_lessthan__equal__question_(s1, s3, []));
 	}
 	
   }); 
