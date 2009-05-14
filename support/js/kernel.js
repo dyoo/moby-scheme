@@ -693,6 +693,11 @@ org.plt = {};
 	return str.toString().substring(begin.toInteger(), end.toInteger());
   },
   
+  char_dash__greaterthan_integer : function(ch){
+	var str = new String(ch.val);
+	return org.plt.types.Rational.makeInstance(str.charCodeAt(0), 1);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
@@ -759,10 +764,19 @@ org.plt = {};
   return new String(s);
     };
 	
+	// Chars
+	org.plt.types.Char = function(val){
+		this.val = val;
+	};
+	
+	org.plt.types.Char.makeInstance = function(val){
+		return new org.plt.types.Char(val);
+	};
+	
     // Symbols
     org.plt.types.Symbol = function(val) {
   this.val = val;
-    }
+    };
  
     // makeInstance: string -> Symbol.
     org.plt.types.Symbol.makeInstance = function(val) {

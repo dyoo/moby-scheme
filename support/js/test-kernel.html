@@ -43,6 +43,7 @@
   var Cons = org.plt.types.Cons;
   var Empty = org.plt.types.Empty;
   var EMPTY = Empty.EMPTY;
+  var Char = org.plt.types.Char;
 	
   new Test.Unit.Runner({
     setup: function() {
@@ -704,7 +705,13 @@
 		var str3 = Kernel.substring(str2, FloatPoint.makeInstance(0), FloatPoint.makeInstance(2));
 		
 		this.assert(Kernel.string_equal__question_(str1, str3, []));
+	},
+	
+	testChar_dash__greaterthan_integer : function(){	
+		this.assert(Kernel.equal_question_(FloatPoint.makeInstance(101), Kernel.char_dash__greaterthan_integer(Char.makeInstance("e"))));
+		
 	}
+	
   }); 
   
 // ]]>
