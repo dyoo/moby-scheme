@@ -774,6 +774,21 @@
 		this.assert(Kernel.char_dash_ci_lessthan__equal__question_(s3, s2, []));
 		this.assert(Kernel.char_dash_ci_lessthan__equal__question_(s3, s3, []));
 		this.assert(!Kernel.char_dash_ci_lessthan__equal__question_(s1, s3, []));
+	},
+	
+	testChar_dash_downcase : function(){
+		var s1 = Char.makeInstance("h");
+		var s2 = Char.makeInstance("H");
+		this.assert(Kernel.char_equal__question_(s1, Kernel.char_dash_downcase(s2),[]));
+	},
+	
+	testChar_dash_lower_dash_case_question_	: function(){
+		var c1 = Char.makeInstance("h");
+		var c2 = Char.makeInstance("H");
+		var c3 = Char.makeInstance("1");
+		this.assert(Kernel.char_dash_lower_dash_case_question_(c1));
+		this.assert(!Kernel.char_dash_lower_dash_case_question_(c2));
+		this.assert(!Kernel.char_dash_lower_dash_case_question_(c3));
 	}
 	
   }); 

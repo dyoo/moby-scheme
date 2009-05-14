@@ -764,6 +764,15 @@ org.plt = {};
 	return !Kernel.char_dash_ci_lessthan__question_(first,second,rest);
   },
   
+  char_dash_downcase : function(ch){
+	var down = ch.val.toString().toLowerCase();
+	return org.plt.types.Char.makeInstance(down);
+  },
+  
+  char_dash_lower_dash_case_question_ : function(ch){
+	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_downcase(ch));
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
