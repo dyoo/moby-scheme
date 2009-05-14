@@ -816,6 +816,13 @@
 	testChar_dash_whitespace_question_ : function(){
 		this.assert(Kernel.char_dash_whitespace_question_(Char.makeInstance(" ")));
 		this.assert(!Kernel.char_dash_whitespace_question_(Char.makeInstance("a")));
+	},
+	
+	testList_dash__greaterthan_string : function(){
+		var arr = [Char.makeInstance("z"), Char.makeInstance("h"), Char.makeInstance("e")];	
+		var lst = Kernel.list(arr);
+		var str = Kernel.list_dash__greaterthan_string(lst);
+		this.assert(Kernel.equal_question_(str, String.makeInstance("zhe")));
 	}
 	
   }); 

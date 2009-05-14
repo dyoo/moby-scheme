@@ -791,6 +791,15 @@ org.plt = {};
 	return Kernel.equal_question_(ch, org.plt.types.Char.makeInstance(" "));
   },
   
+  list_dash__greaterthan_string : function(lst){
+	var ret = "";
+	while (!lst.isEmpty()){
+		ret += lst.first().val.toString();
+		lst = lst.rest();
+	}
+	return org.plt.types.String.makeInstance(ret);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
