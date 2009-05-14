@@ -813,6 +813,11 @@
 		this.assert(!Kernel.char_dash_upper_dash_case_question_(c3));
 	},
 	
+	testChar_dash_whitespace_question_ : function(){
+		this.assert(Kernel.char_dash_whitespace_question_(Char.makeInstance(" ")));
+		this.assert(!Kernel.char_dash_whitespace_question_(Char.makeInstance("a")));
+	}
+	
   }); 
   
 // ]]>

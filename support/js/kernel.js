@@ -787,6 +787,10 @@ org.plt = {};
 	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_upcase(ch));
   },
   
+  char_dash_whitespace_question_ : function(ch){
+	return Kernel.equal_question_(ch, org.plt.types.Char.makeInstance(" "));
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
