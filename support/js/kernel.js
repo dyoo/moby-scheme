@@ -800,6 +800,15 @@ org.plt = {};
 	return org.plt.types.String.makeInstance(ret);
   },
   
+  make_dash_string : function(n, ch){
+	var ret = "";
+	var c = ch.val.toString();
+	var i = org.plt.types.Rational.ZERO;
+	for (;  Kernel._lessthan_(i, n, []); i = Kernel.add1(i))
+		ret += c;
+	return org.plt.types.String.makeInstance(ret);
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };

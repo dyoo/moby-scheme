@@ -823,7 +823,15 @@
 		var lst = Kernel.list(arr);
 		var str = Kernel.list_dash__greaterthan_string(lst);
 		this.assert(Kernel.equal_question_(str, String.makeInstance("zhe")));
-	}
+	},
+	
+	testMake_dash_string : function(){
+		var str = String.makeInstance("zz");
+		var c = Char.makeInstance("z");
+		var n = Rational.makeInstance(2, 1);
+		var str2 = Kernel.make_dash_string(n, c);
+		this.assert(Kernel.equal_question_(str, str2));
+	}	
 	
   }); 
   
