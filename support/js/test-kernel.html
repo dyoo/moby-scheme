@@ -715,6 +715,11 @@
 	
 	testInteger_dash__greaterthan_char : function(){
 		this.assert(Kernel.equal_question_(Char.makeInstance("e"), Kernel.integer_dash__greaterthan_char(Rational.makeInstance(101, 1))));
+	},
+	
+	testChar_dash_alphabetic_question_ : function(){
+		this.assert(Kernel.char_dash_alphabetic_question_(Char.makeInstance("e")));
+		this.assert(!Kernel.char_dash_alphabetic_question_(Char.makeInstance("1")));
 	}
 	
   }); 

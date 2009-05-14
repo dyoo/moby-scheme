@@ -711,6 +711,11 @@ org.plt = {};
 	return org.plt.types.Char.makeInstance(str);
   },
   
+  char_dash_alphabetic_question_ : function(c){
+	var str = c.val.toString();
+	return (str >= "a" && str <= "z") || (str >= "A" && str <= "Z");
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
