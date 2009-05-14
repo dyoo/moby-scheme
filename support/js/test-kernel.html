@@ -796,7 +796,22 @@
 		var c2 = Char.makeInstance("h");
 		this.assert(Kernel.char_dash_numeric_question_(c1));
 		this.assert(!Kernel.char_dash_numeric_question_(c2));
-	}	
+	},
+	
+	testChar_dash_upcase : function(){
+		var s1 = Char.makeInstance("h");
+		var s2 = Char.makeInstance("H");
+		this.assert(Kernel.char_equal__question_(s2, Kernel.char_dash_upcase(s1),[]));
+	},
+	
+	testChar_dash_upper_dash_case_question_	: function(){
+		var c1 = Char.makeInstance("h");
+		var c2 = Char.makeInstance("H");
+		var c3 = Char.makeInstance("1");
+		this.assert(Kernel.char_dash_upper_dash_case_question_(c2));
+		this.assert(!Kernel.char_dash_upper_dash_case_question_(c1));
+		this.assert(!Kernel.char_dash_upper_dash_case_question_(c3));
+	},
 	
   }); 
   

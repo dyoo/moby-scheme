@@ -778,6 +778,15 @@ org.plt = {};
 	return (str >= "0" && str <= "9");
   },
   
+  char_dash_upcase : function(ch){
+	var up = ch.val.toString().toUpperCase();
+	return org.plt.types.Char.makeInstance(up);
+  },
+  
+  char_dash_upper_dash_case_question_ : function(ch){
+	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_upcase(ch));
+  },
+  
   HEREEEEEEEEEEEEEEEEE : function(){}
 	
   };
