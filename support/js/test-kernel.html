@@ -710,8 +710,11 @@
 	},
 	
 	testChar_dash__greaterthan_integer : function(){	
-		this.assert(Kernel.equal_question_(FloatPoint.makeInstance(101), Kernel.char_dash__greaterthan_integer(Char.makeInstance("e"))));
-		
+		this.assert(Kernel.equal_question_(FloatPoint.makeInstance(101), Kernel.char_dash__greaterthan_integer(Char.makeInstance("e"))));	
+	},
+	
+	testInteger_dash__greaterthan_char : function(){
+		this.assert(Kernel.equal_question_(Char.makeInstance("e"), Kernel.integer_dash__greaterthan_char(Rational.makeInstance(101, 1))));
 	}
 	
   }); 

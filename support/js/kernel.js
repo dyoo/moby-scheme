@@ -790,6 +790,10 @@ org.plt = {};
 		return new org.plt.types.Char(val);
 	};
 	
+	org.plt.types.Char.prototype.isEqual = function(other){
+		return other instanceof org.plt.types.Char && this.val.toString() == other.val.toString();
+	};
+	
     // Symbols
     org.plt.types.Symbol = function(val) {
   this.val = val;
