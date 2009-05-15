@@ -415,15 +415,15 @@ org.plt = {};
   
   sgn : function(x){
 	if (this.positive_question_(x))
-		return Rational.ONE;
+		return org.plt.types.Rational.ONE;
 	if (this.negative_question_(x))
-		return Rational.NEGATIVE_ONE;
+		return org.plt.types.Rational.NEGATIVE_ONE;
 	else
-		return Rational.ZERO;
+		return org.plt.types.Rational.ZERO;
   },
   
   zero_question_ : function(x){
-		return org.plt.types.NumberTower.equal(x, Rational.ZERO);
+		return org.plt.types.NumberTower.equal(x, org.plt.types.Rational.ZERO);
   },
   
   boolean_equal__question_ : function(x, y){
@@ -561,7 +561,7 @@ org.plt = {};
   },
   
   length : function(lst){
-	var ret = Rational.ZERO;
+	var ret = org.plt.types.Rational.ZERO;
 	for (; !lst.isEmpty(); lst = lst.rest())
 		ret = Kernel.add1(ret);
 	return ret;
@@ -1107,7 +1107,7 @@ org.plt = {};
 		if (0 == this.n)
 			throw new Error("angle: undefined for 0");
 		if (this.n > 0)
-			return Rational.ZERO;
+			return org.plt.types.Rational.ZERO;
 		else
 			return org.plt.Kernel.pi;
 	};
@@ -1292,7 +1292,7 @@ org.plt = {};
 		if (0 == this.n)
 			throw new Error("angle: undefined for 0");
 		if (this.n > 0)
-			return Rational.ZERO;
+			return org.plt.types.Rational.ZERO;
 		else
 			return org.plt.Kernel.pi;
 	};
@@ -1326,7 +1326,7 @@ org.plt = {};
 	};
 	
 	org.plt.types.FloatPoint.prototype.imag_dash_part = function(){
-		return Rational.ZERO;
+		return org.plt.types.Rational.ZERO;
 	};
 	
 	org.plt.types.FloatPoint.prototype.real_dash_part = function(){
@@ -1519,7 +1519,7 @@ org.plt = {};
 			return this.r.acos();
 		var pi_half = org.plt.Kernel.pi.half();
 		var iz = this.timesI();
-		var root = org.plt.types.NumberTower.subtract(Rational.ONE, this.multiply(this)).sqrt();
+		var root = org.plt.types.NumberTower.subtract(org.plt.types.Rational.ONE, this.multiply(this)).sqrt();
 		var l = org.plt.types.NumberTower.add(iz, root).log().timesI();
 		return org.plt.types.NumberTower.add(pi_half, l);
 	};
@@ -1528,7 +1528,7 @@ org.plt = {};
 		if (this.isReal())
 			return this.r.asin();
 		var iz = this.timesI();
-		var root = org.plt.types.NumberTower.subtract(Rational.ONE, this.multiply(this)).sqrt();
+		var root = org.plt.types.NumberTower.subtract(org.plt.types.Rational.ONE, this.multiply(this)).sqrt();
 		var ret = org.plt.types.NumberTower.add(iz, root).log().timesI().minus();
 	};
 	
