@@ -428,7 +428,7 @@
             (map (lambda (e) 
                    (expression->javascript-string e env a-pinfo))
                  operands)])
-       (format "((~a).apply(null, [[~a]]))" 
+       (format "((~a).apply(null, [~a]))" 
                operator-string
                (string-join operand-strings ", ")))]))
 

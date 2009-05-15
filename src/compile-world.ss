@@ -360,7 +360,7 @@
                  (parse-text-as-program text)]
                 [(compiled-program)
                  (javascript:program->compiled-program program 
-                                                       #:cps? #t)])
+                                                       #:cps? #f)])
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
