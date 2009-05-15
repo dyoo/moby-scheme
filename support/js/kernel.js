@@ -43,7 +43,9 @@ org.plt = {};
   },
   
   number_question_ : function(x){
-	return x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint || x instanceof org.plt.types.Complex;
+      return (x instanceof org.plt.types.Rational || 
+	      x instanceof org.plt.types.FloatPoint ||
+	      x instanceof org.plt.types.Complex);
   },
  
   equal_question_ : function(x, y) {
@@ -405,7 +407,8 @@ org.plt = {};
   },
   
   real_question_ : function(x){
-	return x.isReal();
+      return (org.plt.Kernel.number_question_(x) &&
+	      x.isReal());
   },
   
   
