@@ -405,7 +405,7 @@ org.plt = {};
   },
   
   real_question_ : function(x){
-	return x instanceof org.plt.types.Rational || x instanceof org.plt.types.FloatPoint || (x instanceof org.plt.types.Complex && x.isReal());
+	return x.isReal();
   },
   
   
@@ -1025,6 +1025,10 @@ org.plt = {};
       this.d == other.d;
     };
  
+    org.plt.types.Rational.prototype.isReal = function() {
+	return true;
+    };
+
  
     org.plt.types.Rational.prototype.add = function(other) {
   return org.plt.types.Rational.makeInstance(this.n * other.d + 
@@ -1061,6 +1065,10 @@ org.plt = {};
 		return org.plt.types.Complex.makeInstance(this.n / this.d, 0);
 	};
  
+    org.plt.types.Rational.prototype.greaterThan = function(other) {
+	return this.n*other.d > this.d*other.n;
+    };
+
     org.plt.types.Rational.prototype.greaterThanOrEqual = function(other) {
   return this.n*other.d >= this.d*other.n;
     };
@@ -1068,6 +1076,11 @@ org.plt = {};
     org.plt.types.Rational.prototype.lessThan = function(other) {
   return this.n*other.d < this.d*other.n;
     };
+
+    org.plt.types.Rational.prototype.lessThanOrEqual = function(other) {
+  return this.n*other.d <= this.d*other.n;
+    };
+
  
     org.plt.types.Rational.prototype.sqrt = function() {
 	return this.toFloat().sqrt();
@@ -1218,6 +1231,10 @@ org.plt = {};
   return other instanceof org.plt.types.FloatPoint &&
       this.n == other.n;
     };
+
+    org.plt.types.FloatPoint.prototype.isReal = function() {
+	return true;
+    };
  
     org.plt.types.FloatPoint.prototype.add = function(other) {
   return org.plt.types.FloatPoint.makeInstance(this.n + other.n);
@@ -1256,6 +1273,11 @@ org.plt = {};
   return org.plt.types.Rational.makeInstance(Math.ceil(this.n), 1);
     };
  
+
+
+    org.plt.types.FloatPoint.prototype.greaterThan = function(other) {
+	return this.n > other.n;
+    };
  
     org.plt.types.FloatPoint.prototype.greaterThanOrEqual = function(other) {
   return this.n >= other.n;
@@ -1265,6 +1287,10 @@ org.plt = {};
   return this.n < other.n;
     };
  
+    org.plt.types.FloatPoint.prototype.lessThanOrEqual = function(other) {
+	return this.n <= other.n;
+    };
+
  
     org.plt.types.FloatPoint.prototype.sqrt = function() {
 	if (this.n < 0)
@@ -1383,6 +1409,36 @@ org.plt = {};
 	org.plt.types.Complex.prototype.isEqual = function(other){
 		return other instanceof org.plt.types.Complex  && this.r.isEqual(other.r) && this.i.isEqual(other.i);
     };
+
+    org.plt.types.Complex.prototype.greaterThan = function(other) {
+	if (! this.isReal() || ! other.isReal()) {
+	    throw new Error(">: expects argument of type real number");
+	}
+	return this.r.greaterThan(other.r);
+    };
+
+    org.plt.types.Complex.prototype.greaterThanOrEqual = function(other) {
+	if (! this.isReal() || ! other.isReal()) {
+	    throw new Error(">: expects argument of type real number");
+	}
+	return this.r.greaterThanOrEqual(other.r);
+    };
+
+    org.plt.types.Complex.prototype.lessThan = function(other) {
+	if (! this.isReal() || ! other.isReal()) {
+	    throw new Error(">: expects argument of type real number");
+	}
+	return this.r.lessThan(other.r);
+    };
+
+    org.plt.types.Complex.prototype.lessThanOrEqual = function(other) {
+	if (! this.isReal() || ! other.isReal()) {
+	    throw new Error(">: expects argument of type real number");
+	}
+	return this.r.lessThanOrEqual(other.r);
+    };
+
+
 	
 	org.plt.types.Complex.prototype.abs = function(){
 		if (!org.plt.types.NumberTower.equal(this.i, org.plt.types.Rational.ZERO))
@@ -1625,39 +1681,41 @@ org.plt = {};
   return x.isEqual(y);
     };
 	
-	org.plt.types.NumberTower.greaterThanOrEqual = function(x, y){
-		x = x.toComplex();
-		y = y.toComplex();
-		if (!(x.isReal() && y.isReal()))
-			throw new Error("greaterThanOrEqual: couldn't be applied to complex number");
-		return x.r >= y.r;
-	};
+    org.plt.types.NumberTower.greaterThanOrEqual = function(x, y){
+	if (x.level() < y.level()) x = x.lift(y);
+	if (y.level() < x.level()) y = y.lift(x);
+
+	if (!(x.isReal() && y.isReal()))
+	    throw new Error("greaterThanOrEqual: couldn't be applied to complex number");
+	return x.greaterThanOrEqual(y);
+    };
+    
+    org.plt.types.NumberTower.lessThanOrEqual = function(x, y){
+	if (x.level() < y.level()) x = x.lift(y);
+	if (y.level() < x.level()) y = y.lift(x);
+	if (!(x.isReal() && y.isReal()))
+	    throw new Error("lessThanOrEqual: couldn't be applied to complex number");
+	return x.lessThanOrEqual(y);
+    };
+    
+    org.plt.types.NumberTower.greaterThan = function(x, y){
+	if (x.level() < y.level()) x = x.lift(y);
+	if (y.level() < x.level()) y = y.lift(x);
 	
-	org.plt.types.NumberTower.lessThanOrEqual = function(x, y){
-		x = x.toComplex();
-		y = y.toComplex();
-		if (!(x.isReal() && y.isReal()))
-			throw new Error("lessThanOrEqual: couldn't be applied to complex number");
-		return x.r <= y.r;
-	};
+	if (!(x.isReal() && y.isReal()))
+	    throw new Error("greaterThan: couldn't be applied to complex number");
+	return x.greaterThan(y);
 	
-	org.plt.types.NumberTower.greaterThan = function(x, y){
-		x = x.toComplex();
-		y = y.toComplex();
-		
-		if (!(x.isReal() && y.isReal()))
-			throw new Error("greaterThan: couldn't be applied to complex number");
-		return x.r > y.r;
-		
-	};
-	
-	org.plt.types.NumberTower.lessThan = function(x, y){
-		x = x.toComplex();
-		y = y.toComplex();
-		if (!(x.isReal() && y.isReal()))
-			throw new Error("lessThan: couldn't be applied to complex number");
-		return x.r < y.r;
-	};
+    };
+    
+    org.plt.types.NumberTower.lessThan = function(x, y){
+	if (x.level() < y.level()) x = x.lift(y);
+	if (y.level() < x.level()) y = y.lift(x);
+
+	if (!(x.isReal() && y.isReal()))
+	    throw new Error("lessThan: couldn't be applied to complex number");
+	return x.lessThan(y);
+    };
  
     org.plt.types.NumberTower.modulo = function(m, n) {
   var result = 
