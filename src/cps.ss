@@ -38,11 +38,11 @@
     (match a-binding
       [(struct primitive-env:binding:constant (_ _ _))
        (make-binding:defined (primitive-env:binding-id a-binding))]
-      [(struct primitive-env:binding:function (_ _ _ _ _ _ primitive?))
-       (cond [primitive?
-              (make-binding:primitive (primitive-env:binding-id a-binding))]
+      [(struct primitive-env:binding:function (_ _ _ _ _ _ cps?))
+       (cond [cps?
+              (make-binding:defined (primitive-env:binding-id a-binding))]
              [else
-              (make-binding:defined (primitive-env:binding-id a-binding))])]))
+              (make-binding:primitive (primitive-env:binding-id a-binding))])]))
   
   (foldl (lambda (k env)
            (env-extend env (translate-primitive-binding
@@ -67,9 +67,11 @@
       [else
        (cond
          [(defn? (first a-program))
-          (cons (cps-definition (first a-program) env)
-                (loop (rest a-program)
-                      env))]
+          (let-values ([(transformed-defn new-env)
+                        (cps-definition (first a-program) env)])
+            (cons transformed-defn 
+                  (loop (rest a-program)
+                        new-env)))]
 
          [(test-case? (first a-program))
           ;; FIXME: this is wrong.  We need to apply CPS on the use of the test.
@@ -88,7 +90,8 @@
                       env))])])))
 
 
-;; cps-definition: defn env -> defn
+;; cps-definition: defn env -> (values defn env)
+;; Transforms a definition
 (define (cps-definition a-defn an-env)
   (match a-defn
     [(list 'define (list fun args ...) body)
@@ -98,24 +101,25 @@
      (cps-function-definition fun args body an-env)]
 
     [(list 'define (? symbol? id) body)
-     `(define ,id
-        ,(cps-expression body an-env))]
+     (values `(define ,id ,(cps-expression body an-env))
+             (env-extend an-env (make-binding:defined id)))]
 
     [(list 'define-struct id (list fields ...))
-     a-defn]))
+     (values a-defn an-env)]))
 
 
-;; cps-function-definition: symbol (listof symbol) expr env -> defn
+;; cps-function-definition: symbol (listof symbol) expr env -> (values defn env)
 ;; Given a function definition, produces a CPSed version of that definition
 (define (cps-function-definition id args body env)
   (let* ([cps-arg (generate-unique-arg args)]
-         [new-env (foldl (lambda (a inner-env) 
-                           (env-extend inner-env (make-binding:defined a)))
-                         (env-extend env (make-binding:defined id))
-                         args)]
-         [new-body (cps-expression body new-env)])
-    `(define (,id ,@args ,cps-arg)
-       (,new-body ,cps-arg))))
+         [new-env (env-extend env (make-binding:defined id))]
+         [new-body (cps-expression body (foldl (lambda (arg env) 
+                                                 (env-extend env (make-binding:defined arg)))
+                                               new-env
+                                               args))])
+    (values `(define (,id ,@args ,cps-arg)
+               (,new-body ,cps-arg))
+            new-env)))
 
 
 
@@ -272,10 +276,38 @@
            
            [(struct binding:defined (id))            
             `(lambda (k)
-               'fixme)]))]
+               ,(let loop ([i 0]
+                           [cps-operands cps-operands]
+                           [args/rev empty])
+                  (cond
+                    [(empty? cps-operands)
+                     `(,operator-expr ,@(reverse args/rev) k)]
+                    [else
+                     (let ([arg (string->symbol
+                                 (string-append "_" (number->string i)))])
+                       `(,(first cps-operands)
+                         (lambda (,arg)
+                           ,(loop (add1 i) 
+                                  (rest cps-operands)
+                                  (cons arg args/rev)))))])))]))]         
       [else
        `(lambda (k)
-          'fixme)])))
+          ,(let loop ([i 0]
+                      [cps-operands cps-operands]
+                      [args/rev empty])
+             (cond
+               [(empty? cps-operands)
+                `(,cps-operator ,@(reverse args/rev) k)]
+               [else
+                (let ([arg (string->symbol
+                            (string-append "_" (number->string i)))])
+                  `(,(first cps-operands)
+                    (lambda (,arg)
+                      ,(loop (add1 i) 
+                             (rest cps-operands)
+                             (cons arg args/rev)))))])))])))
+       
+
 
 
 
