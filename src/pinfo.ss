@@ -203,7 +203,13 @@
   (let* ([env (pinfo-env pinfo)]
          [env 
           (env-extend env (bf fun #f (length args) #f
-                                                 (symbol->string fun)))]
+                                                 (symbol->string fun)))])
+    (lambda-expression-analyze-uses args body pinfo)))
+
+
+;; lambda-expression-analyze-uses: (listof symbol) expression program-info -> program-info
+(define (lambda-expression-analyze-uses args body pinfo)
+  (let* ([env (pinfo-env pinfo)]
          [env
           (foldl (lambda (arg-id env) 
                    (env-extend env (make-binding:constant arg-id 
@@ -260,6 +266,9 @@
      (foldl (lambda (e p) (expression-analyze-uses e p env))
             pinfo 
             exprs)]
+    
+    [(list 'lambda (list args ...) body)
+     (lambda-expression-analyze-uses args body pinfo)]
     
     ;; Numbers
     [(? number?)
