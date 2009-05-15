@@ -105,7 +105,7 @@
              (env-extend an-env (make-binding:defined id)))]
 
     [(list 'define-struct id (list fields ...))
-     (values a-defn an-env)]))
+     (cps-structure-definition a-defn an-env)]))
 
 
 ;; cps-function-definition: symbol (listof symbol) expr env -> (values defn env)
@@ -122,6 +122,27 @@
             new-env)))
 
 
+;; cps-structure-definition: defn env -> (values defn env)
+(define (cps-structure-definition a-defn an-env)
+  (match a-defn 
+    [(list 'define-struct id (list fields ...))
+
+     (define (field-accessor a-field)
+       (string->symbol (format "~a-~a" id a-field)))
+     
+     (let* (;; Constructor
+            [new-env (env-extend an-env (make-binding:primitive (string->symbol (format "make-~a" id))))]
+            ;; Predicate
+            [new-env (env-extend new-env (make-binding:primitive (string->symbol (format "~a?" id))))]
+            ;; Accessors
+            [new-env (foldl (lambda (field env)
+                              (env-extend env (make-binding:primitive (field-accessor field))))
+                            new-env
+                            fields)])
+       (values a-defn new-env))]))
+
+    
+    
 
 ;; generate-unique-arg: (listof symbol) -> symbol
 ;; Produces a unique symbol distinct from the given ones.
