@@ -682,7 +682,9 @@
 		var str1 = String.makeInstance("hi");
 		var str2 = Kernel.string_dash_copy(str1);
 		this.assert(Kernel.string_equal__question_(str1, str2, []));
-		this.assert(!Kernel.eq_question_(str1, str2));
+
+// Unnecessary to test for eq-ness of strings: in beginner student level, strings are immutable already.
+//		this.assert(!Kernel.eq_question_(str1, str2));
 	},
 	
 	testString_dash_length : function(){

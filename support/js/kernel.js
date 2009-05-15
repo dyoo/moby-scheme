@@ -693,7 +693,7 @@ org.plt = {};
   },
   
   string_question_ : function(str){
-	return str instanceof org.plt.types.String;
+      return typeof(str) == 'string';
   },
   
   substring : function(str, begin, end){
