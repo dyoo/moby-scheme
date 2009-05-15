@@ -1,6 +1,7 @@
 #lang scheme/base
 (require scheme/match
          scheme/list
+         "helpers.ss"
          (prefix-in primitive-pinfo: "pinfo.ss")
          (prefix-in primitive-env: "env.ss"))
 
@@ -51,19 +52,45 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define default-env
+  (translate-primitive-env 
+   (primitive-pinfo:pinfo-env
+    (primitive-pinfo:get-base-pinfo))))
 
-(define (cps-program a-program (env (translate-primitive-env 
-                                     (primitive-pinfo:pinfo-env
-                                      (primitive-pinfo:get-base-pinfo)))))
-  ;; fixme: handle definitions!
-  (map (lambda (e) 
-         (cps-expression e env))
-       a-program))
+
+(define (cps-program a-program (env default-env))
+  (let loop ([a-program a-program]
+             [env env])
+    (cond
+      [(empty? a-program)
+       empty]
+      [else
+       (cond
+         [(defn? (first a-program))
+          (cons (cps-definition (first a-program) env)
+                (loop (rest a-program)
+                      env))]
+
+         [(test-case? (first a-program))
+          ;; FIXME: this is wrong.  We need to apply CPS on the use of the test.
+          (cons (first a-program)
+                (loop (rest a-program)
+                      env))]
+
+         [(library-require? (first a-program))
+          (cons (first a-program)
+                (loop (rest a-program)
+                      env))]
+         
+         [(expression? (first a-program))
+          (cons (cps-expression (first a-program) env)
+                (loop (rest a-program)
+                      env))])])))
 
 
 ;; cps-definition: defn env -> defn
 (define (cps-definition a-defn an-env)
-  (match defn
+  (match a-defn
     [(list 'define (list fun args ...) body)
      (cps-function-definition fun args body an-env)]
 
@@ -82,12 +109,14 @@
 ;; Given a function definition, produces a CPSed version of that definition
 (define (cps-function-definition id args body env)
   (let* ([cps-arg (generate-unique-arg args)]
-         [new-env (foldl (lambda (a env)  ...)
-                         env
+         [new-env (foldl (lambda (a inner-env) 
+                           (env-extend inner-env (make-binding:defined a)))
+                         (env-extend env (make-binding:defined id))
                          args)]
-         [new-body ()])
-    `(define (id ,@args cps-arg)
-       ...)))
+         [new-body (cps-expression body new-env)])
+    `(define (,id ,@args ,cps-arg)
+       (,new-body ,cps-arg))))
+
 
 
 ;; generate-unique-arg: (listof symbol) -> symbol
