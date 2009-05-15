@@ -359,7 +359,8 @@
                 [(program)
                  (parse-text-as-program text)]
                 [(compiled-program)
-                 (javascript:program->compiled-program program)])
+                 (javascript:program->compiled-program program 
+                                                       #:cps? #t)])
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 

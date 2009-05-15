@@ -11,7 +11,7 @@
          scheme/string
          scheme/contract
          "env.ss"
-         "toplevel.ss"
+         "cps.ss"
          "pinfo.ss"
          "helpers.ss")
 
@@ -28,11 +28,13 @@
 ;; program->compiled-program: program [pinfo] -> compiled-program
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
-(define (program->compiled-program program [input-pinfo (get-base-pinfo)])
+(define (program->compiled-program program 
+                                   [input-pinfo (get-base-pinfo)]
+                                   #:cps? (cps? #f))
   (let* ([a-pinfo (program-analyze program input-pinfo)]
          [toplevel-env (pinfo-env a-pinfo)])
     
-    (let loop ([program program]
+    (let loop ([program (if cps? (cps-program program) program)]
                [defns ""]
                [tops ""])
       (cond [(empty? program)
@@ -44,14 +46,14 @@
                                     (first program) 
                                     toplevel-env
                                     a-pinfo)])
-                                         
-                    (loop (rest program)
-                          (string-append defns
-                                         "\n"
-                                         defn-string)
-                          (string-append tops
-                                         "\n"
-                                         expr-string)))]
+                      
+                      (loop (rest program)
+                            (string-append defns
+                                           "\n"
+                                           defn-string)
+                            (string-append tops
+                                           "\n"
+                                           expr-string)))]
                    
                    [(test-case? (first program))
                     (loop (rest program)
@@ -68,16 +70,29 @@
                           tops)] 
                    
                    [(expression? (first program))
-                    (loop (rest program)
-                          defns
-                          (string-append tops
-                                         "\n"
-                                         "org.plt.Kernel.identity("
-                                         (expression->javascript-string 
-                                          (first program) 
-                                          toplevel-env
-                                          a-pinfo)
-                                         ");"))])]))))
+                    (cond
+                      [cps?
+                       (loop (rest program)
+                             defns
+                             (string-append tops
+                                            "\n"
+                                            "org.plt.Kernel.identity(("
+                                            (expression->javascript-string 
+                                             (first program) 
+                                             toplevel-env
+                                             a-pinfo)
+                                            ")([org.plt.Kernel.identity]));"))]
+                      [else
+                       (loop (rest program)
+                             defns
+                             (string-append tops
+                                            "\n"
+                                            "org.plt.Kernel.identity("
+                                            (expression->javascript-string 
+                                             (first program) 
+                                             toplevel-env
+                                             a-pinfo)
+                                            ");"))])])]))))
 
 
 
@@ -471,7 +486,7 @@
     (format "(function(args) { ~a
                              return ~a; })"
             (string-join (mapi (lambda (arg-id i)
-                                 (format "~a = args[~a];" (symbol->string arg-id) i))
+                                 (format "var ~a = args[~a];" (symbol->string arg-id) i))
                                munged-arg-ids)
                          "\n")
             (expression->javascript-string body new-env a-pinfo))))
@@ -523,4 +538,4 @@
                                             [pinfo pinfo?])]
                   
                   [program->compiled-program 
-                   (program? . -> . compiled-program?)])
+                   ((program?) (#:cps? boolean?) . ->* . compiled-program?)])

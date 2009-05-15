@@ -99,7 +99,7 @@
                     test-struct-question
                     test-move-ball
                     test-image-question
-                    test-local
+                    ;test-local
                     
                     test-location
                     test-location-2

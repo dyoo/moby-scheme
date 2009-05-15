@@ -1,6 +1,7 @@
 #lang scheme/base
 (require scheme/match
          scheme/list
+         scheme/contract
          "helpers.ss"
          (prefix-in primitive-pinfo: "pinfo.ss")
          (prefix-in primitive-env: "env.ss"))
@@ -58,36 +59,37 @@
     (primitive-pinfo:get-base-pinfo))))
 
 
-(define (cps-program a-program (env default-env))
-  (let loop ([a-program a-program]
-             [env env])
-    (cond
-      [(empty? a-program)
-       empty]
-      [else
-       (cond
-         [(defn? (first a-program))
-          (let-values ([(transformed-defn new-env)
-                        (cps-definition (first a-program) env)])
-            (cons transformed-defn 
+(define (cps-program a-program)
+  (let ([a-pinfo (primitive-pinfo:program-analyze a-program)])
+    (let loop ([a-program a-program]
+               [env (translate-primitive-env (primitive-pinfo:pinfo-env a-pinfo))])
+      (cond
+        [(empty? a-program)
+         empty]
+        [else
+         (cond
+           [(defn? (first a-program))
+            (let-values ([(transformed-defn new-env)
+                          (cps-definition (first a-program) env)])
+              (cons transformed-defn 
+                    (loop (rest a-program)
+                          new-env)))]
+           
+           [(test-case? (first a-program))
+            ;; FIXME: this is wrong.  We need to apply CPS on the use of the test.
+            (cons (first a-program)
                   (loop (rest a-program)
-                        new-env)))]
-
-         [(test-case? (first a-program))
-          ;; FIXME: this is wrong.  We need to apply CPS on the use of the test.
-          (cons (first a-program)
-                (loop (rest a-program)
-                      env))]
-
-         [(library-require? (first a-program))
-          (cons (first a-program)
-                (loop (rest a-program)
-                      env))]
-         
-         [(expression? (first a-program))
-          (cons (cps-expression (first a-program) env)
-                (loop (rest a-program)
-                      env))])])))
+                        env))]
+           
+           [(library-require? (first a-program))
+            (cons (first a-program)
+                  (loop (rest a-program)
+                        env))]
+           
+           [(expression? (first a-program))
+            (cons (cps-expression (first a-program) env)
+                  (loop (rest a-program)
+                        env))])]))))
 
 
 ;; cps-definition: defn env -> (values defn env)
@@ -101,7 +103,7 @@
      (cps-function-definition fun args body an-env)]
 
     [(list 'define (? symbol? id) body)
-     (values `(define ,id ,(cps-expression body an-env))
+     (values `(define ,id (,(cps-expression body an-env) (lambda (v) v)))
              (env-extend an-env (make-binding:defined id)))]
 
     [(list 'define-struct id (list fields ...))
@@ -154,7 +156,9 @@
         [else
          arg])))
 
-
+;; generate-unique-k: -> symbol
+(define (generate-unique-k)
+  (gensym 'k))
 
 
 
@@ -185,28 +189,33 @@
         
     ;; Numbers
     [(? number?)
-     `(lambda (k)
-        (k ,an-expr))]
+     (let ([k (generate-unique-k)])
+     `(lambda (,k)
+        (,k ,an-expr)))]
     
     ;; Strings
     [(? string?)
-     `(lambda (k)
-        (k ,an-expr))]
+     (let ([k (generate-unique-k)])
+     `(lambda (,k)
+        (,k ,an-expr)))]
     
     ;; Characters
     [(? char?)
-     `(lambda (k)
-        (k ,an-expr))]
+     (let ([k (generate-unique-k)])
+       `(lambda (,k)
+          (,k ,an-expr)))]
     
     ;; Identifiers
     [(? symbol?)
-     `(lambda (k)
-        (k ,an-expr))]
+     (let ([k (generate-unique-k)])
+     `(lambda (,k)
+        (,k ,an-expr)))]
     
     ;; Quoted datum.
     [(list 'quote datum)
-     `(lambda (k)
-        (k ',an-expr))]
+     (let ([k (generate-unique-k)])
+     `(lambda (,k)
+        (,k ',an-expr)))]
 
     ;; Function call/primitive operation call
     [(list operator-expr operand-exprs ...)
@@ -221,47 +230,50 @@
 (define (cps-if-expression test consequent alternative env)
   (let ([cps-test (cps-expression test env)]
         [cps-consequent (cps-expression consequent env)]
-        [cps-alternative (cps-expression alternative env)])
-    `(lambda (k)
+        [cps-alternative (cps-expression alternative env)]
+        [k (generate-unique-k)])
+    `(lambda (,k)
        (,cps-test (lambda (test-val)
                     (if test-val
-                        (,cps-consequent k)
-                        (,cps-alternative k)))))))
+                        (,cps-consequent ,k)
+                        (,cps-alternative ,k)))))))
 
 
 (define (cps-and-expression conjuncts env)
   (let ([cps-conjuncts (map (lambda (e) (cps-expression e env))
-                            conjuncts)])
+                            conjuncts)]
+        [k (generate-unique-k)])
     (cond [(empty? cps-conjuncts)
-           `(lambda (k)
-              (k #t))]
+           `(lambda (,k)
+              (,k #t))]
           [else
            (let loop ([cps-conjuncts cps-conjuncts])
              (cond
                [(empty? (rest cps-conjuncts))
-                `(lambda (k)
-                   (,(first cps-conjuncts) k))]
+                `(lambda (,k)
+                   (,(first cps-conjuncts) ,k))]
                [else
-                `(lambda (k)
+                `(lambda (,k)
                    (,(first cps-conjuncts) 
                     (lambda (v)
-                      (if v (,(loop (rest cps-conjuncts)) k)
+                      (if v (,(loop (rest cps-conjuncts)) ,k)
                           v))))]))])))
 
 
 (define (cps-or-expression disjuncts env)
   (let ([cps-disjuncts (map (lambda (e) (cps-expression e env))
-                            disjuncts)])
+                            disjuncts)]
+        [k (generate-unique-k)])
     (let loop ([cps-disjuncts cps-disjuncts])
       (cond
         [(empty? cps-disjuncts)
-         `(lambda (k)
-            (k #f))]
+         `(lambda (,k)
+            (,k #f))]
         [else
-         `(lambda (k)
+         `(lambda (,k)
             (,(first cps-disjuncts) 
              (lambda (v)
-               (if v v (,(loop (rest cps-disjuncts)) k)))))]))))
+               (if v v (,(loop (rest cps-disjuncts)) ,k)))))]))))
 
 
 
@@ -270,7 +282,8 @@
 (define (cps-application-expression operator-expr operand-exprs env)
   (let ([cps-operator (cps-expression operator-expr env)]
         [cps-operands (map (lambda (e) (cps-expression e env))
-                           operand-exprs)])
+                           operand-exprs)]
+        [k (generate-unique-k)])
     (cond
       [(symbol? operator-expr)
        (let ([operator-binding (env-lookup env operator-expr)])
@@ -279,13 +292,13 @@
             (error 'cps-application "Unknown operator: ~s" operator-expr)]
            
            [(struct binding:primitive (id))
-            `(lambda (k)
+            `(lambda (,k)
                ,(let loop ([i 0]
                            [cps-operands cps-operands]
                            [args/rev empty])
                   (cond
                     [(empty? cps-operands)
-                     `(k (,operator-expr ,@(reverse args/rev)))]
+                     `(,k (,operator-expr ,@(reverse args/rev)))]
                     [else
                      (let ([arg (string->symbol
                                  (string-append "_" (number->string i)))])
@@ -296,13 +309,13 @@
                                   (cons arg args/rev)))))])))]
            
            [(struct binding:defined (id))            
-            `(lambda (k)
+            `(lambda (,k)
                ,(let loop ([i 0]
                            [cps-operands cps-operands]
                            [args/rev empty])
                   (cond
                     [(empty? cps-operands)
-                     `(,operator-expr ,@(reverse args/rev) k)]
+                     `(,operator-expr ,@(reverse args/rev) ,k)]
                     [else
                      (let ([arg (string->symbol
                                  (string-append "_" (number->string i)))])
@@ -312,13 +325,13 @@
                                   (rest cps-operands)
                                   (cons arg args/rev)))))])))]))]         
       [else
-       `(lambda (k)
+       `(lambda (,k)
           ,(let loop ([i 0]
                       [cps-operands cps-operands]
                       [args/rev empty])
              (cond
                [(empty? cps-operands)
-                `(,cps-operator ,@(reverse args/rev) k)]
+                `(,cps-operator ,@(reverse args/rev) ,k)]
                [else
                 (let ([arg (string->symbol
                             (string-append "_" (number->string i)))])
@@ -364,3 +377,4 @@
 
 
 
+(provide/contract [cps-program (program? . -> . program?)])
