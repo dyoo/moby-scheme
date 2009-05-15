@@ -884,7 +884,7 @@ org.plt = {};
     // For the moment, we just reuse Javascript strings.
     org.plt.types.String = String;
     org.plt.types.String.makeInstance = function(s) {
-  return new String(s);
+	return s;
     };
 	
 	org.plt.types.String.prototype.isEqual = function(other){
