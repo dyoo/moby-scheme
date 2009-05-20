@@ -47,7 +47,7 @@
 (define (list-begins-with? an-sexp a-label)
   (and (list? an-sexp)
        (not (empty? an-sexp))
-       (symbol=? (first an-sexp))
+       (symbol? (first an-sexp))
        (symbol=? (first an-sexp) a-label)))
 
 
