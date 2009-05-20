@@ -1,4 +1,4 @@
-#lang scheme/base
+#lang s-exp "lang.ss"
 
 ;; This program translates beginner-level languages into Javascript.
 ;; We pattern match against the language given by:
@@ -6,11 +6,7 @@
 ;; http://docs.plt-scheme.org/htdp-langs/beginner.html
 
 
-(require scheme/match
-         scheme/list
-         scheme/string
-         scheme/contract
-         "env.ss"
+(require "env.ss"
          "pinfo.ss"
          "helpers.ss")
 
@@ -27,60 +23,66 @@
 ;; program->compiled-program: program [pinfo] -> compiled-program
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
-(define (program->compiled-program program [input-pinfo (get-base-pinfo)])
-  (let* ([a-pinfo (program-analyze program input-pinfo)]
-         [toplevel-env (pinfo-env a-pinfo)])
+(define (program->compiled-program program)
+  (-program->compiled-program program (get-base-pinfo)))
+
+
+(define (-program->compiled-program program input-pinfo)
+  (local [(define a-pinfo (program-analyze program input-pinfo))
+          (define toplevel-env (pinfo-env a-pinfo))
+          (define (loop program defns tops)
+            
+            
+            (cond [(empty? program)
+                   (make-compiled-program defns tops a-pinfo)]
+                  [else
+                   (cond [(defn? (first program))
+                          (local [(define defn-string+expr-string
+                                    (definition->javascript-strings 
+                                      (first program) 
+                                      toplevel-env
+                                      a-pinfo))]
+                            
+                            (loop (rest program)
+                                  (string-append defns
+                                                 "\n"
+                                                 (first defn-string+expr-string))
+                                  (string-append tops
+                                                 "\n"
+                                                 (second defn-string+expr-string))))]
+                         
+                         [(test-case? (first program))
+                          (loop (rest program)
+                                (string-append defns
+                                               "\n"
+                                               "// Test case erased\n")
+                                tops)]
+                         
+                         [(library-require? (first program))
+                          (loop (rest program)
+                                (string-append defns
+                                               "\n"
+                                               "// Module require erased\n")
+                                tops)] 
+                         
+                         [(expression? (first program))
+                          (loop (rest program)
+                                defns
+                                (string-append tops
+                                               "\n"
+                                               "org.plt.Kernel.identity("
+                                               (expression->javascript-string 
+                                                (first program) 
+                                                toplevel-env
+                                                a-pinfo)
+                                               ");"))])]))]
     
-    (let loop ([program program]
-               [defns ""]
-               [tops ""])
-      (cond [(empty? program)
-             (make-compiled-program defns tops a-pinfo)]
-            [else
-             (cond [(defn? (first program))
-                    (let-values ([(defn-string expr-string)
-                                  (definition->javascript-strings 
-                                    (first program) 
-                                    toplevel-env
-                                    a-pinfo)])
-                                         
-                    (loop (rest program)
-                          (string-append defns
-                                         "\n"
-                                         defn-string)
-                          (string-append tops
-                                         "\n"
-                                         expr-string)))]
-                   
-                   [(test-case? (first program))
-                    (loop (rest program)
-                          (string-append defns
-                                         "\n"
-                                         "// Test case erased\n")
-                          tops)]
-                   
-                   [(library-require? (first program))
-                    (loop (rest program)
-                          (string-append defns
-                                         "\n"
-                                         "// Module require erased\n")
-                          tops)] 
-                   
-                   [(expression? (first program))
-                    (loop (rest program)
-                          defns
-                          (string-append tops
-                                         "\n"
-                                         "org.plt.Kernel.identity("
-                                         (expression->javascript-string 
-                                          (first program) 
-                                          toplevel-env
-                                          a-pinfo)
-                                         ");"))])]))))
+    (loop program "" "")))
 
 
 
-;; definition->java-string: definition env pinfo -> (values string string)
+
+;; definition->java-string: definition env pinfo -> (list string string)
 ;; Consumes a definition (define or define-struct) and produces two strings.
 ;; The first maps a definitions string.
 ;; The second value is the expression that will be evaluated at the toplevel.
@@ -89,16 +91,16 @@
 (define (definition->javascript-strings defn env a-pinfo)
   (match defn
     [(list 'define (list fun args ...) body)
-     (values (function-definition->java-string fun args body env a-pinfo)
+     (list (function-definition->java-string fun args body env a-pinfo)
              "")]
     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
-     (values (function-definition->java-string fun args body env a-pinfo)
+     (list (function-definition->java-string fun args body env a-pinfo)
              "")]
     [(list 'define (? symbol? id) body)
      (variable-definition->javascript-strings id body env a-pinfo)]
 
     [(list 'define-struct id (list fields ...))
-     (values (struct-definition->javascript-string id fields env a-pinfo)
+     (list (struct-definition->javascript-string id fields env a-pinfo)
              "")]))
 
 
@@ -106,33 +108,32 @@
 ;; Converts the function definition into a static function declaration whose
 ;; return value is an object.
 (define (function-definition->java-string fun args body env a-pinfo)
-  (let* ([munged-fun-id
-          (identifier->munged-java-identifier fun)]
-         [munged-arg-ids
-          (map identifier->munged-java-identifier args)]
-         [new-env 
-          (env-extend-function env fun #f (length args) #f
-                               (symbol->string munged-fun-id)
-                               #:cps? #f)]
-         [new-env
-          (foldl (lambda (arg-id env) 
-                   (env-extend env (make-binding:constant arg-id 
-                                                          (symbol->string
-                                                           (identifier->munged-java-identifier arg-id))
-                                                          empty)))
-                 new-env
-                 args)])
+  (local [(define munged-fun-id
+            (identifier->munged-java-identifier fun))
+          (define munged-arg-ids
+            (map identifier->munged-java-identifier args))
+          (define new-env 
+            (env-extend-function env fun #f (length args) #f
+                                 (symbol->string munged-fun-id)))
+          (define env-with-arg-bindings
+            (foldl (lambda (arg-id env) 
+                     (env-extend env (make-binding:constant arg-id 
+                                                            (symbol->string
+                                                             (identifier->munged-java-identifier arg-id))
+                                                            empty)))
+                   new-env
+                   args))]
     (format "function ~a(~a) { return ~a; }"
             munged-fun-id
             (string-join (map (lambda (arg-id)
                                 (symbol->string arg-id))
                               munged-arg-ids)
                          ", ")
-            (expression->javascript-string body new-env a-pinfo))))
+            (expression->javascript-string body env-with-arg-bindings a-pinfo))))
 
 
 
-;; variable-definition->javascript-strings: symbol expr env pinfo -> (values string string)
+;; variable-definition->javascript-strings: symbol expr env pinfo -> (list string string)
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
 (define (variable-definition->javascript-strings id body env a-pinfo)
@@ -140,26 +141,27 @@
          [new-env (env-extend env (make-binding:constant id 
                                                          (symbol->string munged-id)
                                                          empty))])
-    (values (format "var ~a; "
-                    munged-id)
-            (format "~a = ~a;" 
-                    munged-id
-                    (expression->javascript-string body new-env a-pinfo)))))
+    (list (format "var ~a; "
+                  munged-id)
+          (format "~a = ~a;" 
+                  munged-id
+                  (expression->javascript-string body new-env a-pinfo)))))
 
 
 
 
 ;; struct-definition->javascript-string: symbol (listof symbol) env pinfo -> string
 (define (struct-definition->javascript-string id fields env a-pinfo)
-  
-  ;; field->accessor-name: symbol symbol -> symbol
-  ;; Given a structure name and a field, return the accessor.
-  (define (field->accessor-name struct-name field-name)
-    (string->symbol
-     (string-append (symbol->string struct-name)
-                    "-"
-                    (symbol->string field-name))))
-  
+  (local [
+          ;; field->accessor-name: symbol symbol -> symbol
+          ;; Given a structure name and a field, return the accessor.
+          (define (field->accessor-name struct-name field-name)
+            (string->symbol
+             (string-append (symbol->string struct-name)
+                            "-"
+                            (symbol->string field-name))))
+          ]
+          
 
   (string-append
    
@@ -246,7 +248,7 @@
               return obj instanceof ~a ; 
             }"
            (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
-           (identifier->munged-java-identifier id))))
+           (identifier->munged-java-identifier id)))))
 
 
 
@@ -259,34 +261,11 @@
      (local-expression->javascript-string defns body env a-pinfo)]
     
     [(list 'cond [list questions answers] ... [list 'else answer-last])
-     (let loop ([questions questions]
-                [answers answers])
-       (cond
-         [(empty? questions)
-          (expression->javascript-string answer-last env a-pinfo)]
-         [else
-          (format "((~a) ? (~a) : (~a))"
-                  (expression->javascript-string (first questions) env a-pinfo)
-                  (expression->javascript-string (first answers) env a-pinfo)
-                  (loop (rest questions) (rest answers)))]))]
-    
+     (expression->javascript-string (desugar-cond expr) env a-pinfo)]    
     
     [(list 'cond [list questions answers] ... [list question-last answer-last])
-     (let loop ([questions questions]
-                [answers answers])
-       (cond
-         [(empty? questions)
-          (format "((~a) ? (~a) : 
-                    org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"),
-                                         \"Fell out of cond\"))"
-                  (expression->javascript-string question-last env a-pinfo)
-                  (expression->javascript-string answer-last env a-pinfo))]
-         [else
-          (format "((~a) ? (~a) : (~a))"
-                  (expression->javascript-string (first questions) env a-pinfo)
-                  (expression->javascript-string (first answers) env a-pinfo)
-                  (loop (rest questions) (rest answers)))]))]
-    
+     (expression->javascript-string (desugar-cond expr) env a-pinfo)]
+     
     [(list 'if test consequent alternative)
      (format "((~a) ? (~a) : (~a))"
              (expression->javascript-string test env a-pinfo)
@@ -340,7 +319,7 @@
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
 (define (local-expression->javascript-string defns body env a-pinfo)
   (let ([inner-compiled-program 
-         (program->compiled-program (append defns (list body)) 
+         (-program->compiled-program (append defns (list body)) 
                                     (pinfo-update-env a-pinfo env))])
     (format "(function() {
                ~a
@@ -349,12 +328,12 @@
               })()"
             (compiled-program-defns inner-compiled-program)
             ;; Complete kludge... How do we do this better?
-            (regexp-replace #px"^\\s+"
-                            (compiled-program-toplevel-exprs inner-compiled-program)
-                            ""))))
+            (remove-leading-whitespace
+             (compiled-program-toplevel-exprs inner-compiled-program)))))
 
 
 
+char-whitespace?
 ;; application-expression->java-string: symbol (listof expr) env pinfo -> string
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string id exprs env a-pinfo)
@@ -375,13 +354,12 @@
       
       [(struct binding:function (name module-path min-arity var-arity? 
                                       java-string permissions primitive?))
-       (unless (>= (length exprs)
-                   min-arity)
-         (error 'application-expression->java-string
+       (cond
+         [(< (length exprs) min-arity)
+          (error 'application-expression->java-string
                 "Minimal arity of ~s not met.  Operands were ~s"
                 id
-                exprs))
-       (cond
+                exprs)]
          [var-arity?
           (cond [(> min-arity 0)
                  (format "~a(~a, [~a])"
@@ -422,8 +400,9 @@
                     return ~a(~a);
                  })"
                 java-string
-                (string-join (for/list ([i (in-range min-arity)])
-                               (format "args[~a]" i))
+                (string-join (map (lambda (i)
+                                    (format "args[~a]" i))
+                                  (range min-arity))
                              ", "))])]))
 
 
@@ -438,9 +417,9 @@
          (format "(org.plt.types.Rational.makeInstance(~a, 1))" (inexact->exact a-num))]
         [(and (inexact? a-num)
               (real? a-num))
-         (format "(org.plt.types.FloatPoint.makeInstance(\"~s\"))" a-num)]
+         (format "(org.plt.types.FloatPoint.makeInstance(\"~a\"))" a-num)]
         [(rational? a-num)
-         (format "(org.plt.types.Rational.makeInstance(~s, ~s))" 
+         (format "(org.plt.types.Rational.makeInstance(~a, ~a))" 
                  (numerator a-num) 
                  (denominator a-num))]
         [(complex? a-num)
@@ -474,5 +453,5 @@
                                              string?]
                                             [pinfo pinfo?])]
                   
-                  [program->compiled-program 
+                  [-program->compiled-program 
                    (program? . -> . compiled-program?)])

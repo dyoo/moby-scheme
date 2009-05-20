@@ -1,14 +1,13 @@
-#lang scheme/base
-
-(require scheme/local
-         scheme/list
-         scheme/bool
-         scheme/string
-         scheme/contract
-         scheme/path)
+#lang s-exp "lang.ss"
 
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
+
+(define (list? datum)
+  (or (empty? datum)
+      (and
+       (pair? datum)
+       (list? (rest datum)))))
 
 
 ;; program: any -> boolean
@@ -40,6 +39,20 @@
      #t]
     [else
      #f]))
+
+
+;; string-join: (listof string) string -> string
+(define (string-join strs delim)
+  (cond
+    [(empty? strs)
+     ""]
+    [(empty? (rest strs))
+     (first strs)]
+    [else
+     (string-append
+      (first strs)
+      delim
+      (string-join (rest strs) delim))]))
 
 
 ;; list-begins-with?: sexp symbol -> boolean
@@ -81,37 +94,118 @@
                         class 	finally 	long 	strictfp 	volatile
                         const 	float 	native 	super 	while))
           ;; Special character mappings for identifiers
-          (define char-mappings 
-            #hash((#\- . "_dash_")
-                  (#\_ . "_underline_")
-                  (#\? . "_question_")
-                  (#\! . "_bang_")
-                  (#\. . "_dot_")
-                  (#\: . "_colon_")
-                  (#\= . "_equal_")
-                  (#\# . "_pound_")
-                  (#\$ . "_dollar_")
-                  (#\% . "_percent_")
-                  (#\^ . "_tilde_")
-                  (#\& . "_and_")
-                  (#\* . "_star_")
-                  (#\+ . "_plus_")
-                  (#\* . "_star_")
-                  (#\/ . "_slash_")
-                  (#\< . "_lessthan_")
-                  (#\> . "_greaterthan_")
-                  (#\~ . "_tilde_")))]
+          (define (trans ch)
+            (cond
+              [(char=? ch #\-)
+               "_dash_"]
+              [(char=? ch #\_)
+               "_underline_"]
+              [(char=? ch #\?)
+               "_question_"]
+              [(char=? ch #\!)
+               "_bang_"]
+              [(char=? ch #\.)
+               "_dot_"]
+              [(char=? ch #\:)
+               "_colon_"]
+              [(char=? ch #\=)
+               "_equal_"]
+              [(char=? ch #\#)
+               "_pound_"]
+              [(char=? ch #\$)
+               "_dollar_"]
+              [(char=? ch #\%)
+               "_percent_"]
+              [(char=? ch #\^)
+               "_tilde_"]
+              [(char=? ch #\&)
+               "_and_"]
+              [(char=? ch #\*)
+               "_star_"]
+              [(char=? ch #\+)
+               "_plus_"]
+              [(char=? ch #\*)
+               "_star_"]
+              [(char=? ch #\/)
+               "_slash_"]
+              [(char=? ch #\<)
+               "_lessthan_"]
+              [(char=? ch #\>)
+               "_greaterthan_"]
+              [(char=? ch #\~)
+               "_tilde_"]
+              [else
+               (string ch)]))]
     (cond
       [(member an-id java-identifiers)
        (string->symbol (format "_nonclashing_~a" an-id))]
       [else
        (let* ([chars (string->list (symbol->string an-id))]
               [translated-chunks 
-               (map (lambda (ch) (hash-ref char-mappings ch (string ch))) chars)]
+               (map trans chars)]
               [translated-id
                (string->symbol
                 (string-join translated-chunks ""))])
          translated-id)])))
+
+
+
+
+;; desugar-cond: expr -> expr
+;; Translates conds to ifs.
+(define (desugar-cond an-expr)
+  (local
+    [(define (loop questions answers question-last answer-last)
+       (cond
+         [(empty? questions)
+          `(if ,question-last ,answer-last (error "Fell out of cond"))]
+         [else
+          `(if ,(first questions) 
+               ,(first answers)
+               ,(loop (rest questions)
+                      (rest answers)
+                      question-last
+                      answer-last))]))]
+    
+    (match an-expr
+      [(list 'cond [list questions answers] ... [list 'else answer-last])
+       (loop questions answers 'true answer-last)]
+      
+      [(list 'cond [list questions answers] ... [list question-last answer-last])
+       (loop questions answers question-last answer-last)])))
+
+
+
+(define (remove-leading-whitespace a-str)
+  (local [(define (remove-leading-whitespace/list chars)
+            (cond
+              [(empty? chars)
+               empty]
+              [(char-whitespace? (first chars))
+               (remove-leading-whitespace/list (rest chars))]
+              [else
+               (list->string chars)]))]
+    (remove-leading-whitespace/list (string->list a-str))))
+
+
+(define (take a-list n)
+  (cond
+    [(= n 0)
+     empty]
+    [else
+     (cons (first a-list)
+           (take (rest a-list) (sub1 n)))]))
+
+(define (list-tail a-list n)
+  (reverse (take (reverse a-list) n)))
+
+(define (range n)
+  (cond
+    [(= n 0)
+     empty]
+    [else
+     (append (range (sub1 n))
+             (list (sub1 n)))]))
 
 
 ;; path=?: path path -> boolean
@@ -126,5 +220,13 @@
                   [defn? (any/c . -> . boolean?)]
                   [test-case? (any/c . -> . boolean?)]
                   [library-require? (any/c . -> . boolean?)]
+                  [list-begins-with? (any/c symbol? . -> . boolean?)]
+                  [take ((listof any/c) number? . -> . (listof any/c))]
+                  [list-tail ((listof any/c) number? . -> . (listof any/c))]
+                  [remove-leading-whitespace (string? . -> . string?)]
                   [identifier->munged-java-identifier (symbol? . -> . symbol?)]
-                  [path=? (path? path? . -> . boolean?)])
+                  [desugar-cond (any/c . -> . any/c)]
+                  [range (number? . -> . (listof number?))]
+                  
+                  [path=? (path? path? . -> . boolean?)]
+                  [string-join ((listof string?) string? . -> . string?)])

@@ -1,7 +1,5 @@
-#lang scheme/base
+#lang s-exp "lang.ss"
 
-(require scheme/contract
-         scheme/match)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-struct permission () #:transparent)

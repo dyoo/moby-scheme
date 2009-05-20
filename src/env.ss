@@ -1,9 +1,6 @@
-#lang scheme/base
+#lang s-exp "lang.ss"
 
-(require scheme/contract
-         scheme/match
-         scheme/list
-         "permission.ss")
+(require "permission.ss")
 
 
 ;; An env collects a set of bindings.
@@ -12,16 +9,19 @@
 
 
 ;; A binding associates a symbol with some value.
-(define-struct binding ())
+;; binding?: any -> boolean
+(define (binding? datum)
+  (or (binding:constant? datum)
+      (binding:function? datum)))
 
 
 ;; binding:constant records an id and its associated Java implementation.
-(define-struct (binding:constant binding) 
+(define-struct binding:constant
   (name java-string permissions))
 
 
 ;; Function bindings try to record more information.
-(define-struct (binding:function binding) 
+(define-struct binding:function
 
   (name         ;; name of the function
    module-path  ;; path where the function's really defined
@@ -35,11 +35,11 @@
 
 ;; binding-id: binding -> symbol
 (define (binding-id a-binding)
-  (match a-binding
-    [(struct binding:constant (name-2 _ _))
-     name-2]
-    [(struct binding:function (name-2 _ _ _ _ _ _))
-     name-2]))
+  (cond
+    [(binding:constant? a-binding)
+     (binding:constant-name a-binding)]
+    [(binding:function? a-binding)
+     (binding:function-name a-binding)]))
 
 
 
@@ -51,18 +51,15 @@
 
 ;; env-lookup: env symbol -> (or/c binding #f)
 (define (env-lookup an-env name)
-  (match an-env
-    [(struct env (bindings))
-     (hash-ref (env-bindings an-env) name #f)]))
-       
+  (hash-ref (env-bindings an-env) name #f))
+
 
 ;; env-keys: env -> (listof symbol)
 ;; Produces the keys in the environment.
 (define (env-keys an-env)
-  (match an-env
-    [(struct env (bindings))
-     (for/list ([k (in-hash-keys bindings)])
-       k)]))
+  (hash-map (env-bindings an-env)
+            (lambda (k v)
+              k)))
 
 
 
@@ -76,8 +73,7 @@
 
 ;; env-extend-function: env symbol (or/c module-path #f) number boolean? string? -> env
 ;; Extends the environment with a new function binding
-(define (env-extend-function an-env id module-path min-arity var-arity? java-string 
-                             #:cps? (cps? #f))
+(define (env-extend-function an-env id module-path min-arity var-arity? java-string)
   (env-extend an-env
               (make-binding:function id 
                                      module-path
@@ -85,22 +81,22 @@
                                      var-arity?
                                      java-string
                                      empty
-                                     cps?)))
+                                     #f)))
 
 
 
 (provide/contract 
- [struct binding ()]
- [struct (binding:constant binding) ([name symbol?]
-                                     [java-string string?]
-                                     [permissions (listof permission?)])]
- [struct (binding:function binding) ([name symbol?]
-                                     [module-path (or/c false/c path?)]
-                                     [min-arity natural-number/c]
-                                     [var-arity? boolean?]
-                                     [java-string string?]
-                                     [permissions (listof permission?)]
-                                     [cps? boolean?])]
+ [binding? (any/c . -> . boolean?)]
+ [struct binding:constant ([name symbol?]
+                           [java-string string?]
+                           [permissions (listof permission?)])]
+ [struct binding:function ([name symbol?]
+                           [module-path (or/c false/c path?)]
+                           [min-arity natural-number/c]
+                           [var-arity? boolean?]
+                           [java-string string?]
+                           [permissions (listof permission?)]
+                           [cps? boolean?])]
  [binding-id (binding? . -> . symbol?)]
  
  
@@ -111,6 +107,5 @@
  [env-keys (env? . -> . (listof symbol?))]
  
  [env-extend-constant (env? symbol? string? . -> . env?)]
- [env-extend-function ((env? symbol? (or/c false/c path?) number? boolean? string?)
-                       (#:cps? boolean?)
-                       . ->* . env?)])
+ [env-extend-function (env? symbol? (or/c false/c path?) number? boolean? string?
+                       . -> . env?)])
