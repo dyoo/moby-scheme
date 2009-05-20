@@ -11,7 +11,6 @@
          scheme/string
          scheme/contract
          "env.ss"
-         "toplevel.ss"
          "pinfo.ss"
          "helpers.ss")
 

@@ -7,22 +7,22 @@
 
 
 ;; An env collects a set of bindings.
-(define-struct env (bindings) #:transparent)
+(define-struct env (bindings))
 (define empty-env (make-env (make-immutable-hasheq '())))
 
 
 ;; A binding associates a symbol with some value.
-(define-struct binding () #:transparent)
+(define-struct binding ())
 
 
 ;; binding:constant records an id and its associated Java implementation.
 (define-struct (binding:constant binding) 
-  (name java-string permissions)
-  #:transparent)
+  (name java-string permissions))
 
 
 ;; Function bindings try to record more information.
 (define-struct (binding:function binding) 
+
   (name         ;; name of the function
    module-path  ;; path where the function's really defined
    min-arity    ;; minimal arity to call
@@ -30,8 +30,7 @@
    java-string  ;; the java-string name of the function
    permissions  ;; what permissions do we need to call this function?
    cps?         ;; does the function respect CPS calling conventions?
-   )
-  #:transparent)
+   ))
 
 
 ;; binding-id: binding -> symbol
