@@ -10,7 +10,7 @@
 
 ;; pinfo (program-info) captures the information we get from analyzing 
 ;; the program.
-(define-struct pinfo (env modules used-bindings) #:transparent)
+(define-struct pinfo (env modules used-bindings))
 
 ;; pinfo
 (define empty-pinfo
@@ -53,7 +53,7 @@
               (pinfo-modules a-pinfo)
               (hash-set (pinfo-used-bindings a-pinfo)
                         a-binding
-                        #t)))
+                        true)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -65,13 +65,11 @@
 (define (program-analyze a-program)
   (program-analyze/pinfo a-program (get-base-pinfo '_)))
   
+
 (define (program-analyze/pinfo a-program pinfo)
-  (let* ([pinfo
-          (program-analyze-collect-definitions a-program pinfo)]
-         [pinfo
-          (program-analyze-uses a-program pinfo)])
-    
-    pinfo))
+  (local [(define pinfo-1
+            (program-analyze-collect-definitions a-program pinfo))]
+    (program-analyze-uses a-program pinfo-1)))
 
 
 
@@ -82,15 +80,15 @@
   (cond [(empty? a-program)
          pinfo]
         [else
-         (let ([updated-pinfo
-                (cond [(defn? (first a-program))
-                       (definition-analyze-collect-definitions (first a-program) pinfo)]
-                      [(test-case? (first a-program))
-                       pinfo]
-                      [(library-require? (first a-program))
-                       (require-analyze (second (first a-program)) pinfo)]
-                      [(expression? (first a-program))
-                       pinfo])])
+         (local [(define updated-pinfo
+                   (cond [(defn? (first a-program))
+                          (definition-analyze-collect-definitions (first a-program) pinfo)]
+                         [(test-case? (first a-program))
+                          pinfo]
+                         [(library-require? (first a-program))
+                          (require-analyze (second (first a-program)) pinfo)]
+                         [(expression? (first a-program))
+                          pinfo]))]
            (program-analyze-collect-definitions (rest a-program)
                                                 updated-pinfo))]))
 
@@ -101,23 +99,23 @@
   (cond [(empty? a-program)
          pinfo]
         [else
-         (let ([updated-pinfo
-                (cond [(defn? (first a-program))
-                       (definition-analyze-uses (first a-program) pinfo)]
-                      [(test-case? (first a-program))
-                       pinfo]
-                      [(library-require? (first a-program))
-                       pinfo]
-                      [(expression? (first a-program))
-                       (expression-analyze-uses (first a-program)
-                                                pinfo 
-                                                (pinfo-env pinfo))])])
+         (local [(define updated-pinfo
+                   (cond [(defn? (first a-program))
+                          (definition-analyze-uses (first a-program) pinfo)]
+                         [(test-case? (first a-program))
+                          pinfo]
+                         [(library-require? (first a-program))
+                          pinfo]
+                         [(expression? (first a-program))
+                          (expression-analyze-uses (first a-program)
+                                                   pinfo 
+                                                   (pinfo-env pinfo))]))]
            (program-analyze-uses (rest a-program)
                                  updated-pinfo))]))
 
 
 (define (bf name module-path arity vararity? java-string)
-  (make-binding:function name module-path arity vararity? java-string empty #f))
+  (make-binding:function name module-path arity vararity? java-string empty false))
 
 
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
@@ -126,17 +124,17 @@
   (match a-definition
     [(list 'define (list id args ...) body)
      (pinfo-accumulate-binding (bf id
-                                                      #f
+                                                      false
                                                       (length args) 
-                                                      #f 
+                                                      false 
                                                       (symbol->string
                                                        (identifier->munged-java-identifier id)))
                                pinfo)]
     [(list 'define (? symbol? id) (list 'lambda (list args ...) body))
      (pinfo-accumulate-binding (bf id
-                                                      #f
+                                                      false
                                                       (length args) 
-                                                      #f 
+                                                      false 
                                                       (symbol->string
                                                        (identifier->munged-java-identifier id)))
                                pinfo)]
@@ -155,28 +153,28 @@
 
 ;; extend-env/struct-defns: env symbol (listof symbol) -> env
 (define (extend-env/struct-defns an-env id fields)
-  (let* ([constructor-id 
-          (string->symbol (format "make-~a" id))]
-         [constructor-binding 
-          (bf constructor-id #f (length fields) #f
-              (symbol->string
-               (identifier->munged-java-identifier constructor-id)))]
-         [predicate-id
-          (string->symbol (format "~a?" id))]
-         [predicate-binding
-          (bf predicate-id #f 1 #f
-              (symbol->string
-               (identifier->munged-java-identifier predicate-id)))]
-         [selector-ids
-          (map (lambda (f)
-                 (string->symbol (format "~a-~a" id f)))
-               fields)]
-         [selector-bindings
-          (map (lambda (sel-id) 
-                 (bf sel-id #f 1 #f 
-                     (symbol->string
-                      (identifier->munged-java-identifier sel-id))))
-               selector-ids)])
+  (local [(define constructor-id 
+            (string->symbol (format "make-~a" id)))
+          (define constructor-binding 
+            (bf constructor-id false (length fields) false
+                (symbol->string
+                 (identifier->munged-java-identifier constructor-id))))
+          (define predicate-id
+            (string->symbol (format "~a?" id)))
+          (define predicate-binding
+            (bf predicate-id false 1 false
+                (symbol->string
+                 (identifier->munged-java-identifier predicate-id))))
+          (define selector-ids
+            (map (lambda (f)
+                   (string->symbol (format "~a-~a" id f)))
+                 fields))
+          (define selector-bindings
+            (map (lambda (sel-id) 
+                   (bf sel-id false 1 false 
+                       (symbol->string
+                        (identifier->munged-java-identifier sel-id))))
+                 selector-ids))]
     (foldl (lambda (a-binding an-env)
              (env-extend an-env a-binding))
            an-env
@@ -202,19 +200,19 @@
 
 ;; function-definition-analyze-uses: symbol (listof symbol) expression program-info -> program-info
 (define (function-definition-analyze-uses fun args body pinfo)
-  (let* ([env (pinfo-env pinfo)]
-         [env 
-          (env-extend env (bf fun #f (length args) #f
-                                                 (symbol->string fun)))]
-         [env
-          (foldl (lambda (arg-id env) 
-                   (env-extend env (make-binding:constant arg-id 
-                                                          (symbol->string
-                                                           arg-id)
-                                                          empty)))
-                 env
-                 args)])
-    (expression-analyze-uses body pinfo env)))
+  (local [(define env-1 (pinfo-env pinfo))
+          (define env-2 
+            (env-extend env-1 (bf fun false (length args) false
+                                  (symbol->string fun))))
+          (define env-3
+            (foldl (lambda (arg-id env) 
+                     (env-extend env (make-binding:constant arg-id 
+                                                            (symbol->string
+                                                             arg-id)
+                                                            empty)))
+                   env-2
+                   args))]
+    (expression-analyze-uses body pinfo env-3)))
 
 
 
@@ -225,10 +223,10 @@
   (match an-expression
     
     [(list 'local [list defns ...] body)
-     (let ([nested-pinfo (foldl (lambda (a-defn a-pinfo)
-                                  (definition-analyze-uses a-defn a-pinfo))
-                                pinfo
-                                defns)])
+     (local [(define nested-pinfo (foldl (lambda (a-defn a-pinfo)
+                                           (definition-analyze-uses a-defn a-pinfo))
+                                         pinfo
+                                         defns))]
        (expression-analyze-uses body
                                 nested-pinfo
                                 (pinfo-env nested-pinfo)))]
@@ -289,19 +287,19 @@
     
     ;; Function call/primitive operation call
     [(list (? symbol? id) exprs ...)
-     (let ([updated-pinfo
-            (foldl (lambda (e p)
-                     (expression-analyze-uses e p env))
-                   pinfo
-                   exprs)])
+     (local [(define updated-pinfo
+               (foldl (lambda (e p)
+                        (expression-analyze-uses e p env))
+                      pinfo
+                      exprs))]
        (cond
          [(env-contains? env id)
           (pinfo-accumulate-binding-use (env-lookup env id) updated-pinfo)]
          [else
           updated-pinfo]))]))
-   
-    
-    
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -310,35 +308,36 @@
 
 
 (define world-config-module 
-  (let ([module-path (resolve-module-path '(lib "world-config.ss" "moby" "stub") #f)])
+  (local [(define module-path 
+            (resolve-module-path '(lib "world-config.ss" "moby" "stub") false))]
     (make-module-binding 'world-config
                          module-path
-                         (list (bf 'on-tick module-path 2 #f "org.plt.world.config.Kernel.onTick")
-                               (bf 'on-mouse module-path 1 #f "org.plt.world.config.Kernel.onMouse")
-                               (bf 'on-key module-path 1 #f "org.plt.world.config.Kernel.onKey")
-                               (bf 'on-message module-path 1 #f "org.plt.world.config.Kernel.onMessage")
+                         (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
+                               (bf 'on-mouse module-path 1 false "org.plt.world.config.Kernel.onMouse")
+                               (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
+                               (bf 'on-message module-path 1 false "org.plt.world.config.Kernel.onMessage")
                                
                                (make-binding:function
-                                'on-location-change module-path 1 #f
+                                'on-location-change module-path 1 false
                                 "org.plt.world.config.Kernel.onLocationChange"
                                 (list PERMISSION:LOCATION)
-                                #f)
+                                false)
                                
                                (make-binding:function
-                                'on-tilt module-path 1 #f
+                                'on-tilt module-path 1 false
                                 "org.plt.world.config.Kernel.onTilt"
                                 (list PERMISSION:TILT)
-                                #f)
+                                false)
                                
                                (make-binding:function
-                                'on-acceleration module-path 1 #f
+                                'on-acceleration module-path 1 false
                                 "org.plt.world.config.Kernel.onAcceleration"
                                 (list PERMISSION:TILT)
-                                #f)
+                                false)
                                
-                               (bf 'on-redraw module-path 1 #f "org.plt.world.config.Kernel.onRedraw")
-                               (bf 'stop-when module-path 1 #f "org.plt.world.config.Kernel.stopWhen")))))
-                          
+                               (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
+                               (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
+
 
 
 
@@ -347,61 +346,61 @@
     (make-module-binding 'world
                          module-path
                          (append (module-binding-bindings world-config-module)
-                                 (list (bf 'big-bang module-path 3 #t "org.plt.WorldKernel.bigBang")
-                                       (bf 'empty-scene module-path 2 #f
+                                 (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
+                                       (bf 'empty-scene module-path 2 false
                                            "org.plt.WorldKernel.emptyScene")
-                                       (bf 'place-image module-path 4 #f
+                                       (bf 'place-image module-path 4 false
                                            "org.plt.WorldKernel.placeImage")
-                                       (bf 'circle module-path 3 #f
+                                       (bf 'circle module-path 3 false
                                            "org.plt.WorldKernel.circle")
-                                       (bf 'nw:rectangle module-path 4 #f
+                                       (bf 'nw:rectangle module-path 4 false
                                            "org.plt.WorldKernel.nwRectangle")
-                                       (bf 'rectangle module-path 4 #f
+                                       (bf 'rectangle module-path 4 false
                                            "org.plt.WorldKernel.rectangle")
                                        
-                                       (bf 'key=? module-path 2 #f
+                                       (bf 'key=? module-path 2 false
                                            "org.plt.WorldKernel.isKeyEqual")
-                                       (bf 'text module-path 3 #f
+                                       (bf 'text module-path 3 false
                                            "org.plt.WorldKernel.text")
                                        
                                        ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
                                        ;; We can fix this by extending expression to include a special "magic" identifier.  We should
                                        ;; ensure students don't accidently hit this function.
-                                       (bf '-kernel-create-image module-path 1 #f
+                                       (bf '-kernel-create-image module-path 1 false
                                            "org.plt.WorldKernel._kernelCreateImage")
-                                       (bf 'image-width module-path 1 #f
+                                       (bf 'image-width module-path 1 false
                                            "org.plt.WorldKernel.imageWidth")
-                                       (bf 'image-height module-path 1 #f
+                                       (bf 'image-height module-path 1 false
                                            "org.plt.WorldKernel.imageHeight")
-                                       (bf 'image? module-path 1 #f
+                                       (bf 'image? module-path 1 false
                                            "org.plt.WorldKernel.isImage")
-                                       (bf 'image=? module-path 2 #f
+                                       (bf 'image=? module-path 2 false
                                            "org.plt.WorldKernel.isImageEqual")
-                                       (bf 'image-rotate module-path 2 #f
+                                       (bf 'image-rotate module-path 2 false
                                            "org.plt.WorldKernel.imageRotate")))))
   
 
 ;; world teachpack bindings
 (define world-module 
-  (let ([module-path
-         (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))])
+  (local [(define module-path
+            (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") false)))]
     (make-world-module module-path)))
 
 
 ;; Alternative world teachpack bindings
 (define world-stub-module
-  (let ([module-path                       
-         (resolve-module-path '(lib "world.ss" "moby" "stub") #f)])
+  (local [(define module-path                       
+         (resolve-module-path '(lib "world.ss" "moby" "stub") false))]
     (make-world-module module-path)))
 
 
 ;; Bootstrap bindings
 (define bootstrap-module
-  (let ([module-path
-         (resolve-module-path '(lib "bootstrap.ss" "moby" "stub") #f)])
+  (local [(define module-path
+            (resolve-module-path '(lib "bootstrap.ss" "moby" "stub") false))]
     (make-module-binding 'world
                          module-path
-                         (append (list (bf 'start module-path 10 #f "org.plt.world.Bootstrap.start"))
+                         (append (list (bf 'start module-path 10 false "org.plt.world.Bootstrap.start"))
                                  (module-binding-bindings world-stub-module)))))
                          
 
@@ -409,120 +408,122 @@
 
 ;; location library
 (define location-module 
-  (let* ([module-path 
-          (resolve-module-path '(lib "location.ss" "moby" "stub") #f)]
-         [bf (lambda (name module-path arity vararity? java-string)
-               (make-binding:function name module-path arity vararity? java-string 
-                                      (list PERMISSION:LOCATION)
-                                      #f))])
+  (local [(define module-path 
+            (resolve-module-path '(lib "location.ss" "moby" "stub") false))
+
+          (define (bf name module-path arity vararity? java-string)
+            (make-binding:function name module-path arity vararity? java-string 
+                                   (list PERMISSION:LOCATION)
+                                   false))]
     (make-module-binding 'location
                          module-path
-                         (list (bf 'get-latitude module-path 0 #f 
+                         (list (bf 'get-latitude module-path 0 false 
                                                       "org.plt.lib.Location.getLatitude")
-                               (bf 'get-longitude module-path 0 #f 
+                               (bf 'get-longitude module-path 0 false 
                                                       "org.plt.lib.Location.getLongitude")
-                               (bf 'get-attitude module-path 0 #f 
+                               (bf 'get-attitude module-path 0 false 
                                                       "org.plt.lib.Location.getAttitude")
-                               (bf 'get-bearing module-path 0 #f 
+                               (bf 'get-bearing module-path 0 false 
                                                       "org.plt.lib.Location.getBearing")
-                               (bf 'get-speed module-path 0 #f 
+                               (bf 'get-speed module-path 0 false 
                                                       "org.plt.lib.Location.getSpeed")
-                               (bf 'location-distance module-path 4 #f
+                               (bf 'location-distance module-path 4 false
                                                       "org.plt.lib.Location.getDistanceBetween")))))
 
   
 ;; accelerometer library
 (define tilt-module 
-  (let* ([module-path 
-          (resolve-module-path '(lib "tilt.ss" "moby" "stub") #f)]
-         [bf (lambda (name module-path arity vararity? java-string)
-               (make-binding:function name module-path arity vararity? java-string
-                                      (list PERMISSION:TILT)
-                                      #t))])
+  (local [(define module-path 
+            (resolve-module-path '(lib "tilt.ss" "moby" "stub") false))
+
+          (define (bf name module-path arity vararity? java-string)
+            (make-binding:function name module-path arity vararity? java-string
+                                   (list PERMISSION:TILT)
+                                   true))]
     (make-module-binding 'tilt
                          module-path
-                         (list (bf 'get-x-acceleration module-path 0 #f 
+                         (list (bf 'get-x-acceleration module-path 0 false 
                                                       "org.plt.lib.Tilt.getXAcceleration")
-                               (bf 'get-y-acceleration module-path 0 #f 
+                               (bf 'get-y-acceleration module-path 0 false 
                                                       "org.plt.lib.Tilt.getYAcceleration")
-                               (bf 'get-z-acceleration module-path 0 #f 
+                               (bf 'get-z-acceleration module-path 0 false 
                                                       "org.plt.lib.Location.getZAcceleration")
                                
-                               (bf 'get-azimuth module-path 0 #f 
+                               (bf 'get-azimuth module-path 0 false 
                                                       "org.plt.lib.Tilt.getAzimuth")
-                               (bf 'get-pitch module-path 0 #f 
+                               (bf 'get-pitch module-path 0 false 
                                                       "org.plt.lib.Tilt.getPitch")
-                               (bf 'get-roll module-path 0 #f 
+                               (bf 'get-roll module-path 0 false 
                                                       "org.plt.lib.Tilt.getRoll")))))
 
 
 (define gui-world-module
-  (let ([module-path 
-         (resolve-module-path '(lib "gui-world.ss" "gui-world")
-                              #f)])
+  (local [(define module-path 
+            (resolve-module-path '(lib "gui-world.ss" "gui-world")
+                                 false))]
     (make-module-binding 'gui-world
                          module-path
                          (append (module-binding-bindings world-config-module)
-                                 (list (bf 'big-bang module-path 2 #t "org.plt.guiworld.GuiWorld.bigBang")
-                                       (bf 'row module-path 0 #t "org.plt.guiworld.GuiWorld.row")
-                                       (bf 'col module-path 0 #t "org.plt.guiworld.GuiWorld.col")
-                                       (bf 'message module-path 1 #f "org.plt.guiworld.GuiWorld.message")
-                                       (bf 'button module-path 2 #f "org.plt.guiworld.GuiWorld.button")
-                                       (bf 'drop-down module-path 3 #f "org.plt.guiworld.GuiWorld.dropDown")
-                                       (bf 'text-field module-path 2 #f "org.plt.guiworld.GuiWorld.textField")
-                                       (bf 'box-group module-path 2 #f "org.plt.guiworld.GuiWorld.boxGroup")
-                                       (bf 'checkbox module-path 3 #f "org.plt.guiworld.GuiWorld.checkBox"))))))
+                                 (list (bf 'big-bang module-path 2 true "org.plt.guiworld.GuiWorld.bigBang")
+                                       (bf 'row module-path 0 true "org.plt.guiworld.GuiWorld.row")
+                                       (bf 'col module-path 0 true "org.plt.guiworld.GuiWorld.col")
+                                       (bf 'message module-path 1 false "org.plt.guiworld.GuiWorld.message")
+                                       (bf 'button module-path 2 false "org.plt.guiworld.GuiWorld.button")
+                                       (bf 'drop-down module-path 3 false "org.plt.guiworld.GuiWorld.dropDown")
+                                       (bf 'text-field module-path 2 false "org.plt.guiworld.GuiWorld.textField")
+                                       (bf 'box-group module-path 2 false "org.plt.guiworld.GuiWorld.boxGroup")
+                                       (bf 'checkbox module-path 3 false "org.plt.guiworld.GuiWorld.checkBox"))))))
 
 
 (define sms-module
-  (let ([module-path
-         (resolve-module-path 
-          '(lib "sms.ss" "moby" "stub") #f)])
+  (local [(define module-path
+            (resolve-module-path 
+             '(lib "sms.ss" "moby" "stub") false))]
     (make-module-binding 'sms
                          module-path
                          (list (make-binding:function 'send-text-message
                                                       module-path 
                                                       3 
-                                                      #f 
+                                                      false 
                                                       "org.plt.lib.Sms.sendTextMessage"
                                                       (list PERMISSION:SMS)
-                                                      #f)))))
+                                                      false)))))
 
 
 (define net-module
-  (let ([module-path
-         (resolve-module-path 
-          '(lib "net.ss" "moby" "stub") #f)])
+  (local [(define module-path
+            (resolve-module-path 
+             '(lib "net.ss" "moby" "stub") false))]
     (make-module-binding 'net
                          module-path
                          (list (make-binding:function 'get-url
                                                       module-path 
                                                       1 
-                                                      #f 
+                                                      false 
                                                       "org.plt.lib.Net.getUrl"
                                                       (list PERMISSION:INTERNET)
-                                                      #f)))))
+                                                      false)))))
 
 (define parser-module
-  (let ([module-path
+  (local [(define module-path
          (resolve-module-path 
-          '(lib "parser.ss" "moby" "stub") #f)])
+          '(lib "parser.ss" "moby" "stub") false))]
     (make-module-binding 'parser
                          module-path
                          (list (make-binding:function 'parse-xml
                                                       module-path 
                                                       1 
-                                                      #f 
+                                                      false 
                                                       "org.plt.lib.Parser.parseXml"
                                                       empty
-                                                      #f)
+                                                      false)
                                (make-binding:function 'split-whitespace
                                                       module-path
                                                       1
-                                                      #f
+                                                      false
                                                       "org.plt.lib.Parser.splitWhitespace"
                                                       empty
-                                                      #f)))))
+                                                      false)))))
 
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
@@ -557,7 +558,7 @@
                (error 'require-analyze 
                       (format "Moby doesn't know about module ~s yet"
                               require-path))]
-              [(path=? (resolve-module-path require-path #f)
+              [(path=? (resolve-module-path require-path false)
                        (module-binding-path (first modules)))
                (pinfo-accumulate-module 
                 (first modules)

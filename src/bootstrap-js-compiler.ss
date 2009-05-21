@@ -10,6 +10,17 @@
 ;; * Compiles the javascript compiler with the javascript compiler.
 
 
+;; bootstrap-compile: path -> compiled-program
+(define (bootstrap-compile a-path)
+  (let* ([modules (find-transitive-required-modules a-path)]
+         [big-program (apply append (map (lambda (p)
+                                           (remove-requires
+                                            (remove-provide/contracts
+                                             (read-program p))))
+                                         modules))])
+    (program->compiled-program big-program)))
+    
+
 
 
 ;; find-transitive-required-modules: path -> (listof path)
@@ -71,11 +82,25 @@
           a-program))
 
 
+;; remove-requires: program -> program
+(define (remove-requires a-program)
+  (filter (lambda (top-level)
+            (not (list-begins-with? top-level 'require)))
+          a-program))
+
+
 ;; unique: (listof X) -> (listof X)
 ;; Produces a unique list of the elements, assuming elements can be
 ;; compared with equal? and are hashable.
 (define (unique elts)
   (let ([ht (make-hash)])
-    (for ((elt elts))
-      (hash-set! ht elt #t))
-    (hash-map ht (lambda (k v) k))))
+    (let loop ([elts elts])
+      (cond
+        [(empty? elts)
+         empty]
+        [(hash-ref ht (first elts) #f)
+         (loop (rest elts))]
+        [else
+         (hash-set! ht (first elts) #t)
+         (cons (first elts)
+               (loop (rest elts)))]))))

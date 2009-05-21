@@ -34,11 +34,11 @@
 (define (defn? an-sexp)
   (cond
     [(list-begins-with? an-sexp 'define)
-     #t]
+     true]
     [(list-begins-with? an-sexp 'define-struct)
-     #t]
+     true]
     [else
-     #f]))
+     false]))
 
 
 ;; string-join: (listof string) string -> string
@@ -140,12 +140,12 @@
       [(member an-id java-identifiers)
        (string->symbol (format "_nonclashing_~a" an-id))]
       [else
-       (let* ([chars (string->list (symbol->string an-id))]
-              [translated-chunks 
-               (map trans chars)]
-              [translated-id
-               (string->symbol
-                (string-join translated-chunks ""))])
+       (local [(define chars (string->list (symbol->string an-id)))
+               (define translated-chunks 
+                 (map trans chars))
+               (define translated-id
+                 (string->symbol
+                  (string-join translated-chunks "")))]
          translated-id)])))
 
 

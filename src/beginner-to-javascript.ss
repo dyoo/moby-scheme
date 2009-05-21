@@ -113,7 +113,7 @@
           (define munged-arg-ids
             (map identifier->munged-java-identifier args))
           (define new-env 
-            (env-extend-function env fun #f (length args) #f
+            (env-extend-function env fun false (length args) false
                                  (symbol->string munged-fun-id)))
           (define env-with-arg-bindings
             (foldl (lambda (arg-id env) 
@@ -137,10 +137,10 @@
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
 (define (variable-definition->javascript-strings id body env a-pinfo)
-  (let* ([munged-id (identifier->munged-java-identifier id)]
-         [new-env (env-extend env (make-binding:constant id 
+  (local [(define munged-id (identifier->munged-java-identifier id))
+          (define new-env (env-extend env (make-binding:constant id 
                                                          (symbol->string munged-id)
-                                                         empty))])
+                                                         empty)))]
     (list (format "var ~a; "
                   munged-id)
           (format "~a = ~a;" 
@@ -192,33 +192,33 @@
            (identifier->munged-java-identifier id)
            (identifier->munged-java-identifier id)
            (expression->javascript-string (foldl (lambda (a-field acc)
-                                                   (let ([acc-id (field->accessor-name id a-field)])
+                                                   (local [(define acc-id (field->accessor-name id a-field))]
                                                      `(and (equal? (,acc-id this)
                                                                    (,acc-id other)) 
                                                            ,acc)))
                                                  'true
                                                  fields)
-                                          (let* ([new-env (env-extend env
+                                          (local [(define new-env-1 (env-extend env
                                                                       (make-binding:constant
                                                                        'this
                                                                        (symbol->string
                                                                         (identifier->munged-java-identifier 'this))
-                                                                       empty))]
-                                                 [new-env (env-extend new-env
+                                                                       empty)))
+                                                  (define new-env-2 (env-extend new-env-1
                                                                       (make-binding:constant
                                                                        'other
                                                                        (symbol->string
                                                                         (identifier->munged-java-identifier 'other))
-                                                                       empty))])
-                                            new-env)
+                                                                       empty)))]
+                                            new-env-2)
                                           a-pinfo))
    
    "\n"
    
    ;; make-id
    (format "function ~a(~a) { return new ~a(~a); }"
-           (let ([make-id (string->symbol 
-                           (string-append "make-" (symbol->string id)))])
+           (local [(define make-id (string->symbol 
+                           (string-append "make-" (symbol->string id))))]
              (identifier->munged-java-identifier  make-id))
            (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
                         ",")
@@ -232,10 +232,10 @@
    (string-join 
     (map (lambda (a-field)
            (format "function ~a(obj) { return obj.~a; }"
-                   (let ([acc-id (string->symbol
+                   (local [(define acc-id (string->symbol
                                   (string-append (symbol->string id)
                                                  "-"
-                                                 (symbol->string a-field)))])
+                                                 (symbol->string a-field))))]
                      (identifier->munged-java-identifier acc-id))
                    (identifier->munged-java-identifier a-field)))
          fields)
@@ -318,9 +318,9 @@
 
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
 (define (local-expression->javascript-string defns body env a-pinfo)
-  (let ([inner-compiled-program 
-         (-program->compiled-program (append defns (list body)) 
-                                    (pinfo-update-env a-pinfo env))])
+  (local [(define inner-compiled-program 
+            (-program->compiled-program (append defns (list body)) 
+                                        (pinfo-update-env a-pinfo env)))]
     (format "(function() {
                ~a
 
@@ -336,13 +336,13 @@
 ;; application-expression->java-string: symbol (listof expr) env pinfo -> string
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string id exprs env a-pinfo)
-  (let ([operator-binding (env-lookup env id)]
-        [operand-strings 
-         (map (lambda (e) 
-                (expression->javascript-string e env a-pinfo))
-              exprs)])
+  (local [(define operator-binding (env-lookup env id))
+          (define operand-strings 
+            (map (lambda (e) 
+                   (expression->javascript-string e env a-pinfo))
+                 exprs))]
     (match operator-binding
-      ['#f
+      ['false
        (error 'application-expression->java-string
               "Moby doesn't know about ~s" id)]
       
@@ -384,7 +384,7 @@
 ;; Java code.
 (define (identifier-expression->javascript-string an-id an-env a-pinfo)
   (match (env-lookup an-env an-id)
-    ['#f
+    ['false
      (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
     [(struct binding:constant (name java-string permissions))
      java-string]

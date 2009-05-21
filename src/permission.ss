@@ -2,12 +2,18 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define-struct permission () #:transparent)
 
-(define-struct (permission:location permission) () #:transparent)
-(define-struct (permission:sms permission) () #:transparent)
-(define-struct (permission:tilt permission) () #:transparent)
-(define-struct (permission:internet permission) () #:transparent)
+(define-struct permission:location ())
+(define-struct permission:sms ())
+(define-struct permission:tilt ())
+(define-struct permission:internet ())
+
+
+(define (permission? datum)
+  (or (permission:location? datum)
+      (permission:sms? datum)
+      (permission:tilt? datum)
+      (permission:internet? datum)))
 
 
 (define PERMISSION:LOCATION (make-permission:location))
@@ -20,63 +26,63 @@
 
 ;; permission->android-permissions: permission -> (listof string)
 (define (permission->android-permissions a-permission)
-  (match a-permission
-    [(struct permission:location ())
+  (cond
+    [(permission:location? a-permission)
      (list "android.permission.ACCESS_LOCATION"
                                    "android.permission.ACCESS_GPS"
                                    "android.permission.ACCESS_FINE_LOCATION")]
-    [(struct permission:sms ())
+    [(permission:sms? a-permission)
      (list "android.permission.SEND_SMS")]
-    [(struct permission:tilt ())
+    [(permission:tilt? a-permission)
      (list)]
-    [(struct permission:internet ())
+    [(permission:internet? a-permission)
      (list "android.permission.INTERNET")]))
 
 
 ;; permission->on-start-code: permission -> string
 (define (permission->on-start-code a-permission)
-  (match a-permission
-    [(struct permission:location ())
+  (cond
+    [(permission:location? a-permission)
      "org.plt.platform.Platform.getInstance().getLocationService().startService();
       org.plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);"]
-    [(struct permission:sms ())
+    [(permission:sms? a-permission)
      ""]
-    [(struct permission:tilt ())
+    [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().startService();
       org.plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);
       org.plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);"]
-    [(struct permission:internet())
+    [(permission:internet? a-permission)
      ""]))
 
 
 ;; permission->on-pause-code: permission -> string
 (define (permission->on-pause-code a-permission)
-  (match a-permission
-    [(struct permission:location ())
+  (cond
+    [(permission:location? a-permission)
      "org.plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
-    [(struct permission:sms ())
+    [(permission:sms? a-permission)
      ""]
-    [(struct permission:tilt ())
+    [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
-    [(struct permission:internet ())
+    [(permission:internet? a-permission)
      ""]))
 
 
 ;; permission->on-destroy-code: permission -> string
 (define (permission->on-destroy-code a-permission)
-  (match a-permission
-    [(struct permission:location ())
+  (cond
+    [(permission:location? a-permission)
      "org.plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
-    [(struct permission:sms ())
+    [(permission:sms? a-permission)
      ""]
-    [(struct permission:tilt ())
+    [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
-    [(struct permission:internet ())
+    [(permission:internet? a-permission)
      ""]))
 
 
 
-(provide/contract [struct permission ()]
+(provide/contract [permission? (any/c . -> . boolean?)]
 
                   [PERMISSION:LOCATION permission?]
                   [PERMISSION:SMS permission?]

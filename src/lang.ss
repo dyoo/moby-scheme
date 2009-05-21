@@ -12,17 +12,20 @@
          scheme/match
          syntax/modresolve)
 
-
+                     
 (provide (except-out (all-from-out lang/htdp-intermediate-lambda)
-                     define-struct quote))
-
+                     define-struct
+                     quote
+                     let
+                     letrec
+                     let*))
 
 
 ;; The following primitives will need support in the runtime,
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
-                     (base:define-struct define-struct)
-                     (base:quote quote))
+                     (base:quote quote)
+                     (base:define-struct define-struct))
 
          ;; Contract-related stuff
          provide/contract -> any/c listof or/c false/c natural-number/c
