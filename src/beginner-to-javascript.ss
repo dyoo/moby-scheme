@@ -6,9 +6,9 @@
 ;; http://docs.plt-scheme.org/htdp-langs/beginner.html
 
 
-(require "env.ss"
-         "pinfo.ss"
-         "helpers.ss")
+(require "env.ss")
+(require "pinfo.ss")
+(require "helpers.ss")
 
 
 ;; A compiled program is a:
@@ -24,11 +24,11 @@
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
 (define (program->compiled-program program)
-  (-program->compiled-program program (get-base-pinfo)))
+  (-program->compiled-program program (get-base-pinfo 'js)))
 
 
 (define (-program->compiled-program program input-pinfo)
-  (local [(define a-pinfo (program-analyze program input-pinfo))
+  (local [(define a-pinfo (program-analyze/pinfo program input-pinfo))
           (define toplevel-env (pinfo-env a-pinfo))
           (define (loop program defns tops)
             

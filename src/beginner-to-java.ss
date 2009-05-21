@@ -26,8 +26,9 @@
 ;; program->compiled-program: program [pinfo] -> compiled-program
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
-(define (program->compiled-program program [input-pinfo (get-base-pinfo)])
-  (let* ([a-pinfo (program-analyze program input-pinfo)]
+(define (program->compiled-program program [input-pinfo (get-base-pinfo 
+                                                         'java)])
+  (let* ([a-pinfo (program-analyze/pinfo program input-pinfo)]
          [toplevel-env (pinfo-env a-pinfo)])
     
     (let loop ([program program]
@@ -111,8 +112,7 @@
           (map identifier->munged-java-identifier args)]
          [new-env 
           (env-extend-function env fun #f (length args) #f
-                               (symbol->string munged-fun-id)
-                               #:cps? #f)]
+                               (symbol->string munged-fun-id))]
          [new-env
           (foldl (lambda (arg-id env) 
                    (env-extend env (make-binding:constant arg-id 

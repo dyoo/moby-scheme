@@ -54,6 +54,12 @@
   (hash-ref (env-bindings an-env) name #f))
 
 
+;; env-contains?: env symbol -> boolean
+(define (env-contains? an-env name)
+  (binding? (hash-ref (env-bindings an-env) name #f)))
+    
+
+
 ;; env-keys: env -> (listof symbol)
 ;; Produces the keys in the environment.
 (define (env-keys an-env)
@@ -104,6 +110,7 @@
  [empty-env env?]
  [env-extend (env? binding? . -> . env?)]
  [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
+ [env-contains? (env? symbol? . -> . boolean?)]
  [env-keys (env? . -> . (listof symbol?))]
  
  [env-extend-constant (env? symbol? string? . -> . env?)]

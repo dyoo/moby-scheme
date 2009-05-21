@@ -9,22 +9,28 @@
          scheme/path
          scheme/contract
          lang/htdp-intermediate-lambda
-         scheme/match)
+         scheme/match
+         syntax/modresolve)
 
 
 (provide (except-out (all-from-out lang/htdp-intermediate-lambda)
-                     require define-struct quote))
+                     define-struct quote))
 
 
 
 ;; The following primitives will need support in the runtime,
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
-                     (base:require require)
                      (base:define-struct define-struct)
                      (base:quote quote))
+
+         ;; Contract-related stuff
          provide/contract -> any/c listof or/c false/c natural-number/c
-         hash-set hash-ref make-immutable-hasheq hash-map
-         path->string normalize-path path?
+
+         ;; Hash stuff
+         hash-set hash-ref make-immutable-hasheq make-immutable-hash hash-map hash?
+
+         path->string normalize-path path? resolve-module-path build-path
+         
          match
          )

@@ -1,11 +1,9 @@
-#lang scheme
+#lang s-exp "lang.ss"
 
-(require "env.ss"
-         "toplevel.ss"
-         "helpers.ss"
-         "permission.ss"
-         syntax/modresolve
-         scheme/contract)
+(require "env.ss")
+(require "toplevel.ss")
+(require "helpers.ss")
+(require "permission.ss")
 
 
 
@@ -19,8 +17,8 @@
   (make-pinfo empty-env empty (make-immutable-hash empty)))
 
 ;; get-base-pinfo: pinfo
-(define (get-base-pinfo)
-  (make-pinfo (get-toplevel-env) empty (make-immutable-hash empty)))
+(define (get-base-pinfo _)
+  (make-pinfo toplevel-env empty (make-immutable-hash empty)))
 
 
 ;; pinfo-update-env: pinfo env -> pinfo
@@ -63,7 +61,11 @@
 ;; program-analyze: program [program-info] -> program-info
 ;; Collects which identifiers are defined by the program, and which identifiers
 ;; are actively used.
-(define (program-analyze a-program [pinfo (get-base-pinfo)])
+
+(define (program-analyze a-program)
+  (program-analyze/pinfo a-program (get-base-pinfo '_)))
+  
+(define (program-analyze/pinfo a-program pinfo)
   (let* ([pinfo
           (program-analyze-collect-definitions a-program pinfo)]
          [pinfo
@@ -276,10 +278,8 @@
     ;; Identifiers
     [(? symbol?)
      (cond
-       [(env-lookup env an-expression)
-        =>
-        (lambda (binding)
-          (pinfo-accumulate-binding-use binding pinfo))]
+       [(env-contains? env an-expression)
+        (pinfo-accumulate-binding-use (env-lookup env an-expression) pinfo)]
        [else
         pinfo])]
     
@@ -295,10 +295,8 @@
                    pinfo
                    exprs)])
        (cond
-         [(env-lookup env id)
-          =>
-          (lambda (binding)
-            (pinfo-accumulate-binding-use binding updated-pinfo))]
+         [(env-contains? env id)
+          (pinfo-accumulate-binding-use (env-lookup env id) updated-pinfo)]
          [else
           updated-pinfo]))]))
    
@@ -529,14 +527,14 @@
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
 (define (extend-env/module-binding an-env a-module-binding)
-  (let loop ([an-env an-env]
-             [contents (module-binding-bindings a-module-binding)])
-    (cond
-      [(empty? contents)
-       an-env]
-      [else
-       (loop (env-extend an-env (first contents))
-             (rest contents))])))
+  (local [(define (loop an-env contents)
+            (cond
+              [(empty? contents)
+               an-env]
+              [else
+               (loop (env-extend an-env (first contents))
+                     (rest contents))]))]
+    (loop an-env (module-binding-bindings a-module-binding))))
 
                           
 (define known-modules (list world-module
@@ -551,28 +549,24 @@
                                         
 
 
-;; extend-known-modules!: module-binding -> void
-;; Extends to the list of known modules.
-(define (extend-known-modules! a-module-binding)
-  (set! known-modules (cons a-module-binding known-modules)))
-
-
-
 ;; require-analyze: require-path -> pinfo
 (define (require-analyze require-path pinfo)
-  (let loop ([modules known-modules])
-    (cond
-      [(empty? modules)
-       (error 'require-analyze "Moby doesn't know about module ~s yet"
-              require-path)]
-      [(path=? (resolve-module-path require-path #f)
-               (module-binding-path (first modules)))
-       (pinfo-accumulate-module 
-        (first modules)
-        (pinfo-accumulate-bindings (module-binding-bindings (first modules))
-                                   pinfo))]
-      [else
-       (loop (rest modules))])))
+  (local [(define (loop modules)
+            (cond
+              [(empty? modules)
+               (error 'require-analyze 
+                      (format "Moby doesn't know about module ~s yet"
+                              require-path))]
+              [(path=? (resolve-module-path require-path #f)
+                       (module-binding-path (first modules)))
+               (pinfo-accumulate-module 
+                (first modules)
+                (pinfo-accumulate-bindings
+                 (module-binding-bindings (first modules))
+                 pinfo))]
+              [else
+               (loop (rest modules))]))]
+    (loop known-modules)))
 
 
 
@@ -585,13 +579,13 @@
                                  [modules (listof module-binding?)]
                                  [used-bindings hash?])]
                   [empty-pinfo pinfo?]
-                  [get-base-pinfo (-> pinfo?)]
+                  [get-base-pinfo (any/c . -> . pinfo?)]
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   
-                  [program-analyze ((program?) (pinfo?) . ->* . pinfo?)]
+                  [program-analyze (program?  . -> . pinfo?)]
+                  [program-analyze/pinfo (program? pinfo? . -> . pinfo?)]
                   
                   [struct module-binding ([name symbol?]
                                           [path path?]
-                                          [bindings (listof binding?)])]
-                  [extend-known-modules! (module-binding? . -> . any)])
+                                          [bindings (listof binding?)])])
