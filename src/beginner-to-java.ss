@@ -7,11 +7,9 @@
 
 
 (require scheme/match
-         scheme/list
-         scheme/string
          scheme/contract
+         (only-in scheme/list empty? first rest empty)
          "env.ss"
-         "toplevel.ss"
          "pinfo.ss"
          "helpers.ss")
 
@@ -376,7 +374,8 @@
        (unless (>= (length exprs)
                    min-arity)
          (error 'application-expression->java-string
-                "Minimal arity of ~s not met.  Operands were ~s"
+                "Minimal arity (~s) of ~s not met.  Operands were ~s"
+                (length exprs)
                 id
                 exprs))
        (cond

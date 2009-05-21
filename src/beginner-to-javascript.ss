@@ -333,7 +333,6 @@
 
 
 
-char-whitespace?
 ;; application-expression->java-string: symbol (listof expr) env pinfo -> string
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string id exprs env a-pinfo)
@@ -357,9 +356,10 @@ char-whitespace?
        (cond
          [(< (length exprs) min-arity)
           (error 'application-expression->java-string
-                "Minimal arity of ~s not met.  Operands were ~s"
-                id
-                exprs)]
+                (format "Minimal arity (~s) of ~s not met.  Operands were ~s"
+                        min-arity
+                        id
+                        exprs))]
          [var-arity?
           (cond [(> min-arity 0)
                  (format "~a(~a, [~a])"
@@ -453,5 +453,5 @@ char-whitespace?
                                              string?]
                                             [pinfo pinfo?])]
                   
-                  [-program->compiled-program 
+                  [program->compiled-program 
                    (program? . -> . compiled-program?)])

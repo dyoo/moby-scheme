@@ -158,7 +158,7 @@
     [(define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          `(if ,question-last ,answer-last (error "Fell out of cond"))]
+          `(if ,question-last ,answer-last (error 'cond "Fell out of cond"))]
          [else
           `(if ,(first questions) 
                ,(first answers)
