@@ -49,14 +49,14 @@
 
 
 
-;; env-lookup: env symbol -> (or/c binding #f)
+;; env-lookup: env symbol -> (or/c binding false)
 (define (env-lookup an-env name)
-  (hash-ref (env-bindings an-env) name #f))
+  (hash-ref (env-bindings an-env) name false))
 
 
 ;; env-contains?: env symbol -> boolean
 (define (env-contains? an-env name)
-  (binding? (hash-ref (env-bindings an-env) name #f)))
+  (binding? (hash-ref (env-bindings an-env) name false)))
     
 
 
@@ -77,7 +77,7 @@
               (make-binding:constant id java-string empty)))
 
 
-;; env-extend-function: env symbol (or/c module-path #f) number boolean? string? -> env
+;; env-extend-function: env symbol (or/c module-path false) number boolean? string? -> env
 ;; Extends the environment with a new function binding
 (define (env-extend-function an-env id module-path min-arity var-arity? java-string)
   (env-extend an-env
@@ -87,7 +87,7 @@
                                      var-arity?
                                      java-string
                                      empty
-                                     #f)))
+                                     false)))
 
 
 

@@ -336,46 +336,48 @@
 ;; application-expression->java-string: symbol (listof expr) env pinfo -> string
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string id exprs env a-pinfo)
-  (local [(define operator-binding (env-lookup env id))
-          (define operand-strings 
-            (map (lambda (e) 
-                   (expression->javascript-string e env a-pinfo))
-                 exprs))]
-    (match operator-binding
-      ['false
-       (error 'application-expression->java-string
-              "Moby doesn't know about ~s" id)]
-      
-      [(struct binding:constant (name java-string permissions))
-       (format "((~a).apply(null, [~a]))" 
-               java-string 
-               (string-join operand-strings ", "))]
-      
-      [(struct binding:function (name module-path min-arity var-arity? 
-                                      java-string permissions primitive?))
-       (cond
-         [(< (length exprs) min-arity)
-          (error 'application-expression->java-string
-                (format "Minimal arity (~s) of ~s not met.  Operands were ~s"
-                        min-arity
-                        id
+  (cond [(not (env-contains? env id))
+         (error 'application-expression->java-string
+                (format "Moby doesn't know about ~s" id))]
+        [else
+         
+         (local [(define operator-binding (env-lookup env id))
+                 (define operand-strings 
+                   (map (lambda (e) 
+                          (expression->javascript-string e env a-pinfo))
                         exprs))]
-         [var-arity?
-          (cond [(> min-arity 0)
-                 (format "~a(~a, [~a])"
-                         java-string
-                         (string-join (take operand-strings min-arity) ",")
-                         (string-join (list-tail operand-strings min-arity)
-                                      ","))]
+           (match operator-binding
+             
+             [(struct binding:constant (name java-string permissions))
+              (format "((~a).apply(null, [~a]))" 
+                      java-string 
+                      (string-join operand-strings ", "))]
+             
+             [(struct binding:function (name module-path min-arity var-arity? 
+                                             java-string permissions primitive?))
+              (cond
+                [(< (length exprs) min-arity)
+                 (error 'application-expression->java-string
+                        (format "Minimal arity (~s) of ~s not met.  Operands were ~s"
+                                min-arity
+                                id
+                                exprs))]
+                [var-arity?
+                 (cond [(> min-arity 0)
+                        (format "~a(~a, [~a])"
+                                java-string
+                                (string-join (take operand-strings min-arity) ",")
+                                (string-join (list-tail operand-strings min-arity)
+                                             ","))]
+                       [else
+                        (format "~a([~a])"
+                                java-string
+                                (string-join (list-tail operand-strings min-arity)
+                                             ","))])]
                 [else
-                 (format "~a([~a])"
-                         java-string
-                         (string-join (list-tail operand-strings min-arity)
-                                      ","))])]
-         [else
-          (format "(~a(~a))" 
-                  java-string 
-                  (string-join operand-strings ","))])])))
+                 (format "(~a(~a))" 
+                         java-string 
+                         (string-join operand-strings ","))])]))]))
 
 
 
