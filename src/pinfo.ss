@@ -64,7 +64,7 @@
 
 (define (program-analyze a-program)
   (program-analyze/pinfo a-program (get-base-pinfo '_)))
-  
+
 
 (define (program-analyze/pinfo a-program pinfo)
   (local [(define pinfo-1
@@ -203,7 +203,7 @@
            an-env
            (list* constructor-binding predicate-binding selector-bindings))))
 
-           
+
 
 
 
@@ -223,7 +223,7 @@
 
 ;; function-definition-analyze-uses: symbol (listof symbol) expression program-info -> program-info
 (define (function-definition-analyze-uses fun args body pinfo)
-
+  
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2 
             (env-extend env-1 (bf fun false (length args) false
@@ -236,14 +236,14 @@
 (define (lambda-expression-analyze-uses args body pinfo)
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2
-          (foldl (lambda (arg-id env) 
-                   (env-extend env (make-binding:constant arg-id 
-                                                          (symbol->string
-                                                           arg-id)
-                                                          empty)))
-                 env-1
-                 args))]
-    (expression-analyze-uses body pinfo env)))
+            (foldl (lambda (arg-id env) 
+                     (env-extend env (make-binding:constant arg-id 
+                                                            (symbol->string
+                                                             arg-id)
+                                                            empty)))
+                   env-1
+                   args))]
+    (expression-analyze-uses body pinfo env-2)))
 
 
 
@@ -253,7 +253,7 @@
 ;; expression-analyze-uses: expression program-info env -> program-info
 (define (expression-analyze-uses an-expression pinfo env)
   (cond
-
+    
     [(list-begins-with? an-expression 'local)
      (local-expression-analyze-uses an-expression pinfo env)]
     
@@ -277,8 +277,10 @@
               pinfo 
               exprs))]
     
-    [(list 'lambda (list args ...) body)
-     (lambda-expression-analyze-uses args body pinfo)]
+    [(list-begins-with? an-expression 'lambda)
+     (local [(define args (second an-expression))
+             (define body (third an-expression))]
+       (lambda-expression-analyze-uses args body pinfo))]
     
     ;; Numbers
     [(number? an-expression)
@@ -307,7 +309,7 @@
     ;; Function call/primitive operation call
     [(pair? an-expression)
      (application-expression-analyze-uses an-expression pinfo env)]))
-     
+
 
 
 (define (local-expression-analyze-uses an-expression pinfo env)
@@ -317,9 +319,9 @@
                                         (definition-analyze-uses a-defn a-pinfo))
                                       pinfo
                                       defns))]
-       (expression-analyze-uses body
-                                nested-pinfo
-                                (pinfo-env nested-pinfo))))
+    (expression-analyze-uses body
+                             nested-pinfo
+                             (pinfo-env nested-pinfo))))
 
 (define (if-expression-analyze-uses an-expression pinfo env)
   (local [(define test (second an-expression))
@@ -383,42 +385,42 @@
 
 
 (define (make-world-module module-path)
-    (make-module-binding 'world
-                         module-path
-                         (append (module-binding-bindings world-config-module)
-                                 (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
-                                       (bf 'empty-scene module-path 2 false
-                                           "org.plt.WorldKernel.emptyScene")
-                                       (bf 'place-image module-path 4 false
-                                           "org.plt.WorldKernel.placeImage")
-                                       (bf 'circle module-path 3 false
-                                           "org.plt.WorldKernel.circle")
-                                       (bf 'nw:rectangle module-path 4 false
-                                           "org.plt.WorldKernel.nwRectangle")
-                                       (bf 'rectangle module-path 4 false
-                                           "org.plt.WorldKernel.rectangle")
-                                       
-                                       (bf 'key=? module-path 2 false
-                                           "org.plt.WorldKernel.isKeyEqual")
-                                       (bf 'text module-path 3 false
-                                           "org.plt.WorldKernel.text")
-                                       
-                                       ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-                                       ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-                                       ;; ensure students don't accidently hit this function.
-                                       (bf '-kernel-create-image module-path 1 false
-                                           "org.plt.WorldKernel._kernelCreateImage")
-                                       (bf 'image-width module-path 1 false
-                                           "org.plt.WorldKernel.imageWidth")
-                                       (bf 'image-height module-path 1 false
-                                           "org.plt.WorldKernel.imageHeight")
-                                       (bf 'image? module-path 1 false
-                                           "org.plt.WorldKernel.isImage")
-                                       (bf 'image=? module-path 2 false
-                                           "org.plt.WorldKernel.isImageEqual")
-                                       (bf 'image-rotate module-path 2 false
-                                           "org.plt.WorldKernel.imageRotate")))))
-  
+  (make-module-binding 'world
+                       module-path
+                       (append (module-binding-bindings world-config-module)
+                               (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
+                                     (bf 'empty-scene module-path 2 false
+                                         "org.plt.WorldKernel.emptyScene")
+                                     (bf 'place-image module-path 4 false
+                                         "org.plt.WorldKernel.placeImage")
+                                     (bf 'circle module-path 3 false
+                                         "org.plt.WorldKernel.circle")
+                                     (bf 'nw:rectangle module-path 4 false
+                                         "org.plt.WorldKernel.nwRectangle")
+                                     (bf 'rectangle module-path 4 false
+                                         "org.plt.WorldKernel.rectangle")
+                                     
+                                     (bf 'key=? module-path 2 false
+                                         "org.plt.WorldKernel.isKeyEqual")
+                                     (bf 'text module-path 3 false
+                                         "org.plt.WorldKernel.text")
+                                     
+                                     ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
+                                     ;; We can fix this by extending expression to include a special "magic" identifier.  We should
+                                     ;; ensure students don't accidently hit this function.
+                                     (bf '-kernel-create-image module-path 1 false
+                                         "org.plt.WorldKernel._kernelCreateImage")
+                                     (bf 'image-width module-path 1 false
+                                         "org.plt.WorldKernel.imageWidth")
+                                     (bf 'image-height module-path 1 false
+                                         "org.plt.WorldKernel.imageHeight")
+                                     (bf 'image? module-path 1 false
+                                         "org.plt.WorldKernel.isImage")
+                                     (bf 'image=? module-path 2 false
+                                         "org.plt.WorldKernel.isImageEqual")
+                                     (bf 'image-rotate module-path 2 false
+                                         "org.plt.WorldKernel.imageRotate")))))
+
 
 ;; world teachpack bindings
 (define world-module 
@@ -430,7 +432,7 @@
 ;; Alternative world teachpack bindings
 (define world-stub-module
   (local [(define module-path                       
-         (resolve-module-path '(lib "world.ss" "moby" "stub") false))]
+            (resolve-module-path '(lib "world.ss" "moby" "stub") false))]
     (make-world-module module-path)))
 
 
@@ -442,7 +444,7 @@
                          module-path
                          (append (list (bf 'start module-path 10 false "org.plt.world.Bootstrap.start"))
                                  (module-binding-bindings world-stub-module)))))
-                         
+
 
 
 
@@ -450,7 +452,7 @@
 (define location-module 
   (local [(define module-path 
             (resolve-module-path '(lib "location.ss" "moby" "stub") false))
-
+          
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string 
                                    (list PERMISSION:LOCATION)
@@ -458,24 +460,24 @@
     (make-module-binding 'location
                          module-path
                          (list (bf 'get-latitude module-path 0 false 
-                                                      "org.plt.lib.Location.getLatitude")
+                                   "org.plt.lib.Location.getLatitude")
                                (bf 'get-longitude module-path 0 false 
-                                                      "org.plt.lib.Location.getLongitude")
+                                   "org.plt.lib.Location.getLongitude")
                                (bf 'get-attitude module-path 0 false 
-                                                      "org.plt.lib.Location.getAttitude")
+                                   "org.plt.lib.Location.getAttitude")
                                (bf 'get-bearing module-path 0 false 
-                                                      "org.plt.lib.Location.getBearing")
+                                   "org.plt.lib.Location.getBearing")
                                (bf 'get-speed module-path 0 false 
-                                                      "org.plt.lib.Location.getSpeed")
+                                   "org.plt.lib.Location.getSpeed")
                                (bf 'location-distance module-path 4 false
-                                                      "org.plt.lib.Location.getDistanceBetween")))))
+                                   "org.plt.lib.Location.getDistanceBetween")))))
 
-  
+
 ;; accelerometer library
 (define tilt-module 
   (local [(define module-path 
             (resolve-module-path '(lib "tilt.ss" "moby" "stub") false))
-
+          
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string
                                    (list PERMISSION:TILT)
@@ -483,18 +485,18 @@
     (make-module-binding 'tilt
                          module-path
                          (list (bf 'get-x-acceleration module-path 0 false 
-                                                      "org.plt.lib.Tilt.getXAcceleration")
+                                   "org.plt.lib.Tilt.getXAcceleration")
                                (bf 'get-y-acceleration module-path 0 false 
-                                                      "org.plt.lib.Tilt.getYAcceleration")
+                                   "org.plt.lib.Tilt.getYAcceleration")
                                (bf 'get-z-acceleration module-path 0 false 
-                                                      "org.plt.lib.Location.getZAcceleration")
+                                   "org.plt.lib.Location.getZAcceleration")
                                
                                (bf 'get-azimuth module-path 0 false 
-                                                      "org.plt.lib.Tilt.getAzimuth")
+                                   "org.plt.lib.Tilt.getAzimuth")
                                (bf 'get-pitch module-path 0 false 
-                                                      "org.plt.lib.Tilt.getPitch")
+                                   "org.plt.lib.Tilt.getPitch")
                                (bf 'get-roll module-path 0 false 
-                                                      "org.plt.lib.Tilt.getRoll")))))
+                                   "org.plt.lib.Tilt.getRoll")))))
 
 
 (define gui-world-module
@@ -546,8 +548,8 @@
 
 (define parser-module
   (local [(define module-path
-         (resolve-module-path 
-          '(lib "parser.ss" "moby" "stub") false))]
+            (resolve-module-path 
+             '(lib "parser.ss" "moby" "stub") false))]
     (make-module-binding 'parser
                          module-path
                          (list (make-binding:function 'parse-xml
@@ -577,7 +579,7 @@
                      (rest contents))]))]
     (loop an-env (module-binding-bindings a-module-binding))))
 
-                          
+
 (define known-modules (list world-module
                             world-stub-module
                             location-module
@@ -587,7 +589,7 @@
                             net-module
                             parser-module
                             bootstrap-module))
-                                        
+
 
 
 ;; require-analyze: require-path -> pinfo

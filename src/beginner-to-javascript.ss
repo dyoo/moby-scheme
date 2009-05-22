@@ -94,16 +94,16 @@
   (match defn
     [(list 'define (list fun args ...) body)
      (list (function-definition->java-string fun args body env a-pinfo)
-             "")]
+           "")]
     [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
      (list (function-definition->java-string fun args body env a-pinfo)
-             "")]
+           "")]
     [(list 'define (? symbol? id) body)
      (variable-definition->javascript-strings id body env a-pinfo)]
-
+    
     [(list 'define-struct id (list fields ...))
      (list (struct-definition->javascript-string id fields env a-pinfo)
-             "")]))
+           "")]))
 
 
 ;; function-definition->java-string: symbol (listof symbol) expr env pinfo -> string
@@ -141,8 +141,8 @@
 (define (variable-definition->javascript-strings id body env a-pinfo)
   (local [(define munged-id (identifier->munged-java-identifier id))
           (define new-env (env-extend env (make-binding:constant id 
-                                                         (symbol->string munged-id)
-                                                         empty)))]
+                                                                 (symbol->string munged-id)
+                                                                 empty)))]
     (list (format "var ~a; "
                   munged-id)
           (format "~a = ~a;" 
@@ -163,94 +163,94 @@
                             "-"
                             (symbol->string field-name))))
           ]
-          
-
-  (string-append
-   
-   ;; default constructor
-   (format "function ~a(~a) { ~a }
+    
+    
+    (string-append
+     
+     ;; default constructor
+     (format "function ~a(~a) { ~a }
             ~a.prototype = new org.plt.Kernel.Struct();"
-           (identifier->munged-java-identifier id)
-           (string-join (map (lambda (i) (format "~a"
-                                                 (identifier->munged-java-identifier i)))
-                             fields) 
-                        ",")
-           (string-join (map (lambda (i) (format "this.~a = ~a;" 
-                                                 (identifier->munged-java-identifier i)
-                                                 (identifier->munged-java-identifier i)))
-                             fields) 
-                        "\n")
-           (identifier->munged-java-identifier id))
-   "\n"
-   
-   ;; equality
-   (format "~a.prototype.isEqual = function(other) {
+             (identifier->munged-java-identifier id)
+             (string-join (map (lambda (i) (format "~a"
+                                                   (identifier->munged-java-identifier i)))
+                               fields) 
+                          ",")
+             (string-join (map (lambda (i) (format "this.~a = ~a;" 
+                                                   (identifier->munged-java-identifier i)
+                                                   (identifier->munged-java-identifier i)))
+                               fields) 
+                          "\n")
+             (identifier->munged-java-identifier id))
+     "\n"
+     
+     ;; equality
+     (format "~a.prototype.isEqual = function(other) {
               if (other instanceof ~a) {
                 return ~a;
               } else {
                 return false;
               }
            } "
-           (identifier->munged-java-identifier id)
-           (identifier->munged-java-identifier id)
-           (expression->javascript-string (foldl (lambda (a-field acc)
-                                                   (local [(define acc-id (field->accessor-name id a-field))]
-                                                     `(and (equal? (,acc-id this)
-                                                                   (,acc-id other)) 
-                                                           ,acc)))
-                                                 'true
-                                                 fields)
-                                          (local [(define new-env-1 (env-extend env
-                                                                      (make-binding:constant
-                                                                       'this
-                                                                       (symbol->string
-                                                                        (identifier->munged-java-identifier 'this))
-                                                                       empty)))
-                                                  (define new-env-2 (env-extend new-env-1
-                                                                      (make-binding:constant
-                                                                       'other
-                                                                       (symbol->string
-                                                                        (identifier->munged-java-identifier 'other))
-                                                                       empty)))]
-                                            new-env-2)
-                                          a-pinfo))
-   
-   "\n"
-   
-   ;; make-id
-   (format "function ~a(~a) { return new ~a(~a); }"
-           (local [(define make-id (string->symbol 
-                           (string-append "make-" (symbol->string id))))]
-             (identifier->munged-java-identifier  make-id))
-           (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
-                        ",")
-           (identifier->munged-java-identifier id)
-           (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
-                        ","))
-   
-   "\n"
-      
-   ;; accessors
-   (string-join 
-    (map (lambda (a-field)
-           (format "function ~a(obj) { return obj.~a; }"
-                   (local [(define acc-id (string->symbol
-                                  (string-append (symbol->string id)
-                                                 "-"
-                                                 (symbol->string a-field))))]
-                     (identifier->munged-java-identifier acc-id))
-                   (identifier->munged-java-identifier a-field)))
-         fields)
-    "\n")
-   
-   "\n"
-   
-   ;; structure predicate
-   (format "function ~a(obj) { 
+             (identifier->munged-java-identifier id)
+             (identifier->munged-java-identifier id)
+             (expression->javascript-string (foldl (lambda (a-field acc)
+                                                     (local [(define acc-id (field->accessor-name id a-field))]
+                                                       `(and (equal? (,acc-id this)
+                                                                     (,acc-id other)) 
+                                                             ,acc)))
+                                                   'true
+                                                   fields)
+                                            (local [(define new-env-1 (env-extend env
+                                                                                  (make-binding:constant
+                                                                                   'this
+                                                                                   (symbol->string
+                                                                                    (identifier->munged-java-identifier 'this))
+                                                                                   empty)))
+                                                    (define new-env-2 (env-extend new-env-1
+                                                                                  (make-binding:constant
+                                                                                   'other
+                                                                                   (symbol->string
+                                                                                    (identifier->munged-java-identifier 'other))
+                                                                                   empty)))]
+                                              new-env-2)
+                                            a-pinfo))
+     
+     "\n"
+     
+     ;; make-id
+     (format "function ~a(~a) { return new ~a(~a); }"
+             (local [(define make-id (string->symbol 
+                                      (string-append "make-" (symbol->string id))))]
+               (identifier->munged-java-identifier  make-id))
+             (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
+                          ",")
+             (identifier->munged-java-identifier id)
+             (string-join (build-list (length fields) (lambda (i) (format "id~a" i)))
+                          ","))
+     
+     "\n"
+     
+     ;; accessors
+     (string-join 
+      (map (lambda (a-field)
+             (format "function ~a(obj) { return obj.~a; }"
+                     (local [(define acc-id (string->symbol
+                                             (string-append (symbol->string id)
+                                                            "-"
+                                                            (symbol->string a-field))))]
+                       (identifier->munged-java-identifier acc-id))
+                     (identifier->munged-java-identifier a-field)))
+           fields)
+      "\n")
+     
+     "\n"
+     
+     ;; structure predicate
+     (format "function ~a(obj) { 
               return obj instanceof ~a ; 
             }"
-           (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
-           (identifier->munged-java-identifier id)))))
+             (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
+             (identifier->munged-java-identifier id)))))
 
 
 
@@ -267,7 +267,7 @@
     
     [(list 'cond [list questions answers] ... [list question-last answer-last])
      (expression->javascript-string (desugar-cond expr) env a-pinfo)]
-     
+    
     [(list 'if test consequent alternative)
      (format "((~a) ? (~a) : (~a))"
              (expression->javascript-string test env a-pinfo)
@@ -291,7 +291,7 @@
                                        expr) 
                                   "||")
                     ")")]
-        
+    
     [(list 'lambda (list args ...) body)
      (lambda-expression->javascript-string args body env a-pinfo)]
     
@@ -346,9 +346,9 @@
     [(symbol? operator)
      (local [(define operator-binding (env-lookup env operator))
              (define operand-strings 
-            (map (lambda (e) 
-                   (expression->javascript-string e env a-pinfo))
-                 operands))]
+               (map (lambda (e) 
+                      (expression->javascript-string e env a-pinfo))
+                    operands))]
        (match operator-binding
          ['false
           (error 'application-expression->java-string
@@ -363,12 +363,12 @@
                                          java-string permissions primitive?))
           
           (cond
-             [(< (length operands)
-                      min-arity)
-              (error 'application-expression->java-string
-                     (format "Minimal arity of ~s not met.  Operands were ~s"
-                             operator
-                             operands))]
+            [(< (length operands)
+                min-arity)
+             (error 'application-expression->java-string
+                    (format "Minimal arity of ~s not met.  Operands were ~s"
+                            operator
+                            operands))]
             [var-arity?
              (cond [(> min-arity 0)
                     (format "~a(~a, [~a])"
@@ -388,11 +388,11 @@
     
     ;; General application
     [else
-     (let ([operator-string (expression->javascript-string operator env a-pinfo)]
-           [operand-strings 
-            (map (lambda (e) 
-                   (expression->javascript-string e env a-pinfo))
-                 operands)])
+     (local [(define operator-string (expression->javascript-string operator env a-pinfo))
+             (define operand-strings 
+               (map (lambda (e) 
+                      (expression->javascript-string e env a-pinfo))
+                    operands))]
        (format "((~a).apply(null, [~a]))" 
                operator-string
                (string-join operand-strings ", ")))]))
@@ -428,28 +428,30 @@
 
 ;; mapi: (X number -> Y) (listof X) -> (listof Y
 (define (mapi f elts)
-  (let loop ([i 0]
-             [elts elts])
-    (cond
-      [(empty? elts)
-       empty]
-      [else
-       (cons (f (first elts) i)
-             (loop (add1 i) (rest elts)))])))
+  (local [(define (loop i elts)
+            (cond
+              [(empty? elts)
+               empty]
+              [else
+               (cons (f (first elts) i)
+                     (loop (add1 i) (rest elts)))]))]
+    (loop 0 elts)))
+
 
 
 ;; lambda-expression->javascript-string (listof symbol) expression env pinfo -> string
 (define (lambda-expression->javascript-string args body env a-pinfo)
-  (let* ([munged-arg-ids
-          (map identifier->munged-java-identifier args)]
-         [new-env
-          (foldl (lambda (arg-id env) 
-                   (env-extend env (make-binding:constant arg-id 
-                                                          (symbol->string
-                                                           (identifier->munged-java-identifier arg-id))
-                                                          empty)))
-                 env
-                 args)])
+  (local [(define munged-arg-ids
+            (map identifier->munged-java-identifier args))
+
+          (define new-env
+            (foldl (lambda (arg-id env) 
+                     (env-extend env (make-binding:constant arg-id 
+                                                            (symbol->string
+                                                             (identifier->munged-java-identifier arg-id))
+                                                            empty)))
+                   env
+                   args))]
     (format "(function(args) { ~a
                              return ~a; })"
             (string-join (mapi (lambda (arg-id i)
@@ -505,4 +507,4 @@
                                             [pinfo pinfo?])]
                   
                   [program->compiled-program 
-                   ((program?) (#:cps? boolean?) . ->* . compiled-program?)])
+                   (program? . -> . compiled-program?)])
