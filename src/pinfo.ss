@@ -121,33 +121,56 @@
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
 ;; Collects the defined names introduced by the definition.
 (define (definition-analyze-collect-definitions a-definition pinfo)
-  (match a-definition
-    [(list 'define (list id args ...) body)
-     (pinfo-accumulate-binding (bf id
-                                                      false
-                                                      (length args) 
-                                                      false 
-                                                      (symbol->string
-                                                       (identifier->munged-java-identifier id)))
-                               pinfo)]
-    [(list 'define (? symbol? id) (list 'lambda (list args ...) body))
-     (pinfo-accumulate-binding (bf id
-                                                      false
-                                                      (length args) 
-                                                      false 
-                                                      (symbol->string
-                                                       (identifier->munged-java-identifier id)))
-                               pinfo)]
-    [(list 'define (? symbol? id) body)
-     (pinfo-accumulate-binding (make-binding:constant id
-                                                      (symbol->string 
-                                                       (identifier->munged-java-identifier id))
-                                                      empty)
-                               pinfo)]
+  (cond
+    ;; (define (id args ...) body)
+    [(and (list-begins-with? a-definition 'define)
+          (= (length a-definition) 3)
+          (pair? (second a-definition)))
+     (local [(define id (first (second a-definition)))
+             (define args (rest (second a-definition)))
+             (define body (third a-definition))]
+       (pinfo-accumulate-binding (bf id
+                                     false
+                                     (length args) 
+                                     false 
+                                     (symbol->string
+                                      (identifier->munged-java-identifier id)))
+                                 pinfo))]
+    ;; (define id (lambda (args ...) body))
+    [(and (list-begins-with? a-definition 'define)
+          (= (length a-definition) 3)
+          (symbol? (second a-definition))
+          (list-begins-with? (third a-definition) 'lambda))
+     (local [(define id (second a-definition))
+             (define args (second (third a-definition)))
+             (define body (third (third a-definition)))]
+       (pinfo-accumulate-binding (bf id
+                                     false
+                                     (length args) 
+                                     false 
+                                     (symbol->string
+                                      (identifier->munged-java-identifier id)))
+                                 pinfo))]
     
+    ;; (define id body)
+    [(and (list-begins-with? a-definition 'define)
+          (= (length a-definition) 3)
+          (symbol? (second a-definition))
+          (not (list-begins-with? (third a-definition) 'lambda)))
+     (local [(define id (second a-definition))
+             (define body (third a-definition))]
+       (pinfo-accumulate-binding (make-binding:constant id
+                                                        (symbol->string 
+                                                         (identifier->munged-java-identifier id))
+                                                        empty)
+                                 pinfo))]
     
-    [(list 'define-struct id (list fields ...))
-     (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) id fields))]))
+    ;(define-struct id (fields ...))    
+    [(list-begins-with? a-definition 'define-struct)
+     (local [(define id (second a-definition))
+             (define fields (third a-definition))]
+       
+       (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) id fields)))]))
 
 
 
@@ -220,61 +243,45 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; expression-analyze-uses: expression program-info env -> program-info
 (define (expression-analyze-uses an-expression pinfo env)
-  (match an-expression
-    
-    [(list 'local [list defns ...] body)
-     (local [(define nested-pinfo (foldl (lambda (a-defn a-pinfo)
-                                           (definition-analyze-uses a-defn a-pinfo))
-                                         pinfo
-                                         defns))]
-       (expression-analyze-uses body
-                                nested-pinfo
-                                (pinfo-env nested-pinfo)))]
-    
-    [(list 'cond [list questions answers] ... [list 'else answer-last])
-     (foldl (lambda (e p)
-              (expression-analyze-uses e p env))
-            pinfo 
-            (cons answer-last (append questions answers)))]
-    
-    
-    [(list 'cond [list questions answers] ... [list question-last answer-last])
-     (foldl (lambda (e p)
-              (expression-analyze-uses e p env))
-            pinfo (cons question-last 
-                        (cons answer-last 
-                              (append questions answers))))]
+  (cond
 
+    [(list-begins-with? an-expression 'local)
+     (local-expression-analyze-uses an-expression pinfo env)]
     
-    [(list 'if test consequent alternative)
-     (foldl (lambda (e p) (expression-analyze-uses e p env))
-            pinfo 
-            (list test consequent alternative))]
+    [(list-begins-with? an-expression 'cond)
+     (expression-analyze-uses (desugar-cond an-expression)
+                              pinfo
+                              env)]
     
-    [(list 'and exprs ...)
-     (foldl (lambda (e p) (expression-analyze-uses e p env))
-            pinfo 
-            exprs)]
+    [(list-begins-with? an-expression 'if)
+     (if-expression-analyze-uses an-expression pinfo env)]
     
-    [(list 'or exprs ...)
-     (foldl (lambda (e p) (expression-analyze-uses e p env))
-            pinfo 
-            exprs)]
+    [(list-begins-with? an-expression 'and)
+     (local [(define exprs (rest an-expression))]
+       (foldl (lambda (e p) (expression-analyze-uses e p env))
+              pinfo 
+              exprs))]
+    
+    [(list-begins-with? an-expression 'or)
+     (local [(define exprs (rest an-expression))]
+       (foldl (lambda (e p) (expression-analyze-uses e p env))
+              pinfo 
+              exprs))]
     
     ;; Numbers
-    [(? number?)
+    [(number? an-expression)
      pinfo]
     
     ;; Strings
-    [(? string?)
+    [(string? an-expression)
      pinfo]
     
     ;; Characters
-    [(? char?)
+    [(char? an-expression)
      pinfo]
     
     ;; Identifiers
-    [(? symbol?)
+    [(symbol? an-expression)
      (cond
        [(env-contains? env an-expression)
         (pinfo-accumulate-binding-use (env-lookup env an-expression) pinfo)]
@@ -282,21 +289,42 @@
         pinfo])]
     
     ;; Quoted symbols
-    [(list 'quote datum)
+    [(list-begins-with? an-expression 'quote)
      pinfo]
     
     ;; Function call/primitive operation call
-    [(list (? symbol? id) exprs ...)
-     (local [(define updated-pinfo
-               (foldl (lambda (e p)
-                        (expression-analyze-uses e p env))
-                      pinfo
-                      exprs))]
-       (cond
-         [(env-contains? env id)
-          (pinfo-accumulate-binding-use (env-lookup env id) updated-pinfo)]
-         [else
-          updated-pinfo]))]))
+    [(pair? an-expression)
+     (application-expression-analyze-uses an-expression pinfo env)]))
+     
+
+
+(define (local-expression-analyze-uses an-expression pinfo env)
+  (local [(define defns (second an-expression))
+          (define body (third an-expression))
+          (define nested-pinfo (foldl (lambda (a-defn a-pinfo)
+                                        (definition-analyze-uses a-defn a-pinfo))
+                                      pinfo
+                                      defns))]
+       (expression-analyze-uses body
+                                nested-pinfo
+                                (pinfo-env nested-pinfo))))
+
+(define (if-expression-analyze-uses an-expression pinfo env)
+  (local [(define test (second an-expression))
+          (define consequent (third an-expression))
+          (define alternative (fourth an-expression))]
+    (foldl (lambda (e p) (expression-analyze-uses e p env))
+           pinfo 
+           (list test consequent alternative))))
+
+
+(define (application-expression-analyze-uses an-expression pinfo env)
+  (local [(define updated-pinfo
+            (foldl (lambda (e p)
+                     (expression-analyze-uses e p env))
+                   pinfo
+                   an-expression))]
+    updated-pinfo))
 
 
 

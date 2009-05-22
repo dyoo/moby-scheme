@@ -44,7 +44,7 @@
 (define (read-program a-path)
   (call-with-input-file a-path
     (lambda (ip)
-      (check-special-lang-line! (read-line ip)) ;; skip the first language-level line
+      (check-special-lang-line! a-path (read-line ip)) ;; skip the first language-level line
       (let loop ([elt (read ip)])
         (cond
           [(eof-object? elt)
@@ -54,9 +54,9 @@
 
 
 ;; make sure the line is a #lang s-exp "lang.ss" line.
-(define (check-special-lang-line! a-line)
+(define (check-special-lang-line! source a-line)
   (unless (regexp-match #rx"^#lang s-exp \"lang.ss\"$" a-line)
-    (error 'check-special-line!)))
+    (error 'check-special-line! "~s needs to be written in lang.ss language" source)))
 
 
 
