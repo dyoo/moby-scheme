@@ -121,6 +121,39 @@
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
 ;; Collects the defined names introduced by the definition.
 (define (definition-analyze-collect-definitions a-definition pinfo)
+  (case-analyze-definition 
+   a-definition
+   
+   ;; For functions
+   (lambda (id args body)
+     (pinfo-accumulate-binding (bf id
+                                   false
+                                   (length args) 
+                                   false 
+                                   (symbol->string
+                                    (identifier->munged-java-identifier id)))
+                               pinfo))
+   
+   ;; For regular defintions
+   (lambda (id expr)
+     (pinfo-accumulate-binding (make-binding:constant id
+                                                      (symbol->string 
+                                                       (identifier->munged-java-identifier id))
+                                                      empty)
+                               pinfo))
+   
+   ;; For structure definitions
+   (lambda (id fields)
+     (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) id fields)))))
+
+
+
+
+;; Helper to help with the destructuring and case analysis of functions.
+(define (case-analyze-definition a-definition 
+                                 f-function            ;; (symbol (listof symbol) expr) -> ...
+                                 f-regular-definition  ;; (symbol expr) -> ...
+                                 f-define-struct)      ;; (symbol (listof symbol)) -> ...
   (cond
     ;; (define (id args ...) body)
     [(and (list-begins-with? a-definition 'define)
@@ -129,13 +162,9 @@
      (local [(define id (first (second a-definition)))
              (define args (rest (second a-definition)))
              (define body (third a-definition))]
-       (pinfo-accumulate-binding (bf id
-                                     false
-                                     (length args) 
-                                     false 
-                                     (symbol->string
-                                      (identifier->munged-java-identifier id)))
-                                 pinfo))]
+       (f-function id args body))]
+
+
     ;; (define id (lambda (args ...) body))
     [(and (list-begins-with? a-definition 'define)
           (= (length a-definition) 3)
@@ -144,13 +173,7 @@
      (local [(define id (second a-definition))
              (define args (second (third a-definition)))
              (define body (third (third a-definition)))]
-       (pinfo-accumulate-binding (bf id
-                                     false
-                                     (length args) 
-                                     false 
-                                     (symbol->string
-                                      (identifier->munged-java-identifier id)))
-                                 pinfo))]
+       (f-function id args body))]
     
     ;; (define id body)
     [(and (list-begins-with? a-definition 'define)
@@ -159,18 +182,16 @@
           (not (list-begins-with? (third a-definition) 'lambda)))
      (local [(define id (second a-definition))
              (define body (third a-definition))]
-       (pinfo-accumulate-binding (make-binding:constant id
-                                                        (symbol->string 
-                                                         (identifier->munged-java-identifier id))
-                                                        empty)
-                                 pinfo))]
+       (f-regular-definition id body))]
     
     ;(define-struct id (fields ...))    
     [(list-begins-with? a-definition 'define-struct)
      (local [(define id (second a-definition))
              (define fields (third a-definition))]
-       
-       (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) id fields)))]))
+       (f-define-struct id fields))]))
+
+
+
 
 
 
@@ -210,15 +231,13 @@
 ;; definition-analyze-uses: definition program-info -> program-info
 ;; Collects the used names.
 (define (definition-analyze-uses a-definition pinfo)
-  (match a-definition
-    [(list 'define (list id args ...) body)
-     (function-definition-analyze-uses id args body pinfo)]
-    [(list 'define (? symbol? id) (list 'lambda (list args ...) body))
-     (function-definition-analyze-uses id args body pinfo)]   
-    [(list 'define (? symbol? id) body)
-     (expression-analyze-uses body pinfo (pinfo-env pinfo))]
-    [(list 'define-struct id (list fields ...))
-     pinfo]))
+  (case-analyze-definition a-definition
+                           (lambda (id args body)
+                             (function-definition-analyze-uses id args body pinfo))
+                           (lambda (id expr)
+                             (expression-analyze-uses expr pinfo (pinfo-env pinfo)))
+                           (lambda (id fields)
+                             pinfo)))
 
 
 ;; function-definition-analyze-uses: symbol (listof symbol) expression program-info -> program-info
