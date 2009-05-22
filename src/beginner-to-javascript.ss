@@ -91,19 +91,17 @@
 ;;
 ;; Structure definitions map to static inner classes with transparent fields.
 (define (definition->javascript-strings defn env a-pinfo)
-  (match defn
-    [(list 'define (list fun args ...) body)
+  (case-analyze-definition 
+   defn
+   (lambda (fun args body)
      (list (function-definition->java-string fun args body env a-pinfo)
-           "")]
-    [(list 'define (? symbol? fun) (list 'lambda (list args ...) body))
-     (list (function-definition->java-string fun args body env a-pinfo)
-           "")]
-    [(list 'define (? symbol? id) body)
-     (variable-definition->javascript-strings id body env a-pinfo)]
-    
-    [(list 'define-struct id (list fields ...))
+           ""))
+   (lambda (id body)
+     (variable-definition->javascript-strings id body env a-pinfo))
+   (lambda (id fields)
      (list (struct-definition->javascript-string id fields env a-pinfo)
-           "")]))
+           ""))))
+     
 
 
 ;; function-definition->java-string: symbol (listof symbol) expr env pinfo -> string
@@ -258,67 +256,80 @@
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (expression->javascript-string expr env a-pinfo)
-  (match expr
-    [(list 'local [list defns ...] body)
-     (local-expression->javascript-string defns body env a-pinfo)]
+  (cond
+    ;; (local ([define ...] ...) body)
+    [(list-begins-with? expr 'local)
+     (local [(define defns (second expr))
+             (define body (third expr))]
+       (local-expression->javascript-string defns body env a-pinfo))]
     
-    [(list 'cond [list questions answers] ... [list 'else answer-last])
+    ;; (cond ...)
+    [(list-begins-with? expr 'cond)
      (expression->javascript-string (desugar-cond expr) env a-pinfo)]    
     
-    [(list 'cond [list questions answers] ... [list question-last answer-last])
-     (expression->javascript-string (desugar-cond expr) env a-pinfo)]
+    ;; (if test consequent alternative)
+    [(list-begins-with? expr 'if)
+     (local [(define test (second expr))
+             (define consequent (third expr))
+             (define alternative (fourth expr))]
+       (format "((~a) ? (~a) : (~a))"
+               (expression->javascript-string test env a-pinfo)
+               (expression->javascript-string consequent env a-pinfo)
+               (expression->javascript-string alternative env a-pinfo)))]
     
-    [(list 'if test consequent alternative)
-     (format "((~a) ? (~a) : (~a))"
-             (expression->javascript-string test env a-pinfo)
-             (expression->javascript-string consequent env a-pinfo)
-             (expression->javascript-string alternative env a-pinfo))]
-    
-    [(list 'and expr ...)
-     (string-append "("
-                    (string-join (map (lambda (e)
-                                        (format "(~a)"
-                                                (expression->javascript-string e env a-pinfo)))
-                                      expr) 
-                                 "&&")
-                    ")")]
-    
-    [(list 'or expr ...)
-     (string-append "("
-                    (string-join  (map (lambda (e)
-                                         (format "(~a)"
-                                                 (expression->javascript-string e env a-pinfo)))
-                                       expr) 
-                                  "||")
-                    ")")]
-    
-    [(list 'lambda (list args ...) body)
-     (lambda-expression->javascript-string args body env a-pinfo)]
+    ;; (and exprs ...)
+    [(list-begins-with? expr 'and)
+     (local [(define exprs (rest expr))]
+       (string-append "("
+                      (string-join (map (lambda (e)
+                                          (format "(~a)"
+                                                  (expression->javascript-string e env a-pinfo)))
+                                        exprs) 
+                                   "&&")
+                      ")"))]
+    ;; (or exprs ...)
+    [(list-begins-with? expr 'or)
+     (local [(define exprs (rest expr))]
+       (string-append "("
+                      (string-join  (map (lambda (e)
+                                           (format "(~a)"
+                                                   (expression->javascript-string e env a-pinfo)))
+                                         exprs) 
+                                    "||")
+                      ")"))]
+    ;; (lambda args body)
+    [(list-begins-with? expr 'lambda)
+     (local [(define args (second expr))
+             (define body (third expr))]
+       (lambda-expression->javascript-string args body env a-pinfo))]
     
     ;; Numbers
-    [(? number?)
+    [(number? expr)
      (number->javascript-string expr)]
     
     ;; Strings
-    [(? string?)
+    [(string? expr)
      (string->javascript-string expr)]
     
     ;; Characters
-    [(? char?)
+    [(char? expr)
      (char->javascript-string expr)]
     
     ;; Identifiers
-    [(? symbol?)
+    [(symbol? expr)
      (identifier-expression->javascript-string expr env a-pinfo)]
     
-    ;; Quoted symbols
-    [(list 'quote datum)
+    ;; Quoted datums
+    [(list-begins-with? expr 'quote)
+     ;; FIXME: expr may be something other than a symbol.  This is wrong!
      (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
-             datum)]
+             expr)]
     
     ;; Function call/primitive operation call
-    [(list operator operands ...)
-     (application-expression->javascript-string operator operands env a-pinfo)]))
+    [(pair? expr)
+     (local [(define operator (first expr))
+             (define operands (rest expr))]
+       (application-expression->javascript-string operator operands env a-pinfo))]))
 
 
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
@@ -354,38 +365,36 @@
                (map (lambda (e) 
                       (expression->javascript-string e env a-pinfo))
                     operands))]
-       (match operator-binding
+       (cond
          
-         [(struct binding:constant (name java-string permissions))
+         [(binding:constant? operator-binding)
           (format "((~a).apply(null, [~a]))" 
-                  java-string 
+                  (binding:constant-java-string operator-binding)
                   (string-join operand-strings ", "))]
          
-         [(struct binding:function (name module-path min-arity var-arity? 
-                                         java-string permissions primitive?))
-          
+         [(binding:function? operator-binding)
           (cond
             [(< (length operands)
-                min-arity)
+                (binding:function-min-arity operator-binding))
              (error 'application-expression->java-string
                     (format "Minimal arity of ~s not met.  Operands were ~s"
                             operator
                             operands))]
-            [var-arity?
-             (cond [(> min-arity 0)
+            [(binding:function-var-arity? operator-binding)
+             (cond [(> (binding:function-min-arity operator-binding) 0)
                     (format "~a(~a, [~a])"
-                            java-string
-                            (string-join (take operand-strings min-arity) ",")
-                            (string-join (list-tail operand-strings min-arity)
+                            (binding:function-java-string operator-binding)
+                            (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
+                            (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
                                          ","))]
                    [else
                     (format "~a([~a])"
-                            java-string
-                            (string-join (list-tail operand-strings min-arity)
+                            (binding:function-java-string operator-binding)
+                            (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
                                          ","))])]
             [else
              (format "(~a(~a))" 
-                     java-string 
+                     (binding:function-java-string operator-binding)
                      (string-join operand-strings ","))])]))]
     
     ;; General application
@@ -410,27 +419,28 @@
     [(not (env-contains? an-env an-id))
      (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
     [else     
-     (match (env-lookup an-env an-id)
-       [(struct binding:constant (name java-string permissions))
-        java-string]
-       [(struct binding:function (name module-path min-arity var-arity? java-string permissions primitive?))
-        (cond
-          [var-arity?
-           (format "(function(args) {
+     (local [(define binding (env-lookup an-env an-id))]
+       (cond
+         [(binding:constant? binding)
+          (binding:constant-java-string binding)]
+         [(binding:function? binding)
+          (cond
+            [(binding:function-var-arity? binding)
+             (format "(function(args) {
                     return ~a.apply(null, args);
                   })"
-                   java-string)]
-          [else
-           (format "(function(args) {
+                     (binding:function-java-string binding))]
+            [else
+             (format "(function(args) {
                     return ~a(~a);
                  })"
-                   java-string
-                   (string-join (map (lambda (i)
-                                       (format "args[~a]" i))
-                                     (range min-arity))
-                                ", "))])])]))
+                     (binding:function-java-string binding)
+                     (string-join (map (lambda (i)
+                                         (format "args[~a]" i))
+                                       (range (binding:function-min-arity binding)))
+                                  ", "))])]))]))
 
-;; mapi: (X number -> Y) (listof X) -> (listof Y
+;; mapi: (X number -> Y) (listof X) -> (listof Y)
 (define (mapi f elts)
   (local [(define (loop i elts)
             (cond

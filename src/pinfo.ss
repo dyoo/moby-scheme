@@ -149,48 +149,6 @@
 
 
 
-;; Helper to help with the destructuring and case analysis of functions.
-(define (case-analyze-definition a-definition 
-                                 f-function            ;; (symbol (listof symbol) expr) -> ...
-                                 f-regular-definition  ;; (symbol expr) -> ...
-                                 f-define-struct)      ;; (symbol (listof symbol)) -> ...
-  (cond
-    ;; (define (id args ...) body)
-    [(and (list-begins-with? a-definition 'define)
-          (= (length a-definition) 3)
-          (pair? (second a-definition)))
-     (local [(define id (first (second a-definition)))
-             (define args (rest (second a-definition)))
-             (define body (third a-definition))]
-       (f-function id args body))]
-
-
-    ;; (define id (lambda (args ...) body))
-    [(and (list-begins-with? a-definition 'define)
-          (= (length a-definition) 3)
-          (symbol? (second a-definition))
-          (list-begins-with? (third a-definition) 'lambda))
-     (local [(define id (second a-definition))
-             (define args (second (third a-definition)))
-             (define body (third (third a-definition)))]
-       (f-function id args body))]
-    
-    ;; (define id body)
-    [(and (list-begins-with? a-definition 'define)
-          (= (length a-definition) 3)
-          (symbol? (second a-definition))
-          (not (list-begins-with? (third a-definition) 'lambda)))
-     (local [(define id (second a-definition))
-             (define body (third a-definition))]
-       (f-regular-definition id body))]
-    
-    ;(define-struct id (fields ...))    
-    [(list-begins-with? a-definition 'define-struct)
-     (local [(define id (second a-definition))
-             (define fields (third a-definition))]
-       (f-define-struct id fields))]))
-
-
 
 
 
