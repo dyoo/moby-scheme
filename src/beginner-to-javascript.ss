@@ -343,6 +343,11 @@
 (define (application-expression->javascript-string operator operands env a-pinfo)
   (cond     
     ;; Special case: when the operator is named
+    [(and (symbol? operator)
+          (not (env-contains? env operator)))
+     (error 'application-expression->java-string
+            (format "Moby doesn't know about ~s" operator))]
+    
     [(symbol? operator)
      (local [(define operator-binding (env-lookup env operator))
              (define operand-strings 
@@ -350,9 +355,6 @@
                       (expression->javascript-string e env a-pinfo))
                     operands))]
        (match operator-binding
-         ['false
-          (error 'application-expression->java-string
-                 "Moby doesn't know about ~s" operator)]
          
          [(struct binding:constant (name java-string permissions))
           (format "((~a).apply(null, [~a]))" 
@@ -404,27 +406,29 @@
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
 (define (identifier-expression->javascript-string an-id an-env a-pinfo)
-  (match (env-lookup an-env an-id)
-    ['false
-     (error 'translate-toplevel-id "Moby doesn't know about ~s." an-id)]
-    [(struct binding:constant (name java-string permissions))
-     java-string]
-    [(struct binding:function (name module-path min-arity var-arity? java-string permissions primitive?))
-     (cond
-       [var-arity?
-        (format "(function(args) {
+  (cond
+    [(not (env-contains? an-env an-id))
+     (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
+    [else     
+     (match (env-lookup an-env an-id)
+       [(struct binding:constant (name java-string permissions))
+        java-string]
+       [(struct binding:function (name module-path min-arity var-arity? java-string permissions primitive?))
+        (cond
+          [var-arity?
+           (format "(function(args) {
                     return ~a.apply(null, args);
                   })"
-                java-string)]
-       [else
-        (format "(function(args) {
+                   java-string)]
+          [else
+           (format "(function(args) {
                     return ~a(~a);
                  })"
-                java-string
-                (string-join (map (lambda (i)
-                                    (format "args[~a]" i))
-                                  (range min-arity))
-                             ", "))])]))
+                   java-string
+                   (string-join (map (lambda (i)
+                                       (format "args[~a]" i))
+                                     (range min-arity))
+                                ", "))])])]))
 
 ;; mapi: (X number -> Y) (listof X) -> (listof Y
 (define (mapi f elts)
@@ -443,7 +447,7 @@
 (define (lambda-expression->javascript-string args body env a-pinfo)
   (local [(define munged-arg-ids
             (map identifier->munged-java-identifier args))
-
+          
           (define new-env
             (foldl (lambda (arg-id env) 
                      (env-extend env (make-binding:constant arg-id 

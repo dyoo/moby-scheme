@@ -227,7 +227,14 @@
                      (error 2)
                      (struct? 1)
                      (identity 1)
-                     (current-seconds 0))))
+                     (current-seconds 0)
+                     
+                     (andmap 2)
+                     (map 1 true)
+                     (format 1 true)
+                     
+                     (match 0 true) ;; we're not going to implement match.
+                     )))
           
           (define top-env-3 
             (foldl (lambda (id+arity+name env)
@@ -237,7 +244,8 @@
                      (hash-set! 3 "org.plt.Kernel._kernelHashSetBang")
                      (hash-set 3 "org.plt.Kernel._kernelHashSet")
                      (hash-ref 3 "org.plt.Kernel._kernelHashRef")
-                     (hash-map 2 "org.plt.Kernel._kernelHashMap"))))]
+                     (hash-map 2 "org.plt.Kernel._kernelHashMap")
+                     )))]
     top-env-3))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -158,11 +158,13 @@
     [(define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          `(if ,question-last ,answer-last (error 'cond "Fell out of cond"))]
+          (list 'if question-last answer-last '(error 'cond "Fell out of cond"))]
+         
          [else
-          `(if ,(first questions) 
-               ,(first answers)
-               ,(loop (rest questions)
+          (list 'if 
+                (first questions)
+                (first answers)
+                (loop (rest questions)
                       (rest answers)
                       question-last
                       answer-last))]))]
