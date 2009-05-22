@@ -6,6 +6,7 @@
 ;; http://docs.plt-scheme.org/htdp-langs/beginner.html
 
 
+
 (require "env.ss")
 (require "pinfo.ss")
 (require "helpers.ss")
@@ -23,6 +24,7 @@
 ;; program->compiled-program: program [pinfo] -> compiled-program
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
+
 (define (program->compiled-program program)
   (-program->compiled-program program (get-base-pinfo 'js)))
 
@@ -290,6 +292,9 @@
                                   "||")
                     ")")]
         
+    [(list 'lambda (list args ...) body)
+     (lambda-expression->javascript-string args body env a-pinfo)]
+    
     ;; Numbers
     [(? number?)
      (number->javascript-string expr)]
@@ -312,8 +317,8 @@
              datum)]
     
     ;; Function call/primitive operation call
-    [(list (? symbol? id) exprs ...)
-     (application-expression->javascript-string id exprs env a-pinfo)]))
+    [(list operator operands ...)
+     (application-expression->javascript-string operator operands env a-pinfo)]))
 
 
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
@@ -335,49 +340,63 @@
 
 ;; application-expression->java-string: symbol (listof expr) env pinfo -> string
 ;; Converts the function application to a string.
-(define (application-expression->javascript-string id exprs env a-pinfo)
-  (cond [(not (env-contains? env id))
-         (error 'application-expression->java-string
-                (format "Moby doesn't know about ~s" id))]
-        [else
+(define (application-expression->javascript-string operator operands env a-pinfo)
+  (cond     
+    ;; Special case: when the operator is named
+    [(symbol? operator)
+     (local [(define operator-binding (env-lookup env operator))
+             (define operand-strings 
+            (map (lambda (e) 
+                   (expression->javascript-string e env a-pinfo))
+                 operands))]
+       (match operator-binding
+         ['false
+          (error 'application-expression->java-string
+                 "Moby doesn't know about ~s" operator)]
          
-         (local [(define operator-binding (env-lookup env id))
-                 (define operand-strings 
-                   (map (lambda (e) 
-                          (expression->javascript-string e env a-pinfo))
-                        exprs))]
-           (match operator-binding
-             
-             [(struct binding:constant (name java-string permissions))
-              (format "((~a).apply(null, [~a]))" 
-                      java-string 
-                      (string-join operand-strings ", "))]
-             
-             [(struct binding:function (name module-path min-arity var-arity? 
-                                             java-string permissions primitive?))
-              (cond
-                [(< (length exprs) min-arity)
-                 (error 'application-expression->java-string
-                        (format "Minimal arity (~s) of ~s not met.  Operands were ~s"
-                                min-arity
-                                id
-                                exprs))]
-                [var-arity?
-                 (cond [(> min-arity 0)
-                        (format "~a(~a, [~a])"
-                                java-string
-                                (string-join (take operand-strings min-arity) ",")
-                                (string-join (list-tail operand-strings min-arity)
-                                             ","))]
-                       [else
-                        (format "~a([~a])"
-                                java-string
-                                (string-join (list-tail operand-strings min-arity)
-                                             ","))])]
-                [else
-                 (format "(~a(~a))" 
-                         java-string 
-                         (string-join operand-strings ","))])]))]))
+         [(struct binding:constant (name java-string permissions))
+          (format "((~a).apply(null, [~a]))" 
+                  java-string 
+                  (string-join operand-strings ", "))]
+         
+         [(struct binding:function (name module-path min-arity var-arity? 
+                                         java-string permissions primitive?))
+          
+          (cond
+             [(< (length operands)
+                      min-arity)
+              (error 'application-expression->java-string
+                     (format "Minimal arity of ~s not met.  Operands were ~s"
+                             operator
+                             operands))]
+            [var-arity?
+             (cond [(> min-arity 0)
+                    (format "~a(~a, [~a])"
+                            java-string
+                            (string-join (take operand-strings min-arity) ",")
+                            (string-join (list-tail operand-strings min-arity)
+                                         ","))]
+                   [else
+                    (format "~a([~a])"
+                            java-string
+                            (string-join (list-tail operand-strings min-arity)
+                                         ","))])]
+            [else
+             (format "(~a(~a))" 
+                     java-string 
+                     (string-join operand-strings ","))])]))]
+    
+    ;; General application
+    [else
+     (let ([operator-string (expression->javascript-string operator env a-pinfo)]
+           [operand-strings 
+            (map (lambda (e) 
+                   (expression->javascript-string e env a-pinfo))
+                 operands)])
+       (format "((~a).apply(null, [~a]))" 
+               operator-string
+               (string-join operand-strings ", ")))]))
+
 
 
 
@@ -407,7 +426,37 @@
                                   (range min-arity))
                              ", "))])]))
 
+;; mapi: (X number -> Y) (listof X) -> (listof Y
+(define (mapi f elts)
+  (let loop ([i 0]
+             [elts elts])
+    (cond
+      [(empty? elts)
+       empty]
+      [else
+       (cons (f (first elts) i)
+             (loop (add1 i) (rest elts)))])))
 
+
+;; lambda-expression->javascript-string (listof symbol) expression env pinfo -> string
+(define (lambda-expression->javascript-string args body env a-pinfo)
+  (let* ([munged-arg-ids
+          (map identifier->munged-java-identifier args)]
+         [new-env
+          (foldl (lambda (arg-id env) 
+                   (env-extend env (make-binding:constant arg-id 
+                                                          (symbol->string
+                                                           (identifier->munged-java-identifier arg-id))
+                                                          empty)))
+                 env
+                 args)])
+    (format "(function(args) { ~a
+                             return ~a; })"
+            (string-join (mapi (lambda (arg-id i)
+                                 (format "var ~a = args[~a];" (symbol->string arg-id) i))
+                               munged-arg-ids)
+                         "\n")
+            (expression->javascript-string body new-env a-pinfo))))
 
 
 
@@ -456,4 +505,4 @@
                                             [pinfo pinfo?])]
                   
                   [program->compiled-program 
-                   (program? . -> . compiled-program?)])
+                   ((program?) (#:cps? boolean?) . ->* . compiled-program?)])

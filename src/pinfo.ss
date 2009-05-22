@@ -223,19 +223,28 @@
 
 ;; function-definition-analyze-uses: symbol (listof symbol) expression program-info -> program-info
 (define (function-definition-analyze-uses fun args body pinfo)
+
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2 
             (env-extend env-1 (bf fun false (length args) false
-                                  (symbol->string fun))))
-          (define env-3
-            (foldl (lambda (arg-id env) 
-                     (env-extend env (make-binding:constant arg-id 
-                                                            (symbol->string
-                                                             arg-id)
-                                                            empty)))
-                   env-2
-                   args))]
-    (expression-analyze-uses body pinfo env-3)))
+                                  (symbol->string fun))))]
+    (lambda-expression-analyze-uses args body (pinfo-update-env pinfo env-2))))
+
+
+
+;; lambda-expression-analyze-uses: (listof symbol) expression program-info -> program-info
+(define (lambda-expression-analyze-uses args body pinfo)
+  (local [(define env-1 (pinfo-env pinfo))
+          (define env-2
+          (foldl (lambda (arg-id env) 
+                   (env-extend env (make-binding:constant arg-id 
+                                                          (symbol->string
+                                                           arg-id)
+                                                          empty)))
+                 env-1
+                 args))]
+    (expression-analyze-uses body pinfo env)))
+
 
 
 
@@ -267,6 +276,9 @@
        (foldl (lambda (e p) (expression-analyze-uses e p env))
               pinfo 
               exprs))]
+    
+    [(list 'lambda (list args ...) body)
+     (lambda-expression-analyze-uses args body pinfo)]
     
     ;; Numbers
     [(number? an-expression)

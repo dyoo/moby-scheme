@@ -36,7 +36,15 @@
   var FloatPoint = org.plt.types.FloatPoint;
   var Complex = org.plt.types.Complex;
   var Kernel = org.plt.Kernel;
-
+  var PI = org.plt.Kernel.pi;
+  var String = org.plt.types.String;
+  var Symbol = org.plt.types.Symbol;
+  var Logic = org.plt.types.Logic;
+  var Cons = org.plt.types.Cons;
+  var Empty = org.plt.types.Empty;
+  var EMPTY = Empty.EMPTY;
+  var Char = org.plt.types.Char;
+	
   new Test.Unit.Runner({
     setup: function() {
     },
@@ -62,6 +70,8 @@
 		var n4 = Complex.makeInstance(2,1);
 		this.assert(Kernel.equal_question_(n1, n3));
 		this.assert(!Kernel.equal_question_(n3, n4));
+		
+		this.assert(Kernel.equal_question_(String.makeInstance("hi"), String.makeInstance("hi")));
 	},
 	
 	testAbs : function(){
@@ -147,6 +157,7 @@
 		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0), Rational.makeInstance(2,1), []));
 		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0), Rational.makeInstance(2,1), []));
 	},
+<<<<<<< HEAD:support/js/test-kernel.html
 
 
       testComparison2 : function () {
@@ -173,6 +184,8 @@
 	  }
       },
 
+=======
+>>>>>>> devel:support/js/test-kernel.html
 	
 	testAtan : function(){
 		this.assert(Kernel.equal_question_(Kernel.atan(Rational.ONE), org.plt.Kernel.pi.half().half()));
@@ -698,7 +711,9 @@
 		var str1 = String.makeInstance("hi");
 		var str2 = Kernel.string_dash_copy(str1);
 		this.assert(Kernel.string_equal__question_(str1, str2, []));
-		this.assert(!Kernel.eq_question_(str1, str2));
+// Unnecessary to test for eq-ness of strings: in beginner student level, strings are immutable already.
+//		this.assert(!Kernel.eq_question_(str1, str2));
+
 	},
 	
 	testString_dash_length : function(){
@@ -858,7 +873,6 @@
 		Kernel.equal_question_(lst.first(), Char.makeInstance("e"));
 	}	
 	
->>>>>>> Stashed changes:support/js/test-kernel.html
   }); 
   
 // ]]>
