@@ -193,9 +193,9 @@
              (identifier->munged-java-identifier id)
              (expression->javascript-string (foldl (lambda (a-field acc)
                                                      (local [(define acc-id (field->accessor-name id a-field))]
-                                                       `(and (equal? (,acc-id this)
-                                                                     (,acc-id other)) 
-                                                             ,acc)))
+                                                       (list 'and 
+                                                             (list 'equal? (list acc-id 'this) (list acc-id 'other))
+                                                             acc)))
                                                    'true
                                                    fields)
                                             (local [(define new-env-1 (env-extend env

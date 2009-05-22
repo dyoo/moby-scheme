@@ -112,6 +112,11 @@
                      (magnitude 1)
                      
                      (exact->inexact 1)
+                     (inexact->exact 1)
+                     (inexact? 1)
+                     (complex? 1)
+                     (real-part 1)
+                     (imag-part 1)
                      
                      ;; Logic
                      (not 1)
@@ -230,10 +235,10 @@
                      (current-seconds 0)
                      
                      (andmap 2)
+                     (foldl 3)
+                     (build-list 2)
                      (map 1 true)
                      (format 1 true)
-                     
-                     (match 0 true) ;; we're not going to implement match.
                      )))
           
           (define top-env-3 
@@ -241,10 +246,15 @@
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
                    '((make-immutable-hasheq 1 "org.plt.Kernel._kernelMakeImmutableHashEq")
+                     (make-immutable-hash 1 "org.plt.Kernel._kernelMakeImmutableHash")
                      (hash-set! 3 "org.plt.Kernel._kernelHashSetBang")
                      (hash-set 3 "org.plt.Kernel._kernelHashSet")
                      (hash-ref 3 "org.plt.Kernel._kernelHashRef")
                      (hash-map 2 "org.plt.Kernel._kernelHashMap")
+                     (path->string 1 "org.plt.Kernel._pathToString")
+                     (normalize-path 1 "org.plt.Kernel._normalizePath")
+                     (resolve-module-path 2 "org.plt.Kernel._resolveModulePath")
+                     (build-path 2 "org.plt.Kernel._buildPath")
                      )))]
     top-env-3))
 

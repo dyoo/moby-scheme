@@ -402,7 +402,7 @@
 ;; world teachpack bindings
 (define world-module 
   (local [(define module-path
-            (build-path (resolve-module-path '(lib "world.ss" "teachpack" "htdp") false)))]
+            (resolve-module-path '(lib "world.ss" "teachpack" "htdp") false))]
     (make-world-module module-path)))
 
 
