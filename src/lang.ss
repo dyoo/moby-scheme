@@ -9,7 +9,6 @@
          scheme/path
          scheme/contract
          lang/htdp-intermediate-lambda
-         scheme/match
          syntax/modresolve)
 
                      
@@ -35,5 +34,4 @@
 
          path->string normalize-path path? resolve-module-path build-path
          
-         match
          )

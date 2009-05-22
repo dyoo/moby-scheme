@@ -167,14 +167,23 @@
                 (loop (rest questions)
                       (rest answers)
                       question-last
-                      answer-last))]))]
-    
-    (match an-expr
-      [(list 'cond [list questions answers] ... [list 'else answer-last])
-       (loop questions answers 'true answer-last)]
-      
-      [(list 'cond [list questions answers] ... [list question-last answer-last])
-       (loop questions answers question-last answer-last)])))
+                      answer-last))]))
+     (define (process-clauses clauses questions/rev answers/rev)
+       (cond
+         [(list-begins-with? (first clauses) 'else)
+          (loop (reverse questions/rev) (reverse answers/rev) 'true (second (first clauses)))]
+         [(empty? (rest clauses))
+          (loop (reverse questions/rev) (reverse answers/rev) (first (first clauses)) (second (first clauses)))]
+         [else
+          (process-clauses (rest clauses)
+                           (cons (first (first clauses)) questions/rev) 
+                           (cons (second (first clauses)) answers/rev))]))]
+    (cond
+      [(list-begins-with? an-expr 'cond)
+       (process-clauses (rest an-expr))]
+      [else
+       (error 'desugar-cond (format "Not a cond clause: ~s" an-expr))])))
+
 
 
 
