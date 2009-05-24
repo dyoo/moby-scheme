@@ -20,7 +20,7 @@
 (define (write-compiler)
   (call-with-output-file compiler-path
     (lambda (op)
-      (write (bootstrap-compile "beginner-to-javascript.ss")
+      (display (bootstrap-compile "beginner-to-javascript.ss")
              op))
     #:exists 'replace))
 

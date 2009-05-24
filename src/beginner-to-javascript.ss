@@ -331,15 +331,46 @@
     
     ;; Quoted datums
     [(list-begins-with? expr 'quote)
-     ;; FIXME: expr may be something other than a symbol.  This is wrong!
-     (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
-             expr)]
-    
+     (quote-expression->javascript-string (second expr))]
+     
     ;; Function call/primitive operation call
     [(pair? expr)
      (local [(define operator (first expr))
              (define operands (rest expr))]
        (application-expression->javascript-string operator operands env a-pinfo))]))
+
+
+
+(define (quote-expression->javascript-string expr)
+  (cond
+    [(empty? expr)
+     "org.plt.types.Empty.EMPTY"]
+    
+    [(pair? expr)
+     (format "(org.plt.Kernel.cons(~a, ~a))"
+             (quote-expression->javascript-string (first expr))
+             (quote-expression->javascript-string (rest expr)))]
+
+    [(symbol? expr)
+     (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
+             expr)]
+
+    ;; Numbers
+    [(number? expr)
+     (number->javascript-string expr)]
+    
+    ;; Strings
+    [(string? expr)
+     (string->javascript-string expr)]
+    
+    ;; Characters
+    [(char? expr)
+     (char->javascript-string expr)]
+    
+    [else
+     (error 'quote-expression->javascript-string 
+            (format "I don't know how to deal with ~s" expr))]))
+
 
 
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
