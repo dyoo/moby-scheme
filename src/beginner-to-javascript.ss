@@ -20,6 +20,16 @@
     ))
 
 
+;; compiled-program-main: compiled-program ->string
+;; Produces the main output source, given the compiled program.
+(define (compiled-program-main a-compiled-program)
+  (string-append (compiled-program-defns a-compiled-program)
+                 "\n"
+                 "function toplevel() {\n"
+                 (compiled-program-toplevel-exprs a-compiled-program)
+                 "\n}"))
+
+
 
 ;; program->compiled-program: program [pinfo] -> compiled-program
 ;; Consumes a program and returns a compiled program.
@@ -519,6 +529,8 @@
                                             [toplevel-exprs 
                                              string?]
                                             [pinfo pinfo?])]
+                  [compiled-program-main
+                   (compiled-program? . -> . string?)]
                   
                   [program->compiled-program 
                    (program? . -> . compiled-program?)])

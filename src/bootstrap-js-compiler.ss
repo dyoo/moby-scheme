@@ -1,5 +1,6 @@
 #lang scheme/base
 (require (only-in scheme/list empty? empty first rest)
+         scheme/runtime-path
          "beginner-to-javascript.ss"
          "helpers.ss")
 
@@ -9,8 +10,22 @@
 ;; * Concatenates all the required modules into a single file
 ;; * Compiles the javascript compiler with the javascript compiler.
 
+(define-runtime-path
+  compiler-path
+  "../support/js/compiler.js")
 
-;; bootstrap-compile: path -> compiled-program
+
+;; write-compiler: ->void
+;; Writes out the javascript compiler.
+(define (write-compiler)
+  (call-with-output-file compiler-path
+    (lambda (op)
+      (write (bootstrap-compile "beginner-to-javascript.ss")
+             op))
+    #:exists 'replace))
+
+
+;; bootstrap-compile: path -> string
 (define (bootstrap-compile a-path)
   (let* ([modules (find-transitive-required-modules a-path)]
          [big-program (apply append (map (lambda (p)
@@ -18,7 +33,8 @@
                                             (remove-provide/contracts
                                              (read-program p))))
                                          modules))])
-    (program->compiled-program big-program)))
+    (compiled-program-main
+     (program->compiled-program big-program))))
     
 
 
