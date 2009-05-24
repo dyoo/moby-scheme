@@ -82,7 +82,16 @@
 
 ;; identifier->munged-java-identifier: symbol -> symbol
 (define (identifier->munged-java-identifier an-id)
-  (local [(define java-identifiers
+  (local [(define (member? an-id elts)
+            (cond
+              [(empty? elts)
+               false]
+              [(equal? (first elts) an-id)
+               true]
+              [else
+               (member? an-id (rest elts))]))
+          
+          (define java-identifiers
             '(abstract  continue  	for  	new  	switch
                         assert 	default 	goto 	package 	synchronized
                         boolean 	do 	if 	private 	#; this
@@ -137,7 +146,7 @@
               [else
                (string ch)]))]
     (cond
-      [(member an-id java-identifiers)
+      [(member? an-id java-identifiers)
        (string->symbol (format "_nonclashing_~a" an-id))]
       [else
        (local [(define chars (string->list (symbol->string an-id)))
@@ -147,7 +156,6 @@
                  (string->symbol
                   (string-join translated-chunks "")))]
          translated-id)])))
-
 
 
 
