@@ -1,14 +1,13 @@
 <html>
 <head>
 <script src="kernel.js"></script>
+<script src="read.js"></script>
 <script src="compiler.js"></script>
 
 <script lang="javascript">
 function doEvaluate() {
     var interaction = window.document.getElementById("interaction");
-    alert(doCompilation(org.plt.Kernel.cons("42",
-					    org.plt.types.Empty.EMPTY)));
-    //    alert(interaction.value);
+    alert(doCompilation(readSchemeExpressions(interaction.value)));
 }
 
 function doCompilation(exprs) {
@@ -25,7 +24,4 @@ function doCompilation(exprs) {
 <br>
 <input type="button" value="evaluate" 
        onclick="doEvaluate()">
-
-<div id="result">Result</div>
-
 </body>
