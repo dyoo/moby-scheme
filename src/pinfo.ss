@@ -204,7 +204,7 @@
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2 
             (env-extend env-1 (bf fun false (length args) false
-                                  (symbol->string fun))))]
+                                  (symbol->string (identifier->munged-java-identifier fun)))))]
     (lambda-expression-analyze-uses args body (pinfo-update-env pinfo env-2))))
 
 
