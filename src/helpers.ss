@@ -101,7 +101,7 @@
                         catch 	extends 	int 	short 	try
                         char 	final 	interface 	static 	void
                         class 	finally 	long 	strictfp 	volatile
-                        const 	float 	native 	super 	while))
+                        const 	float 	native 	super 	while null))
           ;; Special character mappings for identifiers
           (define (trans ch)
             (cond
@@ -147,7 +147,7 @@
                (string ch)]))]
     (cond
       [(member? an-id java-identifiers)
-       (string->symbol (format "_nonclashing_~a" an-id))]
+       (string->symbol (format "_~a_" an-id))]
       [else
        (local [(define chars (string->list (symbol->string an-id)))
                (define translated-chunks 
