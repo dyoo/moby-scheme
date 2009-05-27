@@ -216,7 +216,12 @@
            (take (rest a-list) (sub1 n)))]))
 
 (define (list-tail a-list n)
-  (reverse (take (reverse a-list) n)))
+  (cond
+    [(= n 0)
+     a-list]
+    [else
+     (list-tail (rest a-list)
+                (sub1 n))]))
 
 (define (range n)
   (cond

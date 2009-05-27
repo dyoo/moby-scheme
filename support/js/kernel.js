@@ -1086,15 +1086,12 @@ org.plt = {};
 
  
     org.plt.types.Rational.prototype.sqrt = function() {
-	return this.toFloat().sqrt();
-	/*
-  var result = Math.sqrt(this.n / this.d);
-  if (result == Math.floor(result)) {
-      return org.plt.types.Rational.makeInstance(result, 1);
-  } else {
-      return org.plt.types.FloatPoint.makeInstance(result);
-  }
-  */
+	var result = Math.sqrt(this.n / this.d);
+	if (result == Math.floor(result)) {
+	    return org.plt.types.Rational.makeInstance(result, 1);
+	} else {
+	    return org.plt.types.FloatPoint.makeInstance(result);
+	}
     };
  
     org.plt.types.Rational.prototype.abs = function() {

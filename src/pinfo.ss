@@ -10,30 +10,40 @@
 
 ;; pinfo (program-info) captures the information we get from analyzing 
 ;; the program.
-(define-struct pinfo (env modules used-bindings))
+(define-struct pinfo (env                    ; env
+                      modules                ; (listof module-binding) 
+                      used-bindings-hash     ; (hashof symbol binding)
+                      ))
 
 ;; pinfo
 (define empty-pinfo
-  (make-pinfo empty-env empty (make-immutable-hash empty)))
+  (make-pinfo empty-env empty (make-immutable-hasheq empty)))
 
 ;; get-base-pinfo: pinfo
 (define (get-base-pinfo _)
-  (make-pinfo toplevel-env empty (make-immutable-hash empty)))
+  (make-pinfo toplevel-env empty (make-immutable-hasheq empty)))
 
+
+
+;; pinfo-used-bindings: pinfo -> (listof binding)
+;; Returns the list of used bindings computed from the program analysis.
+(define (pinfo-used-bindings a-pinfo)
+  (hash-map (pinfo-used-bindings-hash a-pinfo)
+            (lambda (k v) v)))
 
 ;; pinfo-update-env: pinfo env -> pinfo
 (define (pinfo-update-env a-pinfo an-env)
   (make-pinfo
    an-env
    (pinfo-modules a-pinfo)
-   (pinfo-used-bindings a-pinfo)))
+   (pinfo-used-bindings-hash a-pinfo)))
 
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
    (env-extend (pinfo-env a-pinfo) a-binding)
    (pinfo-modules a-pinfo)
-   (pinfo-used-bindings a-pinfo)))
+   (pinfo-used-bindings-hash a-pinfo)))
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
 (define (pinfo-accumulate-bindings bindings a-pinfo)
@@ -45,15 +55,15 @@
 (define (pinfo-accumulate-module a-module a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (cons a-module (pinfo-modules a-pinfo))
-              (pinfo-used-bindings a-pinfo)))
+              (pinfo-used-bindings-hash a-pinfo)))
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding-use a-binding a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
-              (hash-set (pinfo-used-bindings a-pinfo)
-                        a-binding
-                        true)))
+              (hash-set (pinfo-used-bindings-hash a-pinfo)
+                        (binding-id a-binding)
+                        a-binding)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -597,9 +607,10 @@
 
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
-                                 [used-bindings hash?])]
+                                 [used-bindings-hash hash?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (any/c . -> . pinfo?)]
+                  [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   
