@@ -47,6 +47,11 @@ function tokenize(s) {
 
     var tokens = tokenize(s)[0];
 
+    var quoteSymbol = org.plt.types.Symbol.makeInstance("quote");
+    var quasiquoteSymbol = org.plt.types.Symbol.makeInstance("quasiquote");
+    var unquoteSymbol = org.plt.types.Symbol.makeInstance("unquote");
+    var empty = org.plt.types.Empty.EMPTY;
+
     function isType(type) {
       return (tokens.length > 0 && tokens[0][0] == type);
     }
@@ -70,6 +75,19 @@ function tokenize(s) {
 	var result = readExprs();
 	eat(')');
 	return result;
+      } else if (isType("'")) {
+	eat("'");
+	var quoted = readExpr();
+	return org.plt.Kernel.cons(quoteSymbol,
+				   org.plt.Kernel.cons(quoted, empty));
+      } else if (isType('`')) {
+	eat("`");
+	return org.plt.Kernel.cons(quasiquoteSymbol,
+				   org.plt.kernel.cons(quoted, empty));
+      } else if (isType(',')) {
+	eat(",");
+	return org.plt.Kernel.cons(unquoteSymbol,
+				   org.plt.kernel.cons(quoted, empty));
       } else if (isType('number')) {
 	t = eat('number');
 	if (t[1].match(/\./)) {

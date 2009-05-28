@@ -62,6 +62,8 @@
   }
   var empty = org.plt.types.Empty.EMPTY;
 
+  var symbol = org.plt.types.Symbol.makeInstance;
+
   new Test.Unit.Runner({
     setup: function() {
     },
@@ -91,9 +93,15 @@
                               [")", ")"]], ""]));
     },
    
-    testReadSymbolInList: function() {
+    testReadSymbol: function() {
         this.assert(schemeIsEqual(readSchemeExpressions("hello"),
-                    cons(org.plt.types.Symbol.makeInstance("hello"),
+                    cons(symbol("hello"),
+                         empty)));
+    },
+
+    testReadSymbolInList: function() {
+        this.assert(schemeIsEqual(readSchemeExpressions("(hello again)"),
+                    cons(cons(symbol("hello"), cons(symbol("again"), empty)),
                          empty)));
     }
 
