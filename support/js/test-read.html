@@ -61,7 +61,7 @@
      return org.plt.Kernel.cons(x, y);
   }
   var empty = org.plt.types.Empty.EMPTY;
-
+  var number = function(x) { return org.plt.types.Rational.makeInstance(x, 1); };
   var symbol = org.plt.types.Symbol.makeInstance;
 
   new Test.Unit.Runner({
@@ -103,6 +103,14 @@
         this.assert(schemeIsEqual(readSchemeExpressions("(hello again)"),
                     cons(cons(symbol("hello"), cons(symbol("again"), empty)),
                          empty)));
+    },
+
+
+    testReadListOfNumbers: function() {
+        this.assert(schemeIsEqual(readSchemeExpressions("(1) (2 3)"),
+                    cons(cons(number(1), empty),
+                         cons(cons(number(2), cons(number(3), empty)),
+                              empty))));
     }
 
 
