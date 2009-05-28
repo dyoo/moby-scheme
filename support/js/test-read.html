@@ -6,7 +6,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <script src="jsunittest/jsunittest.js" type="text/javascript"></script>
 
-  <!-- TODO: REPLACE "example_library_to_test" throughout file with name of file to test -->
+  <script src="kernel.js" type="text/javascript"></script>
   <script src="read.js" type="text/javascript"></script>
   
   <link rel="stylesheet" href="jsunittest/unittest.css" type="text/css" />
@@ -54,6 +54,14 @@
      }
   }
 
+  function schemeIsEqual(x, y) {
+      return org.plt.Kernel.equal_question_(x, y);
+  }
+  function cons(x, y) {
+     return org.plt.Kernel.cons(x, y);
+  }
+  var empty = org.plt.types.Empty.EMPTY;
+
   new Test.Unit.Runner({
     setup: function() {
     },
@@ -81,6 +89,12 @@
                               ["symbol", "hello"],
                               ["string", "world"],
                               [")", ")"]], ""]));
+    },
+   
+    testReadSymbolInList: function() {
+        this.assert(schemeIsEqual(readSchemeExpressions("hello"),
+                    cons(org.plt.types.Symbol.makeInstance("hello"),
+                         empty)));
     }
 
 

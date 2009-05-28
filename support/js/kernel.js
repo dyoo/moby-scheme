@@ -1,5 +1,5 @@
-var org = {};
-org.plt = {};
+var org = org || {};
+org.plt = org.plt || {};
  
  
  
@@ -49,17 +49,18 @@ org.plt = {};
   },
  
   equal_question_ : function(x, y) {
-	if (Kernel.number_question_(x) && Kernel.number_question_(y)){
-		 if ("isEqual" in x) {
-		return org.plt.types.NumberTower.equal(x, y);
-      } else if ("isEqual" in y) {
-		return org.plt.types.NumberTower.equal(y, x);
-      } else {
-		return x == y;
+    if (org.plt.Kernel.number_question_(x) && 
+	org.plt.Kernel.number_question_(y)) {
+	  if ("isEqual" in x) {
+	    return org.plt.types.NumberTower.equal(x, y);
+	  } else if ("isEqual" in y) {
+	    return org.plt.types.NumberTower.equal(y, x);
+	  } else {
+	    return x == y;
 	  }
-	} else {
-		return x.isEqual(y);
-	}
+    } else {
+      return x.isEqual(y);
+    }
   },
   
   eq_question_ : function(x, y){
@@ -480,7 +481,7 @@ org.plt = {};
   }, 
     
   assq : function(x, lst){
-	while (!lst.isEmpty() && !Kernel.eq_question_(x, lst.first().first()))
+	while (!lst.isEmpty() && !org.plt.Kernel.eq_question_(x, lst.first().first()))
 		lst = lst.rest();
 	if (lst.isEmpty())
 		return org.plt.types.Logic.FALSE;
@@ -566,7 +567,7 @@ org.plt = {};
   length : function(lst){
 	var ret = org.plt.types.Rational.ZERO;
 	for (; !lst.isEmpty(); lst = lst.rest())
-		ret = Kernel.add1(ret);
+		ret = org.plt.Kernel.add1(ret);
 	return ret;
   },
   
@@ -578,19 +579,19 @@ org.plt = {};
   },
   
   list_star_ : function(items, lst){
-	return Kernel.append(Kernel.list(items), lst, []);
+	return org.plt.Kernel.append(org.plt.Kernel.list(items), lst, []);
   },
   
   list_dash_ref : function(lst, x){
 	var i = org.plt.types.Rational.ZERO;
-	for (; Kernel._lessthan_(i, x,[]); i = Kernel.add1(i))
+	for (; org.plt.Kernel._lessthan_(i, x,[]); i = org.plt.Kernel.add1(i))
 		lst = lst.rest();
 	return lst.first();
   },
   
   member : function(item, lst){
 	while (!lst.isEmpty()){
-		if (Kernel.equal_question_(item, lst.first()))
+		if (org.plt.Kernel.equal_question_(item, lst.first()))
 			return true;
 		lst = lst.rest();
 	}
@@ -600,7 +601,7 @@ org.plt = {};
   
   memq : function(item, lst){
 	while (!lst.isEmpty()){
-		if (Kernel.eq_question_(item, lst.first()))
+		if (org.plt.Kernel.eq_question_(item, lst.first()))
 			return lst;
 		lst = lst.rest();
 	}
@@ -614,7 +615,7 @@ org.plt = {};
   
   memv : function(item, lst){
 	while (!lst.isEmpty()){
-		if (Kernel.eqv_question_(item, lst.first()))
+		if (org.plt.Kernel.eqv_question_(item, lst.first()))
 			return lst;
 		lst = lst.rest();
 	}
@@ -650,7 +651,7 @@ org.plt = {};
 	second = second.toUpperCase();
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = rest[i].toUpperCase();
-	return Kernel.string_equal__question_(first, second, rest);
+	return org.plt.Kernel.string_equal__question_(first, second, rest);
   },
   
   string_dash_ci_lessthan__equal__question_ : function(first, second, rest){
@@ -658,7 +659,7 @@ org.plt = {};
 	second = second.toUpperCase();
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = rest[i].toUpperCase();
-	return Kernel.string_lessthan__equal__question_(first, second, rest);
+	return org.plt.Kernel.string_lessthan__equal__question_(first, second, rest);
   },
   
   string_dash_ci_lessthan__question_ : function(first, second, rest){
@@ -666,15 +667,15 @@ org.plt = {};
 	second = second.toUpperCase();
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = rest[i].toUpperCase();
-	return Kernel.string_lessthan__question_(first, second, rest);
+	return org.plt.Kernel.string_lessthan__question_(first, second, rest);
   },
   
   string_dash_ci_greaterthan__question_ : function(first, second, rest){
-	return !Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
+	return !org.plt.Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
   },
   
   string_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	return !Kernel.string_dash_ci_lessthan__question_(first, second, rest);
+	return !org.plt.Kernel.string_dash_ci_lessthan__question_(first, second, rest);
   },
   
   string_dash_copy : function(str){
@@ -737,7 +738,7 @@ org.plt = {};
 	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	return Kernel.char_equal__question_(first, second, rest);
+	return org.plt.Kernel.char_equal__question_(first, second, rest);
   },
   
   char_dash_ci_lessthan__question_ : function(first, second, rest){
@@ -745,7 +746,7 @@ org.plt = {};
 	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	return Kernel.char_lessthan__question_(first, second, rest);
+	return org.plt.Kernel.char_lessthan__question_(first, second, rest);
   },
 
   char_dash_ci_lessthan__equal__question_ : function(first, second, rest){
@@ -753,15 +754,15 @@ org.plt = {};
 	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	return Kernel.char_lessthan__equal__question_(first, second, rest);
+	return org.plt.Kernel.char_lessthan__equal__question_(first, second, rest);
   },
   
   char_dash_ci_greaterthan__question_ : function(first, second, rest){
-	return !Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
+	return !org.plt.Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
   },
   
   char_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	return !Kernel.char_dash_ci_lessthan__question_(first,second,rest);
+	return !org.plt.Kernel.char_dash_ci_lessthan__question_(first,second,rest);
   },
   
   char_dash_downcase : function(ch){
@@ -770,7 +771,7 @@ org.plt = {};
   },
   
   char_dash_lower_dash_case_question_ : function(ch){
-	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_downcase(ch));
+	return org.plt.Kernel.char_dash_alphabetic_question_(ch) && org.plt.Kernel.equal_question_(ch, org.plt.Kernel.char_dash_downcase(ch));
   },
   
   char_dash_numeric_question_ : function(ch){
@@ -784,11 +785,11 @@ org.plt = {};
   },
   
   char_dash_upper_dash_case_question_ : function(ch){
-	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_upcase(ch));
+	return org.plt.Kernel.char_dash_alphabetic_question_(ch) && org.plt.Kernel.equal_question_(ch, org.plt.Kernel.char_dash_upcase(ch));
   },
   
   char_dash_whitespace_question_ : function(ch){
-	return Kernel.equal_question_(ch, org.plt.types.Char.makeInstance(" "));
+	return org.plt.Kernel.equal_question_(ch, org.plt.types.Char.makeInstance(" "));
   },
   
   list_dash__greaterthan_string : function(lst){
@@ -804,7 +805,7 @@ org.plt = {};
 	var ret = "";
 	var c = ch.val.toString();
 	var i = org.plt.types.Rational.ZERO;
-	for (;  Kernel._lessthan_(i, n, []); i = Kernel.add1(i))
+	for (;  org.plt.Kernel._lessthan_(i, n, []); i = org.plt.Kernel.add1(i))
 		ret += c;
 	return org.plt.types.String.makeInstance(ret);
   },
@@ -874,7 +875,7 @@ org.plt = {};
     //////////////////////////////////////////////////////////////////////
     // Types
  
-    org.plt.types = {};
+    org.plt.types = org.plt.types || {};
  
  
  
@@ -978,6 +979,12 @@ org.plt = {};
  
     org.plt.types.Empty = function() {};
     org.plt.types.Empty.EMPTY = new org.plt.types.Empty();
+
+
+    org.plt.types.Empty.prototype.isEqual = function(other) {
+      return other instanceof org.plt.types.Empty;
+    };
+
     org.plt.types.Empty.prototype.first = function() {
   die("first can't be applied on empty.");
     };
@@ -987,10 +994,12 @@ org.plt = {};
     org.plt.types.Empty.prototype.isEmpty = function() {
   return true;
     };
+    org.plt.types.Empty.prototype.toString = function() { return "empty"; };
+
  
-	org.plt.types.Empty.prototype.append = function(b){
-		return b;
-	}
+    org.plt.types.Empty.prototype.append = function(b){
+      return b;
+    }
  
     org.plt.types.Cons = function(f, r) {
   this.f = f;
@@ -999,6 +1008,15 @@ org.plt = {};
  
     org.plt.types.Cons.makeInstance = function(f, r) {
   return new org.plt.types.Cons(f, r);
+    };
+
+
+    org.plt.types.Cons.prototype.isEqual = function(other) {
+      if (! (other instanceof org.plt.types.Cons)) {
+	return false;
+      }
+      return (org.plt.Kernel.equal_question_(this.first(), other.first()) &&
+	      org.plt.Kernel.equal_question_(this.rest(), other.rest()));
     };
  
     org.plt.types.Cons.prototype.first = function() {
@@ -1019,7 +1037,7 @@ org.plt = {};
 		if (b.isEmpty())
 			return this;
 		var ret = b;
-		var lst = Kernel.reverse(this);
+		var lst = org.plt.Kernel.reverse(this);
 		while (!lst.isEmpty()){
 			ret = org.plt.types.Cons.makeInstance(lst.first(), ret);
 			lst = lst.rest();
