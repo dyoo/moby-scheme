@@ -299,6 +299,7 @@
 
 
 
+;; local-definition-analyze-uses: expression pinfo env -> pinfo
 (define (local-expression-analyze-uses an-expression pinfo env)
   (local [(define defns (second an-expression))
           (define body (third an-expression))
@@ -306,9 +307,12 @@
                                         (definition-analyze-uses a-defn a-pinfo))
                                       pinfo
                                       defns))]
-    (expression-analyze-uses body
-                             nested-pinfo
-                             (pinfo-env nested-pinfo))))
+    (pinfo-update-env 
+     (expression-analyze-uses body
+                              nested-pinfo
+                              (pinfo-env nested-pinfo))
+     (pinfo-env pinfo))))
+  
 
 (define (if-expression-analyze-uses an-expression pinfo env)
   (local [(define test (second an-expression))
