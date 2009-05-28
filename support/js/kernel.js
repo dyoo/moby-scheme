@@ -1586,6 +1586,7 @@ org.plt = {};
 		var iz = this.timesI();
 		var root = org.plt.types.NumberTower.subtract(org.plt.types.Rational.ONE, this.multiply(this)).sqrt();
 		var ret = org.plt.types.NumberTower.add(iz, root).log().timesI().minus();
+		// FIXME: missing return value!
 	};
 	
 	org.plt.types.Complex.prototype.ceiling = function(){

@@ -5,6 +5,8 @@ Differences from the main branch:
     * Support for Intermediate Student Language.
 
 
+----------------------------------------------------------------------
+
 Quick start
 
   $ git clone git://github.com/dyoo/moby-scheme.git moby
@@ -29,3 +31,18 @@ the source.
 
 Open up world.html in your favorite web browser, and you should see a
 cow falling from the sky.
+
+
+----------------------------------------------------------------------
+
+File summary
+
+src/beginner-to-javascript.ss: the backend compiler for Javascript.
+Note that the file is written in a special language "lang.ss"; this is
+intentional, as we want to be able to bootstrap the compiler.
+
+
+
+src/bootstrap-js.compiler.ss: the bootstrapper.  Writes out the result
+of feeding beginner-to-javascript.ss to itself into the file
+support/js/compiler.js.
