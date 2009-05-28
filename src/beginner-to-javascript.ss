@@ -376,17 +376,23 @@
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
 (define (local-expression->javascript-string defns body env a-pinfo)
   (local [(define inner-compiled-program 
-            (-program->compiled-program (append defns (list body)) 
-                                        (pinfo-update-env a-pinfo env)))]
-    (format "(function() {
-               ~a
+            (-program->compiled-program defns
+                                        (pinfo-update-env a-pinfo env)))
+          (define inner-body-string
+            (expression->javascript-string 
+             body
+             (pinfo-env (compiled-program-pinfo inner-compiled-program))
+             (compiled-program-pinfo inner-compiled-program)))]
 
-               return ~a
+    (format "(function() {
+               // Local
+               ~a
+               ~a
+               return ~a;
               })()"
             (compiled-program-defns inner-compiled-program)
-            ;; Complete kludge... How do we do this better?
-            (remove-leading-whitespace
-             (compiled-program-toplevel-exprs inner-compiled-program)))))
+            (compiled-program-toplevel-exprs inner-compiled-program)
+            inner-body-string)))
 
 
 
