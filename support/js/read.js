@@ -12,7 +12,7 @@ var readSchemeExpressions;
 
 
     readSchemeExpressions = function(s) {
-	org.plt.Kernel.cons("42",
+	return org.plt.Kernel.cons("42",
 			    org.plt.types.Empty.EMPTY);
 
 

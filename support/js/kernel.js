@@ -822,9 +822,30 @@ org.plt = {};
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
+
+
 	
   };
  
+    function HashTable(inputHash) {
+	this.hash = inputHash;
+    }
+
+    // kernelMakeImmutableHashEq: list -> hash
+    org.plt.Kernel._kernelMakeImmutableHashEq = function(pairs) {
+	var myhash = {};
+	while (! pairs.isEmpty()) {
+	    var nextPair = pairs.first();
+	    var aKey = nextPair.first(); 
+	    var aVal = nextPair.rest(); 
+	    myhash[aKey] = aVal;
+	    pairs = pairs.rest();
+	}
+	return new HashTable(myhash);
+    };
+
+
+
  
  
     //////////////////////////////////////////////////////////////////////
