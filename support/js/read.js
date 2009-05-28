@@ -97,7 +97,7 @@ function tokenize(s) {
 	}
       } else if (isType('string')) {
 	t = eat('string');
-	return org.plt.types.String.makeInsatnce(t[1]);
+	return org.plt.types.String.makeInstance(t[1]);
       } else if (isType('symbol')) {
 	t = eat('symbol');
 	return org.plt.types.Symbol.makeInstance(t[1]);
