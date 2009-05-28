@@ -235,7 +235,7 @@
                      (current-seconds 0)
                      
                      (andmap 2)
-                     (foldl 3)
+                     (foldl 2 true)
                      (build-list 2)
                      (map 1 true)
                      (format 1 true)

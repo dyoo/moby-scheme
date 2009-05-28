@@ -262,6 +262,11 @@ org.plt = org.plt || {};
   not : function(x) {
       return !x;
   },
+
+
+  inexact_dash__greaterthan_exact: function(x) {
+    return org.plt.types.NumberTower.toExact(x);
+  },
  
   number_dash__greaterthan_string: function(x) {
       return org.plt.types.String.makeInstance(x.toString());
@@ -697,6 +702,10 @@ org.plt = org.plt || {};
   substring : function(str, begin, end){
 	return str.toString().substring(begin.toInteger(), end.toInteger());
   },
+
+  char_question_: function(x) {
+    return x instanceof org.plt.types.Char;
+  },
   
   char_dash__greaterthan_integer : function(ch){
 	var str = new String(ch.val);
@@ -858,6 +867,21 @@ org.plt = org.plt || {};
 	}
 	return org.plt.Kernel.reverse(results);
     };
+
+    org.plt.Kernel.foldl = function(f, acc, arglists) {
+      var result = acc;
+      while (!arglists[0].isEmpty()) {
+	var args = [];
+	for (var i = 0; i < arglists.length; i++) {
+	  args.push(arglists[i].first());
+	  arglists[i] = arglists[i].rest();
+	}
+	args.push(result);
+	result = f.apply(null, [args]);
+      }
+      return result;
+    };
+
 
 
     // args: arrayof org.plt.types.Char
@@ -1124,6 +1148,10 @@ org.plt = org.plt || {};
                this.d * other.n);
     };
  
+
+    org.plt.types.Rational.prototype.toExact = function() { 
+      return this;
+    };
  
     org.plt.types.Rational.prototype.toInteger = function() {
   return Math.floor(this.n / this.d);  
@@ -1284,6 +1312,11 @@ org.plt = org.plt || {};
   this.n = n;
     };
  
+    org.plt.types.FloatPoint.prototype.toExact = function() {
+      return org.plt.types.Rational.makeInstance(Math.floor(this.n), 1);
+    };
+
+
     org.plt.types.FloatPoint.prototype.level = function() {
   return 1;
     };
@@ -1467,6 +1500,13 @@ org.plt = org.plt || {};
 		return new org.plt.types.Complex(r, i);
 	};
 	
+	org.plt.types.Complex.prototype.toExact = function() { 
+	  if (! this.isReal()) {
+	    throw new Error("inexact->exact: expects argument of type real number");
+	  }
+	  return this.r.toExact();
+	};
+
 	org.plt.types.Complex.prototype.level = function(){
 		return 2;
 	};
@@ -1714,8 +1754,12 @@ org.plt = org.plt || {};
  
     org.plt.types.NumberTower.abs = function(n) {
   return n.abs();
-    }
+    };
  
+    org.plt.types.NumberTower.toExact = function(x) {
+      return x.toExact();
+    };
+
     org.plt.types.NumberTower.add = function(x, y) {
   if (x.level() < y.level()) x = x.lift(y);
   if (y.level() < x.level()) y = y.lift(x);
