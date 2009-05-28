@@ -43,7 +43,8 @@ var JsUnitTest = {
     replacement = arguments.callee.prepareReplacement(replacement);
 
     while (source.length > 0) {
-      if (match = source.match(pattern)) {
+      match = source.match(pattern);
+      if (match) {
         result += source.slice(0, match.index);
         result += JsUnitTest.String.interpret(replacement(match));
         source  = source.slice(match.index + match[0].length);
@@ -138,7 +139,8 @@ var JsUnitTest = {
       le = e;
       for (var i in ps) {
         p = ps[i];
-        if (m = e.match(p)) {
+        m = e.match(p);
+        if (m) {
           // use the Selector.assertions methods unless the selector
           // is too complex.
           if (as[i]) {
@@ -160,7 +162,7 @@ var JsUnitTest = {
     return match;
   },
   toQueryParams: function(query, separator) {
-    var query = query || window.location.search;
+    query = query || window.location.search;
     var match = query.replace(/^\s+/, '').replace(/\s+$/, '').match(/([^?#]*)(#.*)?$/);
     if (!match) return { };
 
@@ -889,14 +891,16 @@ JsUnitTest.Unit.Runner.prototype.runTests = function() {
     setTimeout(function() {
       self.runTests();
     }, test.timeToWait || 1000);
-    return;
+    return null;
   }
 
   this.logger.finish(test.status(), test.summary());
-  if (actions = test.actions) this.logger.appendActionButtons(actions);
+  actions = test.actions;
+  if (actions) this.logger.appendActionButtons(actions);
   this.currentTest++;
   // tail recursive, hopefully the browser will skip the stackframe
   this.runTests();
+  return null;
 };
 
 JsUnitTest.Unit.Runner.prototype.finish = function() {
