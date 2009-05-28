@@ -30,7 +30,7 @@
          provide/contract -> any/c listof or/c false/c natural-number/c
 
          ;; Hash stuff
-         hash-set hash-ref make-immutable-hasheq #;make-immutable-hash hash-map hash?
+         hash-set hash-ref make-immutable-hasheq hash-map hash?
 
          path->string normalize-path path? resolve-module-path build-path
          
