@@ -170,10 +170,10 @@
                      (string->number 1)
                      (string->list 1)
                      (string->symbol  1)
-                     (string-append 1 true)
+                     (string-append 0 true)
                      (list->string 1)
                      (make-string 2)
-                     (string 1 true)
+                     (string 0 true)
                      
                      ;; Pairs
                      (empty? 1)

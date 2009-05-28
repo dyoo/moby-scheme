@@ -7,11 +7,18 @@
 <script lang="javascript">
 function doEvaluate() {
     var interaction = window.document.getElementById("interaction");
-    alert(doCompilation(readSchemeExpressions(interaction.value)));
+    console.log("I see: " + 
+                doCompilation(readSchemeExpressions(interaction.value)));
 }
 
 function doCompilation(exprs) {
-    return compiled_dash_program_dash_main(program_dash__greaterthan_compiled_dash_program(exprs));
+    var compiledProgram =
+        program_dash__greaterthan_compiled_dash_program(exprs);
+    console.log("compiledProgram: " + compiledProgram);
+    console.log("compiledProgram definitions: '" + compiled_dash_program_dash_defns(compiledProgram) + "'");
+    console.log("compiledProgram toplevel: " + compiled_dash_program_dash_toplevel_dash_exprs(compiledProgram));
+    console.log("compiledProgram pinfo: " + compiled_dash_program_dash_pinfo(compiledProgram));
+    return compiled_dash_program_dash_main(compiledProgram);
 }
 </script>
 </head>

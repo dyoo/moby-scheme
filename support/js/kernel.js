@@ -642,10 +642,7 @@ org.plt = {};
   },
   
   string_dash_append : function(arr){
-	var ret = "";
-	for (var i = 0; i < arr.length; i++)
-		ret += arr[i];
-	return ret;
+        return org.plt.types.String.makeInstance(arr.join(""));
   },
   
   string_dash_ci_equal__question_ : function(first, second, rest){
@@ -816,7 +813,9 @@ org.plt = {};
 	var s = str.toString();
 	var ret = org.plt.types.Empty.EMPTY;
 	for (var i = s.length - 1; i >= 0; i--){
-		ret = org.plt.types.Cons.makeInstance(s.charAt(i), ret);
+	    ret = org.plt.types.Cons.makeInstance
+		(org.plt.types.Char.makeInstance(s.charAt(i)),
+		 ret);
 	}
 	return ret;
   },
@@ -853,9 +852,20 @@ org.plt = {};
 		args.push(arglists[i].first());
 		arglists[i] = arglists[i].rest();
 	    }
-	    results.push(f.apply(null, args));
+	    results = org.plt.Kernel.cons(f.apply(null, [args]),
+					  results);
 	}
-	return results;
+	return org.plt.Kernel.reverse(results);
+    };
+
+
+    // args: arrayof org.plt.types.Char
+    org.plt.Kernel.string = function(args) {
+	var vals = [];
+	for(var i = 0; i < args.length; i++) {
+	    vals.push(args[i].getValue());
+	}
+	return org.plt.types.String.makeInstance(vals.join(""));
     };
 
  
@@ -932,7 +942,15 @@ org.plt = {};
 	org.plt.types.Char.makeInstance = function(val){
 		return new org.plt.types.Char(val);
 	};
-	
+
+	org.plt.types.Char.prototype.toString = function() {
+	    return "#\\" + this.val;
+	};
+
+	org.plt.types.Char.prototype.getValue = function() {
+	    return this.val;
+	};
+
 	org.plt.types.Char.prototype.isEqual = function(other){
 		return other instanceof org.plt.types.Char && this.val.toString() == other.val.toString();
 	};
@@ -1620,6 +1638,7 @@ org.plt = {};
 		var root = org.plt.types.NumberTower.subtract(org.plt.types.Rational.ONE, this.multiply(this)).sqrt();
 		var ret = org.plt.types.NumberTower.add(iz, root).log().timesI().minus();
 		// FIXME: missing return value!
+		throw new Error("");
 	};
 	
 	org.plt.types.Complex.prototype.ceiling = function(){
