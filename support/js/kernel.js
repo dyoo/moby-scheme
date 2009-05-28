@@ -845,6 +845,19 @@ org.plt = {};
     };
 
 
+    org.plt.Kernel.map = function(f, arglists) {
+	var results = org.plt.types.Empty.EMPTY;
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    results.push(f.apply(null, args));
+	}
+	return results;
+    };
+
  
  
     //////////////////////////////////////////////////////////////////////

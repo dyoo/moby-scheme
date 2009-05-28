@@ -608,7 +608,7 @@
 
 
 (define (char->javascript-string a-char)
-  (string-append "(org.plt.types.Character.makeInstance(String.fromCharCode("
+  (string-append "(org.plt.types.Char.makeInstance(String.fromCharCode("
                  (number->string (char->integer a-char))
                  ")))"))
 
