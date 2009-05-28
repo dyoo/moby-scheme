@@ -26,12 +26,14 @@
                      (base:quote quote)
                      (base:define-struct define-struct))
          
-         ;; Contract-related stuff
-         provide/contract -> any/c listof or/c false/c natural-number/c
+         ;; Contract-related stuff: the following will be erased on 
+         ;; javascript bootstrapping time.
+         provide/contract -> any/c listof or/c false/c natural-number/c hash?
 
-         ;; Hash stuff
-         hash-set hash-ref make-immutable-hasheq hash-map hash?
-
-         path->string normalize-path path? resolve-module-path build-path
          
+         ;; The rest of these primitives will be implemented for the kernel.
+         ;; Hash stuff
+         hash-set hash-ref make-immutable-hasheq hash-map
+         gensym
+         path->string normalize-path path? resolve-module-path build-path
          )

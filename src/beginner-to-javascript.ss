@@ -451,7 +451,6 @@
 
 
 
-
 ;; identifier-expression->javascript-string: symbol env pinfo -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
@@ -494,6 +493,10 @@
 
 
 
+(define (make-args-symbol context)
+  (gensym 'args))
+
+
 ;; lambda-expression->javascript-string (listof symbol) expression env pinfo -> string
 (define (lambda-expression->javascript-string args body env a-pinfo)
   (local [(define munged-arg-ids
@@ -506,11 +509,18 @@
                                                              (identifier->munged-java-identifier arg-id))
                                                             empty)))
                    env
-                   args))]
-    (format "(function(args) { ~a
+                   args))
+          
+          (define args-sym
+            (make-args-symbol 'lambda-expression->javascript-string))]
+    (format "(function(~a) { ~a
                              return ~a; })"
+            args-sym
             (string-join (mapi (lambda (arg-id i)
-                                 (format "var ~a = args[~a];" (symbol->string arg-id) i))
+                                 (format "var ~a = ~a[~a];" 
+                                         (symbol->string arg-id)
+                                         args-sym
+                                         i))
                                munged-arg-ids)
                          "\n")
             (expression->javascript-string body new-env a-pinfo))))
@@ -543,9 +553,8 @@
 
 
 (define (char->javascript-string a-char)
-  (string-append "(org.plt.types.Character.makeInstance(\""
-                 (if (char=? a-char #\") "\\" (string a-char))
-                 "\"))"))
+  (format "(org.plt.types.Character.makeInstance(String.fromCharCode(~s)))"
+          (char->integer a-char)))
 
 
 
