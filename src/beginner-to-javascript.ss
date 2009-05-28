@@ -437,8 +437,7 @@
                    [else
                     (format "~a([~a])"
                             (binding:function-java-string operator-binding)
-                            (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
-                                         ","))])]
+                            (string-join operand-strings ","))])]
             [else
              (format "(~a(~a))" 
                      (binding:function-java-string operator-binding)
