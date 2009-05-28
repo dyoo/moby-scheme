@@ -32,6 +32,28 @@
 
 <script type="text/javascript">
 // <![CDATA[
+  function isArray(x) {
+      return typeof(x) == 'object' && 'length' in x;
+  }
+  function isEqual(x, y) {
+     if (isArray(x) && isArray(y)) {
+         if (x.length == y.length) {
+             for (var i = 0; i < x.length; i++) {
+                 if (! isEqual(x[i], y[i])) {
+                     return false;
+                 }
+             }
+             return true;
+         } else {
+             return false;
+         }
+     } else if (!isArray(x) && !isArray(y)) {
+         return x == y;         
+     } else {
+         return false;
+     }
+  }
+
   new Test.Unit.Runner({
     setup: function() {
     },
@@ -41,9 +63,26 @@
     },
     
     testTokenizeSymbol: function() {
-        this.assert(tokenize("hello") == 
-                    [[["symbol", "hello"]], ""]);
+        this.assert(isEqual(tokenize("hello"),
+                            [[["symbol", "hello"]], ""]));
+    },
+
+    testTokenizeSimpleList: function() {
+        this.assert(isEqual(tokenize("(hello world)"),
+                            [[["(", "("],
+                              ["symbol", "hello"],
+                              ["symbol", "world"],
+                              [")", ")"]], ""]));
+    },
+
+    testTokenizeSimpleListAndString: function() {
+        this.assert(isEqual(tokenize("(hello \"world\")"),
+                            [[["(", "("],
+                              ["symbol", "hello"],
+                              ["string", "world"],
+                              [")", ")"]], ""]));
     }
+
 
   }); 
   

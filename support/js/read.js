@@ -4,24 +4,28 @@ var readSchemeExpressions;
 function tokenize(s) {
   var tokens = [];
 
-  var PATTERNS = {'whitespace' : /(\s+)/,
-		  'comment': /(;[^\n]*)/,
-		  '(': /(\()/,
-		  ')': /(\))/,
-		  'number': /([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/,
-		  'symbol':/([a-zA-Z\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/,
-		  'string': /"(([^\"] | \\")*)"/,      // comment (emacs getting confused with quote): " 
-		  '\'': /(\')/,
-		  '`': /(`)/,
-		  ',': /(,)/
-		 };
+  var PATTERNS = [['whitespace' , /^(\s+)/],
+		  ['comment' , /(^;[^\n]*)/],
+		  ['(' , /^(\(|\[)/],
+		  [')' , /^(\)|\])/],
+		  ['number' , /^([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/],
+		  ['symbol' ,/^([a-zA-Z\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/],
+		  ['string' , /^"(([^\"] | \\")*)"/],      // comment (emacs getting confused with quote): " 
+	          ['\'' , /^(\')/],
+		  ['`' , /^(`)/],
+		  [',' , /^(,)/]
+		 ];
 
   while (true) {
     var shouldContinue = false;
-    for (var patternName in PATTERNS) {
-      var result = s.match(PATTERNS[patternName]);
-      if (result) {
-	tokens.push([patternName, result[1]]);
+    for (var i = 0; i < PATTERNS.length; i++) {
+      var patternName = PATTERNS[i][0];
+      var pattern = PATTERNS[i][1]
+      var result = s.match(pattern);
+      if (result != null) {
+	if (patternName != 'whitespace' && patternName != 'comment') {
+	  tokens.push([patternName, result[1]]);
+	}
 	s = s.substring(result[1].length);
 	shouldContinue = true;
       }
