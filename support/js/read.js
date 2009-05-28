@@ -10,7 +10,7 @@ function tokenize(s) {
 		  [')' , /^(\)|\])/],
 		  ['number' , /^([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/],
 		  ['symbol' ,/^([a-zA-Z\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/],
-		  ['string' , /^"(([^\"] | \\")*)"/],      // comment (emacs getting confused with quote): " 
+		  ['string' , /^"((?:[^\"]|\\")*)"/],      // comment (emacs getting confused with quote): " 
 	          ['\'' , /^(\')/],
 		  ['`' , /^(`)/],
 		  [',' , /^(,)/]
@@ -26,7 +26,7 @@ function tokenize(s) {
 	if (patternName != 'whitespace' && patternName != 'comment') {
 	  tokens.push([patternName, result[1]]);
 	}
-	s = s.substring(result[1].length);
+	s = s.substring(result[0].length);
 	shouldContinue = true;
       }
     }
