@@ -365,13 +365,16 @@
      "org.plt.types.Empty.EMPTY"]
     
     [(pair? expr)
-     (format "(org.plt.Kernel.cons(~a, ~a))"
-             (quote-expression->javascript-string (first expr))
-             (quote-expression->javascript-string (rest expr)))]
+     (string-append "(org.plt.Kernel.cons("
+                    (quote-expression->javascript-string (first expr))
+                    ", "
+                    (quote-expression->javascript-string (rest expr))
+                    "))")]
 
     [(symbol? expr)
-     (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
-             expr)]
+     (string-append "(org.plt.types.Symbol.makeInstance(\""
+                    (symbol->string expr)
+                    "\"))")]
 
     ;; Numbers
     [(number? expr)
@@ -393,8 +396,9 @@
 (define (boolean-chain->javascript-string joiner exprs env a-pinfo)
   (string-append "("
                  (string-join (map (lambda (e)
-                                     (format "(~a)"
-                                             (expression->javascript-string e env a-pinfo)))
+                                     (string-append "("
+                                                    (expression->javascript-string e env a-pinfo)
+                                                    ")"))
                                    exprs) 
                               joiner)
                  ")"))
@@ -412,15 +416,14 @@
              (pinfo-env (compiled-program-pinfo inner-compiled-program))
              (compiled-program-pinfo inner-compiled-program)))]
 
-    (format "(function() {
-               // Local
-               ~a
-               ~a
-               return ~a;
-              })()"
-            (compiled-program-defns inner-compiled-program)
-            (compiled-program-toplevel-exprs inner-compiled-program)
-            inner-body-string)))
+    (string-append "(function() {
+                     // Local
+               " (compiled-program-defns inner-compiled-program)
+                   "
+               " (compiled-program-toplevel-exprs inner-compiled-program)
+                   "
+               return " inner-body-string ";
+              })()")))
 
 
 
@@ -443,9 +446,11 @@
        (cond
          
          [(binding:constant? operator-binding)
-          (format "((~a).apply(null, [~a]))" 
-                  (binding:constant-java-string operator-binding)
-                  (string-join operand-strings ", "))]
+          (string-append "(("
+                         (binding:constant-java-string operator-binding)
+                         ").apply(null, ["
+                         (string-join operand-strings ", ")
+                         "]))")]
          
          [(binding:function? operator-binding)
           (cond
@@ -457,19 +462,24 @@
                             operands))]
             [(binding:function-var-arity? operator-binding)
              (cond [(> (binding:function-min-arity operator-binding) 0)
-                    (format "~a(~a, [~a])"
-                            (binding:function-java-string operator-binding)
-                            (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
-                            (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
-                                         ","))]
+                    (string-append (binding:function-java-string operator-binding)
+                                   "("
+                                   (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
+                                   ", ["
+                                   (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
+                                                ",")
+                                   "])")]
                    [else
-                    (format "~a([~a])"
-                            (binding:function-java-string operator-binding)
-                            (string-join operand-strings ","))])]
+                    (string-append (binding:function-java-string operator-binding) 
+                                   "(["
+                                   (string-join operand-strings ",")
+                                   "])")])]
             [else
-             (format "(~a(~a))" 
-                     (binding:function-java-string operator-binding)
-                     (string-join operand-strings ","))])]))]
+             (string-append "("
+                            (binding:function-java-string operator-binding)
+                            "("
+                            (string-join operand-strings ",")
+                            "))")])]))]
     
     ;; General application
     [else
@@ -478,9 +488,11 @@
                (map (lambda (e) 
                       (expression->javascript-string e env a-pinfo))
                     operands))]
-       (format "((~a).apply(null, [~a]))" 
-               operator-string
-               (string-join operand-strings ", ")))]))
+       (string-append "(("
+                      operator-string
+                      ").apply(null, ["
+                      (string-join operand-strings ", ")
+                      "]))"))]))
 
 
 
@@ -499,19 +511,22 @@
          [(binding:function? binding)
           (cond
             [(binding:function-var-arity? binding)
-             (format "(function(args) {
-                    return ~a.apply(null, args);
-                  })"
-                     (binding:function-java-string binding))]
+             (string-append "(function(args) {
+                    return "
+                            (binding:function-java-string binding)
+                            ".apply(null, args);
+                  })")]
             [else
-             (format "(function(args) {
-                    return ~a(~a);
-                 })"
-                     (binding:function-java-string binding)
-                     (string-join (map (lambda (i)
-                                         (format "args[~a]" i))
-                                       (range (binding:function-min-arity binding)))
-                                  ", "))])]))]))
+             (string-append "(function(args) {
+                    return "
+                            (binding:function-java-string binding)
+                            "("
+                            (string-join (map (lambda (i)
+                                                (string-append "args[" (number->string i)"]"))
+                                              (range (binding:function-min-arity binding)))
+                                         ", ")
+                            ");
+                 })")])]))]))
 
 ;; mapi: (X number -> Y) (listof X) -> (listof Y)
 (define (mapi f elts)
@@ -546,17 +561,21 @@
           
           (define args-sym
             (make-args-symbol 'lambda-expression->javascript-string))]
-    (format "(function(~a) { ~a
-                             return ~a; })"
-            args-sym
-            (string-join (mapi (lambda (arg-id i)
-                                 (format "var ~a = ~a[~a];" 
-                                         (symbol->string arg-id)
-                                         args-sym
-                                         i))
-                               munged-arg-ids)
-                         "\n")
-            (expression->javascript-string body new-env a-pinfo))))
+    (string-append "(function("
+                   (symbol->string args-sym)
+                   ") { "
+                   (string-join (mapi (lambda (arg-id i)
+                                        (string-append "var "
+                                                       (symbol->string arg-id)
+                                                       " = "
+                                                       (symbol->string args-sym)
+                                                       "[" (number->string i)"];"))
+                                      munged-arg-ids)
+                                "\n")
+                   "
+                             return "
+                   (expression->javascript-string body new-env a-pinfo)
+                   "; })")))
 
 
 
@@ -565,29 +584,50 @@
   (cond [(integer? a-num)
          ;; Fixme: we need to handle exact/vs/inexact issue.
          ;; We probably need the numeric tower.
-         (format "(org.plt.types.Rational.makeInstance(~a, 1))" (inexact->exact a-num))]
+         (string-append "(org.plt.types.Rational.makeInstance("
+                        (number->string (inexact->exact a-num))
+                        ", 1))")]
         [(and (inexact? a-num)
               (real? a-num))
-         (format "(org.plt.types.FloatPoint.makeInstance(\"~a\"))" a-num)]
+         (string-append "(org.plt.types.FloatPoint.makeInstance(\"" (number->string a-num)"\"))")]
         [(rational? a-num)
-         (format "(org.plt.types.Rational.makeInstance(~a, ~a))" 
-                 (numerator a-num) 
-                 (denominator a-num))]
+         (string-append "(org.plt.types.Rational.makeInstance("
+                        (number->string (numerator a-num))
+                        ", "
+                        (number->string (denominator a-num))
+                        "))")]
         [(complex? a-num)
-         (format "(org.plt.types.Complex.makeInstance(~a, ~a))"
-                 (number->javascript-string (real-part a-num))
-                 (number->javascript-string (imag-part a-num)))]
+         (string-append "(org.plt.types.Complex.makeInstance("
+                        (number->string (real-part a-num))
+                        ", "
+                        (number->string (imag-part a-num))"))")]
+        
         [else
          (error 'number->java-string "Don't know how to handle ~s yet" a-num)]))
 
 
-(define (string->javascript-string a-str)
-  (format "(org.plt.types.String.makeInstance(~s))" a-str))
-
 
 (define (char->javascript-string a-char)
-  (format "(org.plt.types.Character.makeInstance(String.fromCharCode(~s)))"
-          (char->integer a-char)))
+  (string-append "(org.plt.types.Character.makeInstance(String.fromCharCode("
+                 (number->string (char->integer a-char))
+                 ")))"))
+
+(define (string->javascript-string a-str)
+  ;; FIXME: escape all character codes!
+  (local [(define (escape-char-code a-char)
+            (cond
+              [(char=? a-char #\")
+               (string #\\ #\")]
+              [(char=? a-char #\\)
+               (string #\\ #\\)]
+              [(char=? a-char #\newline)
+               (string #\\ #\n)]
+              [else
+               (string a-char)]))]
+    (string-append "(org.plt.types.String.makeInstance(\""
+                   (string-join (map escape-char-code (string->list a-str))
+                                "")
+                   "\"))")))
 
 
 

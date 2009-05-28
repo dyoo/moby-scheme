@@ -147,7 +147,7 @@
                (string ch)]))]
     (cond
       [(member? an-id java-identifiers)
-       (string->symbol (format "_~a_" an-id))]
+       (string->symbol (string-append "_" (symbol->string an-id) "_"))]
       [else
        (local [(define chars (string->list (symbol->string an-id)))
                (define translated-chunks 
