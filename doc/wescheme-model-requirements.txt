@@ -1,0 +1,12 @@
+
+    * Allow users to rate each other's programs.
+
+    * Add a student / teacher hierarchical model for users.
+
+    * Teachers should be able to put up homework assignment material visible only to their students.
+
+    * Students should be able to submit solutions that are visible only to the teacher.  
+
+    * Students might work in teams.
+
+    * Students should be allowed to put up new public programs, although a teacher may need to moderate it before it becomes visible.
