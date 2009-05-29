@@ -25,9 +25,9 @@
 (define (compiled-program-main a-compiled-program)
   (string-append (compiled-program-defns a-compiled-program)
                  "\n"
-                 "function toplevel() {\n"
+                 "(function() {\n"
                  (compiled-program-toplevel-exprs a-compiled-program)
-                 "\n}"))
+                 "\n})();"))
 
 
 

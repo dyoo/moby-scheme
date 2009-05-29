@@ -126,7 +126,7 @@
                      
                      ;; Characters
                      (char? 1)
-                     (char=? 2)
+                     (char=? 2 true)
                      (char<? 2 true)
                      (char<=? 2 true)
                      (char>? 2 true)

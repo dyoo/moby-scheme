@@ -840,6 +840,7 @@ org.plt = org.plt || {};
 	this.hash = inputHash;
     }
 
+
     // kernelMakeImmutableHashEq: list -> hash
     org.plt.Kernel._kernelMakeImmutableHashEq = function(pairs) {
 	var myhash = {};
@@ -851,6 +852,22 @@ org.plt = org.plt || {};
 	    pairs = pairs.rest();
 	}
 	return new HashTable(myhash);
+    };
+
+    // org.plt.Kernel._kernelHashSet: hash object value -> hash
+    org.plt.Kernel._kernelHashSet = function(obj, key, val) {
+	var newHash = {};
+	var hash = obj.hash;
+	for (var k in hash) {
+	    newHash[k] = hash[k];
+	}
+	newHash[key] = val;
+	return new HashTable(newHash);
+    };
+
+    org.plt.Kernel._resolveModulePath = function(path) {
+	console.log(path);
+	return path;
     };
 
 
