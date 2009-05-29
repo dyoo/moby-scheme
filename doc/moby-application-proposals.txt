@@ -15,3 +15,6 @@ Conflict resolution using rock-paper-scissors.
 ipov: an intent-driven program.  Have a program listen to SMS intents:
 if a particular SMS intent is received, the program should respond by
 sending an SMS of the current location.
+
+
+phone scammer/spammer warnings.  (http://snappletronics.blogspot.com/2009/05/steal-this-idea-phone-scammerspammer.html)  When a phone call from an unknown entity comes in, run it through whocalled.us (http://whocalled.us/) and see if it's a spammer.  Possibly integrate with https://donotcall.gov/.
