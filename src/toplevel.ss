@@ -25,10 +25,10 @@
                                  (resolve-module-path 'lang/htdp-beginner false)
                                  arity 
                                  vararity?
-                                 (format 
-                                  "org.plt.Kernel.~a"
-                                  (identifier->munged-java-identifier 
-                                   a-name))))
+                                 (string-append 
+                                  "org.plt.Kernel."
+                                  (symbol->string (identifier->munged-java-identifier 
+                                   a-name)))))
 
           
           ;; A special registration function that doesn't munge the kernel function name.

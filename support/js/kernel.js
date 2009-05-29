@@ -467,8 +467,8 @@ org.plt = org.plt || {};
 	return x instanceof org.plt.types.Empty;
   },
   
-  append : function(first, second, rest){
-	var ret = first.append(second);
+  append : function(first, rest){
+        var ret = first;
 	var i;
 	for (i = 0; i < rest.length; i++)
 		ret = ret.append(rest[i]);
@@ -865,8 +865,15 @@ org.plt = org.plt || {};
 	return new HashTable(newHash);
     };
 
+    org.plt.Kernel._kernelHashRef = function(obj, key, defaultVal) {
+	if (key in obj.hash) {
+	    return obj.hash[key];
+	} else {
+	    return defaultVal;
+	}
+    };
+
     org.plt.Kernel._resolveModulePath = function(path) {
-	console.log(path);
 	return path;
     };
 
@@ -1072,20 +1079,21 @@ org.plt = org.plt || {};
   return false;
     };
     
-	org.plt.types.Cons.prototype.append = function(b){
-		if (this.isEmpty())
-			return b;
-		if (b.isEmpty())
-			return this;
-		var ret = b;
-		var lst = org.plt.Kernel.reverse(this);
-		while (!lst.isEmpty()){
-			ret = org.plt.types.Cons.makeInstance(lst.first(), ret);
-			lst = lst.rest();
-		}
-		
-		return ret;
-	};
+    org.plt.types.Cons.prototype.append = function(b){
+	console.log(b);
+	if (this.isEmpty())
+	    return b;
+	if (b.isEmpty())
+	    return this;
+	var ret = b;
+	var lst = org.plt.Kernel.reverse(this);
+	while (!lst.isEmpty()){
+	    ret = org.plt.types.Cons.makeInstance(lst.first(), ret);
+	    lst = lst.rest();
+	}
+	
+	return ret;
+    };
  
     // Rationals
  
