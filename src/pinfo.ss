@@ -166,20 +166,20 @@
 ;; extend-env/struct-defns: env symbol (listof symbol) -> env
 (define (extend-env/struct-defns an-env id fields)
   (local [(define constructor-id 
-            (string->symbol (format "make-~a" id)))
+            (string->symbol (string-append "make-" (symbol->string id))))
           (define constructor-binding 
             (bf constructor-id false (length fields) false
                 (symbol->string
                  (identifier->munged-java-identifier constructor-id))))
           (define predicate-id
-            (string->symbol (format "~a?" id)))
+            (string->symbol (string-append (symbol->string id) "?")))
           (define predicate-binding
             (bf predicate-id false 1 false
                 (symbol->string
                  (identifier->munged-java-identifier predicate-id))))
           (define selector-ids
             (map (lambda (f)
-                   (string->symbol (format "~a-~a" id f)))
+                   (string->symbol (string-append (symbol->string id) "-" (symbol->string f))))
                  fields))
           (define selector-bindings
             (map (lambda (sel-id) 

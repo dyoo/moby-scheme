@@ -380,10 +380,6 @@ org.plt = org.plt || {};
 	return ret;
   },
   
-  number_dash__greaterthan_string : function(n){
-	return org.plt.types.String.makeInstance(n);
-  },
-  
   string_equal__question_ : function(first, second, rest){
 	return chainTest(function(x, y){return x.toString() == y.toString();}, first, second, rest);
   },
@@ -877,6 +873,11 @@ org.plt = org.plt || {};
 	return path;
     };
 
+    var gensymCounter = 0;
+    org.plt.Kernel._gensym = function(label) {
+	gensymCounter++;
+	return org.plt.types.Symbol.makeInstance(label.toString() + gensymCounter);
+    };
 
     org.plt.Kernel.map = function(f, arglists) {
 	var results = org.plt.types.Empty.EMPTY;

@@ -569,7 +569,7 @@
                                                        (symbol->string arg-id)
                                                        " = "
                                                        (symbol->string args-sym)
-                                                       "[" (number->string i)"];"))
+                                                       "[" (number->string i) "];"))
                                       munged-arg-ids)
                                 "\n")
                    "
