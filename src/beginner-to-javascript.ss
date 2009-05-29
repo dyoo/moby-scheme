@@ -211,26 +211,26 @@
                     ".prototype.isEqual = function(other) {
               if (other instanceof " (symbol->string (identifier->munged-java-identifier id)) ") {
                 return " (expression->javascript-string (foldl (lambda (a-field acc)
-                                                     (local [(define acc-id (field->accessor-name id a-field))]
-                                                       (list 'and 
-                                                             (list 'equal? (list acc-id 'this) (list acc-id 'other))
-                                                             acc)))
-                                                   'true
-                                                   fields)
-                                            (local [(define new-env-1 (env-extend env
-                                                                                  (make-binding:constant
-                                                                                   'this
-                                                                                   (symbol->string
-                                                                                    (identifier->munged-java-identifier 'this))
-                                                                                   empty)))
-                                                    (define new-env-2 (env-extend new-env-1
-                                                                                  (make-binding:constant
-                                                                                   'other
-                                                                                   (symbol->string
-                                                                                    (identifier->munged-java-identifier 'other))
-                                                                                   empty)))]
-                                              new-env-2)
-                                            a-pinfo) ";
+                                                                 (local [(define acc-id (field->accessor-name id a-field))]
+                                                                   (list 'and 
+                                                                         (list 'equal? (list acc-id 'this) (list acc-id 'other))
+                                                                         acc)))
+                                                               'true
+                                                               fields)
+                                                        (local [(define new-env-1 (env-extend env
+                                                                                              (make-binding:constant
+                                                                                               'this
+                                                                                               (symbol->string
+                                                                                                (identifier->munged-java-identifier 'this))
+                                                                                               empty)))
+                                                                (define new-env-2 (env-extend new-env-1
+                                                                                              (make-binding:constant
+                                                                                               'other
+                                                                                               (symbol->string
+                                                                                                (identifier->munged-java-identifier 'other))
+                                                                                               empty)))]
+                                                          new-env-2)
+                                                        a-pinfo) ";
               } else {
                 return false;
               }

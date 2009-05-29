@@ -581,8 +581,9 @@ org.plt = org.plt || {};
   
   list_star_ : function(items, otherItems){
       var lastListItem = otherItems.pop();
-      otherItems.shift(items);
-      return org.plt.Kernel.append(org.plt.Kernel.list(otherItems), lastListItem, []);
+      otherItems.unshift(items);
+      console.log(otherItems);
+      return org.plt.Kernel.append(org.plt.Kernel.list(otherItems), [lastListItem]);
   },
   
   list_dash_ref : function(lst, x){
@@ -909,6 +910,19 @@ org.plt = org.plt || {};
       return result;
     };
 
+    org.plt.Kernel.build_dash_list = function(n, f) {
+	var result = org.plt.types.Empty.EMPTY;
+	for(var i = 0; i < n.toInteger(); i++) {
+	    result = org.plt.Kernel.cons(f.apply(null, [[org.plt.types.Rational.makeInstance(i, 1)]]),
+					 result);
+	}
+	return org.plt.Kernel.reverse(result);
+    };
+
+    org.plt.Kernel.format = function(formatStr, args) {
+	// not right yet, but let's see how well this works.
+	return org.plt.types.String.makeInstance(formatStr + args.join(" "));
+    }
 
 
     // args: arrayof org.plt.types.Char
@@ -955,8 +969,8 @@ org.plt = org.plt || {};
     org.plt.Kernel.posn_dash_y = posn_dash_y;
  
  
-    org.plt.Kernel.error = function(msg) {
-  die(msg);
+    org.plt.Kernel.error = function(msg, args) {
+	die(msg + ": " + args);
     }
  
  
