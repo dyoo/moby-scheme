@@ -1,5 +1,5 @@
-var org = {};
-org.plt = {};
+var org = org || {};
+org.plt = org.plt || {};
  
  
  
@@ -49,17 +49,18 @@ org.plt = {};
   },
  
   equal_question_ : function(x, y) {
-	if (Kernel.number_question_(x) && Kernel.number_question_(y)){
-		 if ("isEqual" in x) {
-		return org.plt.types.NumberTower.equal(x, y);
-      } else if ("isEqual" in y) {
-		return org.plt.types.NumberTower.equal(y, x);
-      } else {
-		return x == y;
+    if (org.plt.Kernel.number_question_(x) && 
+	org.plt.Kernel.number_question_(y)) {
+	  if ("isEqual" in x) {
+	    return org.plt.types.NumberTower.equal(x, y);
+	  } else if ("isEqual" in y) {
+	    return org.plt.types.NumberTower.equal(y, x);
+	  } else {
+	    return x == y;
 	  }
-	} else {
-		return x.isEqual(y);
-	}
+    } else {
+      return x.isEqual(y);
+    }
   },
   
   eq_question_ : function(x, y){
@@ -261,6 +262,11 @@ org.plt = {};
   not : function(x) {
       return !x;
   },
+
+
+  inexact_dash__greaterthan_exact: function(x) {
+    return org.plt.types.NumberTower.toExact(x);
+  },
  
   number_dash__greaterthan_string: function(x) {
       return org.plt.types.String.makeInstance(x.toString());
@@ -374,10 +380,6 @@ org.plt = {};
 	return ret;
   },
   
-  number_dash__greaterthan_string : function(n){
-	return org.plt.types.String.makeInstance(n);
-  },
-  
   string_equal__question_ : function(first, second, rest){
 	return chainTest(function(x, y){return x.toString() == y.toString();}, first, second, rest);
   },
@@ -461,8 +463,8 @@ org.plt = {};
 	return x instanceof org.plt.types.Empty;
   },
   
-  append : function(first, second, rest){
-	var ret = first.append(second);
+  append : function(first, rest){
+        var ret = first;
 	var i;
 	for (i = 0; i < rest.length; i++)
 		ret = ret.append(rest[i]);
@@ -480,7 +482,7 @@ org.plt = {};
   }, 
     
   assq : function(x, lst){
-	while (!lst.isEmpty() && !Kernel.eq_question_(x, lst.first().first()))
+	while (!lst.isEmpty() && !org.plt.Kernel.eq_question_(x, lst.first().first()))
 		lst = lst.rest();
 	if (lst.isEmpty())
 		return org.plt.types.Logic.FALSE;
@@ -566,7 +568,7 @@ org.plt = {};
   length : function(lst){
 	var ret = org.plt.types.Rational.ZERO;
 	for (; !lst.isEmpty(); lst = lst.rest())
-		ret = Kernel.add1(ret);
+		ret = org.plt.Kernel.add1(ret);
 	return ret;
   },
   
@@ -577,20 +579,23 @@ org.plt = {};
 	return ret;
   },
   
-  list_star_ : function(items, lst){
-	return Kernel.append(Kernel.list(items), lst, []);
+  list_star_ : function(items, otherItems){
+      var lastListItem = otherItems.pop();
+      otherItems.unshift(items);
+      console.log(otherItems);
+      return org.plt.Kernel.append(org.plt.Kernel.list(otherItems), [lastListItem]);
   },
   
   list_dash_ref : function(lst, x){
 	var i = org.plt.types.Rational.ZERO;
-	for (; Kernel._lessthan_(i, x,[]); i = Kernel.add1(i))
+	for (; org.plt.Kernel._lessthan_(i, x,[]); i = org.plt.Kernel.add1(i))
 		lst = lst.rest();
 	return lst.first();
   },
   
   member : function(item, lst){
 	while (!lst.isEmpty()){
-		if (Kernel.equal_question_(item, lst.first()))
+		if (org.plt.Kernel.equal_question_(item, lst.first()))
 			return true;
 		lst = lst.rest();
 	}
@@ -600,7 +605,7 @@ org.plt = {};
   
   memq : function(item, lst){
 	while (!lst.isEmpty()){
-		if (Kernel.eq_question_(item, lst.first()))
+		if (org.plt.Kernel.eq_question_(item, lst.first()))
 			return lst;
 		lst = lst.rest();
 	}
@@ -614,7 +619,7 @@ org.plt = {};
   
   memv : function(item, lst){
 	while (!lst.isEmpty()){
-		if (Kernel.eqv_question_(item, lst.first()))
+		if (org.plt.Kernel.eqv_question_(item, lst.first()))
 			return lst;
 		lst = lst.rest();
 	}
@@ -642,10 +647,7 @@ org.plt = {};
   },
   
   string_dash_append : function(arr){
-	var ret = "";
-	for (var i = 0; i < arr.length; i++)
-		ret += arr[i];
-	return ret;
+        return org.plt.types.String.makeInstance(arr.join(""));
   },
   
   string_dash_ci_equal__question_ : function(first, second, rest){
@@ -653,7 +655,7 @@ org.plt = {};
 	second = second.toUpperCase();
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = rest[i].toUpperCase();
-	return Kernel.string_equal__question_(first, second, rest);
+	return org.plt.Kernel.string_equal__question_(first, second, rest);
   },
   
   string_dash_ci_lessthan__equal__question_ : function(first, second, rest){
@@ -661,7 +663,7 @@ org.plt = {};
 	second = second.toUpperCase();
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = rest[i].toUpperCase();
-	return Kernel.string_lessthan__equal__question_(first, second, rest);
+	return org.plt.Kernel.string_lessthan__equal__question_(first, second, rest);
   },
   
   string_dash_ci_lessthan__question_ : function(first, second, rest){
@@ -669,15 +671,15 @@ org.plt = {};
 	second = second.toUpperCase();
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = rest[i].toUpperCase();
-	return Kernel.string_lessthan__question_(first, second, rest);
+	return org.plt.Kernel.string_lessthan__question_(first, second, rest);
   },
   
   string_dash_ci_greaterthan__question_ : function(first, second, rest){
-	return !Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
+	return !org.plt.Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
   },
   
   string_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	return !Kernel.string_dash_ci_lessthan__question_(first, second, rest);
+	return !org.plt.Kernel.string_dash_ci_lessthan__question_(first, second, rest);
   },
   
   string_dash_copy : function(str){
@@ -698,6 +700,10 @@ org.plt = {};
   
   substring : function(str, begin, end){
 	return str.toString().substring(begin.toInteger(), end.toInteger());
+  },
+
+  char_question_: function(x) {
+    return x instanceof org.plt.types.Char;
   },
   
   char_dash__greaterthan_integer : function(ch){
@@ -740,7 +746,7 @@ org.plt = {};
 	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	return Kernel.char_equal__question_(first, second, rest);
+	return org.plt.Kernel.char_equal__question_(first, second, rest);
   },
   
   char_dash_ci_lessthan__question_ : function(first, second, rest){
@@ -748,7 +754,7 @@ org.plt = {};
 	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	return Kernel.char_lessthan__question_(first, second, rest);
+	return org.plt.Kernel.char_lessthan__question_(first, second, rest);
   },
 
   char_dash_ci_lessthan__equal__question_ : function(first, second, rest){
@@ -756,15 +762,15 @@ org.plt = {};
 	second = org.plt.types.Char.makeInstance(second.val.toUpperCase());
 	for (var i = 0; i < rest.length; i++)
 		rest[i] = org.plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	return Kernel.char_lessthan__equal__question_(first, second, rest);
+	return org.plt.Kernel.char_lessthan__equal__question_(first, second, rest);
   },
   
   char_dash_ci_greaterthan__question_ : function(first, second, rest){
-	return !Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
+	return !org.plt.Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
   },
   
   char_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	return !Kernel.char_dash_ci_lessthan__question_(first,second,rest);
+	return !org.plt.Kernel.char_dash_ci_lessthan__question_(first,second,rest);
   },
   
   char_dash_downcase : function(ch){
@@ -773,7 +779,7 @@ org.plt = {};
   },
   
   char_dash_lower_dash_case_question_ : function(ch){
-	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_downcase(ch));
+	return org.plt.Kernel.char_dash_alphabetic_question_(ch) && org.plt.Kernel.equal_question_(ch, org.plt.Kernel.char_dash_downcase(ch));
   },
   
   char_dash_numeric_question_ : function(ch){
@@ -787,11 +793,11 @@ org.plt = {};
   },
   
   char_dash_upper_dash_case_question_ : function(ch){
-	return Kernel.char_dash_alphabetic_question_(ch) && Kernel.equal_question_(ch, Kernel.char_dash_upcase(ch));
+	return org.plt.Kernel.char_dash_alphabetic_question_(ch) && org.plt.Kernel.equal_question_(ch, org.plt.Kernel.char_dash_upcase(ch));
   },
   
   char_dash_whitespace_question_ : function(ch){
-	return Kernel.equal_question_(ch, org.plt.types.Char.makeInstance(" "));
+	return org.plt.Kernel.equal_question_(ch, org.plt.types.Char.makeInstance(" "));
   },
   
   list_dash__greaterthan_string : function(lst){
@@ -807,7 +813,7 @@ org.plt = {};
 	var ret = "";
 	var c = ch.val.toString();
 	var i = org.plt.types.Rational.ZERO;
-	for (;  Kernel._lessthan_(i, n, []); i = Kernel.add1(i))
+	for (;  org.plt.Kernel._lessthan_(i, n, []); i = org.plt.Kernel.add1(i))
 		ret += c;
 	return org.plt.types.String.makeInstance(ret);
   },
@@ -816,22 +822,125 @@ org.plt = {};
 	var s = str.toString();
 	var ret = org.plt.types.Empty.EMPTY;
 	for (var i = s.length - 1; i >= 0; i--){
-		ret = org.plt.types.Cons.makeInstance(s.charAt(i), ret);
+	    ret = org.plt.types.Cons.makeInstance
+		(org.plt.types.Char.makeInstance(s.charAt(i)),
+		 ret);
 	}
 	return ret;
   },
   
   HEREEEEEEEEEEEEEEEEE : function(){}
+
+
 	
   };
  
+    function HashTable(inputHash) {
+	this.hash = inputHash;
+    }
+
+
+    // kernelMakeImmutableHashEq: list -> hash
+    org.plt.Kernel._kernelMakeImmutableHashEq = function(pairs) {
+	var myhash = {};
+	while (! pairs.isEmpty()) {
+	    var nextPair = pairs.first();
+	    var aKey = nextPair.first(); 
+	    var aVal = nextPair.rest(); 
+	    myhash[aKey] = aVal;
+	    pairs = pairs.rest();
+	}
+	return new HashTable(myhash);
+    };
+
+    // org.plt.Kernel._kernelHashSet: hash object value -> hash
+    org.plt.Kernel._kernelHashSet = function(obj, key, val) {
+	var newHash = {};
+	var hash = obj.hash;
+	for (var k in hash) {
+	    newHash[k] = hash[k];
+	}
+	newHash[key] = val;
+	return new HashTable(newHash);
+    };
+
+    org.plt.Kernel._kernelHashRef = function(obj, key, defaultVal) {
+	if (key in obj.hash) {
+	    return obj.hash[key];
+	} else {
+	    return defaultVal;
+	}
+    };
+
+    org.plt.Kernel._resolveModulePath = function(path) {
+	return path;
+    };
+
+    var gensymCounter = 0;
+    org.plt.Kernel._gensym = function(label) {
+	gensymCounter++;
+	return org.plt.types.Symbol.makeInstance(label.toString() + gensymCounter);
+    };
+
+    org.plt.Kernel.map = function(f, arglists) {
+	var results = org.plt.types.Empty.EMPTY;
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    results = org.plt.Kernel.cons(f.apply(null, [args]),
+					  results);
+	}
+	return org.plt.Kernel.reverse(results);
+    };
+
+    org.plt.Kernel.foldl = function(f, acc, arglists) {
+      var result = acc;
+      while (!arglists[0].isEmpty()) {
+	var args = [];
+	for (var i = 0; i < arglists.length; i++) {
+	  args.push(arglists[i].first());
+	  arglists[i] = arglists[i].rest();
+	}
+	args.push(result);
+	result = f.apply(null, [args]);
+      }
+      return result;
+    };
+
+    org.plt.Kernel.build_dash_list = function(n, f) {
+	var result = org.plt.types.Empty.EMPTY;
+	for(var i = 0; i < n.toInteger(); i++) {
+	    result = org.plt.Kernel.cons(f.apply(null, [[org.plt.types.Rational.makeInstance(i, 1)]]),
+					 result);
+	}
+	return org.plt.Kernel.reverse(result);
+    };
+
+    org.plt.Kernel.format = function(formatStr, args) {
+	// not right yet, but let's see how well this works.
+	return org.plt.types.String.makeInstance(formatStr + args.join(" "));
+    }
+
+
+    // args: arrayof org.plt.types.Char
+    org.plt.Kernel.string = function(args) {
+	var vals = [];
+	for(var i = 0; i < args.length; i++) {
+	    vals.push(args[i].getValue());
+	}
+	return org.plt.types.String.makeInstance(vals.join(""));
+    };
+
  
  
     //////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
     // Types
  
-    org.plt.types = {};
+    org.plt.types = org.plt.types || {};
  
  
  
@@ -860,8 +969,8 @@ org.plt = {};
     org.plt.Kernel.posn_dash_y = posn_dash_y;
  
  
-    org.plt.Kernel.error = function(msg) {
-  die(msg);
+    org.plt.Kernel.error = function(msg, args) {
+	die(msg + ": " + args);
     }
  
  
@@ -899,7 +1008,15 @@ org.plt = {};
 	org.plt.types.Char.makeInstance = function(val){
 		return new org.plt.types.Char(val);
 	};
-	
+
+	org.plt.types.Char.prototype.toString = function() {
+	    return "#\\" + this.val;
+	};
+
+	org.plt.types.Char.prototype.getValue = function() {
+	    return this.val;
+	};
+
 	org.plt.types.Char.prototype.isEqual = function(other){
 		return other instanceof org.plt.types.Char && this.val.toString() == other.val.toString();
 	};
@@ -927,6 +1044,12 @@ org.plt = {};
  
     org.plt.types.Empty = function() {};
     org.plt.types.Empty.EMPTY = new org.plt.types.Empty();
+
+
+    org.plt.types.Empty.prototype.isEqual = function(other) {
+      return other instanceof org.plt.types.Empty;
+    };
+
     org.plt.types.Empty.prototype.first = function() {
   die("first can't be applied on empty.");
     };
@@ -936,10 +1059,12 @@ org.plt = {};
     org.plt.types.Empty.prototype.isEmpty = function() {
   return true;
     };
+    org.plt.types.Empty.prototype.toString = function() { return "empty"; };
+
  
-	org.plt.types.Empty.prototype.append = function(b){
-		return b;
-	}
+    org.plt.types.Empty.prototype.append = function(b){
+      return b;
+    }
  
     org.plt.types.Cons = function(f, r) {
   this.f = f;
@@ -948,6 +1073,15 @@ org.plt = {};
  
     org.plt.types.Cons.makeInstance = function(f, r) {
   return new org.plt.types.Cons(f, r);
+    };
+
+
+    org.plt.types.Cons.prototype.isEqual = function(other) {
+      if (! (other instanceof org.plt.types.Cons)) {
+	return false;
+      }
+      return (org.plt.Kernel.equal_question_(this.first(), other.first()) &&
+	      org.plt.Kernel.equal_question_(this.rest(), other.rest()));
     };
  
     org.plt.types.Cons.prototype.first = function() {
@@ -962,20 +1096,20 @@ org.plt = {};
   return false;
     };
     
-	org.plt.types.Cons.prototype.append = function(b){
-		if (this.isEmpty())
-			return b;
-		if (b.isEmpty())
-			return this;
-		var ret = b;
-		var lst = Kernel.reverse(this);
-		while (!lst.isEmpty()){
-			ret = org.plt.types.Cons.makeInstance(lst.first(), ret);
-			lst = lst.rest();
-		}
-		
-		return ret;
-	};
+    org.plt.types.Cons.prototype.append = function(b){
+	if (this.isEmpty())
+	    return b;
+	if (b.isEmpty())
+	    return this;
+	var ret = b;
+	var lst = org.plt.Kernel.reverse(this);
+	while (!lst.isEmpty()){
+	    ret = org.plt.types.Cons.makeInstance(lst.first(), ret);
+	    lst = lst.rest();
+	}
+	
+	return ret;
+    };
  
     // Rationals
  
@@ -1055,6 +1189,10 @@ org.plt = {};
                this.d * other.n);
     };
  
+
+    org.plt.types.Rational.prototype.toExact = function() { 
+      return this;
+    };
  
     org.plt.types.Rational.prototype.toInteger = function() {
   return Math.floor(this.n / this.d);  
@@ -1086,15 +1224,12 @@ org.plt = {};
 
  
     org.plt.types.Rational.prototype.sqrt = function() {
-	return this.toFloat().sqrt();
-	/*
-  var result = Math.sqrt(this.n / this.d);
-  if (result == Math.floor(result)) {
-      return org.plt.types.Rational.makeInstance(result, 1);
-  } else {
-      return org.plt.types.FloatPoint.makeInstance(result);
-  }
-  */
+	var result = Math.sqrt(this.n / this.d);
+	if (result == Math.floor(result)) {
+	    return org.plt.types.Rational.makeInstance(result, 1);
+	} else {
+	    return org.plt.types.FloatPoint.makeInstance(result);
+	}
     };
  
     org.plt.types.Rational.prototype.abs = function() {
@@ -1218,6 +1353,11 @@ org.plt = {};
   this.n = n;
     };
  
+    org.plt.types.FloatPoint.prototype.toExact = function() {
+      return org.plt.types.Rational.makeInstance(Math.floor(this.n), 1);
+    };
+
+
     org.plt.types.FloatPoint.prototype.level = function() {
   return 1;
     };
@@ -1401,6 +1541,13 @@ org.plt = {};
 		return new org.plt.types.Complex(r, i);
 	};
 	
+	org.plt.types.Complex.prototype.toExact = function() { 
+	  if (! this.isReal()) {
+	    throw new Error("inexact->exact: expects argument of type real number");
+	  }
+	  return this.r.toExact();
+	};
+
 	org.plt.types.Complex.prototype.level = function(){
 		return 2;
 	};
@@ -1589,6 +1736,8 @@ org.plt = {};
 		var iz = this.timesI();
 		var root = org.plt.types.NumberTower.subtract(org.plt.types.Rational.ONE, this.multiply(this)).sqrt();
 		var ret = org.plt.types.NumberTower.add(iz, root).log().timesI().minus();
+		// FIXME: missing return value!
+		throw new Error("");
 	};
 	
 	org.plt.types.Complex.prototype.ceiling = function(){
@@ -1646,8 +1795,12 @@ org.plt = {};
  
     org.plt.types.NumberTower.abs = function(n) {
   return n.abs();
-    }
+    };
  
+    org.plt.types.NumberTower.toExact = function(x) {
+      return x.toExact();
+    };
+
     org.plt.types.NumberTower.add = function(x, y) {
   if (x.level() < y.level()) x = x.lift(y);
   if (y.level() < x.level()) y = y.lift(x);

@@ -10,30 +10,40 @@
 
 ;; pinfo (program-info) captures the information we get from analyzing 
 ;; the program.
-(define-struct pinfo (env modules used-bindings))
+(define-struct pinfo (env                    ; env
+                      modules                ; (listof module-binding) 
+                      used-bindings-hash     ; (hashof symbol binding)
+                      ))
 
 ;; pinfo
 (define empty-pinfo
-  (make-pinfo empty-env empty (make-immutable-hash empty)))
+  (make-pinfo empty-env empty (make-immutable-hasheq empty)))
 
 ;; get-base-pinfo: pinfo
 (define (get-base-pinfo _)
-  (make-pinfo toplevel-env empty (make-immutable-hash empty)))
+  (make-pinfo toplevel-env empty (make-immutable-hasheq empty)))
 
+
+
+;; pinfo-used-bindings: pinfo -> (listof binding)
+;; Returns the list of used bindings computed from the program analysis.
+(define (pinfo-used-bindings a-pinfo)
+  (hash-map (pinfo-used-bindings-hash a-pinfo)
+            (lambda (k v) v)))
 
 ;; pinfo-update-env: pinfo env -> pinfo
 (define (pinfo-update-env a-pinfo an-env)
   (make-pinfo
    an-env
    (pinfo-modules a-pinfo)
-   (pinfo-used-bindings a-pinfo)))
+   (pinfo-used-bindings-hash a-pinfo)))
 
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
    (env-extend (pinfo-env a-pinfo) a-binding)
    (pinfo-modules a-pinfo)
-   (pinfo-used-bindings a-pinfo)))
+   (pinfo-used-bindings-hash a-pinfo)))
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
 (define (pinfo-accumulate-bindings bindings a-pinfo)
@@ -45,15 +55,15 @@
 (define (pinfo-accumulate-module a-module a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (cons a-module (pinfo-modules a-pinfo))
-              (pinfo-used-bindings a-pinfo)))
+              (pinfo-used-bindings-hash a-pinfo)))
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding-use a-binding a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
-              (hash-set (pinfo-used-bindings a-pinfo)
-                        a-binding
-                        true)))
+              (hash-set (pinfo-used-bindings-hash a-pinfo)
+                        (binding-id a-binding)
+                        a-binding)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -156,20 +166,20 @@
 ;; extend-env/struct-defns: env symbol (listof symbol) -> env
 (define (extend-env/struct-defns an-env id fields)
   (local [(define constructor-id 
-            (string->symbol (format "make-~a" id)))
+            (string->symbol (string-append "make-" (symbol->string id))))
           (define constructor-binding 
             (bf constructor-id false (length fields) false
                 (symbol->string
                  (identifier->munged-java-identifier constructor-id))))
           (define predicate-id
-            (string->symbol (format "~a?" id)))
+            (string->symbol (string-append (symbol->string id) "?")))
           (define predicate-binding
             (bf predicate-id false 1 false
                 (symbol->string
                  (identifier->munged-java-identifier predicate-id))))
           (define selector-ids
             (map (lambda (f)
-                   (string->symbol (format "~a-~a" id f)))
+                   (string->symbol (string-append (symbol->string id) "-" (symbol->string f))))
                  fields))
           (define selector-bindings
             (map (lambda (sel-id) 
@@ -204,7 +214,7 @@
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2 
             (env-extend env-1 (bf fun false (length args) false
-                                  (symbol->string fun))))]
+                                  (symbol->string (identifier->munged-java-identifier fun)))))]
     (lambda-expression-analyze-uses args body (pinfo-update-env pinfo env-2))))
 
 
@@ -289,6 +299,7 @@
 
 
 
+;; local-definition-analyze-uses: expression pinfo env -> pinfo
 (define (local-expression-analyze-uses an-expression pinfo env)
   (local [(define defns (second an-expression))
           (define body (third an-expression))
@@ -296,9 +307,12 @@
                                         (definition-analyze-uses a-defn a-pinfo))
                                       pinfo
                                       defns))]
-    (expression-analyze-uses body
-                             nested-pinfo
-                             (pinfo-env nested-pinfo))))
+    (pinfo-update-env 
+     (expression-analyze-uses body
+                              nested-pinfo
+                              (pinfo-env nested-pinfo))
+     (pinfo-env pinfo))))
+  
 
 (define (if-expression-analyze-uses an-expression pinfo env)
   (local [(define test (second an-expression))
@@ -597,9 +611,10 @@
 
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
-                                 [used-bindings hash?])]
+                                 [used-bindings-hash hash?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (any/c . -> . pinfo?)]
+                  [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   

@@ -82,7 +82,16 @@
 
 ;; identifier->munged-java-identifier: symbol -> symbol
 (define (identifier->munged-java-identifier an-id)
-  (local [(define java-identifiers
+  (local [(define (member? an-id elts)
+            (cond
+              [(empty? elts)
+               false]
+              [(equal? (first elts) an-id)
+               true]
+              [else
+               (member? an-id (rest elts))]))
+          
+          (define java-identifiers
             '(abstract  continue  	for  	new  	switch
                         assert 	default 	goto 	package 	synchronized
                         boolean 	do 	if 	private 	#; this
@@ -92,7 +101,7 @@
                         catch 	extends 	int 	short 	try
                         char 	final 	interface 	static 	void
                         class 	finally 	long 	strictfp 	volatile
-                        const 	float 	native 	super 	while))
+                        const 	float 	native 	super 	while null))
           ;; Special character mappings for identifiers
           (define (trans ch)
             (cond
@@ -137,8 +146,8 @@
               [else
                (string ch)]))]
     (cond
-      [(member an-id java-identifiers)
-       (string->symbol (format "_nonclashing_~a" an-id))]
+      [(member? an-id java-identifiers)
+       (string->symbol (string-append "_" (symbol->string an-id) "_"))]
       [else
        (local [(define chars (string->list (symbol->string an-id)))
                (define translated-chunks 
@@ -147,7 +156,6 @@
                  (string->symbol
                   (string-join translated-chunks "")))]
          translated-id)])))
-
 
 
 
@@ -208,7 +216,12 @@
            (take (rest a-list) (sub1 n)))]))
 
 (define (list-tail a-list n)
-  (reverse (take (reverse a-list) n)))
+  (cond
+    [(= n 0)
+     a-list]
+    [else
+     (list-tail (rest a-list)
+                (sub1 n))]))
 
 (define (range n)
   (cond

@@ -11,9 +11,9 @@
 
 (define some-value
   (+ (f 2)
-     (local [(define (f x)
-               (* x x))]
-       (f 3))))
+     (local [(define (f x y)
+               (* x y))]
+       (f 3 3))))
 ;; We expect some value to be 42 + 9 = 51.
 
 

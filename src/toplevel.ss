@@ -25,10 +25,10 @@
                                  (resolve-module-path 'lang/htdp-beginner false)
                                  arity 
                                  vararity?
-                                 (format 
-                                  "org.plt.Kernel.~a"
-                                  (identifier->munged-java-identifier 
-                                   a-name))))
+                                 (string-append 
+                                  "org.plt.Kernel."
+                                  (symbol->string (identifier->munged-java-identifier 
+                                   a-name)))))
 
           
           ;; A special registration function that doesn't munge the kernel function name.
@@ -126,7 +126,7 @@
                      
                      ;; Characters
                      (char? 1)
-                     (char=? 2)
+                     (char=? 2 true)
                      (char<? 2 true)
                      (char<=? 2 true)
                      (char>? 2 true)
@@ -170,10 +170,10 @@
                      (string->number 1)
                      (string->list 1)
                      (string->symbol  1)
-                     (string-append 1 true)
+                     (string-append 0 true)
                      (list->string 1)
                      (make-string 2)
-                     (string 1 true)
+                     (string 0 true)
                      
                      ;; Pairs
                      (empty? 1)
@@ -235,26 +235,29 @@
                      (current-seconds 0)
                      
                      (andmap 2)
-                     (foldl 3)
+                     (foldl 2 true)
                      (build-list 2)
                      (map 1 true)
                      (format 1 true)
                      )))
           
+          
+          ;; These are identifiers we'll need to do the bootstrapping.
           (define top-env-3 
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
-                   '((make-immutable-hasheq 1 "org.plt.Kernel._kernelMakeImmutableHashEq")
-                     (make-immutable-hash 1 "org.plt.Kernel._kernelMakeImmutableHash")
-                     (hash-set! 3 "org.plt.Kernel._kernelHashSetBang")
-                     (hash-set 3 "org.plt.Kernel._kernelHashSet")
+                   '((hash-set 3 "org.plt.Kernel._kernelHashSet")
                      (hash-ref 3 "org.plt.Kernel._kernelHashRef")
+                     (make-immutable-hasheq 1 "org.plt.Kernel._kernelMakeImmutableHashEq")
                      (hash-map 2 "org.plt.Kernel._kernelHashMap")
+                     (hash? 1 "org.plt.Kernel._isHash")
+                     (gensym 1 "org.plt.Kernel._gensym")
                      (path->string 1 "org.plt.Kernel._pathToString")
                      (normalize-path 1 "org.plt.Kernel._normalizePath")
                      (resolve-module-path 2 "org.plt.Kernel._resolveModulePath")
                      (build-path 2 "org.plt.Kernel._buildPath")
+
                      )))]
     top-env-3))
 

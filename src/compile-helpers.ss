@@ -52,7 +52,7 @@
 ;; Returns the stub necessary to compile this program.
 (define (choose-program-stub a-pinfo)
   (let/ec return
-    (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
+    (for ([b (pinfo-used-bindings a-pinfo)])
       (cond
         [(and (binding:function? b)
               (binding:function-module-path b))
@@ -74,7 +74,7 @@
 ;; get-permissions: pinfo -> (listof permission)
 (define (get-permissions a-pinfo)
   (define ht (make-hash))
-  (for ([b (in-hash-keys (pinfo-used-bindings a-pinfo))])
+  (for ([b (pinfo-used-bindings a-pinfo)])
     (cond
       [(binding:function? b)
        (for ([p (binding:function-permissions b)])
