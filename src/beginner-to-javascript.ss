@@ -448,9 +448,9 @@
          [(binding:constant? operator-binding)
           (string-append "(("
                          (binding:constant-java-string operator-binding)
-                         ").apply(null, ["
+                         ").apply(null, [["
                          (string-join operand-strings ", ")
-                         "]))")]
+                         "]]))")]
          
          [(binding:function? operator-binding)
           (cond

@@ -1081,7 +1081,6 @@ org.plt = org.plt || {};
     };
     
     org.plt.types.Cons.prototype.append = function(b){
-	console.log(b);
 	if (this.isEmpty())
 	    return b;
 	if (b.isEmpty())
