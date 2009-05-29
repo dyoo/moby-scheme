@@ -82,6 +82,9 @@
                                 defns
                                 (string-append tops
                                                "\n"
+                                               ;; FIXME: we must do something special
+                                               ;; for toplevel expressions so the user
+                                               ;; can see the values.
                                                "org.plt.Kernel.identity("
                                                (expression->javascript-string 
                                                 (first program) 
