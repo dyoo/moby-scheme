@@ -29,15 +29,20 @@
 
 ;; bootstrap-compile: path -> string
 (define (bootstrap-compile a-path)
+  (compiled-program-main
+   (program->compiled-program (get-big-program a-path))))
+
+
+;; get-big-program: path -> program
+(define (get-big-program a-path)
   (let* ([modules (find-transitive-required-modules a-path)]
          [big-program (apply append (map (lambda (p)
                                            (remove-requires
                                             (remove-provide/contracts
                                              (read-program p))))
                                          modules))])
-    (compiled-program-main
-     (program->compiled-program big-program))))
-    
+    big-program))
+  
 
 
 

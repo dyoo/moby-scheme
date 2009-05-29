@@ -8,12 +8,14 @@ function tokenize(s) {
 		  ['comment' , /(^;[^\n]*)/],
 		  ['(' , /^(\(|\[)/],
 		  [')' , /^(\)|\])/],
-		  ['number' , /^([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/],
-		  ['symbol' ,/^([a-zA-Z\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\+\=\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/],
-		  ['string' , /^"((?:[^\"]|\\")*)"/],      // comment (emacs getting confused with quote): " 
 	          ['\'' , /^(\')/],
 		  ['`' , /^(`)/],
-		  [',' , /^(,)/]
+		  [',' , /^(,)/],
+		  ['char', /^\#\\(newline)/],
+                  ['char', /^\#\\(.)/],
+		  ['number' , /^([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/],
+		  ['string' , /^"((?:([^\\"]|(\\.)))*)"/],      // comment (emacs getting confused with quote): " 
+		  ['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
 		 ];
 
   while (true) {
@@ -44,8 +46,11 @@ function tokenize(s) {
 
 
   readSchemeExpressions = function(s) {
-
-    var tokens = tokenize(s)[0];
+    var tokensAndError = tokenize(s);
+    var tokens = tokensAndError[0];
+    if (tokensAndError[1].length > 0) {
+	throw new Error("Error while tokenizing: the rest of the stream is: " + tokensAndError[1]);
+    }
 
     var quoteSymbol = org.plt.types.Symbol.makeInstance("quote");
     var quasiquoteSymbol = org.plt.types.Symbol.makeInstance("quasiquote");
@@ -98,6 +103,14 @@ function tokenize(s) {
       } else if (isType('string')) {
 	t = eat('string');
 	return org.plt.types.String.makeInstance(t[1]);
+      } else if (isType('char')) {
+        t = eat('char');
+	  if (t[1] == 'newline') {
+	      return org.plt.types.Char.makeInstance('\n');
+	  }
+          else {
+	      return org.plt.types.Char.makeInstance(t[1]);
+	  }
       } else if (isType('symbol')) {
 	t = eat('symbol');
 	return org.plt.types.Symbol.makeInstance(t[1]);
