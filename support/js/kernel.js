@@ -579,8 +579,10 @@ org.plt = org.plt || {};
 	return ret;
   },
   
-  list_star_ : function(items, lst){
-	return org.plt.Kernel.append(org.plt.Kernel.list(items), lst, []);
+  list_star_ : function(items, otherItems){
+      var lastListItem = otherItems.pop();
+      otherItems.shift(items);
+      return org.plt.Kernel.append(org.plt.Kernel.list(otherItems), lastListItem, []);
   },
   
   list_dash_ref : function(lst, x){
