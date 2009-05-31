@@ -25,28 +25,38 @@
 (define (compiled-program-main a-compiled-program)
   (string-append (compiled-program-defns a-compiled-program)
                  "\n"
-                 "(function() {\n"
-                 (compiled-program-toplevel-exprs a-compiled-program)
+                 "(function() { \n"
+                 "("(compiled-program-toplevel-exprs a-compiled-program) ")"
+                 "(org.plt.Kernel.identity)"
                  "\n})();"))
 
 
 
-;; program->compiled-program: program [pinfo] -> compiled-program
+;; program->compiled-program: program -> compiled-program
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
 
 (define (program->compiled-program program)
-  (-program->compiled-program program (get-base-pinfo 'js)))
+  (program->compiled-program/pinfo program (get-base-pinfo 'js)))
 
 
-(define (-program->compiled-program program input-pinfo)
+;; program->compiled-program/pinfo: program pinfo -> compiled-program
+(define (program->compiled-program/pinfo program input-pinfo)
   (local [(define a-pinfo (program-analyze/pinfo program input-pinfo))
           (define toplevel-env (pinfo-env a-pinfo))
+
+          (define toplevel-expression-show (gensym 'toplevel-expression-show))
+          
           (define (loop program defns tops)
             
             
             (cond [(empty? program)
-                   (make-compiled-program defns tops a-pinfo)]
+                   (make-compiled-program defns 
+                                          (string-append "(function (" 
+                                                         (symbol->string
+                                                          (identifier->munged-java-identifier toplevel-expression-show))
+                                                         ") { " tops " })") 
+                                          a-pinfo)]
                   [else
                    (cond [(defn? (first program))
                           (local [(define defn-string+expr-string
@@ -82,10 +92,12 @@
                                 defns
                                 (string-append tops
                                                "\n"
-                                               ;; FIXME: we must do something special
+                                               ;; NOTE: we must do something special
                                                ;; for toplevel expressions so the user
-                                               ;; can see the values.
-                                               "org.plt.Kernel.identity("
+                                               ;; can see the values.  The toplevel expression is evaluated and its
+                                               ;; value passed to the toplevel-expression-show function.
+                                               (symbol->string (identifier->munged-java-identifier toplevel-expression-show))
+                                               "("
                                                (expression->javascript-string 
                                                 (first program) 
                                                 toplevel-env
@@ -411,7 +423,7 @@
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
 (define (local-expression->javascript-string defns body env a-pinfo)
   (local [(define inner-compiled-program 
-            (-program->compiled-program defns
+            (program->compiled-program/pinfo defns
                                         (pinfo-update-env a-pinfo env)))
           (define inner-body-string
             (expression->javascript-string 
@@ -419,13 +431,12 @@
              (pinfo-env (compiled-program-pinfo inner-compiled-program))
              (compiled-program-pinfo inner-compiled-program)))]
 
-    (string-append "(function() {
-                     // Local
-               " (compiled-program-defns inner-compiled-program)
-                   "
-               " (compiled-program-toplevel-exprs inner-compiled-program)
-                   "
-               return " inner-body-string ";
+    (string-append "(function() { \n"
+                   (compiled-program-defns inner-compiled-program)
+                   "\n"
+                   "(" (compiled-program-toplevel-exprs inner-compiled-program) ")(org.plt.Kernel.identity)"
+                   "\n"
+                   "return " inner-body-string ";
               })()")))
 
 
