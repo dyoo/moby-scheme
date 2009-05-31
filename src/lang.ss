@@ -20,11 +20,21 @@
                      let*))
 
 
+
+(define my-gensym
+  (let ([n 0])
+    (base:lambda (label)
+                 (set! n (add1 n))
+                 (string->symbol
+                  (string-append (symbol->string label)
+                      (number->string n))))))
+
 ;; The following primitives will need support in the runtime,
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
                      (base:quote quote)
                      (base:define-struct define-struct))
+
          
          ;; Contract-related stuff: the following will be erased on 
          ;; javascript bootstrapping time.
@@ -34,6 +44,6 @@
          ;; The rest of these primitives will be implemented for the kernel.
          ;; Hash stuff
          hash-set hash-ref make-immutable-hasheq hash-map
-         gensym
+         (rename-out (my-gensym gensym))
          path->string normalize-path path? resolve-module-path build-path
          )

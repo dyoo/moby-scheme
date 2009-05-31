@@ -2,6 +2,21 @@ var readSchemeExpressions;
 
 
 function tokenize(s) {
+
+  function replaceEscapes(s) {
+    return s.replace(/\\./g, function(match, submatch, index) {
+      // FIXME: add more escape sequences.
+      if (match == '\\n') {
+	return "\n";
+      }
+      else {
+	return match.substring(1);
+      }
+      });
+    }
+
+
+
   var tokens = [];
 
   var PATTERNS = [['whitespace' , /^(\s+)/],
@@ -25,6 +40,9 @@ function tokenize(s) {
       var pattern = PATTERNS[i][1]
       var result = s.match(pattern);
       if (result != null) {
+	if (patternName == 'string') {
+	  result[1] = replaceEscapes(result[1]);
+        }
 	if (patternName != 'whitespace' && patternName != 'comment') {
 	  tokens.push([patternName, result[1]]);
 	}
@@ -72,6 +90,8 @@ function tokenize(s) {
 	throw new Error("Unexpected token " + t);
       }
     }
+
+
 
     function readExpr() {
       var t;

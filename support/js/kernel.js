@@ -582,7 +582,6 @@ org.plt = org.plt || {};
   list_star_ : function(items, otherItems){
       var lastListItem = otherItems.pop();
       otherItems.unshift(items);
-      console.log(otherItems);
       return org.plt.Kernel.append(org.plt.Kernel.list(otherItems), [lastListItem]);
   },
   
