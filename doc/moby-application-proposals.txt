@@ -1,11 +1,14 @@
-Music alarm: Allow the user to pick a playlist and a duration.  Start
-playing the playlist.  As the duration expires, gradually weaken the
-volume until it goes away.  If the user shakes the phone, they're
-still awake -- restore the volume and keep playing.  Repeat.
+Silencing music player: Allow the user to pick a playlist and a
+duration.  Start playing the playlist.  As the duration expires,
+gradually weaken the volume until it goes away.  If the user shakes
+the phone, they're still awake -- restore the volume and keep playing.
+Repeat.
 
 
 Zombie: implement the zombie variation of the hide-and-seek game.  Use
-location services to arrange the world in a grid.
+location services to arrange the world in a grid.  People are either
+regular players or zombies; if a zombie gets close enough to a player,
+that player becomes a zombie.
 
 
 rock-paper-scissors: Implement rock-paper-scissors using Universe.
@@ -17,4 +20,8 @@ if a particular SMS intent is received, the program should respond by
 sending an SMS of the current location.
 
 
-phone scammer/spammer warnings.  (http://snappletronics.blogspot.com/2009/05/steal-this-idea-phone-scammerspammer.html)  When a phone call from an unknown entity comes in, run it through whocalled.us (http://whocalled.us/) and see if it's a spammer.  Possibly integrate with https://donotcall.gov/.
+phone scammer/spammer warnings.
+(http://snappletronics.blogspot.com/2009/05/steal-this-idea-phone-scammerspammer.html)
+When a phone call from an unknown entity comes in, run it through
+whocalled.us (http://whocalled.us/) and see if it's a spammer.
+Possibly integrate with https://donotcall.gov/.
