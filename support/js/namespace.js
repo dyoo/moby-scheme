@@ -8,7 +8,7 @@ var Namespace =
 	    this._eval = function(s) { return eval(s); };
 	}
 	// eval: string string -> X
-	// Evaluates contents of text, and returns the value of returnText.
+	// Evaluates contents of defntext, and returns the value of returnText.
 	Namespace.prototype.eval = function(_defnText, _returnText) {
 	    var _retVal = this._eval(_defnText + 
 			      "; [" + _returnText + ", " +
