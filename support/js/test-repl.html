@@ -12,69 +12,108 @@
 var _namespace;
 var _pinfo;
 
-function run() {
-    var definitions = window.document.getElementById("definitions");
-    var interactions = window.document.getElementById("interactions");
-    var prompt = window.document.getElementById("prompt");
+var _resetAndRunDefns;
+var _maybeRunPrompt;
+var _initialize;
 
-    function resetRepl() {
-        // clear out the interactions.
-        interactions.value = "WeScheme Interactions\n---\n";
-        prompt.value = "";
-        _namespace = new Namespace();
-        _pinfo = get_dash_base_dash_pinfo(
-            org.plt.types.Symbol.makeInstance("js"));
+(function() {
+var definitions;
+var interactions;
+var prompt;
+
+
+function bindVariables() {
+    definitions = window.document.getElementById("definitions");
+    interactions = window.document.getElementById("interactions");
+    prompt = window.document.getElementById("prompt");
+}
+
+
+
+function resetRepl() {
+    // clear out the interactions.
+    interactions.value = "WeScheme Interactions\n---\n";
+    prompt.value = "";
+    _namespace = new Namespace();
+    _pinfo = get_dash_base_dash_pinfo(
+        org.plt.types.Symbol.makeInstance("js"));
+}
+
+
+function addToInteractions(val) {
+    if (interactions.value == "") {
+        interactions.value = val.toString();
+    } else {
+        interactions.value = interactions.value + "\n" + val.toString();
     }
+}
+
+function runDefinitions() {
+    runSource(definitions.value);
+}
+
+function runPrompt() {
+    runSource(prompt.value);
+    prompt.value = "";
+}
 
 
-    function addToInteractions(val) {
-        if (interactions.value == "") {
-            interactions.value = val.toString();
-        } else {
-            interactions.value = interactions.value + "\n" + val.toString();
-        }
-    }
+function runSource(aSource) {
+    var program = readSchemeExpressions(aSource);
+    var compiledProgram = 
+        program_dash__greaterthan_compiled_dash_program_slash_pinfo(
+            program, _pinfo);
 
-    function runDefinitions() {
-        var program = readSchemeExpressions(definitions.value);
-        var compiledProgram = 
-            program_dash__greaterthan_compiled_dash_program_slash_pinfo(
-                program, _pinfo);
-
-        var defns = compiled_dash_program_dash_defns(compiledProgram);
-        var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
-            compiledProgram);
-        var runToplevel = _namespace.eval(defns, interFunc);
+    var defns = compiled_dash_program_dash_defns(compiledProgram);
+    var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
+        compiledProgram);
+    var runToplevel = _namespace.eval(defns, interFunc);
          
-        runToplevel(function(val) {
-            addToInteractions(val);
-        });
+    runToplevel(function(val) {
+        addToInteractions(val);
+    });
 
-        // Update the pinfo.
-        _pinfo = compiled_dash_program_dash_pinfo(compiledProgram);
-    }
+    // Update the pinfo.
+    _pinfo = compiled_dash_program_dash_pinfo(compiledProgram);
+}
 
 
+
+_resetAndRunDefns = function() {
     resetRepl();
     runDefinitions();
+};
+
+_maybeRunPrompt = function(keyEvent) {
+    if (keyEvent.keyCode == 13) {
+      runPrompt();
+    }
 }
+
+_initialize = function() {
+    bindVariables();
+    _resetAndRunDefns();
+};
+
+})();
+
 
 
 // ]]>
 </script>
 </head>
-<body>
+<body onLoad="_initialize()">
 
-<input type="button" value="run" onClick="run()">
+<input type="button" value="run" onClick="_resetAndRunDefns()">
 <div><textarea id="definitions" cols="80" rows="25"></textarea></div>
 <hr>
 <!-- Fixme: make interactions textarea mutable only by the system. -->
-<div><textarea id="interactions" cols="80" rows="25"></textarea></div>
+<div><textarea id="interactions" cols="80" rows="10"></textarea></div>
 
 <div>
 <!-- Fixme: make the font size consistent with the other text-input
 elements. -->
-&gt;&gt;&gt; <input id="prompt" type="text" size="80">
+&gt;&gt;&gt; <input id="prompt" type="text" size="80" onKeyPress="_maybeRunPrompt(event)">
 </div>
 </body>
 </html>
