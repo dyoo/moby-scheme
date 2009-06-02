@@ -620,7 +620,7 @@ var operand_dash_strings;
 operator_dash_string = (expression_dash__greaterthan_javascript_dash_string(operator,env,a_dash_pinfo));
 operand_dash_strings = org.plt.Kernel.map((function(args87) { var e = args87[0];
                              return (expression_dash__greaterthan_javascript_dash_string(e,env,a_dash_pinfo)); }), [operands]); }))(org.plt.Kernel.identity)
-return org.plt.Kernel.string_dash_append([(org.plt.types.String.makeInstance("((")),operator_dash_string,(org.plt.types.String.makeInstance(").apply(null, [")),(string_dash_join(operand_dash_strings,(org.plt.types.String.makeInstance(", ")))),(org.plt.types.String.makeInstance("]))"))]);
+return org.plt.Kernel.string_dash_append([(org.plt.types.String.makeInstance("((")),operator_dash_string,(org.plt.types.String.makeInstance(").apply(null, [[")),(string_dash_join(operand_dash_strings,(org.plt.types.String.makeInstance(", ")))),(org.plt.types.String.makeInstance("]]))"))]);
               })()) : ((org.plt.Kernel.error((org.plt.types.Symbol.makeInstance("cond")),(org.plt.types.String.makeInstance("Fell out of cond")))))))))); }
 function identifier_dash_expression_dash__greaterthan_javascript_dash_string(an_dash_id, an_dash_env, a_dash_pinfo) { return (((org.plt.Kernel.not((env_dash_contains_question_(an_dash_env,an_dash_id))))) ? ((org.plt.Kernel.error((org.plt.types.Symbol.makeInstance("translate-toplevel-id")),org.plt.Kernel.format((org.plt.types.String.makeInstance("Moby doesn't know about ~s.")), [an_dash_id])))) : (((org.plt.types.Logic.TRUE) ? ((function() { 
 

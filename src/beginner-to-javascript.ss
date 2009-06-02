@@ -504,9 +504,9 @@
                     operands))]
        (string-append "(("
                       operator-string
-                      ").apply(null, ["
+                      ").apply(null, [["
                       (string-join operand-strings ", ")
-                      "]))"))]))
+                      "]]))"))]))
 
 
 
