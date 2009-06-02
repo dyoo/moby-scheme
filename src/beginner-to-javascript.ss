@@ -31,6 +31,16 @@
                  "\n})();"))
 
 
+;; compile-program: program -> (list string string)
+;; A simplified interface for Brendan.
+(define (compile-program a-program)
+  (local [(define a-compiled-program (program->compiled-program a-program))]
+    (list (compiled-program-defns a-compiled-program)
+          (compiled-program-toplevel-exprs a-compiled-program))))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 ;; program->compiled-program: program -> compiled-program
 ;; Consumes a program and returns a compiled program.
@@ -656,6 +666,10 @@
                                             [toplevel-exprs 
                                              string?]
                                             [pinfo pinfo?])]
+
+                  [compile-program
+                   (program? . -> . (list/c string? string?))]
+                   
                   [compiled-program-main
                    (compiled-program? . -> . string?)]
                   

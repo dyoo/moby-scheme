@@ -38,7 +38,7 @@
          
          ;; Contract-related stuff: the following will be erased on 
          ;; javascript bootstrapping time.
-         provide/contract -> any/c listof or/c false/c natural-number/c hash?
+         provide/contract -> any/c listof list/c or/c false/c natural-number/c hash?
 
          
          ;; The rest of these primitives will be implemented for the kernel.
