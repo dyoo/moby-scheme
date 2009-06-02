@@ -30,13 +30,6 @@
                  "(org.plt.Kernel.identity)"
                  "\n})();"))
 
-
-;; compile-program: program -> (list string string)
-;; A simplified interface for Brendan.
-(define (compile-program a-program)
-  (local [(define a-compiled-program (program->compiled-program a-program))]
-    (list (compiled-program-defns a-compiled-program)
-          (compiled-program-toplevel-exprs a-compiled-program))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -390,6 +383,13 @@
      "org.plt.types.Empty.EMPTY"]
     
     [(pair? expr)
+     (string-append "(org.plt.Kernel.list(["
+                    (string-join 
+                     (map quote-expression->javascript-string expr)
+                     ",")
+                    "]))")]
+    
+    #;[(pair? expr)
      (string-append "(org.plt.Kernel.cons("
                     (quote-expression->javascript-string (first expr))
                     ", "
@@ -667,11 +667,11 @@
                                              string?]
                                             [pinfo pinfo?])]
 
-                  [compile-program
-                   (program? . -> . (list/c string? string?))]
                    
                   [compiled-program-main
                    (compiled-program? . -> . string?)]
                   
                   [program->compiled-program 
-                   (program? . -> . compiled-program?)])
+                   (program? . -> . compiled-program?)]
+                  [program->compiled-program/pinfo
+                   (program? pinfo? . -> . compiled-program?)])

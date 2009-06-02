@@ -4,6 +4,11 @@ var Repl = (function(textarea) {
 	this.ns = new Namespace();
     };
     
+
+    Repl.prototype.reset = function() {
+	this.ns = new Namespace();
+    };
+
     Repl.prototype.onNotify = function() {
     };
 
