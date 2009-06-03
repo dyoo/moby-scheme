@@ -15,24 +15,32 @@ org.plt.WorldKernel = {};
     }
 
 
-    
+    // changeWorld: world -> void
+    // Changes the current world to newWorld.
     function changeWorld(newWorld) {
 	world = newWorld;
 	notifyWorldListeners();
     }
 
+
+    // notifyWorldListeners: -> void
+    // Tells all of the world listeners that the world has changed.
     function notifyWorldListeners() {
 	var i;
 	for (i = 0; i < worldListeners.length; i++) {
 	    worldListeners[i](world);
 	}
     }
-    
+
+    // addWorldListener: (world -> void) -> void
+    // Adds a new world listener: whenever the world is changed, the aListener
+    // will be called with that new world.
     function addWorldListener(aListener) {
 	worldListeners.push(aListener);
     }
     
 
+    // getKeyCodeName: keyEvent -> String
     // Given an event, try to get the name of the key.
     function getKeyCodeName(e) {
 	var code = e.charCode || e.keyCode;
@@ -52,6 +60,8 @@ org.plt.WorldKernel = {};
     }
 
 
+    // resetWorld: -> void
+    // Resets all of the world global values.
     function resetWorld() {
 	if (timerInterval) {
 	    clearInterval(timerInterval);
@@ -62,6 +72,10 @@ org.plt.WorldKernel = {};
     }
 
 
+    // bigBang: number number world (arrayof (-> void)) -> void
+    // Begins a world computation.  The initial world is aWorld, and handlers
+    // register other reactive functions (timer tick, key press, etc.) which
+    // will change the world.
     org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
 	var canvas = 
@@ -112,6 +126,8 @@ org.plt.WorldKernel = {};
 	}
     };
 
+    // scheduleTimerTick: -> void
+    // Repeatedly schedules an evaluation of the onTick until the program has stopped.
     function scheduleTimerTick() {
 	timerInterval = window.setTimeout(
 	    function() {
