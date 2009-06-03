@@ -250,15 +250,6 @@ org.plt.WorldKernel = {};
 	var i;
 	var childImage, childX, childY;
 	// Clear the scene.
-// 	ctx.save();
-// 	ctx.fillStyle = "white";
-// 	ctx.fillRect(x - this.pinholeX, y - this.pinholeY,
-// 		     this.width, this.height);
-// 	ctx.fillStyle = "black";
-// 	ctx.strokeRect(x - this.pinholeX, y - this.pinholeY, 
-// 		       this.width, this.height);
-// 	ctx.restore();
-// 	ctx.globalCompositeOperation = 'source-over';
 	ctx.clearRect(x - this.pinholeX, y - this.pinholeY, 
  		      this.width, this.height);
 	// Then ask every object to render itself.
@@ -437,6 +428,7 @@ org.plt.WorldKernel = {};
 	tickDelay: false,
 	onTick: false,
 	onKey: false,
+	onTilt: false,
 	stopWhen: false
     };
 
@@ -456,6 +448,12 @@ org.plt.WorldKernel = {};
 	    org.plt.world.config.onTick = handler;    
 	};
     };
+
+    org.plt.world.config.Kernel.onTilt = function(handler) {
+	return function() {
+	    org.plt.world.config.onTilt = handler;
+	}
+    }
 
     org.plt.world.config.Kernel.stopWhen = function(handler) {
 	return function() {
