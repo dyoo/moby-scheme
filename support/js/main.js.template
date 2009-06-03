@@ -3,9 +3,10 @@ var main = {};
 
 (function() {
 
-
+var listener = {};
 
 main.startup = function() {
+
 <<ON-START>>
 };
 
@@ -52,7 +53,7 @@ main.afterPreloadImages = function(after) {
 
 
 main.runToplevel = function() {
-   <<PROGRAM-TOPLEVEL-EXPRESSIONS>>
+   (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(org.plt.Kernel.identity);
 };
 
 <<PROGRAM-DEFINITIONS>>
