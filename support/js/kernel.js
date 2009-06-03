@@ -1898,8 +1898,8 @@ org.plt = org.plt || {};
     // Platform-specific stuff.
     org.plt.platform = {};
  
- 
-    org.plt.platform.getInstance = function() {
+    org.plt.platform.Platform = {};
+    org.plt.platform.Platform.getInstance = function() {
   return JavascriptPlatform;
     };
  
