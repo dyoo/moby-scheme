@@ -17,7 +17,7 @@
 
 (define WORLD-PATH-1 (resolve-module-path '(lib "world.ss" "moby" "stub") #f))
 (define WORLD-PATH-2 (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))
-(define GUI-WORLD-PATH (resolve-module-path '(lib "gui-world.ss" "gui-world") #f))
+#;(define GUI-WORLD-PATH (resolve-module-path '(lib "gui-world.ss" "gui-world") #f))
 
 
 
@@ -62,7 +62,7 @@
                 (path=? (binding:function-module-path b)
                         WORLD-PATH-2))
             (return STUB:WORLD)]
-           [(path=? (binding:function-module-path b)
+           #;[(path=? (binding:function-module-path b)
                     GUI-WORLD-PATH)
             (return STUB:GUI-WORLD)])]))
       (error 'choose-program-stub "Couldn't identify stub to use for this program.")))

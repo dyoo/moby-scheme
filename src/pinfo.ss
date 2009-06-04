@@ -490,7 +490,7 @@
                                    "org.plt.lib.Tilt.getRoll")))))
 
 
-(define gui-world-module
+#;(define gui-world-module
   (local [(define module-path 
             (resolve-module-path '(lib "gui-world.ss" "gui-world")
                                  false))]
@@ -575,7 +575,7 @@
                             world-stub-module
                             location-module
                             tilt-module
-                            gui-world-module
+                            #;gui-world-module
                             sms-module
                             net-module
                             parser-module

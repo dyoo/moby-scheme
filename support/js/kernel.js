@@ -40,7 +40,9 @@ org.plt = org.plt || {};
   
   struct_question_: function(thing) {
       return thing instanceof this.Struct;
-  },
+  },    tiltSuccessCallback = function(accel) {
+	
+    },
   
   number_question_ : function(x){
       return (x instanceof org.plt.types.Rational || 
@@ -1912,21 +1914,31 @@ org.plt = org.plt || {};
     JavascriptPlatform.getTiltService = function() {
   return JavascriptTiltService;
     };
+
+  var locSuccessCallback = function(lat, lng) {
+	var newWorld = org.plt.world.config.onMove(org.plt.WorldKernel.world, lat, lng);
+	org.plt.WorldKernel.changeWorld(newWorld);
+  };
  
-    var JavascriptLocationService = { 
+    var JavascriptLocationService = {
+	var watchId;
   startService : function() {
-      // fill me in.
+      watchId = Geolocation.watchPosition(locSuccessCallback, function() {}, {});
   },
   shutdownService : function() {
-      // fill me in.
+      Geolocation.clearWatch(watchId);
   },
  
   addLocationListener : function(listener) {
       // fill me in.
  
-  }
+  },
     };
  
+  var tiltSuccessCallback = function(accel) {
+	//TODO Compute pitch, roll, and azimuth from accel vector
+  };
+
     var JavascriptTiltService = { 
   startService : function() {
       // fill me in.
