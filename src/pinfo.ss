@@ -8,20 +8,22 @@
 
 
 
-;; pinfo (program-info) captures the information we get from analyzing 
-;; the program.
+;; pinfo (program-info) is the "world" structure for the compilers; 
+;; it captures the information we get from analyzing and compiling
+;; the program, and also maintains some auxillary structures.
 (define-struct pinfo (env                    ; env
                       modules                ; (listof module-binding) 
                       used-bindings-hash     ; (hashof symbol binding)
+                      gensym-counter         ; number
                       ))
 
 ;; pinfo
 (define empty-pinfo
-  (make-pinfo empty-env empty (make-immutable-hasheq empty)))
+  (make-pinfo empty-env empty (make-immutable-hasheq empty) 0))
 
 ;; get-base-pinfo: pinfo
 (define (get-base-pinfo _)
-  (make-pinfo toplevel-env empty (make-immutable-hasheq empty)))
+  (make-pinfo toplevel-env empty (make-immutable-hasheq empty) 0))
 
 
 
@@ -36,14 +38,16 @@
   (make-pinfo
    an-env
    (pinfo-modules a-pinfo)
-   (pinfo-used-bindings-hash a-pinfo)))
+   (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-gensym-counter a-pinfo)))
 
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
    (env-extend (pinfo-env a-pinfo) a-binding)
    (pinfo-modules a-pinfo)
-   (pinfo-used-bindings-hash a-pinfo)))
+   (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-gensym-counter a-pinfo)))
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
 (define (pinfo-accumulate-bindings bindings a-pinfo)
@@ -55,7 +59,8 @@
 (define (pinfo-accumulate-module a-module a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (cons a-module (pinfo-modules a-pinfo))
-              (pinfo-used-bindings-hash a-pinfo)))
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)))
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
 (define (pinfo-accumulate-binding-use a-binding a-pinfo)
@@ -63,7 +68,8 @@
               (pinfo-modules a-pinfo)
               (hash-set (pinfo-used-bindings-hash a-pinfo)
                         (binding-id a-binding)
-                        a-binding)))
+                        a-binding)
+              (pinfo-gensym-counter a-pinfo)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -611,7 +617,8 @@
 
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
-                                 [used-bindings-hash hash?])]
+                                 [used-bindings-hash hash?]
+                                 [gensym-counter number?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (any/c . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
