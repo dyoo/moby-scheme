@@ -1920,8 +1920,11 @@ org.plt = org.plt || {};
 	org.plt.WorldKernel.changeWorld(newWorld);
   };
  
+
+  var locationListeners = [];
+  var watchId;
     var JavascriptLocationService = {
-	var watchId;
+
   startService : function() {
       watchId = Geolocation.watchPosition(locSuccessCallback, function() {}, {});
   },
@@ -1929,10 +1932,11 @@ org.plt = org.plt || {};
       Geolocation.clearWatch(watchId);
   },
  
-  addLocationListener : function(listener) {
-      // fill me in.
- 
-  },
+  addLocationChangeListener : function(listener) {
+	    // When the location changes, notify the listeners
+	    // by calling them with the updated lat/long values.
+	    locationListeners.push(listener);
+  } 
     };
  
   var tiltSuccessCallback = function(accel) {
