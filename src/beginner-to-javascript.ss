@@ -182,18 +182,21 @@
 ;; initializer at the toplevel.
 (define (variable-definition->javascript-strings id body env a-pinfo)
   (local [(define munged-id (identifier->munged-java-identifier id))
-          (define new-env (env-extend env (make-binding:constant id 
-                                                                 (symbol->string munged-id)
-                                                                 empty)))]
+          (define new-env (env-extend env 
+                                      (make-binding:constant 
+                                       id 
+                                       (symbol->string munged-id)
+                                       empty)))
+          (define str+p (expression->javascript-string body new-env a-pinfo))]
     (list (string-append "var "
                          (symbol->string munged-id)
                          "; ")
 
           (string-append (symbol->string munged-id)
                          " = "
-                         (expression->javascript-string body new-env a-pinfo)
+                         (first str+p)
                          ";")
-          a-pinfo)))
+          (second str+p))))
 
 
 
@@ -404,8 +407,9 @@
             (foldl (lambda (e ss+p)
                      (local [(define new-string+p
                                (expression->javascript-string e env (second ss+p)))]
-                       (list (cons new-string+p (first ss+p))
-                             (second ss+p))))
+                       (list (cons (first new-string+p) 
+                                   (first ss+p))
+                             (second new-string+p))))
                    (list empty a-pinfo)
                    expressions))]
     (list (reverse (first strings/rev+pinfo))
