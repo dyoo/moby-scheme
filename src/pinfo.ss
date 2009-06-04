@@ -17,12 +17,19 @@
                       gensym-counter         ; number
                       ))
 
-;; pinfo
+
+;; empty-pinfo: pinfo
+;; An empty pinfo that doesn't know any toplevel environment bindings.
 (define empty-pinfo
   (make-pinfo empty-env empty (make-immutable-hasheq empty) 0))
 
-;; get-base-pinfo: pinfo
-(define (get-base-pinfo _)
+
+
+;; get-base-pinfo: pinfo symbol -> pinfo
+;; Returns a pinfo that knows the base definitions.
+(define (get-base-pinfo language)
+  ;; FIXME: currently ignores the language.  We should change this to
+  ;; support different language levels.
   (make-pinfo toplevel-env empty (make-immutable-hasheq empty) 0))
 
 
@@ -33,7 +40,9 @@
   (hash-map (pinfo-used-bindings-hash a-pinfo)
             (lambda (k v) v)))
 
+
 ;; pinfo-update-env: pinfo env -> pinfo
+;; Updates the env of a pinfo.
 (define (pinfo-update-env a-pinfo an-env)
   (make-pinfo
    an-env
@@ -41,7 +50,9 @@
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)))
 
+
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
+;; Adds a new binding to a pinfo's set.
 (define (pinfo-accumulate-binding a-binding a-pinfo)
   (make-pinfo
    (env-extend (pinfo-env a-pinfo) a-binding)
@@ -49,20 +60,26 @@
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)))
 
+
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
+;; Adds a list of bindings to the pinfo's set.
 (define (pinfo-accumulate-bindings bindings a-pinfo)
   (foldl pinfo-accumulate-binding
          a-pinfo
          bindings))
 
+
 ;; pinfo-accumulate-module: module-binding pinfo -> pinfo
+;; Adds a module to the pinfo's set.
 (define (pinfo-accumulate-module a-module a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (cons a-module (pinfo-modules a-pinfo))
               (pinfo-used-bindings-hash a-pinfo)
               (pinfo-gensym-counter a-pinfo)))
 
+
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
+;; Adds a binding's use to a pinfo's set.
 (define (pinfo-accumulate-binding-use a-binding a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
@@ -93,6 +110,8 @@
 ;; program-analyze-collect-definitions: program pinfo -> pinfo
 ;; Collects the definitions either imported or defined by this program.
 (define (program-analyze-collect-definitions a-program pinfo)
+  ;; FIXME: this does not yet say anything if a definition is introduced twice
+  ;; in the same lexical scope.  We must do this error check!
   (cond [(empty? a-program)
          pinfo]
         [else
@@ -111,6 +130,7 @@
 
 
 ;; program-analyze-uses: program pinfo -> pinfo
+;; Collects the uses of bindings that this program uses.
 (define (program-analyze-uses a-program pinfo)
   (cond [(empty? a-program)
          pinfo]
@@ -129,7 +149,8 @@
            (program-analyze-uses (rest a-program)
                                  updated-pinfo))]))
 
-
+;; bf: symbol path number boolean string -> binding:function
+;; Helper function.
 (define (bf name module-path arity vararity? java-string)
   (make-binding:function name module-path arity vararity? java-string empty false))
 
@@ -165,11 +186,9 @@
 
 
 
-
-
-
-
 ;; extend-env/struct-defns: env symbol (listof symbol) -> env
+;; Extends the environment by adding bindings for those identifiers introduced
+;; by a structure definition.
 (define (extend-env/struct-defns an-env id fields)
   (local [(define constructor-id 
             (string->symbol (string-append "make-" (symbol->string id))))
@@ -203,14 +222,17 @@
 
 
 ;; definition-analyze-uses: definition program-info -> program-info
-;; Collects the used names.
+;; Collects the used names in a definition.
 (define (definition-analyze-uses a-definition pinfo)
   (case-analyze-definition a-definition
                            (lambda (id args body)
+                             ;; The body of a function may introduce a use.
                              (function-definition-analyze-uses id args body pinfo))
                            (lambda (id expr)
+                             ;; A regular definition may introduce a use.
                              (expression-analyze-uses expr pinfo (pinfo-env pinfo)))
                            (lambda (id fields)
+                             ;; Structures don't introduce any uses.
                              pinfo)))
 
 
