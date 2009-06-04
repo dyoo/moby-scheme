@@ -31,6 +31,15 @@ org.plt.WorldKernel = {};
     }
 
 
+    // updateWorld: (world -> world) -> void
+    // Public function: update the world, given the old state of the
+    // world.
+    org.plt.WorldKernel.updateWorld = function(updater) {
+	var newWorld = updater(world);
+	changeWorld(newWorld);
+    }
+
+
     // notifyWorldListeners: -> void
     // Tells all of the world listeners that the world has changed.
     function notifyWorldListeners() {

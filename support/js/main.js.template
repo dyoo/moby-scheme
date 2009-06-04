@@ -4,6 +4,12 @@ var main = {};
 (function() {
 
 var listener = {};
+listener.onOrientationChange = function(azimuth, pitch, roll) {
+    org.plt.WorldKernel.updateWorld(
+        function(w) {
+            return org.plt.world.config.onTilt(w, azimuth, pitch, roll);
+        });    
+};
 
 main.startup = function() {
 
