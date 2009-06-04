@@ -40,29 +40,32 @@
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
 
 (define (program->compiled-program program)
-  (program->compiled-program/pinfo program (get-base-pinfo 'js)))
+  (program->compiled-program/pinfo program 
+                                   (get-base-pinfo 'htdp-intermediate-lambda)))
 
 
 ;; program->compiled-program/pinfo: program pinfo -> compiled-program
 (define (program->compiled-program/pinfo program input-pinfo)
-  (local [(define a-pinfo (program-analyze/pinfo program input-pinfo))
-          (define toplevel-env (pinfo-env a-pinfo))
+  (local [(define pinfo-1+gensym (pinfo-gensym input-pinfo 'toplevel-expression-show))
 
-          (define toplevel-expression-show (gensym 'toplevel-expression-show))
+
+          (define toplevel-expression-show (second pinfo-1+gensym))
+          (define a-pinfo (program-analyze/pinfo program (first pinfo-1+gensym)))
+          (define toplevel-env (pinfo-env a-pinfo))
           
-          (define (loop program defns tops)
-            
+          (define (loop program defns tops a-pinfo)
             
             (cond [(empty? program)
                    (make-compiled-program defns 
                                           (string-append "(function (" 
                                                          (symbol->string
-                                                          (identifier->munged-java-identifier toplevel-expression-show))
+                                                          (identifier->munged-java-identifier
+                                                           toplevel-expression-show))
                                                          ") { " tops " })") 
                                           a-pinfo)]
                   [else
                    (cond [(defn? (first program))
-                          (local [(define defn-string+expr-string
+                          (local [(define defn-string+expr-string+pinfo
                                     (definition->javascript-strings 
                                       (first program) 
                                       toplevel-env
@@ -71,48 +74,58 @@
                             (loop (rest program)
                                   (string-append defns
                                                  "\n"
-                                                 (first defn-string+expr-string))
+                                                 (first defn-string+expr-string+pinfo))
                                   (string-append tops
                                                  "\n"
-                                                 (second defn-string+expr-string))))]
+                                                 (second defn-string+expr-string+pinfo))
+                                  (third defn-string+expr-string+pinfo)))]
                          
                          [(test-case? (first program))
                           (loop (rest program)
                                 (string-append defns
                                                "\n"
                                                "// Test case erased\n")
-                                tops)]
+                                tops
+                                a-pinfo)]
                          
                          [(library-require? (first program))
                           (loop (rest program)
                                 (string-append defns
                                                "\n"
                                                "// Module require erased\n")
-                                tops)] 
+                                tops
+                                a-pinfo)] 
                          
                          [(expression? (first program))
-                          (loop (rest program)
-                                defns
-                                (string-append tops
-                                               "\n"
-                                               ;; NOTE: we must do something special
-                                               ;; for toplevel expressions so the user
-                                               ;; can see the values.  The toplevel expression is evaluated and its
-                                               ;; value passed to the toplevel-expression-show function.
-                                               (symbol->string (identifier->munged-java-identifier toplevel-expression-show))
-                                               "("
-                                               (expression->javascript-string 
+                          (local [(define expression-string+pinfo
+                                    (expression->javascript-string 
                                                 (first program) 
                                                 toplevel-env
-                                                a-pinfo)
-                                               ");"))])]))]
+                                                a-pinfo))]
+                            
+                            (loop (rest program)
+                                  defns
+                                  (string-append tops
+                                                 "\n"
+                                                 ;; NOTE: we must do something special
+                                                 ;; for toplevel expressions so the user
+                                                 ;; can see the values.  The toplevel expression is 
+                                                 ;; evaluated and its value passed to the
+                                                 ;; toplevel-expression-show function.
+                                                 (symbol->string 
+                                                  (identifier->munged-java-identifier
+                                                   toplevel-expression-show))
+                                                 "("
+                                                 (first expression-string+pinfo)
+                                                 ");")
+                                  (second expression-string+pinfo)))])]))]
     
-    (loop program "" "")))
+    (loop program "" "" a-pinfo)))
 
 
 
 
-;; definition->java-string: definition env pinfo -> (list string string)
+;; definition->java-string: definition env pinfo -> (list string string pinfo)
 ;; Consumes a definition (define or define-struct) and produces two strings.
 ;; The first maps a definitions string.
 ;; The second value is the expression that will be evaluated at the toplevel.
@@ -122,17 +135,16 @@
   (case-analyze-definition 
    defn
    (lambda (fun args body)
-     (list (function-definition->java-string fun args body env a-pinfo)
-           ""))
+     (function-definition->java-string fun args body env a-pinfo))
    (lambda (id body)
      (variable-definition->javascript-strings id body env a-pinfo))
    (lambda (id fields)
-     (list (struct-definition->javascript-string id fields env a-pinfo)
-           ""))))
+     (struct-definition->javascript-string id fields env a-pinfo))))
+
      
 
 
-;; function-definition->java-string: symbol (listof symbol) expr env pinfo -> string
+;; function-definition->java-string: symbol (listof symbol) expr env pinfo -> (list string string pinfo)
 ;; Converts the function definition into a static function declaration whose
 ;; return value is an object.
 (define (function-definition->java-string fun args body env a-pinfo)
@@ -151,17 +163,21 @@
                                                             empty)))
                    new-env
                    args))]
-    (string-append "function " (symbol->string munged-fun-id) "("
-                   (string-join (map (lambda (arg-id)
-                                       (symbol->string arg-id))
-                                     munged-arg-ids)
-                                ", ")
-                   ") { return "
-                   (expression->javascript-string body env-with-arg-bindings a-pinfo)
-                   "; }")))
+    (list 
+     (string-append "function " (symbol->string munged-fun-id) "("
+                    (string-join (map (lambda (arg-id)
+                                        (symbol->string arg-id))
+                                      munged-arg-ids)
+                                 ", ")
+                    ") { return "
+                    (expression->javascript-string body env-with-arg-bindings a-pinfo)
+                    "; }"
+                    )
+     ""
+     a-pinfo)))
 
 
-;; variable-definition->javascript-strings: symbol expr env pinfo -> (list string string)
+;; variable-definition->javascript-strings: symbol expr env pinfo -> (list string string pinfo)
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
 (define (variable-definition->javascript-strings id body env a-pinfo)
@@ -176,14 +192,15 @@
           (string-append (symbol->string munged-id)
                          " = "
                          (expression->javascript-string body new-env a-pinfo)
-                         ";"))))
+                         ";")
+          a-pinfo)))
 
 
 
 
 
 
-;; struct-definition->javascript-string: symbol (listof symbol) env pinfo -> string
+;; struct-definition->javascript-string: symbol (listof symbol) env pinfo -> (list string string pinfo)
 (define (struct-definition->javascript-string id fields env a-pinfo)
   (local [
           ;; field->accessor-name: symbol symbol -> symbol
@@ -302,7 +319,11 @@
 
 
 
-;; expression->java-string: expr env pinfo -> string
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;; expression->java-string: expr env pinfo -> (list string pinfo)
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (expression->javascript-string expr env a-pinfo)
@@ -342,23 +363,30 @@
     
     ;; Numbers
     [(number? expr)
-     (number->javascript-string expr)]
+     (list
+      (number->javascript-string expr)
+      a-pinfo)]
     
     ;; Strings
     [(string? expr)
-     (string->javascript-string expr)]
-    
+     (list (string->javascript-string expr)
+           a-pinfo)]
+
     ;; Characters
     [(char? expr)
-     (char->javascript-string expr)]
+     (list (char->javascript-string expr)
+           a-pinfo)]
     
     ;; Identifiers
     [(symbol? expr)
-     (identifier-expression->javascript-string expr env a-pinfo)]
+     (list
+      (identifier-expression->javascript-string expr env)
+      a-pinfo)]
     
     ;; Quoted datums
     [(list-begins-with? expr 'quote)
-     (quote-expression->javascript-string (second expr))]
+     (list (quote-expression->javascript-string (second expr))
+           a-pinfo)]
      
     ;; Function call/primitive operation call
     [(pair? expr)
@@ -367,16 +395,40 @@
        (application-expression->javascript-string operator operands env a-pinfo))]))
 
 
-(define (if-expression->javascript-string test consequent alternative env a-pinfo)
-  (string-append "((" (expression->javascript-string test env a-pinfo) ") ? ("
-                 (expression->javascript-string consequent env a-pinfo)
-                 ") : ("
-                 (expression->javascript-string alternative env a-pinfo)
-                 "))"))
+
+;; expressions->javascript-strings: (listof expr) env pinfo -> (list (listof string) pinfo)
+;; Computes the string representation of all of the expressions, and returns those
+;; as well as the updated pinfo.
+(define (expressions->javascript-strings expressions env a-pinfo)
+  (local [(define strings/rev+pinfo
+            (foldl (lambda (e ss+p)
+                     (local [(define new-string+p
+                               (expression->javascript-string e env (second ss+p)))]
+                       (list (cons new-string+p (first ss+p))
+                             (second ss+p))))
+                   (list empty a-pinfo)
+                   expressions))]
+    (list (reverse (first strings/rev+pinfo))
+          (second strings/rev+pinfo))))
+
+
+
+;; if-expression->javascript-string: expr expr expr env pinfo -> (list string pinfo)
+(define (if-expression->javascript-string test consequent alternative env a-pinfo)  
+  (local [(define es+p 
+            (expressions->javascript-strings (list test consequent alternative)
+                                             env 
+                                             a-pinfo))
+          (define s1 (first (first es+p)))
+          (define s2 (second (first es+p)))
+          (define s3 (third (first es+p)))]
+    (list
+     (string-append "(" s1 " ?\n " s2 " :\n " s3 ")")
+     (second es+p))))
+
        
 
-
-
+;; quote-expression->javascript-string: expr -> string
 (define (quote-expression->javascript-string expr)
   (cond
     [(empty? expr)
@@ -384,23 +436,16 @@
     
     [(pair? expr)
      (string-append "(org.plt.Kernel.list(["
-                    (string-join 
-                     (map quote-expression->javascript-string expr)
-                     ",")
-                    "]))")]
+                          (string-join 
+                           (map quote-expression->javascript-string expr)
+                           ",")
+                          "]))")]
     
-    #;[(pair? expr)
-     (string-append "(org.plt.Kernel.cons("
-                    (quote-expression->javascript-string (first expr))
-                    ", "
-                    (quote-expression->javascript-string (rest expr))
-                    "))")]
-
     [(symbol? expr)
      (string-append "(org.plt.types.Symbol.makeInstance(\""
                     (symbol->string expr)
                     "\"))")]
-
+    
     ;; Numbers
     [(number? expr)
      (number->javascript-string expr)]
@@ -418,43 +463,45 @@
             (format "I don't know how to deal with ~s" expr))]))
 
 
+
+;; boolean-chain->javascript-string: string (listof expr) env pinfo -> (list string pinfo)
 (define (boolean-chain->javascript-string joiner exprs env a-pinfo)
-  (string-append "("
-                 (string-join (map (lambda (e)
-                                     (string-append "("
-                                                    (expression->javascript-string e env a-pinfo)
-                                                    ")"))
-                                   exprs) 
-                              joiner)
-                 ")"))
+  (local [(define strings+pinfo
+            (expressions->javascript-strings exprs env a-pinfo))]
+    (list (string-append "(" (string-join (first strings+pinfo) joiner) ")")
+          (second strings+pinfo))))
 
 
 
-;; local-expression->javascript-string: (listof defn) expr env pinfo -> string
+;; local-expression->javascript-string: (listof defn) expr env pinfo -> (list string pinfo)
 (define (local-expression->javascript-string defns body env a-pinfo)
   (local [(define inner-compiled-program 
             (program->compiled-program/pinfo defns
-                                        (pinfo-update-env a-pinfo env)))
-          (define inner-body-string
+                                             (pinfo-update-env a-pinfo env)))
+          (define inner-body-string+pinfo
             (expression->javascript-string 
              body
              (pinfo-env (compiled-program-pinfo inner-compiled-program))
-             (compiled-program-pinfo inner-compiled-program)))]
+             (compiled-program-pinfo inner-compiled-program)))
+          
+          (define inner-body-string (first inner-body-string+pinfo))
+          (define updated-pinfo (second inner-body-string+pinfo))]
+    (list (string-append "((function() { \n"
+                         (compiled-program-defns inner-compiled-program)
+                         "\n"
+                         ;; Apply the toplevel expressions with the identity function.
+                         (compiled-program-toplevel-exprs inner-compiled-program) "(org.plt.Kernel.identity)"
+                         "\n"
+                         "return " inner-body-string ";
+              })())")
+          (pinfo-update-env updated-pinfo (pinfo-env a-pinfo)))))
 
-    (string-append "(function() { \n"
-                   (compiled-program-defns inner-compiled-program)
-                   "\n"
-                   "(" (compiled-program-toplevel-exprs inner-compiled-program) ")(org.plt.Kernel.identity)"
-                   "\n"
-                   "return " inner-body-string ";
-              })()")))
 
 
-
-;; application-expression->java-string: symbol (listof expr) env pinfo -> string
+;; application-expression->java-string: symbol (listof expr) env pinfo -> (list string pinfo)
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string operator operands env a-pinfo)
-  (cond     
+  (cond 
     ;; Special case: when the operator is named
     [(and (symbol? operator)
           (not (env-contains? env operator)))
@@ -463,18 +510,20 @@
     
     [(symbol? operator)
      (local [(define operator-binding (env-lookup env operator))
-             (define operand-strings 
-               (map (lambda (e) 
-                      (expression->javascript-string e env a-pinfo))
-                    operands))]
+             (define operand-strings+pinfo
+               (expressions->javascript-strings operands env a-pinfo))
+             
+             (define operand-strings (first operand-strings+pinfo))
+             (define updated-pinfo (second operand-strings+pinfo))]
        (cond
          
          [(binding:constant? operator-binding)
-          (string-append "(("
-                         (binding:constant-java-string operator-binding)
-                         ").apply(null, [["
-                         (string-join operand-strings ", ")
-                         "]]))")]
+          (list (string-append "(("
+                               (binding:constant-java-string operator-binding)
+                               ").apply(null, [["
+                               (string-join operand-strings ", ")
+                               "]]))")
+                updated-pinfo)]
          
          [(binding:function? operator-binding)
           (cond
@@ -486,44 +535,54 @@
                             operands))]
             [(binding:function-var-arity? operator-binding)
              (cond [(> (binding:function-min-arity operator-binding) 0)
-                    (string-append (binding:function-java-string operator-binding)
-                                   "("
-                                   (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
-                                   ", ["
-                                   (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
-                                                ",")
-                                   "])")]
+                    (list 
+                     (string-append (binding:function-java-string operator-binding)
+                                    "("
+                                    (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
+                                    ", ["
+                                    (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
+                                                 ",")
+                                    "])")
+                     updated-pinfo)]
                    [else
-                    (string-append (binding:function-java-string operator-binding) 
-                                   "(["
-                                   (string-join operand-strings ",")
-                                   "])")])]
+                    (list
+                     (string-append (binding:function-java-string operator-binding) 
+                                    "(["
+                                    (string-join operand-strings ",")
+                                    "])")
+                     updated-pinfo)])]
             [else
-             (string-append "("
-                            (binding:function-java-string operator-binding)
-                            "("
-                            (string-join operand-strings ",")
-                            "))")])]))]
+             (list 
+              (string-append "("
+                             (binding:function-java-string operator-binding)
+                             "("
+                             (string-join operand-strings ",")
+                             "))")
+              updated-pinfo)])]))]
     
     ;; General application
     [else
-     (local [(define operator-string (expression->javascript-string operator env a-pinfo))
-             (define operand-strings 
-               (map (lambda (e) 
-                      (expression->javascript-string e env a-pinfo))
-                    operands))]
-       (string-append "(("
-                      operator-string
-                      ").apply(null, [["
-                      (string-join operand-strings ", ")
-                      "]]))"))]))
+     (local [(define expression-strings+pinfo
+               (expressions->javascript-strings (cons operator operands)
+                                                env
+                                                a-pinfo))
+             (define operator-string (first (first expression-strings+pinfo)))
+             (define operand-strings (rest (first expression-strings+pinfo)))
+             (define updated-pinfo (second expression-strings+pinfo))]
+       (list
+        (string-append "(("
+                       operator-string
+                       ").apply(null, [["
+                       (string-join operand-strings ", ")
+                       "]]))")
+        updated-pinfo))]))
 
 
 
-;; identifier-expression->javascript-string: symbol env pinfo -> string
+;; identifier-expression->javascript-string: symbol env -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
-(define (identifier-expression->javascript-string an-id an-env a-pinfo)
+(define (identifier-expression->javascript-string an-id an-env)
   (cond
     [(not (env-contains? an-env an-id))
      (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
@@ -552,54 +611,63 @@
                             ");
                  })")])]))]))
 
-;; mapi: (X number -> Y) (listof X) -> (listof Y)
-(define (mapi f elts)
-  (local [(define (loop i elts)
-            (cond
-              [(empty? elts)
-               empty]
-              [else
-               (cons (f (first elts) i)
-                     (loop (add1 i) (rest elts)))]))]
-    (loop 0 elts)))
-
-
-
-(define (make-args-symbol context)
-  (gensym 'args))
 
 
 ;; lambda-expression->javascript-string (listof symbol) expression env pinfo -> string
 (define (lambda-expression->javascript-string args body env a-pinfo)
-  (local [(define munged-arg-ids
+  (local [;; mapi: (X number -> Y) (listof X) -> (listof Y)
+          (define (mapi f elts)
+            (local [(define (loop i elts)
+                      (cond
+                        [(empty? elts)
+                         empty]
+                        [else
+                         (cons (f (first elts) i)
+                               (loop (add1 i) (rest elts)))]))]
+              (loop 0 elts)))
+          
+          
+          (define munged-arg-ids
             (map identifier->munged-java-identifier args))
           
           (define new-env
             (foldl (lambda (arg-id env) 
-                     (env-extend env (make-binding:constant arg-id 
-                                                            (symbol->string
-                                                             (identifier->munged-java-identifier arg-id))
-                                                            empty)))
+                     (env-extend env 
+                                 (make-binding:constant 
+                                  arg-id 
+                                  (symbol->string
+                                   (identifier->munged-java-identifier arg-id))
+                                  empty)))
                    env
                    args))
           
-          (define args-sym
-            (make-args-symbol 'lambda-expression->javascript-string))]
-    (string-append "(function("
-                   (symbol->string args-sym)
-                   ") { "
-                   (string-join (mapi (lambda (arg-id i)
-                                        (string-append "var "
-                                                       (symbol->string arg-id)
-                                                       " = "
-                                                       (symbol->string args-sym)
-                                                       "[" (number->string i) "];"))
-                                      munged-arg-ids)
-                                "\n")
-                   "
+          (define pinfo+args-sym
+            (pinfo-gensym a-pinfo 'args))          
+          
+          (define a-pinfo-2 (first pinfo+args-sym))
+          (define args-sym (second pinfo+args-sym))
+          
+          (define body-string+p
+            (expression->javascript-string body new-env a-pinfo-2))
+          (define body-string (first body-string+p))
+          (define updated-pinfo (second body-string+p))]
+    (list
+     (string-append "(function("
+                    (symbol->string args-sym)
+                    ") { "
+                    (string-join (mapi (lambda (arg-id i)
+                                         (string-append "var "
+                                                        (symbol->string arg-id)
+                                                        " = "
+                                                        (symbol->string args-sym)
+                                                        "[" (number->string i) "];"))
+                                       munged-arg-ids)
+                                 "\n")
+                    "
                              return "
-                   (expression->javascript-string body new-env a-pinfo)
-                   "; })")))
+                    body-string
+                   "; })")
+     updated-pinfo)))
 
 
 
@@ -613,7 +681,8 @@
                         ", 1))")]
         [(and (inexact? a-num)
               (real? a-num))
-         (string-append "(org.plt.types.FloatPoint.makeInstance(\"" (number->string a-num)"\"))")]
+         (string-append "(org.plt.types.FloatPoint.makeInstance(\"" 
+                        (number->string a-num)"\"))")]
         [(rational? a-num)
          (string-append "(org.plt.types.Rational.makeInstance("
                         (number->string (numerator a-num))
@@ -631,11 +700,14 @@
 
 
 
+;; char->javascript-string: char -> string
 (define (char->javascript-string a-char)
   (string-append "(org.plt.types.Char.makeInstance(String.fromCharCode("
                  (number->string (char->integer a-char))
                  ")))"))
 
+
+;; string->javascript-string: string -> string
 (define (string->javascript-string a-str)
   ;; FIXME: escape all character codes!
   (local [(define (escape-char-code a-char)
