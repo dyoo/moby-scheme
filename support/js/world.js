@@ -445,6 +445,7 @@ org.plt.WorldKernel = {};
 	onTick: false,
 	onKey: false,
 	onTilt: false,
+	onLocationChange : false,
 	stopWhen: false
     };
 
@@ -483,6 +484,12 @@ org.plt.WorldKernel = {};
 	    org.plt.world.config.onKey = handler;    
 	};
     };
+
+    org.plt.world.config.Kernel.onLocationChange = function(handler) {
+	return function() {
+	    org.plt.world.config.onLocationChange = handler;    
+	};
+    }
 
 
 })();

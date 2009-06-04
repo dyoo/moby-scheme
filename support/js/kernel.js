@@ -1913,6 +1913,8 @@ org.plt = org.plt || {};
   return JavascriptTiltService;
     };
  
+
+    var locationListeners = [];
     var JavascriptLocationService = { 
   startService : function() {
       // fill me in.
@@ -1921,10 +1923,11 @@ org.plt = org.plt || {};
       // fill me in.
   },
  
-  addLocationListener : function(listener) {
-      // fill me in.
- 
-  }
+  addLocationChangeListener : function(listener) {
+	    // When the location changes, notify the listeners
+	    // by calling them with the updated lat/long values.
+	    locationListeners.push(listener);
+  } 
     };
  
     var JavascriptTiltService = { 
