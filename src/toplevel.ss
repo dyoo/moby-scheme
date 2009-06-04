@@ -16,7 +16,7 @@
                      (false "org.plt.types.Logic.FALSE")
                      (eof "org.plt.types.EofObject.EOF")
                      (pi "org.plt.Kernel.pi")
-                     (e "org.plt.Kernel.pi"))))
+                     (e "org.plt.Kernel.e"))))
     
           ;; Registers a new toplevel function, munging the name
           (define (r env a-name arity vararity?)
@@ -252,7 +252,6 @@
                      (make-immutable-hasheq 1 "org.plt.Kernel._kernelMakeImmutableHashEq")
                      (hash-map 2 "org.plt.Kernel._kernelHashMap")
                      (hash? 1 "org.plt.Kernel._isHash")
-                     (gensym 1 "org.plt.Kernel._gensym")
                      (path->string 1 "org.plt.Kernel._pathToString")
                      (normalize-path 1 "org.plt.Kernel._normalizePath")
                      (resolve-module-path 2 "org.plt.Kernel._resolveModulePath")

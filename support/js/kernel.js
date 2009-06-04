@@ -875,11 +875,6 @@ org.plt = org.plt || {};
 	return path;
     };
 
-    var gensymCounter = 0;
-    org.plt.Kernel._gensym = function(label) {
-	gensymCounter++;
-	return org.plt.types.Symbol.makeInstance(label.toString() + gensymCounter);
-    };
 
     org.plt.Kernel.map = function(f, arglists) {
 	var results = org.plt.types.Empty.EMPTY;
