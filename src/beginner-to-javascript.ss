@@ -162,19 +162,22 @@
                                                              (identifier->munged-java-identifier arg-id))
                                                             empty)))
                    new-env
-                   args))]
+                   args))
+          
+          (define body-string+pinfo 
+            (expression->javascript-string body env-with-arg-bindings a-pinfo))
+          (define body-string (first body-string+pinfo))
+          (define updated-pinfo (second body-string+pinfo))]
     (list 
      (string-append "function " (symbol->string munged-fun-id) "("
                     (string-join (map (lambda (arg-id)
                                         (symbol->string arg-id))
                                       munged-arg-ids)
                                  ", ")
-                    ") { return "
-                    (expression->javascript-string body env-with-arg-bindings a-pinfo)
-                    "; }"
+                    ") { return " body-string "; }"
                     )
      ""
-     a-pinfo)))
+     updated-pinfo)))
 
 
 ;; variable-definition->javascript-strings: symbol expr env pinfo -> (list string string pinfo)
@@ -213,113 +216,124 @@
              (string-append (symbol->string struct-name)
                             "-"
                             (symbol->string field-name))))
-          ]
+                    
+          (define new-env-1 (env-extend env
+                                        (make-binding:constant
+                                         'this
+                                         (symbol->string
+                                          (identifier->munged-java-identifier 'this))
+                                         empty)))
+          (define new-env-2 (env-extend new-env-1
+                                        (make-binding:constant
+                                         'other
+                                         (symbol->string
+                                          (identifier->munged-java-identifier 'other))
+                                         empty)))
+          
+          (define equality-expression
+            (foldl (lambda (a-field acc)
+                     (local [(define acc-id (field->accessor-name id a-field))]
+                       (list 'and 
+                             (list 'equal? (list acc-id 'this) (list acc-id 'other))
+                             acc)))
+                   'true
+                   fields))
+
+          (define equality-expression-string+pinfo
+            (expression->javascript-string equality-expression
+                                                        new-env-2
+                                                        a-pinfo))
+          
+          (define equality-expression-string (first equality-expression-string+pinfo))
+          (define updated-pinfo (second equality-expression-string+pinfo))]
     
-    
-    (string-append
-     
-     ;; default constructor
-     (string-append "function "
-                    (symbol->string (identifier->munged-java-identifier id))
-                    "("
-                    (string-join (map (lambda (i) (symbol->string
-                                                   (identifier->munged-java-identifier i)))
-                                      fields)
-                                 ",")
-                    ") { "
-                    (string-join (map (lambda (i) (string-append "this."
-                                                          (symbol->string 
-                                                           (identifier->munged-java-identifier i))
-                                                          " = "
-                                                          (symbol->string 
-                                                           (identifier->munged-java-identifier i))
-                                                          ";"))
-                               fields) 
-                          "\n")
-             
-                    " }
+    (list  (string-append
+            
+            ;; default constructor
+            (string-append "function "
+                           (symbol->string (identifier->munged-java-identifier id))
+                           "("
+                           (string-join (map (lambda (i) (symbol->string
+                                                          (identifier->munged-java-identifier i)))
+                                             fields)
+                                        ",")
+                           ") { "
+                           (string-join (map (lambda (i) (string-append "this."
+                                                                        (symbol->string 
+                                                                         (identifier->munged-java-identifier i))
+                                                                        " = "
+                                                                        (symbol->string 
+                                                                         (identifier->munged-java-identifier i))
+                                                                        ";"))
+                                             fields) 
+                                        "\n")
+                           
+                           " }
                     "
-                    (symbol->string (identifier->munged-java-identifier id))
-                    ".prototype = new org.plt.Kernel.Struct();"
-             )
-     "\n"
-     
-     ;; equality
-     (string-append (symbol->string (identifier->munged-java-identifier id))
-                    ".prototype.isEqual = function(other) {
+                           (symbol->string (identifier->munged-java-identifier id))
+                           ".prototype = new org.plt.Kernel.Struct();"
+                           )
+            "\n"
+            
+            ;; equality
+            (string-append (symbol->string (identifier->munged-java-identifier id))
+                           ".prototype.isEqual = function(other) {
               if (other instanceof " (symbol->string (identifier->munged-java-identifier id)) ") {
-                return " (expression->javascript-string (foldl (lambda (a-field acc)
-                                                                 (local [(define acc-id (field->accessor-name id a-field))]
-                                                                   (list 'and 
-                                                                         (list 'equal? (list acc-id 'this) (list acc-id 'other))
-                                                                         acc)))
-                                                               'true
-                                                               fields)
-                                                        (local [(define new-env-1 (env-extend env
-                                                                                              (make-binding:constant
-                                                                                               'this
-                                                                                               (symbol->string
-                                                                                                (identifier->munged-java-identifier 'this))
-                                                                                               empty)))
-                                                                (define new-env-2 (env-extend new-env-1
-                                                                                              (make-binding:constant
-                                                                                               'other
-                                                                                               (symbol->string
-                                                                                                (identifier->munged-java-identifier 'other))
-                                                                                               empty)))]
-                                                          new-env-2)
-                                                        a-pinfo) ";
+                return " equality-expression-string ";
               } else {
                 return false;
               }
            } ")
-     
-     "\n"
-     
-     ;; make-id
-     (string-append "function "
-                    (local [(define make-id (string->symbol 
-                                             (string-append "make-" (symbol->string id))))]
-                      (symbol->string (identifier->munged-java-identifier make-id)))
-                    "(" (string-join (build-list (length fields) (lambda (i) 
-                                                                   (string-append "id" (number->string i))))
-                                     ",")
-                    ") { return new "
-                    (symbol->string (identifier->munged-java-identifier id))
-                    "("
-                    (string-join (build-list (length fields) (lambda (i) 
-                                                               (string-append "id" (number->string i))))
-                                 ",")
-                    "); }")
-     
-     "\n"
-     
-     ;; accessors
-     (string-join 
-      (map (lambda (a-field)
-             (string-append "function "
-                            (local [(define acc-id (string->symbol
-                                                    (string-append (symbol->string id)
-                                                                   "-"
-                                                                   (symbol->string a-field))))]
-                              (symbol->string (identifier->munged-java-identifier acc-id)))
-                            "(obj) { return obj."
-                            (symbol->string (identifier->munged-java-identifier a-field))
-                            "; }"))
-           fields)
-      "\n")
-     
-     "\n"
-     
-     ;; structure predicate
-     (string-append "function "
-                    (symbol->string (identifier->munged-java-identifier (string->symbol (string-append (symbol->string id)
-                                                                                                       "?"))))
-                    "(obj) { 
+            
+            "\n"
+            
+            ;; make-id
+            (string-append "function "
+                           (local [(define make-id (string->symbol 
+                                                    (string-append "make-" (symbol->string id))))]
+                             (symbol->string (identifier->munged-java-identifier make-id)))
+                           "(" (string-join (build-list (length fields) (lambda (i) 
+                                                                          (string-append "id" (number->string i))))
+                                            ",")
+                           ") { return new "
+                           (symbol->string (identifier->munged-java-identifier id))
+                           "("
+                           (string-join (build-list (length fields) (lambda (i) 
+                                                                      (string-append "id" (number->string i))))
+                                        ",")
+                           "); }")
+            
+            "\n"
+            
+            ;; accessors
+            (string-join 
+             (map (lambda (a-field)
+                    (string-append "function "
+                                   (local [(define acc-id (string->symbol
+                                                           (string-append (symbol->string id)
+                                                                          "-"
+                                                                          (symbol->string a-field))))]
+                                     (symbol->string (identifier->munged-java-identifier acc-id)))
+                                   "(obj) { return obj."
+                                   (symbol->string (identifier->munged-java-identifier a-field))
+                                   "; }"))
+                  fields)
+             "\n")
+            
+            "\n"
+            
+            ;; structure predicate
+            (string-append "function "
+                           (symbol->string (identifier->munged-java-identifier (string->symbol (string-append (symbol->string id)
+                                                                                                              "?"))))
+                           "(obj) { 
               return obj instanceof "
-                    (symbol->string (identifier->munged-java-identifier id))
-                    "; }"))))
-
+                           (symbol->string (identifier->munged-java-identifier id))
+                           "; }"))
+           
+           "" ;; no introduced toplevel expressions
+           updated-pinfo)))
+  
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

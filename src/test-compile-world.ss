@@ -113,16 +113,17 @@
                     test-sms
                     test-kathi-finder
                     test-kathi-finder-single
-                    test-net
-                    test-get-ip-address
-                    test-parse-google-maps-places
-                    test-grocery-shopper
                     
-                    test-gui-world-hello-world
-                    test-gui-world-drop-down
-                    test-gui-world-text-field
-                    test-gui-world-box-group
-                    test-gui-world-checkbox
+                    ;; Commented out: uses deprecated gui-world
+                    #;test-net
+                    #;test-get-ip-address
+                    #;test-parse-google-maps-places
+                    #;test-grocery-shopper
+                    #;test-gui-world-hello-world
+                    #;test-gui-world-drop-down
+                    #;test-gui-world-text-field
+                    #;test-gui-world-box-group
+                    #;test-gui-world-checkbox
                     
                     test-cowabunga
                     test-flight-lander
