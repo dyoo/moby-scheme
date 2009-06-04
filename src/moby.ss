@@ -8,10 +8,10 @@
          scheme/cmdline
          scheme/path)
 
-;; Parameters.
+;; Parameters with their default values.
 (define name (make-parameter #f))
 (define dest-dir (make-parameter #f))
-(define app-compiler (make-parameter generate-android-application))
+(define app-compiler (make-parameter generate-javascript-application))
 
 
 
