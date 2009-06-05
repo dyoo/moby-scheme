@@ -15,6 +15,14 @@ org.plt.WorldKernel = {};
     }
 
 
+    // updateWorld: (world -> world) -> void
+    // Updates the state of the world by using the updater function.
+    org.plt.WorldKernel.updateWorld = function(updater) {
+	newWorld = updater(world);
+	changeWorld(newWorld);
+    };
+
+
     // changeWorld: world -> void
     // Changes the current world to newWorld.
     function changeWorld(newWorld) {
