@@ -1907,15 +1907,22 @@ org.plt = org.plt || {};
     JavascriptPlatform.getTiltService = function() {
   return JavascriptTiltService;
     };
+
+  var locSuccessCallback = function(lat, lng) {
+	var newWorld = org.plt.world.config.onMove(org.plt.WorldKernel.world, lat, lng);
+	org.plt.WorldKernel.changeWorld(newWorld);
+  };
  
 
-    var locationListeners = [];
-    var JavascriptLocationService = { 
+  var locationListeners = [];
+  var watchId;
+    var JavascriptLocationService = {
+
   startService : function() {
-      // fill me in.
+      watchId = Geolocation.watchPosition(locSuccessCallback, function() {}, {});
   },
   shutdownService : function() {
-      // fill me in.
+      Geolocation.clearWatch(watchId);
   },
  
   addLocationChangeListener : function(listener) {
@@ -1925,6 +1932,10 @@ org.plt = org.plt || {};
   } 
     };
  
+  var tiltSuccessCallback = function(accel) {
+	//TODO Compute pitch, roll, and azimuth from accel vector
+  };
+
     var JavascriptTiltService = { 
   startService : function() {
       // fill me in.
