@@ -40,9 +40,7 @@ org.plt = org.plt || {};
   
   struct_question_: function(thing) {
       return thing instanceof this.Struct;
-  },    tiltSuccessCallback = function(accel) {
-	
-    },
+  },
   
   number_question_ : function(x){
       return (x instanceof org.plt.types.Rational || 
