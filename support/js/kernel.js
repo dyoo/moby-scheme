@@ -1938,14 +1938,32 @@ org.plt = org.plt || {};
     var accelId;
     var orientId;
 
+    var accelSuccessCallback = function(accel) {
+	for ( var i = 0; i < accelListeners.length; i++ ) {
+		var listener = accelListeners[i];
+		listener.accelUpdate(accel.x, accel.y, accel.z);
+	}
+    };
+    
+    var orientSuccessCallback = function(orient) {
+	for ( var i = 0; i < orientListeners.length; i++ ) {
+		var listener = orientListeners[i];
+		listener.orientUpdate(orient.azimuth, orient.pitch, orient.roll);
+	}
+    };
+
   var JavascriptTiltService = {
     startService : function() {
-      accelId = Accelerometer.watchAcceleration(accelSuccessCallback, function() {}, {});
-      orientId = Accelerometer.watchOrientation(orientSuccessCallback, function() {}, {});
+      if (typeof Accelerometer != "undefined") {
+        accelId = navigator.accelerometer.watchAcceleration(accelSuccessCallback, function() {}, {});
+        orientId = navigator.accelerometer.watchOrientation(orientSuccessCallback, function() {}, {});
+      }
     },
     shutdownService : function() {
-      Accelerometer.clearWatch(accelId);
-      Accelerometer.clearWatch(orientId);
+      if (typeof Accelerometer != "undefined") {
+        navigator.accelerometer.clearWatch(accelId);
+        navigator.accelerometer.clearWatch(orientId);
+      }
     },
  
     addOrientationChangeListener : function(listener) {
@@ -1955,16 +1973,6 @@ org.plt = org.plt || {};
     addAccelerationChangeListener : function(listener) {
       // push a listener onto the acceleration listeners
       accelListeners.push(listener);
-    },
-    accelSuccessCallback = function(accel) {
-	for ( listener in accelListeners ) {
-		listener.accelUpdate(accel.x, accel.y, accel.z);
-	}
-    },
-    orientSuccessCallback = function(orient) {
-	for ( listener in orientListeners ) {
-		listener.orientUpdate(orient.azimuth, orient.pitch, orient.roll);
-	}
     }
   };
  

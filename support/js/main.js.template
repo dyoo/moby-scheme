@@ -4,23 +4,19 @@ var main = {};
 (function() {
 
 var listener = {};
-listener.onOrientationChange = function(azimuth, pitch, roll) {
-    org.plt.WorldKernel.updateWorld(
-        function(w) {
-            return org.plt.world.config.onTilt(w, azimuth, pitch, roll);
-        });    
-};
+
+var rat = org.plt.types.Rational.makeInstance;
 
 listener.orientUpdate = function(azimuth, pitch, roll) {
   org.plt.WorldKernel.updateWorld(function(w) {
-     return org.plt.WorldKernel.config.onOrientChange(w, azimuth, pitch, roll);
+     return org.plt.world.config.onTilt([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
   })
 };
 
 listener.accelUpdate = function(x, y, z) {
-  org.plt.WorldKernel.updateWorld(function(w) {
-    return org.plt.WorldKernel.config.onAccelChange(w, x, y, z);
-  })
+//  org.plt.WorldKernel.updateWorld(function(w) {
+//    return org.plt.world.config.onAccelChange([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
+//  })
 };
 
 main.startup = function() {
