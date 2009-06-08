@@ -454,6 +454,7 @@ org.plt.WorldKernel = {};
 	onTick: false,
 	onKey: false,
 	onTilt: false,
+	onAcceleration: false,
 	onLocationChange : false,
 	stopWhen: false
     };
@@ -478,8 +479,14 @@ org.plt.WorldKernel = {};
     org.plt.world.config.Kernel.onTilt = function(handler) {
 	return function() {
 	    org.plt.world.config.onTilt = handler;
-	}
-    }
+	};
+    };
+    
+    org.plt.world.config.Kernel.onAcceleration = function(handler) {
+	return function() {
+	    org.plt.world.config.onAcceleration = handler;
+	};
+    };
 
     org.plt.world.config.Kernel.stopWhen = function(handler) {
 	return function() {

@@ -512,24 +512,24 @@
   (local [(define module-path 
             (resolve-module-path '(lib "tilt.ss" "moby" "stub") false))
           
-          (define (bf name module-path arity vararity? java-string)
+          (define (bf name arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string
                                    (list PERMISSION:TILT)
                                    true))]
     (make-module-binding 'tilt
                          module-path
-                         (list (bf 'get-x-acceleration module-path 0 false 
+                         (list (bf 'get-x-acceleration 0 false 
                                    "org.plt.lib.Tilt.getXAcceleration")
-                               (bf 'get-y-acceleration module-path 0 false 
+                               (bf 'get-y-acceleration 0 false 
                                    "org.plt.lib.Tilt.getYAcceleration")
-                               (bf 'get-z-acceleration module-path 0 false 
+                               (bf 'get-z-acceleration 0 false 
                                    "org.plt.lib.Location.getZAcceleration")
                                
-                               (bf 'get-azimuth module-path 0 false 
+                               (bf 'get-azimuth 0 false 
                                    "org.plt.lib.Tilt.getAzimuth")
-                               (bf 'get-pitch module-path 0 false 
+                               (bf 'get-pitch 0 false 
                                    "org.plt.lib.Tilt.getPitch")
-                               (bf 'get-roll module-path 0 false 
+                               (bf 'get-roll 0 false 
                                    "org.plt.lib.Tilt.getRoll")))))
 
 
