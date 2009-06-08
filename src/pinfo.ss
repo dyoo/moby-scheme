@@ -550,23 +550,6 @@
                                          (bf 'text-field module-path 2 false "org.plt.guiworld.GuiWorld.textField")
                                          (bf 'box-group module-path 2 false "org.plt.guiworld.GuiWorld.boxGroup")
                                          (bf 'checkbox module-path 3 false "org.plt.guiworld.GuiWorld.checkBox"))))))
-=======
-#;(define gui-world-module
-  (local [(define module-path 
-            (resolve-module-path '(lib "gui-world.ss" "gui-world")
-                                 false))]
-    (make-module-binding 'gui-world
-                         module-path
-                         (append (module-binding-bindings world-config-module)
-                                 (list (bf 'big-bang module-path 2 true "org.plt.guiworld.GuiWorld.bigBang")
-                                       (bf 'row module-path 0 true "org.plt.guiworld.GuiWorld.row")
-                                       (bf 'col module-path 0 true "org.plt.guiworld.GuiWorld.col")
-                                       (bf 'message module-path 1 false "org.plt.guiworld.GuiWorld.message")
-                                       (bf 'button module-path 2 false "org.plt.guiworld.GuiWorld.button")
-                                       (bf 'drop-down module-path 3 false "org.plt.guiworld.GuiWorld.dropDown")
-                                       (bf 'text-field module-path 2 false "org.plt.guiworld.GuiWorld.textField")
-                                       (bf 'box-group module-path 2 false "org.plt.guiworld.GuiWorld.boxGroup")
-                                       (bf 'checkbox module-path 3 false "org.plt.guiworld.GuiWorld.checkBox"))))))
 
 
 
