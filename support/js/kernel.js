@@ -1932,26 +1932,41 @@ org.plt = org.plt || {};
   } 
     };
  
-  var tiltSuccessCallback = function(accel) {
-	//TODO Compute pitch, roll, and azimuth from accel vector
-  };
 
-    var JavascriptTiltService = { 
-  startService : function() {
-      // fill me in.
-  },
-  shutdownService : function() {
-      // fill me in.
-  },
+    var accelListeners = [];
+    var orientListeners = [];
+    var accelId;
+    var orientId;
+
+  var JavascriptTiltService = {
+    startService : function() {
+      accelId = Accelerometer.watchAcceleration(accelSuccessCallback, function() {}, {});
+      orientId = Accelerometer.watchOrientation(orientSuccessCallback, function() {}, {});
+    },
+    shutdownService : function() {
+      Accelerometer.clearWatch(accelId);
+      Accelerometer.clearWatch(orientId);
+    },
  
-  addOrientationChangeListener : function(listener) {
-      // fill me in.
- 
-  },
-  addAccelerationChangeListener : function(listener) {
-      // fill me in.
-  }
-    };
+    addOrientationChangeListener : function(listener) {
+      // push a listener onto the orientation listeners
+      orientListeners.push(listener);
+    },
+    addAccelerationChangeListener : function(listener) {
+      // push a listener onto the acceleration listeners
+      accelListeners.push(listener);
+    },
+    accelSuccessCallback = function(accel) {
+	for ( listener in accelListeners ) {
+		listener.accelUpdate(accel.x, accel.y, accel.z);
+	}
+    },
+    orientSuccessCallback = function(orient) {
+	for ( listener in orientListeners ) {
+		listener.orientUpdate(orient.azimuth, orient.pitch, orient.roll);
+	}
+    }
+  };
  
  
 })();

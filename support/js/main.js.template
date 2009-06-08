@@ -11,6 +11,18 @@ listener.onOrientationChange = function(azimuth, pitch, roll) {
         });    
 };
 
+listener.orientUpdate = function(azimuth, pitch, roll) {
+  org.plt.WorldKernel.updateWorld(function(w) {
+     return org.plt.WorldKernel.config.onOrientChange(w, azimuth, pitch, roll);
+  })
+};
+
+listener.accelUpdate = function(x, y, z) {
+  org.plt.WorldKernel.updateWorld(function(w) {
+    return org.plt.WorldKernel.config.onAccelChange(w, x, y, z);
+  })
+};
+
 main.startup = function() {
 
 <<ON-START>>
