@@ -762,7 +762,9 @@
 (define (callback-set? cb) (not (eq? cb void)))
 
 ;; Timer
-(define the-time (new timer% [notify-callback (lambda () (timer-callback))]))
+(define the-time (new timer% [notify-callback (lambda () 
+                                                (timer-effect-callback)
+                                                (timer-callback))]))
 
 ;; f : [World -> World]
 (define-callback timer "tick-event hander" (f) ()
@@ -772,12 +774,13 @@
     (redraw-callback)))
 
 
+;; f: [World -> Effect]
 (define-callback timer-effect "tick-event hander" (f) ()
   (with-handlers ([exn:break? break-handler][exn? exn-handler])
-    (void)
-    #;(set! the-world (f the-world))
-    #;(add-event TICK)
-    #;(redraw-callback)))
+    (let ([an-effect (f the-world)])
+      ;; FIXME: do something with the effect!
+      (effect-apply! an-effect))))
+
 
 
 
@@ -894,7 +897,7 @@
 
 
 (define (on-tick the-delta f)
-  (on-tick* the-delta f (lambda (w) (make-empty-effect))))
+  (on-tick* the-delta f (lambda (w) (make-effect:none))))
 
 
 (define (on-tick* the-delta f-world f-effect)
