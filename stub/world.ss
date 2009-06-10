@@ -595,8 +595,12 @@
   (define c 
     (new (class editor-canvas%
            (super-new)
-           (define/override (on-char e) (key-callback (send e get-key-code)))
-           (define/override (on-event e) (mouse-callback e)))
+           (define/override (on-char e) 
+             (key-effect-callback (send e get-key-code))
+             (key-callback (send e get-key-code)))
+           (define/override (on-event e) 
+             (mouse-effect-callback e)
+             (mouse-callback e)))
          (parent frame)
          (editor visible-world)
          (style '(no-hscroll no-vscroll))
@@ -775,10 +779,9 @@
 
 
 ;; f: [World -> Effect]
-(define-callback timer-effect "tick-event hander" (f) ()
+(define-callback timer-effect "tick-effect event hander" (f) ()
   (with-handlers ([exn:break? break-handler][exn? exn-handler])
     (let ([an-effect (f the-world)])
-      ;; FIXME: do something with the effect!
       (effect-apply! an-effect))))
 
 
@@ -823,6 +826,16 @@
              (add-event KEY e)
              (redraw-callback))))))))
 
+(define-callback key-effect "key-effect event handler" (f evt-space) (e)
+  (parameterize ([current-eventspace evt-space])
+    (queue-callback 
+     (lambda ()
+       (with-handlers ([exn:break? break-handler][exn? exn-handler])
+         (let ([new-effect (f the-world e)])
+           (effect-apply! new-effect)))))))
+
+
+
 ;; f : [World Nat Nat MouseEventType -> World]
 ;; esp : EventSpace 
 ;; e : MouseEvent
@@ -840,6 +853,19 @@
                (set! the-world new-world)
                (add-event MOUSE x y m)
                (redraw-callback)))))))))
+
+(define-callback mouse-effect "mouse event handler" (f evt-space) (e)
+  (parameterize ([current-eventspace evt-space])
+    (queue-callback
+     (lambda ()
+       (define x (- (send e get-x) INSET))
+       (define y (- (send e get-y) INSET))
+       (define m (mouse-event->symbol e))
+       (when (and (<= 0 x WIDTH) (<= 0 y HEIGHT))
+	 (with-handlers ([exn:break? break-handler][exn? exn-handler])
+           (let ([new-effect (f the-world x y m)])
+             (effect-apply! new-effect))))))))
+
 
 ;; MouseEvent -> MouseEventType
 (define (mouse-event->symbol e)
@@ -927,16 +953,28 @@
 
 
 (define (on-key f)
+  (on-key* f (lambda (w k)
+               (make-effect:none))))
+
+(define (on-key* f f-effect)
   (check-proc 'on-key f 2 "on-key" "two arguments")
   (lambda ()
     (set-key-callback f (current-eventspace))
+    (set-key-effect-callback f-effect (current-eventspace))
     #t))
 
 (define (on-mouse f)
+  (on-mouse* f (lambda (w x y b)
+                 (make-effect:none))))
+
+
+(define (on-mouse* f f-effect)
   (check-proc 'on-mouse f 4 "on-mouse" "four arguments")
   (lambda ()
     (set-mouse-callback f (current-eventspace))
+    (set-mouse-effect-callback f-effect (current-eventspace))
     #t))
+
 
 (define (stop-when f)
   (check-proc 'stop-when f 1 "stop-when" "one argument")
@@ -950,7 +988,17 @@
     ;; fixme
     #t))
 
+(define (on-tilt* handler effect-handler)
+  (lambda ()
+    ;; fixme
+    #t))
+
 (define (on-acceleration handler)
+  (lambda ()
+    ;; fixme
+    #t))
+
+(define (on-acceleration* handler effect-handler)
   (lambda ()
     ;; fixme
     #t))
@@ -958,13 +1006,19 @@
 
 
 (define (on-location-change f)
+  (on-location-change* f (lambda (w x y) (make-effect:none))))
+
+
+(define (on-location-change* f effect-f)
   (check-proc 'on-location-change f 3 "on-location-change" 
+              "three arguments")
+  (check-proc 'on-location-change effect-f 3 "on-location-change" 
               "three arguments")
   (lambda ()
     (set-location-callback f (current-eventspace))
+    (set-location-effect-callback effect-f (current-eventspace))
     (show-location-gui)
     #t))
-  
 
 ;; f : [World KeyEvent -> World]
 ;; esp : EventSpace 
@@ -979,6 +1033,16 @@
            (unless (equal? new-world the-world)
              (set! the-world new-world)
              (redraw-callback))))))))
+
+
+(define-callback location-effect "location-change handler" (f evt-space) 
+  (lat long)
+  (parameterize ([current-eventspace evt-space])
+    (queue-callback 
+     (lambda ()
+       (with-handlers ([exn:break? break-handler][exn? exn-handler])
+         (let ([new-effect (f the-world lat long)])
+           (effect-apply! new-effect)))))))
 
 
 
@@ -999,10 +1063,12 @@
                  [parent a-frame]
                  [label "Set!"]
                  [callback (lambda (b e)
-                             (location-callback (string->number
-                                                 (send t-x get-value))
-                                                (string->number
-                                                 (send t-y get-value))))]))
+                             (let ([x (string->number
+                                                 (send t-x get-value))]
+                                   [y (string->number
+                                                 (send t-y get-value))])
+                               (location-effect-callback x y)
+                               (location-callback x y)))]))
   (send a-frame show #t))
 
 
@@ -1015,6 +1081,11 @@
  )
 
 (provide-higher-order-primitive
+ on-tick* (_ tock event-tock) ;; Number (World -> World) (World->Event) -> true
+ )
+
+
+(provide-higher-order-primitive
  on-redraw (world-to-image) ;; (World -> Image) -> true
  )
 
@@ -1023,7 +1094,17 @@
  )
 
 (provide-higher-order-primitive
+ on-key* (control key-effect) ;; (World KeyEvent -> World) -> true
+ )
+
+
+
+(provide-higher-order-primitive
  on-mouse (clack)  ;; (World Number Number MouseEvent -> World) -> true
+ )
+
+(provide-higher-order-primitive
+ on-mouse* (clack mouse-effect)  ;; (World Number Number MouseEvent -> World) -> true
  )
 
 (provide-higher-order-primitive
@@ -1034,10 +1115,22 @@
 ;; handler: World number number -> world
 (provide-higher-order-primitive on-location-change (handler))
 
+;; handler: World number number -> world
+;; effect-handler: World number number -> Effect
+(provide-higher-order-primitive on-location-change* (handler effect-handler))
+
 ;; handler: World number number number -> World
 (provide-higher-order-primitive on-tilt (handler))
 
 ;; handler: World number number number -> World
+;; effect-handler: World number number number -> Effect
+(provide-higher-order-primitive on-tilt* (handler effect-handler))
+
+;; handler: World number number number -> World
 (provide-higher-order-primitive on-acceleration (handler))
+
+;; handler: World number number number -> World
+;; effect-handler: World number number number -> Effect
+(provide-higher-order-primitive on-acceleration* (handler effect-handler))
 
 ;; FIXME: changes to location or tilt should reflect on the world.
