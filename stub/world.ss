@@ -14,7 +14,8 @@
          (only-in lang/htdp-beginner image?)
          mrlib/cache-image-snip
          lang/prim
-         (for-syntax scheme/base))
+         (for-syntax scheme/base)
+         "private/effect.ss")
 
 (require mrlib/gif)
 (require mzlib/runtime-path)
@@ -60,13 +61,6 @@
  big-bang	;; Number Number World [Boolean] -> true
  )
 
-(provide-higher-order-primitive
- on-tick (_ tock) ;; Number (World -> World) -> true
- )
-
-(provide-higher-order-primitive
- on-redraw (world-to-image) ;; (World -> Image) -> true
- )
 
 ;; KeyEvent is one of: 
 ;; -- Char 
@@ -77,10 +71,6 @@
   key=? ;; KeyEvent KeyEvent -> Boolean
  )
 
-(provide-higher-order-primitive
- on-key (control) ;; (World KeyEvent -> World) -> true
- )
-
 ;; A MouseEventType is one of:
 ;; - 'button-down
 ;; - 'button-up
@@ -89,13 +79,7 @@
 ;; - 'enter
 ;; - 'leave
 
-(provide-higher-order-primitive
- on-mouse (clack)  ;; (World Number Number MouseEvent -> World) -> true
- )
 
-(provide-higher-order-primitive
- stop-when (last-world)  ;; (World -> Boolean) -> true
- )
 
 (provide-higher-order-primitive
  run-simulation (_ _ _ create-scene) ; (Number Number Number (Nat -> Scene) -> true)
@@ -261,12 +245,12 @@
          (sleep/yield .05)
          (run-movie (cdr movie))]))))
 
-(define run-simulation 
-  (lambda x 
-    (define args (length x))
-    (if (or (= args 5) (= args 4))
-        (apply run-simulation0 x) 
-        (error 'run-simulation msg-run-simulation))))
+#;(define run-simulation 
+    (lambda x 
+      (define args (length x))
+      (if (or (= args 5) (= args 4))
+          (apply run-simulation0 x) 
+          (error 'run-simulation msg-run-simulation))))
 (define msg-run-simulation
   (string-append
    "consumes 4 or 5 arguments:\n"
@@ -275,19 +259,19 @@
    "see Help Desk."))
 
 
-(define run-simulation0
-  (case-lambda
-    [(width height rate f record?)
-     (check-pos 'run-simulation width "first")
-     (check-pos 'run-simulation height "second")
-     (check-arg 'run-simulation (number? rate) 'number "third" rate)
-     (check-proc 'run-simulation f 1 "fourth" "one argument")
-     (check-arg 'run-simulation (boolean? record?) 'number "fifth [and optional]" record?)
-     (big-bang width height rate 1 record?)
-     (on-redraw f)
-     (on-tick add1)]
-    [(width height rate f)
-     (run-simulation width height rate f #f)]))
+#;(define run-simulation0
+    (case-lambda
+      [(width height rate f record?)
+       (check-pos 'run-simulation width "first")
+       (check-pos 'run-simulation height "second")
+       (check-arg 'run-simulation (number? rate) 'number "third" rate)
+       (check-proc 'run-simulation f 1 "fourth" "one argument")
+       (check-arg 'run-simulation (boolean? record?) 'number "fifth [and optional]" record?)
+       (big-bang width height rate 1 record?)
+       (on-redraw f)
+       (on-tick add1)]
+      [(width height rate f)
+       (run-simulation width height rate f #f)]))
 
 ;; ---------------------------------------------------------------------------
 
@@ -787,6 +771,16 @@
     (add-event TICK)
     (redraw-callback)))
 
+
+(define-callback timer-effect "tick-event hander" (f) ()
+  (with-handlers ([exn:break? break-handler][exn? exn-handler])
+    (void)
+    #;(set! the-world (f the-world))
+    #;(add-event TICK)
+    #;(redraw-callback)))
+
+
+
 ;; f : [World -> Image]
 (define-callback redraw "redraw function" (f) ()
   (with-handlers ([exn:break? break-handler][exn? exn-handler])
@@ -874,21 +868,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -915,19 +894,26 @@
 
 
 (define (on-tick the-delta f)
+  (on-tick* the-delta f (lambda (w) (make-empty-effect))))
+
+
+(define (on-tick* the-delta f-world f-effect)
   (check-arg 'on-tick
              (and (number? the-delta) (<= 0 the-delta 1000))
              "number [of seconds] between 0 and 1000"
              "first"
              the-delta)
-  (check-proc 'on-tick f 1 "on-tick" "one argument")
+  (check-proc 'on-tick f-world 1 "on-tick" "one argument")
   (lambda ()
     (set! *the-delta* the-delta)
-    (set-timer-callback f)
+    (set-timer-callback f-world)
+    (set-timer-effect-callback f-effect)
     (send the-time start
           (let* ([w (ceiling (* 1000 the-delta))])
             (if (exact? w) w (inexact->exact w))))
     #t))
+
+
 
 (define (on-redraw f)
   (check-proc 'on-redraw f 1 "on-redraw" "one argument")
@@ -966,10 +952,6 @@
     ;; fixme
     #t))
 
-(define (on-message handler)
-  (lambda ()
-    ;; fixme
-    #t))
 
 
 (define (on-location-change f)
@@ -1025,11 +1007,34 @@
 
 
 
+(provide-higher-order-primitive
+ on-tick (_ tock) ;; Number (World -> World) -> true
+ )
+
+(provide-higher-order-primitive
+ on-redraw (world-to-image) ;; (World -> Image) -> true
+ )
+
+(provide-higher-order-primitive
+ on-key (control) ;; (World KeyEvent -> World) -> true
+ )
+
+(provide-higher-order-primitive
+ on-mouse (clack)  ;; (World Number Number MouseEvent -> World) -> true
+ )
+
+(provide-higher-order-primitive
+ stop-when (last-world)  ;; (World -> Boolean) -> true
+ )
 
 
+;; handler: World number number -> world
 (provide-higher-order-primitive on-location-change (handler))
-(provide-higher-order-primitive on-message (handler))
+
+;; handler: World number number number -> World
 (provide-higher-order-primitive on-tilt (handler))
+
+;; handler: World number number number -> World
 (provide-higher-order-primitive on-acceleration (handler))
 
 ;; FIXME: changes to location or tilt should reflect on the world.

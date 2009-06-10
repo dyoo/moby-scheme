@@ -391,7 +391,7 @@
                          (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
                                (bf 'on-mouse module-path 1 false "org.plt.world.config.Kernel.onMouse")
                                (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
-                               (bf 'on-message module-path 1 false "org.plt.world.config.Kernel.onMessage")
+                               #;(bf 'on-message module-path 1 false "org.plt.world.config.Kernel.onMessage")
                                
                                (make-binding:function
                                 'on-location-change module-path 1 false
