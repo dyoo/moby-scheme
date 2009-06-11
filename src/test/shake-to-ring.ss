@@ -23,7 +23,7 @@
 (define (maybe-ring a-world new-x new-y new-z)
   (cond [(> (distance a-world (update a-world new-x new-y new-z))
             THRESHOLD)
-         (make-effect:beep 42)]
+         (make-effect:beep)]
         [else
          (make-effect:none)]))
 
