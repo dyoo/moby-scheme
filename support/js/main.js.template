@@ -14,7 +14,7 @@ listener.orientUpdate = function(azimuth, pitch, roll) {
          org.plt.WorldKernel.applyEffect(effect);
      }
 
-     if (org.plt.worldconfig.onTilt) {
+     if (org.plt.world.config.onTilt) {
          return org.plt.world.config.onTilt([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
      } else {
          return w;

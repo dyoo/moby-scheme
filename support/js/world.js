@@ -556,6 +556,9 @@ org.plt.WorldKernel = {};
 	return obj instanceof effect_colon_send_dash_sms; }
     org.plt.WorldKernel.effect_colon_send_dash_sms_question_ = effect_colon_send_dash_sms_question_;
 
+
+
+
     function effect_colon_play_dash_sound_dash_url(url,string) { this.url = url;
 	this.string = string; }
     effect_colon_play_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
@@ -574,8 +577,9 @@ org.plt.WorldKernel = {};
 
     effect_colon_play_dash_sound_dash_url.prototype.run = function() {
 	// FIXME: fill me in
+	//window.document.getElementById("dummy").innerHTML=("<embed src='"+soundfile+"' hidden='true' autostart='true' loop='false' />");
     };
-
+    
 
     function make_dash_effect_colon_play_dash_sound_dash_url(id0,id1) { return new effect_colon_play_dash_sound_dash_url(id0,id1); }
     org.plt.WorldKernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;function effect_colon_play_dash_sound_dash_url_dash_url(obj) { return obj.url; }

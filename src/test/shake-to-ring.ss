@@ -5,11 +5,11 @@
 
 (define WIDTH 320)
 (define HEIGHT 480)
-(define THRESHOLD 5)
+(define THRESHOLD 20)
 
 ;; The world records the acceleration vector.
 (define-struct world (x y z))
-(define initial-world (make-world 0 0 9))
+(define initial-world (make-world 0 0 -9))
 
 
 ;; update: world number number number -> world
@@ -48,8 +48,8 @@
                                     (number->string (world-z w)))
                      10
                      "black")
-               20
-               20
+               50
+               50
                (empty-scene WIDTH HEIGHT)))
 
 
