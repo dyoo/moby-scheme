@@ -11,19 +11,25 @@
 (define-struct world (x y z))
 (define initial-world (make-world 0 0 9))
 
+
+;; update: world number number number -> world
 (define (update a-world new-x new-y new-z)
-  a-world)
+  (make-world new-x new-y new-z))
 
 
+;; maybe-ring: world number number number -> effect
+;; Maybe produce a ring, if the old world and the new world
+;; have a significant distance difference.
 (define (maybe-ring a-world new-x new-y new-z)
   (cond [(> (distance a-world (update a-world new-x new-y new-z))
             THRESHOLD)
-         'beep]
+         (make-effect:beep 42)]
         [else
-         'none]))
+         (make-effect:none)]))
 
 
 ;; distance: world world -> boolean
+;; Returns the "distance" between two worlds.
 (define (distance w1 w2)
   (sqrt (+ (sqr (- (world-x w1)
                    (world-x w2)))
@@ -45,6 +51,7 @@
                20
                20
                (empty-scene WIDTH HEIGHT)))
+
 
 
 (big-bang WIDTH HEIGHT initial-world

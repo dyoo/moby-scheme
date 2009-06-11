@@ -33,6 +33,9 @@
 (define-struct effect:none () 
   #:prefab)
 
+(define-struct effect:beep ()
+  #:prefab)
+
 (define-struct effect:send-sms (address  ;; string
                                 msg ;; string
                                 )
@@ -47,6 +50,7 @@
 ;; Determines if thing is an effect.
 (define (effect? thing)
   (or (effect:none? thing)
+      (effect:beep? thing)
       (effect:send-sms? thing)
       (effect:play-sound-url? thing)))
 
@@ -81,6 +85,10 @@
     [(effect:none? e)
      (void)]
     
+    [(effect:beep? e)
+     ;; fixme: how do we beep?
+     (void)]
+   
     [(effect:send-sms? e)
      ;; fixme
      (void)]
@@ -121,6 +129,7 @@
 
 
 (provide/contract [struct effect:none ()]
+                  [struct effect:beep ()]
                   [struct effect:send-sms ([address string?]
                                            [msg string?])]
                   [struct effect:play-sound-url ([url string?])]

@@ -17,6 +17,13 @@
          (for-syntax scheme/base)
          "private/world-effects.ss")
 
+#;(provide (all-from-out "private/world-effects.ss"))
+(provide-primitive effect?)
+(provide-primitive make-effect:none)
+(provide-primitive make-effect:beep)
+
+
+
 (require mrlib/gif)
 (require mzlib/runtime-path)
 
