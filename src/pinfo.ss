@@ -383,9 +383,9 @@
 (define-struct module-binding (name path bindings))
 
 
-(define world-config-module 
+(define world-shared-module 
   (local [(define module-path 
-            (resolve-module-path '(lib "world-config.ss" "moby" "stub") false))]
+            (resolve-module-path '(lib "world-handlers.ss" "moby" "stub" "private") false))]
     (make-module-binding 'world-config
                          module-path
                          (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
@@ -421,7 +421,7 @@
 (define (make-world-module module-path)
   (make-module-binding 'world
                        module-path
-                       (append (module-binding-bindings world-config-module)
+                       (append (module-binding-bindings world-shared-module)
                                (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
                                      (bf 'empty-scene module-path 2 false
                                          "org.plt.WorldKernel.emptyScene")

@@ -5,6 +5,7 @@
 
 (define WIDTH 320)
 (define HEIGHT 480)
+(define THRESHOLD 5)
 
 ;; The world records the acceleration vector.
 (define-struct world (x y z))

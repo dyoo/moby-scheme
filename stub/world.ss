@@ -15,7 +15,7 @@
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
-         "private/effect.ss")
+         "private/world-effects.ss")
 
 (require mrlib/gif)
 (require mzlib/runtime-path)
