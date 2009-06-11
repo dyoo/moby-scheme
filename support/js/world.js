@@ -508,7 +508,12 @@ org.plt.WorldKernel = {};
     } 
 
     effect_colon_beep.prototype.run = function() {
-	// FIXME: fill me in.
+	if (typeof navigator != "undefined" &&
+	    typeof navigator.notification != "undefined") {
+	    navigator.notification.beep(1);
+        } else {
+	    alert("Beep");  // FIXME: fill me in.
+        }
     };
 
     function make_dash_effect_colon_beep() { return new effect_colon_beep(); }
