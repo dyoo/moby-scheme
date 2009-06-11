@@ -383,16 +383,29 @@
 (define-struct module-binding (name path bindings))
 
 
-(define world-shared-module 
+(define world-effects-module 
+ (local [(define module-path 
+            (resolve-module-path '(lib "world-effects.ss" "moby" "stub" "private") false))]
+    (make-module-binding 'world-effects
+                         module-path
+                         (list (bf 'make-effect:none module-path 0
+                                   false "org.plt.WorldKernel.make_dash_effect_colon_none")
+                               (bf 'make-effect:beep module-path 0
+                                   false "org.plt.WorldKernel.make_dash_effect_colon_beep")))))
+
+                               
+(define world-handlers-module 
   (local [(define module-path 
             (resolve-module-path '(lib "world-handlers.ss" "moby" "stub" "private") false))]
     (make-module-binding 'world-config
                          module-path
                          (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
-                               (bf 'on-tick module-path 3 false "org.plt.world.config.Kernel.onTick_star_")
+                               (bf 'on-tick* module-path 3 false "org.plt.world.config.Kernel.onTick_star_")
                                (bf 'on-mouse module-path 1 false "org.plt.world.config.Kernel.onMouse")
+                               (bf 'on-mouse* module-path 2 false "org.plt.world.config.Kernel.onMouse_star_")
+
                                (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
-                               (bf 'on-key module-path 2 false "org.plt.world.config.Kernel.onKey_star_")
+                               (bf 'on-key* module-path 2 false "org.plt.world.config.Kernel.onKey_star_")
                                
                                (make-binding:function
                                 'on-location-change module-path 1 false
@@ -400,7 +413,7 @@
                                 (list PERMISSION:LOCATION)
                                 false)
                                (make-binding:function
-                                'on-location-change module-path 2 false
+                                'on-location-change* module-path 2 false
                                 "org.plt.world.config.Kernel.onLocationChange_star_"
                                 (list PERMISSION:LOCATION)
                                 false)
@@ -411,7 +424,7 @@
                                 (list PERMISSION:TILT)
                                 false)
                                (make-binding:function
-                                'on-tilt module-path 2 false
+                                'on-tilt* module-path 2 false
                                 "org.plt.world.config.Kernel.onTilt_star_"
                                 (list PERMISSION:TILT)
                                 false)
@@ -423,7 +436,7 @@
                                 false)
 
                                (make-binding:function
-                                'on-acceleration module-path 2 false
+                                'on-acceleration* module-path 2 false
                                 "org.plt.world.config.Kernel.onAcceleration_star_"
                                 (list PERMISSION:TILT)
                                 false)
@@ -438,7 +451,8 @@
 (define (make-world-module module-path)
   (make-module-binding 'world
                        module-path
-                       (append (module-binding-bindings world-shared-module)
+                       (append (module-binding-bindings world-handlers-module)
+                               (module-binding-bindings world-effects-module)
                                (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
                                      (bf 'empty-scene module-path 2 false
                                          "org.plt.WorldKernel.emptyScene")
