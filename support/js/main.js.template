@@ -9,15 +9,34 @@ var rat = org.plt.types.Rational.makeInstance;
 
 listener.orientUpdate = function(azimuth, pitch, roll) {
   org.plt.WorldKernel.updateWorld(function(w) {
-     return org.plt.world.config.onTilt([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
-  })
+     if (org.plt.world.config.onTiltEffect) {
+         var effect = org.plt.world.config.onTiltEffect([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
+         org.plt.WorldKernel.applyEffect(effect);
+     }
+
+     if (org.plt.worldconfig.onTilt) {
+         return org.plt.world.config.onTilt([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
+     } else {
+         return w;
+     }
+  });
 };
 
 listener.accelUpdate = function(x, y, z) {
-//  org.plt.WorldKernel.updateWorld(function(w) {
-//    return org.plt.world.config.onAccelChange([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
-//  })
+  org.plt.WorldKernel.updateWorld(function(w) {
+      if (org.plt.world.config.onAccelerationEffect) {
+          var effect = org.plt.world.config.onAccelerationEffect([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
+          org.plt.WorldKernel.applyEffect(effect);
+      }
+   
+      if (org.plt.world.config.onAcceleration) {
+          return org.plt.world.config.onAcceleration([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
+      } else {
+          return w;
+      }
+  });
 };
+
 
 main.startup = function() {
 

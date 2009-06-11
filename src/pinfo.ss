@@ -389,13 +389,19 @@
     (make-module-binding 'world-config
                          module-path
                          (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
+                               (bf 'on-tick module-path 3 false "org.plt.world.config.Kernel.onTick_star_")
                                (bf 'on-mouse module-path 1 false "org.plt.world.config.Kernel.onMouse")
                                (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
-                               #;(bf 'on-message module-path 1 false "org.plt.world.config.Kernel.onMessage")
+                               (bf 'on-key module-path 2 false "org.plt.world.config.Kernel.onKey_star_")
                                
                                (make-binding:function
                                 'on-location-change module-path 1 false
                                 "org.plt.world.config.Kernel.onLocationChange"
+                                (list PERMISSION:LOCATION)
+                                false)
+                               (make-binding:function
+                                'on-location-change module-path 2 false
+                                "org.plt.world.config.Kernel.onLocationChange_star_"
                                 (list PERMISSION:LOCATION)
                                 false)
                                
@@ -404,13 +410,24 @@
                                 "org.plt.world.config.Kernel.onTilt"
                                 (list PERMISSION:TILT)
                                 false)
+                               (make-binding:function
+                                'on-tilt module-path 2 false
+                                "org.plt.world.config.Kernel.onTilt_star_"
+                                (list PERMISSION:TILT)
+                                false)
                                
                                (make-binding:function
                                 'on-acceleration module-path 1 false
                                 "org.plt.world.config.Kernel.onAcceleration"
                                 (list PERMISSION:TILT)
                                 false)
-                               
+
+                               (make-binding:function
+                                'on-acceleration module-path 2 false
+                                "org.plt.world.config.Kernel.onAcceleration_star_"
+                                (list PERMISSION:TILT)
+                                false)
+
                                (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
                                (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
 
