@@ -455,6 +455,7 @@ org.plt.WorldKernel = {};
 	onKey: false,
 	onTilt: false,
 	onAcceleration: false,
+	onShake: false,
 	onLocationChange : false,
 	stopWhen: false
     };
@@ -485,6 +486,12 @@ org.plt.WorldKernel = {};
     org.plt.world.config.Kernel.onAcceleration = function(handler) {
 	return function() {
 	    org.plt.world.config.onAcceleration = handler;
+	};
+    };
+
+    org.plt.world.config.Kernel.onShake = function(handler) {
+	return function() {
+	    org.plt.world.config.onShake = handler;
 	};
     };
 
