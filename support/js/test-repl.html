@@ -43,8 +43,8 @@ function resetRepl() {
 
 // addToInteractions: string -> void
 // Adds a note to the interactions.
-function addToInteractions(val) {
-    interactions.value = interactions.value + val.toString();
+function addToInteractions(interactionVal) {
+    interactions.value = interactions.value + interactionVal.toString();
 }
 
 
@@ -79,7 +79,9 @@ function runSource(aSource) {
         var runToplevel = _namespace.eval(defns, interFunc);
          
         runToplevel(function(val) {
-            addToInteractions(val.toString() + "\n");
+            if (val != undefined) {
+                addToInteractions(val.toString() + "\n");
+            }
         });
 
         // Update the pinfo.

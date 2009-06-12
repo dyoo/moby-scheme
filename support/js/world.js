@@ -81,17 +81,30 @@ org.plt.WorldKernel = {};
     }
 
 
+    function getBigBangWindow(width, height) {
+        if (window.document.getElementById("canvas") != undefined) {
+	    return window;
+	}
+
+        var newWindow = window.open(
+	    "big-bang.html",
+	    "big-bang",
+	    "toolbar=0,location=0,directories=0,status=0,menubar=0,width="+width+",height="+height);
+	if (newWindow == null) { 
+            throw new Error("Error: Not allowed to create a new window."); }
+
+	return newWindow;
+    }
+
+
     // bigBang: number number world (arrayof (-> void)) -> void
     // Begins a world computation.  The initial world is aWorld, and handlers
     // register other reactive functions (timer tick, key press, etc.) which
     // will change the world.
     org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
-        var newWindow = window.open("big-bang.html", "big-bang", "toolbar=0,location=0,directories=0,status=0,menubar=0,width="+width+",height="+height);
+	var newWindow = getBigBangWindow(width, height);
 
-	if (newWindow == null) { 
-            throw new Error("Error: Not allowed to create a new window."); }
-//	var canvas = newWindow.document.createElement("canvas");
 	var canvas = 
 	    newWindow.document.getElementById("canvas");
 
@@ -156,7 +169,7 @@ org.plt.WorldKernel = {};
 		}
 		else {
                     if (org.plt.world.config.onTickEffect) {
-			var effect = org.plt.world.config.onTick([world]);
+			var effect = org.plt.world.config.onTickEffect([world]);
 			org.plt.WorldKernel.applyEffect(effect);
                     }
 
@@ -696,7 +709,7 @@ org.plt.WorldKernel = {};
     org.plt.world.config.Kernel.onKey = function(handler) {
 	return org.plt.world.config.Kernel.onKey_star_(handler,
 						       function(w, k) {
-							   return make_dash_effect_colon_none(); });;
+							   return make_dash_effect_colon_none(); });
     };
 
     org.plt.world.config.Kernel.onKey_star_ = function(handler, effectHandler) {
