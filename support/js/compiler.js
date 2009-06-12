@@ -364,7 +364,7 @@ id = (org.plt.Kernel.second(a_dash_definition));
 body = (org.plt.Kernel.third(a_dash_definition)); })(org.plt.Kernel.identity)
 return ((f_dash_regular_dash_definition).apply(null, [[id, body]]));
               })()) :
- ((list_dash_begins_dash_with_question_(a_dash_definition,(org.plt.types.Symbol.makeInstance("define-struct")))) ?
+ (((list_dash_begins_dash_with_question_(a_dash_definition,(org.plt.types.Symbol.makeInstance("define-struct"))))&&org.plt.Kernel._equal_((org.plt.Kernel.length(a_dash_definition)),(org.plt.types.Rational.makeInstance(3, 1)), [])&&(org.plt.Kernel.symbol_question_((org.plt.Kernel.second(a_dash_definition))))&&((org.plt.Kernel.empty_question_((org.plt.Kernel.third(a_dash_definition))))||(org.plt.Kernel.pair_question_((org.plt.Kernel.third(a_dash_definition)))))) ?
  ((function() { 
 
 var id; 
@@ -374,7 +374,11 @@ id = (org.plt.Kernel.second(a_dash_definition));
 fields = (org.plt.Kernel.third(a_dash_definition)); })(org.plt.Kernel.identity)
 return ((f_dash_define_dash_struct).apply(null, [[id, fields]]));
               })()) :
- (org.plt.Kernel.error((org.plt.types.Symbol.makeInstance("cond")),(org.plt.types.String.makeInstance("Fell out of cond")))))))); }
+ ((list_dash_begins_dash_with_question_(a_dash_definition,(org.plt.types.Symbol.makeInstance("define")))) ?
+ (org.plt.Kernel.error((org.plt.types.Symbol.makeInstance("define")),(org.plt.types.String.makeInstance("define expects an identifier and a body.  i.e. (define answer 42)")))) :
+ ((list_dash_begins_dash_with_question_(a_dash_definition,(org.plt.types.Symbol.makeInstance("define-struct")))) ?
+ (org.plt.Kernel.error((org.plt.types.Symbol.makeInstance("define-struct")),(org.plt.types.String.makeInstance("define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")))) :
+ (org.plt.Kernel.error((org.plt.types.Symbol.makeInstance("cond")),(org.plt.types.String.makeInstance("Fell out of cond")))))))))); }
 function path_equal__question_(path_dash_1, path_dash_2) { return org.plt.Kernel.string_equal__question_((org.plt.Kernel._pathToString((org.plt.Kernel._normalizePath(path_dash_1)))),(org.plt.Kernel._pathToString((org.plt.Kernel._normalizePath(path_dash_2)))), []); }
 var toplevel_dash_env; 
 function pinfo(env,modules,used_dash_bindings_dash_hash,gensym_dash_counter) { this.env = env;

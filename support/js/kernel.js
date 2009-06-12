@@ -635,10 +635,10 @@ org.plt = org.plt || {};
   },
   
   string_dash__greaterthan_number : function(str){
-	var val = str * 1;
-	if (isNaN(val))
+	var aNum = str * 1;
+	if (isNaN(aNum))
 		return false;
-	return org.plt.types.FloatPoint.makeInstance(val);
+	return org.plt.types.FloatPoint.makeInstance(aNum);
   },
   
   string_dash__greaterthan_symbol : function(str){
@@ -875,6 +875,14 @@ org.plt = org.plt || {};
 	return path;
     };
 
+    org.plt.Kernel._normalizePath = function(path) {
+        return path;
+    };
+
+    org.plt.Kernel._pathToString = function(path) {
+        return path.toString();
+    };
+
 
     org.plt.Kernel.map = function(f, arglists) {
 	var results = org.plt.types.Empty.EMPTY;
@@ -976,8 +984,8 @@ org.plt = org.plt || {};
  
     function die(msg) {
   // We're trying to error out so that we get a stack track from firebug.
-  console.log(msg);
-  console.trace();
+//  console.log(msg);
+//  console.trace();
   throw new TypeError(msg.toString());
     }
  

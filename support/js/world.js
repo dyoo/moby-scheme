@@ -87,8 +87,13 @@ org.plt.WorldKernel = {};
     // will change the world.
     org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
+        var newWindow = window.open("big-bang.html", "big-bang", "toolbar=0,location=0,directories=0,status=0,menubar=0,width="+width+",height="+height);
+
+	if (newWindow == null) { 
+            throw new Error("Error: Not allowed to create a new window."); }
+//	var canvas = newWindow.document.createElement("canvas");
 	var canvas = 
-	    window.document.getElementById("canvas");
+	    newWindow.document.getElementById("canvas");
 
 	resetWorld();
 
@@ -98,7 +103,7 @@ org.plt.WorldKernel = {};
 	}
 
 	if (org.plt.world.config.onKey) {
-	    window.onkeypress = function(e) {
+	    newWindow.onkeypress = function(e) {
 		if (! stopped) {
 		    var keyname = getKeyCodeName(e);
 		    if (org.plt.world.config.onKeyEffect) {
@@ -136,13 +141,13 @@ org.plt.WorldKernel = {};
 
 	
 	if(org.plt.world.config.onTick) {
-	    scheduleTimerTick();
+	    scheduleTimerTick(newWindow);
 	}
     };
 
     // scheduleTimerTick: -> void
     // Repeatedly schedules an evaluation of the onTick until the program has stopped.
-    function scheduleTimerTick() {
+    function scheduleTimerTick(window) {
 	timerInterval = window.setTimeout(
 	    function() {
 		if (stopped) {
@@ -157,7 +162,7 @@ org.plt.WorldKernel = {};
 
 		    changeWorld(
 			org.plt.world.config.onTick([world]));
-		    scheduleTimerTick();
+		    scheduleTimerTick(window);
 		}
 	    },
 	    org.plt.world.config.tickDelay);

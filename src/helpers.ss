@@ -269,10 +269,26 @@
        (f-regular-definition id body))]
     
     ;(define-struct id (fields ...))    
-    [(list-begins-with? a-definition 'define-struct)
+    [(and (list-begins-with? a-definition 'define-struct)
+          (= (length a-definition) 3)
+          (symbol? (second a-definition))
+          (or (empty? (third a-definition))
+              (pair? (third a-definition))))
      (local [(define id (second a-definition))
              (define fields (third a-definition))]
-       (f-define-struct id fields))]))
+       (f-define-struct id fields))]
+    
+    
+    ;; FIXME: add more error productions as necessary to get
+    ;; reasonable error messages.
+    [(list-begins-with? a-definition 'define)
+     (error 
+      'define 
+      "define expects an identifier and a body.  i.e. (define answer 42)")]
+    [(list-begins-with? a-definition 'define-struct)
+     (error 
+      'define-struct 
+      "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")]))
 
 
 ;; path=?: path path -> boolean

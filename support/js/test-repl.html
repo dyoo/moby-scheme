@@ -4,7 +4,7 @@
 <script src="read.js"></script>
 <script src="compiler.js"></script>
 <script src="namespace.js"></script>
-
+<script src="world.js"></script>
 
 <script lang="javascript">
 // <![CDATA[
@@ -30,9 +30,9 @@ function bindVariables() {
 }
 
 
-
+// resetRepl: -> void
+// Clears out the interactions.
 function resetRepl() {
-    // clear out the interactions.
     interactions.value = "WeScheme Interactions\n---\n";
     prompt.value = "";
     _namespace = new Namespace();
@@ -41,41 +41,53 @@ function resetRepl() {
 }
 
 
+// addToInteractions: string -> void
+// Adds a note to the interactions.
 function addToInteractions(val) {
-    if (interactions.value == "") {
-        interactions.value = val.toString();
-    } else {
-        interactions.value = interactions.value + "\n" + val.toString();
-    }
+    interactions.value = interactions.value + val.toString();
 }
+
+
+// addErrorToInteractions: string -> void
+// Adds a notification that something bad happened.
+function addErrorToInteractions(val) {
+    interactions.value = interactions.value + val.toString();
+}
+
 
 function runDefinitions() {
     runSource(definitions.value);
 }
 
 function runPrompt() {
+    addToInteractions(">>> " + prompt.value + "\n");
     runSource(prompt.value);
     prompt.value = "";
 }
 
 
 function runSource(aSource) {
-    var program = readSchemeExpressions(aSource);
-    var compiledProgram = 
-        program_dash__greaterthan_compiled_dash_program_slash_pinfo(
-            program, _pinfo);
+    try {
+        var program = readSchemeExpressions(aSource);
+        var compiledProgram = 
+            program_dash__greaterthan_compiled_dash_program_slash_pinfo(
+                program, _pinfo);
 
-    var defns = compiled_dash_program_dash_defns(compiledProgram);
-    var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
-        compiledProgram);
-    var runToplevel = _namespace.eval(defns, interFunc);
+        var defns = compiled_dash_program_dash_defns(compiledProgram);
+        var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
+            compiledProgram);
+        var runToplevel = _namespace.eval(defns, interFunc);
          
-    runToplevel(function(val) {
-        addToInteractions(val);
-    });
+        runToplevel(function(val) {
+            addToInteractions(val.toString() + "\n");
+        });
 
-    // Update the pinfo.
-    _pinfo = compiled_dash_program_dash_pinfo(compiledProgram);
+        // Update the pinfo.
+        _pinfo = compiled_dash_program_dash_pinfo(compiledProgram);
+    } catch (err) {
+        addToInteractions(err.toString() + "\n");
+	throw err;
+    }
 }
 
 
