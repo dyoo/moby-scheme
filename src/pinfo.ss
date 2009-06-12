@@ -103,6 +103,41 @@
 
    
 
+
+;; pinfo-permissions: pinfo -> (listof permission)
+;; Given a pinfo, collect the list of permissions.
+(define (pinfo-permissions a-pinfo)
+  (local [;; unique: (listof X) -> (listof X)
+          (define (unique lst)
+            (cond [(empty? lst)
+                   empty]
+                  [(member? (first lst)
+                            (rest lst))
+                   (unique (rest lst))]
+                  [else
+                   (cons (first lst)
+                         (unique (rest lst)))]))
+          ;; member?: X (listof X) -> boolean
+          (define (member? x lst)
+            (cond
+              [(empty? lst)
+               false]
+              [(eq? (first lst) x)
+               true]
+              [else
+               (member? x (rest lst))]))]
+    (unique
+     (foldl (lambda (a-binding permissions)
+              (cond [(binding:function? a-binding)
+                     (append (binding:function-permissions a-binding)
+                             permissions)]
+                    [else
+                     permissions]))
+            empty
+            (pinfo-used-bindings a-pinfo)))))
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -391,7 +426,10 @@
                          (list (bf 'make-effect:none module-path 0
                                    false "org.plt.WorldKernel.make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_beep")))))
+                                   false "org.plt.WorldKernel.make_dash_effect_colon_beep")
+                               (make-binding:function 'make-effect:send-sms module-path 2 false "org.plt.WorldKernel.make_dash_effect_colon_sms"
+                                                      (list PERMISSION:SMS)
+                                                      false)))))
 
                                
 (define world-handlers-module 
@@ -696,6 +734,7 @@
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
+                  [pinfo-permissions (pinfo? . -> . (listof permission?))]
 
                   [program-analyze (program?  . -> . pinfo?)]
                   [program-analyze/pinfo (program? pinfo? . -> . pinfo?)]
