@@ -5,6 +5,7 @@
          scheme/runtime-path
          scheme/port
          (only-in xml xexpr->string)
+         "pinfo.ss"
          "compile-helpers.ss"
          "image-lift.ss"
          "beginner-to-java.ss"
@@ -277,7 +278,7 @@
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
     (write-android-manifest dest-dir 
                             #:name a-name
-                            #:permissions (collect-required-android-permissions pinfo))
+                            #:permissions (pinfo-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
@@ -292,21 +293,11 @@
                             #:name a-name
                             #:activity-class (string-append
                                               "org.plt." classname "." classname)
-                            #:permissions (collect-required-android-permissions pinfo))
+                            #:permissions (pinfo-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
     (replace-template-file dest-dir "src/jad.properties" mappings)))
 
-
-
-;; collect-required-permissions: pinfo -> (listof symbol)
-(define (collect-required-android-permissions a-pinfo)
-  (define ht (make-hash))
-  (for ([p (get-permissions a-pinfo)])
-    (for ([ps (permission->android-permissions p)])
-      (hash-set! ht ps #t)))
-  (for/list ([p (in-hash-keys ht)])
-    p))
 
 
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
