@@ -12,8 +12,7 @@
          (prefix-in javascript: "beginner-to-javascript.ss")
          "utils.ss"
          "template.ss"
-         "config.ss"
-         "permission.ss")
+         "config.ss")
 
 (provide/contract [generate-j2me-application
                    (string? path-string? path-string? . -> . any)]

@@ -4,20 +4,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-struct permission:location ())
-(define-struct permission:sms ())
+(define-struct permission:send-sms ())
+(define-struct permission:receive-sms ())
 (define-struct permission:tilt ())
 (define-struct permission:internet ())
 
 
 (define (permission? datum)
   (or (permission:location? datum)
-      (permission:sms? datum)
+      (permission:send-sms? datum)
+      (permission:receive-sms? datum)
       (permission:tilt? datum)
       (permission:internet? datum)))
 
 
 (define PERMISSION:LOCATION (make-permission:location))
-(define PERMISSION:SMS (make-permission:sms))
+(define PERMISSION:SEND-SMS (make-permission:send-sms))
 (define PERMISSION:TILT (make-permission:tilt))
 (define PERMISSION:INTERNET (make-permission:internet))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,8 +33,10 @@
      (list "android.permission.ACCESS_LOCATION"
                                    "android.permission.ACCESS_GPS"
                                    "android.permission.ACCESS_FINE_LOCATION")]
-    [(permission:sms? a-permission)
+    [(permission:send-sms? a-permission)
      (list "android.permission.SEND_SMS")]
+    [(permission:receive-sms? a-permission)
+     (list "android.permission.RECEIVE_SMS")]
     [(permission:tilt? a-permission)
      (list)]
     [(permission:internet? a-permission)
@@ -45,7 +49,9 @@
     [(permission:location? a-permission)
      "org.plt.platform.Platform.getInstance().getLocationService().startService();
       org.plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);"]
-    [(permission:sms? a-permission)
+    [(permission:send-sms? a-permission)
+     ""]
+    [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().startService();
@@ -60,7 +66,9 @@
   (cond
     [(permission:location? a-permission)
      "org.plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
-    [(permission:sms? a-permission)
+    [(permission:send-sms? a-permission)
+     ""]
+    [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
@@ -73,7 +81,9 @@
   (cond
     [(permission:location? a-permission)
      "org.plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
-    [(permission:sms? a-permission)
+    [(permission:send-sms? a-permission)
+     ""]
+    [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
@@ -85,7 +95,7 @@
 (provide/contract [permission? (any/c . -> . boolean?)]
 
                   [PERMISSION:LOCATION permission?]
-                  [PERMISSION:SMS permission?]
+                  [PERMISSION:SEND-SMS permission?]
                   [PERMISSION:TILT permission?]
                   [PERMISSION:INTERNET permission?]
                                    

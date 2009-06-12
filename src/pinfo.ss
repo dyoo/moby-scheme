@@ -428,7 +428,7 @@
                                (bf 'make-effect:beep module-path 0
                                    false "org.plt.WorldKernel.make_dash_effect_colon_beep")
                                (make-binding:function 'make-effect:send-sms module-path 2 false "org.plt.WorldKernel.make_dash_effect_colon_sms"
-                                                      (list PERMISSION:SMS)
+                                                      (list PERMISSION:SEND-SMS)
                                                       false)))))
 
                                
@@ -633,7 +633,7 @@
                                                       3 
                                                       false 
                                                       "org.plt.lib.Sms.sendTextMessage"
-                                                      (list PERMISSION:SMS)
+                                                      (list PERMISSION:SEND-SMS)
                                                       false)))))
 
 
