@@ -131,6 +131,25 @@ org.plt.WorldKernel = {};
 	    }
 	}
 
+	if (org.plt.world.config.onShake) {
+	    if (typeof(navigator) != 'undefined' &&
+		typeof(navigator.accelerometer) != 'undefined' &&
+		typeof(navigator.accelerometer.watchShake) != 'undefined') {
+		function success() {
+		    if (org.plt.world.config.onShakeEffect) {
+			var effect = org.plt.world.config.onShakeEffect([world]);
+			org.plt.WorldKernel.applyEffect(effect);
+                    }
+		    var newWorld = org.plt.world.config.onShake([world]);
+		    changeWorld(newWorld);
+		}
+		function fail() {
+		}
+		navigator.accelerometer.watchShake(success, fail);
+	    }
+	}
+
+
 	addWorldListener(function (w) {
 	    if (org.plt.world.config.onRedraw) {
 		var context = 
@@ -683,6 +702,8 @@ org.plt.WorldKernel = {};
 	onAcceleration: false,
 	onAccelerationEffect: false,
 
+	onShake: false,
+	onShakeEffect: false,
 
 	// onLocationChange: world number number -> world
 	onLocationChange : false,
@@ -745,6 +766,23 @@ org.plt.WorldKernel = {};
 	    org.plt.world.config.onAccelerationEffect = effectHandler;
 	}
     };
+
+
+    org.plt.world.config.Kernel.onShake = function(handler) {
+	return org.plt.world.config.Kernel.onShake_star_(handler, 
+							 function(w, a, p, r) { 
+							     return make_dash_effect_colon_none(); });
+    };
+    
+    org.plt.world.config.Kernel.onShake_star_ = function(handler, effectHandler) {
+	return function() {
+	    org.plt.world.config.onShake = handler;
+	    org.plt.world.config.onShakeEffect = effectHandler;
+	}
+    };
+
+
+
 
 
 

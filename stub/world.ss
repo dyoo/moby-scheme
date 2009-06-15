@@ -1010,6 +1010,15 @@
     ;; fixme
     #t))
 
+(define (on-shake handler)
+  (lambda ()
+    ;; fixme
+    #t))
+
+(define (on-shake* handler effect-handler)
+  (lambda ()
+    ;; fixme
+    #t))
 
 
 (define (on-location-change f)

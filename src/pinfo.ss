@@ -482,6 +482,19 @@
                                 (list PERMISSION:TILT)
                                 false)
 
+                                (make-binding:function
+                                'on-shake module-path 1 false
+                                "org.plt.world.config.Kernel.onShake"
+                                (list PERMISSION:TILT)
+                                false)
+
+                               (make-binding:function
+                                'on-shake* module-path 2 false
+                                "org.plt.world.config.Kernel.onShake_star_"
+                                (list PERMISSION:TILT)
+                                false)
+                               
+                               
                                (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
                                (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
 
