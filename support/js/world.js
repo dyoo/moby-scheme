@@ -485,6 +485,7 @@ org.plt.WorldKernel = {};
     function effect_question_(thing) { 
 	return ((effect_colon_none_question_(thing))||
 		(effect_colon_beep_question_(thing))||
+		(effect_colon_play_dash_dtmf_dash_tone_question_(thing))||
 		(effect_colon_send_dash_sms_question_(thing))||
 		(effect_colon_play_dash_sound_dash_url_question_(thing))); 
     }
@@ -538,6 +539,8 @@ org.plt.WorldKernel = {};
     org.plt.WorldKernel.make_dash_effect_colon_beep = make_dash_effect_colon_beep;
 
 
+
+
     function effect_colon_beep_question_(obj) { 
 	return obj instanceof effect_colon_beep; }
     org.plt.WorldKernel.effect_colon_beep_question_ = effect_colon_beep_question_;
@@ -560,6 +563,45 @@ org.plt.WorldKernel = {};
     effect_colon_send_dash_sms.prototype.run = function() {
 	// FIXME: fill me in
     };
+
+
+    //////////////////////////////////////////////////////////////////////
+    // dtmf tones
+    
+    function effect_colon_play_dash_dtmf_dash_tone(tone,duration) { this.tone = tone;
+	this.duration = duration; }
+    effect_colon_play_dash_dtmf_dash_tone.prototype = new org.plt.Kernel.Struct();
+    effect_colon_play_dash_dtmf_dash_tone.prototype.isEqual = function(other) {
+	if (other instanceof effect_colon_play_dash_dtmf_dash_tone) {
+	    return ((org.plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_duration(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_duration(other))))&&((org.plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_tone(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_tone(other))))&&org.plt.types.Logic.TRUE));
+	} else {
+	    return false;
+	}
+    } 
+
+    effect_colon_play_dash_dtmf_dash_tone.prototype.run = function() {
+	if (typeof navigator != "undefined" &&
+	    typeof navigator.media != "undefined") {
+	    var tone = this.tone.toInteger();
+            var duration = this.duration.toInteger();
+	    navigator.media.playDTMF(tone);
+            setTimeout(function() { navigator.media.stopDTMF() },
+                       duration);
+        } else {
+	    alert("dtmf tone");
+        }
+    };
+
+
+    function make_dash_effect_colon_play_dash_dtmf_dash_tone(id0,id1) { return new effect_colon_play_dash_dtmf_dash_tone(id0,id1); }
+    function effect_colon_play_dash_dtmf_dash_tone_dash_tone(obj) { return obj.tone; }
+    function effect_colon_play_dash_dtmf_dash_tone_dash_duration(obj) { return obj.duration; }
+    function effect_colon_play_dash_dtmf_dash_tone_question_(obj) { 
+	return obj instanceof effect_colon_play_dash_dtmf_dash_tone; }
+
+    //////////////////////////////////////////////////////////////////////
+
+
 
 
 

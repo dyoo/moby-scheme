@@ -427,7 +427,10 @@
                                    false "org.plt.WorldKernel.make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
                                    false "org.plt.WorldKernel.make_dash_effect_colon_beep")
-                               (make-binding:function 'make-effect:send-sms module-path 2 false "org.plt.WorldKernel.make_dash_effect_colon_sms"
+                               (bf 'make-effect:play-dtmf-tone module-path 2
+                                   false "org.plt.WorldKernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                               (make-binding:function 'make-effect:send-sms module-path 2 false 
+                                                      "org.plt.WorldKernel.make_dash_effect_colon_sms"
                                                       (list PERMISSION:SEND-SMS)
                                                       false)))))
 

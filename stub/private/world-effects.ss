@@ -36,6 +36,10 @@
 (define-struct effect:beep ()
   #:prefab)
 
+(define-struct effect:play-dtmf-tone (tone duration)
+  #:prefab)
+
+
 (define-struct effect:send-sms (address  ;; string
                                 msg ;; string
                                 )
@@ -51,6 +55,7 @@
 (define (effect? thing)
   (or (effect:none? thing)
       (effect:beep? thing)
+      (effect:play-dtmf-tone? thing)
       (effect:send-sms? thing)
       (effect:play-sound-url? thing)))
 
@@ -87,6 +92,9 @@
     
     [(effect:beep? e)
      ;; fixme: how do we beep?
+     (void)]
+    
+    [(effect:play-dtmf-tone? e)
      (void)]
    
     [(effect:send-sms? e)
@@ -130,6 +138,9 @@
 
 (provide/contract [struct effect:none ()]
                   [struct effect:beep ()]
+                  [struct effect:play-dtmf-tone ([tone number?]
+                                                 [duration number?])]
+
                   [struct effect:send-sms ([address string?]
                                            [msg string?])]
                   [struct effect:play-sound-url ([url string?])]
