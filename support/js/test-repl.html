@@ -107,7 +107,8 @@ _maybeRunPrompt = function(keyEvent) {
 
 _initialize = function() {
     bindVariables();
-    _resetAndRunDefns();
+    resetRepl();
+    // _resetAndRunDefns();
 };
 
 })();
@@ -130,5 +131,14 @@ _initialize = function() {
 elements. -->
 &gt;&gt;&gt; <input id="prompt" type="text" size="80" onKeyPress="_maybeRunPrompt(event)">
 </div>
+
+
+<!-- Canvas for world programs.
+
+     Fixme: how do we do this across different windows without hitting
+     Javascript security issues?  -->
+<div id="canvasDiv"><canvas id="canvas"></canvas></div>
+
+
 </body>
 </html>

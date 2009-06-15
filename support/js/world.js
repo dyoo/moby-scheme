@@ -88,8 +88,8 @@ org.plt.WorldKernel = {};
 
         var newWindow = window.open(
 	    "big-bang.html",
-	    "big-bang",
-	    "toolbar=0,location=0,directories=0,status=0,menubar=0,width="+width+",height="+height);
+	    "big-bang");
+	    //"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
 	if (newWindow == null) { 
             throw new Error("Error: Not allowed to create a new window."); }
 
@@ -104,9 +104,10 @@ org.plt.WorldKernel = {};
     org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
 	var newWindow = getBigBangWindow(width, height);
-
 	var canvas = 
 	    newWindow.document.getElementById("canvas");
+	canvas.width = width;
+	canvas.height = height;
 
 	resetWorld();
 
@@ -150,11 +151,10 @@ org.plt.WorldKernel = {};
 	    }
 	});
 
-	changeWorld(aWorld);
+ 	changeWorld(aWorld);
 
-	
-	if(org.plt.world.config.onTick) {
-	    scheduleTimerTick(newWindow);
+ 	if(org.plt.world.config.onTick) {
+ 	    scheduleTimerTick(newWindow);
 	}
     };
 
