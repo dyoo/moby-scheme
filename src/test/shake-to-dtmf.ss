@@ -7,46 +7,23 @@
 (define HEIGHT 480)
 (define THRESHOLD 20)
 
-;; The world records the acceleration vector.
-(define-struct world (x y z))
-(define initial-world (make-world 0 0 -9))
+;; The world is a number counting how many times we've been shaken.
+(define initial-world 0)
+
+;; update: world -> world
+(define (update a-world)
+  (add1 a-world))
 
 
-;; update: world number number number -> world
-(define (update a-world new-x new-y new-z)
-  (make-world new-x new-y new-z))
-
-
-;; maybe-ring: world number number number -> effect
-;; Maybe produce a ring, if the old world and the new world
-;; have a significant distance difference.
-(define (maybe-ring a-world new-x new-y new-z)
-  (cond [(> (distance a-world (update a-world new-x new-y new-z))
-            THRESHOLD)
-         ;; play note 4 for one second.
-         (make-effect:play-dtmf-tone 4 1)]
-        [else
-         (make-effect:none)]))
-
-
-;; distance: world world -> boolean
-;; Returns the "distance" between two worlds.
-(define (distance w1 w2)
-  (sqrt (+ (sqr (- (world-x w1)
-                   (world-x w2)))
-           (sqr (- (world-y w1)
-                   (world-y w2)))
-           (sqr (- (world-z w1)
-                   (world-z w2))))))
-
+;; ring: world -> effect
+(define (ring a-world)
+  (make-effect:play-dtmf-tone 4 1000))
+  
 
 ;; render: world -> scene
 (define (render w)
-  (place-image (text (string-append (number->string (world-x w))
-                                    " "
-                                    (number->string (world-y w))
-                                    " "
-                                    (number->string (world-z w)))
+  (place-image (text (string-append (number->string w)
+                                    " rings")
                      10
                      "black")
                50
@@ -57,5 +34,4 @@
 
 (big-bang WIDTH HEIGHT initial-world
           (on-redraw render)
-          (on-acceleration* update maybe-ring))
-                            
+          (on-shake* update ring))

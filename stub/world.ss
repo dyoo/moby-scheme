@@ -21,6 +21,7 @@
 (provide-primitive effect?)
 (provide-primitive make-effect:none)
 (provide-primitive make-effect:beep)
+(provide-primitive make-effect:play-dtmf-tone)
 
 
 
@@ -1148,5 +1149,9 @@
 ;; handler: World number number number -> World
 ;; effect-handler: World number number number -> Effect
 (provide-higher-order-primitive on-acceleration* (handler effect-handler))
+
+(provide-higher-order-primitive on-shake (handler))
+(provide-higher-order-primitive on-shake* (handler effect-handler))
+
 
 ;; FIXME: changes to location or tilt should reflect on the world.
