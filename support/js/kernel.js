@@ -1853,7 +1853,7 @@ org.plt = org.plt || {};
 	if (y.level() < x.level()) y = y.lift(x);
 	if (!(x.isReal() && y.isReal()))
 	    throw new Error("lessThanOrEqual: couldn't be applied to complex number");
-	return x.lessThanOrEqual(y);
+	return x.lessThanOrEqual(y);    	
     };
     
     org.plt.types.NumberTower.greaterThan = function(x, y){
@@ -1903,86 +1903,105 @@ org.plt = org.plt || {};
  
     org.plt.platform.Platform = {};
     org.plt.platform.Platform.getInstance = function() {
-  return JavascriptPlatform;
+    	return JavascriptPlatform;
     };
  
     var JavascriptPlatform = {};
  
     JavascriptPlatform.getLocationService = function() {
-  return JavascriptLocationService;
+    	return JavascriptLocationService;
     };
  
     JavascriptPlatform.getTiltService = function() {
-  return JavascriptTiltService;
+    	return JavascriptTiltService;
     };
 
-  var locSuccessCallback = function(lat, lng) {
-	var newWorld = org.plt.world.config.onMove(org.plt.WorldKernel.world, lat, lng);
-	org.plt.WorldKernel.changeWorld(newWorld);
-  };
- 
 
-  var locationListeners = [];
-  var watchId;
+    var locSuccessCallback = function(pos) {
+    	for ( var i = 0; i < locListeners.length; i++ ) {
+    		var listener = locListeners[i];
+    		listener.locUpdate(pos.latitude, pos.longitude);
+    	}
+    }; 
+
+    var locationListeners = [];
+    var locId;
+
     var JavascriptLocationService = {
 
-  startService : function() {
-      watchId = Geolocation.watchPosition(locSuccessCallback, function() {}, {});
-  },
-  shutdownService : function() {
-      Geolocation.clearWatch(watchId);
-  },
+    	startService : function() {
+    		watchId = Geolocation.watchPosition(locSuccessCallback, function() {}, {});
+    	},
+
+    	shutdownService : function() {
+    		Geolocation.clearWatch(locId);
+    	},
  
-  addLocationChangeListener : function(listener) {
-	    // When the location changes, notify the listeners
-	    // by calling them with the updated lat/long values.
-	    locationListeners.push(listener);
-  } 
+    	addLocationChangeListener : function(listener) {
+    		// When the location changes, notify the listeners
+    		// by calling them with the updated lat/long values.
+    		locationListeners.push(listener);
+    	} 
     };
  
 
     var accelListeners = [];
     var orientListeners = [];
+    var shakeListeners = [];
     var accelId;
     var orientId;
+    var shakeId;
 
     var accelSuccessCallback = function(accel) {
-	for ( var i = 0; i < accelListeners.length; i++ ) {
-		var listener = accelListeners[i];
-		listener.accelUpdate(accel.x, accel.y, accel.z);
-	}
+    	for ( var i = 0; i < accelListeners.length; i++ ) {
+    		accelListeners[i].accelUpdate(accel.x, accel.y, accel.z);
+    	}
     };
     
     var orientSuccessCallback = function(orient) {
 	for ( var i = 0; i < orientListeners.length; i++ ) {
-		var listener = orientListeners[i];
-		listener.orientUpdate(orient.azimuth, orient.pitch, orient.roll);
+		orientListeners[i].orientUpdate(orient.azimuth, orient.pitch, orient.roll);
 	}
     };
 
-  var JavascriptTiltService = {
-    startService : function() {
-      if (typeof Accelerometer != "undefined") {
-        accelId = navigator.accelerometer.watchAcceleration(accelSuccessCallback, function() {}, {});
-        orientId = navigator.accelerometer.watchOrientation(orientSuccessCallback, function() {}, {});
-      }
-    },
-    shutdownService : function() {
-      if (typeof Accelerometer != "undefined") {
-        navigator.accelerometer.clearWatch(accelId);
-        navigator.accelerometer.clearWatch(orientId);
-      }
-    },
+    var shakeSuccessCallback = function() {
+    	for ( var i = 0; i < shakeListeners.length; i++ ) {
+    		shakeListeners[i].shakeUpdate();
+    	}
+    };
+
+    var JavascriptTiltService = {
+    	startService : function() {
+    	    if (typeof Accelerometer != "undefined") {
+    	    	accelId = navigator.accelerometer.watchAcceleration(accelSuccessCallback, function() {});
+    	    	orientId = navigator.accelerometer.watchOrientation(orientSuccessCallback, function() {});
+    	    	shakeId = navigator.accelerometer.watchShake(shakeSuccessCallback, function() {});
+    	    }
+    	},
+
+    	shutdownService : function() {
+    	    if (typeof Accelerometer != "undefined") {
+    	    	navigator.accelerometer.clearWatch(accelId);
+    	    	navigator.accelerometer.clearWatch(orientId);
+		navigator.accelerometer.stopAllShakeWatches();
+    	    }
+    	},
  
-    addOrientationChangeListener : function(listener) {
-      // push a listener onto the orientation listeners
-      orientListeners.push(listener);
-    },
-    addAccelerationChangeListener : function(listener) {
-      // push a listener onto the acceleration listeners
-      accelListeners.push(listener);
-    }
-  };
+    	addOrientationChangeListener : function(listener) {
+    	    // push a listener onto the orientation listeners
+    	    orientListeners.push(listener);
+    	},
+
+    	addAccelerationChangeListener : function(listener) {
+    	    // push a listener onto the acceleration listeners
+    	    accelListeners.push(listener);
+    	},
+
+    	addShakeListener : function(listener) {
+    	    // push a listener onto the shake listeners
+    	    shakeListeners.push(listener);
+    	}
+    };
  
  
 })();

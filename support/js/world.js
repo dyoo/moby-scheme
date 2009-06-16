@@ -699,10 +699,14 @@ org.plt.WorldKernel = {};
 	// onTiltEffect: world number number number -> effect
 	onTiltEffect: false,
 
+	// onAcceleration: world number number number -> world
 	onAcceleration: false,
+	// onAccelerationEffect: world number number number -> effect
 	onAccelerationEffect: false,
 
+	// onShake: world -> world
 	onShake: false,
+	// onShakeEffect: world -> effect
 	onShakeEffect: false,
 
 	// onLocationChange: world number number -> world

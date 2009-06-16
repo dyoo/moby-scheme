@@ -37,6 +37,18 @@ listener.accelUpdate = function(x, y, z) {
   });
 };
 
+listener.shakeUpdate = function() {
+  org.plt.WorldKernel.updateWorld(function(w) {
+    return org.plt.world.config.onShake([w]);
+  });
+};
+
+listener.locUpdate = function(lat, lng) {
+  org.plt.WorldKernel.updateWorld(function(w) {
+    return org.plt.world.config.onLocationChange([w, rat(lat), rat(lng)]);
+  });
+};
+
 
 main.startup = function() {
 
