@@ -441,9 +441,10 @@ org.plt.WorldKernel = {};
 	    ctx.fillStyle = this.color;
 	    ctx.mozDrawText(this.msg);
 	} else {
-	    ctx.font.color = this.color;
-	    ctx.font.size = this.size + "px";
+	    //ctx.font.color = this.color;
+	    //ctx.font.size = this.size + "px";
 	    ctx.fillText(this.msg, x, y);
+	    // FIXME.
 	}
     };
     
@@ -599,12 +600,12 @@ org.plt.WorldKernel = {};
     } 
 
     effect_colon_play_dash_dtmf_dash_tone.prototype.run = function() {
-	if (typeof navigator != "undefined" &&
-	    typeof navigator.media != "undefined") {
+	if (typeof (navigator) != "undefined" &&
+	    typeof (navigator.audio) != "undefined") {
 	    var tone = this.tone.toInteger();
             var duration = this.duration.toInteger();
-	    navigator.media.playDTMF(tone);
-            setTimeout(function() { navigator.media.stopDTMF() },
+	    navigator.audio.playDTMF(tone);
+            setTimeout(function() { navigator.audio.stopDTMF() },
                        duration);
         } else {
 	    alert("dtmf tone");
@@ -618,6 +619,8 @@ org.plt.WorldKernel = {};
     function effect_colon_play_dash_dtmf_dash_tone_question_(obj) { 
 	return obj instanceof effect_colon_play_dash_dtmf_dash_tone; }
 
+
+    org.plt.WorldKernel.make_dash_effect_colon_play_dash_dtmf_dash_tone = make_dash_effect_colon_play_dash_dtmf_dash_tone;
     //////////////////////////////////////////////////////////////////////
 
 

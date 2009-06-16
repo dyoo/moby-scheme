@@ -5,7 +5,6 @@
 
 (define WIDTH 320)
 (define HEIGHT 480)
-(define THRESHOLD 20)
 
 ;; The world is a number counting how many times we've been shaken.
 (define initial-world 0)
