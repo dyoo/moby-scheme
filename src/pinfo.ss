@@ -4,7 +4,7 @@
 (require "toplevel.ss")
 (require "helpers.ss")
 (require "permission.ss")
-
+(require "modules.ss")
 
 
 
@@ -30,7 +30,9 @@
 (define (get-base-pinfo language)
   ;; FIXME: currently ignores the language.  We should change this to
   ;; support different language levels.
-  (make-pinfo toplevel-env empty (make-immutable-hasheq empty) 0))
+  (cond
+    [else
+     (make-pinfo toplevel-env empty (make-immutable-hasheq empty) 0)]))
 
 
 
@@ -415,302 +417,6 @@
 
 
 
-(define-struct module-binding (name path bindings))
-
-
-(define world-effects-module 
- (local [(define module-path 
-            (resolve-module-path '(lib "world-effects.ss" "moby" "stub" "private") false))]
-    (make-module-binding 'world-effects
-                         module-path
-                         (list (bf 'make-effect:none module-path 0
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_none")
-                               (bf 'make-effect:beep module-path 0
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_beep")
-                               (bf 'make-effect:play-dtmf-tone module-path 2
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
-                               (make-binding:function 'make-effect:send-sms module-path 2 false 
-                                                      "org.plt.WorldKernel.make_dash_effect_colon_sms"
-                                                      (list PERMISSION:SEND-SMS)
-                                                      false)))))
-
-                               
-(define world-handlers-module 
-  (local [(define module-path 
-            (resolve-module-path '(lib "world-handlers.ss" "moby" "stub" "private") false))]
-    (make-module-binding 'world-config
-                         module-path
-                         (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
-                               (bf 'on-tick* module-path 3 false "org.plt.world.config.Kernel.onTick_star_")
-                               (bf 'on-mouse module-path 1 false "org.plt.world.config.Kernel.onMouse")
-                               (bf 'on-mouse* module-path 2 false "org.plt.world.config.Kernel.onMouse_star_")
-
-                               (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
-                               (bf 'on-key* module-path 2 false "org.plt.world.config.Kernel.onKey_star_")
-                               
-                               (make-binding:function
-                                'on-location-change module-path 1 false
-                                "org.plt.world.config.Kernel.onLocationChange"
-                                (list PERMISSION:LOCATION)
-                                false)
-                               (make-binding:function
-                                'on-location-change* module-path 2 false
-                                "org.plt.world.config.Kernel.onLocationChange_star_"
-                                (list PERMISSION:LOCATION)
-                                false)
-                               
-                               (make-binding:function
-                                'on-tilt module-path 1 false
-                                "org.plt.world.config.Kernel.onTilt"
-                                (list PERMISSION:TILT)
-                                false)
-                               (make-binding:function
-                                'on-tilt* module-path 2 false
-                                "org.plt.world.config.Kernel.onTilt_star_"
-                                (list PERMISSION:TILT)
-                                false)
-                               
-                               (make-binding:function
-                                'on-acceleration module-path 1 false
-                                "org.plt.world.config.Kernel.onAcceleration"
-                                (list PERMISSION:TILT)
-                                false)
-
-                               (make-binding:function
-                                'on-acceleration* module-path 2 false
-                                "org.plt.world.config.Kernel.onAcceleration_star_"
-                                (list PERMISSION:TILT)
-                                false)
-
-                                (make-binding:function
-                                'on-shake module-path 1 false
-                                "org.plt.world.config.Kernel.onShake"
-                                (list PERMISSION:TILT)
-                                false)
-
-                               (make-binding:function
-                                'on-shake* module-path 2 false
-                                "org.plt.world.config.Kernel.onShake_star_"
-                                (list PERMISSION:TILT)
-                                false)
-                               
-                               
-                               (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
-                               (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
-
-
-
-
-
-(define (make-world-module module-path)
-  (make-module-binding 'world
-                       module-path
-                       (append (module-binding-bindings world-handlers-module)
-                               (module-binding-bindings world-effects-module)
-                               (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
-                                     (bf 'empty-scene module-path 2 false
-                                         "org.plt.WorldKernel.emptyScene")
-                                     (bf 'place-image module-path 4 false
-                                         "org.plt.WorldKernel.placeImage")
-                                     (bf 'circle module-path 3 false
-                                         "org.plt.WorldKernel.circle")
-                                     (bf 'nw:rectangle module-path 4 false
-                                         "org.plt.WorldKernel.nwRectangle")
-                                     (bf 'rectangle module-path 4 false
-                                         "org.plt.WorldKernel.rectangle")
-                                     
-                                     (bf 'key=? module-path 2 false
-                                         "org.plt.WorldKernel.isKeyEqual")
-                                     (bf 'text module-path 3 false
-                                         "org.plt.WorldKernel.text")
-                                     
-                                     ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-                                     ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-                                     ;; ensure students don't accidently hit this function.
-                                     (bf '-kernel-create-image module-path 1 false
-                                         "org.plt.WorldKernel._kernelCreateImage")
-                                     (bf 'image-width module-path 1 false
-                                         "org.plt.WorldKernel.imageWidth")
-                                     (bf 'image-height module-path 1 false
-                                         "org.plt.WorldKernel.imageHeight")
-                                     (bf 'image? module-path 1 false
-                                         "org.plt.WorldKernel.isImage")
-                                     (bf 'image=? module-path 2 false
-                                         "org.plt.WorldKernel.isImageEqual")
-                                     (bf 'image-rotate module-path 2 false
-                                         "org.plt.WorldKernel.imageRotate")))))
-
-
-;; world teachpack bindings
-(define world-module 
-  (local [(define module-path
-            (resolve-module-path '(lib "world.ss" "teachpack" "htdp") false))]
-    (make-world-module module-path)))
-
-
-;; Alternative world teachpack bindings
-(define world-stub-module
-  (local [(define module-path                       
-            (resolve-module-path '(lib "world.ss" "moby" "stub") false))]
-    (make-world-module module-path)))
-
-
-;; Bootstrap bindings
-(define bootstrap-module
-  (local [(define module-path
-            (resolve-module-path '(lib "bootstrap.ss" "moby" "stub") false))]
-    (make-module-binding 'world
-                         module-path
-                         (append (list (bf 'start module-path 10 false "org.plt.world.Bootstrap.start"))
-                                 (module-binding-bindings world-stub-module)))))
-
-
-
-
-;; location library
-(define location-module 
-  (local [(define module-path 
-            (resolve-module-path '(lib "location.ss" "moby" "stub") false))
-          
-          (define (bf name module-path arity vararity? java-string)
-            (make-binding:function name module-path arity vararity? java-string 
-                                   (list PERMISSION:LOCATION)
-                                   false))]
-    (make-module-binding 'location
-                         module-path
-                         (list (bf 'get-latitude module-path 0 false 
-                                   "org.plt.lib.Location.getLatitude")
-                               (bf 'get-longitude module-path 0 false 
-                                   "org.plt.lib.Location.getLongitude")
-                               (bf 'get-attitude module-path 0 false 
-                                   "org.plt.lib.Location.getAttitude")
-                               (bf 'get-bearing module-path 0 false 
-                                   "org.plt.lib.Location.getBearing")
-                               (bf 'get-speed module-path 0 false 
-                                   "org.plt.lib.Location.getSpeed")
-                               (bf 'location-distance module-path 4 false
-                                   "org.plt.lib.Location.getDistanceBetween")))))
-
-
-;; accelerometer library
-(define tilt-module 
-  (local [(define module-path 
-            (resolve-module-path '(lib "tilt.ss" "moby" "stub") false))
-          
-          (define (bf name arity vararity? java-string)
-            (make-binding:function name module-path arity vararity? java-string
-                                   (list PERMISSION:TILT)
-                                   true))]
-    (make-module-binding 'tilt
-                         module-path
-                         (list (bf 'get-x-acceleration 0 false 
-                                   "org.plt.lib.Tilt.getXAcceleration")
-                               (bf 'get-y-acceleration 0 false 
-                                   "org.plt.lib.Tilt.getYAcceleration")
-                               (bf 'get-z-acceleration 0 false 
-                                   "org.plt.lib.Location.getZAcceleration")
-                               
-                               (bf 'get-azimuth 0 false 
-                                   "org.plt.lib.Tilt.getAzimuth")
-                               (bf 'get-pitch 0 false 
-                                   "org.plt.lib.Tilt.getPitch")
-                               (bf 'get-roll 0 false 
-                                   "org.plt.lib.Tilt.getRoll")))))
-
-
-;; gui-world is deprecated, so we currently remove this binding.
-#;(define gui-world-module
-    (local [(define module-path 
-              (resolve-module-path '(lib "gui-world.ss" "gui-world")
-                                   false))]
-      (make-module-binding 'gui-world
-                           module-path
-                           (append (module-binding-bindings world-config-module)
-                                   (list (bf 'big-bang module-path 2 true "org.plt.guiworld.GuiWorld.bigBang")
-                                         (bf 'row module-path 0 true "org.plt.guiworld.GuiWorld.row")
-                                         (bf 'col module-path 0 true "org.plt.guiworld.GuiWorld.col")
-                                         (bf 'message module-path 1 false "org.plt.guiworld.GuiWorld.message")
-                                         (bf 'button module-path 2 false "org.plt.guiworld.GuiWorld.button")
-                                         (bf 'drop-down module-path 3 false "org.plt.guiworld.GuiWorld.dropDown")
-                                         (bf 'text-field module-path 2 false "org.plt.guiworld.GuiWorld.textField")
-                                         (bf 'box-group module-path 2 false "org.plt.guiworld.GuiWorld.boxGroup")
-                                         (bf 'checkbox module-path 3 false "org.plt.guiworld.GuiWorld.checkBox"))))))
-
-
-
-(define sms-module
-  (local [(define module-path
-            (resolve-module-path 
-             '(lib "sms.ss" "moby" "stub") false))]
-    (make-module-binding 'sms
-                         module-path
-                         (list (make-binding:function 'send-text-message
-                                                      module-path 
-                                                      3 
-                                                      false 
-                                                      "org.plt.lib.Sms.sendTextMessage"
-                                                      (list PERMISSION:SEND-SMS)
-                                                      false)))))
-
-
-(define net-module
-  (local [(define module-path
-            (resolve-module-path 
-             '(lib "net.ss" "moby" "stub") false))]
-    (make-module-binding 'net
-                         module-path
-                         (list (make-binding:function 'get-url
-                                                      module-path 
-                                                      1 
-                                                      false 
-                                                      "org.plt.lib.Net.getUrl"
-                                                      (list PERMISSION:INTERNET)
-                                                      false)))))
-
-(define parser-module
-  (local [(define module-path
-            (resolve-module-path 
-             '(lib "parser.ss" "moby" "stub") false))]
-    (make-module-binding 'parser
-                         module-path
-                         (list (make-binding:function 'parse-xml
-                                                      module-path 
-                                                      1 
-                                                      false 
-                                                      "org.plt.lib.Parser.parseXml"
-                                                      empty
-                                                      false)
-                               (make-binding:function 'split-whitespace
-                                                      module-path
-                                                      1
-                                                      false
-                                                      "org.plt.lib.Parser.splitWhitespace"
-                                                      empty
-                                                      false)))))
-
-;; extend-env/module-binding: env module-binding -> env
-;; Extends an environment with the bindings associated to a module.
-(define (extend-env/module-binding an-env a-module-binding)
-  (local [(define (loop an-env contents)
-            (cond
-              [(empty? contents)
-               an-env]
-              [else
-               (loop (env-extend an-env (first contents))
-                     (rest contents))]))]
-    (loop an-env (module-binding-bindings a-module-binding))))
-
-
-
-(define known-modules (list world-module
-                            world-stub-module
-                            location-module
-                            tilt-module
-                            #;gui-world-module
-                            sms-module
-                            net-module
-                            parser-module
-                            bootstrap-module))
 
 
 
@@ -736,10 +442,6 @@
 
 
 
-
-
-
-
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash hash?]
@@ -753,8 +455,4 @@
                   [pinfo-permissions (pinfo? . -> . (listof permission?))]
 
                   [program-analyze (program?  . -> . pinfo?)]
-                  [program-analyze/pinfo (program? pinfo? . -> . pinfo?)]
-                  
-                  [struct module-binding ([name symbol?]
-                                          [path path?]
-                                          [bindings (listof binding?)])])
+                  [program-analyze/pinfo (program? pinfo? . -> . pinfo?)])
