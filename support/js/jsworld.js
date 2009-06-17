@@ -424,12 +424,34 @@ Jsworld = {};
     }
 
 
+
+
+
+
     //////////////////////////////////////////////////////////////////////
+    //From this point forward, we define wrappers to integrate jsworld
+    //with Moby.
 
 
+    // deepListToArray: any -> any
+    // Converts list structure to array structure.
+    function deepListToArray(thing) {
+	if (org.plt.Kernel.empty_question_(thing)) {
+	    return [];
+	} else if (org.plt.Kernel.pair_question_(thing)) {
+	    var result = [];
+	    while (!thing.isEmpty()) {
+		result.push(deepListToArray(aList.first()));
+		thing = thing.rest();
+	    }
+	} else {
+	    return thing;
+	}
+    };
 
 
     // Exports:
+    // bigBang: world (world -> dom) (world -> (listof css-style)) number number (listof (list string string)) -> world
     Jsworld.bigBang = function(initWorld, redraw, redrawCss, delay, tick, attribs) {
 	function wrappedRedraw(w) {
 	    // fixme
@@ -437,8 +459,11 @@ Jsworld = {};
 	}
 
 	function wrappedRedrawCss(w) {
+	    // fixme
 	    return redrawCss(w);
 	}
+	var wrappedDelay = delay.toInteger();
+	var wrappedTick = tick.toInteger();
 
 	return big_bang(initWorld,
 			wrappedRedraw,
