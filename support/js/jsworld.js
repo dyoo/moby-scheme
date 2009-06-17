@@ -1,10 +1,16 @@
-Jsworld = {};
+org.plt.world.Jsworld = {};
 
+
+
+// Stuff here is copy-and-pasted from Chris's JSWorld.  We
+// namespace-protect it, and add the Javascript <-> Moby wrapper
+// functions here.
 
 (function() {
 
-    // Stuff here is copy-and-pasted from Chris's JSWorld.  We namespace-protect it, and
-    // add the Javascript<->Moby wrapper functions here.
+    var Jsworld = org.plt.world.Jsworld;
+
+
 
     //
     // STUFF THAT SHOULD REALLY BE IN ECMASCRIPT
@@ -447,20 +453,44 @@ Jsworld = {};
 	} else {
 	    return thing;
 	}
-    };
+    }
+
+    // assocListToAssocArray: (listof (list X Y)) -> (hashof X Y)
+    function assocListToAssocArray(aList) {
+	var result = {};
+	while (! aList.isEmpty()) {
+	    var key = aList.first().first();
+	    var val = aList.first().rest().first();
+	    result[key] = val;
+	    aList = aList.rest();
+	}
+	return result;
+    }
+
+
+    // changeWorld: (world -> world) -> void
+    // Trigger a change in the world due to an updater, and redraw.
+    function changeWorld(f) {
+	world = f(world); 
+	do_redraw();	
+    }
 
 
     // Exports:
     // bigBang: world (world -> dom) (world -> (listof css-style)) number number (listof (list string string)) -> world
-    Jsworld.bigBang = function(initWorld, redraw, redrawCss, delay, tick, attribs) {
+    Jsworld.bigBang = function(initWorld,
+88			       redraw, 
+			       redrawCss, 
+			       delay, 
+			       tick, 
+			       attribs) {
 	function wrappedRedraw(w) {
-	    // fixme
-	    return redraw(w);
+	    return deepListToArray(redraw(w));
 	}
 
 	function wrappedRedrawCss(w) {
 	    // fixme
-	    return redrawCss(w);
+	    return deepListToArray(redrawCss(w));
 	}
 	var wrappedDelay = delay.toInteger();
 	var wrappedTick = tick.toInteger();
@@ -470,9 +500,35 @@ Jsworld = {};
 			wrappedRedrawCss,
 			wrappedDelay, 
 			wrappedTick, 
-			convertAttribs(attribs));
+			assocListToAssocArray(attribs));
     }
 
+
+
+    // p: assoc -> dom
+    Jsworld.p = function(attribsAssocList) {
+	return p(assocListToAssocArray(attribsAssocList));
+    };
+
+    // div: assoc -> dom
+    Jsworld.div = function (attribsAssocList) {
+	return div(assocListToAssocArray(attribsAssocList));
+    };
+
+    // button: (world -> world) assoc -> dom
+    Jsworld.button = function(f, attribsAssocList) {
+	return button(f, assocListToAssocArray(attribsAssocList));
+    };
+
+    // input: string assoc -> dom
+    Jsworld.input = function(type, attribsAssocList) {
+	return input(type, assocListToAssocArray(attribsAssocList));
+    };
+
+    // text: string assoc -> dom
+    Jsworld.text = function(s, attribsAssocList) {
+	return text(s, assocListToAssocArray(attribsAssocList));
+    }
 
 
 
