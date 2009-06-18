@@ -27,7 +27,7 @@
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
 (define (program->compiled-program program [input-pinfo (get-base-pinfo 
-                                                         'java)])
+                                                         'base)])
   (let* ([a-pinfo (program-analyze/pinfo program input-pinfo)]
          [toplevel-env (pinfo-env a-pinfo)])
     

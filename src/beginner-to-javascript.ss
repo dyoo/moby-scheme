@@ -41,7 +41,7 @@
 
 (define (program->compiled-program program)
   (program->compiled-program/pinfo program 
-                                   (get-base-pinfo 'htdp-intermediate-lambda)))
+                                   (get-base-pinfo 'base)))
 
 
 ;; program->compiled-program/pinfo: program pinfo -> compiled-program

@@ -1024,13 +1024,21 @@ org.plt = org.plt || {};
 	};
 	
     // Symbols
+
+
     org.plt.types.Symbol = function(val) {
-  this.val = val;
+	this.val = val;
     };
+
+    var symbolCache = {};
  
     // makeInstance: string -> Symbol.
     org.plt.types.Symbol.makeInstance = function(val) {
-  return new org.plt.types.Symbol(val);
+	// To ensure that we can eq? symbols with equal values.
+	if (!(val in symbolCache)) {
+	    symbolCache[val] = new org.plt.types.Symbol(val);
+	}
+	return symbolCache[val];
     };
  
     org.plt.types.Symbol.prototype.isEqual = function(other) {

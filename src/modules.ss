@@ -280,6 +280,23 @@
                                                       empty
                                                       false)))))
 
+
+;; The default bindings for moby will include
+;; stuff from regular world
+;; stuff from jsworld
+(define moby-module-binding
+  (make-module-binding 'moby
+                       (resolve-module-path '(lib "moby.ss" "moby" "stub"))
+                       (append 
+                        (module-binding-bindings world-stub-module)
+                        (module-binding-bindings jsworld-module)
+                        
+                        )))
+
+
+                               
+                               
+
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
 (define (extend-env/module-binding an-env a-module-binding)
@@ -301,9 +318,16 @@
                             sms-module
                             net-module
                             parser-module
-                            bootstrap-module))
+                            bootstrap-module
+                            
+                            moby-module-binding))
+
+
 
 (provide/contract [struct module-binding ([name symbol?]
                                           [path path?]
                                           [bindings (listof binding?)])]
-                  [known-modules (listof module-binding?)])
+                  [extend-env/module-binding 
+                   (env? module-binding? . -> . env?)]
+                  [known-modules (listof module-binding?)]
+                  [moby-module-binding module-binding?])

@@ -1,8 +1,8 @@
 #lang scheme/base
 (require scheme/match
-         scheme/list
          scheme/contract
          "helpers.ss"
+         (only-in scheme/list empty? empty first rest)
          (prefix-in primitive-pinfo: "pinfo.ss")
          (prefix-in primitive-env: "env.ss"))
 
@@ -347,33 +347,7 @@
 
 
 
-;; desugar-cond: expr -> expr
-;; Translates conds to ifs.
-(define (desugar-cond an-expr)
-  (match an-expr
-    [(list 'cond [list questions answers] ... [list 'else answer-last])
-     (let loop ([questions questions]
-                [answers answers])
-       (cond
-         [(empty? questions)
-          `,answer-last]
-         [else
-          `(if ,(first questions) 
-               ,(first answers)
-               ,(loop (rest questions)
-                      (rest answers)))]))]
-    
-    [(list 'cond [list questions answers] ... [list question-last answer-last])
-     (let loop ([questions questions]
-                [answers answers])
-       (cond
-         [(empty? questions)
-          `(if ,question-last ,answer-last (error "Fell out of cond"))]
-         [else
-          `(if ,(first questions) 
-               ,(first answers)
-               ,(loop (rest questions)
-                      (rest answers)))]))]))
+
 
 
 

@@ -27,11 +27,20 @@
 
 ;; get-base-pinfo: pinfo symbol -> pinfo
 ;; Returns a pinfo that knows the base definitions.
+;; Language can be one of the following:
+;; 'base
+;; 'moby
 (define (get-base-pinfo language)
   ;; FIXME: currently ignores the language.  We should change this to
   ;; support different language levels.
   (cond
-    [else
+    [(symbol=? language 'moby)
+     (make-pinfo (extend-env/module-binding toplevel-env
+                                            moby-module-binding)
+                 empty 
+                 (make-immutable-hasheq empty) 
+                 0)]
+    [(symbol=? language 'base)
      (make-pinfo toplevel-env empty (make-immutable-hasheq empty) 0)]))
 
 
@@ -148,7 +157,7 @@
 ;; are actively used.
 
 (define (program-analyze a-program)
-  (program-analyze/pinfo a-program (get-base-pinfo '_)))
+  (program-analyze/pinfo a-program (get-base-pinfo 'base)))
 
 
 (define (program-analyze/pinfo a-program pinfo)
@@ -447,7 +456,7 @@
                                  [used-bindings-hash hash?]
                                  [gensym-counter number?])]
                   [empty-pinfo pinfo?]
-                  [get-base-pinfo (any/c . -> . pinfo?)]
+                  [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
