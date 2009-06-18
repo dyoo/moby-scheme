@@ -1120,6 +1120,17 @@ org.plt = org.plt || {};
 	
 	return ret;
     };
+    
+    org.plt.types.Cons.prototype.toString = function() {
+	var texts = [];
+	var p = this;
+	while (! p.isEmpty()) {
+	    texts.push(p.first().toString());
+	    p = p.rest();
+	}
+	return "(" + texts.join(", ") + ")";
+    };
+
  
     // Rationals
  

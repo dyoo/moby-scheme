@@ -448,18 +448,19 @@ org.plt.world.Jsworld = {};
 
     // deepListToArray: any -> any
     // Converts list structure to array structure.
-    function deepListToArray(thing) {
+    function deepListToArray(x) {
+	var thing = x;
 	if (org.plt.Kernel.empty_question_(thing)) {
 	    return [];
 	} else if (org.plt.Kernel.pair_question_(thing)) {
 	    var result = [];
 	    while (!thing.isEmpty()) {
-		result.push(deepListToArray(aList.first()));
+		result.push(deepListToArray(thing.first()));
 		thing = thing.rest();
 	    }
 	    return result;
 	} else {
-	    return thing;
+	    return x;
 	}
     }
 
@@ -502,8 +503,16 @@ org.plt.world.Jsworld = {};
 
 
 
+
+
+    // types are
+    // sexp: (cons node (listof sexp))
+    // css-style: (node (listof (list string string)))
+
     // Exports:
-    // bigBang: world (world -> dom) (world -> (listof css-style)) number (world -> world) (listof (list string string)) -> world
+
+
+    // bigBang: world (world -> sexp) (world -> (listof css-style)) number (world -> world) (listof (list string string)) -> world
     Jsworld.bigBang = function(initWorld,
 			       redraw, 
 			       redrawCss, 
@@ -517,13 +526,13 @@ org.plt.world.Jsworld = {};
 	toplevelNode = mainWindow.document.getElementById("jsworld-div");
 
 	function wrappedRedraw(w) {
-	    var result = [toplevelNode, 
-			  [deepListToArray(redraw([w]))]];
+	    var result = [toplevelNode, deepListToArray(redraw([w]))];
 	    return result;
 	}
 
 	function wrappedRedrawCss(w) {
-	    return deepListToArray(redrawCss([w]));
+	    var result = deepListToArray(redrawCss([w]));
+	    return result;
 	}
 
 	function wrappedTick(w) {
@@ -544,27 +553,27 @@ org.plt.world.Jsworld = {};
 
 
 
-    // p: assoc -> dom
+    // p: assoc -> node
     Jsworld.p = function(attribsAssocList) {
 	return p(assocListToAssocArray(attribsAssocList));
     };
 
-    // div: assoc -> dom
+    // div: assoc -> node
     Jsworld.div = function (attribsAssocList) {
 	return div(assocListToAssocArray(attribsAssocList));
     };
 
-    // button: (world -> world) assoc -> dom
+    // button: (world -> world) assoc -> node
     Jsworld.button = function(f, attribsAssocList) {
 	return button(f, assocListToAssocArray(attribsAssocList));
     };
 
-    // input: string assoc -> dom
+    // input: string assoc -> node
     Jsworld.input = function(type, attribsAssocList) {
 	return input(type, assocListToAssocArray(attribsAssocList));
     };
 
-    // text: string assoc -> dom
+    // text: string assoc -> node
     Jsworld.text = function(s, attribsAssocList) {
 	return text(s, assocListToAssocArray(attribsAssocList));
     }
