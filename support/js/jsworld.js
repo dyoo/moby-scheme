@@ -12,6 +12,12 @@ org.plt.world.Jsworld = {};
 
 
 
+    var toplevelNode = document.body;
+
+
+
+
+
     //
     // STUFF THAT SHOULD REALLY BE IN ECMASCRIPT
     //
@@ -262,7 +268,7 @@ org.plt.world.Jsworld = {};
 	try {
 	    // don't take out concat, it doubles as a shallow copy
 	    // (as well as ensuring we keep document.body)
-	    live_nodes = nodes.concat(document.body).sort(positionComparator);
+	    live_nodes = nodes.concat(toplevelNode).sort(positionComparator);
 	}
 	catch (e) {
 	    // probably doesn't implement Node.compareDocumentPosition
@@ -271,7 +277,7 @@ org.plt.world.Jsworld = {};
 	
 	pcRead('prune sort');
 	
-	var node = document.body, stop = document.body.parentNode;
+	var node = toplevelNode, stop = toplevelNode.parentNode;
 	while (node !== stop) {
 	    for (;;) {
 		// process first
@@ -345,6 +351,7 @@ org.plt.world.Jsworld = {};
 
     var world, redraw_func, redraw_css_func, tick_func;
 
+
     function sexp2tree(sexp) {
 	return { node: sexp[0], children: map(sexp.slice(1), sexp2tree) };
     }
@@ -382,7 +389,7 @@ org.plt.world.Jsworld = {};
 	do_redraw();
 	setInterval(function () { world = tick(world); do_redraw(); }, delay);
 	// do we want something for body too?
-	//copy_attribs(document.body, attribs);
+	//copy_attribs(toplevelNode, attribs);
 	copy_attribs(window, attribs);
     }
 
@@ -505,11 +512,12 @@ org.plt.world.Jsworld = {};
 			       attribs) {
 
 	var mainWindow = getBigBangWindow();
-	var mainDiv = mainWindow.document.body;//mainWindow.document.getElementById("jsworld-div");
+	// KLUDGE: check with Chris to get newest version of jsworld that
+	// consumes the toplevel node.
+	toplevelNode = mainWindow.document.getElementById("jsworld-div");
 
 	function wrappedRedraw(w) {
-	    console.log("in redraw: world is " + w);
-	    var result = [mainDiv, 
+	    var result = [toplevelNode, 
 			  [deepListToArray(redraw([w]))]];
 	    return result;
 	}
@@ -520,14 +528,11 @@ org.plt.world.Jsworld = {};
 
 	function wrappedTick(w) {
 	    var result = tick([w]);
-	    console.log("old world is: " + w);
-	    console.log("new world is: " + result);
 	    return result;
 	}
 
 	var wrappedDelay = delay.toInteger();
 
-	console.log("initial world is " + initWorld);
 
 	return big_bang(initWorld,
 			wrappedRedraw,
