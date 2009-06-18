@@ -450,6 +450,7 @@ org.plt.world.Jsworld = {};
 		result.push(deepListToArray(aList.first()));
 		thing = thing.rest();
 	    }
+	    return result;
 	} else {
 	    return thing;
 	}
@@ -504,24 +505,35 @@ org.plt.world.Jsworld = {};
 			       attribs) {
 
 	var mainWindow = getBigBangWindow();
-	var mainDiv = mainWindow.document.getElementById("jsworld-div");
+	var mainDiv = mainWindow.document.body;//mainWindow.document.getElementById("jsworld-div");
 
 	function wrappedRedraw(w) {
-	    return [mainDiv, 
-                    deepListToArray(redraw(w))];
+	    console.log("in redraw: world is " + w);
+	    var result = [mainDiv, 
+			  [deepListToArray(redraw([w]))]];
+	    return result;
 	}
 
 	function wrappedRedrawCss(w) {
-	    return deepListToArray(redrawCss(w));
+	    return deepListToArray(redrawCss([w]));
+	}
+
+	function wrappedTick(w) {
+	    var result = tick([w]);
+	    console.log("old world is: " + w);
+	    console.log("new world is: " + result);
+	    return result;
 	}
 
 	var wrappedDelay = delay.toInteger();
+
+	console.log("initial world is " + initWorld);
 
 	return big_bang(initWorld,
 			wrappedRedraw,
 			wrappedRedrawCss,
 			wrappedDelay, 
-			tick, 
+			wrappedTick, 
 			assocListToAssocArray(attribs));
     }
 
