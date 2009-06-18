@@ -389,6 +389,11 @@
      (list (string->javascript-string expr)
            a-pinfo)]
 
+    ;; Literal booleans
+    [(boolean? expr)
+     (expression->javascript-string (if expr 'true 'false)
+                                    env
+                                    a-pinfo)]
     ;; Characters
     [(char? expr)
      (list (char->javascript-string expr)

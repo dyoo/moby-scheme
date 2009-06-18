@@ -366,6 +366,10 @@
     [(string? an-expression)
      pinfo]
     
+    ;; Literal booleans
+    [(boolean? an-expression)
+     pinfo]
+    
     ;; Characters
     [(char? an-expression)
      pinfo]

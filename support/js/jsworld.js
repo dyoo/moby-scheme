@@ -476,30 +476,52 @@ org.plt.world.Jsworld = {};
     }
 
 
+    // getBigBangWindow: -> window
+    function getBigBangWindow() {
+        if (window.document.getElementById("jsworld-div") != undefined) {
+	    return window;
+	}
+
+        var newWindow = window.open(
+	    "big-bang.html",
+	    "big-bang");
+	    //"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
+	if (newWindow == null) { 
+            throw new Error("Error: Not allowed to create a new window."); }
+
+	return newWindow;
+    }
+
+
+
     // Exports:
-    // bigBang: world (world -> dom) (world -> (listof css-style)) number number (listof (list string string)) -> world
+    // bigBang: world (world -> dom) (world -> (listof css-style)) number (world -> world) (listof (list string string)) -> world
     Jsworld.bigBang = function(initWorld,
-88			       redraw, 
+			       redraw, 
 			       redrawCss, 
 			       delay, 
 			       tick, 
 			       attribs) {
+
+	var mainWindow = getBigBangWindow();
+	var mainDiv = mainWindow.document.getElementById("jsworld-div");
+
 	function wrappedRedraw(w) {
-	    return deepListToArray(redraw(w));
+	    return [mainDiv, 
+                    deepListToArray(redraw(w))];
 	}
 
 	function wrappedRedrawCss(w) {
-	    // fixme
 	    return deepListToArray(redrawCss(w));
 	}
+
 	var wrappedDelay = delay.toInteger();
-	var wrappedTick = tick.toInteger();
 
 	return big_bang(initWorld,
 			wrappedRedraw,
 			wrappedRedrawCss,
 			wrappedDelay, 
-			wrappedTick, 
+			tick, 
 			assocListToAssocArray(attribs));
     }
 

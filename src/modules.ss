@@ -280,18 +280,32 @@
                                                       empty
                                                       false)))))
 
+(define jsworld-module 
+  (local [(define module-path
+            (resolve-module-path 
+             '(lib "jsworld.ss" "moby" "stub") false))
+          (define (bf name arity java-string)
+            (make-binding:function name module-path arity false java-string empty false))]
+    (make-module-binding 'jsworld
+                         module-path
+                         (list (bf 'js-big-bang 1
+                                   "org.plt.world.Jsworld.bigBang")
+                               (bf 'js-div 1 "org.plt.world.Jsworld.div")
+                               (bf 'js-button 2 "org.plt.world.Jsworld.button")
+                               (bf 'js-input 2 "org.plt.world.Jsworld.input")
+                               (bf 'js-text 2 "org.plt.world.Jsworld.text")))))
+  
+
 
 ;; The default bindings for moby will include
 ;; stuff from regular world
 ;; stuff from jsworld
 (define moby-module-binding
   (make-module-binding 'moby
-                       (resolve-module-path '(lib "moby.ss" "moby" "stub"))
+                       (resolve-module-path '(lib "moby.ss" "moby" "stub") false)
                        (append 
                         (module-binding-bindings world-stub-module)
-                        (module-binding-bindings jsworld-module)
-                        
-                        )))
+                        (module-binding-bindings jsworld-module))))
 
 
                                
