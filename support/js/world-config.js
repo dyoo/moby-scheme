@@ -1,5 +1,9 @@
-org.plt.world = {};
+// depends on kernel.js
 
+
+var org = org || {};
+org.plt = org.plt || {};
+org.plt.world = org.plt.world || {};
 
 
 org.plt.world.config = {
