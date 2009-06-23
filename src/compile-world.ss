@@ -277,6 +277,7 @@
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
     (write-android-manifest dest-dir 
                             #:name a-name
+                            #:package (string-append "org.plt." (upper-camel-case a-name))
                             #:permissions (pinfo-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
@@ -290,6 +291,7 @@
                                    (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (write-android-manifest dest-dir 
                             #:name a-name
+                            #:package (string-append "org.plt." (upper-camel-case a-name))
                             #:activity-class (string-append
                                               "org.plt." classname "." classname)
                             #:permissions (pinfo-permissions pinfo))
@@ -302,13 +304,32 @@
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
 (define (write-android-manifest dest-dir
                                 #:name name
+                                #:package package
+                                #:activity-class (activity-class 
+                                                  "j2ab.android.app.J2ABMIDletActivity")
+                                #:permissions (permissions '()))
+  (call-with-output-file (build-path dest-dir "AndroidManifest.xml")
+    (lambda (op)
+      (display (get-android-manifest dest-dir 
+                                     #:name name 
+                                     #:package package 
+                                     #:activity-class activity-class 
+                                     #:permissions permissions) op))
+    #:exists 'replace))
+
+  
+
+;; get-android-manifest: path (#:name string) (#:package string) (#:activity-class string) (#:permissions (listof string)) -> string
+(define (get-android-manifest dest-dir
+                                #:name name
+                                #:package package
                                 #:activity-class (activity-class 
                                                   "j2ab.android.app.J2ABMIDletActivity")
                                 #:permissions (permissions '()))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")
-            (package ,(string-append "org.plt." (upper-camel-case name)))
+            (package ,package)
             (android:versionCode "1")
             (android:versionName "1.0.0"))
 
@@ -327,11 +348,11 @@
                        (category
                         ((android:name
                           "android.intent.category.LAUNCHER")))))))])
+    
+    (xexpr->string AndroidManifest.xml)))
+    
 
-    (call-with-output-file (build-path dest-dir "AndroidManifest.xml")
-      (lambda (op)
-        (display (xexpr->string AndroidManifest.xml) op))
-      #:exists 'replace)))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
