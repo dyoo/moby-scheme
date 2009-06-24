@@ -115,36 +115,36 @@ org.plt.WorldKernel = {};
 
 	resetWorld();
 
-
+	var config = new org.plt.world.config.WorldConfig();
 	for (i = 0; i < handlers.length; i++) {
-	    handlers[i]();
+	    config = handlers[i](config);
 	}
 
-	if (org.plt.world.config.onKey) {
+	if (config.lookup('onKey')) {
 	    newWindow.onkeypress = function(e) {
 		if (! stopped) {
 		    var keyname = getKeyCodeName(e);
-		    if (org.plt.world.config.onKeyEffect) {
-			var effect = org.plt.world.config.onKeyEffect([world, keyname]);
+		    if (config.lookup('onKeyEffect')) {
+		      var effect = config.lookup('onKeyEffect')([world, keyname]);
 			org.plt.WorldKernel.applyEffect(effect);
                     }
 
-		    var newWorld = org.plt.world.config.onKey([world, keyname]);
+		    var newWorld = config.lookup('onKey')([world, keyname]);
 		    changeWorld(newWorld);
 		}
 	    }
 	}
 
-	if (org.plt.world.config.onShake) {
+	if (config.lookup('onShake')) {
 	    if (typeof(navigator) != 'undefined' &&
 		typeof(navigator.accelerometer) != 'undefined' &&
 		typeof(navigator.accelerometer.watchShake) != 'undefined') {
 		function success() {
-		    if (org.plt.world.config.onShakeEffect) {
-			var effect = org.plt.world.config.onShakeEffect([world]);
+		  if (config.lookup('onShakeEffect')) {
+		        var effect = config.lookup('onShakeEffect')([world]);
 			org.plt.WorldKernel.applyEffect(effect);
                     }
-		    var newWorld = org.plt.world.config.onShake([world]);
+		  var newWorld = config.lookup('onShake')([world]);
 		    changeWorld(newWorld);
 		}
 		function fail() {
@@ -154,36 +154,38 @@ org.plt.WorldKernel = {};
 	}
 
 
-	addWorldListener(function (w) {
-	    if (org.plt.world.config.onRedraw) {
+       if (config.lookup('onRedraw')) {
+	   addWorldListener(function (w) {
 		var context = 
 		    canvas.getContext("2d");
 		var aScene = 
-		    org.plt.world.config.onRedraw([w]);
+		  config.lookup('onRedraw')([w]);
 		aScene.render(context,
 			      0,
 			      0);
-	    }
+	   });
+       }
 
-	});
+
 	addWorldListener(function (w) {
-	    if (org.plt.world.config.stopWhen) {
-		if (org.plt.world.config.stopWhen([w])) {
+	  if (config.lookup('stopWhen')) {
+	    if (config.lookup('stopWhen')([w])) {
 		    stopped = true;
-		}
 	    }
+	  }
 	});
 
  	changeWorld(aWorld);
 
- 	if(org.plt.world.config.onTick) {
- 	    scheduleTimerTick(newWindow);
+ 	if(config.lookup('onTick')) {
+	  console.log('onTick');
+	  scheduleTimerTick(newWindow, config);
 	}
     };
 
     // scheduleTimerTick: -> void
     // Repeatedly schedules an evaluation of the onTick until the program has stopped.
-    function scheduleTimerTick(window) {
+    function scheduleTimerTick(window, config) {
 	timerInterval = window.setTimeout(
 	    function() {
 		if (stopped) {
@@ -191,17 +193,17 @@ org.plt.WorldKernel = {};
 		    timerInterval = false;
 		}
 		else {
-                    if (org.plt.world.config.onTickEffect) {
-			var effect = org.plt.world.config.onTickEffect([world]);
+		  if (config.lookup('onTickEffect')) {
+		    var effect = config.lookup('onTickEffect')([world]);
 			org.plt.WorldKernel.applyEffect(effect);
                     }
 
 		    changeWorld(
-			org.plt.world.config.onTick([world]));
+		      config.lookup('onTick')([world]));
 		    scheduleTimerTick(window);
 		}
 	    },
-	    org.plt.world.config.tickDelay);
+	    config.lookup('tickDelay'));
     }
 
 
