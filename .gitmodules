@@ -1,0 +1,3 @@
+[submodule "support/js/jsworld"]
+	path = support/js/jsworld
+	url = git://github.com/dyoo/jsworld.git
