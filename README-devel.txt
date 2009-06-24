@@ -12,6 +12,8 @@ Quick start
   $ git clone git://github.com/dyoo/moby-scheme.git moby
   $ cd moby
   $ git checkout origin/devel
+  $ git submodule init
+  $ git submodule update
 
 Once the devel branch is checked out, you can compile one of the test
 programs to see that things are running:
