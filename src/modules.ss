@@ -94,8 +94,10 @@
                                 (list PERMISSION:TILT)
                                 false)
                                
-                               
                                (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
+                               
+                               (bf 'on-draw/css module-path 1 false "org.plt.world.config.Kernel.onRedraw")
+                               
                                (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
 
 
@@ -288,12 +290,12 @@
             (make-binding:function name module-path arity false java-string empty false))]
     (make-module-binding 'jsworld
                          module-path
-                         (list (bf 'js-big-bang 1
-                                   "org.plt.world.Jsworld.bigBang")
-                               (bf 'js-div 1 "org.plt.world.Jsworld.div")
-                               (bf 'js-button 2 "org.plt.world.Jsworld.button")
-                               (bf 'js-input 2 "org.plt.world.Jsworld.input")
-                               (bf 'js-text 2 "org.plt.world.Jsworld.text")))))
+                         (list (bf 'js-big-bang 3
+                                   "org.plt.world.MobyJsworld.bigBang")
+                               (bf 'js-div 1 "org.plt.world.MobyJsworld.div")
+                               (bf 'js-button 2 "org.plt.world.MobyJsworld.button")
+                               (bf 'js-input 2 "org.plt.world.MobyJsworld.input")
+                               (bf 'js-text 2 "org.plt.world.MobyJsworld.text")))))
   
 
 

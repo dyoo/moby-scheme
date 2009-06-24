@@ -6,6 +6,70 @@ org.plt = org.plt || {};
 org.plt.world = org.plt.world || {};
 
 
+(function() {
+
+function WorldConfig() {
+    this.vals = {
+    // onRedraw: world -> scene
+    onRedraw: false,
+
+    // tickDelay: number
+    tickDelay: false,
+    // onTick: world -> world
+    onTick: false,
+    // onTickEffect: world -> effect
+    onTickEffect: false,
+
+    // onKey: world key -> world
+    onKey: false,
+    // onKeyEffect: world key -> effect
+    onKeyEffect : false,
+
+    // onTilt: world number number number -> world
+    onTilt: false,
+    // onTiltEffect: world number number number -> effect
+    onTiltEffect: false,
+
+    // onAcceleration: world number number number -> world
+    onAcceleration: false,
+    // onAccelerationEffect: world number number number -> effect
+    onAccelerationEffect: false,
+
+    // onShake: world -> world
+    onShake: false,
+    // onShakeEffect: world -> effect
+    onShakeEffect: false,
+
+    // onLocationChange: world number number -> world
+    onLocationChange : false,
+    // onLocationChangeEffect: world number number -> effect
+    onLocationChangeEffect: false,
+
+    // stopWhen: world -> boolean
+    stopWhen: false
+    };
+}
+
+
+WorldConfig.prototype.lookup = function(key) {
+    return this.vals[key];
+}
+
+WorldConfig.prototype.update = function(key, val) {
+    function augment(o, a) {
+	var oo = {};
+	for (var e in o)
+	    oo[e] = o[e];
+	for (var e in a)
+	    oo[e] = a[e];
+	return oo;
+    }
+    result.vals = augment(result.vals, {key : val});
+    return result;
+}
+
+})();
+
 org.plt.world.config = {
     // onRedraw: world -> scene
     onRedraw: false,
