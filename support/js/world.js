@@ -646,8 +646,11 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
 
 
-    function effect_colon_play_dash_sound_dash_url(url,string) { this.url = url;
-	this.string = string; }
+    function effect_colon_play_dash_sound_dash_url(url, string) {
+    	this.url = url;
+	this.string = string;
+    }
+
     effect_colon_play_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
 
     effect_colon_play_dash_sound_dash_url.prototype.isEqual = function(other) {
@@ -663,23 +666,217 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     } 
 
     effect_colon_play_dash_sound_dash_url.prototype.run = function() {
-	// FIXME: fill me in
-	//window.document.getElementById("dummy").innerHTML=("<embed src='"+soundfile+"' hidden='true' autostart='true' loop='false' />");
+    	navigator.audio.play(this.url);
     };
-    
 
-    function make_dash_effect_colon_play_dash_sound_dash_url(id0,id1) { return new effect_colon_play_dash_sound_dash_url(id0,id1); }
-    org.plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;function effect_colon_play_dash_sound_dash_url_dash_url(obj) { return obj.url; }
+    function make_dash_effect_colon_play_dash_sound_dash_url(id0, id1) {
+    	return new effect_colon_play_dash_sound_dash_url(id0, id1);
+    }
 
-    function effect_colon_play_dash_sound_dash_url_dash_string(obj) { return obj.string; }
+    org.plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;
+
+    function effect_colon_play_dash_sound_dash_url_dash_url(obj) {
+    	return obj.url;
+    }
+
+    function effect_colon_play_dash_sound_dash_url_dash_string(obj) {
+    	return obj.string;
+    }
+
     org.plt.world.Kernel.effect_colon_play_dash_sound_dash_url_dash_string = effect_colon_play_dash_sound_dash_url_dash_string;
 
     function effect_colon_play_dash_sound_dash_url_question_(obj) { 
-	return obj instanceof effect_colon_play_dash_sound_dash_url; }
+	return obj instanceof effect_colon_play_dash_sound_dash_url;
+    }
+
     org.plt.world.Kernel.effect_colon_play_dash_sound_dash_url_question_ = effect_colon_play_dash_sound_dash_url_question_;
+//////////////////////////////////////////////////////////////////////////
+
+    function effect_colon_stop_dash_sound_dash_url(url, string) {
+    	this.url = url;
+	this.string = string;
+    }
+
+    effect_colon_stop_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_stop_dash_sound_dash_url.prototype.isEqual = function(other) {
+	if (other instanceof effect_colon_stop_dash_sound_dash_url) {
+	    return ((org.plt.Kernel.equal_question_((effect_colon_stop_dash_sound_dash_url_dash_string(this)),
+						    (effect_colon_stop_dash_sound_dash_url_dash_string(other))))&&
+		    ((org.plt.Kernel.equal_question_((effect_colon_stop_dash_sound_dash_url_dash_url(this)),
+						     (effect_colon_stop_dash_sound_dash_url_dash_url(other))))&&
+		     org.plt.types.Logic.TRUE));
+	} else {
+	    return false;
+	}
+    } 
+
+    effect_colon_stop_dash_sound_dash_url.prototype.run = function() {
+    	navigator.audio.stop(this.url);
+    };
+
+    function make_dash_effect_colon_stop_dash_sound_dash_url(id0, id1) {
+    	return new effect_colon_stop_dash_sound_dash_url(id0, id1);
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url = make_dash_effect_colon_stop_dash_sound_dash_url;
+
+    function effect_colon_stop_dash_sound_dash_url_dash_url(obj) {
+    	return obj.url;
+    }
+
+    function effect_colon_stop_dash_sound_dash_url_dash_string(obj) {
+    	return obj.string;
+    }
+
+    org.plt.world.Kernel.effect_colon_stop_dash_sound_dash_url_dash_string = effect_colon_stop_dash_sound_dash_url_dash_string;
+
+    function effect_colon_stop_dash_sound_dash_url_question_(obj) { 
+	return obj instanceof effect_colon_stop_dash_sound_dash_url;
+    }
+
+    org.plt.world.Kernel.effect_colon_stop_dash_sound_dash_url_question_ = effect_colon_stop_dash_sound_dash_url_question_;
 //////////////////////////////////////////////////////////////////////
 
+    function effect_colon_pause_dash_sound_dash_url(url, string) {
+    	this.url = url;
+	this.string = string;
+    }
 
+    effect_colon_pause_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_pause_dash_sound_dash_url.prototype.isEqual = function(other) {
+	if (other instanceof effect_colon_pause_dash_sound_dash_url) {
+	    return ((org.plt.Kernel.equal_question_((effect_colon_pause_dash_sound_dash_url_dash_string(this)),
+						    (effect_colon_pause_dash_sound_dash_url_dash_string(other))))&&
+		    ((org.plt.Kernel.equal_question_((effect_colon_pause_dash_sound_dash_url_dash_url(this)),
+						     (effect_colon_pause_dash_sound_dash_url_dash_url(other))))&&
+		     org.plt.types.Logic.TRUE));
+	} else {
+	    return false;
+	}
+    } 
+
+    effect_colon_pause_dash_sound_dash_url.prototype.run = function() {
+    	navigator.audio.pause(this.url);
+    };
+
+    function make_dash_effect_colon_pause_dash_sound_dash_url(id0, id1) {
+    	return new effect_colon_pause_dash_sound_dash_url(id0, id1);
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url = make_dash_effect_colon_pause_dash_sound_dash_url;
+
+    function effect_colon_pause_dash_sound_dash_url_dash_url(obj) {
+    	return obj.url;
+    }
+
+    function effect_colon_pause_dash_sound_dash_url_dash_string(obj) {
+    	return obj.string;
+    }
+
+    org.plt.world.Kernel.effect_colon_pause_dash_sound_dash_url_dash_string = effect_colon_pause_dash_sound_dash_url_dash_string;
+
+    function effect_colon_pause_dash_sound_dash_url_question_(obj) { 
+	return obj instanceof effect_colon_pause_dash_sound_dash_url;
+    }
+
+    org.plt.world.Kernel.effect_colon_pause_dash_sound_dash_url_question_ = effect_colon_pause_dash_sound_dash_url_question_;
+//////////////////////////////////////////////////////////////////////
+
+    function effect_colon_set_dash_sound_dash_volume(volume) {
+    	this.volume = volume;
+    }
+
+    effect_colon_set_dash_sound_dash_volume.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_set_dash_sound_dash_volume.prototype.isEqual = function(other) {
+    	if (other instanceof effect_colon_set_dash_sound_dash_volume) {
+    	    return ((org.plt.Kernel.equal_question_((effect_colon_set_dash_sound_dash_volume_dash_volume(this)),
+     	                                            (effect_colon_set_dash_sound_dash_volume_dash_volume(other))))&&
+    	            org.plt.types.Logic.TRUE);
+    	} else {
+    	     return false;
+    	}
+    }
+
+    effect_colon_set_dash_sound_dash_volume.prototype.run = function() {
+    	navigator.audio.setMusicVolume(this.volume);
+    }
+
+    function make_dash_effect_colon_set_dash_sound_dash_volume(id0) {
+    	return new effect_colon_set_dash_sound_dash_volume(id0);
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume = make_dash_effect_colon_set_dash_sound_dash_volume;
+
+    function effect_colon_set_dash_sound_dash_volume_dash_volume(obj) {
+    	return obj.volume;
+    }
+
+    function effect_colon_set_dash_sound_dash_volume_question_(obj) {
+    	return obj instanceof effect_colon_set_dash_sound_dash_volume;
+    }
+/////////////////////////////////////////////////////////////////////////
+
+    function effect_colon_raise_dash_sound_dash_volume() {  }
+
+    effect_colon_raise_dash_sound_dash_volume.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
+    	navigator.audio.increaseMusicVolume();
+    }
+
+
+    effect_colon_raise_dash_sound_dash_volume.prototype.isEqual = function(other) {
+    	if (other instanceof effect_colon_raise_dash_sound_dash_volume) {
+    	    return org.plt.types.Logic.TRUE;
+    	} else {
+    	    return false;
+    	}
+    }
+
+    function make_dash_effect_colon_raise_dash_sound_dash_volume() {
+    	return new effect_colon_raise_dash_sound_dash_volume();
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume = make_dash_effect_colon_raise_dash_sound_dash_volume;
+
+    function effect_colon_raise_dash_sound_dash_volume_question_(obj) {
+    	return obj instanceof effect_colon_raise_dash_sound_dash_volume;
+    }
+////////////////////////////////////////////////////////////////////////
+
+
+
+    function effect_colon_lower_dash_sound_dash_volume() {  }
+
+    effect_colon_lower_dash_sound_dash_volume.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_lower_dash_sound_dash_volume.prototype.run = function() {
+    	navigator.audio.decreaseMusicVolume();
+    }
+
+
+
+    effect_colon_lower_dash_sound_dash_volume.prototype.isEqual = function(other) {
+    	if (other instanceof effect_colon_lower_dash_sound_dash_volume) {
+    	    return org.plt.types.Logic.TRUE;
+    	} else {
+    	    return false;
+    	}
+    }
+
+    function make_dash_effect_colon_lower_dash_sound_dash_volume() {
+    	return new effect_colon_lower_dash_sound_dash_volume();
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume = make_dash_effect_colon_lower_dash_sound_dash_volume;
+
+    function effect_colon_lower_dash_sound_dash_volume_question_(obj) {
+    	return obj instanceof effect_colon_lower_dash_sound_dash_volume;
+    }
+///////////////////////////////////////////////////////////////////////////
 
  
 

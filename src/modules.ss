@@ -23,6 +23,18 @@
                                    false "org.plt.world.Kernel.make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
                                    false "org.plt.world.Kernel.make_dash_effect_colon_beep")
+                               (bf 'make-effect:play-sound-url module-path 1
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url")
+                               (bf 'make-effect:stop-sound-url module-path 1
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url")
+                               (bf 'make-effect:pause-sound-url module-path 1
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url")
+                               (bf 'make-effect:set-sound-volume module-path 1
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume")
+                               (bf 'make-effect:raise-sound-volume module-path 0
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume")
+                               (bf 'make-effect:lower-sound-volume module-path 0
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
