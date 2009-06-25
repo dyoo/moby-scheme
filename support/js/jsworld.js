@@ -83,6 +83,7 @@ org.plt.world.MobyJsworld = {};
 	for(var i = 0; i < handlers.length; i++) {
 	  config = handlers[i](config);
 	}
+	org.plt.world.config.CONFIG = config;
 	
 	var wrappedHandlers = [];
 	
@@ -163,7 +164,6 @@ org.plt.world.MobyJsworld = {};
     // text: string assoc -> node
     Jsworld.text = function(s, args) {
 	var attribsAssocList = arrayToList(args);
-	console.log('text');
 	return _js.text(s, assocListToAssocArray(attribsAssocList));
     };
 

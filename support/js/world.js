@@ -119,6 +119,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 	for (i = 0; i < handlers.length; i++) {
 	    config = handlers[i](config);
 	}
+	org.plt.world.config.CONFIG = config;
 
 	if (config.lookup('onKey')) {
 	    newWindow.onkeypress = function(e) {
