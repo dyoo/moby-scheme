@@ -8,17 +8,15 @@
 
 (define WIDTH 320)
 (define HEIGHT 480)
+(define MAX-TONE 15)
+(define MIN-TONE 0)
+
 
 ;; The world is a number counting how many times we've been shaken, 
 ;; and the current tone.
 (define-struct world (shaken tone))
 
 (define initial-world (make-world 0 4))
-
-
-
-(define button-up (js-button ""))
-(define button-down (js-button ""))
 
 
 
@@ -31,15 +29,36 @@
 ;; ring: world -> effect
 (define (ring a-world)
   (make-effect:play-dtmf-tone (world-tone a-world) 1000))
-  
+
+;; up: world -> world
+(define (up a-world)
+  (make-world (world-shaken a-world)
+              (min (add1 (world-tone a-world))
+                   MAX-TONE)))
+
+;; down: world -> world
+(define (down a-world)
+  (make-world (world-shaken a-world)
+              (max (sub1 (world-tone a-world))
+                   MIN-TONE)))
+
+
+
+(define button-up (js-button up))
+(define button-down (js-button down))
 
 ;; render: world -> (sexpof dom)
 (define (render w)
   (list (js-div)
-        (list (js-text (number->string (world-shaken w))))
-        (list (js-text "rings"))
-        (list button-up)
-        (list button-down)))
+        (list (js-div) 
+              (list (js-text (number->string (world-shaken w))))
+              (list (js-text " "))
+              (list (js-text "rings")))
+        (list (js-div) 
+              (list (js-text "note is: "))
+              (list (js-text (number->string (world-tone w)))))
+        (list button-up (list (js-text "Up")))
+        (list button-down (list (js-text "Down")))))
   
 
 ;; render-css: world -> (sexpof css-style)

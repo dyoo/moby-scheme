@@ -300,23 +300,16 @@
   (local [(define module-path
             (resolve-module-path 
              '(lib "jsworld.ss" "moby" "stub") false))
+          ;; helper function: all the functions exposed in jsworld are vararity.
           (define (bf name arity java-string)
-            (make-binding:function name module-path arity false java-string empty false))]
+            (make-binding:function name module-path arity true java-string empty false))]
     (make-module-binding 'jsworld
                          module-path
-                         (list (make-binding:function 
-                                'js-big-bang
-                                module-path
-                                2
-                                true
-                                "org.plt.world.MobyJsworld.bigBang"
-                                empty
-                                false)
+                         (list (bf 'js-big-bang 2 "org.plt.world.MobyJsworld.bigBang")
                                (bf 'js-div 0 "org.plt.world.MobyJsworld.div")
                                (bf 'js-button 1 "org.plt.world.MobyJsworld.button")
                                (bf 'js-input 1 "org.plt.world.MobyJsworld.input")
                                (bf 'js-text 1 "org.plt.world.MobyJsworld.text")))))
-  
 
 
 ;; The default bindings for moby will include

@@ -27,6 +27,8 @@ org.plt.world.config = org.plt.world.config || {};
 
   function WorldConfig() {
     this.vals = {
+    changeWorld: false,
+
       // onRedraw: world -> scene
     onRedraw: false,
 

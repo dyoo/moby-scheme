@@ -7,15 +7,16 @@ var listener = {};
 
 var rat = org.plt.types.Rational.makeInstance;
 
+
 listener.orientUpdate = function(azimuth, pitch, roll) {
-  org.plt.WorldKernel.updateWorld(function(w) {
-     if (org.plt.world.config.onTiltEffect) {
-         var effect = org.plt.world.config.onTiltEffect([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
-         org.plt.WorldKernel.applyEffect(effect);
+  org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+     if (org.plt.world.config.CONFIG.lookup('onTiltEffect')) {
+         var effect = org.plt.world.config.CONFIG.lookup('onTiltEffect')([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
+         org.plt.world.Kernel.applyEffect(effect);
      }
 
-     if (org.plt.world.config.onTilt) {
-         return org.plt.world.config.onTilt([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
+     if (org.plt.world.config.CONFIG.lookup('onTilt')) {
+         return org.plt.world.config.CONFIG.lookup('onTilt')([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
      } else {
          return w;
      }
@@ -23,14 +24,14 @@ listener.orientUpdate = function(azimuth, pitch, roll) {
 };
 
 listener.accelUpdate = function(x, y, z) {
-  org.plt.WorldKernel.updateWorld(function(w) {
-      if (org.plt.world.config.onAccelerationEffect) {
-          var effect = org.plt.world.config.onAccelerationEffect([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
-          org.plt.WorldKernel.applyEffect(effect);
+  org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+      if (org.plt.world.config.CONFIG.lookup('onAccelerationEffect')) {
+          var effect = org.plt.world.config.CONFIG.lookup('onAccelerationEffect')([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
+          org.plt.world.Kernel.applyEffect(effect);
       }
    
-      if (org.plt.world.config.onAcceleration) {
-          return org.plt.world.config.onAcceleration([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
+      if (org.plt.world.config.CONFIG.lookup('onAcceleration')) {
+          return org.plt.world.config.CONFIG.lookup('onAcceleration')([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
       } else {
           return w;
       }
@@ -38,15 +39,35 @@ listener.accelUpdate = function(x, y, z) {
 };
 
 listener.shakeUpdate = function() {
-  org.plt.WorldKernel.updateWorld(function(w) {
-    return org.plt.world.config.onShake([w]);
-  });
+  var onShake = org.plt.world.config.CONFIG.lookup('onShake');
+  var onShakeEffect = org.plt.world.config.CONFIG.lookup('onShakeEffect');
+  if (onShake) {
+     org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+
+       if (onShakeEffect) { 
+           var effect = onShakeEffect([w]);
+           org.plt.world.Kernel.applyEffect(effect);
+       }
+
+       return onShake([w]);
+    });
+  }
 };
 
 listener.locUpdate = function(lat, lng) {
-  org.plt.WorldKernel.updateWorld(function(w) {
-    return org.plt.world.config.onLocationChange([w, rat(lat), rat(lng)]);
-  });
+  var onLocationChange = org.plt.world.config.CONFIG.lookup('onLocationChange');
+  var onLocationChangeEffect = org.plt.world.config.CONFIG.lookup('onLocationChangeEffect');
+
+  if (onLocationChange) {
+    org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+
+      if (onLocationChangeEffect) {
+          var effect = onLocationChangeEffect([w, rat(lat), rat(lng)]);
+          org.plt.world.Kernel.applyEffect(effect);
+      }
+      return onLocationChange([w, rat(lat), rat(lng)]);
+    });
+  }
 };
 
 
@@ -90,7 +111,7 @@ main.afterPreloadImages = function(after) {
 
   var i;
   for (i = 0; i < imagePaths.length; i++) {
-      images.push(org.plt.WorldKernel._kernelCreateImage
+      images.push(org.plt.world.Kernel._kernelCreateImage
 		  (org.plt.types.String.makeInstance(imagePaths[i])));
   }
   wait(isAllLoaded, after);
