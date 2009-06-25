@@ -5,10 +5,10 @@
   (add1 w))
 
 
-(define hello-div (js-div '()))
-(define separator-div (js-div '()))
-(define hello-text-1 (js-text "hello" '()))
-(define hello-text-2 (js-text "world" '()))
+(define hello-div (js-div))
+(define separator-div (js-div))
+(define hello-text-1 (js-text "hello"))
+(define hello-text-2 (js-text "world"))
 
 
 (define (get-color r g b)

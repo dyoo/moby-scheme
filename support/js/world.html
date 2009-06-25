@@ -5,6 +5,7 @@
 <script src="world-config.js"></script>
 <script src="platform.js"></script>
 <script src="world.js"></script>
+<script src="jsworld/jsworld.js"></script>
 <script src="jsworld.js"></script>
 <script src="main.js"></script>
 
@@ -12,9 +13,9 @@
 
 <body id="body" onload="main.startup(); main.afterPreloadImages(main.runToplevel);" 
                 onunload="main.shutdown(); main.destroy();">
-  <!-- Dummy element is meant for sounds -->
-<span id="dummy"></span>
 
+
+<div id="jsworld-div"></div>
 <canvas id="canvas" width="320" height="480">
 </canvas>
 

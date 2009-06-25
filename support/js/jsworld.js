@@ -132,8 +132,12 @@ org.plt.world.MobyJsworld = {};
 
     // button: (world -> world) assoc -> node
     Jsworld.button = function(f, attribsAssocList) {
-      // fixme: we need to wrap the function
-	return _js.button(f, assocListToAssocArray(attribsAssocList));
+	function wrappedF(world) {
+	    return f([world]);
+	}
+	// fixme: we need to wrap the function
+	return _js.button(wrappedF,
+			  assocListToAssocArray(attribsAssocList));
     };
 
     // input: string assoc -> node
