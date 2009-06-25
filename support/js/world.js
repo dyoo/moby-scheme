@@ -501,8 +501,18 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     //////////////////////////////////////////////////////////////////////
     // Effects
-    org.plt.world.Kernel.applyEffect = function(anEffect) {
-	anEffect.run();
+    org.plt.world.Kernel.applyEffect = function(aCompEffect) {
+    	// if the compound effect is a pair
+    	// then recursively apply each element
+    	if ( org.plt.Kernel.pair_question_(aCompEffect) ) {
+    	    org.plt.world.Kernel.applyEffect(aCompEffect.first());
+    	    org.plt.world.Kernel.applyEffect(aCompEffect.rest());
+    	}
+    	// otherwise it is a primitive effect
+    	// so just apply the effect
+    	else {
+    	    aCompEffect.run();
+    	}
     }
 
 
