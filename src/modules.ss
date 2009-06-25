@@ -20,13 +20,13 @@
     (make-module-binding 'world-effects
                          module-path
                          (list (bf 'make-effect:none module-path 0
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_none")
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_beep")
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_beep")
                                (bf 'make-effect:play-dtmf-tone module-path 2
-                                   false "org.plt.WorldKernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
-                                                      "org.plt.WorldKernel.make_dash_effect_colon_sms"
+                                                      "org.plt.world.Kernel.make_dash_effect_colon_sms"
                                                       (list PERMISSION:SEND-SMS)
                                                       false)))))
 
@@ -113,38 +113,38 @@
                        module-path
                        (append (module-binding-bindings world-handlers-module)
                                (module-binding-bindings world-effects-module)
-                               (list (bf 'big-bang module-path 3 true "org.plt.WorldKernel.bigBang")
+                               (list (bf 'big-bang module-path 3 true "org.plt.world.Kernel.bigBang")
                                      (bf 'empty-scene module-path 2 false
-                                         "org.plt.WorldKernel.emptyScene")
+                                         "org.plt.world.Kernel.emptyScene")
                                      (bf 'place-image module-path 4 false
-                                         "org.plt.WorldKernel.placeImage")
+                                         "org.plt.world.Kernel.placeImage")
                                      (bf 'circle module-path 3 false
-                                         "org.plt.WorldKernel.circle")
+                                         "org.plt.world.Kernel.circle")
                                      (bf 'nw:rectangle module-path 4 false
-                                         "org.plt.WorldKernel.nwRectangle")
+                                         "org.plt.world.Kernel.nwRectangle")
                                      (bf 'rectangle module-path 4 false
-                                         "org.plt.WorldKernel.rectangle")
+                                         "org.plt.world.Kernel.rectangle")
                                      
                                      (bf 'key=? module-path 2 false
-                                         "org.plt.WorldKernel.isKeyEqual")
+                                         "org.plt.world.Kernel.isKeyEqual")
                                      (bf 'text module-path 3 false
-                                         "org.plt.WorldKernel.text")
+                                         "org.plt.world.Kernel.text")
                                      
                                      ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
                                      ;; We can fix this by extending expression to include a special "magic" identifier.  We should
                                      ;; ensure students don't accidently hit this function.
                                      (bf '-kernel-create-image module-path 1 false
-                                         "org.plt.WorldKernel._kernelCreateImage")
+                                         "org.plt.world.Kernel._kernelCreateImage")
                                      (bf 'image-width module-path 1 false
-                                         "org.plt.WorldKernel.imageWidth")
+                                         "org.plt.world.Kernel.imageWidth")
                                      (bf 'image-height module-path 1 false
-                                         "org.plt.WorldKernel.imageHeight")
+                                         "org.plt.world.Kernel.imageHeight")
                                      (bf 'image? module-path 1 false
-                                         "org.plt.WorldKernel.isImage")
+                                         "org.plt.world.Kernel.isImage")
                                      (bf 'image=? module-path 2 false
-                                         "org.plt.WorldKernel.isImageEqual")
+                                         "org.plt.world.Kernel.isImageEqual")
                                      (bf 'image-rotate module-path 2 false
-                                         "org.plt.WorldKernel.imageRotate"))))))
+                                         "org.plt.world.Kernel.imageRotate"))))))
 
 
 ;; world teachpack bindings

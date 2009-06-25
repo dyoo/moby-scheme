@@ -76,13 +76,13 @@ org.plt.world.config = org.plt.world.config || {};
     var result = new WorldConfig();
     var newDict = {};
     newDict[key] = val;
-    result.vals = augment(result.vals, newDict);
+    result.vals = augment(this.vals, newDict);
     return result;
   }
 
   WorldConfig.prototype.updateAll = function(aHash) {
     var result = new WorldConfig();
-    result.vals = augment(result.vals, aHash);
+    result.vals = augment(this.vals, aHash);
     return result;
   }
 
@@ -91,10 +91,9 @@ org.plt.world.config = org.plt.world.config || {};
 
 
 
-
-
-
-
+  function getNoneEffect() {
+    return org.plt.world.Kernel.make_dash_effect_colon_none();
+  }
 
   //////////////////////////////////////////////////////////////////////
 
@@ -110,12 +109,13 @@ org.plt.world.config = org.plt.world.config || {};
     return org.plt.world.config.Kernel.onTick_star_(aDelay, 
 						    handler,
 						    function(w) { 
-						      return make_dash_effect_colon_none(); });
+						      return getNoneEffect(); });
   };
 
   org.plt.world.config.Kernel.onTick_star_ = function(aDelay, handler, effectHandler) {
+    console.log("adding ontick handler");
     return function(config) {
-      
+      console.log("configuring ontick handler");
       var newVals = { onTick: handler,
 		      onTickEffect: effectHandler,
 		      tickDelay: (org.plt.types.NumberTower.toInteger(
@@ -124,6 +124,10 @@ org.plt.world.config = org.plt.world.config || {};
 				      aDelay)))
 		    };
       var result = config.updateAll(newVals);
+
+      console.log("onTick is " + config.lookup("onTick"));
+      console.log("it should be " + handler);
+      console.log("it should be " + newVals['onTick']);
       return result;
     };
 
@@ -132,7 +136,7 @@ org.plt.world.config = org.plt.world.config || {};
   org.plt.world.config.Kernel.onTilt = function(handler) {
     return org.plt.world.config.Kernel.onTilt_star_(handler, 
 						    function(w, a, p, r) { 
-						      return make_dash_effect_colon_none(); });
+						      return getNoneEffect(); });
   };
 
   org.plt.world.config.Kernel.onTilt_star_ = function(handler, effectHandler) {
@@ -147,7 +151,7 @@ org.plt.world.config = org.plt.world.config || {};
   org.plt.world.config.Kernel.onAcceleration = function(handler) {
     return org.plt.world.config.Kernel.onAcceleration_star_(handler, 
 							    function(w, a, p, r) { 
-							      return make_dash_effect_colon_none(); });
+							      return getNoneEffect(); });
   };
 
   org.plt.world.config.Kernel.onAcceleration_star_ = function(handler, effectHandler) {
@@ -161,7 +165,7 @@ org.plt.world.config = org.plt.world.config || {};
   org.plt.world.config.Kernel.onShake = function(handler) {
     return org.plt.world.config.Kernel.onShake_star_(handler, 
 						     function(w, a, p, r) { 
-						       return make_dash_effect_colon_none(); });
+						       return getNoneEffect(); });
   };
 
   org.plt.world.config.Kernel.onShake_star_ = function(handler, effectHandler) {
@@ -176,7 +180,7 @@ org.plt.world.config = org.plt.world.config || {};
   org.plt.world.config.Kernel.onKey = function(handler) {
     return org.plt.world.config.Kernel.onKey_star_(handler,
 						   function(w, k) {
-						     return make_dash_effect_colon_none(); });
+						     return getNoneEffect(); });
   };
 
   org.plt.world.config.Kernel.onKey_star_ = function(handler, effectHandler) {
@@ -190,7 +194,7 @@ org.plt.world.config = org.plt.world.config || {};
   org.plt.world.config.Kernel.onLocationChange = function(handler) {
     org.plt.world.config.Kernel.onLocationChange_star_(handler,
 						       function(w, latitude, longitude) {
-							 return make_dash_effect_colon_none(); });
+							 return getNoneEffect(); });
   }
 
   org.plt.world.config.Kernel.onLocationChange_star_ = function(handler, effectHandler) {

@@ -1,8 +1,8 @@
 
 // Depends on kernel.js, world-config.js
 
-
-org.plt.WorldKernel = {};
+org.plt.world = org.plt.world || {};
+org.plt.world.Kernel = org.plt.world.Kernel || {};
 (function() {
     
     var world;
@@ -30,7 +30,7 @@ org.plt.WorldKernel = {};
     // updateWorld: (world -> world) -> void
     // Public function: update the world, given the old state of the
     // world.
-    org.plt.WorldKernel.updateWorld = function(updater) {
+    org.plt.world.Kernel.updateWorld = function(updater) {
 	var newWorld = updater(world);
 	changeWorld(newWorld);
     }
@@ -105,7 +105,7 @@ org.plt.WorldKernel = {};
     // Begins a world computation.  The initial world is aWorld, and handlers
     // register other reactive functions (timer tick, key press, etc.) which
     // will change the world.
-    org.plt.WorldKernel.bigBang = function(width, height, aWorld, handlers) {
+    org.plt.world.Kernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
 	var newWindow = getBigBangWindow(width, height);
 	var canvas = 
@@ -126,7 +126,7 @@ org.plt.WorldKernel = {};
 		    var keyname = getKeyCodeName(e);
 		    if (config.lookup('onKeyEffect')) {
 		      var effect = config.lookup('onKeyEffect')([world, keyname]);
-			org.plt.WorldKernel.applyEffect(effect);
+			org.plt.world.Kernel.applyEffect(effect);
                     }
 
 		    var newWorld = config.lookup('onKey')([world, keyname]);
@@ -142,7 +142,7 @@ org.plt.WorldKernel = {};
 		function success() {
 		  if (config.lookup('onShakeEffect')) {
 		        var effect = config.lookup('onShakeEffect')([world]);
-			org.plt.WorldKernel.applyEffect(effect);
+			org.plt.world.Kernel.applyEffect(effect);
                     }
 		  var newWorld = config.lookup('onShake')([world]);
 		    changeWorld(newWorld);
@@ -178,7 +178,7 @@ org.plt.WorldKernel = {};
  	changeWorld(aWorld);
 
  	if(config.lookup('onTick')) {
-	  console.log('onTick');
+	  console.log('onTick is defined');
 	  scheduleTimerTick(newWindow, config);
 	}
     };
@@ -186,7 +186,8 @@ org.plt.WorldKernel = {};
     // scheduleTimerTick: -> void
     // Repeatedly schedules an evaluation of the onTick until the program has stopped.
     function scheduleTimerTick(window, config) {
-	timerInterval = window.setTimeout(
+      console.log("setting up timer for " + config.lookup('tickDelay'));
+	timerInterval = window.setInterval(
 	    function() {
 		if (stopped) {
 		    window.clearTimeout(timerInterval);
@@ -195,12 +196,10 @@ org.plt.WorldKernel = {};
 		else {
 		  if (config.lookup('onTickEffect')) {
 		    var effect = config.lookup('onTickEffect')([world]);
-			org.plt.WorldKernel.applyEffect(effect);
+			org.plt.world.Kernel.applyEffect(effect);
                     }
-
 		    changeWorld(
 		      config.lookup('onTick')([world]));
-		    scheduleTimerTick(window);
 		}
 	    },
 	    config.lookup('tickDelay'));
@@ -208,28 +207,28 @@ org.plt.WorldKernel = {};
 
 
 
-    org.plt.WorldKernel.isKeyEqual = function(key1, key2) {
+    org.plt.world.Kernel.isKeyEqual = function(key1, key2) {
 	return key1.toString() == key2.toString();
     };
 
 
-    org.plt.WorldKernel.isImage = function(thing) {
+    org.plt.world.Kernel.isImage = function(thing) {
 	return 'render' in thing;
     };
 
 
-    org.plt.WorldKernel.imageWidth = function(thing) {
+    org.plt.world.Kernel.imageWidth = function(thing) {
 	return org.plt.types.Rational.makeInstance(thing.getWidth(), 1);
     };
 
 
-    org.plt.WorldKernel.imageHeight = function(thing) {
+    org.plt.world.Kernel.imageHeight = function(thing) {
 	return org.plt.types.Rational.makeInstance(thing.getHeight(), 1);
     };
 
 
     // placeImage: image number number scene -> scene
-    org.plt.WorldKernel.placeImage = function(picture, x, y, aScene) {
+    org.plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
 	return aScene.add(picture,
 			  org.plt.types.NumberTower.toInteger(x),
 			  org.plt.types.NumberTower.toInteger(y));
@@ -237,7 +236,7 @@ org.plt.WorldKernel = {};
 
     
     // emptyScene: number number -> scene
-    org.plt.WorldKernel.emptyScene = function(width, height) {
+    org.plt.world.Kernel.emptyScene = function(width, height) {
 	return new SceneImage(
 	    org.plt.types.NumberTower.toInteger(width), 
 	    org.plt.types.NumberTower.toInteger(height),
@@ -246,7 +245,7 @@ org.plt.WorldKernel = {};
 
 
     // text: string number color -> TextImage
-    org.plt.WorldKernel.text = function(aString, aSize, aColor) {
+    org.plt.world.Kernel.text = function(aString, aSize, aColor) {
 	return new TextImage
 	(aString, 
 	 org.plt.types.NumberTower.toInteger(aSize), 
@@ -255,7 +254,7 @@ org.plt.WorldKernel = {};
 
 
     // circle: number style color -> TextImage
-    org.plt.WorldKernel.circle = function(aRadius, aStyle, aColor) {
+    org.plt.world.Kernel.circle = function(aRadius, aStyle, aColor) {
 	return new CircleImage
 	(org.plt.types.NumberTower.toInteger(aRadius), 
 	 aStyle,
@@ -263,12 +262,12 @@ org.plt.WorldKernel = {};
     };
 
 
-    org.plt.WorldKernel._kernelCreateImage = function(path) {
+    org.plt.world.Kernel._kernelCreateImage = function(path) {
 	return FileImage.makeInstance(path.toString());
     };
 
 
-    org.plt.WorldKernel.nwRectangle = function(w, h, s, c) {
+    org.plt.world.Kernel.nwRectangle = function(w, h, s, c) {
 	var aRect = new RectangleImage
 	(org.plt.types.NumberTower.toInteger(w),
 	 org.plt.types.NumberTower.toInteger(h),
@@ -277,7 +276,7 @@ org.plt.WorldKernel = {};
 	return updatePinhole(aRect, 0, 0);
     };
 
-    org.plt.WorldKernel.rectangle = function(w, h, s, c) {
+    org.plt.world.Kernel.rectangle = function(w, h, s, c) {
 	// Fixme: get the pinholes!
 	return new RectangleImage(
 	    org.plt.types.NumberTower.toInteger(w),
@@ -502,7 +501,7 @@ org.plt.WorldKernel = {};
 
     //////////////////////////////////////////////////////////////////////
     // Effects
-    org.plt.WorldKernel.applyEffect = function(anEffect) {
+    org.plt.world.Kernel.applyEffect = function(anEffect) {
 	anEffect.run();
     }
 
@@ -515,7 +514,7 @@ org.plt.WorldKernel = {};
 		(effect_colon_send_dash_sms_question_(thing))||
 		(effect_colon_play_dash_sound_dash_url_question_(thing))); 
     }
-    org.plt.WorldKernel.effect_question_ = effect_question_;
+    org.plt.world.Kernel.effect_question_ = effect_question_;
     
     function effect_colon_none() {  }
     effect_colon_none.prototype = new org.plt.Kernel.Struct();
@@ -532,13 +531,13 @@ org.plt.WorldKernel = {};
     };
 
     function make_dash_effect_colon_none() { return new effect_colon_none(); }
-    org.plt.WorldKernel.make_dash_effect_colon_none = make_dash_effect_colon_none;
+    org.plt.world.Kernel.make_dash_effect_colon_none = make_dash_effect_colon_none;
 
 
 
     function effect_colon_none_question_(obj) { 
 	return obj instanceof effect_colon_none; }
-    org.plt.WorldKernel.effect_colon_none_question_ = effect_colon_none_question_;
+    org.plt.world.Kernel.effect_colon_none_question_ = effect_colon_none_question_;
    
     function effect_colon_beep() {  }
 
@@ -562,14 +561,14 @@ org.plt.WorldKernel = {};
     };
 
     function make_dash_effect_colon_beep() { return new effect_colon_beep(); }
-    org.plt.WorldKernel.make_dash_effect_colon_beep = make_dash_effect_colon_beep;
+    org.plt.world.Kernel.make_dash_effect_colon_beep = make_dash_effect_colon_beep;
 
 
 
 
     function effect_colon_beep_question_(obj) { 
 	return obj instanceof effect_colon_beep; }
-    org.plt.WorldKernel.effect_colon_beep_question_ = effect_colon_beep_question_;
+    org.plt.world.Kernel.effect_colon_beep_question_ = effect_colon_beep_question_;
     function effect_colon_send_dash_sms(address,msg) { 
 	this.address = address;
 	this.msg = msg; }
@@ -626,7 +625,7 @@ org.plt.WorldKernel = {};
 	return obj instanceof effect_colon_play_dash_dtmf_dash_tone; }
 
 
-    org.plt.WorldKernel.make_dash_effect_colon_play_dash_dtmf_dash_tone = make_dash_effect_colon_play_dash_dtmf_dash_tone;
+    org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone = make_dash_effect_colon_play_dash_dtmf_dash_tone;
     //////////////////////////////////////////////////////////////////////
 
 
@@ -634,15 +633,15 @@ org.plt.WorldKernel = {};
 
 
     function make_dash_effect_colon_send_dash_sms(id0,id1) { return new effect_colon_send_dash_sms(id0,id1); }
-    org.plt.WorldKernel.make_dash_effect_colon_send_dash_sms = make_dash_effect_colon_send_dash_sms;
+    org.plt.world.Kernel.make_dash_effect_colon_send_dash_sms = make_dash_effect_colon_send_dash_sms;
     function effect_colon_send_dash_sms_dash_address(obj) { return obj.address; }
     
     function effect_colon_send_dash_sms_dash_msg(obj) { return obj.msg; }
-    org.plt.WorldKernel.effect_colon_send_dash_sms_dash_msg = effect_colon_send_dash_sms_dash_msg;
+    org.plt.world.Kernel.effect_colon_send_dash_sms_dash_msg = effect_colon_send_dash_sms_dash_msg;
 
     function effect_colon_send_dash_sms_question_(obj) { 
 	return obj instanceof effect_colon_send_dash_sms; }
-    org.plt.WorldKernel.effect_colon_send_dash_sms_question_ = effect_colon_send_dash_sms_question_;
+    org.plt.world.Kernel.effect_colon_send_dash_sms_question_ = effect_colon_send_dash_sms_question_;
 
 
 
@@ -670,14 +669,14 @@ org.plt.WorldKernel = {};
     
 
     function make_dash_effect_colon_play_dash_sound_dash_url(id0,id1) { return new effect_colon_play_dash_sound_dash_url(id0,id1); }
-    org.plt.WorldKernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;function effect_colon_play_dash_sound_dash_url_dash_url(obj) { return obj.url; }
+    org.plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;function effect_colon_play_dash_sound_dash_url_dash_url(obj) { return obj.url; }
 
     function effect_colon_play_dash_sound_dash_url_dash_string(obj) { return obj.string; }
-    org.plt.WorldKernel.effect_colon_play_dash_sound_dash_url_dash_string = effect_colon_play_dash_sound_dash_url_dash_string;
+    org.plt.world.Kernel.effect_colon_play_dash_sound_dash_url_dash_string = effect_colon_play_dash_sound_dash_url_dash_string;
 
     function effect_colon_play_dash_sound_dash_url_question_(obj) { 
 	return obj instanceof effect_colon_play_dash_sound_dash_url; }
-    org.plt.WorldKernel.effect_colon_play_dash_sound_dash_url_question_ = effect_colon_play_dash_sound_dash_url_question_;
+    org.plt.world.Kernel.effect_colon_play_dash_sound_dash_url_question_ = effect_colon_play_dash_sound_dash_url_question_;
 //////////////////////////////////////////////////////////////////////
 
 
