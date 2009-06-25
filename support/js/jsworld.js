@@ -89,7 +89,7 @@ org.plt.world.MobyJsworld = {};
 	if (config.lookup('onDraw')) {
 	  function wrappedRedraw(w) {
 	    var result = [toplevelNode, 
-			  [deepListToArray(config.lookup('onDraw')([w]))]];
+			  deepListToArray(config.lookup('onDraw')([w]))];
 	    return result;
 	  }
 
