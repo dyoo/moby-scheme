@@ -40,12 +40,14 @@ listener.accelUpdate = function(x, y, z) {
 listener.shakeUpdate = function() {
   var onShake = org.plt.world.config.CONFIG.lookup('onShake');
   var onShakeEffect = org.plt.world.config.CONFIG.lookup('onShakeEffect');
-  if (onShakeEffect) { 
-     var effect = onShakeEffect([w]);
-     org.plt.world.Kernel.applyEffect(effect);
-  }
   if (onShake) {
      org.plt.world.Kernel.updateWorld(function(w) {
+
+       if (onShakeEffect) { 
+           var effect = onShakeEffect([w]);
+           org.plt.world.Kernel.applyEffect(effect);
+       }
+
        return onShake([w]);
     });
   }
@@ -55,12 +57,13 @@ listener.locUpdate = function(lat, lng) {
   var onLocationChange = org.plt.world.config.CONFIG.lookup('onLocationChange');
   var onLocationChangeEffect = org.plt.world.config.CONFIG.lookup('onLocationChangeEffect');
 
-  if (onLocationChangeEffect) {
-    var effect = onLocationChangeEffect([w, rat(lat), rat(lng)]);
-    org.plt.world.Kernel.applyEffect(effect);
-  }
   if (onLocationChange) {
     org.plt.world.Kernel.updateWorld(function(w) {
+
+      if (onLocationChangeEffect) {
+          var effect = onLocationChangeEffect([w, rat(lat), rat(lng)]);
+          org.plt.world.Kernel.applyEffect(effect);
+      }
       return onLocationChange([w, rat(lat), rat(lng)]);
     });
   }

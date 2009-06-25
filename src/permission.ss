@@ -56,7 +56,9 @@
     [(permission:tilt? a-permission)
      "org.plt.platform.Platform.getInstance().getTiltService().startService();
       org.plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);
-      org.plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);"]
+      org.plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);
+      org.plt.platform.Platform.getInstance().getTiltService().addShakeListener(listener);"
+]
     [(permission:internet? a-permission)
      ""]))
 
