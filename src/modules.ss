@@ -312,10 +312,10 @@
                                 "org.plt.world.MobyJsworld.bigBang"
                                 empty
                                 false)
-                               (bf 'js-div 1 "org.plt.world.MobyJsworld.div")
-                               (bf 'js-button 2 "org.plt.world.MobyJsworld.button")
-                               (bf 'js-input 2 "org.plt.world.MobyJsworld.input")
-                               (bf 'js-text 2 "org.plt.world.MobyJsworld.text")))))
+                               (bf 'js-div 0 "org.plt.world.MobyJsworld.div")
+                               (bf 'js-button 1 "org.plt.world.MobyJsworld.button")
+                               (bf 'js-input 1 "org.plt.world.MobyJsworld.input")
+                               (bf 'js-text 1 "org.plt.world.MobyJsworld.text")))))
   
 
 
