@@ -119,20 +119,34 @@ org.plt.world.MobyJsworld = {};
 
 
 
+    function arrayToList(anArray) {
+	var result = org.plt.types.Empty.EMPTY;
+	for(var i = 0; i < anArray.length; i++) {
+	    result = org.plt.types.Cons.makeInstance(anArray[length-i-1],
+						     result);
+	}
+	return result;
+    }
+
 
     // p: assoc -> node
-    Jsworld.p = function(attribsAssocList) {
+    Jsworld.p = function(args) {
+	var attribsAssocList = arrayToList(args);
 	return _js.p(assocListToAssocArray(attribsAssocList));
     };
 
     // div: assoc -> node
-    Jsworld.div = function (attribsAssocList) {
+    Jsworld.div = function(args) {
+	var attribsAssocList = arrayToList(args);
+	console.log('div');
 	return _js.div(assocListToAssocArray(attribsAssocList));
     };
 
     // button: (world -> world) assoc -> node
-    Jsworld.button = function(f, attribsAssocList) {
-	function wrappedF(world) {
+    Jsworld.button = function(f, args) {
+	var attribsAssocList = arrayToList(args);
+	function wrappedF(world, evt) {
+	    console.log("world is " + world);
 	    return f([world]);
 	}
 	// fixme: we need to wrap the function
@@ -141,14 +155,17 @@ org.plt.world.MobyJsworld = {};
     };
 
     // input: string assoc -> node
-    Jsworld.input = function(type, attribsAssocList) {
+    Jsworld.input = function(type, args) {
+	var attribsAssocList = arrayToList(args);
 	return _js.input(type, assocListToAssocArray(attribsAssocList));
     };
 
     // text: string assoc -> node
-    Jsworld.text = function(s, attribsAssocList) {
+    Jsworld.text = function(s, args) {
+	var attribsAssocList = arrayToList(args);
+	console.log('text');
 	return _js.text(s, assocListToAssocArray(attribsAssocList));
-    }
+    };
 
 
 
