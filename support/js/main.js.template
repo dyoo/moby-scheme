@@ -7,8 +7,9 @@ var listener = {};
 
 var rat = org.plt.types.Rational.makeInstance;
 
+
 listener.orientUpdate = function(azimuth, pitch, roll) {
-  org.plt.world.Kernel.updateWorld(function(w) {
+  org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
      if (org.plt.world.config.CONFIG.lookup('onTiltEffect')) {
          var effect = org.plt.world.config.CONFIG.lookup('onTiltEffect')([w, rat(azimuth, 1), rat(pitch, 1), rat(roll, 1)]);
          org.plt.world.Kernel.applyEffect(effect);
@@ -23,7 +24,7 @@ listener.orientUpdate = function(azimuth, pitch, roll) {
 };
 
 listener.accelUpdate = function(x, y, z) {
-  org.plt.world.Kernel.updateWorld(function(w) {
+  org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
       if (org.plt.world.config.CONFIG.lookup('onAccelerationEffect')) {
           var effect = org.plt.world.config.CONFIG.lookup('onAccelerationEffect')([w, rat(x, 1), rat(y, 1), rat(z, 1)]);
           org.plt.world.Kernel.applyEffect(effect);
@@ -41,7 +42,7 @@ listener.shakeUpdate = function() {
   var onShake = org.plt.world.config.CONFIG.lookup('onShake');
   var onShakeEffect = org.plt.world.config.CONFIG.lookup('onShakeEffect');
   if (onShake) {
-     org.plt.world.Kernel.updateWorld(function(w) {
+     org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
 
        if (onShakeEffect) { 
            var effect = onShakeEffect([w]);
@@ -58,7 +59,7 @@ listener.locUpdate = function(lat, lng) {
   var onLocationChangeEffect = org.plt.world.config.CONFIG.lookup('onLocationChangeEffect');
 
   if (onLocationChange) {
-    org.plt.world.Kernel.updateWorld(function(w) {
+    org.plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
 
       if (onLocationChangeEffect) {
           var effect = onLocationChangeEffect([w, rat(lat), rat(lng)]);

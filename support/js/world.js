@@ -119,6 +119,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 	for (i = 0; i < handlers.length; i++) {
 	    config = handlers[i](config);
 	}
+	config = config.update('changeWorld', org.plt.world.Kernel.updateWorld);
 	org.plt.world.config.CONFIG = config;
 
 	if (config.lookup('onKey')) {

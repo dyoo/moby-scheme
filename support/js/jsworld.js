@@ -83,6 +83,7 @@ org.plt.world.MobyJsworld = {};
 	for(var i = 0; i < handlers.length; i++) {
 	  config = handlers[i](config);
 	}
+	config = config.update('changeWorld', Jsworld.updateWorld);
 	org.plt.world.config.CONFIG = config;
 	
 	var wrappedHandlers = [];
@@ -128,6 +129,9 @@ org.plt.world.MobyJsworld = {};
 	}
 	return result;
     }
+
+    // updateWorld: (world -> world) -> void
+    Jsworld.updateWorld = _js.change_world;
 
 
     // p: assoc -> node
