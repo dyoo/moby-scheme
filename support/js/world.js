@@ -682,7 +682,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     } 
 
     effect_colon_play_dash_sound_dash_url.prototype.run = function() {
-    	navigator.audio.play(this.url);
+    	navigator.audio.playMusic(this.url);
     };
 
     function make_dash_effect_colon_play_dash_sound_dash_url(id0, id1) {
@@ -728,7 +728,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     } 
 
     effect_colon_stop_dash_sound_dash_url.prototype.run = function() {
-    	navigator.audio.stop(this.url);
+    	navigator.audio.stopMusic(this.url);
     };
 
     function make_dash_effect_colon_stop_dash_sound_dash_url(id0, id1) {
@@ -774,7 +774,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     } 
 
     effect_colon_pause_dash_sound_dash_url.prototype.run = function() {
-    	navigator.audio.pause(this.url);
+    	navigator.audio.pauseMusic(this.url);
     };
 
     function make_dash_effect_colon_pause_dash_sound_dash_url(id0, id1) {
@@ -894,6 +894,75 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     }
 ///////////////////////////////////////////////////////////////////////////
 
+    function effect_colon_set_dash_wake_dash_lock(flags) {
+    	this.flags = flags;
+    }
+
+    effect_colon_set_dash_wake_dash_lock.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
+    	navigator.power.setWakeLock(this.flags);
+    }
+
+    effect_colon_set_dash_wake_dash_lock.prototype.isEqual = function(other) {
+    	if (other instanceof effect_colon_set_dash_wake_dash_lock) {
+    	    return ((org.plt.Kernel.equal_question_((effect_colon_set_dash_wake_dash_lock_dash_flags(this)),
+    	                                            (effect_colon_set_dash_wake_dash_lock_dash_flags(other))))&&
+    	            org.plt.types.Logic.TRUE);
+    	} else {
+    	    return false;
+    	}
+    }
+ 
+    function make_dash_effect_colon_set_dash_wake_dash_lock(id0) {
+    	return new effect_colon_set_dash_wake_dash_lock(id0);
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock = make_dash_effect_colon_set_dash_wake_dash_lock;
+
+    function effect_colon_set_dash_wake_dash_lock_dash_flags(obj) {
+    	return obj.flags;
+    }
+
+    function effect_colon_set_dash_wake_dash_lock_question_(obj) { 
+    	return obj instanceof effect_colon_set_dash_wake_dash_lock;
+    }
+//////////////////////////////////////////////////////////////////////////
+
+    function effect_colon_release_dash_wake_dash_lock(flags) {
+    	this.flags = flags;
+    }
+
+    effect_colon_release_dash_wake_dash_lock.prototype = new org.plt.Kernel.Struct();
+
+    effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
+    	navigator.power.releaseWakeLock(this.flags);
+    }
+
+    effect_colon_release_dash_wake_dash_lock.prototype.isEqual = function(other) {
+    	if (other instanceof effect_colon_release_dash_wake_dash_lock) {
+    	    return ((org.plt.Kernel.equal_question_((effect_colon_release_dash_wake_dash_lock_dash_flags(this)),
+    	                                            (effect_colon_release_dash_wake_dash_lock_dash_flags(other))))&&
+    	            org.plt.types.Logic.TRUE);
+    	} else {
+    	    return false;
+    	}
+    }
+ 
+    function make_dash_effect_colon_release_dash_wake_dash_lock(id0) {
+    	return new effect_colon_release_dash_wake_dash_lock(id0);
+    }
+
+    org.plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock = make_dash_effect_colon_release_dash_wake_dash_lock;
+
+    function effect_colon_release_dash_wake_dash_lock_dash_flags(obj) {
+    	return obj.flags;
+    }
+
+    function effect_colon_release_dash_wake_dash_lock_question_(obj) { 
+    	return obj instanceof effect_colon_release_dash_wake_dash_lock;
+    }
+//////////////////////////////////////////////////////////////////////////
  
 
 

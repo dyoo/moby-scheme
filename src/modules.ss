@@ -37,6 +37,10 @@
                                    false "org.plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                               (bf 'make-effect:set-wake-lock 1
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")
+                               (bf 'make-effect:release-wake-lock 0
+                                   false "org.plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
                                                       "org.plt.world.Kernel.make_dash_effect_colon_sms"
                                                       (list PERMISSION:SEND-SMS)
@@ -300,16 +304,23 @@
   (local [(define module-path
             (resolve-module-path 
              '(lib "jsworld.ss" "moby" "stub") false))
-          ;; helper function: all the functions exposed in jsworld are vararity.
           (define (bf name arity java-string)
-            (make-binding:function name module-path arity true java-string empty false))]
+            (make-binding:function name module-path arity false java-string empty false))]
     (make-module-binding 'jsworld
                          module-path
-                         (list (bf 'js-big-bang 2 "org.plt.world.MobyJsworld.bigBang")
+                         (list (make-binding:function 
+                                'js-big-bang
+                                module-path
+                                2
+                                true
+                                "org.plt.world.MobyJsworld.bigBang"
+                                empty
+                                false)
                                (bf 'js-div 0 "org.plt.world.MobyJsworld.div")
                                (bf 'js-button 1 "org.plt.world.MobyJsworld.button")
                                (bf 'js-input 1 "org.plt.world.MobyJsworld.input")
                                (bf 'js-text 1 "org.plt.world.MobyJsworld.text")))))
+  
 
 
 ;; The default bindings for moby will include
