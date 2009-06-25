@@ -77,10 +77,6 @@ org.plt = org.plt || {};
       return org.plt.types.Cons.makeInstance(x, y);
   },
  
-  empty_question_: function(thing) {
-      return thing.isEmpty();
-  },
- 
   first: function(thing) {
       return thing.first();
   },
@@ -627,6 +623,10 @@ org.plt = org.plt || {};
   },
   
   null_question_ : function(x){
+	return x instanceof org.plt.types.Empty;
+  },
+   
+  empty_question_: function(x) {
 	return x instanceof org.plt.types.Empty;
   },
   

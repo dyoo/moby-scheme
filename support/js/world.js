@@ -501,15 +501,19 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     //////////////////////////////////////////////////////////////////////
     // Effects
+
+    /**
+     * applyEffect applies all of the effects
+     * @param aCompEffect a compound effect is either a scheme list of compound effects or a single primitive effect
+     */
     org.plt.world.Kernel.applyEffect = function(aCompEffect) {
-    	// if the compound effect is a pair
-    	// then recursively apply each element
     	if ( org.plt.Kernel.pair_question_(aCompEffect) ) {
     	    org.plt.world.Kernel.applyEffect(aCompEffect.first());
     	    org.plt.world.Kernel.applyEffect(aCompEffect.rest());
     	}
-    	// otherwise it is a primitive effect
-    	// so just apply the effect
+    	else if ( org.plt.Kernel.empty_question_(aCompEffect) ) {
+    	    // Do Nothing
+    	}
     	else {
     	    aCompEffect.run();
     	}
