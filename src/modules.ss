@@ -94,9 +94,11 @@
                                 (list PERMISSION:TILT)
                                 false)
                                
+                               ;; old style
                                (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
                                
-                               (bf 'on-draw/css module-path 1 false "org.plt.world.config.Kernel.onRedraw")
+                               ;; Supports both draw and css
+                               (bf 'on-draw module-path 2 false "org.plt.world.config.Kernel.onDraw")
                                
                                (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
 
@@ -290,8 +292,14 @@
             (make-binding:function name module-path arity false java-string empty false))]
     (make-module-binding 'jsworld
                          module-path
-                         (list (bf 'js-big-bang 3
-                                   "org.plt.world.MobyJsworld.bigBang")
+                         (list (make-binding:function 
+                                'js-big-bang
+                                module-path
+                                2
+                                true
+                                "org.plt.world.MobyJsworld.bigBang"
+                                empty
+                                false)
                                (bf 'js-div 1 "org.plt.world.MobyJsworld.div")
                                (bf 'js-button 2 "org.plt.world.MobyJsworld.button")
                                (bf 'js-input 2 "org.plt.world.MobyJsworld.input")

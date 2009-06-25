@@ -71,38 +71,50 @@ org.plt.world.MobyJsworld = {};
     // Exports:
 
 
-    // bigBang: world (listof handler) (listof (list string string)) -> world
-    Jsworld.bigBang = function(initWorld, handlers, attribs) {
+
+
+    // bigBang: world (listof (list string string)) (listof handler) -> world
+    Jsworld.bigBang = function(initWorld, attribs, handlers) {
 
 	var mainWindow = getBigBangWindow();
-	// KLUDGE: check with Chris to get newest version of jsworld that
-	// consumes the toplevel node.
-	toplevelNode = mainWindow.document.getElementById("jsworld-div");
+	var toplevelNode = mainWindow.document.getElementById("jsworld-div");
 
-	function wrappedRedraw(w) {
-	    var result = [toplevelNode, deepListToArray(redraw([w]))];
+	var config = new org.plt.world.config.WorldConfig();
+	for(var i = 0; i < handlers.length; i++) {
+	  config = handlers[i](config);
+	}
+	
+	var wrappedHandlers = [];
+	
+	if (config.lookup('onDraw')) {
+	  function wrappedRedraw(w) {
+	    var result = [toplevelNode, 
+			  [deepListToArray(config.lookup('onDraw')([w]))]];
 	    return result;
+	  }
+
+	  function wrappedRedrawCss(w) {
+	    var result = deepListToArray(config.lookup('onDrawCss')([w]));
+	    return result;
+	  }
+	  wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
 	}
 
-	function wrappedRedrawCss(w) {
-	    var result = deepListToArray(redrawCss([w]));
+
+	if (config.lookup('onTick')) {
+	  function wrappedTick(w) {
+	    var result = config.lookup('onTick')([w]);
 	    return result;
+	  }
+	  
+	  var wrappedDelay = config.lookup('tickDelay');
+	  wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
 	}
 
-	function wrappedTick(w) {
-	    var result = tick([w]);
-	    return result;
-	}
-
-	var wrappedDelay = delay.toInteger();
-
-
-	return big_bang(initWorld,
-			wrappedRedraw,
-			wrappedRedrawCss,
-			wrappedDelay, 
-			wrappedTick, 
-			assocListToAssocArray(attribs));
+	return _js.big_bang(toplevelNode,
+			    initWorld,
+			    wrappedHandlers,
+			    assocListToAssocArray(attribs));
     }
 
 
@@ -110,27 +122,27 @@ org.plt.world.MobyJsworld = {};
 
     // p: assoc -> node
     Jsworld.p = function(attribsAssocList) {
-	return p(assocListToAssocArray(attribsAssocList));
+	return _js.p(assocListToAssocArray(attribsAssocList));
     };
 
     // div: assoc -> node
     Jsworld.div = function (attribsAssocList) {
-	return div(assocListToAssocArray(attribsAssocList));
+	return _js.div(assocListToAssocArray(attribsAssocList));
     };
 
     // button: (world -> world) assoc -> node
     Jsworld.button = function(f, attribsAssocList) {
-	return button(f, assocListToAssocArray(attribsAssocList));
+	return _js.button(f, assocListToAssocArray(attribsAssocList));
     };
 
     // input: string assoc -> node
     Jsworld.input = function(type, attribsAssocList) {
-	return input(type, assocListToAssocArray(attribsAssocList));
+	return _js.input(type, assocListToAssocArray(attribsAssocList));
     };
 
     // text: string assoc -> node
     Jsworld.text = function(s, attribsAssocList) {
-	return text(s, assocListToAssocArray(attribsAssocList));
+	return _js.text(s, assocListToAssocArray(attribsAssocList));
     }
 
 

@@ -30,6 +30,13 @@ org.plt.world.config = org.plt.world.config || {};
       // onRedraw: world -> scene
     onRedraw: false,
 
+    // onDraw: world -> (sexpof dom)
+    onDraw: false,
+
+    // onDrawCss: world -> (sexpof css-style)
+    onDrawCss: false,
+
+
     // tickDelay: number
     tickDelay: false,
     // onTick: world -> world
@@ -105,6 +112,14 @@ org.plt.world.config = org.plt.world.config || {};
   };
 
 
+  org.plt.world.config.Kernel.onDraw = function(domHandler, styleHandler) {
+    return function(config) {
+      return config.updateAll({onDraw: domHandler,
+			       onDrawCss : styleHandler});
+    };
+  };
+
+
   org.plt.world.config.Kernel.onTick = function(aDelay, handler) {
     return org.plt.world.config.Kernel.onTick_star_(aDelay, 
 						    handler,
@@ -113,9 +128,7 @@ org.plt.world.config = org.plt.world.config || {};
   };
 
   org.plt.world.config.Kernel.onTick_star_ = function(aDelay, handler, effectHandler) {
-    console.log("adding ontick handler");
     return function(config) {
-      console.log("configuring ontick handler");
       var newVals = { onTick: handler,
 		      onTickEffect: effectHandler,
 		      tickDelay: (org.plt.types.NumberTower.toInteger(
@@ -124,10 +137,6 @@ org.plt.world.config = org.plt.world.config || {};
 				      aDelay)))
 		    };
       var result = config.updateAll(newVals);
-
-      console.log("onTick is " + config.lookup("onTick"));
-      console.log("it should be " + handler);
-      console.log("it should be " + newVals['onTick']);
       return result;
     };
 
