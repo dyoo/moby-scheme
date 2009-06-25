@@ -36,9 +36,9 @@
 	 (list (list hello-div (list "color" 
 				     (get-color n n n))))))
 
+
+
 (js-big-bang 0
-	     redraw
-	     redraw-css
-             100
-             tick
-             '())
+             '()
+	     (on-draw redraw redraw-css)
+             (on-tick (/ 1 10) tick))

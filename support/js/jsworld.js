@@ -132,6 +132,7 @@ org.plt.world.MobyJsworld = {};
 
     // button: (world -> world) assoc -> node
     Jsworld.button = function(f, attribsAssocList) {
+      // fixme: we need to wrap the function
 	return _js.button(f, assocListToAssocArray(attribsAssocList));
     };
 
@@ -145,6 +146,9 @@ org.plt.world.MobyJsworld = {};
 	return _js.text(s, assocListToAssocArray(attribsAssocList));
     }
 
+
+
+    // fixme: add support for select, option, textarea, h1, canvas
 
 
 })();
