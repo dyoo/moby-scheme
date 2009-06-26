@@ -648,15 +648,26 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
 
 
-    function make_dash_effect_colon_send_dash_sms(id0,id1) { return new effect_colon_send_dash_sms(id0,id1); }
+    function make_dash_effect_colon_send_dash_sms(id0,id1) {
+    	return new effect_colon_send_dash_sms(id0,id1);
+    }
+
     org.plt.world.Kernel.make_dash_effect_colon_send_dash_sms = make_dash_effect_colon_send_dash_sms;
-    function effect_colon_send_dash_sms_dash_address(obj) { return obj.address; }
+
+    function effect_colon_send_dash_sms_dash_address(obj) {
+    	return obj.address;
+    }
     
-    function effect_colon_send_dash_sms_dash_msg(obj) { return obj.msg; }
+    function effect_colon_send_dash_sms_dash_msg(obj) {
+    	return obj.msg;
+    }
+
     org.plt.world.Kernel.effect_colon_send_dash_sms_dash_msg = effect_colon_send_dash_sms_dash_msg;
 
     function effect_colon_send_dash_sms_question_(obj) { 
-	return obj instanceof effect_colon_send_dash_sms; }
+	return obj instanceof effect_colon_send_dash_sms;
+    }
+
     org.plt.world.Kernel.effect_colon_send_dash_sms_question_ = effect_colon_send_dash_sms_question_;
 
 
