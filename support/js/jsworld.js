@@ -143,7 +143,6 @@ org.plt.world.MobyJsworld = {};
     // div: assoc -> node
     Jsworld.div = function(args) {
 	var attribsAssocList = arrayToList(args);
-	console.log('div');
 	return _js.div(assocListToAssocArray(attribsAssocList));
     };
 
@@ -151,7 +150,6 @@ org.plt.world.MobyJsworld = {};
     Jsworld.button = function(f, args) {
 	var attribsAssocList = arrayToList(args);
 	function wrappedF(world, evt) {
-	    console.log("world is " + world);
 	    return f([world]);
 	}
 	// fixme: we need to wrap the function
