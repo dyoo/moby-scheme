@@ -37,9 +37,9 @@
                                    false "org.plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
-                               (bf 'make-effect:set-wake-lock 1
+                               (bf 'make-effect:set-wake-lock module-path 1
                                    false "org.plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")
-                               (bf 'make-effect:release-wake-lock 0
+                               (bf 'make-effect:release-wake-lock module-path 0
                                    false "org.plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
                                                       "org.plt.world.Kernel.make_dash_effect_colon_sms"
