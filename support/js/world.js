@@ -905,6 +905,8 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     }
 ///////////////////////////////////////////////////////////////////////////
 
+    var currentLockFlags = -1;
+
     function effect_colon_set_dash_wake_dash_lock(flags) {
     	this.flags = flags;
     }
@@ -912,7 +914,10 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     effect_colon_set_dash_wake_dash_lock.prototype = new org.plt.Kernel.Struct();
 
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
-    	navigator.power.setWakeLock(this.flags);
+    	if (this.flags != currentLockFlags) {
+    	    navigator.power.setWakeLock(this.flags);
+    	    currentLockFlags = this.flags;
+    	}
     }
 
     effect_colon_set_dash_wake_dash_lock.prototype.isEqual = function(other) {
@@ -940,35 +945,30 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     }
 //////////////////////////////////////////////////////////////////////////
 
-    function effect_colon_release_dash_wake_dash_lock(flags) {
-    	this.flags = flags;
-    }
+    function effect_colon_release_dash_wake_dash_lock() {  }
 
     effect_colon_release_dash_wake_dash_lock.prototype = new org.plt.Kernel.Struct();
 
-    effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
-    	navigator.power.releaseWakeLock(this.flags);
-    }
-
     effect_colon_release_dash_wake_dash_lock.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_release_dash_wake_dash_lock) {
-    	    return ((org.plt.Kernel.equal_question_((effect_colon_release_dash_wake_dash_lock_dash_flags(this)),
-    	                                            (effect_colon_release_dash_wake_dash_lock_dash_flags(other))))&&
-    	            org.plt.types.Logic.TRUE);
+    	    return org.plt.types.Logic.TRUE;
     	} else {
     	    return false;
     	}
     }
- 
-    function make_dash_effect_colon_release_dash_wake_dash_lock(id0) {
-    	return new effect_colon_release_dash_wake_dash_lock(id0);
+
+    effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
+    	if (currentLockFlags != -1) {
+    	    navigator.power.releaseWakeLock();
+    	    currentLockFlags = -1;
+    	}
+    }
+
+    function make_dash_effect_colon_release_dash_wake_dash_lock() {
+    	return new effect_colon_release_dash_wake_dash_lock();
     }
 
     org.plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock = make_dash_effect_colon_release_dash_wake_dash_lock;
-
-    function effect_colon_release_dash_wake_dash_lock_dash_flags(obj) {
-    	return obj.flags;
-    }
 
     function effect_colon_release_dash_wake_dash_lock_question_(obj) { 
     	return obj instanceof effect_colon_release_dash_wake_dash_lock;
