@@ -32,7 +32,10 @@
 
 ;; ring: world -> effect
 (define (ring a-world)
-  (make-effect:play-dtmf-tone (world-tone a-world) 500))
+  (make-effect:play-dtmf-tone (world-tone a-world) 500)
+  #;(make-effect:play-sound-url (string-append "file:///android_asset/tones/"
+                                             (number->letter (world-tone a-world))
+                                             "-tone.wav")))
 
 ;; check-wake-lock: world -> effect
 #;(define (check-wake-lock a-world)
@@ -65,6 +68,15 @@
 (define button-up (js-button up))
 (define button-down (js-button down))
 #;(define button-sleep (js-button toggle-sleep))
+
+;; converts a number 1-4 into the letter corresponding to that tone
+;; number->letter: number -> string
+#;(define (number->letter num)
+  (cond
+    [(= num 1) "C"]
+    [(= num 2) "D"]
+    [(= num 3) "E"]
+    [(= num 4) "G"]))
 
 ;; render: world -> (sexpof dom)
 (define (render w)
