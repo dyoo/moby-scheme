@@ -98,6 +98,9 @@ org.plt.world.config = org.plt.world.config || {};
   
   org.plt.world.config.WorldConfig = WorldConfig;
 
+  // The following global variable CONFIG is mutated by either
+  // big-bang from the regular world or the one in jsworld.
+  org.plt.world.config.CONFIG = new WorldConfig();
 
 
   function getNoneEffect() {
