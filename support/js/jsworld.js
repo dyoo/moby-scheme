@@ -104,10 +104,15 @@ org.plt.world.MobyJsworld = {};
 
 
 	if (config.lookup('onTick')) {
-	  function wrappedTick(w) {
-	    var result = config.lookup('onTick')([w]);
-	    return result;
-	  }
+	    function wrappedTick(w) {
+		if (config.lookup('onTickEffect')) {
+		    var effect = config.lookup('onTickEffect')([w]);
+		    org.plt.world.Kernel.applyEffect(effect);
+                }
+
+		var result = config.lookup('onTick')([w]);
+		return result;
+	    }
 	  
 	  var wrappedDelay = config.lookup('tickDelay');
 	  wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
