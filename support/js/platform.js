@@ -1,12 +1,11 @@
 // Platform-specific stuff.
-var org = org || {};
-org.plt = org.plt || {};
+var plt = plt || {};
 
-org.plt.platform = {};
+plt.platform = {};
 
 (function() { 
-    org.plt.platform.Platform = {};
-    org.plt.platform.Platform.getInstance = function() {
+    plt.platform.Platform = {};
+    plt.platform.Platform.getInstance = function() {
     	return JavascriptPlatform;
     };
  

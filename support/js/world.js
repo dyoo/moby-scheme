@@ -1,8 +1,8 @@
 
 // Depends on kernel.js, world-config.js
-
-org.plt.world = org.plt.world || {};
-org.plt.world.Kernel = org.plt.world.Kernel || {};
+var plt = plt || {};
+plt.world = plt.world || {};
+plt.world.Kernel = plt.world.Kernel || {};
 (function() {
     
     var world;
@@ -30,7 +30,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     // updateWorld: (world -> world) -> void
     // Public function: update the world, given the old state of the
     // world.
-    org.plt.world.Kernel.updateWorld = function(updater) {
+    plt.world.Kernel.updateWorld = function(updater) {
 	var newWorld = updater(world);
 	changeWorld(newWorld);
     }
@@ -105,7 +105,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     // Begins a world computation.  The initial world is aWorld, and handlers
     // register other reactive functions (timer tick, key press, etc.) which
     // will change the world.
-    org.plt.world.Kernel.bigBang = function(width, height, aWorld, handlers) {
+    plt.world.Kernel.bigBang = function(width, height, aWorld, handlers) {
 	var i;
 	var newWindow = getBigBangWindow(width, height);
 	var canvas = 
@@ -115,12 +115,12 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
 	resetWorld();
 
-	var config = new org.plt.world.config.WorldConfig();
+	var config = new plt.world.config.WorldConfig();
 	for (i = 0; i < handlers.length; i++) {
 	    config = handlers[i](config);
 	}
-	config = config.update('changeWorld', org.plt.world.Kernel.updateWorld);
-	org.plt.world.config.CONFIG = config;
+	config = config.update('changeWorld', plt.world.Kernel.updateWorld);
+	plt.world.config.CONFIG = config;
 
 	if (config.lookup('onKey')) {
 	    newWindow.onkeypress = function(e) {
@@ -128,7 +128,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 		    var keyname = getKeyCodeName(e);
 		    if (config.lookup('onKeyEffect')) {
 		      var effect = config.lookup('onKeyEffect')([world, keyname]);
-			org.plt.world.Kernel.applyEffect(effect);
+			plt.world.Kernel.applyEffect(effect);
                     }
 
 		    var newWorld = config.lookup('onKey')([world, keyname]);
@@ -144,7 +144,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 		function success() {
 		  if (config.lookup('onShakeEffect')) {
 		        var effect = config.lookup('onShakeEffect')([world]);
-			org.plt.world.Kernel.applyEffect(effect);
+			plt.world.Kernel.applyEffect(effect);
                     }
 		  var newWorld = config.lookup('onShake')([world]);
 		    changeWorld(newWorld);
@@ -198,7 +198,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 		else {
 		  if (config.lookup('onTickEffect')) {
 		    var effect = config.lookup('onTickEffect')([world]);
-			org.plt.world.Kernel.applyEffect(effect);
+			plt.world.Kernel.applyEffect(effect);
                     }
 		    changeWorld(
 		      config.lookup('onTick')([world]));
@@ -209,80 +209,80 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
 
 
-    org.plt.world.Kernel.isKeyEqual = function(key1, key2) {
+    plt.world.Kernel.isKeyEqual = function(key1, key2) {
 	return key1.toString() == key2.toString();
     };
 
 
-    org.plt.world.Kernel.isImage = function(thing) {
+    plt.world.Kernel.isImage = function(thing) {
 	return 'render' in thing;
     };
 
 
-    org.plt.world.Kernel.imageWidth = function(thing) {
-	return org.plt.types.Rational.makeInstance(thing.getWidth(), 1);
+    plt.world.Kernel.imageWidth = function(thing) {
+	return plt.types.Rational.makeInstance(thing.getWidth(), 1);
     };
 
 
-    org.plt.world.Kernel.imageHeight = function(thing) {
-	return org.plt.types.Rational.makeInstance(thing.getHeight(), 1);
+    plt.world.Kernel.imageHeight = function(thing) {
+	return plt.types.Rational.makeInstance(thing.getHeight(), 1);
     };
 
 
     // placeImage: image number number scene -> scene
-    org.plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
+    plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
 	return aScene.add(picture,
-			  org.plt.types.NumberTower.toInteger(x),
-			  org.plt.types.NumberTower.toInteger(y));
+			  plt.types.NumberTower.toInteger(x),
+			  plt.types.NumberTower.toInteger(y));
     };
 
     
     // emptyScene: number number -> scene
-    org.plt.world.Kernel.emptyScene = function(width, height) {
+    plt.world.Kernel.emptyScene = function(width, height) {
 	return new SceneImage(
-	    org.plt.types.NumberTower.toInteger(width), 
-	    org.plt.types.NumberTower.toInteger(height),
+	    plt.types.NumberTower.toInteger(width), 
+	    plt.types.NumberTower.toInteger(height),
 	    []);
     };
 
 
     // text: string number color -> TextImage
-    org.plt.world.Kernel.text = function(aString, aSize, aColor) {
+    plt.world.Kernel.text = function(aString, aSize, aColor) {
 	return new TextImage
 	(aString, 
-	 org.plt.types.NumberTower.toInteger(aSize), 
+	 plt.types.NumberTower.toInteger(aSize), 
 	 aColor);
     };
 
 
     // circle: number style color -> TextImage
-    org.plt.world.Kernel.circle = function(aRadius, aStyle, aColor) {
+    plt.world.Kernel.circle = function(aRadius, aStyle, aColor) {
 	return new CircleImage
-	(org.plt.types.NumberTower.toInteger(aRadius), 
+	(plt.types.NumberTower.toInteger(aRadius), 
 	 aStyle,
 	 aColor);
     };
 
 
-    org.plt.world.Kernel._kernelCreateImage = function(path) {
+    plt.world.Kernel._kernelCreateImage = function(path) {
 	return FileImage.makeInstance(path.toString());
     };
 
 
-    org.plt.world.Kernel.nwRectangle = function(w, h, s, c) {
+    plt.world.Kernel.nwRectangle = function(w, h, s, c) {
 	var aRect = new RectangleImage
-	(org.plt.types.NumberTower.toInteger(w),
-	 org.plt.types.NumberTower.toInteger(h),
+	(plt.types.NumberTower.toInteger(w),
+	 plt.types.NumberTower.toInteger(h),
 	 s,
 	 c);
 	return updatePinhole(aRect, 0, 0);
     };
 
-    org.plt.world.Kernel.rectangle = function(w, h, s, c) {
+    plt.world.Kernel.rectangle = function(w, h, s, c) {
 	// Fixme: get the pinholes!
 	return new RectangleImage(
-	    org.plt.types.NumberTower.toInteger(w),
-	    org.plt.types.NumberTower.toInteger(h),
+	    plt.types.NumberTower.toInteger(w),
+	    plt.types.NumberTower.toInteger(h),
 	    s,
 	    c);
     };
@@ -508,12 +508,12 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
      * applyEffect applies all of the effects
      * @param aCompEffect a compound effect is either a scheme list of compound effects or a single primitive effect
      */
-    org.plt.world.Kernel.applyEffect = function(aCompEffect) {
-    	if ( org.plt.Kernel.pair_question_(aCompEffect) ) {
-    	    org.plt.world.Kernel.applyEffect(aCompEffect.first());
-    	    org.plt.world.Kernel.applyEffect(aCompEffect.rest());
+    plt.world.Kernel.applyEffect = function(aCompEffect) {
+    	if ( plt.Kernel.pair_question_(aCompEffect) ) {
+    	    plt.world.Kernel.applyEffect(aCompEffect.first());
+    	    plt.world.Kernel.applyEffect(aCompEffect.rest());
     	}
-    	else if ( org.plt.Kernel.empty_question_(aCompEffect) ) {
+    	else if ( plt.Kernel.empty_question_(aCompEffect) ) {
     	    // Do Nothing
     	}
     	else {
@@ -530,13 +530,13 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 		(effect_colon_send_dash_sms_question_(thing))||
 		(effect_colon_play_dash_sound_dash_url_question_(thing))); 
     }
-    org.plt.world.Kernel.effect_question_ = effect_question_;
+    plt.world.Kernel.effect_question_ = effect_question_;
     
     function effect_colon_none() {  }
-    effect_colon_none.prototype = new org.plt.Kernel.Struct();
+    effect_colon_none.prototype = new plt.Kernel.Struct();
     effect_colon_none.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_none) {
-	    return org.plt.types.Logic.TRUE;
+	    return plt.types.Logic.TRUE;
 	} else {
 	    return false;
 	}
@@ -547,21 +547,21 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     };
 
     function make_dash_effect_colon_none() { return new effect_colon_none(); }
-    org.plt.world.Kernel.make_dash_effect_colon_none = make_dash_effect_colon_none;
+    plt.world.Kernel.make_dash_effect_colon_none = make_dash_effect_colon_none;
 
 
 
     function effect_colon_none_question_(obj) { 
 	return obj instanceof effect_colon_none; }
-    org.plt.world.Kernel.effect_colon_none_question_ = effect_colon_none_question_;
+    plt.world.Kernel.effect_colon_none_question_ = effect_colon_none_question_;
    
     function effect_colon_beep() {  }
 
-    effect_colon_beep.prototype = new org.plt.Kernel.Struct();
+    effect_colon_beep.prototype = new plt.Kernel.Struct();
 
     effect_colon_beep.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_beep) {
-	    return org.plt.types.Logic.TRUE;
+	    return plt.types.Logic.TRUE;
 	} else {
 	    return false;
 	}
@@ -577,26 +577,26 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     };
 
     function make_dash_effect_colon_beep() { return new effect_colon_beep(); }
-    org.plt.world.Kernel.make_dash_effect_colon_beep = make_dash_effect_colon_beep;
+    plt.world.Kernel.make_dash_effect_colon_beep = make_dash_effect_colon_beep;
 
 
 
 
     function effect_colon_beep_question_(obj) { 
 	return obj instanceof effect_colon_beep; }
-    org.plt.world.Kernel.effect_colon_beep_question_ = effect_colon_beep_question_;
+    plt.world.Kernel.effect_colon_beep_question_ = effect_colon_beep_question_;
     function effect_colon_send_dash_sms(address,msg) { 
 	this.address = address;
 	this.msg = msg; }
     
-    effect_colon_send_dash_sms.prototype = new org.plt.Kernel.Struct();
+    effect_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
     effect_colon_send_dash_sms.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_send_dash_sms) {
-	    return ((org.plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_msg(this)),
+	    return ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_msg(this)),
 						    (effect_colon_send_dash_sms_dash_msg(other))))&&
-		    ((org.plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_address(this)),
+		    ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_address(this)),
 						     (effect_colon_send_dash_sms_dash_address(other))))&&
-		     org.plt.types.Logic.TRUE));
+		     plt.types.Logic.TRUE));
 	} else {
 	    return false;
 	}
@@ -611,10 +611,10 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     
     function effect_colon_play_dash_dtmf_dash_tone(tone,duration) { this.tone = tone;
 	this.duration = duration; }
-    effect_colon_play_dash_dtmf_dash_tone.prototype = new org.plt.Kernel.Struct();
+    effect_colon_play_dash_dtmf_dash_tone.prototype = new plt.Kernel.Struct();
     effect_colon_play_dash_dtmf_dash_tone.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_play_dash_dtmf_dash_tone) {
-	    return ((org.plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_duration(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_duration(other))))&&((org.plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_tone(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_tone(other))))&&org.plt.types.Logic.TRUE));
+	    return ((plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_duration(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_duration(other))))&&((plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_tone(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_tone(other))))&&plt.types.Logic.TRUE));
 	} else {
 	    return false;
 	}
@@ -641,7 +641,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 	return obj instanceof effect_colon_play_dash_dtmf_dash_tone; }
 
 
-    org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone = make_dash_effect_colon_play_dash_dtmf_dash_tone;
+    plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone = make_dash_effect_colon_play_dash_dtmf_dash_tone;
     //////////////////////////////////////////////////////////////////////
 
 
@@ -652,7 +652,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_send_dash_sms(id0,id1);
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_send_dash_sms = make_dash_effect_colon_send_dash_sms;
+    plt.world.Kernel.make_dash_effect_colon_send_dash_sms = make_dash_effect_colon_send_dash_sms;
 
     function effect_colon_send_dash_sms_dash_address(obj) {
     	return obj.address;
@@ -662,13 +662,13 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return obj.msg;
     }
 
-    org.plt.world.Kernel.effect_colon_send_dash_sms_dash_msg = effect_colon_send_dash_sms_dash_msg;
+    plt.world.Kernel.effect_colon_send_dash_sms_dash_msg = effect_colon_send_dash_sms_dash_msg;
 
     function effect_colon_send_dash_sms_question_(obj) { 
 	return obj instanceof effect_colon_send_dash_sms;
     }
 
-    org.plt.world.Kernel.effect_colon_send_dash_sms_question_ = effect_colon_send_dash_sms_question_;
+    plt.world.Kernel.effect_colon_send_dash_sms_question_ = effect_colon_send_dash_sms_question_;
 
 
 
@@ -678,15 +678,15 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 	this.string = string;
     }
 
-    effect_colon_play_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
+    effect_colon_play_dash_sound_dash_url.prototype = new plt.Kernel.Struct();
 
     effect_colon_play_dash_sound_dash_url.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_play_dash_sound_dash_url) {
-	    return ((org.plt.Kernel.equal_question_((effect_colon_play_dash_sound_dash_url_dash_string(this)),
+	    return ((plt.Kernel.equal_question_((effect_colon_play_dash_sound_dash_url_dash_string(this)),
 						    (effect_colon_play_dash_sound_dash_url_dash_string(other))))&&
-		    ((org.plt.Kernel.equal_question_((effect_colon_play_dash_sound_dash_url_dash_url(this)),
+		    ((plt.Kernel.equal_question_((effect_colon_play_dash_sound_dash_url_dash_url(this)),
 						     (effect_colon_play_dash_sound_dash_url_dash_url(other))))&&
-		     org.plt.types.Logic.TRUE));
+		     plt.types.Logic.TRUE));
 	} else {
 	    return false;
 	}
@@ -700,7 +700,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_play_dash_sound_dash_url(id0, id1);
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;
+    plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url = make_dash_effect_colon_play_dash_sound_dash_url;
 
     function effect_colon_play_dash_sound_dash_url_dash_url(obj) {
     	return obj.url;
@@ -710,13 +710,13 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return obj.string;
     }
 
-    org.plt.world.Kernel.effect_colon_play_dash_sound_dash_url_dash_string = effect_colon_play_dash_sound_dash_url_dash_string;
+    plt.world.Kernel.effect_colon_play_dash_sound_dash_url_dash_string = effect_colon_play_dash_sound_dash_url_dash_string;
 
     function effect_colon_play_dash_sound_dash_url_question_(obj) { 
 	return obj instanceof effect_colon_play_dash_sound_dash_url;
     }
 
-    org.plt.world.Kernel.effect_colon_play_dash_sound_dash_url_question_ = effect_colon_play_dash_sound_dash_url_question_;
+    plt.world.Kernel.effect_colon_play_dash_sound_dash_url_question_ = effect_colon_play_dash_sound_dash_url_question_;
 //////////////////////////////////////////////////////////////////////////
 
     function effect_colon_stop_dash_sound_dash_url(url, string) {
@@ -724,15 +724,15 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 	this.string = string;
     }
 
-    effect_colon_stop_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
+    effect_colon_stop_dash_sound_dash_url.prototype = new plt.Kernel.Struct();
 
     effect_colon_stop_dash_sound_dash_url.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_stop_dash_sound_dash_url) {
-	    return ((org.plt.Kernel.equal_question_((effect_colon_stop_dash_sound_dash_url_dash_string(this)),
+	    return ((plt.Kernel.equal_question_((effect_colon_stop_dash_sound_dash_url_dash_string(this)),
 						    (effect_colon_stop_dash_sound_dash_url_dash_string(other))))&&
-		    ((org.plt.Kernel.equal_question_((effect_colon_stop_dash_sound_dash_url_dash_url(this)),
+		    ((plt.Kernel.equal_question_((effect_colon_stop_dash_sound_dash_url_dash_url(this)),
 						     (effect_colon_stop_dash_sound_dash_url_dash_url(other))))&&
-		     org.plt.types.Logic.TRUE));
+		     plt.types.Logic.TRUE));
 	} else {
 	    return false;
 	}
@@ -746,7 +746,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_stop_dash_sound_dash_url(id0, id1);
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url = make_dash_effect_colon_stop_dash_sound_dash_url;
+    plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url = make_dash_effect_colon_stop_dash_sound_dash_url;
 
     function effect_colon_stop_dash_sound_dash_url_dash_url(obj) {
     	return obj.url;
@@ -756,13 +756,13 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return obj.string;
     }
 
-    org.plt.world.Kernel.effect_colon_stop_dash_sound_dash_url_dash_string = effect_colon_stop_dash_sound_dash_url_dash_string;
+    plt.world.Kernel.effect_colon_stop_dash_sound_dash_url_dash_string = effect_colon_stop_dash_sound_dash_url_dash_string;
 
     function effect_colon_stop_dash_sound_dash_url_question_(obj) { 
 	return obj instanceof effect_colon_stop_dash_sound_dash_url;
     }
 
-    org.plt.world.Kernel.effect_colon_stop_dash_sound_dash_url_question_ = effect_colon_stop_dash_sound_dash_url_question_;
+    plt.world.Kernel.effect_colon_stop_dash_sound_dash_url_question_ = effect_colon_stop_dash_sound_dash_url_question_;
 //////////////////////////////////////////////////////////////////////
 
     function effect_colon_pause_dash_sound_dash_url(url, string) {
@@ -770,15 +770,15 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 	this.string = string;
     }
 
-    effect_colon_pause_dash_sound_dash_url.prototype = new org.plt.Kernel.Struct();
+    effect_colon_pause_dash_sound_dash_url.prototype = new plt.Kernel.Struct();
 
     effect_colon_pause_dash_sound_dash_url.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_pause_dash_sound_dash_url) {
-	    return ((org.plt.Kernel.equal_question_((effect_colon_pause_dash_sound_dash_url_dash_string(this)),
+	    return ((plt.Kernel.equal_question_((effect_colon_pause_dash_sound_dash_url_dash_string(this)),
 						    (effect_colon_pause_dash_sound_dash_url_dash_string(other))))&&
-		    ((org.plt.Kernel.equal_question_((effect_colon_pause_dash_sound_dash_url_dash_url(this)),
+		    ((plt.Kernel.equal_question_((effect_colon_pause_dash_sound_dash_url_dash_url(this)),
 						     (effect_colon_pause_dash_sound_dash_url_dash_url(other))))&&
-		     org.plt.types.Logic.TRUE));
+		     plt.types.Logic.TRUE));
 	} else {
 	    return false;
 	}
@@ -792,7 +792,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_pause_dash_sound_dash_url(id0, id1);
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url = make_dash_effect_colon_pause_dash_sound_dash_url;
+    plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url = make_dash_effect_colon_pause_dash_sound_dash_url;
 
     function effect_colon_pause_dash_sound_dash_url_dash_url(obj) {
     	return obj.url;
@@ -802,26 +802,26 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return obj.string;
     }
 
-    org.plt.world.Kernel.effect_colon_pause_dash_sound_dash_url_dash_string = effect_colon_pause_dash_sound_dash_url_dash_string;
+    plt.world.Kernel.effect_colon_pause_dash_sound_dash_url_dash_string = effect_colon_pause_dash_sound_dash_url_dash_string;
 
     function effect_colon_pause_dash_sound_dash_url_question_(obj) { 
 	return obj instanceof effect_colon_pause_dash_sound_dash_url;
     }
 
-    org.plt.world.Kernel.effect_colon_pause_dash_sound_dash_url_question_ = effect_colon_pause_dash_sound_dash_url_question_;
+    plt.world.Kernel.effect_colon_pause_dash_sound_dash_url_question_ = effect_colon_pause_dash_sound_dash_url_question_;
 //////////////////////////////////////////////////////////////////////
 
     function effect_colon_set_dash_sound_dash_volume(volume) {
     	this.volume = volume;
     }
 
-    effect_colon_set_dash_sound_dash_volume.prototype = new org.plt.Kernel.Struct();
+    effect_colon_set_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
     effect_colon_set_dash_sound_dash_volume.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_set_dash_sound_dash_volume) {
-    	    return ((org.plt.Kernel.equal_question_((effect_colon_set_dash_sound_dash_volume_dash_volume(this)),
+    	    return ((plt.Kernel.equal_question_((effect_colon_set_dash_sound_dash_volume_dash_volume(this)),
      	                                            (effect_colon_set_dash_sound_dash_volume_dash_volume(other))))&&
-    	            org.plt.types.Logic.TRUE);
+    	            plt.types.Logic.TRUE);
     	} else {
     	     return false;
     	}
@@ -835,7 +835,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_set_dash_sound_dash_volume(id0);
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume = make_dash_effect_colon_set_dash_sound_dash_volume;
+    plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume = make_dash_effect_colon_set_dash_sound_dash_volume;
 
     function effect_colon_set_dash_sound_dash_volume_dash_volume(obj) {
     	return obj.volume;
@@ -848,7 +848,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     function effect_colon_raise_dash_sound_dash_volume() {  }
 
-    effect_colon_raise_dash_sound_dash_volume.prototype = new org.plt.Kernel.Struct();
+    effect_colon_raise_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
     effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
     	navigator.audio.increaseMusicVolume();
@@ -857,7 +857,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     effect_colon_raise_dash_sound_dash_volume.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_raise_dash_sound_dash_volume) {
-    	    return org.plt.types.Logic.TRUE;
+    	    return plt.types.Logic.TRUE;
     	} else {
     	    return false;
     	}
@@ -867,7 +867,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_raise_dash_sound_dash_volume();
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume = make_dash_effect_colon_raise_dash_sound_dash_volume;
+    plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume = make_dash_effect_colon_raise_dash_sound_dash_volume;
 
     function effect_colon_raise_dash_sound_dash_volume_question_(obj) {
     	return obj instanceof effect_colon_raise_dash_sound_dash_volume;
@@ -878,7 +878,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     function effect_colon_lower_dash_sound_dash_volume() {  }
 
-    effect_colon_lower_dash_sound_dash_volume.prototype = new org.plt.Kernel.Struct();
+    effect_colon_lower_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
     effect_colon_lower_dash_sound_dash_volume.prototype.run = function() {
     	navigator.audio.decreaseMusicVolume();
@@ -888,7 +888,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     effect_colon_lower_dash_sound_dash_volume.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_lower_dash_sound_dash_volume) {
-    	    return org.plt.types.Logic.TRUE;
+    	    return plt.types.Logic.TRUE;
     	} else {
     	    return false;
     	}
@@ -898,7 +898,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_lower_dash_sound_dash_volume();
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume = make_dash_effect_colon_lower_dash_sound_dash_volume;
+    plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume = make_dash_effect_colon_lower_dash_sound_dash_volume;
 
     function effect_colon_lower_dash_sound_dash_volume_question_(obj) {
     	return obj instanceof effect_colon_lower_dash_sound_dash_volume;
@@ -911,7 +911,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	this.flags = flags;
     }
 
-    effect_colon_set_dash_wake_dash_lock.prototype = new org.plt.Kernel.Struct();
+    effect_colon_set_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
     	if (this.flags != currentLockFlags) {
@@ -922,9 +922,9 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     effect_colon_set_dash_wake_dash_lock.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_set_dash_wake_dash_lock) {
-    	    return ((org.plt.Kernel.equal_question_((effect_colon_set_dash_wake_dash_lock_dash_flags(this)),
+    	    return ((plt.Kernel.equal_question_((effect_colon_set_dash_wake_dash_lock_dash_flags(this)),
     	                                            (effect_colon_set_dash_wake_dash_lock_dash_flags(other))))&&
-    	            org.plt.types.Logic.TRUE);
+    	            plt.types.Logic.TRUE);
     	} else {
     	    return false;
     	}
@@ -934,7 +934,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_set_dash_wake_dash_lock(id0);
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock = make_dash_effect_colon_set_dash_wake_dash_lock;
+    plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock = make_dash_effect_colon_set_dash_wake_dash_lock;
 
     function effect_colon_set_dash_wake_dash_lock_dash_flags(obj) {
     	return obj.flags;
@@ -947,11 +947,11 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
 
     function effect_colon_release_dash_wake_dash_lock() {  }
 
-    effect_colon_release_dash_wake_dash_lock.prototype = new org.plt.Kernel.Struct();
+    effect_colon_release_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
     effect_colon_release_dash_wake_dash_lock.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_release_dash_wake_dash_lock) {
-    	    return org.plt.types.Logic.TRUE;
+    	    return plt.types.Logic.TRUE;
     	} else {
     	    return false;
     	}
@@ -968,7 +968,7 @@ org.plt.world.Kernel = org.plt.world.Kernel || {};
     	return new effect_colon_release_dash_wake_dash_lock();
     }
 
-    org.plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock = make_dash_effect_colon_release_dash_wake_dash_lock;
+    plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock = make_dash_effect_colon_release_dash_wake_dash_lock;
 
     function effect_colon_release_dash_wake_dash_lock_question_(obj) { 
     	return obj instanceof effect_colon_release_dash_wake_dash_lock;

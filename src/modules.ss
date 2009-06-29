@@ -20,29 +20,29 @@
     (make-module-binding 'world-effects
                          module-path
                          (list (bf 'make-effect:none module-path 0
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_none")
+                                   false "plt.world.Kernel.make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_beep")
+                                   false "plt.world.Kernel.make_dash_effect_colon_beep")
                                (bf 'make-effect:play-sound-url module-path 1
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url")
+                                   false "plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url")
                                (bf 'make-effect:stop-sound-url module-path 1
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url")
+                                   false "plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url")
                                (bf 'make-effect:pause-sound-url module-path 1
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url")
+                                   false "plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url")
                                (bf 'make-effect:set-sound-volume module-path 1
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume")
+                                   false "plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume")
                                (bf 'make-effect:raise-sound-volume module-path 0
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume")
+                                   false "plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume")
                                (bf 'make-effect:lower-sound-volume module-path 0
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
+                                   false "plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
                                (bf 'make-effect:play-dtmf-tone module-path 2
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                                   false "plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
                                (bf 'make-effect:set-wake-lock module-path 0
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")
+                                   false "plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")
                                (bf 'make-effect:release-wake-lock module-path 0
-                                   false "org.plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")
+                                   false "plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
-                                                      "org.plt.world.Kernel.make_dash_effect_colon_sms"
+                                                      "plt.world.Kernel.make_dash_effect_colon_sms"
                                                       (list PERMISSION:SEND-SMS)
                                                       false)))))
 
@@ -56,67 +56,67 @@
             (resolve-module-path '(lib "world-handlers.ss" "moby" "stub" "private") false))]
     (make-module-binding 'world-config
                          module-path
-                         (list (bf 'on-tick module-path 2 false "org.plt.world.config.Kernel.onTick")
-                               (bf 'on-tick* module-path 3 false "org.plt.world.config.Kernel.onTick_star_")
-                               (bf 'on-mouse module-path 1 false "org.plt.world.config.Kernel.onMouse")
-                               (bf 'on-mouse* module-path 2 false "org.plt.world.config.Kernel.onMouse_star_")
+                         (list (bf 'on-tick module-path 2 false "plt.world.config.Kernel.onTick")
+                               (bf 'on-tick* module-path 3 false "plt.world.config.Kernel.onTick_star_")
+                               (bf 'on-mouse module-path 1 false "plt.world.config.Kernel.onMouse")
+                               (bf 'on-mouse* module-path 2 false "plt.world.config.Kernel.onMouse_star_")
                                
-                               (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
-                               (bf 'on-key* module-path 2 false "org.plt.world.config.Kernel.onKey_star_")
+                               (bf 'on-key module-path 1 false "plt.world.config.Kernel.onKey")
+                               (bf 'on-key* module-path 2 false "plt.world.config.Kernel.onKey_star_")
                                
                                (make-binding:function
                                 'on-location-change module-path 1 false
-                                "org.plt.world.config.Kernel.onLocationChange"
+                                "plt.world.config.Kernel.onLocationChange"
                                 (list PERMISSION:LOCATION)
                                 false)
                                (make-binding:function
                                 'on-location-change* module-path 2 false
-                                "org.plt.world.config.Kernel.onLocationChange_star_"
+                                "plt.world.config.Kernel.onLocationChange_star_"
                                 (list PERMISSION:LOCATION)
                                 false)
                                
                                (make-binding:function
                                 'on-tilt module-path 1 false
-                                "org.plt.world.config.Kernel.onTilt"
+                                "plt.world.config.Kernel.onTilt"
                                 (list PERMISSION:TILT)
                                 false)
                                (make-binding:function
                                 'on-tilt* module-path 2 false
-                                "org.plt.world.config.Kernel.onTilt_star_"
+                                "plt.world.config.Kernel.onTilt_star_"
                                 (list PERMISSION:TILT)
                                 false)
                                
                                (make-binding:function
                                 'on-acceleration module-path 1 false
-                                "org.plt.world.config.Kernel.onAcceleration"
+                                "plt.world.config.Kernel.onAcceleration"
                                 (list PERMISSION:TILT)
                                 false)
                                
                                (make-binding:function
                                 'on-acceleration* module-path 2 false
-                                "org.plt.world.config.Kernel.onAcceleration_star_"
+                                "plt.world.config.Kernel.onAcceleration_star_"
                                 (list PERMISSION:TILT)
                                 false)
                                
                                (make-binding:function
                                 'on-shake module-path 1 false
-                                "org.plt.world.config.Kernel.onShake"
+                                "plt.world.config.Kernel.onShake"
                                 (list PERMISSION:TILT)
                                 false)
                                
                                (make-binding:function
                                 'on-shake* module-path 2 false
-                                "org.plt.world.config.Kernel.onShake_star_"
+                                "plt.world.config.Kernel.onShake_star_"
                                 (list PERMISSION:TILT)
                                 false)
                                
                                ;; old style
-                               (bf 'on-redraw module-path 1 false "org.plt.world.config.Kernel.onRedraw")
+                               (bf 'on-redraw module-path 1 false "plt.world.config.Kernel.onRedraw")
                                
                                ;; Supports both draw and css
-                               (bf 'on-draw module-path 2 false "org.plt.world.config.Kernel.onDraw")
+                               (bf 'on-draw module-path 2 false "plt.world.config.Kernel.onDraw")
                                
-                               (bf 'stop-when module-path 1 false "org.plt.world.config.Kernel.stopWhen")))))
+                               (bf 'stop-when module-path 1 false "plt.world.config.Kernel.stopWhen")))))
 
 
 
@@ -131,38 +131,38 @@
                        module-path
                        (append (module-binding-bindings world-handlers-module)
                                (module-binding-bindings world-effects-module)
-                               (list (bf 'big-bang module-path 3 true "org.plt.world.Kernel.bigBang")
+                               (list (bf 'big-bang module-path 3 true "plt.world.Kernel.bigBang")
                                      (bf 'empty-scene module-path 2 false
-                                         "org.plt.world.Kernel.emptyScene")
+                                         "plt.world.Kernel.emptyScene")
                                      (bf 'place-image module-path 4 false
-                                         "org.plt.world.Kernel.placeImage")
+                                         "plt.world.Kernel.placeImage")
                                      (bf 'circle module-path 3 false
-                                         "org.plt.world.Kernel.circle")
+                                         "plt.world.Kernel.circle")
                                      (bf 'nw:rectangle module-path 4 false
-                                         "org.plt.world.Kernel.nwRectangle")
+                                         "plt.world.Kernel.nwRectangle")
                                      (bf 'rectangle module-path 4 false
-                                         "org.plt.world.Kernel.rectangle")
+                                         "plt.world.Kernel.rectangle")
                                      
                                      (bf 'key=? module-path 2 false
-                                         "org.plt.world.Kernel.isKeyEqual")
+                                         "plt.world.Kernel.isKeyEqual")
                                      (bf 'text module-path 3 false
-                                         "org.plt.world.Kernel.text")
+                                         "plt.world.Kernel.text")
                                      
                                      ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
                                      ;; We can fix this by extending expression to include a special "magic" identifier.  We should
                                      ;; ensure students don't accidently hit this function.
                                      (bf '-kernel-create-image module-path 1 false
-                                         "org.plt.world.Kernel._kernelCreateImage")
+                                         "plt.world.Kernel._kernelCreateImage")
                                      (bf 'image-width module-path 1 false
-                                         "org.plt.world.Kernel.imageWidth")
+                                         "plt.world.Kernel.imageWidth")
                                      (bf 'image-height module-path 1 false
-                                         "org.plt.world.Kernel.imageHeight")
+                                         "plt.world.Kernel.imageHeight")
                                      (bf 'image? module-path 1 false
-                                         "org.plt.world.Kernel.isImage")
+                                         "plt.world.Kernel.isImage")
                                      (bf 'image=? module-path 2 false
-                                         "org.plt.world.Kernel.isImageEqual")
+                                         "plt.world.Kernel.isImageEqual")
                                      (bf 'image-rotate module-path 2 false
-                                         "org.plt.world.Kernel.imageRotate"))))))
+                                         "plt.world.Kernel.imageRotate"))))))
 
 
 ;; world teachpack bindings
@@ -189,7 +189,7 @@
             (resolve-module-path '(lib "bootstrap.ss" "moby" "stub") false))]
     (make-module-binding 'world
                          module-path
-                         (append (list (bf 'start module-path 10 false "org.plt.world.Bootstrap.start"))
+                         (append (list (bf 'start module-path 10 false "plt.world.Bootstrap.start"))
                                  (module-binding-bindings world-stub-module)))))
 
 
@@ -207,17 +207,17 @@
     (make-module-binding 'location
                          module-path
                          (list (bf 'get-latitude module-path 0 false 
-                                   "org.plt.lib.Location.getLatitude")
+                                   "plt.lib.Location.getLatitude")
                                (bf 'get-longitude module-path 0 false 
-                                   "org.plt.lib.Location.getLongitude")
+                                   "plt.lib.Location.getLongitude")
                                (bf 'get-attitude module-path 0 false 
-                                   "org.plt.lib.Location.getAttitude")
+                                   "plt.lib.Location.getAttitude")
                                (bf 'get-bearing module-path 0 false 
-                                   "org.plt.lib.Location.getBearing")
+                                   "plt.lib.Location.getBearing")
                                (bf 'get-speed module-path 0 false 
-                                   "org.plt.lib.Location.getSpeed")
+                                   "plt.lib.Location.getSpeed")
                                (bf 'location-distance module-path 4 false
-                                   "org.plt.lib.Location.getDistanceBetween")))))
+                                   "plt.lib.Location.getDistanceBetween")))))
 
 
 ;; accelerometer library
@@ -232,18 +232,18 @@
     (make-module-binding 'tilt
                          module-path
                          (list (bf 'get-x-acceleration 0 false 
-                                   "org.plt.lib.Tilt.getXAcceleration")
+                                   "plt.lib.Tilt.getXAcceleration")
                                (bf 'get-y-acceleration 0 false 
-                                   "org.plt.lib.Tilt.getYAcceleration")
+                                   "plt.lib.Tilt.getYAcceleration")
                                (bf 'get-z-acceleration 0 false 
-                                   "org.plt.lib.Location.getZAcceleration")
+                                   "plt.lib.Location.getZAcceleration")
                                
                                (bf 'get-azimuth 0 false 
-                                   "org.plt.lib.Tilt.getAzimuth")
+                                   "plt.lib.Tilt.getAzimuth")
                                (bf 'get-pitch 0 false 
-                                   "org.plt.lib.Tilt.getPitch")
+                                   "plt.lib.Tilt.getPitch")
                                (bf 'get-roll 0 false 
-                                   "org.plt.lib.Tilt.getRoll")))))
+                                   "plt.lib.Tilt.getRoll")))))
 
 
 
@@ -260,7 +260,7 @@
                                                       module-path 
                                                       3 
                                                       false 
-                                                      "org.plt.lib.Sms.sendTextMessage"
+                                                      "plt.lib.Sms.sendTextMessage"
                                                       (list PERMISSION:SEND-SMS)
                                                       false)))))
 
@@ -275,7 +275,7 @@
                                                       module-path 
                                                       1 
                                                       false 
-                                                      "org.plt.lib.Net.getUrl"
+                                                      "plt.lib.Net.getUrl"
                                                       (list PERMISSION:INTERNET)
                                                       false)))))
 
@@ -289,14 +289,14 @@
                                                       module-path 
                                                       1 
                                                       false 
-                                                      "org.plt.lib.Parser.parseXml"
+                                                      "plt.lib.Parser.parseXml"
                                                       empty
                                                       false)
                                (make-binding:function 'split-whitespace
                                                       module-path
                                                       1
                                                       false
-                                                      "org.plt.lib.Parser.splitWhitespace"
+                                                      "plt.lib.Parser.splitWhitespace"
                                                       empty
                                                       false)))))
 
@@ -313,13 +313,13 @@
                                 module-path
                                 2
                                 true
-                                "org.plt.world.MobyJsworld.bigBang"
+                                "plt.world.MobyJsworld.bigBang"
                                 empty
                                 false)
-                               (bf 'js-div 0 "org.plt.world.MobyJsworld.div")
-                               (bf 'js-button 1 "org.plt.world.MobyJsworld.button")
-                               (bf 'js-input 1 "org.plt.world.MobyJsworld.input")
-                               (bf 'js-text 1 "org.plt.world.MobyJsworld.text")))))
+                               (bf 'js-div 0 "plt.world.MobyJsworld.div")
+                               (bf 'js-button 1 "plt.world.MobyJsworld.button")
+                               (bf 'js-input 1 "plt.world.MobyJsworld.input")
+                               (bf 'js-text 1 "plt.world.MobyJsworld.text")))))
   
 
 

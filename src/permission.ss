@@ -47,17 +47,17 @@
 (define (permission->on-start-code a-permission)
   (cond
     [(permission:location? a-permission)
-     "org.plt.platform.Platform.getInstance().getLocationService().startService();
-      org.plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);"]
+     "plt.platform.Platform.getInstance().getLocationService().startService();
+      plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);"]
     [(permission:send-sms? a-permission)
      ""]
     [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
-     "org.plt.platform.Platform.getInstance().getTiltService().startService();
-      org.plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);
-      org.plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);
-      org.plt.platform.Platform.getInstance().getTiltService().addShakeListener(listener);"
+     "plt.platform.Platform.getInstance().getTiltService().startService();
+      plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);
+      plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);
+      plt.platform.Platform.getInstance().getTiltService().addShakeListener(listener);"
 ]
     [(permission:internet? a-permission)
      ""]))
@@ -67,13 +67,13 @@
 (define (permission->on-pause-code a-permission)
   (cond
     [(permission:location? a-permission)
-     "org.plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
+     "plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
     [(permission:send-sms? a-permission)
      ""]
     [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
-     "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+     "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
     [(permission:internet? a-permission)
      ""]))
 
@@ -82,13 +82,13 @@
 (define (permission->on-destroy-code a-permission)
   (cond
     [(permission:location? a-permission)
-     "org.plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
+     "plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
     [(permission:send-sms? a-permission)
      ""]
     [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
-     "org.plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+     "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
     [(permission:internet? a-permission)
      ""]))
 

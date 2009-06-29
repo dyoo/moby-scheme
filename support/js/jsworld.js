@@ -1,11 +1,10 @@
-var org = org || {};
-org.plt = org.plt || {};
-org.plt.world = org.plt.world || {};
-org.plt.world.MobyJsworld = {};
+var plt = plt || {};
+plt.world = plt.world || {};
+plt.world.MobyJsworld = {};
 
 (function() {
 
-    var Jsworld = org.plt.world.MobyJsworld;
+    var Jsworld = plt.world.MobyJsworld;
 
     // The real low-level jsworld module:
     var _js = plt.Jsworld;
@@ -20,9 +19,9 @@ org.plt.world.MobyJsworld = {};
     // Converts list structure to array structure.
     function deepListToArray(x) {
 	var thing = x;
-	if (org.plt.Kernel.empty_question_(thing)) {
+	if (plt.Kernel.empty_question_(thing)) {
 	    return [];
-	} else if (org.plt.Kernel.pair_question_(thing)) {
+	} else if (plt.Kernel.pair_question_(thing)) {
 	    var result = [];
 	    while (!thing.isEmpty()) {
 		result.push(deepListToArray(thing.first()));
@@ -79,12 +78,12 @@ org.plt.world.MobyJsworld = {};
 	var mainWindow = getBigBangWindow();
 	var toplevelNode = mainWindow.document.getElementById("jsworld-div");
 
-	var config = new org.plt.world.config.WorldConfig();
+	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
 	  config = handlers[i](config);
 	}
 	config = config.update('changeWorld', Jsworld.updateWorld);
-	org.plt.world.config.CONFIG = config;
+	plt.world.config.CONFIG = config;
 	
 	var wrappedHandlers = [];
 	
@@ -107,7 +106,7 @@ org.plt.world.MobyJsworld = {};
 	    function wrappedTick(w) {
 		if (config.lookup('onTickEffect')) {
 		    var effect = config.lookup('onTickEffect')([w]);
-		    org.plt.world.Kernel.applyEffect(effect);
+		    plt.world.Kernel.applyEffect(effect);
                 }
 
 		var result = config.lookup('onTick')([w]);
@@ -127,9 +126,9 @@ org.plt.world.MobyJsworld = {};
 
 
     function arrayToList(anArray) {
-	var result = org.plt.types.Empty.EMPTY;
+	var result = plt.types.Empty.EMPTY;
 	for(var i = 0; i < anArray.length; i++) {
-	    result = org.plt.types.Cons.makeInstance(anArray[length-i-1],
+	    result = plt.types.Cons.makeInstance(anArray[length-i-1],
 						     result);
 	}
 	return result;
