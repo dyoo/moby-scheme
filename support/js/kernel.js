@@ -871,6 +871,18 @@ org.plt = org.plt || {};
 	}
     };
 
+    org.plt.Kernel._kernelHashMap = function(ht, f) {
+	var result = org.plt.types.Empty.EMPTY;
+	var key;
+	for (key in ht.hash) {
+	    var val = ht.hash[key];
+	    result = org.plt.Kernel.cons(f.apply(null, [[key, val]]),
+					 result);
+	}
+	return result;
+    };
+
+
     org.plt.Kernel._resolveModulePath = function(path) {
 	return path;
     };
