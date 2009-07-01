@@ -42,14 +42,15 @@
 tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
                     
 
-(make-effect:js-exec-string "
+(define maps-startup-effect
+  (make-effect:js-exec-string "
     google.load('maps', '2.x');
     //google.load('search', '1');
     //google.setOnLoadCallback(function() {
     //    var map = new google.maps.Map2(document.getElementById('google-div'));
     //    map.setUIToDefault();
     //    map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
-    //})")
+    //})"))
 
   
 (js-big-bang (make-loc 0 0)
@@ -57,4 +58,5 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
              (on-draw draw draw-css)
              (initial-effect 
               (list load-script-effect
-                    maps-startup-effect)))
+                    ;;maps-startup-effect
+                    )))
