@@ -55,14 +55,14 @@
   }
 
   function schemeIsEqual(x, y) {
-      return org.plt.Kernel.equal_question_(x, y);
+      return plt.Kernel.equal_question_(x, y);
   }
   function cons(x, y) {
-     return org.plt.Kernel.cons(x, y);
+     return plt.Kernel.cons(x, y);
   }
-  var empty = org.plt.types.Empty.EMPTY;
-  var number = function(x) { return org.plt.types.Rational.makeInstance(x, 1); };
-  var symbol = org.plt.types.Symbol.makeInstance;
+  var empty = plt.types.Empty.EMPTY;
+  var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
+  var symbol = plt.types.Symbol.makeInstance;
 
   new Test.Unit.Runner({
     setup: function() {

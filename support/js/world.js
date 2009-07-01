@@ -123,7 +123,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	plt.world.config.CONFIG = config;
 
 	if (config.lookup('initialEffect')) {
-	    org.plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
+	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
 	}
 
 	if (config.lookup('onKey')) {

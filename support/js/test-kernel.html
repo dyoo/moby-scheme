@@ -32,18 +32,18 @@
 
 <script type="text/javascript">
 // <![CDATA[
-  var Rational = org.plt.types.Rational;
-  var FloatPoint = org.plt.types.FloatPoint;
-  var Complex = org.plt.types.Complex;
-  var Kernel = org.plt.Kernel;
-  var PI = org.plt.Kernel.pi;
-  var String = org.plt.types.String;
-  var Symbol = org.plt.types.Symbol;
-  var Logic = org.plt.types.Logic;
-  var Cons = org.plt.types.Cons;
-  var Empty = org.plt.types.Empty;
+  var Rational = plt.types.Rational;
+  var FloatPoint = plt.types.FloatPoint;
+  var Complex = plt.types.Complex;
+  var Kernel = plt.Kernel;
+  var PI = plt.Kernel.pi;
+  var String = plt.types.String;
+  var Symbol = plt.types.Symbol;
+  var Logic = plt.types.Logic;
+  var Cons = plt.types.Cons;
+  var Empty = plt.types.Empty;
   var EMPTY = Empty.EMPTY;
-  var Char = org.plt.types.Char;
+  var Char = plt.types.Char;
 	
   new Test.Unit.Runner({
     setup: function() {
@@ -157,7 +157,6 @@
 		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0), Rational.makeInstance(2,1), []));
 		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0), Rational.makeInstance(2,1), []));
 	},
-<<<<<<< HEAD:support/js/test-kernel.html
 
 
       testComparison2 : function () {
@@ -184,17 +183,15 @@
 	  }
       },
 
-=======
->>>>>>> devel:support/js/test-kernel.html
 	
 	testAtan : function(){
-		this.assert(Kernel.equal_question_(Kernel.atan(Rational.ONE), org.plt.Kernel.pi.half().half()));
+		this.assert(Kernel.equal_question_(Kernel.atan(Rational.ONE), plt.Kernel.pi.half().half()));
 	},
 	
 	testLog : function(){
 		this.assert(Kernel.equal_question_(Kernel.log(Rational.ONE), Rational.ZERO));		
-		this.assert(Kernel.equal_question_(Kernel.log(Complex.makeInstance(0,1)), org.plt.Kernel.pi.toComplex().timesI().half()));
-		this.assert(Kernel.equal_question_(Kernel.log(FloatPoint.makeInstance(-1)), org.plt.Kernel.pi.toComplex().timesI()));
+		this.assert(Kernel.equal_question_(Kernel.log(Complex.makeInstance(0,1)), plt.Kernel.pi.toComplex().timesI().half()));
+		this.assert(Kernel.equal_question_(Kernel.log(FloatPoint.makeInstance(-1)), plt.Kernel.pi.toComplex().timesI()));
 	},
 	
 	testAngle : function(){
@@ -212,7 +209,7 @@
 	
 	
 	testExpt : function(){
-		//var i = org.plt.types.Complex.makeInstance(0, 1);
+		//var i = plt.types.Complex.makeInstance(0, 1);
 		//this.assert(Kernel.equal_question_(Kernel.expt(i, i), Kernel.exp(PI.half().minus())));
 		this.assert(Kernel.equal_question_(Kernel.expt(FloatPoint.makeInstance(2), FloatPoint.makeInstance(3)), FloatPoint.makeInstance(8)));
 	},
@@ -250,7 +247,7 @@
 		this.assert(Kernel.complex_question_(PI));
 		this.assert(Kernel.complex_question_(Rational.ONE));
 		this.assert(Kernel.complex_question_(Complex.makeInstance(0,1)));
-		this.assert(!Kernel.complex_question_(org.plt.types.Empty.EMPTY));
+		this.assert(!Kernel.complex_question_(plt.types.Empty.EMPTY));
 		this.assert(!Kernel.complex_question_(String.makeInstance("hi")));
 		this.assert(!Kernel.complex_question_(Symbol.makeInstance('h')));
 	},
@@ -407,7 +404,7 @@
 		this.assert(Kernel.real_question_(Rational.ONE));
 		this.assert(!Kernel.real_question_(Complex.makeInstance(0,1)));
 		this.assert(Kernel.real_question_(Complex.makeInstance(1,0)));
-		this.assert(!Kernel.real_question_(org.plt.types.Empty.EMPTY));
+		this.assert(!Kernel.real_question_(plt.types.Empty.EMPTY));
 		this.assert(!Kernel.real_question_(String.makeInstance("hi")));
 		this.assert(!Kernel.real_question_(Symbol.makeInstance('h')));
 	},
