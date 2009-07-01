@@ -29,6 +29,8 @@ org.plt.world.config = org.plt.world.config || {};
     this.vals = {
     changeWorld: false,
 
+    initialEffect: false,
+
       // onRedraw: world -> scene
     onRedraw: false,
 
@@ -115,6 +117,13 @@ org.plt.world.config = org.plt.world.config || {};
       return config.update('onRedraw', handler);
     };
   };
+
+
+    org.plt.world.config.Kernel.initialEffect = function(effect) {
+	return function(config) {
+	    return config.update('initialEffect', effect);
+	};
+    }
 
 
   org.plt.world.config.Kernel.onDraw = function(domHandler, styleHandler) {

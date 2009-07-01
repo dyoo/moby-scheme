@@ -88,6 +88,10 @@ org.plt.world.MobyJsworld = {};
 	
 	var wrappedHandlers = [];
 	
+	if (config.lookup('initialEffect')) {
+	    org.plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
+	}
+
 	if (config.lookup('onDraw')) {
 	  function wrappedRedraw(w) {
 	    var result = [toplevelNode, 

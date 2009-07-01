@@ -47,6 +47,8 @@
                                
                                (bf 'on-key module-path 1 false "org.plt.world.config.Kernel.onKey")
                                (bf 'on-key* module-path 2 false "org.plt.world.config.Kernel.onKey_star_")
+
+			       (bf 'initial-effect module-path 1 false "org.plt.world.config.Kernel.initialEffect")
                                
                                (make-binding:function
                                 'on-location-change module-path 1 false
