@@ -10,13 +10,13 @@
             (foldl (lambda (id+name env)
                      (env-extend-constant env (first id+name) (second id+name)))
                    empty-env
-                   '((null "org.plt.types.Empty.EMPTY")
-                     (empty "org.plt.types.Empty.EMPTY")
-                     (true "org.plt.types.Logic.TRUE")
-                     (false "org.plt.types.Logic.FALSE")
-                     (eof "org.plt.types.EofObject.EOF")
-                     (pi "org.plt.Kernel.pi")
-                     (e "org.plt.Kernel.e"))))
+                   '((null "plt.types.Empty.EMPTY")
+                     (empty "plt.types.Empty.EMPTY")
+                     (true "plt.types.Logic.TRUE")
+                     (false "plt.types.Logic.FALSE")
+                     (eof "plt.types.EofObject.EOF")
+                     (pi "plt.Kernel.pi")
+                     (e "plt.Kernel.e"))))
     
           ;; Registers a new toplevel function, munging the name
           (define (r env a-name arity vararity?)
@@ -26,7 +26,7 @@
                                  arity 
                                  vararity?
                                  (string-append 
-                                  "org.plt.Kernel."
+                                  "plt.Kernel."
                                   (symbol->string (identifier->munged-java-identifier 
                                    a-name)))))
 
@@ -247,15 +247,15 @@
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
-                   '((hash-set 3 "org.plt.Kernel._kernelHashSet")
-                     (hash-ref 3 "org.plt.Kernel._kernelHashRef")
-                     (make-immutable-hasheq 1 "org.plt.Kernel._kernelMakeImmutableHashEq")
-                     (hash-map 2 "org.plt.Kernel._kernelHashMap")
-                     (hash? 1 "org.plt.Kernel._isHash")
-                     (path->string 1 "org.plt.Kernel._pathToString")
-                     (normalize-path 1 "org.plt.Kernel._normalizePath")
-                     (resolve-module-path 2 "org.plt.Kernel._resolveModulePath")
-                     (build-path 2 "org.plt.Kernel._buildPath")
+                   '((hash-set 3 "plt.Kernel._kernelHashSet")
+                     (hash-ref 3 "plt.Kernel._kernelHashRef")
+                     (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
+                     (hash-map 2 "plt.Kernel._kernelHashMap")
+                     (hash? 1 "plt.Kernel._isHash")
+                     (path->string 1 "plt.Kernel._pathToString")
+                     (normalize-path 1 "plt.Kernel._normalizePath")
+                     (resolve-module-path 2 "plt.Kernel._resolveModulePath")
+                     (build-path 2 "plt.Kernel._buildPath")
 
                      )))]
     top-env-3))

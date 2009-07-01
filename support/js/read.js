@@ -70,10 +70,10 @@ function tokenize(s) {
 	throw new Error("Error while tokenizing: the rest of the stream is: " + tokensAndError[1]);
     }
 
-    var quoteSymbol = org.plt.types.Symbol.makeInstance("quote");
-    var quasiquoteSymbol = org.plt.types.Symbol.makeInstance("quasiquote");
-    var unquoteSymbol = org.plt.types.Symbol.makeInstance("unquote");
-    var empty = org.plt.types.Empty.EMPTY;
+    var quoteSymbol = plt.types.Symbol.makeInstance("quote");
+    var quasiquoteSymbol = plt.types.Symbol.makeInstance("quasiquote");
+    var unquoteSymbol = plt.types.Symbol.makeInstance("unquote");
+    var empty = plt.types.Empty.EMPTY;
 
     function isType(type) {
       return (tokens.length > 0 && tokens[0][0] == type);
@@ -103,37 +103,37 @@ function tokenize(s) {
       } else if (isType("'")) {
 	eat("'");
 	var quoted = readExpr();
-	return org.plt.Kernel.cons(quoteSymbol,
-				   org.plt.Kernel.cons(quoted, empty));
+	return plt.Kernel.cons(quoteSymbol,
+				   plt.Kernel.cons(quoted, empty));
       } else if (isType('`')) {
 	eat("`");
-	return org.plt.Kernel.cons(quasiquoteSymbol,
-				   org.plt.kernel.cons(quoted, empty));
+	return plt.Kernel.cons(quasiquoteSymbol,
+				   plt.kernel.cons(quoted, empty));
       } else if (isType(',')) {
 	eat(",");
-	return org.plt.Kernel.cons(unquoteSymbol,
-				   org.plt.kernel.cons(quoted, empty));
+	return plt.Kernel.cons(unquoteSymbol,
+				   plt.kernel.cons(quoted, empty));
       } else if (isType('number')) {
 	t = eat('number');
 	if (t[1].match(/\./)) {
-	  return org.plt.types.FloatPoint.makeInstance(parseFloat(t[1]));
+	  return plt.types.FloatPoint.makeInstance(parseFloat(t[1]));
 	} else {
-	  return org.plt.types.Rational.makeInstance(parseInt(t[1]), 1);
+	  return plt.types.Rational.makeInstance(parseInt(t[1]), 1);
 	}
       } else if (isType('string')) {
 	t = eat('string');
-	return org.plt.types.String.makeInstance(t[1]);
+	return plt.types.String.makeInstance(t[1]);
       } else if (isType('char')) {
         t = eat('char');
 	  if (t[1] == 'newline') {
-	      return org.plt.types.Char.makeInstance('\n');
+	      return plt.types.Char.makeInstance('\n');
 	  }
           else {
-	      return org.plt.types.Char.makeInstance(t[1]);
+	      return plt.types.Char.makeInstance(t[1]);
 	  }
       } else if (isType('symbol')) {
 	t = eat('symbol');
-	return org.plt.types.Symbol.makeInstance(t[1]);
+	return plt.types.Symbol.makeInstance(t[1]);
       } else {
 	throw new Error("Parse broke with token stream " + tokens);
       }
@@ -141,16 +141,16 @@ function tokenize(s) {
 
 
     function readExprs() {
-      var result = org.plt.types.Empty.EMPTY;
+      var result = plt.types.Empty.EMPTY;
       while (true) {
 	if (tokens.length == 0 || isType(')')) {
 	  break;
 	} else {
 	  var nextElt = readExpr();
-	  result = org.plt.types.Cons.makeInstance(nextElt, result);
+	  result = plt.types.Cons.makeInstance(nextElt, result);
 	}
       }
-      return org.plt.Kernel.reverse(result);
+      return plt.Kernel.reverse(result);
     }
     
 

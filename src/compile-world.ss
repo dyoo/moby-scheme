@@ -174,7 +174,7 @@
                             (vendor "${company.name}")
                             (version "1.0.0"))
                            (midlet ((name ,(upper-camel-case name))
-                                    (class ,(string-append "org.plt." 
+                                    (class ,(string-append "plt." 
                                                            (upper-camel-case name)
                                                            "."
                                                            (upper-camel-case name)))))))
@@ -194,8 +194,8 @@
                                 (jadfile "bin/${midlet.name}.jad")
                                 (obfuscate "false")
                                 (preverify "true"))
-                               (preserve ((class "org.plt.platform.Platform")))
-                               (preserve ((class "org.plt.platform.J2MEPlatform")))
+                               (preserve ((class "plt.platform.Platform")))
+                               (preserve ((class "plt.platform.J2MEPlatform")))
                                (fileset ((dir "classes")))
                                (fileset ((dir "res")))))
            "\n"           
@@ -277,7 +277,7 @@
     (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
     (write-android-manifest dest-dir 
                             #:name a-name
-                            #:package (string-append "org.plt." (upper-camel-case a-name))
+                            #:package (string-append "plt." (upper-camel-case a-name))
                             #:permissions (pinfo-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)
@@ -291,9 +291,9 @@
                                    (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
     (write-android-manifest dest-dir 
                             #:name a-name
-                            #:package (string-append "org.plt." (upper-camel-case a-name))
+                            #:package (string-append "plt." (upper-camel-case a-name))
                             #:activity-class (string-append
-                                              "org.plt." classname "." classname)
+                                              "plt." classname "." classname)
                             #:permissions (pinfo-permissions pinfo))
     (replace-template-file dest-dir "build.xml" mappings)
     (replace-template-file dest-dir "res/values/strings.xml" mappings)

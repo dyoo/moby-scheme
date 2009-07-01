@@ -71,7 +71,7 @@
                           defns
                           (string-append tops
                                          "\n"
-                                         "org.plt.Kernel.identity("
+                                         "plt.Kernel.identity("
                                          (expression->java-string 
                                           (first program) 
                                           toplevel-env
@@ -159,7 +159,7 @@
                     "-"
                     (symbol->string field-name))))
   
-  (format "public class ~a implements org.plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a\n ~a" 
+  (format "public class ~a implements plt.types.Struct { ~a \n ~a\n ~a\n}\n~a \n ~a\n ~a" 
           (identifier->munged-java-identifier id)
           (string-join (map (lambda (a-field)
                               (format "public Object ~a;"
@@ -238,7 +238,7 @@
            "\n")
           
           ;; predicate
-          (format "public org.plt.types.Logic ~a(Object obj) { return obj instanceof ~a ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE; }"
+          (format "public plt.types.Logic ~a(Object obj) { return obj instanceof ~a ? plt.types.Logic.TRUE : plt.types.Logic.FALSE; }"
                   (identifier->munged-java-identifier (string->symbol (format "~a?" id)))
                   (identifier->munged-java-identifier id))))
 
@@ -258,7 +258,7 @@
          [(empty? questions)
           (expression->java-string answer-last env a-pinfo)]
          [else
-          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+          (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
                   (expression->java-string (first questions) env a-pinfo)
                   (expression->java-string (first answers) env a-pinfo)
                   (loop (rest questions) (rest answers)))]))]
@@ -269,18 +269,18 @@
                 [answers answers])
        (cond
          [(empty? questions)
-          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : 
-                      org.plt.Kernel.error(org.plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
+          (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : 
+                      plt.Kernel.error(plt.types.Symbol.makeInstance(\"cond\"), \"Fell out of cond\"))"
                   (expression->java-string question-last env a-pinfo)
                   (expression->java-string answer-last env a-pinfo))]
          [else
-          (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+          (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
                   (expression->java-string (first questions) env a-pinfo)
                   (expression->java-string (first answers) env a-pinfo)
                   (loop (rest questions) (rest answers)))]))]
     
     [(list 'if test consequent alternative)
-     (format "(((org.plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
+     (format "(((plt.types.Logic)(~a)).isTrue() ? (~a) : (~a))"
              (expression->java-string test env a-pinfo)
              (expression->java-string consequent env a-pinfo)
              (expression->java-string alternative env a-pinfo))]
@@ -288,20 +288,20 @@
     [(list 'and expr ...)
      (string-append "(("
                     (string-join (map (lambda (e)
-                                        (format "(((org.plt.types.Logic)~a).isTrue())"
+                                        (format "(((plt.types.Logic)~a).isTrue())"
                                                 (expression->java-string e env a-pinfo)))
                                       expr) 
                                  "&&")
-                    ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
+                    ") ? plt.types.Logic.TRUE : plt.types.Logic.FALSE)")]
     
     [(list 'or expr ...)
      (string-append "(("
                     (string-join  (map (lambda (e)
-                                         (format "(((org.plt.types.Logic)~a).isTrue())"
+                                         (format "(((plt.types.Logic)~a).isTrue())"
                                                  (expression->java-string e env a-pinfo)))
                                        expr) 
                                   "||")
-                    ") ? org.plt.types.Logic.TRUE : org.plt.types.Logic.FALSE)")]
+                    ") ? plt.types.Logic.TRUE : plt.types.Logic.FALSE)")]
     
     ;; Numbers
     [(? number?)
@@ -323,7 +323,7 @@
     
     ;; Quoted symbols
     [(list 'quote datum)
-     (format "(org.plt.types.Symbol.makeInstance(\"~a\"))"
+     (format "(plt.types.Symbol.makeInstance(\"~a\"))"
              datum)]
     
     ;; Function call/primitive operation call
@@ -337,7 +337,7 @@
   (let ([inner-compiled-program 
          (program->compiled-program (append defns (list body)) 
                                     (pinfo-update-env a-pinfo env))])
-    (format "(new org.plt.types.Callable() {
+    (format "(new plt.types.Callable() {
                ~a
                public Object call(Object[] args) {
                  return ~a
@@ -365,7 +365,7 @@
               "Moby doesn't know about ~s" id)]
       
       [(struct binding:constant (name java-string permissions))
-       (format "(((org.plt.types.Callable) ~a).call(new Object[] {~a}))" 
+       (format "(((plt.types.Callable) ~a).call(new Object[] {~a}))" 
                java-string 
                (string-join operand-strings ", "))]
       
@@ -410,14 +410,14 @@
     [(struct binding:function (name module-path min-arity var-arity? java-string permissions primitive?))
      (cond
        [var-arity?
-        (format "(new org.plt.types.Callable() {
+        (format "(new plt.types.Callable() {
                       public Object call(Object[] args) {
                           return ~a(args);
                       }
                   })"
                 java-string)]
        [else
-        (format "(new org.plt.types.Callable() {
+        (format "(new plt.types.Callable() {
                    public Object call(Object[] args) {
                        return ~a(~a);
                    }
@@ -437,16 +437,16 @@
   (cond [(integer? a-num)
          ;; Fixme: we need to handle exact/vs/inexact issue.
          ;; We probably need the numeric tower.
-         (format "(new org.plt.types.Rational(~a, 1))" (inexact->exact a-num))]
+         (format "(new plt.types.Rational(~a, 1))" (inexact->exact a-num))]
         [(and (inexact? a-num)
               (real? a-num))
-         (format "(org.plt.types.FloatPoint.fromString(\"~s\"))" a-num)]
+         (format "(plt.types.FloatPoint.fromString(\"~s\"))" a-num)]
         [(rational? a-num)
-         (format "(new org.plt.types.Rational(~s, ~s))" 
+         (format "(new plt.types.Rational(~s, ~s))" 
                  (numerator a-num) 
                  (denominator a-num))]
         [(complex? a-num)
-         (format "(new org.plt.types.Complex(~a, ~a))"
+         (format "(new plt.types.Complex(~a, ~a))"
                  (number->java-string (real-part a-num))
                  (number->java-string (imag-part a-num)))]
         [else

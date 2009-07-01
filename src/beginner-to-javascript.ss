@@ -27,7 +27,7 @@
                  "\n"
                  "(function() { \n"
                  "("(compiled-program-toplevel-exprs a-compiled-program) ")"
-                 "(org.plt.Kernel.identity)"
+                 "(plt.Kernel.identity)"
                  "\n})();"))
 
   
@@ -271,7 +271,7 @@
                            " }
                     "
                            (symbol->string (identifier->munged-java-identifier id))
-                           ".prototype = new org.plt.Kernel.Struct();"
+                           ".prototype = new plt.Kernel.Struct();"
                            )
             "\n"
             
@@ -455,17 +455,17 @@
 (define (quote-expression->javascript-string expr)
   (cond
     [(empty? expr)
-     "org.plt.types.Empty.EMPTY"]
+     "plt.types.Empty.EMPTY"]
     
     [(pair? expr)
-     (string-append "(org.plt.Kernel.list(["
+     (string-append "(plt.Kernel.list(["
                           (string-join 
                            (map quote-expression->javascript-string expr)
                            ",")
                           "]))")]
     
     [(symbol? expr)
-     (string-append "(org.plt.types.Symbol.makeInstance(\""
+     (string-append "(plt.types.Symbol.makeInstance(\""
                     (symbol->string expr)
                     "\"))")]
     
@@ -513,7 +513,7 @@
                          (compiled-program-defns inner-compiled-program)
                          "\n"
                          ;; Apply the toplevel expressions with the identity function.
-                         (compiled-program-toplevel-exprs inner-compiled-program) "(org.plt.Kernel.identity)"
+                         (compiled-program-toplevel-exprs inner-compiled-program) "(plt.Kernel.identity)"
                          "\n"
                          "return " inner-body-string ";
               })())")
@@ -699,21 +699,21 @@
   (cond [(integer? a-num)
          ;; Fixme: we need to handle exact/vs/inexact issue.
          ;; We probably need the numeric tower.
-         (string-append "(org.plt.types.Rational.makeInstance("
+         (string-append "(plt.types.Rational.makeInstance("
                         (number->string (inexact->exact a-num))
                         ", 1))")]
         [(and (inexact? a-num)
               (real? a-num))
-         (string-append "(org.plt.types.FloatPoint.makeInstance(\"" 
+         (string-append "(plt.types.FloatPoint.makeInstance(\"" 
                         (number->string a-num)"\"))")]
         [(rational? a-num)
-         (string-append "(org.plt.types.Rational.makeInstance("
+         (string-append "(plt.types.Rational.makeInstance("
                         (number->string (numerator a-num))
                         ", "
                         (number->string (denominator a-num))
                         "))")]
         [(complex? a-num)
-         (string-append "(org.plt.types.Complex.makeInstance("
+         (string-append "(plt.types.Complex.makeInstance("
                         (number->string (real-part a-num))
                         ", "
                         (number->string (imag-part a-num))"))")]
@@ -725,7 +725,7 @@
 
 ;; char->javascript-string: char -> string
 (define (char->javascript-string a-char)
-  (string-append "(org.plt.types.Char.makeInstance(String.fromCharCode("
+  (string-append "(plt.types.Char.makeInstance(String.fromCharCode("
                  (number->string (char->integer a-char))
                  ")))"))
 
@@ -743,7 +743,7 @@
                (string #\\ #\n)]
               [else
                (string a-char)]))]
-    (string-append "(org.plt.types.String.makeInstance(\""
+    (string-append "(plt.types.String.makeInstance(\""
                    (string-join (map escape-char-code (string->list a-str))
                                 "")
                    "\"))")))
