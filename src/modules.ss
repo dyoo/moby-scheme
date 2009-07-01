@@ -41,6 +41,9 @@
                                    false "plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")
                                (bf 'make-effect:release-wake-lock module-path 0
                                    false "plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")
+                               (bf 'make-effect:js-load-script module-path 1 false "plt.world.Kernel.make_dash_effect_colon_js_dash_load_dash_script")
+                               (bf 'make-effect:js-exec-string module-path 1 false "plt.world.Kernel.make_dash_effect_colon_js_dash_exec_dash_string")
+
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
                                                       "plt.world.Kernel.make_dash_effect_colon_sms"
                                                       (list PERMISSION:SEND-SMS)
@@ -320,6 +323,8 @@
                                 "plt.world.MobyJsworld.bigBang"
                                 empty
                                 false)
+			       ;; Each of these functions can take an optional
+			       ;; (sexpof css-style) argument.
                                (bf 'js-div 0 "plt.world.MobyJsworld.div")
                                (bf 'js-button 1 "plt.world.MobyJsworld.button")
                                (bf 'js-button* 2 "plt.world.MobyJsworld.buttonStar")

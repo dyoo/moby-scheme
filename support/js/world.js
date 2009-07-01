@@ -907,6 +907,71 @@ plt.world.Kernel = plt.world.Kernel || {};
     function effect_colon_lower_dash_sound_dash_volume_question_(obj) {
     	return obj instanceof effect_colon_lower_dash_sound_dash_volume;
     }
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+    // Loading DHTML files dynamically
+
+    function effect_colon_js_dash_load_dash_script(url) { this.url = url; }
+    effect_colon_js_dash_load_dash_script.prototype = new plt.Kernel.Struct();
+
+    effect_colon_js_dash_load_dash_script.prototype.run = function() {
+	var e = document.createElement("script");
+	e.src = this.url;
+	e.type = "text/javascript";
+	window.document.getElementsByTagName("head")[0].appendChild(e);
+    }
+
+    effect_colon_js_dash_load_dash_script.prototype.isEqual = function(other) {
+        if (other instanceof effect_colon_js_dash_load_dash_script) {
+            return ((plt.Kernel.equal_question_((effect_colon_js_dash_load_dash_script_dash_url(this)),(effect_colon_js_dash_load_dash_script_dash_url(other))))&&plt.types.Logic.TRUE);
+        } else {
+            return false;
+        }
+    } 
+    function make_dash_effect_colon_js_dash_load_dash_script(id0) { return new effect_colon_js_dash_load_dash_script(id0); }
+
+    plt.world.Kernel.make_dash_effect_colon_js_dash_load_dash_script = make_dash_effect_colon_js_dash_load_dash_script;
+
+
+    function effect_colon_js_dash_load_dash_script_dash_url(obj) { return obj.url; }
+    function effect_colon_js_dash_load_dash_script_question_(obj) { 
+        return obj instanceof effect_colon_js_dash_load_dash_script; }
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+    // Dynamic javascript string evaluation
+    
+    function effect_colon_js_dash_exec_dash_string(cmd) { this.cmd = cmd; }
+    effect_colon_js_dash_exec_dash_string.prototype = new plt.Kernel.Struct();
+
+    effect_colon_js_dash_exec_dash_string.prototype.run = function() {
+	eval(this.cmd);
+    }
+
+    effect_colon_js_dash_exec_dash_string.prototype.isEqual = function(other) {
+        if (other instanceof effect_colon_js_dash_exec_dash_string) {
+            return ((plt.Kernel.equal_question_((effect_colon_js_dash_exec_dash_string_dash_cmd(this)),(effect_colon_js_dash_exec_dash_string_dash_cmd(other))))&&plt.types.Logic.TRUE);
+        } else {
+            return false;
+        }
+    } 
+    function make_dash_effect_colon_js_dash_exec_dash_string(id0) { return new effect_colon_js_dash_exec_dash_string(id0); }
+
+    plt.world.Kernel.make_dash_effect_colon_js_dash_exec_dash_string = make_dash_effect_colon_js_dash_exec_dash_string;
+
+
+    function effect_colon_js_dash_exec_dash_string_dash_cmd(obj) { return obj.cmd; }
+    function effect_colon_js_dash_exec_dash_string_question_(obj) { 
+        return obj instanceof effect_colon_js_dash_exec_dash_string; }
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////
 
     var currentLockFlags = -1;

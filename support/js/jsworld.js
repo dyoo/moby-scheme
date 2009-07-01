@@ -87,9 +87,6 @@ plt.world.MobyJsworld = {};
 	
 	var wrappedHandlers = [];
 	
-	if (config.lookup('initialEffect')) {
-	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
-	}
 
 	if (config.lookup('onDraw')) {
 	  function wrappedRedraw(w) {
@@ -121,6 +118,11 @@ plt.world.MobyJsworld = {};
 	  wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
 	}
 
+
+	if (config.lookup('initialEffect')) {
+	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
+	}
+
 	return _js.big_bang(toplevelNode,
 			    initWorld,
 			    wrappedHandlers,
@@ -142,16 +144,27 @@ plt.world.MobyJsworld = {};
     Jsworld.updateWorld = _js.change_world;
 
 
+    function getAttribs(args) {
+	if (args.length == 0) {
+	    return []
+	}
+	if (args.length == 1) {
+	    return assocListToAssocArray(args[0]);
+	} else {
+	    throw new Error();
+	}
+    }
+
     // p: assoc -> node
     Jsworld.p = function(args) {
-	var attribsAssocList = arrayToList(args);
-	return _js.p(assocListToAssocArray(attribsAssocList));
+	var attribs = getAttribs(args);
+	return _js.p(attribs);
     };
 
     // div: assoc -> node
     Jsworld.div = function(args) {
-	var attribsAssocList = arrayToList(args);
-	return _js.div(assocListToAssocArray(attribsAssocList));
+	var attribs = getAttribs(args);
+	return _js.div(attribs);
     };
 
     // button: (world -> world) assoc -> node
@@ -165,20 +178,19 @@ plt.world.MobyJsworld = {};
     };
 
     Jsworld.buttonStar = function(worldUpdateF, effectF, args) {
-	var attribsAssocList = arrayToList(args);
+	var attribs = getAttribs(args);
 	function wrappedF(world, evt) {
 	    plt.world.Kernel.applyEffect(effectF([world]));
 	    return worldUpdateF([world]);
 	}
 	// fixme: we need to wrap the function
-	return _js.button(wrappedF,
-			  assocListToAssocArray(attribsAssocList));
+	return _js.button(wrappedF, attribs);
     };
     
     // input: string assoc -> node
     Jsworld.input = function(type, args) {
-	var attribsAssocList = arrayToList(args);
-	return _js.input(type, assocListToAssocArray(attribsAssocList));
+	var attribs = getAttribs(args);
+	return _js.input(type, attribs);
     };
 
     // BidirectionalInput
@@ -189,8 +201,8 @@ plt.world.MobyJsworld = {};
 
     // text: string assoc -> node
     Jsworld.text = function(s, args) {
-	var attribsAssocList = arrayToList(args);
-	return _js.text(s, assocListToAssocArray(attribsAssocList));
+	var attribs = getAttribs(args);
+	return _js.text(s, attribs);
     };
 
 
