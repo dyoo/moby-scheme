@@ -156,20 +156,36 @@ plt.world.MobyJsworld = {};
 
     // button: (world -> world) assoc -> node
     Jsworld.button = function(f, args) {
+	var noneF = function(world) {
+	    return plt.world.Kernel.make_dash_effect_colon_none();
+	};
+	return Jsworld.buttonStar(f, 
+				  noneF,
+				  args);
+    };
+
+    Jsworld.buttonStar = function(worldUpdateF, effectF, args) {
 	var attribsAssocList = arrayToList(args);
 	function wrappedF(world, evt) {
-	    return f([world]);
+	    plt.world.Kernel.applyEffect(effectF([world]));
+	    return worldUpdateF([world]);
 	}
 	// fixme: we need to wrap the function
 	return _js.button(wrappedF,
 			  assocListToAssocArray(attribsAssocList));
     };
-
+    
     // input: string assoc -> node
     Jsworld.input = function(type, args) {
 	var attribsAssocList = arrayToList(args);
 	return _js.input(type, assocListToAssocArray(attribsAssocList));
     };
+
+    // BidirectionalInput
+    Jsworld.bidirectionalInput = function(type, args) {
+	throw new Error("FIXME: not implemented yet.");
+    };
+
 
     // text: string assoc -> node
     Jsworld.text = function(s, args) {
