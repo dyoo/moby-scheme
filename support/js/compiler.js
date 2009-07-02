@@ -488,8 +488,8 @@ return (unique(plt.Kernel.foldl((function(args30) { var a_dash_binding = args30[
 var permissions = args30[1];
                              return ((binding_colon_function_question_(a_dash_binding)) ?
  plt.Kernel.append((binding_colon_function_dash_permissions(a_dash_binding)), [permissions]) :
- (plt.types.Logic.TRUE ?
- permissions :
+ ((binding_colon_constant_question_(a_dash_binding)) ?
+ plt.Kernel.append((binding_colon_constant_dash_permissions(a_dash_binding)), [permissions]) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }),plt.types.Empty.EMPTY, [(pinfo_dash_used_dash_bindings(a_dash_pinfo))])));
               })()); }
 function program_dash_analyze(a_dash_program) { return (program_dash_analyze_slash_pinfo(a_dash_program,(get_dash_base_dash_pinfo((plt.types.Symbol.makeInstance("base")))))); }
