@@ -59,12 +59,14 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
                                                 var map = new google.maps.Map2(document.getElementById('google-div'));
                                                 map.setUIToDefault();
                                                 map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
-                                                GEvent.addListener(map, 'dblclick',
-                                                                   function() {
-                                                                       var latitude = plt.types.Rational.makeInstance(this.latlng.lat(), 1);
-                                                                       var longitude = plt.types.Rational.makeInstance(this.latlng.lng(), 1);
 
-                                                                       plt.world.announce('map:dblclick', 
+                                                map.disableDoubleClickZoom();
+                                                GEvent.addListener(map, 'dblclick',
+                                                                   function(overlay, latlng) {
+                                                                       var latitude = plt.types.FloatPoint.makeInstance(latlng.lat());
+                                                                       var longitude = plt.types.FloatPoint.makeInstance(latlng.lng());
+
+                                                                       plt.world.Kernel.announce('map:dblclick', 
                                                                                           [latitude, longitude]);
                                                                    });
                                            }})
