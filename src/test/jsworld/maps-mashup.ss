@@ -44,13 +44,21 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
 
 (define maps-startup-effect
   (make-effect:js-exec-string "
-    google.load('maps', '2.x');
-    //google.load('search', '1');
-    //google.setOnLoadCallback(function() {
-    //    var map = new google.maps.Map2(document.getElementById('google-div'));
-    //    map.setUIToDefault();
-    //    map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
-    //})"))
+    (function() {
+        function phase2() {
+            if (typeof google != 'undefined') {
+                google.load('search', '1', {callback: function() {}});
+                google.load('maps', '2.x', {callback: function() {
+                                                var map = new google.maps.Map2(document.getElementById('google-div'));
+                                                map.setUIToDefault();
+                                                map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
+                                           })
+            } else {
+                setTimeout(phase2, 0);
+            }
+        }
+        phase2();
+    })();"))
 
   
 (js-big-bang (make-loc 0 0)

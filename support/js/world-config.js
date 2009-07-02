@@ -72,6 +72,10 @@ plt.world.config = plt.world.config || {};
     // onLocationChangeEffect: world number number -> effect
     onLocationChangeEffect: false,
 
+
+    onAnnounce: false,
+    onAnnounceEffect: false,
+
     // stopWhen: world -> boolean
     stopWhen: false
     };
@@ -166,6 +170,21 @@ plt.world.config = plt.world.config || {};
     return function(config) {
       return config.updateAll({onTilt : handler,
                                onTiltEffect : effectHandler});
+    }
+  };
+
+
+
+  plt.world.config.Kernel.onAnnounce = function(handler) {
+    return plt.world.config.Kernel.onAnnounce_star_(handler, 
+						    function(w, eventName, vals) { 
+						      return getNoneEffect(); });
+  };
+
+  plt.world.config.Kernel.onAnnounce_star_ = function(handler, effectHandler) {
+    return function(config) {
+      return config.updateAll({onAnnounce : handler,
+                               onAnnounceEffect : effectHandler});
     }
   };
 

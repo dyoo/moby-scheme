@@ -19,6 +19,29 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
 
+
+    var announceListeners = [];
+    plt.world.Kernel.addAnnounceListener = function(listener) {
+	announceListeners.push(listener);
+    };
+    plt.world.Kernel.removeAnnounceListener = function(listener) {
+	var idx = announceListeners.indexOf(listener);
+	if (idx != -1) {
+	    announceListeners.splice(idx, 1);
+	}
+    };
+    plt.world.Kernel.announce = function(eventName, vals) {
+	for (var i = 0; i < announceListeners.length; i++) {
+	    try {
+		announceListeners[i](eventName, vals);
+	    } catch (e) {}
+	}
+    };
+
+
+
+
+
     // changeWorld: world -> void
     // Changes the current world to newWorld.
     function changeWorld(newWorld) {
