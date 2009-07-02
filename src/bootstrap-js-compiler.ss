@@ -54,13 +54,28 @@
       (display (bootstrap-compile "beginner-to-javascript.ss") op)
       
       (display "return function(s) {
+   function listToArray(aList) {
+       var anArray = [];
+       while (!aList.isEmpty()) {     
+          anArray.push(aList.first());
+          aList = aList.rest();
+       }
+       return anArray;
+   }
    var exprs = readSchemeExpressions(s);
+
    var compiledProgram =
        program_dash__greaterthan_compiled_dash_program(exprs);
 
-   return [compiled_dash_program_dash_main(compiledProgram),
-           // fixme: coerse list to javascript array?
-           pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram))]
+   var compiledSrc = compiled_dash_program_dash_main(compiledProgram);
+   var permList = pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram));
+   var perms = [];
+   while (!permList.isEmpty()) {     
+      perms = perms.concat(
+                listToArray(permission_dash__greaterthan_android_dash_permissions(permList.first())));
+      permList = permList.rest();
+   }
+   return [compiledSrc, perms];
 }"
                op)
       (display "})();" op))
