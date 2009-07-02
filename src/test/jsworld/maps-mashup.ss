@@ -37,9 +37,11 @@
                (list "border-style" "solid"))))
 
 
-(define (maybe-update-loc w name vals)
-  w)
-
+(define (update-loc w name vals)
+  (local [(define latitude (first vals))
+          (define longitude (second vals))]
+    (make-world latitude longitude)))
+    
 
 
 (define load-script-effect
@@ -78,7 +80,7 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
 (js-big-bang (make-loc 0 0)
              '()
              (on-draw draw draw-css)
-             (on-announce maybe-update-loc)
+             (on-announce update-loc)
              (initial-effect 
               (list load-script-effect
                     maps-startup-effect
