@@ -123,7 +123,7 @@ plt.world.MobyJsworld = {};
 
 	if (config.lookup('onAnnounce')) {
 	    function aListener(eventName, vals) {
-		updateWorld(function(w) {
+		Jsworld.updateWorld(function(w) {
 			if (config.lookup('onAnnounceEffect')) {
 			    var effect = config.lookup('onAnnounceEffect')([w]);
 			    plt.world.Kernel.applyEffect(effect);
@@ -134,7 +134,7 @@ plt.world.MobyJsworld = {};
 		    });
 	    }
 	    // Fixme: we should clear the announceListener on exit.
-	    plt.world.addAnnounceListener(aListener);
+	    plt.world.Kernel.addAnnounceListener(aListener);
 	}
 
 
