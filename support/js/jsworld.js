@@ -148,6 +148,8 @@ plt.world.MobyJsworld = {};
 	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
 	}
 
+	// Fixme: handle stopwhen.
+
 	return _js.big_bang(toplevelNode,
 			    initWorld,
 			    wrappedHandlers,
