@@ -52,7 +52,7 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
                                                 var map = new google.maps.Map2(document.getElementById('google-div'));
                                                 map.setUIToDefault();
                                                 map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
-                                           })
+                                           }})
             } else {
                 setTimeout(phase2, 0);
             }
@@ -66,5 +66,5 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
              (on-draw draw draw-css)
              (initial-effect 
               (list load-script-effect
-                    ;;maps-startup-effect
+                    maps-startup-effect
                     )))

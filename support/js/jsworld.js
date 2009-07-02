@@ -2,6 +2,8 @@ var plt = plt || {};
 plt.world = plt.world || {};
 plt.world.MobyJsworld = {};
 
+// Depends on world.js, world-config.js
+
 (function() {
 
     var Jsworld = plt.world.MobyJsworld;
@@ -114,9 +116,27 @@ plt.world.MobyJsworld = {};
 		return result;
 	    }
 	  
-	  var wrappedDelay = config.lookup('tickDelay');
-	  wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
+	    var wrappedDelay = config.lookup('tickDelay');
+	    wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
 	}
+
+
+	if (config.lookup('onAnnounce')) {
+	    function aListener(eventName, vals) {
+		updateWorld(function(w) {
+			if (config.lookup('onAnnounceEffect')) {
+			    var effect = config.lookup('onAnnounceEffect')([w]);
+			    plt.world.Kernel.applyEffect(effect);
+			}
+			
+			var result = config.lookup('onAnnounce')([w]);
+			return result;
+		    });
+	    }
+	    // Fixme: we should clear the announceListener on exit.
+	    plt.world.addAnnounceListener(aListener);
+	}
+
 
 
 	if (config.lookup('initialEffect')) {
