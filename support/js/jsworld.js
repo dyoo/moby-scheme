@@ -123,13 +123,18 @@ plt.world.MobyJsworld = {};
 
 	if (config.lookup('onAnnounce')) {
 	    function aListener(eventName, vals) {
+		var valsList = plt.types.Empty.EMPTY;
+		for (var i = 0; i < vals.length; i++) {
+		    valsList = plt.types.Cons.makeInstance(vals[vals.length - i - 1], valsList);
+		}
+
 		Jsworld.updateWorld(function(w) {
 			if (config.lookup('onAnnounceEffect')) {
-			    var effect = config.lookup('onAnnounceEffect')([w]);
+			    var effect = config.lookup('onAnnounceEffect')([w, eventName, valsList]);
 			    plt.world.Kernel.applyEffect(effect);
 			}
 			
-			var result = config.lookup('onAnnounce')([w]);
+			var result = config.lookup('onAnnounce')([w, eventName, valsList]);
 			return result;
 		    });
 	    }
