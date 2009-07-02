@@ -37,6 +37,11 @@
                (list "border-style" "solid"))))
 
 
+(define (maybe-update-loc w name vals)
+  w)
+
+
+
 (define load-script-effect
   (make-effect:js-load-script "http://www.google.com/jsapi?key=ABQIAAAA8ZT9Mxsh6JZ0SL4OykinsxQWOJEcslnYca7MAn
 tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
@@ -52,6 +57,14 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
                                                 var map = new google.maps.Map2(document.getElementById('google-div'));
                                                 map.setUIToDefault();
                                                 map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
+                                                GEvent.addListener(map, 'dblclick',
+                                                                   function() {
+                                                                       var latitude = plt.types.Rational.makeInstance(this.latlng.lat(), 1);
+                                                                       var longitude = plt.types.Rational.makeInstance(this.latlng.lng(), 1);
+
+                                                                       plt.world.announce('map:dblclick', 
+                                                                                          [latitude, longitude]);
+                                                                   });
                                            }})
             } else {
                 setTimeout(phase2, 0);
@@ -60,10 +73,12 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
         phase2();
     })();"))
 
+
   
 (js-big-bang (make-loc 0 0)
              '()
              (on-draw draw draw-css)
+             (on-announce maybe-update-loc)
              (initial-effect 
               (list load-script-effect
                     maps-startup-effect
