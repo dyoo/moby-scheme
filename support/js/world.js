@@ -207,7 +207,6 @@ plt.world.Kernel = plt.world.Kernel || {};
  	changeWorld(aWorld);
 
  	if(config.lookup('onTick')) {
-	  console.log('onTick is defined');
 	  scheduleTimerTick(newWindow, config);
 	}
     };
@@ -215,7 +214,6 @@ plt.world.Kernel = plt.world.Kernel || {};
     // scheduleTimerTick: -> void
     // Repeatedly schedules an evaluation of the onTick until the program has stopped.
     function scheduleTimerTick(window, config) {
-      console.log("setting up timer for " + config.lookup('tickDelay'));
 	timerInterval = window.setInterval(
 	    function() {
 		if (stopped) {

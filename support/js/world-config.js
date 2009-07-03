@@ -80,11 +80,15 @@ plt.world.config = plt.world.config || {};
 	    onLocationChangeEffect: false,
 
 
+	    // onAnnounce: world string X ... -> world
 	    onAnnounce: false,
+	    // onAnnounce: world string X ... -> effect
 	    onAnnounceEffect: false,
 
 	    // stopWhen: world -> boolean
-	    stopWhen: false
+	    stopWhen: false,
+	    // stopWhenEffect: world -> effect
+	    stopWhenEffect: false
 	};
     }
 
@@ -258,6 +262,13 @@ plt.world.config = plt.world.config || {};
     plt.world.config.Kernel.stopWhen = function(handler) {
 	return function(config) {
 	    return config.updateAll({'stopWhen': handler});
+	};
+    };
+
+    plt.world.config.Kernel.stopWhen_star_ = function(stopHandler, stopEffect) {
+	return function(config) {
+	    return config.updateAll({'stopWhen': stopHandler,
+				     'stopWhenEffect' : stopEffect});
 	};
     };
 
