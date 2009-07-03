@@ -142,7 +142,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	for (i = 0; i < handlers.length; i++) {
 	    config = handlers[i](config);
 	}
-	config = config.update('changeWorld', plt.world.Kernel.updateWorld);
+	config = config.updateAll({'changeWorld', plt.world.Kernel.updateWorld});
 	plt.world.config.CONFIG = config;
 
 	if (config.lookup('initialEffect')) {
