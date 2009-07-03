@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname simple-button) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+(require (lib "moby.ss" "moby" "stub"))
+
 ;; button example.  Pressing the button will send an alert and adjust the button's text.
 
 ;; The world is a number.
