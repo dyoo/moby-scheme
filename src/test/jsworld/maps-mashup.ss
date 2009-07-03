@@ -37,10 +37,16 @@
                (list "border-style" "solid"))))
 
 
+
+;; update-loc: world string (listof X) -> world
 (define (update-loc w name vals)
-  (local [(define latitude (first vals))
-          (define longitude (second vals))]
-    (make-world latitude longitude)))
+    (cond
+      [(string=? name "map:dblclick")
+       (local [(define latitude (first vals))
+               (define longitude (second vals))]
+         (make-loc latitude longitude))]
+      [else
+       w]))
     
 
 
@@ -57,15 +63,13 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
                 google.load('search', '1', {callback: function() {}});
                 google.load('maps', '2.x', {callback: function() {
                                                 var map = new google.maps.Map2(document.getElementById('google-div'));
-                                                map.setUIToDefault();
-                                                map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
-
+                                                map.setUIToDefault(); 
+                                                map.setCenter(new google.maps.LatLng(41.82761869589464, -71.39830112457275), 15);
                                                 map.disableDoubleClickZoom();
                                                 GEvent.addListener(map, 'dblclick',
                                                                    function(overlay, latlng) {
                                                                        var latitude = plt.types.FloatPoint.makeInstance(latlng.lat());
                                                                        var longitude = plt.types.FloatPoint.makeInstance(latlng.lng());
-
                                                                        plt.world.Kernel.announce('map:dblclick', 
                                                                                           [latitude, longitude]);
                                                                    });

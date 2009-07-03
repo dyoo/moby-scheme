@@ -154,8 +154,7 @@ plt.world.config = plt.world.config || {};
 				      plt.types.Rational.makeInstance(1000, 1), 
 				      aDelay)))
 		    };
-      var result = config.updateAll(newVals);
-      return result;
+      return config.updateAll(newVals);
     };
 
   };
@@ -234,7 +233,7 @@ plt.world.config = plt.world.config || {};
 
 
   plt.world.config.Kernel.onLocationChange = function(handler) {
-    plt.world.config.Kernel.onLocationChange_star_(handler,
+   return plt.world.config.Kernel.onLocationChange_star_(handler,
 						       function(w, latitude, longitude) {
 							 return getNoneEffect(); });
   }
@@ -249,8 +248,8 @@ plt.world.config = plt.world.config || {};
 
 
   plt.world.config.Kernel.stopWhen = function(handler) {
-    return function() {
-      plt.world.config.stopWhen = handler;    
+    return function(config) {
+	return config.update('stopWhen', handler);
     };
   };
 
