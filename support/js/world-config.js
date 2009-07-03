@@ -9,7 +9,8 @@ plt.world.config = plt.world.config || {};
 
 (function() {
 
-
+    // augment: hash hash -> hash
+    // Functionally extend a hashtable with another one.
   function augment(o, a) {
       var oo = {};
       for (var e in o) {
@@ -22,11 +23,17 @@ plt.world.config = plt.world.config || {};
     }
 
 
-
-
   function WorldConfig() {
+      // The following handler values are initially false until they're updated
+      // by configuration.
+      
+      // A handler is a function:
+      //     handler: world X Y ... -> Z
+
+
     this.vals = {
     changeWorld: false,
+
 
     initialEffect: false,
 
@@ -81,19 +88,20 @@ plt.world.config = plt.world.config || {};
     };
   }
 
-
+  
+  // WorldConfig.lookup: string -> handler
+  // Looks up a value in the configuration.
   WorldConfig.prototype.lookup = function(key) {
-    return this.vals[key];
+      if (key in this.vals) {
+	  return this.vals[key];
+      } else {
+	  throw Error("Can't find " + key + " in the configuration");
+      }
   }
   
-  WorldConfig.prototype.update = function(key, val) {
-    var result = new WorldConfig();
-    var newDict = {};
-    newDict[key] = val;
-    result.vals = augment(this.vals, newDict);
-    return result;
-  }
 
+
+  // WorldConfig.updateAll: (hashof string handler) -> WorldConfig
   WorldConfig.prototype.updateAll = function(aHash) {
     var result = new WorldConfig();
     result.vals = augment(this.vals, aHash);
@@ -117,7 +125,7 @@ plt.world.config = plt.world.config || {};
   plt.world.config.Kernel = plt.world.config.Kernel || {};
   plt.world.config.Kernel.onRedraw = function(handler) {
     return function(config) {
-      return config.update('onRedraw', handler);
+	return config.updateAll({'onRedraw': handler});
     };
   };
 
@@ -125,7 +133,7 @@ plt.world.config = plt.world.config || {};
 
     plt.world.config.Kernel.initialEffect = function(effect) {
 	return function(config) {
-	    return config.update('initialEffect', effect);
+	    return config.updateAll({'initialEffect': effect});
 	};
     }
 
@@ -249,10 +257,12 @@ plt.world.config = plt.world.config || {};
 
   plt.world.config.Kernel.stopWhen = function(handler) {
     return function(config) {
-	return config.update('stopWhen', handler);
+	return config.updateAll({'stopWhen': handler});
     };
   };
 
+
+  
 
 
 
