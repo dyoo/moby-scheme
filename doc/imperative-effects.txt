@@ -1,0 +1,108 @@
+Problem: we want to allow our World programs to do imperative things
+in a principled way.  We need this feature because mashups typically
+use imperative APIs.
+
+
+Google Maps, for example, has the following API (simplified) in the
+Javascript world:
+
+   make-map: () -> map
+   set-center: map number number -> void
+   gEvent-add-listener!: map string (number number -> void) -> void
+
+
+i.e., in JS, we can write the following:
+
+   var map = makeMap();
+   setCenter(map, 42, -71);
+   gEventAddListener(map, "dblclick", 
+                      function(lat, lng) {
+                          alert(lat + ", " + lng);
+                      });
+
+
+Observations:
+
+    1.  All the bang-ed functions return void.
+
+    2.  Furthermore, these functions mutate their arguments, and have
+        no effect on the world.
+
+    3.  Finally, gevent-add-listener! is higher order: it consumes a
+    function that returns void.
+
+
+----------------------------------------------------------------------
+
+From Observation 1, we want Effects in the World framework to call a
+sequence of these functions.
+
+
+In our framework, we use a list to apply a sequence of Effects.  Each
+element in the list needs to be an effect.
+
+    (list effect ...)
+
+In order to call a void function, we provide an effect for void
+function application called "apply-void".
+
+
+----------------------------------------------------------------------
+
+From Observation 2, we need to represent a store that can be accessed
+and mutated.  Let's define a 'store' type;
+
+    make-store: -> store
+
+with a function store-ref to access values in the store:
+
+    store-ref: store string -> value
+
+Let's now introduce an Effect to get at the value in the store:
+
+    store-set: string (world store -> store) -> effect
+
+
+But we still have to introduce the store somehow when we process a
+sequence of effects.  Let's explicitely create a constructor for
+effects called seq, which applies a sequence of effects, beginning
+with an empty store.
+
+    seq: effect ... -> effect
+
+----------------------------------------------------------------------
+
+
+
+Let's summarize the current API:
+
+    seq: effect ... -> effect
+    apply-void: (world store -> (X Y ... -> void)) -> effect
+
+    make-store: -> store
+    store-ref: store string -> value
+    store-set: string (world store -> store) -> effect
+
+
+----------------------------------------------------------------------
+
+
+We can at least express the first two statements of our example, and
+some of the third:
+
+
+   var map = makeMap();
+   setCenter(map, 42, -71);
+   gEventAddListener(map, "dblclick", 
+                      function(lat, lng) {
+                          alert(lat + ", " + lng);
+                      });
+
+
+   (seq (store-set "map" 
+                   (lambda (w a-store)
+                     (make-map)))
+
+        (apply-void set-center!
+                   (lambda (w a-store)
+                     (store-ref a-store
