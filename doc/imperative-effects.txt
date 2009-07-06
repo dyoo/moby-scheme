@@ -35,10 +35,9 @@ API
 
     > effect-with-store: (world store -> effect) -> effect
 
-    Consumes a function that produces a list of effects.  That
-    sequence of effects is applied in the context of a store.  When a
-    sequence-with-store effect is applied, it initializes the store to
-    empty and then applies each sub-effect in order.
+    Consumes a function that produces a effect in the context of a
+    store.When a sequence-with-store effect is applied, it initializes
+    the store to empty and then applies the sub-effect.
 
 
     > void-function->effect-function: (X Y ... -> void) -> (X Y ... -> effect)
