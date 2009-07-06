@@ -108,8 +108,8 @@ We write the corresponding world program and the initial effect as:
 We can compare this to imperative Scheme:
 
    (define make-map (js-get-obj "makeMap"))
-   (define set-center (js-get-obj "setCenter"))
-   (define gevent-add-listener-effect (js-get-obj "gEventAddListener"))
+   (define set-center! (js-get-obj "setCenter"))
+   (define gevent-add-listener! (js-get-obj "gEventAddListener"))
 
    (begin
      (let ([map (make-map)])
