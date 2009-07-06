@@ -16,57 +16,56 @@ world-with-effects to support imperative update.
 
 API
 
-    make-store: -> store
 
-    Constructs a store, which represents an associative, mutable data
-    structure.
+    > make-store-var: -> store-var
+
+    Creates a unique store variable that is used to key into a store.
 
 
-    store-ref: store string -> X
+    > store-ref: store store-var -> X
 
     Consumes the store and a key, and returns the associated value.
 
 
-    store-set: string (world store -> X) -> effect
+    > store-set: store store-var X -> effect
 
-    Consumes a string name, as well as a value-producing function, and
-    produces an effect.  When the effect is applied, it mutates the
-    store.
-
-
-    seq: effect ... -> effect
-
-    Consumes a sequence of effects, produces an effect.  When a
-    seq effect is applied, it initializes the store to empty and then
-    applies each sub-effect in sequence.
+    Consumes a store, a store variable, and a value, and produces an
+    effect.  When the effect is applied, it mutates the store.
 
 
-    apply-void: (world store -> (list (X Y ... -> void) X Y ...)) -> effect
+    > effect-with-store: (world store -> effect) -> effect
 
-    Consumes a function that produces a void-function and its
-    arguments, and produces an effect.  When that effect is applied,
-    it executes the void function with the given arguments.
+    Consumes a function that produces a list of effects.  That
+    sequence of effects is applied in the context of a store.  When a
+    sequence-with-store effect is applied, it initializes the store to
+    empty and then applies each sub-effect in order.
 
 
-    wrap-effect-function: (X Y ... -> effect) -> (X Y ... -> void)
+    > void-function->effect-function: (X Y ... -> void) -> (X Y ... -> effect)
+
+    Given a function that has a side effect, produces a effect-producing function.
+
+
+    > effect-function->void-function: (X Y ... -> effect) -> (X Y ... -> void)
 
     Given a function that produces an effect, produces a void-function.
 
 
+
+
 ======================================================================
 
-Example
+Example: Google Maps
 
-The following is a running example that shows why each part of the API
-is necessary.  We use Google Maps; it has the following API
-(simplified) in Javascript:
+
+Google Maps has the following API (simplified) in Javascript:
 
    make-map: () -> map
    set-center!: map number number -> void
-   gEvent-add-listener!: map string (number number -> void) -> void
+   gevent-add-listener!: map string (number number -> void) -> void
 
 
-i.e., in JS, we can write the following:
+i.e., in JS, we write the following:
 
    var map = makeMap();
    setCenter(map, 42, -71);
@@ -75,11 +74,49 @@ i.e., in JS, we can write the following:
                           alert(lat + ", " + lng);
                       });
 
-to initialize the map mashup.
 
-----------------------------------------------------------------------
+We assume that we'll have a function js-get-obj:
 
-Observations:
+    js-get-obj: string -> X
+
+
+
+We write the corresponding world program and the initial effect as:
+
+   (define map (make-store-var))
+
+   (define make-map (js-get-obj "makeMap"))
+   (define set-center-effect
+      (void-function->effect-function (js-get-obj "setCenter")))
+   (define gevent-add-listener-effect 
+     (void-function->effect-function (js-get-obj "gEventAddListener")))
+   (define alert-void-function (effect-function->void-function 
+                                 (lambda (lat lng)
+                                   (make-effect:alert (format "~a, ~a" lat lng)))))
+
+   (big-bang ...
+             (initial-effect
+
+               (effect-with-store
+                 (lambda (w s)
+                    (list (store-set s map (make-map))
+                          (set-center-effect (store-ref s map) 42 -71)
+                          (gevent-add-listener-effect (store-ref s map) 
+                                                      "dblclick"
+                                                      alert-void-function))))))
+
+
+======================================================================
+
+Observations from the Maps example:
+
+    var map = makeMap();
+    setCenter(map, 42, -71);
+    gEventAddListener(map, "dblclick", 
+                      function(lat, lng) {
+                          alert(lat + ", " + lng);
+                      });
+
 
     1.  All the bang-ed functions (set-center!, gevent-add-listener!)
     return void.
@@ -91,119 +128,23 @@ Observations:
     function that returns void.
 
 
-----------------------------------------------------------------------
 
 From Observation 2, we need to represent a store that can be accessed
-and mutated.  Let's define a 'store' type;
+and mutated.  We define a 'store' type, but we make sure that the user
+cannot construct an instance of a store outside of the context of an
+effect.  This motivates the definition of sequence-with-effects, which
+constructs an effect that introduces the store that can be manipulated
+by the effects within its context.
 
-    make-store: -> store
-
-with a function store-ref to access values in the store:
-
-    store-ref: store string -> value
-
-Let's now introduce an Effect to assign to the value in the store:
-
-    store-set: string (world store -> store) -> effect
-
-But we still have to introduce the store somehow when we process a
-sequence of effects.  Let's provide a constructor for a sequence of
-effects called seq.  The semantics of seq are similar to a list of
-effects: process each one in turn, but initialize the store to empty.
-
-    seq: effect ... -> effect
-
-----------------------------------------------------------------------
 
 From Observation 1, we want Effects in the World framework to call a
-sequence of these void-functions.  To apply a void function, we
-introduce an effect constructor, "apply-void", so we can translate an
-expression like
+sequence of these void-functions.  We provide a wrapper
+void-function->effect-function that consumes void functions and turns
+them into effect functions.
 
-    setCenter(map, 42, -71)       // JS
-
-to
-
-    (apply-void (lambda (w a-store)            ;; BSL + world/effects
-                  (list a-center 42 -71)))
-
-We need the function given to apply-void to consume the store, since
-the application of the void function will most likely consult the
-store for values.
-
-----------------------------------------------------------------------
-
-Let's summarize the current API:
-
-    seq: effect ... -> effect
-    apply-void: (world store -> (X Y ... -> void)) -> effect
-    make-store: -> store
-    store-ref: store string -> value
-    store-set: string (world store -> store) -> effect
-
-We can at least express the first two statements of our example, and
-some of the third.  We put a placeholder for '???', which we need to
-figure out next.
-
-   var map = makeMap();
-   setCenter(map, 42, -71);
-   gEventAddListener(map, "dblclick", 
-                      function(lat, lng) {
-                          alert(lat + ", " + lng);
-                      });
-
-   translates to ==>
-
-   (seq (store-set "map" 
-                   (lambda (w a-store)
-                     (make-map)))
-
-        (apply-void  (lambda (w a-store)
-                       (list set-center!
-                             (store-ref a-store "map")
-                             42
-			     -71)))
-
-        (apply-void (lambda (w a-store)
-                       (list gevent-add-listener
-                             (store-ref a-store "map")
-                             "dblclick"
-                             ???))))
-
-We now look at the effect of the higher-order function.
-
-----------------------------------------------------------------------
 
 From Observation 3, we want to put a higher-order function value there
 whose return value is void.  In our framework, a void function is one
-that produces an effect.  By necessity, ??? must be replaced with a
-function that produces an effect
-
-    (lambda (lat lng)
-      (make-effect:alert ...))
-
-but this is a (number number -> effect) function, not a (number number
--> void), as gevent-add-listener! expects!  So we need a combinator to
-translate effect functions to void functions.
-
-    wrap-effect-function: (X Y ... -> effect) -> (X Y ... -> void)
-
-----------------------------------------------------------------------
-
-With this extension, we can now write the sequential effect as:
-
-   (seq (store-set "map" 
-                   (lambda (w a-store) (make-map)))
-
-        (apply-void  (lambda (w a-store)
-                       (list set-center! (store-ref a-store "map")
-                                         42
-			                 -71)))
-
-        (apply-void (lambda (w a-store)
-                       (list gevent-add-listener
-                             (store-ref a-store "map")
-                             "dblclick"
-                             (wrap-effect-function
-                              (lambda (lat long)
-                                (make-effect:alert (format "~a, ~a" lat long))))))))
+that produces an effect.  Since JS expects functions that go to void,
+we provide another wrapper effect->function->void-function that acts
+as an inverse to void-function->effect-function.
