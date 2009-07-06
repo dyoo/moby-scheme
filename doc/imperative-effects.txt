@@ -1,13 +1,68 @@
-Problem: we want to allow our World programs to do imperative things
-in a principled way.  We need this feature because mashups typically
-use imperative APIs.
+Problem: we want to allow our World programs to do imperative things,
+since mashups typically use imperative APIs.  By imperative, we mean
+a void-function of the type:
+
+   X Y ... -> void
+
+which will typically mutate the argument values.  We can't directly
+call these in Beginner/Intermediate-level Scheme because they produce
+no values.
+
+However, we've already got some infrastructure for doing side-effects
+by using world-with-effects.  The following proposed API extends
+world-with-effects to support imperative update.
+
+======================================================================
+
+API
+
+    make-store: -> store
+
+    Constructs a store, which represents an associative, mutable data
+    structure.
 
 
-Google Maps, for example, has the following API (simplified) in the
-Javascript world:
+    store-ref: store string -> X
+
+    Consumes the store and a key, and returns the associated value.
+
+
+    store-set: string (world store -> X) -> effect
+
+    Consumes a string name, as well as a value-producing function, and
+    produces an effect.  When the effect is applied, it mutates the
+    store.
+
+
+    seq: effect ... -> effect
+
+    Consumes a sequence of effects, produces an effect that.  When a
+    seq effect is applied, it initializes the store to empty and then
+    applies each sub-effect in sequence.
+
+
+    apply-void: (world store -> (list (X Y ... -> void) X Y ...)) -> effect
+
+    Consumes a function that produces a void-function and its
+    arguments, and produces an effect.  When that effect is applied,
+    it executes the void function with the given arguments.
+
+
+    wrap-effect-function: (X Y ... -> effect) -> (X Y ... -> void)
+
+    Given a function that produces an effect, produces a void-function.
+
+
+======================================================================
+
+Example
+
+The following is a running example that shows why each part of the API
+is necessary.  We use Google Maps; it has the following API
+(simplified) in Javascript:
 
    make-map: () -> map
-   set-center: map number number -> void
+   set-center!: map number number -> void
    gEvent-add-listener!: map string (number number -> void) -> void
 
 
@@ -20,31 +75,20 @@ i.e., in JS, we can write the following:
                           alert(lat + ", " + lng);
                       });
 
-
-Observations:
-
-    1.  All the bang-ed functions return void.
-
-    2.  Furthermore, these functions mutate their arguments, and have
-        no effect on the world.
-
-    3.  Finally, gevent-add-listener! is higher order: it consumes a
-    function that returns void.
-
+to initialize the map mashup.
 
 ----------------------------------------------------------------------
 
-From Observation 1, we want Effects in the World framework to call a
-sequence of these functions.
+Observations:
 
+    1.  All the bang-ed functions (set-center!, gevent-add-listener!)
+    return void.
 
-In our framework, we use a list to apply a sequence of Effects.  Each
-element in the list needs to be an effect.
+    2.  Furthermore, these functions mutate their arguments, and have
+    no effect on the world.
 
-    (list effect ...)
-
-In order to call a void function, we provide an effect for void
-function application called "apply-void".
+    3.  Finally, gevent-add-listener! is higher order: it consumes a
+    function that returns void.
 
 
 ----------------------------------------------------------------------
@@ -58,38 +102,48 @@ with a function store-ref to access values in the store:
 
     store-ref: store string -> value
 
-Let's now introduce an Effect to get at the value in the store:
+Let's now introduce an Effect to assign to the value in the store:
 
     store-set: string (world store -> store) -> effect
 
-
 But we still have to introduce the store somehow when we process a
-sequence of effects.  Let's explicitely create a constructor for
-effects called seq, which applies a sequence of effects, beginning
-with an empty store.
+sequence of effects.  Let's provide a constructor for a sequence of
+effects called seq.  The semantics of seq are similar to a list of
+effects: process each one in turn, but initialize the store to empty.
 
     seq: effect ... -> effect
 
 ----------------------------------------------------------------------
 
+From Observation 1, we want Effects in the World framework to call a
+sequence of these void-functions.  To apply a void function, we
+introduce an effect constructor, "apply-void", so we can translate an
+expression like
 
+    setCenter(map, 42, -71)       // JS
+
+to
+
+    (apply-void (lambda (w a-store)            ;; BSL + world/effects
+                  (list a-center 42 -71)))
+
+We need the function given to apply-void to consume the store, since
+the application of the void function will most likely consult the
+store for values.
+
+----------------------------------------------------------------------
 
 Let's summarize the current API:
 
     seq: effect ... -> effect
     apply-void: (world store -> (X Y ... -> void)) -> effect
-
     make-store: -> store
     store-ref: store string -> value
     store-set: string (world store -> store) -> effect
 
-
-----------------------------------------------------------------------
-
-
 We can at least express the first two statements of our example, and
-some of the third:
-
+some of the third.  We put a placeholder for '???', which we need to
+figure out next.
 
    var map = makeMap();
    setCenter(map, 42, -71);
@@ -98,11 +152,56 @@ some of the third:
                           alert(lat + ", " + lng);
                       });
 
+   translates to ==>
 
    (seq (store-set "map" 
                    (lambda (w a-store)
                      (make-map)))
 
-        (apply-void set-center!
-                   (lambda (w a-store)
-                     (store-ref a-store
+        (apply-void  (lambda (w a-store)
+                       (list set-center!
+                             (store-ref a-store map)
+                             42
+			     -71)))
+
+        (apply-void (lambda (w a-store)
+                       (list gevent-add-listener
+                             "dblclick"
+                             ???))))
+
+We now look at the effect of the higher-order function.
+
+----------------------------------------------------------------------
+
+From Observation 3, we want to put a higher-order function value there
+whose return value is void.  In our framework, a void function is one
+that produces an effect.  By necessity, ??? must be replaced with a
+function that produces an effect
+
+    (lambda (lat lng)
+      (make-effect:alert ...))
+
+but this is a (number number -> effect) function, not a (number number
+-> void), as gevent-add-listener! expects!  So we need a combinator to
+translate effect functions to void functions.
+
+    wrap-effect-function: (X Y ... -> effect) -> (X Y ... -> void)
+
+----------------------------------------------------------------------
+
+With this extension, we can now write:
+
+   (seq (store-set "map" 
+                   (lambda (w a-store) (make-map)))
+
+        (apply-void  (lambda (w a-store)
+                       (list set-center! (store-ref a-store map)
+                                         42
+			                 -71)))
+
+        (apply-void (lambda (w a-store)
+                       (list gevent-add-listener
+                             "dblclick"
+                             (wrap-effect-function
+                              (lambda (lat long)
+                                (make-effect:alert (format "~a, ~a" lat long))))))))
