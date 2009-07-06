@@ -110,8 +110,6 @@ We can compare this to imperative Scheme:
    (define make-map (js-get-obj "makeMap"))
    (define set-center (js-get-obj "setCenter"))
    (define gevent-add-listener-effect (js-get-obj "gEventAddListener"))
-   (define (alert-void-function lat lng)
-     (alert (format "~a, ~a" lat lng)))
 
    (begin
      (let ([map (make-map)])
