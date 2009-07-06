@@ -36,7 +36,7 @@ API
 
     seq: effect ... -> effect
 
-    Consumes a sequence of effects, produces an effect that.  When a
+    Consumes a sequence of effects, produces an effect.  When a
     seq effect is applied, it initializes the store to empty and then
     applies each sub-effect in sequence.
 
