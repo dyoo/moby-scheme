@@ -202,6 +202,7 @@ With this extension, we can now write the sequential effect as:
 
         (apply-void (lambda (w a-store)
                        (list gevent-add-listener
+                             (store-ref a-store "map")
                              "dblclick"
                              (wrap-effect-function
                               (lambda (lat long)
