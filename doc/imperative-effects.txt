@@ -160,12 +160,13 @@ figure out next.
 
         (apply-void  (lambda (w a-store)
                        (list set-center!
-                             (store-ref a-store map)
+                             (store-ref a-store "map")
                              42
 			     -71)))
 
         (apply-void (lambda (w a-store)
                        (list gevent-add-listener
+                             (store-ref a-store "map")
                              "dblclick"
                              ???))))
 
@@ -189,13 +190,13 @@ translate effect functions to void functions.
 
 ----------------------------------------------------------------------
 
-With this extension, we can now write:
+With this extension, we can now write the sequential effect as:
 
    (seq (store-set "map" 
                    (lambda (w a-store) (make-map)))
 
         (apply-void  (lambda (w a-store)
-                       (list set-center! (store-ref a-store map)
+                       (list set-center! (store-ref a-store "map")
                                          42
 			                 -71)))
 
