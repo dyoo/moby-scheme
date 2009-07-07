@@ -444,8 +444,8 @@
 	},
 	
 	testNot : function(){
-		this.assert(Kernel.not(Logic.FALSE));
-		this.assert(!Kernel.not(Logic.TRUE));
+		this.assert(Kernel.not(Logic.FALSE).valueOf());
+		this.assert(!Kernel.not(Logic.TRUE).valueOf());
 	},
 	
 	testSymbol_dash__greaterthan_string : function(){
@@ -877,8 +877,16 @@
 	
 
         testToWrittenString : function() {
-                this.assertEquals(42, 42);
+                this.assertEqual(String.makeInstance('hello').toWrittenString(),
+                                 '"hello"');
+                this.assertEqual(Kernel.make_dash_posn(FloatPoint.makeInstance(3),
+                                                       FloatPoint.makeInstance(4)).toWrittenString(),
+                                 '(make-posn 3 4)');
+                this.assertEqual(Logic.TRUE.toWrittenString(), "true");
+                this.assertEqual(Logic.FALSE.toWrittenString(), "false");
+
         }
+
 
 
   }); 

@@ -7,14 +7,14 @@ var plt = plt || {};
 (function() {
  
     function chainTest(test, first, second, rest) {
-  if (! test(first, second))
+	if (! test(first, second).valueOf())
       return false;
   if (rest.length == 0)
       return true;
-  if (! test(second, rest[0]))
+  if (! test(second, rest[0]).valueOf())
       return false;
   for(var i = 0; i < rest.length - 1; i++) {
-      if (! test(rest[i], rest[i+1]))
+      if (! test(rest[i], rest[i+1]).valueOf())
     return false;
   }
   return true;
@@ -25,45 +25,50 @@ var plt = plt || {};
   var i;
   var best = first;
   for(i = 0; i < rest.length; i++) {
-      if (! comparator(best, rest[i])) {
+      if (! (comparator(best, rest[i])).valueOf()) {
     best = rest[i];
       }
   }
   return best;
     }
  
- 
+
+    function toLogic(x) {
+	if (x) { return plt.types.Logic.TRUE; }
+	return plt.types.Logic.FALSE;
+    }
+
     plt.Kernel = {
   Struct: function () {
   },
   
   struct_question_: function(thing) {
-      return thing instanceof this.Struct;
+	    return toLogic(thing instanceof this.Struct);
   },
   
   number_question_ : function(x){
-      return (x instanceof plt.types.Rational || 
-	      x instanceof plt.types.FloatPoint ||
-	      x instanceof plt.types.Complex);
+	    return toLogic(x instanceof plt.types.Rational || 
+			   x instanceof plt.types.FloatPoint ||
+			   x instanceof plt.types.Complex);
   },
  
   equal_question_ : function(x, y) {
-    if (plt.Kernel.number_question_(x) && 
-	plt.Kernel.number_question_(y)) {
-	  if ("isEqual" in x) {
-	    return plt.types.NumberTower.equal(x, y);
-	  } else if ("isEqual" in y) {
-	    return plt.types.NumberTower.equal(y, x);
-	  } else {
-	    return x == y;
-	  }
-    } else {
-      return x.isEqual(y);
-    }
-  },
+	    if (plt.Kernel.number_question_(x).valueOf() && 
+		plt.Kernel.number_question_(y).valueOf()) {
+		if ("isEqual" in x) {
+		    return plt.types.NumberTower.equal(x, y);
+		} else if ("isEqual" in y) {
+		    return plt.types.NumberTower.equal(y, x);
+		} else {
+		    return toLogic(x == y);
+		}
+	    } else {
+		return x.isEqual(y);
+	    }
+	},
   
   eq_question_ : function(x, y){
-	return x == y;
+	    return toLogic(x == y);
   }, 
  
   
@@ -300,7 +305,9 @@ var plt = plt || {};
   },
   
   complex_question_ : function(x){
-	return x instanceof plt.types.Complex || x instanceof plt.types.Rational || x instanceof plt.types.FloatPoint;
+	    return toLogic(x instanceof plt.types.Complex || 
+			   x instanceof plt.types.Rational ||
+			   x instanceof plt.types.FloatPoint);
   },
   
   cosh : function(x) {
@@ -320,11 +327,11 @@ var plt = plt || {};
   },
   
   odd_question_ : function(x){
-	return (x.toInteger() % 2 == 1);
+	return toLogic(x.toInteger() % 2 == 1);
   },
   
   even_question_ : function(x) {
-	return (x.toInteger() % 2 == 0);
+	return toLogic(x.toInteger() % 2 == 0);
   },
   
   positive_question_ : function(x){
@@ -381,8 +388,8 @@ var plt = plt || {};
   },
   
   real_question_ : function(x){
-      return (plt.Kernel.number_question_(x) &&
-	      x.isReal());
+      return toLogic(plt.Kernel.number_question_(x) &&
+		     x.isReal());
   },
   
   
@@ -391,9 +398,9 @@ var plt = plt || {};
   },
   
   sgn : function(x){
-	if (this.positive_question_(x))
+	    if (this.positive_question_(x).valueOf())
 		return plt.types.Rational.ONE;
-	if (this.negative_question_(x))
+	    if (this.negative_question_(x).valueOf())
 		return plt.types.Rational.NEGATIVE_ONE;
 	else
 		return plt.types.Rational.ZERO;
@@ -404,27 +411,27 @@ var plt = plt || {};
   },
   
   boolean_question_ : function(x){
-	return x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE;
-  },
+	    return toLogic(x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
+	},
   
   false_question_ : function(x){
-	return  x == plt.types.Logic.FALSE;
+	    return toLogic(x == plt.types.Logic.FALSE);
   },
   
   not : function(x){
-	return x == plt.types.Logic.FALSE ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+	    return (!(x.valueOf())) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
   },
   
   symbol_dash__greaterthan_string : function(x){
-	return plt.types.String.makeInstance(x);
+	return plt.types.String.makeInstance(x.val);
   },
   
   symbol_equal__question_ : function(x, y){
-	return x.val == y.val;
+	    return toLogic(x.val == y.val);
   },
   
   symbol_question_ : function(x){
-	return x instanceof plt.types.Symbol;
+	    return toLogic(x instanceof plt.types.Symbol);
   },
   
   
@@ -562,22 +569,22 @@ var plt = plt || {};
   
   member : function(item, lst){
 	while (!lst.isEmpty()){
-		if (plt.Kernel.equal_question_(item, lst.first()))
-			return true;
+	    if (plt.Kernel.equal_question_(item, lst.first()).valueOf())
+			return plt.types.Logic.TRUE;
 		lst = lst.rest();
 	}
 	
-	return false;
+	return plt.types.Logic.FALSE;
   },
   
   memq : function(item, lst){
 	while (!lst.isEmpty()){
-		if (plt.Kernel.eq_question_(item, lst.first()))
+	    if (plt.Kernel.eq_question_(item, lst.first()).valueOf())
 			return lst;
 		lst = lst.rest();
 	}
 	
-	return false;
+	return plt.types.Logic.FALSE;
   },
   
   eqv_question_ : function(x, y){
@@ -586,12 +593,12 @@ var plt = plt || {};
   
   memv : function(item, lst){
 	while (!lst.isEmpty()){
-		if (plt.Kernel.eqv_question_(item, lst.first()))
+	    if (plt.Kernel.eqv_question_(item, lst.first()).valueOf())
 			return lst;
 		lst = lst.rest();
 	}
 	
-	return false;
+	return plt.types.Logic.FALSE;
   },
   
   null_question_ : function(x){
@@ -609,7 +616,7 @@ var plt = plt || {};
   string_dash__greaterthan_number : function(str){
 	var aNum = str * 1;
 	if (isNaN(aNum))
-		return false;
+		return plt.types.Logic.FALSE;
 	return plt.types.FloatPoint.makeInstance(aNum);
   },
   
@@ -771,6 +778,7 @@ var plt = plt || {};
 	return plt.Kernel.equal_question_(ch, plt.types.Char.makeInstance(" "));
   },
   
+  // list->string: (listof char) -> string
   list_dash__greaterthan_string : function(lst){
 	var ret = "";
 	while (!lst.isEmpty()){
@@ -939,16 +947,16 @@ var plt = plt || {};
         if (other instanceof posn) {
             return (((plt.Kernel.equal_question_((posn_dash_y(this)),(posn_dash_y(other)))))&&((((plt.Kernel.equal_question_((posn_dash_x(this)),(posn_dash_x(other)))))&&(plt.types.Logic.TRUE))));
         } else {
-            return false;
+            return plt.types.Logic.FALSE;
         }
     } 
 
     posn.prototype.toWrittenString = function() {
-	return "posn(" + this.x.toWrittenString() + ", " + this.y.toWrittenString() + ")";
+	return "(make-posn " + this.x.toWrittenString() + " " + this.y.toWrittenString() + ")";
     }
 
     posn.prototype.toDisplayedString = function () {
-	return "posn(" + this.x.toDisplayedString() + ", " + this.y.toDisplayedString();
+	return "(make-posn " + this.x.toDisplayedString() + " " + this.y.toDisplayedString();
     }
 
     function make_dash_posn(id0,id1) { return new posn(id0,id1); }
@@ -966,8 +974,8 @@ var plt = plt || {};
  
  
     plt.types.Logic = {
-  TRUE : true,
-  FALSE : false
+	TRUE : new Boolean(true),
+	FALSE : new Boolean(false)
     };
  
 
@@ -1117,7 +1125,7 @@ var plt = plt || {};
 
     plt.types.Cons.prototype.isEqual = function(other) {
       if (! (other instanceof plt.types.Cons)) {
-	return false;
+	return plt.types.Logic.FALSE;
       }
       return (plt.Kernel.equal_question_(this.first(), other.first()) &&
 	      plt.Kernel.equal_question_(this.rest(), other.rest()));
@@ -1430,7 +1438,7 @@ var plt = plt || {};
     };
  
     plt.types.FloatPoint.prototype.toWrittenString = function() {
-  return this.n.toWrittenString();
+  return this.n.toString();
     };
  
     plt.types.FloatPoint.prototype.toDisplayedString = plt.types.FloatPoint.prototype.toWrittenString;
@@ -1570,7 +1578,7 @@ var plt = plt || {};
 	
 	
 	plt.types.FloatPoint.prototype.round = function(){
-		if (plt.types.NumberTower.lessThan(this.subtract(FloatPoint.makeInstance(0.5)).floor(), this.floor()))
+		if (plt.types.NumberTower.lessThan(this.subtract(FloatPoint.makeInstance(0.5)).floor(), this.floor()).valueOf())
 			return this.floor();
 		else 
 			return this.ceiling();
@@ -1664,19 +1672,19 @@ var plt = plt || {};
 
 	
 	plt.types.Complex.prototype.abs = function(){
-		if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO))
+		if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO).valueOf())
 			throw new Error("abs: expects argument of type real number");
 		return this.r.abs();
 	};
 	
 	plt.types.Complex.prototype.toInteger = function(){
-		if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO))
+		if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO).valueOf())
 			throw new Error("toInteger: expects argument of type real number");
 		return this.r.toInteger();
 	};
 	
 	plt.types.Complex.prototype.toFloat = function(){
-		if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO))
+		if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO).valueOf())
 			throw new Error("toFloat: expects argument of type real number");
 		return this.r.toFloat();
 	};
@@ -1950,7 +1958,7 @@ var plt = plt || {};
   var result = 
       plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
             1);
-  if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO)) {
+  if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
       return plt.types.NumberTower.add(result, n);
   }
   return result;
