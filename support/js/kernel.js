@@ -372,7 +372,8 @@ var plt = plt || {};
   },
   
   quotient : function(x, y){
-	return plt.types.Rational.makeInstance(plt.types.NumberTower.divide(x,y).floor(), 1);
+	    return plt.types.Rational.makeInstance(plt.types.NumberTower.divide(x,y).floor().toInteger(),
+						   1);
   },
   
   remainder : function(x, y) {
@@ -1457,7 +1458,7 @@ var plt = plt || {};
     };
  
     plt.types.FloatPoint.prototype.divide = function(other) {
-  return plt.types.FloatPoint.makeInstance(this.n / other.n);
+        return plt.types.FloatPoint.makeInstance(this.n / other.n);
     };
  
  
