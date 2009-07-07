@@ -37,6 +37,19 @@
                (list "border-style" "solid"))))
 
 
+
+;; update-loc: world string (listof X) -> world
+(define (update-loc w name vals)
+    (cond
+      [(string=? name "map:dblclick")
+       (local [(define latitude (first vals))
+               (define longitude (second vals))]
+         (make-loc latitude longitude))]
+      [else
+       w]))
+    
+
+
 (define load-script-effect
   (make-effect:js-load-script "http://www.google.com/jsapi?key=ABQIAAAA8ZT9Mxsh6JZ0SL4OykinsxQWOJEcslnYca7MAn
 tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
@@ -44,19 +57,37 @@ tWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q"))
 
 (define maps-startup-effect
   (make-effect:js-exec-string "
-    google.load('maps', '2.x');
-    //google.load('search', '1');
-    //google.setOnLoadCallback(function() {
-    //    var map = new google.maps.Map2(document.getElementById('google-div'));
-    //    map.setUIToDefault();
-    //    map.setCenter(new google.maps.LatLng(37.4419, -122.1419));
-    //})"))
+    (function() {
+        function phase2() {
+            if (typeof google != 'undefined') {
+                google.load('search', '1', {callback: function() {}});
+                google.load('maps', '2.x', {callback: function() {
+                                                var map = new google.maps.Map2(document.getElementById('google-div'));
+                                                map.setUIToDefault(); 
+                                                map.setCenter(new google.maps.LatLng(41.82761869589464, -71.39830112457275), 15);
+                                                map.disableDoubleClickZoom();
+                                                GEvent.addListener(map, 'dblclick',
+                                                                   function(overlay, latlng) {
+                                                                       var latitude = plt.types.FloatPoint.makeInstance(latlng.lat());
+                                                                       var longitude = plt.types.FloatPoint.makeInstance(latlng.lng());
+                                                                       plt.world.Kernel.announce('map:dblclick', 
+                                                                                          [latitude, longitude]);
+                                                                   });
+                                           }})
+            } else {
+                setTimeout(phase2, 0);
+            }
+        }
+        phase2();
+    })();"))
+
 
   
 (js-big-bang (make-loc 0 0)
              '()
              (on-draw draw draw-css)
+             (on-announce update-loc)
              (initial-effect 
               (list load-script-effect
-                    ;;maps-startup-effect
+                    maps-startup-effect
                     )))

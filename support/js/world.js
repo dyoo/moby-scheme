@@ -19,6 +19,29 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
 
+
+    var announceListeners = [];
+    plt.world.Kernel.addAnnounceListener = function(listener) {
+	announceListeners.push(listener);
+    };
+    plt.world.Kernel.removeAnnounceListener = function(listener) {
+	var idx = announceListeners.indexOf(listener);
+	if (idx != -1) {
+	    announceListeners.splice(idx, 1);
+	}
+    };
+    plt.world.Kernel.announce = function(eventName, vals) {
+	for (var i = 0; i < announceListeners.length; i++) {
+	    try {
+		announceListeners[i](eventName, vals);
+	    } catch (e) {}
+	}
+    };
+
+
+
+
+
     // changeWorld: world -> void
     // Changes the current world to newWorld.
     function changeWorld(newWorld) {
@@ -119,7 +142,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	for (i = 0; i < handlers.length; i++) {
 	    config = handlers[i](config);
 	}
-	config = config.update('changeWorld', plt.world.Kernel.updateWorld);
+	config = config.updateAll({'changeWorld': plt.world.Kernel.updateWorld});
 	plt.world.config.CONFIG = config;
 
 	if (config.lookup('initialEffect')) {
@@ -184,7 +207,6 @@ plt.world.Kernel = plt.world.Kernel || {};
  	changeWorld(aWorld);
 
  	if(config.lookup('onTick')) {
-	  console.log('onTick is defined');
 	  scheduleTimerTick(newWindow, config);
 	}
     };
@@ -192,7 +214,6 @@ plt.world.Kernel = plt.world.Kernel || {};
     // scheduleTimerTick: -> void
     // Repeatedly schedules an evaluation of the onTick until the program has stopped.
     function scheduleTimerTick(window, config) {
-      console.log("setting up timer for " + config.lookup('tickDelay'));
 	timerInterval = window.setInterval(
 	    function() {
 		if (stopped) {

@@ -2,6 +2,8 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname jsworld-fading) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 
+(require (lib "moby.ss" "moby" "stub"))
+
 (define (tick w)
   (add1 w))
 

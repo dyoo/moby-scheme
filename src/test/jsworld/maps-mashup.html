@@ -1,0 +1,57 @@
+<html>
+<head>
+
+
+<script lang="javascript">
+
+// <![CDATA[
+
+
+function loadScript(url) {
+    var e = document.createElement("script");
+    e.src = url;
+    e.type = "text/javascript";
+    window.document.getElementsByTagName("head")[0].appendChild(e);
+}
+
+
+
+function loadGoogleMaps() {
+  loadScript("http://www.google.com/jsapi?key=ABQIAAAA8ZT9Mxsh6JZ0SL4OykinsxQWOJEcslnYca7MAntWMY1b3Vu10BTf4mPDHeeY6Yy4oWNI9NyJiJCC8Q");
+  function phase2() {
+    if (typeof google != 'undefined') {
+      google.load("maps", "2.x", {
+                     callback:function() {
+                         var map = new google.maps.Map2(document.getElementById("map"));
+                         map.setCenter(new google.maps.LatLng(37.4419, -122.1419), 13);
+                         map.setUIToDefault(); 
+                     }
+                 });
+    } else {
+        setTimeout(phase2, 0);
+    }
+  }
+  phase2();
+}
+
+
+// ]]>
+
+</script>
+</head>
+
+
+
+<body>
+
+
+<h1>Test</h1>
+<input type="button"
+       id="mybutton1"
+       value="Try starting google maps."
+       onClick="loadGoogleMaps();">
+
+<div id="map" style="width: 500px; height:500px"></div>
+
+</body>
+</html>

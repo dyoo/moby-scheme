@@ -70,7 +70,9 @@
                                (bf 'on-key module-path 1 false "plt.world.config.Kernel.onKey")
                                (bf 'on-key* module-path 2 false "plt.world.config.Kernel.onKey_star_")
 
-                               
+                               (bf 'on-announce module-path 1 false "plt.world.config.Kernel.onAnnounce")
+                               (bf 'on-announce* module-path 2 false "plt.world.config.Kernel.onAnnounce_star_")
+
                                (make-binding:function
                                 'on-location-change module-path 1 false
                                 "plt.world.config.Kernel.onLocationChange"

@@ -142,8 +142,9 @@
               (cond [(binding:function? a-binding)
                      (append (binding:function-permissions a-binding)
                              permissions)]
-                    [else
-                     permissions]))
+                    [(binding:constant? a-binding)
+                     (append (binding:constant-permissions a-binding)
+                             permissions)]))
             empty
             (pinfo-used-bindings a-pinfo)))))
 

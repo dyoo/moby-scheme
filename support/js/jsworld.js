@@ -2,6 +2,8 @@ var plt = plt || {};
 plt.world = plt.world || {};
 plt.world.MobyJsworld = {};
 
+// Depends on world.js, world-config.js
+
 (function() {
 
     var Jsworld = plt.world.MobyJsworld;
@@ -114,14 +116,39 @@ plt.world.MobyJsworld = {};
 		return result;
 	    }
 	  
-	  var wrappedDelay = config.lookup('tickDelay');
-	  wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
+	    var wrappedDelay = config.lookup('tickDelay');
+	    wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
 	}
+
+
+	if (config.lookup('onAnnounce')) {
+	    function aListener(eventName, vals) {
+		var valsList = plt.types.Empty.EMPTY;
+		for (var i = 0; i < vals.length; i++) {
+		    valsList = plt.types.Cons.makeInstance(vals[vals.length - i - 1], valsList);
+		}
+
+		Jsworld.updateWorld(function(w) {
+			if (config.lookup('onAnnounceEffect')) {
+			    var effect = config.lookup('onAnnounceEffect')([w, eventName, valsList]);
+			    plt.world.Kernel.applyEffect(effect);
+			}
+			
+			var result = config.lookup('onAnnounce')([w, eventName, valsList]);
+			return result;
+		    });
+	    }
+	    // Fixme: we should clear the announceListener on exit.
+	    plt.world.Kernel.addAnnounceListener(aListener);
+	}
+
 
 
 	if (config.lookup('initialEffect')) {
 	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
 	}
+
+	// Fixme: handle stopwhen.
 
 	return _js.big_bang(toplevelNode,
 			    initWorld,
