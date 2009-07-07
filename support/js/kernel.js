@@ -974,16 +974,15 @@ var plt = plt || {};
  
  
     plt.types.Logic = {
-	TRUE : new Boolean(true),
-	FALSE : new Boolean(false)
+	TRUE : true,
+	FALSE : false
     };
  
-
-    plt.types.Logic.TRUE.toWrittenString = function () { return "true"; };
-    plt.types.Logic.TRUE.toDisplayedString = function () { return "true"; };
-
-    plt.types.Logic.FALSE.toWrittenString = function () { return "false"; };
-    plt.types.Logic.FALSE.toDisplayedString = function () { return "false"; };
+    Boolean.prototype.toWrittenString = function() {
+	if (this) { return "true"; }
+	return "false";
+    };
+    Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
 
 
 
