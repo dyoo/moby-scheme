@@ -111,13 +111,15 @@ We can compare this to imperative Scheme:
    (define set-center! (js-get-obj "setCenter"))
    (define gevent-add-listener! (js-get-obj "gEventAddListener"))
 
+   (define map false)
+
    (begin
-     (let ([map (make-map)])
-       (set-center! map 42 -17)
-       (gevent-add-listener! map 
-                             "dblclick"
-                             (lambda (lat lng)
-                               (alert (format "~a, ~a" lat lng))))))
+     (set! map (make-map))
+     (set-center! map 42 -17)
+     (gevent-add-listener! map 
+                           "dblclick"
+                           (lambda (lat lng)
+                             (alert (format "~a, ~a" lat lng)))))
 
 
 
