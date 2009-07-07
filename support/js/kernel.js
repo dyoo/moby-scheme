@@ -33,21 +33,17 @@ var plt = plt || {};
     }
  
 
-    function toLogic(x) {
-	if (x) { return plt.types.Logic.TRUE; }
-	return plt.types.Logic.FALSE;
-    }
 
     plt.Kernel = {
   Struct: function () {
   },
   
   struct_question_: function(thing) {
-	    return toLogic(thing instanceof this.Struct);
+	    return (thing instanceof this.Struct);
   },
   
   number_question_ : function(x){
-	    return toLogic(x instanceof plt.types.Rational || 
+	    return (x instanceof plt.types.Rational || 
 			   x instanceof plt.types.FloatPoint ||
 			   x instanceof plt.types.Complex);
   },
@@ -60,7 +56,7 @@ var plt = plt || {};
 		} else if ("isEqual" in y) {
 		    return plt.types.NumberTower.equal(y, x);
 		} else {
-		    return toLogic(x == y);
+		    return (x == y);
 		}
 	    } else {
 		return x.isEqual(y);
@@ -68,7 +64,7 @@ var plt = plt || {};
 	},
   
   eq_question_ : function(x, y){
-	    return toLogic(x == y);
+	    return (x == y);
   }, 
  
   
@@ -305,7 +301,7 @@ var plt = plt || {};
   },
   
   complex_question_ : function(x){
-	    return toLogic(x instanceof plt.types.Complex || 
+	    return (x instanceof plt.types.Complex || 
 			   x instanceof plt.types.Rational ||
 			   x instanceof plt.types.FloatPoint);
   },
@@ -327,11 +323,11 @@ var plt = plt || {};
   },
   
   odd_question_ : function(x){
-	return toLogic(x.toInteger() % 2 == 1);
+	return (x.toInteger() % 2 == 1);
   },
   
   even_question_ : function(x) {
-	return toLogic(x.toInteger() % 2 == 0);
+	return (x.toInteger() % 2 == 0);
   },
   
   positive_question_ : function(x){
@@ -388,7 +384,7 @@ var plt = plt || {};
   },
   
   real_question_ : function(x){
-      return toLogic(plt.Kernel.number_question_(x) &&
+      return (plt.Kernel.number_question_(x) &&
 		     x.isReal());
   },
   
@@ -411,11 +407,11 @@ var plt = plt || {};
   },
   
   boolean_question_ : function(x){
-	    return toLogic(x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
+	    return (x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
 	},
   
   false_question_ : function(x){
-	    return toLogic(x == plt.types.Logic.FALSE);
+	    return (x == plt.types.Logic.FALSE);
   },
   
   not : function(x){
@@ -427,11 +423,11 @@ var plt = plt || {};
   },
   
   symbol_equal__question_ : function(x, y){
-	    return toLogic(x.val == y.val);
+	    return (x.val == y.val);
   },
   
   symbol_question_ : function(x){
-	    return toLogic(x instanceof plt.types.Symbol);
+	    return (x instanceof plt.types.Symbol);
   },
   
   
@@ -979,7 +975,7 @@ var plt = plt || {};
     };
  
     Boolean.prototype.toWrittenString = function() {
-	if (this) { return "true"; }
+	if (this.valueOf()) { return "true"; }
 	return "false";
     };
     Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
