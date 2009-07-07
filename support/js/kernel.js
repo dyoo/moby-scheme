@@ -576,6 +576,9 @@ var plt = plt || {};
   
   list_star_ : function(items, otherItems){
       var lastListItem = otherItems.pop();
+      if (lastListItem == undefined || ! lastListItem instanceof plt.types.Cons) {
+	  throw new TypeError("list*: " + lastListItem + " not a list");
+      }
       otherItems.unshift(items);
       return plt.Kernel.append(plt.Kernel.list(otherItems), [lastListItem]);
   },
@@ -1083,6 +1086,7 @@ var plt = plt || {};
     plt.types.Empty.prototype.toString = function() { return "empty"; };
 
  
+    // Empty.append: (listof X) -> (listof X)
     plt.types.Empty.prototype.append = function(b){
       return b;
     }
@@ -1117,9 +1121,8 @@ var plt = plt || {};
   return false;
     };
     
+    // Cons.append: (listof X) -> (listof X)
     plt.types.Cons.prototype.append = function(b){
-	if (this.isEmpty())
-	    return b;
 	if (b.isEmpty())
 	    return this;
 	var ret = b;
