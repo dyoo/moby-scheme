@@ -250,21 +250,13 @@ var plt = plt || {};
            rest);
   },
  
-  symbol_equal__question_: function(x, y) {
-      return x.isEqual(y);
-  },
  
-  not : function(x) {
-      return !x;
-  },
-
-
   inexact_dash__greaterthan_exact: function(x) {
     return plt.types.NumberTower.toExact(x);
   },
  
   number_dash__greaterthan_string: function(x) {
-      return plt.types.String.makeInstance(x.toString());
+      return plt.types.String.makeInstance(x.toWrittenString());
   },
   
   conjugate: function(x){
@@ -359,40 +351,24 @@ var plt = plt || {};
 	return plt.types.Complex.makeInstance(x.toFloat(), y.toFloat());
   },
  
-  max : function(first, rest){
-	var i, ret = first;
-	for (i = 0; i < rest.length; i++)
-		if (plt.types.NumberTower.greaterThan(rest[i], ret))
-			ret = rest[i];
-	return ret;
-  },
-  
-  min : function(first, rest){
-	var i, ret = first;
-	for (i = 0; i < rest.length; i++)
-		if (plt.types.NumberTower.lessThan(rest[i], ret))
-			ret = rest[i];
-	return ret;
-  },
-  
   string_equal__question_ : function(first, second, rest){
-	return chainTest(function(x, y){return x.toString() == y.toString();}, first, second, rest);
+	    return chainTest(function(x, y){return x == y;}, first, second, rest);
   },
   
   string_lessthan__equal__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x.toString() <= y.toString();}, first, second, rest);
+	return chainTest(function(x, y){return x <= y;}, first, second, rest);
   },
   
   string_lessthan__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x.toString() < y.toString();}, first, second, rest);
+	return chainTest(function(x, y){return x < y;}, first, second, rest);
   },
   
   string_greaterthan__equal__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x.toString() >= y.toString();}, first, second, rest);
+	return chainTest(function(x, y){return x >= y;}, first, second, rest);
   },
   
   string_greaterthan__question_: function(first, second, rest){
-	return chainTest(function(x, y){return x.toString() > y.toString();}, first, second, rest);
+	return chainTest(function(x, y){return x > y;}, first, second, rest);
   },
   
   quotient : function(x, y){
@@ -420,10 +396,6 @@ var plt = plt || {};
 		return plt.types.Rational.NEGATIVE_ONE;
 	else
 		return plt.types.Rational.ZERO;
-  },
-  
-  zero_question_ : function(x){
-		return plt.types.NumberTower.equal(x, plt.types.Rational.ZERO);
   },
   
   boolean_equal__question_ : function(x, y){
@@ -454,9 +426,6 @@ var plt = plt || {};
 	return x instanceof plt.types.Symbol;
   },
   
-  empty_question_ : function(x){
-	return x instanceof plt.types.Empty;
-  },
   
   append : function(first, rest){
         var ret = first;
@@ -700,7 +669,7 @@ var plt = plt || {};
   },
   
   substring : function(str, begin, end){
-	return str.toString().substring(begin.toInteger(), end.toInteger());
+	return str.substring(begin.toInteger(), end.toInteger());
   },
 
   char_question_: function(x) {
@@ -718,7 +687,7 @@ var plt = plt || {};
   },
   
   char_dash_alphabetic_question_ : function(c){
-	var str = c.val.toString();
+	var str = c.val;
 	return (str >= "a" && str <= "z") || (str >= "A" && str <= "Z");
   },
   
@@ -727,11 +696,11 @@ var plt = plt || {};
   },
   
   char_lessthan__question_ : function(first, second, rest){
-	return chainTest(function(x, y){return x.val.toString() < y.val.toString()}, first, second, rest);
+	return chainTest(function(x, y){return x.val < y.val}, first, second, rest);
   },
   
   char_lessthan__equal__question_ : function(first, second, rest){
-	return chainTest(function(x, y){return x.val.toString() <= y.val.toString()}, first, second, rest);
+	return chainTest(function(x, y){return x.val <= y.val}, first, second, rest);
   },
   
   char_greaterthan__question_ : function(first, second, rest){
@@ -775,7 +744,7 @@ var plt = plt || {};
   },
   
   char_dash_downcase : function(ch){
-	var down = ch.val.toString().toLowerCase();
+	var down = ch.val.toLowerCase();
 	return plt.types.Char.makeInstance(down);
   },
   
@@ -784,12 +753,12 @@ var plt = plt || {};
   },
   
   char_dash_numeric_question_ : function(ch){
-	var str = ch.val.toString();
+	var str = ch.val;
 	return (str >= "0" && str <= "9");
   },
   
   char_dash_upcase : function(ch){
-	var up = ch.val.toString().toUpperCase();
+	var up = ch.val.toUpperCase();
 	return plt.types.Char.makeInstance(up);
   },
   
@@ -804,7 +773,7 @@ var plt = plt || {};
   list_dash__greaterthan_string : function(lst){
 	var ret = "";
 	while (!lst.isEmpty()){
-		ret += lst.first().val.toString();
+		ret += lst.first().val;
 		lst = lst.rest();
 	}
 	return plt.types.String.makeInstance(ret);
@@ -812,7 +781,7 @@ var plt = plt || {};
   
   make_dash_string : function(n, ch){
 	var ret = "";
-	var c = ch.val.toString();
+	var c = ch.val;
 	var i = plt.types.Rational.ZERO;
 	for (;  plt.Kernel._lessthan_(i, n, []); i = plt.Kernel.add1(i))
 		ret += c;
@@ -820,7 +789,7 @@ var plt = plt || {};
   },
   
   string_dash__greaterthan_list : function(str){
-	var s = str.toString();
+	var s = str;
 	var ret = plt.types.Empty.EMPTY;
 	for (var i = s.length - 1; i >= 0; i--){
 	    ret = plt.types.Cons.makeInstance
@@ -973,8 +942,8 @@ var plt = plt || {};
         }
     } 
 
-    posn.prototype.toString = function() {
-	return "posn(" + this.x.toString() + ", " + this.y.toString() + ")";
+    posn.prototype.toWrittenString = function() {
+	return "posn(" + this.x.toWrittenString() + ", " + this.y.toWrittenString() + ")";
     }
 
     posn.prototype.toDisplayedString = function () {
@@ -1001,10 +970,10 @@ var plt = plt || {};
     };
  
 
-    plt.types.Logic.TRUE.toString = function () { return "true"; };
+    plt.types.Logic.TRUE.toWrittenString = function () { return "true"; };
     plt.types.Logic.TRUE.toDisplayedString = function () { return "true"; };
 
-    plt.types.Logic.FALSE.toString = function () { return "false"; };
+    plt.types.Logic.FALSE.toWrittenString = function () { return "false"; };
     plt.types.Logic.FALSE.toDisplayedString = function () { return "false"; };
 
 
@@ -1031,18 +1000,18 @@ var plt = plt || {};
     };
 	
 	plt.types.String.prototype.isEqual = function(other){
-		return this.toString() == other.toString();
+		return this == other;
 	};
 	
 
-    plt.types.String.toString = function() {
+    plt.types.String.prototype.toWrittenString = function() {
 	return '"' + this.replace(/["\\]/g,
 	                       function(match, submatch, index) {
                                    return "\\" + match;
                                }) + '"';
     }
 
-    plt.types.String.toDisplayedString = function() {
+    plt.types.String.prototype.toDisplayedString = function() {
         return this;
     }
 
@@ -1057,7 +1026,7 @@ var plt = plt || {};
 		return new plt.types.Char(val);
 	};
 
-	plt.types.Char.prototype.toString = function() {
+	plt.types.Char.prototype.toWrittenString = function() {
 	    return "#\\" + this.val;
 	};
 
@@ -1070,7 +1039,7 @@ var plt = plt || {};
 	};
 
 	plt.types.Char.prototype.isEqual = function(other){
-		return other instanceof plt.types.Char && this.val.toString() == other.val.toString();
+		return other instanceof plt.types.Char && this.val == other.val;
 	};
 	
     // Symbols
@@ -1096,7 +1065,7 @@ var plt = plt || {};
       this.val == other.val;
     };
  
-    plt.types.Symbol.prototype.toString = function() {
+    plt.types.Symbol.prototype.toWrittenString = function() {
   return this.val;
     };
 
@@ -1124,7 +1093,7 @@ var plt = plt || {};
     plt.types.Empty.prototype.isEmpty = function() {
   return true;
     };
-    plt.types.Empty.prototype.toString = function() { return "empty"; };
+    plt.types.Empty.prototype.toWrittenString = function() { return "empty"; };
     plt.types.Empty.prototype.toDisplayedString = function() { return "empty"; };
 
 
@@ -1179,18 +1148,18 @@ var plt = plt || {};
 	return ret;
     };
     
-    plt.types.Cons.prototype.toString = function() {
+    plt.types.Cons.prototype.toWrittenString = function() {
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
-	    texts.push(p.first().toString());
+	    texts.push(p.first().toWrittenString());
 	    p = p.rest();
 	}
 	return "(" + texts.join(", ") + ")";
     };
 
 
-    plt.types.Cons.prototype.toString = function() {
+    plt.types.Cons.prototype.toWrittenString = function() {
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
@@ -1225,7 +1194,7 @@ var plt = plt || {};
   this.d = d / divisor;
     };
  
-    plt.types.Rational.prototype.toString = function() {
+    plt.types.Rational.prototype.toWrittenString = function() {
   if (this.d == 1) {
       return this.n + "";
   } else {
@@ -1233,7 +1202,7 @@ var plt = plt || {};
   }
     };
 
-    plt.types.Rational.prototype.toDisplayedString = plt.types.Rational.prototype.toString;
+    plt.types.Rational.prototype.toDisplayedString = plt.types.Rational.prototype.toWrittenString;
 
  
     plt.types.Rational.prototype.level = function() {
@@ -1459,11 +1428,11 @@ var plt = plt || {};
 		return plt.types.Complex.makeInstance(this.n, 0);
     };
  
-    plt.types.FloatPoint.prototype.toString = function() {
-  return this.n.toString();
+    plt.types.FloatPoint.prototype.toWrittenString = function() {
+  return this.n.toWrittenString();
     };
  
-    plt.types.FloatPoint.prototype.toDisplayedString = plt.types.FloatPoint.prototype.toString;
+    plt.types.FloatPoint.prototype.toDisplayedString = plt.types.FloatPoint.prototype.toWrittenString;
 
 
     plt.types.FloatPoint.prototype.isEqual = function(other) {
@@ -1637,11 +1606,11 @@ var plt = plt || {};
 		return new plt.types.Complex(r, i);
 	};
 	
-        plt.types.Complex.prototype.toString = function() {
-             return this.r.toString() + "+" + this.i.toString()+"i";
+        plt.types.Complex.prototype.toWrittenString = function() {
+             return this.r.toWrittenString() + "+" + this.i.toWrittenString()+"i";
         };
 
-        plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toString;
+        plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
 
 
 	plt.types.Complex.prototype.toExact = function() { 

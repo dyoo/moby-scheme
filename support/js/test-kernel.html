@@ -873,8 +873,14 @@
 		Kernel.equal_question_(lst.first(), Char.makeInstance("h"));
 		lst = lst.rest();
 		Kernel.equal_question_(lst.first(), Char.makeInstance("e"));
-	}	
+	},
 	
+
+        testToWrittenString : function() {
+                this.assertEquals(42, 42);
+        }
+
+
   }); 
   
 // ]]>

@@ -1018,4 +1018,4 @@ JsUnitTest.Unit.Testcase.prototype.benchmark = function(operation, iterations) {
   return timeTaken;
 };
 
-Test = JsUnitTest
+var Test = JsUnitTest
