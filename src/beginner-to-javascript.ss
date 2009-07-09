@@ -271,7 +271,25 @@
                            " }
                     "
                            (symbol->string (identifier->munged-java-identifier id))
-                           ".prototype = new plt.Kernel.Struct();"
+                           ".prototype = new plt.Kernel.Struct();\n"
+
+                           (symbol->string (identifier->munged-java-identifier id))
+                           ".prototype.toWrittenString = function() { 
+                               return '(' + [" (string-join (cons (string-append "'" "make-" (symbol->string id) "'")
+
+
+                                                                   (map (lambda (i) (string-append "this."
+                                                                   (symbol->string 
+                                                                    (identifier->munged-java-identifier i))
+                                                                   ".toWrittenString()")) fields))
+                                                            ",")
+                                           "].join(' ') + ')'; };"
+
+                           (symbol->string (identifier->munged-java-identifier id))
+                           ".prototype.toDisplayedString = "
+                           (symbol->string (identifier->munged-java-identifier id))
+			   ".prototype.toWrittenString;\n"
+
                            )
             "\n"
             
@@ -617,13 +635,15 @@
          [(binding:function? binding)
           (cond
             [(binding:function-var-arity? binding)
-             (string-append "(function(args) {
+             (string-append "((function() { var result = (function(args) {
                     return "
                             (binding:function-java-string binding)
                             ".apply(null, args);
-                  })")]
+                  }); result.toWrittenString = function() {return '<primitive:" (symbol->string (binding-id binding)) ">'; }
+                      result.toDisplayedString = function() {return '<primitive:" (symbol->string (binding-id binding)) ">';}
+                      return result; })())")]
             [else
-             (string-append "(function(args) {
+             (string-append "(function() { var result = (function(args) {
                     return "
                             (binding:function-java-string binding)
                             "("
@@ -632,7 +652,9 @@
                                               (range (binding:function-min-arity binding)))
                                          ", ")
                             ");
-                 })")])]))]))
+                 }); result.toWrittenString = function() {return '<primitive:"(symbol->string (binding-id binding))">'; }
+                     result.toDisplayedString = function() {return '<primitive:"(symbol->string (binding-id binding))">';}
+                     return result; })()")])]))]))
 
 
 
