@@ -271,7 +271,17 @@ var plt = plt || {};
   inexact_dash__greaterthan_exact: function(x) {
     return plt.types.NumberTower.toExact(x);
   },
+
+  inexact_question_ : function(x) {
+	    return plt.types.NumberTower.equal(x,
+					       plt.types.NumberTower.toExact(x));
+	},
  
+	rational_question_ : function(x) {
+	    return (plt.Kernel.number_question_(x) &&
+		    x.isRational());
+	},
+
   number_dash__greaterthan_string: function(x) {
       return plt.types.String.makeInstance(x.toWrittenString());
   },
@@ -1259,6 +1269,10 @@ var plt = plt || {};
       this.n == other.n &&
       this.d == other.d;
     };
+
+    plt.types.Rational.prototype.isRational = function() {
+        return true;
+    };
  
     plt.types.Rational.prototype.isReal = function() {
 	return true;
@@ -1475,6 +1489,11 @@ var plt = plt || {};
       this.n == other.n;
     };
 
+
+    plt.types.FloatPoint.prototype.isRational = function() {
+        return true;
+    };
+
     plt.types.FloatPoint.prototype.isReal = function() {
 	return true;
     };
@@ -1646,6 +1665,10 @@ var plt = plt || {};
 
         plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
 
+
+        plt.types.Complex.prototype.isRational = function() {
+            return this.isReal();
+        };
 
 	plt.types.Complex.prototype.toExact = function() { 
 	  if (! this.isReal()) {

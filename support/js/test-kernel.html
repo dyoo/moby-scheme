@@ -890,6 +890,13 @@
                                                                      Empty.EMPTY),
                                                    Empty.EMPTY).toWrittenString(),
                                  "((2))");
+                this.assertEqual(FloatPoint.makeInstance(3.1415).toWrittenString(),
+                                 "3.1415");
+                this.assertEqual(Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(3.1415),
+                                                                     Empty.EMPTY),
+                                                   Empty.EMPTY).toWrittenString(),
+                                 "((3.1415))");
+
         }
 
 
