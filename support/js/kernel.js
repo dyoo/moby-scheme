@@ -1195,7 +1195,7 @@ var plt = plt || {};
     };
 
 
-    plt.types.Cons.prototype.toWrittenString = function() {
+    plt.types.Cons.prototype.toDisplayedString = function() {
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {

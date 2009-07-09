@@ -1005,9 +1005,8 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_set_dash_wake_dash_lock.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
-	console.log(this.flags);
     	if (this.flags != currentLockFlags) {
-    	    navigator.power.setWakeLock(this.flags);
+    	    navigator.power.setWakeLock(this.flags.toInteger());
     	    currentLockFlags = this.flags;
     	}
     }
