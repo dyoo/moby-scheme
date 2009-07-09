@@ -1069,6 +1069,11 @@ var plt = plt || {};
       this.val == other.val;
     };
  
+
+    plt.types.Symbol.prototype.toString = function() {
+        return this.val;
+    };
+
     plt.types.Symbol.prototype.toWrittenString = function() {
   return this.val;
     };
