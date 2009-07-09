@@ -84,7 +84,7 @@ plt.world.MobyJsworld = {};
 	for(var i = 0; i < handlers.length; i++) {
 	  config = handlers[i](config);
 	}
-	config = config.update('changeWorld', Jsworld.updateWorld);
+	config = config.updateAll({'changeWorld': Jsworld.updateWorld});
 	plt.world.config.CONFIG = config;
 	
 	var wrappedHandlers = [];
