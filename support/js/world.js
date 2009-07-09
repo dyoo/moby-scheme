@@ -997,6 +997,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     var currentLockFlags = -1;
 
+    // flags: (listof number)
     function effect_colon_set_dash_wake_dash_lock(flags) {
     	this.flags = flags;
     }

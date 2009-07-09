@@ -571,7 +571,7 @@
             [(< (length operands)
                 (binding:function-min-arity operator-binding))
              (error 'application-expression->java-string
-                    (format "Minimal arity of ~s not met.  Operands were ~s"
+                    (format "Too few arguments passed to ~s.  Operands were ~s"
                             operator
                             operands))]
             [(binding:function-var-arity? operator-binding)
@@ -593,13 +593,21 @@
                                     "])")
                      updated-pinfo)])]
             [else
-             (list 
-              (string-append "("
-                             (binding:function-java-string operator-binding)
-                             "("
-                             (string-join operand-strings ",")
-                             "))")
-              updated-pinfo)])]))]
+             (cond
+               [(> (length operands)
+                   (binding:function-min-arity operator-binding))
+                (error 'application-expression->java-string
+                       (format "Too many arguments passed to ~s.  Operands were ~s"
+                               operator
+                               operands))]
+               [else
+                (list 
+                 (string-append "("
+                                (binding:function-java-string operator-binding)
+                                "("
+                                (string-join operand-strings ",")
+                                "))")
+                 updated-pinfo)])])]))]
     
     ;; General application
     [else
