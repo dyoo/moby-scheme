@@ -36,6 +36,10 @@
          
          ;; The rest of these primitives will be implemented for the kernel.
          ;; Hash stuff
+         ;; FIXME: the hash in javascript only accepts strings as keys.
+         ;; We should use contracts here.
          hash-set hash-ref make-immutable-hasheq hash-map
+         
+
          path->string normalize-path path? resolve-module-path build-path
          )
