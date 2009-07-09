@@ -48,7 +48,7 @@ function resetRepl() {
 // addToInteractions: string -> void
 // Adds a note to the interactions.
 function addToInteractions(interactionVal) {
-    interactions.value = interactions.value + interactionVal.toString();
+    interactions.value = interactions.value + interactionVal;
 }
 
 
@@ -84,7 +84,7 @@ function runSource(aSource) {
          
         runToplevel(function(val) {
             if (val != undefined) {
-                addToInteractions(val.toString() + "\n");
+                addToInteractions(val.toWrittenString() + "\n");
             }
         });
 
