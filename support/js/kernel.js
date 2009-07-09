@@ -1,10 +1,21 @@
 var plt = plt || {};
- 
- 
+  
  
 //////////////////////////////////////////////////////////////////////
 // Kernel
 (function() {
+
+
+
+    // Inheritance from pg 168: Javascript, the Definitive Guide.
+    function heir(p) {
+	function f() {}
+	f.prototype = p;
+	return new f();
+    }
+
+
+
  
     function chainTest(test, first, second, rest) {
 	if (! test(first, second).valueOf())
@@ -35,8 +46,13 @@ var plt = plt || {};
 
 
     plt.Kernel = {
+	
+	_heir : heir,
+
+
   Struct: function () {
   },
+
   
   struct_question_: function(thing) {
 	    return (thing instanceof this.Struct);
@@ -802,14 +818,23 @@ var plt = plt || {};
 		 ret);
 	}
 	return ret;
-  },
+  }
   
-  HEREEEEEEEEEEEEEEEEE : function(){}
-
 
 	
   };
  
+
+
+
+
+    plt.Kernel.Struct.prototype.toWrittenString = function() { return "<struct>"};
+
+
+
+
+
+
     function HashTable(inputHash) {
 	this.hash = inputHash;
     }
@@ -938,7 +963,9 @@ var plt = plt || {};
  
     function posn(x,y) { this.x = x;
        this.y = y; }
-    posn.prototype = new plt.Kernel.Struct();
+
+    posn.prototype = heir(plt.Kernel.Struct.prototype);
+
     posn.prototype.isEqual = function(other) {
         if (other instanceof posn) {
             return (((plt.Kernel.equal_question_((posn_dash_y(this)),(posn_dash_y(other)))))&&((((plt.Kernel.equal_question_((posn_dash_x(this)),(posn_dash_x(other)))))&&(plt.types.Logic.TRUE))));
@@ -1374,7 +1401,6 @@ var plt = plt || {};
 		return this;
 	};
 	
-	plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	plt.types.Rational.prototype.half = function(){
 		return plt.types.Rational.makeInstance(this.n, this.d * 2);
@@ -1585,7 +1611,6 @@ var plt = plt || {};
 			
 	};
 	
-	plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	plt.types.FloatPoint.prototype.conjugate = plt.types.FloatPoint.prototype.abs;
 	
@@ -1845,7 +1870,6 @@ var plt = plt || {};
 		return this.r.round();
 	};
 	
-	plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	plt.types.Complex.prototype.timesI = function(){
 		return this.multiply(plt.types.Complex.makeInstance(0, 1));

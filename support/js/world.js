@@ -558,7 +558,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     plt.world.Kernel.effect_question_ = effect_question_;
     
     function effect_colon_none() {  }
-    effect_colon_none.prototype = new plt.Kernel.Struct();
+    effect_colon_none.prototype = heir(plt.Kernel.Struct.prototype);
     effect_colon_none.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_none) {
 	    return plt.types.Logic.TRUE;
@@ -582,7 +582,7 @@ plt.world.Kernel = plt.world.Kernel || {};
    
     function effect_colon_beep() {  }
 
-    effect_colon_beep.prototype = new plt.Kernel.Struct();
+    effect_colon_beep.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_beep.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_beep) {
@@ -614,7 +614,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.address = address;
 	this.msg = msg; }
     
-    effect_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
+    effect_colon_send_dash_sms.prototype = heir(plt.Kernel.Struct.prototype);
     effect_colon_send_dash_sms.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_send_dash_sms) {
 	    return ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_msg(this)),
@@ -636,7 +636,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     
     function effect_colon_play_dash_dtmf_dash_tone(tone,duration) { this.tone = tone;
 	this.duration = duration; }
-    effect_colon_play_dash_dtmf_dash_tone.prototype = new plt.Kernel.Struct();
+    effect_colon_play_dash_dtmf_dash_tone.prototype = heir(plt.Kernel.Struct.prototype);
     effect_colon_play_dash_dtmf_dash_tone.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_play_dash_dtmf_dash_tone) {
 	    return ((plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_duration(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_duration(other))))&&((plt.Kernel.equal_question_((effect_colon_play_dash_dtmf_dash_tone_dash_tone(this)),(effect_colon_play_dash_dtmf_dash_tone_dash_tone(other))))&&plt.types.Logic.TRUE));
@@ -703,7 +703,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.string = string;
     }
 
-    effect_colon_play_dash_sound_dash_url.prototype = new plt.Kernel.Struct();
+    effect_colon_play_dash_sound_dash_url.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_play_dash_sound_dash_url.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_play_dash_sound_dash_url) {
@@ -749,7 +749,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.string = string;
     }
 
-    effect_colon_stop_dash_sound_dash_url.prototype = new plt.Kernel.Struct();
+    effect_colon_stop_dash_sound_dash_url.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_stop_dash_sound_dash_url.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_stop_dash_sound_dash_url) {
@@ -795,7 +795,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.string = string;
     }
 
-    effect_colon_pause_dash_sound_dash_url.prototype = new plt.Kernel.Struct();
+    effect_colon_pause_dash_sound_dash_url.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_pause_dash_sound_dash_url.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_pause_dash_sound_dash_url) {
@@ -840,7 +840,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     	this.volume = volume;
     }
 
-    effect_colon_set_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
+    effect_colon_set_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_set_dash_sound_dash_volume.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_set_dash_sound_dash_volume) {
@@ -873,7 +873,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     function effect_colon_raise_dash_sound_dash_volume() {  }
 
-    effect_colon_raise_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
+    effect_colon_raise_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
     	navigator.audio.increaseMusicVolume();
@@ -903,7 +903,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     function effect_colon_lower_dash_sound_dash_volume() {  }
 
-    effect_colon_lower_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
+    effect_colon_lower_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_lower_dash_sound_dash_volume.prototype.run = function() {
     	navigator.audio.decreaseMusicVolume();
@@ -936,7 +936,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     // Loading DHTML files dynamically
 
     function effect_colon_js_dash_load_dash_script(url) { this.url = url; }
-    effect_colon_js_dash_load_dash_script.prototype = new plt.Kernel.Struct();
+    effect_colon_js_dash_load_dash_script.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_js_dash_load_dash_script.prototype.run = function() {
 	var e = document.createElement("script");
@@ -968,7 +968,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     // Dynamic javascript string evaluation
     
     function effect_colon_js_dash_exec_dash_string(cmd) { this.cmd = cmd; }
-    effect_colon_js_dash_exec_dash_string.prototype = new plt.Kernel.Struct();
+    effect_colon_js_dash_exec_dash_string.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_js_dash_exec_dash_string.prototype.run = function() {
 	eval(this.cmd);
@@ -1001,7 +1001,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     	this.flags = flags;
     }
 
-    effect_colon_set_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
+    effect_colon_set_dash_wake_dash_lock.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
     	if (this.flags != currentLockFlags) {
@@ -1037,7 +1037,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     function effect_colon_release_dash_wake_dash_lock() {  }
 
-    effect_colon_release_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
+    effect_colon_release_dash_wake_dash_lock.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_release_dash_wake_dash_lock.prototype.isEqual = function(other) {
     	if (other instanceof effect_colon_release_dash_wake_dash_lock) {
