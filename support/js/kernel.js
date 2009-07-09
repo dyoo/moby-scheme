@@ -1164,7 +1164,7 @@ var plt = plt || {};
 	    texts.push(p.first().toWrittenString());
 	    p = p.rest();
 	}
-	return "(" + texts.join(", ") + ")";
+	return "(" + texts.join(" ") + ")";
     };
 
 
@@ -1175,7 +1175,7 @@ var plt = plt || {};
 	    texts.push(p.first().toDisplayedString());
 	    p = p.rest();
 	}
-	return "(" + texts.join(", ") + ")";
+	return "(" + texts.join(" ") + ")";
     };
 
  
