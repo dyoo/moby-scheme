@@ -1491,7 +1491,7 @@ var plt = plt || {};
 
 
     plt.types.FloatPoint.prototype.isRational = function() {
-        return true;
+        return false;
     };
 
     plt.types.FloatPoint.prototype.isReal = function() {
@@ -1667,7 +1667,7 @@ var plt = plt || {};
 
 
         plt.types.Complex.prototype.isRational = function() {
-            return this.isReal();
+            return false;
         };
 
 	plt.types.Complex.prototype.toExact = function() { 

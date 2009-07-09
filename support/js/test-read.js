@@ -1,17 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <title>JavaScript unit test file</title>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <script src="kernel.js" type="text/javascript"></script>
-  <script src="read.js" type="text/javascript"></script>
-  <script src="jsunittest/jsunittest.js" type="text/javascript"></script>  
-  <link rel="stylesheet" href="jsunittest/unittest.css" type="text/css" />
-
-  
-  <script type="text/javascript">
-// <![CDATA[
 function isArray(x) {
     return typeof(x) == 'object' && 'length' in x;
 }
@@ -109,30 +95,3 @@ function init() {
 
     }); 
 }
-// ]]>
-
-  </script>
-
-</head>
-
-
-<body onLoad="init()">
-<div id="content">
-
-  <div id="header">
-    <h1>JavaScript unit test file</h1>
-    <p>
-      This file tests <strong>read.js</strong>.
-    </p>
-  </div>
-
-  <!-- Log output (one per Runner, via {testLog: "testlog"} option)-->
-  <div id="testlog"></div>
-  
-  <!-- Put sample/test html here -->
-  <div id="sample">
-  </div>
-</div>
-
-</body>
-</html>

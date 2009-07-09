@@ -570,7 +570,7 @@
           (cond
             [(< (length operands)
                 (binding:function-min-arity operator-binding))
-             (error 'application-expression->java-string
+             (error 'application-expression->javascript-string
                     (format "Too few arguments passed to ~s.  Operands were ~s"
                             operator
                             operands))]
@@ -596,7 +596,7 @@
              (cond
                [(> (length operands)
                    (binding:function-min-arity operator-binding))
-                (error 'application-expression->java-string
+                (error 'application-expression->javascript-string 
                        (format "Too many arguments passed to ~s.  Operands were ~s"
                                operator
                                operands))]
@@ -727,21 +727,18 @@
 ;; number->java-string: number -> string
 (define (number->javascript-string a-num)
   (cond [(integer? a-num)
-         ;; Fixme: we need to handle exact/vs/inexact issue.
-         ;; We probably need the numeric tower.
          (string-append "(plt.types.Rational.makeInstance("
                         (number->string (inexact->exact a-num))
                         ", 1))")]
-        [(and (inexact? a-num)
-              (real? a-num))
-         (string-append "(plt.types.FloatPoint.makeInstance(\"" 
-                        (number->string a-num)"\"))")]
         [(rational? a-num)
          (string-append "(plt.types.Rational.makeInstance("
                         (number->string (numerator a-num))
                         ", "
                         (number->string (denominator a-num))
                         "))")]
+        [(real? a-num)
+         (string-append "(plt.types.FloatPoint.makeInstance(\"" 
+                        (number->string a-num)"\"))")]
         [(complex? a-num)
          (string-append "(plt.types.Complex.makeInstance("
                         (number->string (real-part a-num))
@@ -749,7 +746,7 @@
                         (number->string (imag-part a-num))"))")]
         
         [else
-         (error 'number->java-string "Don't know how to handle ~s yet" a-num)]))
+         (error 'number->java-string (format "Don't know how to handle ~s yet" a-num))]))
 
 
 
