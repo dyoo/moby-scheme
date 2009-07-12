@@ -884,6 +884,19 @@
                                  '(make-posn 3 4)');
                 this.assertEqual(Logic.TRUE.toWrittenString(), "true");
                 this.assertEqual(Logic.FALSE.toWrittenString(), "false");
+
+
+                this.assertEqual(Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(2),
+                                                                     Empty.EMPTY),
+                                                   Empty.EMPTY).toWrittenString(),
+                                 "((2))");
+                this.assertEqual(FloatPoint.makeInstance(3.1415).toWrittenString(),
+                                 "3.1415");
+                this.assertEqual(Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(3.1415),
+                                                                     Empty.EMPTY),
+                                                   Empty.EMPTY).toWrittenString(),
+                                 "((3.1415))");
+
         }
 
 

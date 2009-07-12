@@ -1,10 +1,21 @@
 var plt = plt || {};
- 
- 
+  
  
 //////////////////////////////////////////////////////////////////////
 // Kernel
 (function() {
+
+
+
+    // Inheritance from pg 168: Javascript, the Definitive Guide.
+    function heir(p) {
+	function f() {}
+	f.prototype = p;
+	return new f();
+    }
+
+
+
  
     function chainTest(test, first, second, rest) {
 	if (! test(first, second).valueOf())
@@ -35,8 +46,13 @@ var plt = plt || {};
 
 
     plt.Kernel = {
+	
+	_heir : heir,
+
+
   Struct: function () {
   },
+
   
   struct_question_: function(thing) {
 	    return (thing instanceof this.Struct);
@@ -255,7 +271,17 @@ var plt = plt || {};
   inexact_dash__greaterthan_exact: function(x) {
     return plt.types.NumberTower.toExact(x);
   },
+
+  inexact_question_ : function(x) {
+	    return plt.types.NumberTower.equal(x,
+					       plt.types.NumberTower.toExact(x));
+	},
  
+	rational_question_ : function(x) {
+	    return (plt.Kernel.number_question_(x) &&
+		    x.isRational());
+	},
+
   number_dash__greaterthan_string: function(x) {
       return plt.types.String.makeInstance(x.toWrittenString());
   },
@@ -802,14 +828,23 @@ var plt = plt || {};
 		 ret);
 	}
 	return ret;
-  },
+  }
   
-  HEREEEEEEEEEEEEEEEEE : function(){}
-
 
 	
   };
  
+
+
+
+
+    plt.Kernel.Struct.prototype.toWrittenString = function() { return "<struct>"};
+
+
+
+
+
+
     function HashTable(inputHash) {
 	this.hash = inputHash;
     }
@@ -938,7 +973,9 @@ var plt = plt || {};
  
     function posn(x,y) { this.x = x;
        this.y = y; }
-    posn.prototype = new plt.Kernel.Struct();
+
+    posn.prototype = heir(plt.Kernel.Struct.prototype);
+
     posn.prototype.isEqual = function(other) {
         if (other instanceof posn) {
             return (((plt.Kernel.equal_question_((posn_dash_y(this)),(posn_dash_y(other)))))&&((((plt.Kernel.equal_question_((posn_dash_x(this)),(posn_dash_x(other)))))&&(plt.types.Logic.TRUE))));
@@ -1168,7 +1205,7 @@ var plt = plt || {};
     };
 
 
-    plt.types.Cons.prototype.toWrittenString = function() {
+    plt.types.Cons.prototype.toDisplayedString = function() {
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
@@ -1231,6 +1268,10 @@ var plt = plt || {};
   return other instanceof plt.types.Rational &&
       this.n == other.n &&
       this.d == other.d;
+    };
+
+    plt.types.Rational.prototype.isRational = function() {
+        return true;
     };
  
     plt.types.Rational.prototype.isReal = function() {
@@ -1374,7 +1415,6 @@ var plt = plt || {};
 		return this;
 	};
 	
-	plt.types.Rational.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	plt.types.Rational.prototype.half = function(){
 		return plt.types.Rational.makeInstance(this.n, this.d * 2);
@@ -1447,6 +1487,11 @@ var plt = plt || {};
     plt.types.FloatPoint.prototype.isEqual = function(other) {
   return other instanceof plt.types.FloatPoint &&
       this.n == other.n;
+    };
+
+
+    plt.types.FloatPoint.prototype.isRational = function() {
+        return false;
     };
 
     plt.types.FloatPoint.prototype.isReal = function() {
@@ -1585,7 +1630,6 @@ var plt = plt || {};
 			
 	};
 	
-	plt.types.FloatPoint.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	plt.types.FloatPoint.prototype.conjugate = plt.types.FloatPoint.prototype.abs;
 	
@@ -1621,6 +1665,10 @@ var plt = plt || {};
 
         plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
 
+
+        plt.types.Complex.prototype.isRational = function() {
+            return false;
+        };
 
 	plt.types.Complex.prototype.toExact = function() { 
 	  if (! this.isReal()) {
@@ -1845,7 +1893,6 @@ var plt = plt || {};
 		return this.r.round();
 	};
 	
-	plt.types.Complex.prototype.HEREEEEEEEEEEEEEEEEE = function(){};
 	
 	plt.types.Complex.prototype.timesI = function(){
 		return this.multiply(plt.types.Complex.makeInstance(0, 1));

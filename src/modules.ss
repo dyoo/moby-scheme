@@ -37,7 +37,7 @@
                                    false "plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false "plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
-                               (bf 'make-effect:set-wake-lock module-path 0
+                               (bf 'make-effect:set-wake-lock module-path 1
                                    false "plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")
                                (bf 'make-effect:release-wake-lock module-path 0
                                    false "plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")
