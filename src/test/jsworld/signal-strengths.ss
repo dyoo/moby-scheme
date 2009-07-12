@@ -8,7 +8,6 @@
 
 (define initial-world empty)
 
-
 ;; update: world -> world
 ;; Update all the signal strength readings.
 (define (update w)
@@ -33,9 +32,11 @@
   (local [(define (tower->node a-tower)
             (list (js-text (tower->string a-tower))))] 
   (list (js-p) 
-        (list js-text "Here are the following towers.")
+        (list (js-text "Here are the following towers."))
         (cons (js-p)
-              (map tower->node w)))))
+              (map tower->node w))
+        
+        (list (js-button update) (list (js-text "Update!"))))))
 
 
 ;; draw-css: world -> (sexpof css)
