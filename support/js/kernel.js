@@ -44,6 +44,18 @@ var plt = plt || {};
     }
  
 
+    function isList(x) {
+	return x instanceof plt.types.Cons || x instanceof plt.types.Empty
+    }
+
+    // Throws exception if x is not a list.
+    function checkList(x, msg) {
+	if (! isList(x)) {
+	    throw new TypeError(msg);
+	}
+    }
+
+
 
     plt.Kernel = {
 	
@@ -90,31 +102,38 @@ var plt = plt || {};
  
  
   cons: function(x, y) {
-      return plt.types.Cons.makeInstance(x, y);
+	    checkList(y, "second argument to cons must be a list.");
+	    return plt.types.Cons.makeInstance(x, y);
   },
  
   first: function(thing) {
+	    checkList(thing, "first must consume a list");
       return thing.first();
   },
  
   rest: function(thing) {
+	    checkList(thing, "rest must consume a list");
       return thing.rest();
   },
  
  
   second: function(thing) {
+	    checkList(thing, "second must consume a list");
       return thing.rest().first();
   },
  
   third: function(thing) {
+	    checkList(thing, "third must consume a list");
       return thing.rest().rest().first();
   },
  
   fourth: function(thing) {
+	    checkList(thing, "fourth must consume a list");
       return thing.rest().rest().rest().first();
   },
  
   fifth: function(thing) {
+	    checkList(thing, "fifth must consume a list");
       return thing.rest().rest().rest().rest().first();
   },
  
@@ -458,14 +477,17 @@ var plt = plt || {};
   
   
   append : function(first, rest){
+	    checkList(first, "append must consume lists");
         var ret = first;
 	var i;
 	for (i = 0; i < rest.length; i++)
-		ret = ret.append(rest[i]);
+	    checkList(rest[i], "append must consume lists");
+	    ret = ret.append(rest[i]);
 	return ret;
   },
   
   reverse : function(lst){
+	    checkList(list, "reverse must consume a list");
 	var ret = plt.types.Empty.EMPTY;
 	while (!lst.isEmpty()){
 		ret = plt.types.Cons.makeInstance(lst.first(), ret);
@@ -476,6 +498,7 @@ var plt = plt || {};
   }, 
     
   assq : function(x, lst){
+	    checkList(lst, "assq must consume a list");
 	while (!lst.isEmpty() && !plt.Kernel.eq_question_(x, lst.first().first()))
 		lst = lst.rest();
 	if (lst.isEmpty())
@@ -484,62 +507,77 @@ var plt = plt || {};
   },
   
   caaar : function(lst){
+	    checkList(lst, "caaar must consume a list");
 	return lst.first().first().first();
   },
   
   caadr : function(lst){
+	    checkList(lst, "caadr must consume a list");
 	return lst.first().first().rest();
   },
   
   caar : function(lst){
+	    checkList(lst, "caar must consume a list");
 	return lst.first().first();
   },
   
   cadar : function(lst){
+	    checkList(lst, "cadar must consume a list");
 	return lst.first().rest().first();
   },
   
   cadddr : function(lst){
+	    checkList(lst, "cadddr must consume a list");
 	return lst.rest().rest().rest().first();
   },
   
   caddr : function(lst){
+	    checkList(lst, "caddr must consume a list");
 	return lst.rest().rest().first();
   },
   
   cadr : function(lst){
+	    checkList(lst, "cadr must consume a list");
 	return lst.rest().first();
   },
   
   car : function(lst){
+	    checkList(lst, "car must consume a list");
 	return lst.first();
   },
   
   cdaar : function(lst){
+	    checkList(lst, "cdaar must consume a list");
 	return lst.first().first().rest();
   },
   
   cdadr : function(lst){
+	    checkList(lst, "cdadr must consume a list");
 	return lst.rest().first().rest();
   },
   
   cdar : function(lst){
+	    checkList(lst, "cdar must consume a list");
 	return lst.first().rest();
   },
   
   cddar : function(lst){
+	    checkList(lst, "cddar must consume a list");
 	return lst.first().rest().rest();
   },
   
   cdddr : function(lst){
+	    checkList(lst, "cdddr must consume a list");
 	return lst.rest().rest().rest();
   },
   
   cddr : function(lst){
+	    checkList(lst, "cddr must consume a list");
 	return lst.rest().rest();
   },
   
   cdr : function(lst){
+	    checkList(lst, "cdr must consume a list");
 	return lst.rest();
   },
   
@@ -548,18 +586,22 @@ var plt = plt || {};
   },
   
   sixth : function(lst){
+	    checkList(lst, "sixth must consume a list");
 	return lst.rest().rest().rest().rest().rest().first();
   },
   
   seventh: function(lst){
+	    checkList(lst, "seventh must consume a list");
 	return lst.rest().rest().rest().rest().rest().rest().first();
   },
   
   eighth : function(lst){
+	    checkList(lst, "eighth must consume a list");
 	return lst.rest().rest().rest().rest().rest().rest().rest().first();
   },
   
   length : function(lst){
+	    checkList(lst, "length must consume a list");
 	var ret = plt.types.Rational.ZERO;
 	for (; !lst.isEmpty(); lst = lst.rest())
 		ret = plt.Kernel.add1(ret);
@@ -583,6 +625,7 @@ var plt = plt || {};
   },
   
   list_dash_ref : function(lst, x){
+	    checkList(lst, "list-ref must consume a list");
 	var i = plt.types.Rational.ZERO;
 	for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i))
 		lst = lst.rest();
@@ -590,6 +633,7 @@ var plt = plt || {};
   },
   
   member : function(item, lst){
+	    checkList(lst, "member must consume a list");
 	while (!lst.isEmpty()){
 	    if (plt.Kernel.equal_question_(item, lst.first()).valueOf())
 			return plt.types.Logic.TRUE;
@@ -600,6 +644,7 @@ var plt = plt || {};
   },
   
   memq : function(item, lst){
+	    checkList(lst, "memq must consume a list");
 	while (!lst.isEmpty()){
 	    if (plt.Kernel.eq_question_(item, lst.first()).valueOf())
 			return lst;
@@ -610,10 +655,12 @@ var plt = plt || {};
   },
   
   eqv_question_ : function(x, y){
+	    // FIXME: must check for number and do numerical equivalence.
 	return x == y;
   },
   
   memv : function(item, lst){
+	    checkList(memv, "memv must consume a list");
 	while (!lst.isEmpty()){
 	    if (plt.Kernel.eqv_question_(item, lst.first()).valueOf())
 			return lst;
