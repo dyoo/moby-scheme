@@ -705,7 +705,8 @@
           (define body-string (first body-string+p))
           (define updated-pinfo (second body-string+p))]
     (list
-     (string-append "(function("
+     (string-append "((function() {
+                        var result = (function("
                     (symbol->string args-sym)
                     ") { "
                     (string-join (mapi (lambda (arg-id i)
@@ -719,7 +720,13 @@
                     "
                              return "
                     body-string
-                   "; })")
+                   "; });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })())")
      updated-pinfo)))
 
 
