@@ -647,8 +647,8 @@
                     return "
                             (binding:function-java-string binding)
                             ".apply(null, args);
-                  }); result.toWrittenString = function() {return '<primitive:" (symbol->string (binding-id binding)) ">'; }
-                      result.toDisplayedString = function() {return '<primitive:" (symbol->string (binding-id binding)) ">';}
+                  }); result.toWrittenString = function() {return '<function:" (symbol->string (binding-id binding)) ">'; }
+                      result.toDisplayedString = function() {return '<function:" (symbol->string (binding-id binding)) ">';}
                       return result; })())")]
             [else
              (string-append "(function() { var result = (function(args) {
@@ -660,8 +660,8 @@
                                               (range (binding:function-min-arity binding)))
                                          ", ")
                             ");
-                 }); result.toWrittenString = function() {return '<primitive:"(symbol->string (binding-id binding))">'; }
-                     result.toDisplayedString = function() {return '<primitive:"(symbol->string (binding-id binding))">';}
+                 }); result.toWrittenString = function() {return '<function:"(symbol->string (binding-id binding))">'; }
+                     result.toDisplayedString = function() {return '<function:"(symbol->string (binding-id binding))">';}
                      return result; })()")])]))]))
 
 

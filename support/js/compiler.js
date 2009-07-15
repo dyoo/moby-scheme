@@ -336,8 +336,8 @@ var translated_dash_id;
 chars = (plt.Kernel.string_dash__greaterthan_list((plt.Kernel.symbol_dash__greaterthan_string(an_dash_id))));
 translated_dash_chunks = plt.Kernel.map((function() { var result = (function(args) {
                     return trans(args[0]);
-                 }); result.toWrittenString = function() {return '<primitive:trans>'; }
-                     result.toDisplayedString = function() {return '<primitive:trans>';}
+                 }); result.toWrittenString = function() {return '<function:trans>'; }
+                     result.toDisplayedString = function() {return '<function:trans>';}
                      return result; })(), [chars]);
 translated_dash_id = (plt.Kernel.string_dash__greaterthan_symbol((string_dash_join(translated_dash_chunks,(plt.types.String.makeInstance("")))))); })(plt.Kernel.identity)
 return translated_dash_id;
@@ -540,8 +540,8 @@ function pinfo_dash_update_dash_env(a_dash_pinfo, an_dash_env) { return (make_da
 function pinfo_dash_accumulate_dash_binding(a_dash_binding, a_dash_pinfo) { return (make_dash_pinfo((env_dash_extend((pinfo_dash_env(a_dash_pinfo)),a_dash_binding)),(pinfo_dash_modules(a_dash_pinfo)),(pinfo_dash_used_dash_bindings_dash_hash(a_dash_pinfo)),(pinfo_dash_gensym_dash_counter(a_dash_pinfo)))); }
 function pinfo_dash_accumulate_dash_bindings(bindings, a_dash_pinfo) { return plt.Kernel.foldl((function() { var result = (function(args) {
                     return pinfo_dash_accumulate_dash_binding(args[0], args[1]);
-                 }); result.toWrittenString = function() {return '<primitive:pinfo-accumulate-binding>'; }
-                     result.toDisplayedString = function() {return '<primitive:pinfo-accumulate-binding>';}
+                 }); result.toWrittenString = function() {return '<function:pinfo-accumulate-binding>'; }
+                     result.toDisplayedString = function() {return '<function:pinfo-accumulate-binding>';}
                      return result; })(),a_dash_pinfo, [bindings]); }
 function pinfo_dash_accumulate_dash_module(a_dash_module, a_dash_pinfo) { return (make_dash_pinfo((pinfo_dash_env(a_dash_pinfo)),(plt.Kernel.cons(a_dash_module,(pinfo_dash_modules(a_dash_pinfo)))),(pinfo_dash_used_dash_bindings_dash_hash(a_dash_pinfo)),(pinfo_dash_gensym_dash_counter(a_dash_pinfo)))); }
 function pinfo_dash_accumulate_dash_binding_dash_use(a_dash_binding, a_dash_pinfo) { return (make_dash_pinfo((pinfo_dash_env(a_dash_pinfo)),(pinfo_dash_modules(a_dash_pinfo)),(plt.Kernel._kernelHashSet((pinfo_dash_used_dash_bindings_dash_hash(a_dash_pinfo)),(binding_dash_id(a_dash_binding)),a_dash_binding)),(pinfo_dash_gensym_dash_counter(a_dash_pinfo)))); }
@@ -995,8 +995,8 @@ var updated_dash_pinfo;
 munged_dash_fun_dash_id = (identifier_dash__greaterthan_munged_dash_java_dash_identifier(fun));
 munged_dash_arg_dash_ids = plt.Kernel.map((function() { var result = (function(args) {
                     return identifier_dash__greaterthan_munged_dash_java_dash_identifier(args[0]);
-                 }); result.toWrittenString = function() {return '<primitive:identifier->munged-java-identifier>'; }
-                     result.toDisplayedString = function() {return '<primitive:identifier->munged-java-identifier>';}
+                 }); result.toWrittenString = function() {return '<function:identifier->munged-java-identifier>'; }
+                     result.toDisplayedString = function() {return '<function:identifier->munged-java-identifier>';}
                      return result; })(), [args]);
 new_dash_env = (env_dash_extend_dash_function(env,fun,plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id))));
 env_dash_with_dash_arg_dash_bindings = plt.Kernel.foldl(((function() {
@@ -1242,8 +1242,8 @@ function quote_dash_expression_dash__greaterthan_javascript_dash_string(expr) { 
  ((plt.Kernel.pair_question_(expr)) ?
  plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.Kernel.list([")),(string_dash_join(plt.Kernel.map((function() { var result = (function(args) {
                     return quote_dash_expression_dash__greaterthan_javascript_dash_string(args[0]);
-                 }); result.toWrittenString = function() {return '<primitive:quote-expression->javascript-string>'; }
-                     result.toDisplayedString = function() {return '<primitive:quote-expression->javascript-string>';}
+                 }); result.toWrittenString = function() {return '<function:quote-expression->javascript-string>'; }
+                     result.toDisplayedString = function() {return '<function:quote-expression->javascript-string>';}
                      return result; })(), [expr]),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("]))"))]) :
  ((plt.Kernel.symbol_question_(expr)) ?
  plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Symbol.makeInstance(\"")),(plt.Kernel.symbol_dash__greaterthan_string(expr)),(plt.types.String.makeInstance("\"))"))]) :
@@ -1337,7 +1337,7 @@ return ((binding_colon_constant_question_(binding)) ?
  (binding_colon_constant_dash_java_dash_string(binding)) :
  ((binding_colon_function_question_(binding)) ?
  ((binding_colon_function_dash_var_dash_arity_question_(binding)) ?
- plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((function() { var result = (function(args) {\n                    return ")),(binding_colon_function_dash_java_dash_string(binding)),(plt.types.String.makeInstance(".apply(null, args);\n                  }); result.toWrittenString = function() {return '<primitive:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">'; }\n                      result.toDisplayedString = function() {return '<primitive:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">';}\n                      return result; })())"))]) :
+ plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((function() { var result = (function(args) {\n                    return ")),(binding_colon_function_dash_java_dash_string(binding)),(plt.types.String.makeInstance(".apply(null, args);\n                  }); result.toWrittenString = function() {return '<function:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">'; }\n                      result.toDisplayedString = function() {return '<function:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">';}\n                      return result; })())"))]) :
  (plt.types.Logic.TRUE ?
  plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(function() { var result = (function(args) {\n                    return ")),(binding_colon_function_dash_java_dash_string(binding)),(plt.types.String.makeInstance("(")),(string_dash_join(plt.Kernel.map(((function() {
                         var result = (function(args96) { var i = args96[0];
@@ -1347,7 +1347,7 @@ return ((binding_colon_constant_question_(binding)) ?
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [(range((binding_colon_function_dash_min_dash_arity(binding))))]),(plt.types.String.makeInstance(", ")))),(plt.types.String.makeInstance(");\n                 }); result.toWrittenString = function() {return '<primitive:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">'; }\n                     result.toDisplayedString = function() {return '<primitive:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">';}\n                     return result; })()"))]) :
+                   })()), [(range((binding_colon_function_dash_min_dash_arity(binding))))]),(plt.types.String.makeInstance(", ")))),(plt.types.String.makeInstance(");\n                 }); result.toWrittenString = function() {return '<function:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">'; }\n                     result.toDisplayedString = function() {return '<function:")),(plt.Kernel.symbol_dash__greaterthan_string((binding_dash_id(binding)))),(plt.types.String.makeInstance(">';}\n                     return result; })()"))]) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))));
               })()) :
@@ -1377,8 +1377,8 @@ var updated_dash_pinfo;
 
 munged_dash_arg_dash_ids = plt.Kernel.map((function() { var result = (function(args) {
                     return identifier_dash__greaterthan_munged_dash_java_dash_identifier(args[0]);
-                 }); result.toWrittenString = function() {return '<primitive:identifier->munged-java-identifier>'; }
-                     result.toDisplayedString = function() {return '<primitive:identifier->munged-java-identifier>';}
+                 }); result.toWrittenString = function() {return '<function:identifier->munged-java-identifier>'; }
+                     result.toDisplayedString = function() {return '<function:identifier->munged-java-identifier>';}
                      return result; })(), [args]);
 new_dash_env = plt.Kernel.foldl(((function() {
                         var result = (function(args99) { var arg_dash_id = args99[0];
@@ -1434,8 +1434,8 @@ function escape_dash_char_dash_code(a_dash_char) { return (plt.Kernel.char_equal
  })(plt.Kernel.identity)
 return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(string_dash_join(plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);
-                 }); result.toWrittenString = function() {return '<primitive:escape-char-code>'; }
-                     result.toDisplayedString = function() {return '<primitive:escape-char-code>';}
+                 }); result.toWrittenString = function() {return '<function:escape-char-code>'; }
+                     result.toDisplayedString = function() {return '<function:escape-char-code>';}
                      return result; })(), [(plt.Kernel.string_dash__greaterthan_list(a_dash_str))]),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]);
               })()); }
 (function() { 
