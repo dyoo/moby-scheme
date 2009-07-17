@@ -249,6 +249,7 @@
                    top-env-2
                    '((hash-set 3 "plt.Kernel._kernelHashSet")
                      (hash-ref 3 "plt.Kernel._kernelHashRef")
+                     (hash-remove 2 "plt.Kernel._kernelHashRemove")
                      (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
                      (hash-map 2 "plt.Kernel._kernelHashMap")
                      (hash? 1 "plt.Kernel._isHash")

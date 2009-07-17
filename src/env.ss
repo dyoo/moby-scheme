@@ -53,6 +53,10 @@
 (define (env-lookup an-env name)
   (hash-ref (env-bindings an-env) name false))
 
+;; env-remove: env symbol -> env
+(define (env-remove an-env name)
+  (hash-remove (env-bindings an-env) name))
+
 
 ;; env-contains?: env symbol -> boolean
 (define (env-contains? an-env name)
@@ -110,6 +114,7 @@
  [empty-env env?]
  [env-extend (env? binding? . -> . env?)]
  [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
+ [env-remove (env? symbol? . -> . env?)]
  [env-contains? (env? symbol? . -> . boolean?)]
  [env-keys (env? . -> . (listof symbol?))]
  

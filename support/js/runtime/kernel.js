@@ -941,6 +941,16 @@ var plt = plt || {};
 	    return defaultVal;
 	}
     };
+    
+    plt.Kernel._kernelHashRemove = function(hash, key) {
+	var newHash = {};
+	var hash = obj.hash;
+    	for (var k in hash) {
+	    if (k != key)
+    	    	newHash[k] = hash[k];
+	}
+	return new HashTable(newHash);
+    };
 
     plt.Kernel._kernelHashMap = function(ht, f) {
 	var result = plt.types.Empty.EMPTY;
