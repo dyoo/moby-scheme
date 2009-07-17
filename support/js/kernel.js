@@ -487,7 +487,7 @@ var plt = plt || {};
   },
   
   reverse : function(lst){
-	    checkList(list, "reverse must consume a list");
+	    checkList(lst, "reverse must consume a list");
 	var ret = plt.types.Empty.EMPTY;
 	while (!lst.isEmpty()){
 		ret = plt.types.Cons.makeInstance(lst.first(), ret);
@@ -660,7 +660,7 @@ var plt = plt || {};
   },
   
   memv : function(item, lst){
-	    checkList(memv, "memv must consume a list");
+	    checkList(lst, "memv must consume a list");
 	while (!lst.isEmpty()){
 	    if (plt.Kernel.eqv_question_(item, lst.first()).valueOf())
 			return lst;
