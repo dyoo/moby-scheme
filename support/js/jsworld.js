@@ -73,12 +73,17 @@ plt.world.MobyJsworld = {};
 
 
 
+    // FIXME: document how we may want to create and destroy toplevel
+    // nodes on bigBang.
+    Jsworld.makeToplevelNode = function() {
+	return getBigBangWindow().document.getElementById("jsworld-div");
+    };
+
+
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, attribs, handlers) {
-
-	var mainWindow = getBigBangWindow();
-	var toplevelNode = mainWindow.document.getElementById("jsworld-div");
+	var toplevelNode = Jsworld.makeToplevelNode();
 
 	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
