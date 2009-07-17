@@ -72,7 +72,6 @@ listener.locUpdate = function(lat, lng) {
 
 
 main.startup = function() {
-
 <<ON-START>>
 };
 

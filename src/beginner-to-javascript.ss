@@ -647,8 +647,8 @@
                     return "
                             (binding:function-java-string binding)
                             ".apply(null, args);
-                  }); result.toWrittenString = function() {return '<primitive:" (symbol->string (binding-id binding)) ">'; }
-                      result.toDisplayedString = function() {return '<primitive:" (symbol->string (binding-id binding)) ">';}
+                  }); result.toWrittenString = function() {return '<function:" (symbol->string (binding-id binding)) ">'; }
+                      result.toDisplayedString = function() {return '<function:" (symbol->string (binding-id binding)) ">';}
                       return result; })())")]
             [else
              (string-append "(function() { var result = (function(args) {
@@ -660,8 +660,8 @@
                                               (range (binding:function-min-arity binding)))
                                          ", ")
                             ");
-                 }); result.toWrittenString = function() {return '<primitive:"(symbol->string (binding-id binding))">'; }
-                     result.toDisplayedString = function() {return '<primitive:"(symbol->string (binding-id binding))">';}
+                 }); result.toWrittenString = function() {return '<function:"(symbol->string (binding-id binding))">'; }
+                     result.toDisplayedString = function() {return '<function:"(symbol->string (binding-id binding))">';}
                      return result; })()")])]))]))
 
 
@@ -705,7 +705,8 @@
           (define body-string (first body-string+p))
           (define updated-pinfo (second body-string+p))]
     (list
-     (string-append "(function("
+     (string-append "((function() {
+                        var result = (function("
                     (symbol->string args-sym)
                     ") { "
                     (string-join (mapi (lambda (arg-id i)
@@ -719,7 +720,13 @@
                     "
                              return "
                     body-string
-                   "; })")
+                   "; });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })())")
      updated-pinfo)))
 
 

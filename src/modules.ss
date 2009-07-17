@@ -273,6 +273,23 @@
                                                       (list PERMISSION:SEND-SMS)
                                                       false)))))
 
+(define telephony-module
+  (local [(define module-path
+            (resolve-module-path 
+             '(lib "telephony.ss" "moby" "stub") false))]
+    (make-module-binding 'telephony
+                         module-path
+                         (list (make-binding:function 'get-signal-strengths
+                                                      module-path 
+                                                      0 
+                                                      false 
+                                                      "plt.lib.Telephony.getSignalStrengths"
+                                                      (list PERMISSION:TELEPHONY)
+                                                      false)))))
+
+
+
+
 
 (define net-module
   (local [(define module-path
@@ -328,6 +345,7 @@
 			       ;; Each of these functions can take an optional
 			       ;; (sexpof css-style) argument.
                                (bf 'js-div 0 "plt.world.MobyJsworld.div")
+			       (bf 'js-p 0 "plt.world.MobyJsworld.p")
                                (bf 'js-button 1 "plt.world.MobyJsworld.button")
                                (bf 'js-button* 2 "plt.world.MobyJsworld.buttonStar")
                                (bf 'js-input 1 "plt.world.MobyJsworld.input")
@@ -345,7 +363,8 @@
                        (resolve-module-path '(lib "moby.ss" "moby" "stub") false)
                        (append 
                         (module-binding-bindings world-stub-module)
-                        (module-binding-bindings jsworld-module))))
+                        (module-binding-bindings jsworld-module)
+                        (module-binding-bindings telephony-module))))
 
 
                                
@@ -373,6 +392,7 @@
                             net-module
                             parser-module
                             bootstrap-module
+                            telephony-module
                             
                             moby-module-binding))
 

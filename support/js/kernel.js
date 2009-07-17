@@ -925,6 +925,8 @@ var plt = plt || {};
 	if (key in obj.hash) {
 	    return obj.hash[key];
 	} else {
+	    if (typeof(defaultVal) == 'function')
+		return defaultVal([]);
 	    return defaultVal;
 	}
     };
@@ -934,8 +936,8 @@ var plt = plt || {};
 	var key;
 	for (key in ht.hash) {
 	    var val = ht.hash[key];
-	    result = plt.Kernel.cons(f.apply(null, [[key, val]]),
-					 result);
+	    result = plt.Kernel.cons(f([key, val]),
+				     result);
 	}
 	return result;
     };
@@ -962,8 +964,7 @@ var plt = plt || {};
 		args.push(arglists[i].first());
 		arglists[i] = arglists[i].rest();
 	    }
-	    results = plt.Kernel.cons(f.apply(null, [args]),
-					  results);
+	    results = plt.Kernel.cons(f(args), results);
 	}
 	return plt.Kernel.reverse(results);
     };
@@ -977,7 +978,7 @@ var plt = plt || {};
 	  arglists[i] = arglists[i].rest();
 	}
 	args.push(result);
-	result = f.apply(null, [args]);
+	  result = f(args);
       }
       return result;
     };
@@ -985,8 +986,8 @@ var plt = plt || {};
     plt.Kernel.build_dash_list = function(n, f) {
 	var result = plt.types.Empty.EMPTY;
 	for(var i = 0; i < n.toInteger(); i++) {
-	    result = plt.Kernel.cons(f.apply(null, [[plt.types.Rational.makeInstance(i, 1)]]),
-					 result);
+	    result = plt.Kernel.cons(f([plt.types.Rational.makeInstance(i, 1)]),
+				     result);
 	}
 	return plt.Kernel.reverse(result);
     };
