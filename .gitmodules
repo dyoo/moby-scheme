@@ -1,6 +1,6 @@
-[submodule "support/js/jsworld"]
-	path = support/jsworld
-	url = git://github.com/dyoo/jsworld.git
 [submodule "support/phonegap"]
 	path = support/phonegap
 	url = git://github.com/dyoo/phonegap.git
+[submodule "support/jsworld"]
+	path = support/jsworld
+	url = git://github.com/dyoo/jsworld.git
