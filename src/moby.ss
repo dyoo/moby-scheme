@@ -27,8 +27,10 @@
   (cond 
     [(string=? a-type "js")
      generate-javascript-application]
+    [(string=? a-type "js+android-phonegap")
+     generate-javascript+android-phonegap-application]
     [else
-     (error 'moby "Type is expected to be one of [android, js]")]))
+     (error 'moby "Type is expected to be one of [js, js+android-phonegap]")]))
 
 
 ;; get-name: -> string
@@ -48,11 +50,11 @@
 (define file-to-compile
   (command-line 
    #:once-each
-   [("-n" "--name") n "Set the name of the output program"
+   [("-n" "--name") n "Set the name of the output program."
                     (name n)]
-   [("-d" "--dest") d "Set the destination path of the output"
+   [("-d" "--dest") d "Set the destination path of the output."
                     (dest-dir (build-path d))]
-   [("-t" "--type") t "Set the application type"
+   [("-t" "--type") t "Set the application type.  Options: [js, js+android-phonegap]"
                     (app-compiler (lookup-app-type t))]
    #:args (beginner-program-filename)
    (build-path beginner-program-filename)))

@@ -7,6 +7,8 @@
          (only-in xml xexpr->string)
          "compile-helpers.ss"
          "image-lift.ss"
+         "permission.ss"
+         "pinfo.ss"
          (prefix-in javascript: "beginner-to-javascript.ss")
          "utils.ss"
          "template.ss"
@@ -29,6 +31,7 @@
 
 (define-runtime-path phonegap-path "../support/phonegap/android-1.5")
 (define-runtime-path jsworld-path"../support/jsworld")
+(define-runtime-path icon-path "../support/icons/icon.png")
 
 (define-runtime-path javascript-support-path "../support/js")
 
@@ -44,9 +47,51 @@
   (compile-program-to-javascript (open-beginner-program file) name dest))
 
 
-;; generate-javascript-application: name file dest
+;; generate-javascript+android-phonegap-application: name file dest
 (define (generate-javascript+android-phonegap-application name file dest)
-  (compile-program-to-javascript (open-beginner-program file) name dest))
+  (copy-directory/files* phonegap-path dest)
+  (let* ([compiled-program         
+          (compile-program-to-javascript (open-beginner-program file) 
+                                         name
+                                         (build-path dest "assets"))]
+         [classname (upper-camel-case name)]
+         [package (string-append "plt.moby." classname)])
+
+    ;; Write out the icon
+    (make-directory* (build-path dest "res" "drawable"))
+    (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
+
+    ;; Put in the customized manifest.
+    (write-android-manifest (build-path dest "AndroidManifest.xml")
+                            #:package package
+                            #:activity-class "com.phonegap.demo.DroidGap"
+                            #:permissions (apply append (map permission->android-permissions
+                                                             (pinfo-permissions (javascript:compiled-program-pinfo compiled-program)))))
+
+    ;; Write out local properties so that the build system knows how to compile
+    (call-with-output-file (build-path dest "local.properties")
+      (lambda (op)
+        (fprintf op "sdk-location=~a~n" (current-android-sdk-path)))
+      #:exists 'replace)
+ 
+    ;; HACK!
+    ;; Add an import statement to package.R in the class file, so we can compile things.
+    (let* ([middleware 
+            (get-file-bytes (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java"))]
+           [middleware 
+            (regexp-replace #rx"import" 
+                            middleware
+                            (string->bytes/utf-8 (string-append "import " package ".R" "; import")))])
+      (call-with-output-file (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java")
+        (lambda (op)
+          (write-bytes middleware op))
+        #:exists 'replace))
+      
+
+    ;; Write out the defaults.properties so that ant can build
+    ;; Run ant debug.
+    (run-ant-build.xml dest "debug")))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -140,31 +185,25 @@
 ;
 ;
 ;
-;;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
-;(define (write-android-manifest dest-dir
-;                                #:name name
-;                                #:package package
-;                                #:activity-class (activity-class 
-;                                                  "j2ab.android.app.J2ABMIDletActivity")
-;                                #:permissions (permissions '()))
-;  (call-with-output-file (build-path dest-dir "AndroidManifest.xml")
-;    (lambda (op)
-;      (display (get-android-manifest dest-dir 
-;                                     #:name name 
-;                                     #:package package 
-;                                     #:activity-class activity-class 
-;                                     #:permissions permissions) op))
-;    #:exists 'replace))
-;
-;  
 
-;; get-android-manifest: path (#:name string) (#:package string) (#:activity-class string) (#:permissions (listof string)) -> string
-(define (get-android-manifest dest-dir
-                                #:name name
+
+;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
+(define (write-android-manifest path
                                 #:package package
-                                #:activity-class (activity-class 
-                                                  "j2ab.android.app.J2ABMIDletActivity")
+                                #:activity-class activity-class
                                 #:permissions (permissions '()))
+  (call-with-output-file path
+    (lambda (op)
+      (display (get-android-manifest #:package package 
+                                     #:activity-class activity-class 
+                                     #:permissions permissions) op))
+    #:exists 'replace))
+
+  
+;; get-android-manifest: (#:package string) (#:activity-class string) (#:permissions (listof string)) -> string
+(define (get-android-manifest #:package package
+                              #:activity-class activity-class
+                              #:permissions (permissions '()))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")
@@ -172,6 +211,8 @@
             (android:versionCode "1")
             (android:versionName "1.0.0"))
 
+           (uses-sdk ((android:minSdkVersion "2")))
+           
            ,@(map (lambda (p)
                     `(uses-permission ((android:name ,p))))
                   permissions)
@@ -196,7 +237,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; compile-program-to-javascript: platform text% string path-string -> void
+;; compile-program-to-javascript: platform text% string path-string -> compiled-program
 ;; Consumes a text, an application name, destination directory, and produces an application.
 ;; The text buffer is assumed to contain a beginner-level program that uses only the world
 ;; teachpack.  We need to consume a text because we must first lift up all the images
@@ -216,7 +257,8 @@
                     (compiled-program->main.js compiled-program named-bitmaps))
                    op))
       #:exists 'replace)
-    (delete-file (build-path dest-dir "main.js.template"))))
+    (delete-file (build-path dest-dir "main.js.template"))
+    compiled-program))
 
 
 ;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string

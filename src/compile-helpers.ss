@@ -1,5 +1,7 @@
 #lang scheme/base
+
 (provide (all-defined-out))
+
 (require syntax/modresolve
          scheme/gui/base
          scheme/match
@@ -142,13 +144,13 @@
   text)
 
 
-;; run-ant-build.xml: path -> void
+;; run-ant-build.xml: path string -> void
 ;; Runs ant to build the program in the destination directory.
 ;; Assumes the build file is called "build.xml" at the top of the directory.
-(define (run-ant-build.xml dest-dir)
+(define (run-ant-build.xml dest-dir target)
   (parameterize ([current-directory dest-dir])
     (let*-values ([(a-subprocess inp outp errp)
-                   (subprocess #f #f #f (current-ant-bin-path))]
+                   (subprocess #f #f #f (current-ant-bin-path) target)]
                   [(t1 t2) 
                    (values (thread (lambda () 
                                      (copy-port-to-debug-log inp)))
