@@ -3,7 +3,7 @@
 ;; Moby command line compiler.
 ;; Usage: <program> [-n name] <filename>
 
-(require "compile-world.ss"
+(require "generate-application.ss"
          "utils.ss"
          scheme/cmdline
          scheme/path)
@@ -25,8 +25,6 @@
 ;; lookup-app-type: string -> (string path-string path path-string -> void)
 (define (lookup-app-type a-type)
   (cond 
-    [(string=? a-type "android")
-     generate-android-application]
     [(string=? a-type "js")
      generate-javascript-application]
     [else
