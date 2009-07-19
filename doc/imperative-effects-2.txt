@@ -1,0 +1,222 @@
+API
+
+
+make-variable: -> js-object
+
+Creates a variable.
+
+
+
+imp: void ... -> effect
+
+Special form: Runs a sequence of imperative effects.
+
+
+
+
+The following function should be callable only in the dynamic context of an 'imp'
+
+
+    js-ref: (or string js-object) string ... -> js-object
+
+    References a Javascript object.
+
+
+    js-app: (or string js-object) X ... -> js-object
+
+    Apply a Javascript method on arguments
+
+
+    js-new: (or string js-object) X ... -> js-object
+
+    Instantiate a new js-object with the given arguments.
+
+
+    js->moby: X -> js-object
+
+    Coerse a Scheme object to a js-object.
+
+
+    moby->js: js-object -> X
+
+    Coerse a js-object to a Scheme object.
+
+
+
+    js-set! : (or string js-object) string ... X -> void
+
+    Sets a variable or an attribute of the variable.  Should only be
+    called in the dynamic extent of an imperative effect.
+
+
+
+
+
+
+make-event-type: -> event-type
+
+Creates a new event type.
+
+
+
+send-event: event-type X ... -> void
+
+Sends out a new instance of an event that can be caught by an
+appropriate big bang handler.
+
+
+
+
+Within a big bang,
+
+   on-event: event (world event X ... -> world)
+   on-event*: event (world event X ... -> world) (world event X ... -> world)
+
+register a new event type that a big-bang computation will watch.
+
+
+
+Helper Utilities
+----------------
+
+
+get-rest: string (list string string) ... -> string
+
+Performs a RESTful query, given a url and a sequence of key-value
+pairs, and return the result.
+
+
+parse-xml: xml -> sxml
+
+Parse XML and get back a SXML representation of the content.
+
+
+get-element-by-id: string -> js-object
+
+Gets an element of the DOM by id.
+
+
+
+======================================================================
+
+Examples
+
+
+
+Google maps / yahoo local search services.
+
+
+
+;; http://code.google.com/apis/maps/
+;; http://developer.yahoo.com/search/local/V3/localSearch.html
+
+;; Should show pizza places nearby the current location.
+
+;; The world is a latitude and longitude, as well as a list of
+;; pizza places.
+
+
+(define yahoo-url "http://local.yahooapis.com/LocalSearchService/V3/localSearch")
+
+(define yahoo-app-id "???") ;; fill me in
+
+
+
+
+(define-struct world (lat long pizzas))
+
+(define initial-world (make-world 0 0 empty))
+
+
+;; We define a separate event that's fired when the map is moved.
+(define map-moved-event (make-event))
+
+
+;; When the map center moves, reposition the map.
+(define (recenter world lat long)
+  (refresh-pizza (make-world lat long empty)))
+
+
+
+;; refresh-pizza: world -> world
+(define (refresh-pizza-places w)
+  (make-world (world-lat w)
+              (world-long w)
+              (extract-pizza-from-xml
+                (parse-xml (get-rest yahoo-url
+                                     (list "Latitude" (number->string (world-lat w)))
+                                     (list "Longitude" (number->string (world-lat w)))
+                                     (list "appid" yahoo-app-id)
+                                     (list "query" "pizza"))))))
+ 
+;; extract-pizza-from-xml should be straightfoward s-expression processing,
+;; and is omitted.
+
+
+
+;; make-js-latlng: number number -> js-object
+;; Builds a js latitude-longitude.
+(define (make-js-latlng a-latitude a-longitude)
+  (js-call (js-ref "google" "maps" "LatLng")
+           (moby->js a-latitude)
+           (moby->js a-longitude)))
+
+
+
+(define setup-for-google-maps
+  (local [;; The Google map.
+          (define map (make-variable))]
+    (imp
+      (js-set! map (js-new (js-ref "google" "maps" "Map2")
+                           (get-element-by-id "google-div")))
+      (js-call (js-ref map "setUiToDefault"))
+      (js-call (js-ref map "setCenter"))
+      (js-call (js-ref map "disableDoubleClickZoom"))
+      (js-call (js-ref "GEvent" "addListener") 
+               map
+               (moby->js "dblclick")
+               (moby->js (lambda (overlay latlng)
+                           (send-event map-moved-event
+                                       (js->moby (js-call (js-ref latlng "lat")))
+                                       (js->moby (js-call (js-ref latlng "lng"))))))))))
+
+
+;; on-draw: world -> HTML
+(define (on-draw w)
+  ...)
+
+
+;; on-draw-css: world -> CSS
+(define (on-draw-css w)
+  ...)
+
+
+
+(js-big-bang (make-world 0 0)
+             '()
+             (initial-effect setup-for-google-maps)
+             (on-event map-moved-event recenter)
+             (on-draw draw draw-css))
+
+
+
+
+
+----------------------------------------------------------------------
+
+Shake to ring example.  Assume that there's an Audio.playUrl method.
+
+;; The world is a number.
+
+(define (count w)
+  (add1 w))
+
+(define (play w)
+  (imp (js-apply (js-ref "Audio" "play-Url") 
+                 (moby->js "http://hashcollision.org/tmp/bell.mp3"))))
+
+(define initial-world 0)
+
+(big-bang initial-world
+          (on-shake* count play))
+
