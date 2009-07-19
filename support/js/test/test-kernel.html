@@ -45,7 +45,7 @@
   var EMPTY = Empty.EMPTY;
   var Char = plt.types.Char;
 	
-  new Test.Unit.Runner({
+  var testRunner = new Test.Unit.Runner({
     setup: function() {
     },
     
@@ -898,11 +898,11 @@
                                  "((3.1415))");
 
         }
-
-
-
   }); 
   
+
+  testRunner.runTests();
+
 // ]]>
 </script>
 </body>
