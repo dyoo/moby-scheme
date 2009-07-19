@@ -23,6 +23,8 @@
                   [generate-javascript-application
                    (string? path-string? path-string? . -> . any)]
                   
+                  [generate-javascript+phonegap-application
+                   (string? path-string? path-string? . -> . any)]
                   
                   [compiled-program->main.js
                    (javascript:compiled-program? (listof named-bitmap?) . -> . string?)])
@@ -40,7 +42,9 @@
 (define-runtime-path common-support-src-path "../support/common/src")
 (define-runtime-path j2me-support-src-path "../support/j2me/src")
 (define-runtime-path j2me-support-res-path "../support/j2me/res")
+
 (define-runtime-path javascript-support-path "../support/js")
+(define-runtime-path phonegap-path "../support/phonegap")
 
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
 

@@ -29,9 +29,9 @@ the source.
   $ ls
   image-0.png         main.js                 world.js
   jsunittest          test-kernel.html
-  kernel.js           world.html
+  kernel.js           index.html
 
-Open up world.html in your favorite web browser, and you should see a
+Open up index.html in your favorite web browser, and you should see a
 cow falling from the sky.
 
 
