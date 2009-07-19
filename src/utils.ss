@@ -4,6 +4,7 @@
          (prefix-in 19: srfi/19))
 
 (provide/contract [copy-directory/files* (path-string? path-string? . -> . any)]
+                  [copy-or-overwrite-file (path-string? path-string? . -> . any)]
                   [upper-camel-case (string? . -> . string?)]
                   [make-temporary-directory (() (#:parent-directory path?) . ->* . path?)]
                   [get-file-bytes (path? . -> . bytes?)]
@@ -12,7 +13,14 @@
                   [string->date (string? . -> . date?)])
 
 
-;; copy-directory/files*: path path -> void
+;; copy-or-overwrite-file: path path -> void
+(define (copy-or-overwrite-file src-path dest-path)
+  (when (file-exists? dest-path)
+    (delete-file dest-path))
+  (copy-file src-path dest-path))
+
+
+;; copy-directory/files*: directory-path path -> void
 ;; Like copy-directory/files, but overwrites rather than raises exn:fail:filesystem.
 (define (copy-directory/files* from-path dest-path)
   (for ([entry (directory-list from-path)])    

@@ -27,11 +27,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-runtime-path phonegap-path "../support/phonegap/android-1.5")
+(define-runtime-path jsworld-path"../support/jsworld")
 
 (define-runtime-path javascript-support-path "../support/js")
-(define-runtime-path phonegap-path "../support/phonegap")
 
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,7 +219,7 @@
     (delete-file (build-path dest-dir "main.js.template"))))
 
 
-
+;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string
 (define (compiled-program->main.js compiled-program named-bitmaps)
   (let*-values ([(defns pinfo)
                 (values (javascript:compiled-program-defns compiled-program)
@@ -244,7 +246,10 @@
     (get-output-string output-port)))
 
 
+
 ;; make-javascript-directories: path -> void
 (define (make-javascript-directories dest-dir)
   (make-directory* dest-dir)
-  (copy-directory/files* javascript-support-path dest-dir))
+  (copy-directory/files* javascript-support-path dest-dir)
+  (copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld"))
+  (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") (build-path dest-dir "runtime" "phonegap.js")))
