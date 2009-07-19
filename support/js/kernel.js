@@ -45,7 +45,7 @@ var plt = plt || {};
  
 
     function isList(x) {
-	return x instanceof plt.types.Cons || x instanceof plt.types.Empty
+	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
     }
 
     // Throws exception if x is not a list.
@@ -477,12 +477,13 @@ var plt = plt || {};
   
   
   append : function(first, rest){
-	    checkList(first, "append must consume lists");
+	checkList(first, "append must consume lists");
         var ret = first;
 	var i;
-	for (i = 0; i < rest.length; i++)
+	for (i = 0; i < rest.length; i++) {
 	    checkList(rest[i], "append must consume lists");
 	    ret = ret.append(rest[i]);
+	}
 	return ret;
   },
   
@@ -603,15 +604,17 @@ var plt = plt || {};
   length : function(lst){
 	    checkList(lst, "length must consume a list");
 	var ret = plt.types.Rational.ZERO;
-	for (; !lst.isEmpty(); lst = lst.rest())
+	for (; !lst.isEmpty(); lst = lst.rest()) {
 		ret = plt.Kernel.add1(ret);
+	}
 	return ret;
   },
   
   list : function(items){
 	var ret = plt.types.Empty.EMPTY;
-	for (var i = items.length - 1; i >=0; i--)
+	for (var i = items.length - 1; i >=0; i--) {
 		ret = plt.types.Cons.makeInstance(items[i], ret);
+	}
 	return ret;
   },
   
@@ -627,8 +630,9 @@ var plt = plt || {};
   list_dash_ref : function(lst, x){
 	    checkList(lst, "list-ref must consume a list");
 	var i = plt.types.Rational.ZERO;
-	for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i))
+	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
 		lst = lst.rest();
+	    }
 	return lst.first();
   },
   
@@ -700,24 +704,27 @@ var plt = plt || {};
   string_dash_ci_equal__question_ : function(first, second, rest){
 	first = first.toUpperCase();
 	second = second.toUpperCase();
-	for (var i = 0; i < rest.length; i++)
+	for (var i = 0; i < rest.length; i++) {
 		rest[i] = rest[i].toUpperCase();
+	}
 	return plt.Kernel.string_equal__question_(first, second, rest);
   },
   
   string_dash_ci_lessthan__equal__question_ : function(first, second, rest){
 	first = first.toUpperCase();
 	second = second.toUpperCase();
-	for (var i = 0; i < rest.length; i++)
+	for (var i = 0; i < rest.length; i++) {
 		rest[i] = rest[i].toUpperCase();
+	}
 	return plt.Kernel.string_lessthan__equal__question_(first, second, rest);
   },
   
   string_dash_ci_lessthan__question_ : function(first, second, rest){
 	first = first.toUpperCase();
 	second = second.toUpperCase();
-	for (var i = 0; i < rest.length; i++)
+	for (var i = 0; i < rest.length; i++) {
 		rest[i] = rest[i].toUpperCase();
+	}
 	return plt.Kernel.string_lessthan__question_(first, second, rest);
   },
   
@@ -791,24 +798,27 @@ var plt = plt || {};
   char_dash_ci_equal__question_ : function(first, second, rest){
 	first = plt.types.Char.makeInstance(first.val.toUpperCase());
 	second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	for (var i = 0; i < rest.length; i++)
+	for (var i = 0; i < rest.length; i++) {
 		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
+	}
 	return plt.Kernel.char_equal__question_(first, second, rest);
   },
   
   char_dash_ci_lessthan__question_ : function(first, second, rest){
 	first = plt.types.Char.makeInstance(first.val.toUpperCase());
 	second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	for (var i = 0; i < rest.length; i++)
+	for (var i = 0; i < rest.length; i++) {
 		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
+	}
 	return plt.Kernel.char_lessthan__question_(first, second, rest);
   },
 
   char_dash_ci_lessthan__equal__question_ : function(first, second, rest){
 	first = plt.types.Char.makeInstance(first.val.toUpperCase());
 	second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	for (var i = 0; i < rest.length; i++)
+	for (var i = 0; i < rest.length; i++) {
 		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
+	}
 	return plt.Kernel.char_lessthan__equal__question_(first, second, rest);
   },
   
@@ -861,15 +871,16 @@ var plt = plt || {};
 	var ret = "";
 	var c = ch.val;
 	var i = plt.types.Rational.ZERO;
-	for (;  plt.Kernel._lessthan_(i, n, []); i = plt.Kernel.add1(i))
+	for (;  plt.Kernel._lessthan_(i, n, []); i = plt.Kernel.add1(i)) {
 		ret += c;
+	}
 	return plt.types.String.makeInstance(ret);
   },
   
   string_dash__greaterthan_list : function(str){
 	var s = str;
 	var ret = plt.types.Empty.EMPTY;
-	for (var i = s.length - 1; i >= 0; i--){
+	for (var i = s.length - 1; i >= 0; i--) {
 	    ret = plt.types.Cons.makeInstance
 		(plt.types.Char.makeInstance(s.charAt(i)),
 		 ret);
@@ -1496,8 +1507,9 @@ var plt = plt || {};
     _rationalCache = {};
     (function() {
   var i;
-  for(i = -500; i < 500; i++)
+  for(i = -500; i < 500; i++) {
       _rationalCache[i] = new plt.types.Rational(i, 1);
+  }
     })();
     plt.types.Rational.NEGATIVE_ONE = _rationalCache[-1];
     plt.types.Rational.ZERO = _rationalCache[0];
