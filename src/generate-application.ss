@@ -62,6 +62,9 @@
     (make-directory* (build-path dest "res" "drawable"))
     (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
 
+    (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
+                            (build-path dest "assets" "runtime" "phonegap.js"))
+
     ;; Put in the customized manifest.
     (write-android-manifest (build-path dest "AndroidManifest.xml")
 			    #:name name
@@ -298,5 +301,4 @@
 (define (make-javascript-directories dest-dir)
   (make-directory* dest-dir)
   (copy-directory/files* javascript-support-path dest-dir)
-  (copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld"))
-  (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") (build-path dest-dir "runtime" "phonegap.js")))
+  (copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld")))
