@@ -30,11 +30,16 @@ and the second argument computes that tree's styling.
 
 For example:
 
-    (js-big-bang 0
-                 '()
-                 (on-draw (lambda (w)
+    (js-big-bang 0                ;; initial world
+
+                 '()              ;; empty global attribs
+
+                 (on-draw ;; the dom tree renderer
+                          (lambda (w)
                             (list (js-p '(("id" "myPara")))
                                   (list (js-text "hello world"))))
+
+                          ;; the css renderer
                           (lambda (w)
                             '(("myPara" ("font-size" "30"))))))
 
@@ -58,9 +63,8 @@ a CSS-sexp is a:
    (listof (cons DOM-element-or-id
                  (listof (list string string))))
 
-and a DOM-element-or-id is a:
+and a DOM-element-or-id is either a DOM-element or a string.
 
-   (or DOM-element string)
 
 
 
@@ -192,7 +196,6 @@ same meaning as in ISL.
  boolean=?
  boolean?
  build-list
- build-path
  caaar
  caadr
  caar
@@ -260,10 +263,6 @@ same meaning as in ISL.
  format
  fourth
  gcd
- hash-map
- hash-ref
- hash-set
- hash?
  identity
  imag-part
  inexact->exact
@@ -278,7 +277,6 @@ same meaning as in ISL.
  list-ref
  log
  magnitude
- make-immutable-hasheq
  make-posn
  make-string
  map
@@ -289,7 +287,6 @@ same meaning as in ISL.
  min
  modulo
  negative?
- normalize-path
  not
  null
  null?
@@ -298,7 +295,6 @@ same meaning as in ISL.
  numerator
  odd?
  pair?
- path->string
  pi
  positive?
  posn-x
@@ -310,7 +306,6 @@ same meaning as in ISL.
  real-part
  real?
  remainder
- resolve-module-path
  rest
  reverse
  round
