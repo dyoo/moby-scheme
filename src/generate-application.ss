@@ -50,6 +50,7 @@
 
 ;; generate-javascript+android-phonegap-application: name file dest
 (define (generate-javascript+android-phonegap-application name file dest)
+  (make-directory* dest)
   (copy-directory/files* phonegap-path dest)
   (let* ([compiled-program         
           (compile-program-to-javascript (open-beginner-program file) 
