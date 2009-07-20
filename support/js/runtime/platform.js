@@ -21,8 +21,8 @@ plt.platform = {};
 
 
     var locSuccessCallback = function(pos) {
-    	for ( var i = 0; i < locListeners.length; i++ ) {
-    		var listener = locListeners[i];
+    	for ( var i = 0; i < locationListeners.length; i++ ) {
+    		var listener = locationListeners[i];
     		listener.locUpdate(pos.latitude, pos.longitude);
     	}
     }; 
@@ -33,11 +33,11 @@ plt.platform = {};
     var JavascriptLocationService = {
 
     	startService : function() {
-    		watchId = Geolocation.watchPosition(locSuccessCallback, function() {}, {});
+    		watchId = navigator.geolocation.watchPosition(locSuccessCallback, function() {}, {});
     	},
 
     	shutdownService : function() {
-    		Geolocation.clearWatch(locId);
+    		navigator.geolocation.clearWatch(locId);
     	},
  
     	addLocationChangeListener : function(listener) {
