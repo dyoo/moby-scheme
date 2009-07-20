@@ -1294,6 +1294,7 @@ var plt = plt || {};
     }
  
     plt.types.Rational = function(n, d) {
+    if (d == undefined) { d = 1; }
   var divisor = gcd(Math.abs(n), Math.abs(d));
   this.n = n / divisor;
   this.d = d / divisor;

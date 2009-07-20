@@ -12,6 +12,7 @@
 (define (on-press w)
   (add1 w))
 
+
 ;; ring: world -> effect
 (define (ring w)
   (make-effect:beep))
@@ -20,7 +21,8 @@
 
 ;; draw: world -> (sexpof dom)
 (define (draw w)
-  (local [(define a-button (js-button* on-press ring (list (list "id" "aButton"))))
+  (local [(define a-button (js-button* on-press ring
+                                       (list (list "id" "aButton"))))
 	  (define a-para (js-p (list (list "id" "aPara"))))
           (define a-button-text (js-text (number->string w) (list (list "id" "aText"))))]
     (list a-button (list a-para (list a-button-text)))))
@@ -28,7 +30,7 @@
 
 
 ;; draw-css: world -> (sexpof css)
-(define (draw-css)
+(define (draw-css w)
   (list (list "aButton"
               (list "background-color" "lightblue"))
         (list "aPara"
