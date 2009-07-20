@@ -20,15 +20,19 @@
 
 ;; draw: world -> (sexpof dom)
 (define (draw w)
-  (local [(define a-button (js-button* on-press ring))
-          (define a-button-text (js-text (number->string w)))]
-    (list a-button (list a-button-text))))
+  (local [(define a-button (js-button* on-press ring (list (list "id" "aButton"))))
+	  (define a-para (js-p (list (list "id" "aPara"))))
+          (define a-button-text (js-text (number->string w) (list (list "id" "aText"))))]
+    (list a-button (list a-para (list a-button-text)))))
 
 
 
 ;; draw-css: world -> (sexpof css)
 (define (draw-css)
-  '())
+  (list (list "aButton"
+              (list "background-color" "lightblue"))
+        (list "aPara"
+              (list "font-size" "30pt"))))
 
 
 (js-big-bang 0
