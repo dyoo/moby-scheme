@@ -133,8 +133,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	var newWindow = getBigBangWindow(width, height);
 	var canvas = 
 	    newWindow.document.getElementById("canvas");
-	canvas.width = width;
-	canvas.height = height;
+	canvas.width = width.toInteger();
+	canvas.height = height.toInteger();
 
 	resetWorld();
 

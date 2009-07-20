@@ -44,7 +44,8 @@
 
 ;; generate-javascript-application: name file dest
 (define (generate-javascript-application name file dest)
-  (compile-program-to-javascript (open-beginner-program file) name dest))
+  (void
+   (compile-program-to-javascript (open-beginner-program file) name dest)))
 
 
 ;; generate-javascript+android-phonegap-application: name file dest
@@ -63,6 +64,7 @@
 
     ;; Put in the customized manifest.
     (write-android-manifest (build-path dest "AndroidManifest.xml")
+			    #:name name
                             #:package package
                             #:activity-class "com.phonegap.demo.DroidGap"
                             #:permissions (apply append (map permission->android-permissions
@@ -189,19 +191,22 @@
 
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
 (define (write-android-manifest path
+				#:name name
                                 #:package package
                                 #:activity-class activity-class
                                 #:permissions (permissions '()))
   (call-with-output-file path
     (lambda (op)
-      (display (get-android-manifest #:package package 
+      (display (get-android-manifest #:name name
+				     #:package package 
                                      #:activity-class activity-class 
                                      #:permissions permissions) op))
     #:exists 'replace))
 
   
-;; get-android-manifest: (#:package string) (#:activity-class string) (#:permissions (listof string)) -> string
-(define (get-android-manifest #:package package
+;; get-android-manifest: (#:name string) (#:package string) (#:activity-class string) (#:permissions (listof string)) -> string
+(define (get-android-manifest #:name name
+			      #:package package
                               #:activity-class activity-class
                               #:permissions (permissions '()))
   (let ([AndroidManifest.xml
@@ -221,7 +226,7 @@
             ((android:label "@string/app_name")
              (android:icon "@drawable/icon"))
             (activity ((android:name ,activity-class)
-                       (android:label "@string/app_name"))
+                       (android:label ,name))
                       (intent-filter 
                        ()
                        (action ((android:name "android.intent.action.MAIN")))
