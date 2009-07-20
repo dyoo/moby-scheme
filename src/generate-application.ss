@@ -258,7 +258,7 @@
                 [(program)
                  (parse-text-as-program text)]
                 [(compiled-program)
-                 (javascript:program->compiled-program program)])
+                 (do-compilation program)])
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
@@ -267,6 +267,10 @@
       #:exists 'replace)
     (delete-file (build-path dest-dir "main.js.template"))
     compiled-program))
+
+
+(define (do-compilation program)
+  (javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
 
 
 ;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string

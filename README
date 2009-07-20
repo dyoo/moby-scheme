@@ -99,64 +99,47 @@ At this point, you can run the Moby command line utility
 (moby/src/moby.ss) on a BSL program.  Moby supports two backends, both
 which rely on Javascript:
 
-    * js: compiles to web application 
-
     * js+android-phonegap: compiles to Android application; can also
       use features of the mobile platform.
 
+    * js: compiles to web application 
 
-Let's run moby on the falling-ball.ss example in
-moby/examples/falling-ball.ss:
+
+By default, the command line utility with compile with the
+js+android-phonegap backend.  Let's run moby on the falling-ball.ss
+example in moby/examples/falling-ball.ss:
 
     $ cd moby/examples
     $ mred ../src/moby.ss falling-ball.ss
     $ cd FallingBall
     $ ls
-    index.html   main.js  runtime  test
+    AndroidManifest.xml  build.properties    gen               res
+    assets               build.xml           libs              src
+    bin                  default.properties  local.properties  tests
 
+    $ ls bin
+    classes  classes.dex  DroidGap.ap_  DroidGap-debug.apk
 
-FallingBall-debug.apk is the compiled Android binary.  The Ant
-build.xml build-script in the FallingBall directory can install,
-uninstall, and reinstall the application if the Android emulator
-is online.
+DroidGap-debug.apk is the compiled Android binary.  The Ant build.xml
+build-script in the FallingBall directory can install, uninstall, and
+reinstall the application if the Android emulator is online.
 
     $ ant install
 Buildfile: build.xml
 
-dirs:
-     [echo] Creating output directories if needed...
-
-resource-src:
-     [echo] Generating R.java / Manifest.java from the resources...
-
-aidl:
-     [echo] Compiling aidl files into Java classes...
-
-compile:
-    [javac] Compiling 142 source files to /home/dyoo/work/moby/examples/FallingBall/bin/classes
-    [javac] Note: Some input files use unchecked or unsafe operations.
-    [javac] Note: Recompile with -Xlint:unchecked for details.
-
-dex:
-     [echo] Converting compiled files and external libraries into bin/classes.dex...
-
-package-res:
-
-package-res-no-assets:
-     [echo] Packaging resources...
-
-debug:
-     [echo] Packaging bin/FallingBall-debug.apk, and signing it with a debug key...
-     [exec] Using keystore: /home/dyoo/.android/debug.keystore
+[some output cut]
 
 install:
-     [echo] Installing bin/FallingBall-debug.apk onto default emulator...
-     [exec] 726 KB/s (157611 bytes in 0.211s)
-     [exec] 	pkg: /data/local/tmp/FallingBall-debug.apk
+     [echo] Installing bin/DroidGap-debug.apk onto default emulator...
+     [exec] 1594 KB/s (120997 bytes in 0.074s)
+03:38 I/ddms: Created: [Debugger 8610-->1641 inactive]
+03:38 I/ddms: Good handshake from client, sending HELO to 1641
+     [exec] 	pkg: /data/local/tmp/DroidGap-debug.apk
      [exec] Success
+03:39 I/ddms: Closing [Client pid: 1641]
 
 BUILD SUCCESSFUL
-Total time: 19 seconds
+Total time: 6 seconds
 
 
 After this, you can look at the Android emulator, which should now
@@ -165,97 +148,5 @@ have the FallingBall application installed.
 
 ----------------------------------------------------------------------
 
-Regression test suite
 
-
-We've got the beginnings of a regression test suite in
-moby/src/test-compile-world.ss.  The test suite compiles several
-applications in moby/src/test/; the suite saves compiled executables
-in src/bin for manual inspection.
-
-To run the regression test suite, open the
-moby/src/test-compile-world.ss module in DrScheme.  You can then run
-the run-all-tests function.  If everything runs successfully, every
-sub-subdirectory in moby/src/bin will contain a compiled application.
-Each application will have an ant file that you can use to install the
-application into the Android emulator.
-
-For Android, first start the emulator, then use
-
-    ant install
-
-or
-
-    ant reinstall
-
-For example:
-
-## Running in DrScheme:
-
-    Welcome to DrScheme, version 4.1.3 [3m].
-    Language: Module.
-    > (run-all-tests)
-
-
-## This should take some time.  Afterwards, at your shell, cd into
-   moby/src.
-
-~/moby/src$
-
-
-## Let's try out the falling-ball example.  The source for the 
-## falling ball example is in test/falling-ball.ss.
-
-
-~/moby/src$ cd bin
-~/moby/src/bin$ ls
-android
-## Let's test the Android binary.  If you haven't started up the
-## emulator, do so now.
-
-~/moby/src/bin$ cd android/falling-ball
-~/moby/src/bin/android/falling-ball$ ant install
-
-## The application should deploy into the emulator.  Try running the
-   program, and you should see a red ball descend.
-
-
-----------------------------------------------------------------------
-
-Unit tests
-
-Minimal unit tests for the Java runtime live in moby/src/test.  To run
-the unit tests, run the build.xml in src/test with ant.  Here's an
-example run of the test suite:
-
-######################################################################
-~/moby$ cd src/test
-~/moby/src/test$ ant
-Buildfile: build.xml
-
-init:
-
-compile:
-    [javac] Compiling 1 source file to /home/dyoo/moby/src/test/build
-
-test:
-    [junit] Testsuite: org.plt.TestKernel
-    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.041 sec
-    [junit] 
-    [junit] Testcase: testEmpty took 0.011 sec
-    [junit] Testsuite: org.plt.TestMath
-    [junit] Tests run: 9, Failures: 0, Errors: 0, Time elapsed: 0.05 sec
-    [junit] 
-    [junit] Testcase: testAdd took 0.003 sec
-    [junit] Testcase: testSymbol took 0.001 sec
-    [junit] Testcase: testModulo took 0 sec
-    [junit] Testcase: testCeiling took 0 sec
-    [junit] Testcase: testFloor took 0 sec
-    [junit] Testcase: testAbs took 0.008 sec
-    [junit] Testcase: testAcos took 0 sec
-    [junit] Testcase: testAsin took 0 sec
-    [junit] Testcase: testAtan took 0 sec
-
-BUILD SUCCESSFUL
-Total time: 1 second
-######################################################################
+API
