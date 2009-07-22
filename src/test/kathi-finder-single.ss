@@ -1,10 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname kathi-finder-single) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
-(require (lib "location.ss" "moby" "stub"))
-(require (lib "sms.ss" "moby" "stub"))
-(require (lib "world.ss" "moby" "stub"))
-
 ;; Kathi finder: A program to report where Kathi is.
 
 (define WIDTH 320)
@@ -49,9 +45,22 @@
 ;; The world is the current location.
 (define initial-world (make-loc 0 0))
 
+;; loc->string: loc -> string
+(define (loc->string w)
+  (string-append "(" 
+		 (number->string (loc-lat w))
+		 ", "
+		 (number->string (loc-long w))
+		 ")"))
+
 ;; change-location: world number number -> world
 (define (change-location w lat long)
   (make-loc lat long))
+
+;; identity: world -> world
+;; Doesn't change the world.
+(define (identity w)
+  w)
 
 ;; current-place: world -> place
 ;; Returns the closest place.
@@ -62,15 +71,14 @@
          (choose-smallest
           (find-places ALL-PLACES w))]))
 
-;; send-report: world -> world
+;; send-report: world -> effect
 ;; Sends out a text message of the world description,
 ;; and produces the world.
 (define (send-report w)
-  (send-text-message ADDRESS 
-                     (string-append (description w) 
-                                    "\n" 
-                                    (maps-url (place-loc (current-place w))))
-                     w))
+  (make-effect:send-sms ADDRESS 
+                        (string-append (description w) 
+                                       "\n" 
+                                       (maps-url (place-loc (current-place w))))))
 
 ;; maps-url: loc -> string
 ;; Creates the Google maps url for a location.
@@ -100,6 +108,7 @@
     [else
      (choose-smallest (rest places))]))
 
+
 ;; find-places: world loc -> (listof place)
 ;; Finds places that match the a-loc.
 (define (find-places places a-loc)
@@ -111,6 +120,7 @@
     [else
      (find-places (rest places) a-loc)]))
 
+
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
 (define (place-matches? a-place a-loc)
@@ -121,19 +131,27 @@
       (place-radius a-place)))
 
 
-;; render: world -> world
-(define (render w)
-  (place-image
-   (text (description w) 10 "black")
-   20 
-   20
-   (empty-scene WIDTH HEIGHT)))
+;; draw: world -> DOM-sexp
+(define (draw w)
+  (list (js-div)
+        (list (js-p '(("id" "aPara")))
+	      (list (js-text (description w)))
+	      (list (js-text " "))
+	      (list (js-text (loc->string w))))))
+        
+
+
+;; draw-css: world -> CSS-sexp
+(define (draw-css w)
+  '(("aPara" ("font-size" "30px"))))
+ 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tick-delay 10 #;(* 5 60))  ;; wait every five minutes before updates.
 
-(big-bang WIDTH HEIGHT initial-world
-          (on-tick tick-delay send-report)
-          (on-redraw render)
-          (on-location-change change-location))
+(js-big-bang initial-world
+             '()
+             (on-draw draw draw-css)
+             (on-tick* tick-delay identity send-report)
+             (on-location-change change-location))

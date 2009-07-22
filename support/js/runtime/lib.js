@@ -23,4 +23,64 @@ plt.lib = {};
 	}
 	return result;
     };
+
+    
+    plt.lib.Location = {};
+    plt.lib.Location.getLatitude = function () {
+	if (typeof navigator.geolocation != 'undefined') {
+	    return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.latitude);
+	} else {
+	    return plt.types.Rational.ZERO;
+	}
+    };
+
+    plt.lib.Location.getLongitude = function () {
+	if (typeof navigator.geolocation != 'undefined') {
+	    return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.longitude);
+	} else {
+	    return plt.types.Rational.ZERO;
+	}
+
+    };
+
+    plt.lib.Location.getAttitude = function () {
+	if (typeof navigator.geolocation != 'undefined') {
+	    return plt.types.Rational.ZERO;
+	} else {
+	    return plt.types.Rational.ZERO;
+	}
+
+    };
+
+    plt.lib.Location.getBearing = function () {
+	if (typeof navigator.geolocation != 'undefined') {
+	    return plt.types.Rational.ZERO;
+	} else {
+	    return plt.types.Rational.ZERO;
+	}
+
+    };
+
+    plt.lib.Location.getSpeed = function () {
+	if (typeof navigator.geolocation != 'undefined') {
+	    return plt.types.Rational.ZERO;
+	} else {
+	    return plt.types.Rational.ZERO;
+	}
+
+    };
+
+    plt.lib.Location.getDistanceBetween = function (lat1, long1, lat2, long2) {
+	if (typeof navigator.geolocation != 'undefined') {
+	    return plt.types.FloatPoint.makeInstance(
+		navigator.geolocation.getDistanceBetween(lat1.toFloat(),
+							 long1.toFloat(),
+							 lat2.toFloat(),
+							 long2.toFloat()));
+	} else {
+	    return plt.types.Rational.ZERO;
+	}
+    };
+
+
 }());

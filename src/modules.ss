@@ -258,21 +258,6 @@
 
 
 
-
-(define sms-module
-  (local [(define module-path
-            (resolve-module-path 
-             '(lib "sms.ss" "moby" "stub") false))]
-    (make-module-binding 'sms
-                         module-path
-                         (list (make-binding:function 'send-text-message
-                                                      module-path 
-                                                      3 
-                                                      false 
-                                                      "plt.lib.Sms.sendTextMessage"
-                                                      (list PERMISSION:SEND-SMS)
-                                                      false)))))
-
 (define telephony-module
   (local [(define module-path
             (resolve-module-path 
@@ -364,8 +349,8 @@
                        (append 
                         (module-binding-bindings world-stub-module)
                         (module-binding-bindings jsworld-module)
-                        (module-binding-bindings telephony-module))))
-
+                        (module-binding-bindings telephony-module)
+                        (module-binding-bindings location-module))))
 
                                
                                
@@ -388,7 +373,6 @@
                             world-stub-module
                             location-module
                             tilt-module
-                            sms-module
                             net-module
                             parser-module
                             bootstrap-module
