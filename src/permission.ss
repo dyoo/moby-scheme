@@ -34,6 +34,7 @@
     [(permission:location? a-permission)
      (list "android.permission.ACCESS_LOCATION"
            "android.permission.ACCESS_GPS"
+	   "android.permission.ACCESS_COARSE_LOCATION"
            "android.permission.ACCESS_FINE_LOCATION")]
     [(permission:send-sms? a-permission)
      (list "android.permission.SEND_SMS")]
