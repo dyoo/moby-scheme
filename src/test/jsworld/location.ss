@@ -6,25 +6,36 @@
 
 (define initial-world (make-world 0 0))
 
+
 ;; update: world number number -> world
+;; Update the world to the latest latitude and longitude reading.
 (define (update w lat long)
   (make-world lat long))
 
 
+;; world->string: world -> string
+(define (world->string w)
+  (string-append "("
+		 (number->string (world-lat w))
+		 ", "
+		 (number->string (world-long w))
+		 ")"))
+
+
 ;; draw: world -> DOM-sexp
 (define (draw w)
-  (list (js-text (string-append (number->string (world-lat w))
-                                ", "
-                                (number->string (world-long w))))))
+  (list (js-p '(("id" "aPara")))
+        (list (js-text "(latitude, longitude) = "))
+	(list (js-text (world->string w)))))
 
 
 ;; draw-css: world -> CSS-sexp
+;; Style the paragraph so its internal text is large.
 (define (draw-css w)
-  '())
+  '(("aPara" ("font-size" "30px"))))
 
 
 (js-big-bang initial-world
              '()
              (on-draw draw draw-css)
-             (on-location-change update)
-             )
+             (on-location-change update))
