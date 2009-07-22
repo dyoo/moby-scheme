@@ -55,7 +55,7 @@
 
 ;; env-remove: env symbol -> env
 (define (env-remove an-env name)
-  (hash-remove (env-bindings an-env) name))
+  (make-env (hash-remove (env-bindings an-env) name)))
 
 
 ;; env-contains?: env symbol -> boolean
