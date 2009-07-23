@@ -6,7 +6,7 @@
 ;; timer and initial volume will be user-inputted parameters later
 (define init-time 45)
 (define fade-time 30)
-(define init-volume 60)
+(define init-volume 100)
 (define song "file:///android_asset/song.ogg")
 
 ;; The world is a number counting the number of seconds until the music turns off
@@ -70,8 +70,10 @@
 ;; draw: world -> DOM-sexp
 (define (draw a-world)
   (list (js-p '(("id" "aPara")))
-        (list (js-text (string-append "time ="
-                                      (number->string (world-time a-world)))))))
+        ;(list (js-text (string-append "time ="
+        ;                              (number->string (world-time a-world)))))
+        (list (js-text (string-append "volume ="
+                                      (number->string (world-volume a-world)))))))
 
 ;; draw-css: world -> CSS-sexp
 (define (draw-css a-world)
