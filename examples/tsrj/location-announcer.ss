@@ -17,9 +17,6 @@
 ;; Announcements will be sent to a phone number.
 (define phone "5554")
 
-
-
-
 ;; update: world number number -> world
 ;; Update the world to the latest latitude and longitude reading.
 (define (update w lat long)
@@ -55,6 +52,7 @@
 
 
 ;; announce-location: world -> effect
+;; Produces an effect that sends an sms message out.
 (define (announce-location w)
   (make-effect:send-sms phone-number 
                         (string-append "Current location is: " 

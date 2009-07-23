@@ -1,79 +1,41 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname silencing-music) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
-(define-struct world (time volume))
+;; The world is a volume number between 0 and 70.
 
 ;; timer and initial volume will be user-inputted parameters later
-(define init-time 45)
-(define fade-time 30)
-(define init-volume 100)
 (define song "file:///android_asset/song.ogg")
 
 ;; The world is a number counting the number of seconds until the music turns off
-(define initial-world (make-world init-time init-volume))
+(define initial-world 70)
 
-;; this is the update for every tick
+
 ;; update: world -> world
-(define (update a-world)
-  (local [(define t (sub1 (world-time a-world)))]
-    (make-world t
-                (cond
-                  [(< t 0) 0]
-                  [(< t fade-time) (quotient (* t init-volume) fade-time)]
-                  [else init-volume]))))
-
-(define (should-stay-awake? a-world)
-  (>= (sub1 (world-time a-world)) 0))
+;; Every tick, reduces the volume.
+(define (tick w)
+  (max 0 (sub1 w)))
 
 
-;; this resets the world by just returning the initial world
-;; reset-world: world -> world
-(define (reset-world a-world)
+;; reset: world -> world
+;; Resets the world to the initial value.
+(define (reset w)
   initial-world)
 
-;; On a tick, we set the volume.
-;; change-volume: world -> effect
-(define (change-volume a-world)
-  (make-effect:set-sound-volume (world-volume a-world)))
-
-;; play-music: world -> effect
-(define (play-music a-world)
-  (cond
-    [(> (world-volume a-world) 0)
-     (make-effect:play-sound-url song)]
-    [(<= (world-volume a-world) 0) 
-     (make-effect:pause-sound-url song)]))
-
-;; sleep-check: world -> effect
-(define (sleep-check a-world)
-  (cond [(should-stay-awake? a-world)
-         (make-effect:set-wake-lock 6)]
-        [else
-         (make-effect:release-wake-lock)]))
 
 ;; get-effects: world -> (listof effect)
-(define (get-effects a-world)
-  (list (change-volume a-world)
-        (play-music a-world)
-        (sleep-check a-world)))
-
-;; shut-off? returns true if the timer is down to -5 or below
-;; shut-off?: world -> boolean
-(define (shut-off? a-world)
-  (<= (world-time a-world) -5))
-
-;; stop-music: world -> effect
-(define (stop-music a-world)
-  (make-effect:stop-sound-url song))
+;; Returns the list of effects that the world should be applying.
+;; Ensures the song is playing, at a particular volume,
+;; and that the phone doesn't go to sleep prematurely.
+(define (get-effects w)
+  (list (make-effect:play-sound-url song)
+        (make-effect:set-sound-volume w)))
 
 
 ;; draw: world -> DOM-sexp
-(define (draw a-world)
+(define (draw w)
   (list (js-p '(("id" "aPara")))
-        ;(list (js-text (string-append "time ="
-        ;                              (number->string (world-time a-world)))))
-        (list (js-text (string-append "volume ="
-                                      (number->string (world-volume a-world)))))))
+        (list (js-text (string-append "volume = " (number->string w))))))
+
 
 ;; draw-css: world -> CSS-sexp
 (define (draw-css a-world)
@@ -82,7 +44,6 @@
 
 (js-big-bang initial-world
              '()
-             (on-tick* 1 update get-effects)
              (on-draw draw draw-css)
-             (on-shake* reset-world get-effects))
-
+             (on-shake reset)
+             (on-tick* 1/10 tick get-effects))
