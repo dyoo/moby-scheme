@@ -1,9 +1,12 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname location) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname simple-location) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+;; Shows the current GPS location.
+
 ;; The world is a latitude and longitude.
 (define-struct world (lat long))
 
+;; The initial world is set to (0, 0).
 (define initial-world (make-world 0 0))
 
 
@@ -14,11 +17,12 @@
 
 
 ;; world->string: world -> string
+;; Produces a string description of the world.
 (define (world->string w)
-  (string-append "("
-		 (number->string (world-lat w))
-		 ", "
-		 (number->string (world-long w))
+  (string-append "(" 
+                 (number->string (world-lat w)) 
+                 ", "
+                 (number->string (world-long w))
 		 ")"))
 
 
