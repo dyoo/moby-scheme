@@ -7,7 +7,7 @@
 (define init-time 45)
 (define fade-time 30)
 (define init-volume 60)
-(define song "/sdcard/audio/06-Love_Like_Winter.mp3")
+(define song "file:///android_asset/song.ogg")
 
 ;; The world is a number counting the number of seconds until the music turns off
 (define initial-world (make-world init-time init-volume))
@@ -67,7 +67,20 @@
   (make-effect:stop-sound-url song))
 
 
+;; draw: world -> DOM-sexp
+(define (draw a-world)
+  (list (js-p '(("id" "aPara")))
+        (list (js-text (string-append "time ="
+                                      (number->string (world-time a-world)))))))
+
+;; draw-css: world -> CSS-sexp
+(define (draw-css a-world)
+  '(("aPara" ("font-size" "30px"))))
+
+
 (js-big-bang initial-world
-               (on-tick* 1 update get-effects)
-               (on-shake* reset-world get-effects))
+             '()
+             (on-tick* 1 update get-effects)
+             (on-draw draw draw-css)
+             (on-shake* reset-world get-effects))
 

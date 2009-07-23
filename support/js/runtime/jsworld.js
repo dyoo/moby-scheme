@@ -81,8 +81,22 @@ plt.world.MobyJsworld = {};
 
 
 
+    function isList(x) {
+	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
+    }
+
+    // Throws exception if x is not a list.
+    function checkList(x, msg) {
+	if (! isList(x)) {
+	    throw new TypeError(msg);
+	}
+    }
+
+
+
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, attribs, handlers) {
+	checkList(attribs, "2nd argument must be a list of global attributes");
 	var toplevelNode = Jsworld.makeToplevelNode();
 
 	var config = new plt.world.config.WorldConfig();

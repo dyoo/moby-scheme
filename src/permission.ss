@@ -9,6 +9,7 @@
 (define-struct permission:tilt ())
 (define-struct permission:internet ())
 (define-struct permission:telephony ())
+(define-struct permission:wake-lock ())
 
 (define (permission? datum)
   (or (permission:location? datum)
@@ -16,7 +17,8 @@
       (permission:receive-sms? datum)
       (permission:tilt? datum)
       (permission:internet? datum)
-      (permission:telephony? datum)))
+      (permission:telephony? datum)
+      (permission:wake-lock? datum)))
 
 
 (define PERMISSION:LOCATION (make-permission:location))
@@ -24,6 +26,7 @@
 (define PERMISSION:TILT (make-permission:tilt))
 (define PERMISSION:INTERNET (make-permission:internet))
 (define PERMISSION:TELEPHONY (make-permission:telephony))
+(define PERMISSION:WAKE-LOCK (make-permission:wake-lock))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -45,7 +48,9 @@
     [(permission:internet? a-permission)
      (list "android.permission.INTERNET")]
     [(permission:telephony? a-permission)
-     (list "android.permission.ACCESS_COARSE_UPDATES")]))
+     (list "android.permission.ACCESS_COARSE_UPDATES")]
+    [(permission:wake-lock? a-permission)
+     (list "android.permission.WAKE_LOCK")]))
 
 
 ;; permission->on-start-code: permission -> string
@@ -67,6 +72,8 @@
     [(permission:internet? a-permission)
      ""]
     [(permission:telephony? a-permission)
+     ""]
+    [(permission:wake-lock? a-permission)
      ""]))
 
 
@@ -84,6 +91,8 @@
     [(permission:internet? a-permission)
      ""]
     [(permission:telephony? a-permission)
+     ""]
+    [(permission:wake-lock? a-permission)
      ""]))
 
 
@@ -101,6 +110,8 @@
     [(permission:internet? a-permission)
      ""]
     [(permission:telephony? a-permission)
+     ""]
+    [(permission:wake-lock? a-permission)
      ""]))
 
 
@@ -112,6 +123,7 @@
                   [PERMISSION:TILT permission?]
                   [PERMISSION:INTERNET permission?]
                   [PERMISSION:TELEPHONY permission?]
+                  [PERMISSION:WAKE-LOCK permission?]
                   
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))]
