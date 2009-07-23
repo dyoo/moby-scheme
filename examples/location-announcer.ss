@@ -29,12 +29,15 @@
 ;; Worcester, in a radius of 3 miles.
 (define WORCESTER-PLACE 
   (make-place "Worcester" (make-loc 42.274514 -71.798744) (mile->meter 3)))
+(define NORTHEASTERN-PLACE
+  (make-place "NEU" (make-loc 42.340065 -71.088881) (mile->meter 3)))
 
 ;; This is a list of the places.
 (define ALL-PLACES
   (list WPI-PLACE
         WPI-PARKING-PLACE
-        WORCESTER-PLACE))
+        WORCESTER-PLACE
+        NORTHEASTERN-PLACE))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
