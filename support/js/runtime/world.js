@@ -853,7 +853,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
     effect_colon_set_dash_sound_dash_volume.prototype.run = function() {
-    	navigator.audio.setMusicVolume(this.volume);
+    	navigator.audio.setMusicVolume(this.volume.toInteger());
     }
 
     function make_dash_effect_colon_set_dash_sound_dash_volume(id0) {
