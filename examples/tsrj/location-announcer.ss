@@ -54,9 +54,9 @@
 ;; announce-location: world -> effect
 ;; Produces an effect that sends an sms message out.
 (define (announce-location w)
-  (make-effect:send-sms phone-number 
+  (make-effect:send-sms phone 
                         (string-append "Current location is: " 
-                                       (world-string w))))
+                                       (world->string w))))
 
 (js-big-bang initial-world
              '()
