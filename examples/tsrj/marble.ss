@@ -3,15 +3,14 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname marble) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Marble rolling program.
 
-(define WIDTH 300)
-(define HEIGHT 300)
+(define WIDTH 320)
+(define HEIGHT 480)
 
 (define MARBLE-WIDTH 20)
 (define MARBLE-HEIGHT 20)
 
 (define background (js-div '(("id" "backgroundDiv"))))
 (define marble (js-div '(("id" "marble"))))
-
 
 ;; A velocity has an x and y component.
 (define-struct vel (x y))
@@ -49,34 +48,6 @@
         (list (js-text (vel->string (world-vel w))))))
 
 
-;; vel->string: vel -> string
-(define (vel->string v)
-  (string-append "("
-                 (number->string (vel-x v))
-                 " "
-                 (number->string (vel-y v))
-                 ")"))
-         
-
-
-;; marble-styling: posn -> (listof css-style)
-(define (marble-styling a-posn)
-  (list 
-   (list "background-color" "red")
-   (list "position" "absolute")
-   (list "width" (number->px MARBLE-WIDTH))
-   (list "height" (number->px MARBLE-HEIGHT))
-   (list "top" (number->px (posn-y a-posn)))
-   (list "left" (number->px (posn-x a-posn)))))
-
-
-;; number->px: number -> string
-;; Turns a number into a px string for css.
-(define (number->px a-num)
-  (string-append (number->string a-num)
-                 "px"))
-                    
-
 ;; draw-css: world -> css-sexp
 ;; The marble is styled to be at a position and
 ;; a certain color.
@@ -90,6 +61,34 @@
                (number->px WIDTH))
          (list "height"
                (number->px HEIGHT)))))
+
+
+
+;; vel->string: vel -> string
+(define (vel->string v)
+  (string-append "("
+                 (number->string (vel-x v))
+                 " "
+                 (number->string (vel-y v))
+                 ")"))
+         
+
+;; marble-styling: posn -> (listof css-style)
+(define (marble-styling a-posn)
+  (list 
+   (list "background-color" "red")
+   (list "position" "absolute")
+   (list "width" (number->px MARBLE-WIDTH))
+   (list "height" (number->px MARBLE-HEIGHT))
+   (list "top" (number->px (posn-y a-posn)))
+   (list "left" (number->px (posn-x a-posn)))))
+
+;; number->px: number -> string
+;; Turns a number into a px string for css.
+(define (number->px a-num)
+  (string-append (number->string a-num)
+                 "px"))
+                    
 
 
 ;; posn+vel: posn velocity -> posn
