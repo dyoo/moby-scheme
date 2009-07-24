@@ -5,12 +5,12 @@
 (require "env.ss")
 
 (define temp-begin "temp")
-(define higher-order-prims '(andmap argmax argmin build-list build-string compose filter
-                             foldl foldr map memf ormap quicksort sort))
-(define toplevel-prims (foldl (lambda (symb env)
-                                (env-remove env symb))
-                              (env-extend-constant toplevel-env 'quote "primitive")
-                              higher-order-prims))
+(define higher-order-prims '(andmap argmax argmin build-list build-string compose
+                             filter foldl foldr map memf ormap quicksort sort))
+(define first-order-prims (foldl (lambda (symb env)
+                                   (env-remove env symb))
+                                 (env-extend-constant toplevel-env 'quote "primitive")
+                                 higher-order-prims))
 
 (define-struct linfo (return raise gensym))
 
@@ -44,7 +44,7 @@
                     (env-extend-constant an-env struct-proc "struct-prim"))
                   env
                   (get-struct-procs struct-def)))
-         toplevel-prims
+         first-order-prims
          (get-struct-defs program)))
 
 ;; primitive?: any/c env -> boolean
@@ -178,6 +178,9 @@
     [else (make-linfo expr empty gensym)]))
 
 ;; make-anormal: (listof s-expr) env number -> linfo
+;; consumes a list of symbolic expressions, an environment of primitives, and a gesym counter
+;; returns linfo with the return being the completely anormalized expression,
+;;    the raise being empty, and the gensym being the current gensym counter
 (define (make-anormal expr prims gensym)
   (local [(define reversed-output
             (foldl (lambda (an-expr rest-exprs)
@@ -195,7 +198,7 @@
                    (make-linfo empty empty gensym)
                    expr))]
     (make-linfo (reverse (linfo-return reversed-output))
-                (linfo-raise reversed-output)
+                empty
                 (linfo-gensym reversed-output))))
 
 ;; anormalize: (listof s-expr) -> (listof s-expr)

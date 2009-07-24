@@ -160,23 +160,47 @@
 
 (define-struct linfo (return raise gensym))
 
-;; fold-elim-anon: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
-;; consumes a symbolic expression, a list of formal arguments,
-;;    a hash table of replacements, and a gensym counter
+;; ensugar: s-expr -> s-expr
+;; takes a define statement in abstract syntax
+;; if the identifier is bound directly to a syntactic lambda
+;;    then it returns the syntactic sugar for the statement
+;;    otherwise it returns the original statement
+(define (ensugar def)
+  (if (and (cons? def)
+           (equal? (first def) 'define))
+      (if (and (not (cons? (second def)))
+               (and (cons? (third def))
+                    (equal? (first (third def)) 'lambda)))
+          (list 'define
+                (cons (second def) (second (third def)))
+                (third (third def)))
+          def)
+      (error 'ensugar "expected definition in abstract syntax, found something else.")))
+
+;; fold-elim-anon: s-expr number -> linfo
+;; consumes a symbolic expression and a gensym counter
 ;; returns the result of folding elim-anon-help across the expression
 (define (fold-elim-anon expr gensym)
-  (foldr (lambda (an-expr new-info)
-           (local [(define rec-info
-                     (elim-anon-help an-expr (linfo-gensym new-info)))]
-             (make-linfo (cons (linfo-return rec-info)
-                               (linfo-return new-info))
-                         (append (linfo-raise rec-info)
-                                 (linfo-raise new-info))
-                         (linfo-gensym rec-info))))
-         (make-linfo empty empty gensym)
-         expr))
+  (local [(define reversed-info
+            (foldl (lambda (an-expr new-info)
+                     (local [(define rec-info
+                               (elim-anon-help an-expr (linfo-gensym new-info)))]
+                       (make-linfo (cons (linfo-return rec-info)
+                                         (linfo-return new-info))
+                                   (append (linfo-raise new-info)
+                                           (linfo-raise rec-info))
+                                   (linfo-gensym rec-info))))
+                   (make-linfo empty empty gensym)
+                   expr))]
+    (make-linfo (reverse (linfo-return reversed-info))
+                (linfo-raise reversed-info)
+                (linfo-gensym reversed-info))))
 
-;; elim-anon-help: s-expr number -> s-expr
+;; elim-anon-help: s-expr number -> linfo
+;; consumes a symbolic expression and a gensym counter
+;; returns linfo where the return is the new statement,
+;;    the raise is new local definitions to be placed inside the next
+;;    binding form, and the gensym is the new gensym counter
 (define (elim-anon-help expr gensym)
   (cond
     [(cons? expr)
@@ -191,17 +215,21 @@
                   new-proc-name
                   expr)
           (make-linfo new-proc-name
-                      (cons (list 'define
+                      (list (list 'define
                                   (cons new-proc-name (second expr))
-                                  (linfo-return rec-info))
-                            (linfo-raise rec-info))
+                                  (if (empty? (linfo-raise rec-info))
+                                      (linfo-return rec-info)
+                                      (list 'local
+                                            (linfo-raise rec-info)
+                                            (linfo-return rec-info)))))
                       (linfo-gensym rec-info)))];)]
        [(equal? (first expr) 'define)
-        (local [(define rec-info (if (cons? (third expr))
-                                     (elim-anon-help (third expr) gensym)
-                                     (make-linfo (third expr) empty gensym)))]
+        (local [(define sugared-def (ensugar expr))
+                (define rec-info (if (cons? (third sugared-def))
+                                     (elim-anon-help (third sugared-def) gensym)
+                                     (make-linfo (third sugared-def) empty gensym)))]
           (make-linfo (list 'define
-                            (second expr)
+                            (second sugared-def)
                             (if (empty? (linfo-raise rec-info))
                                 (linfo-return rec-info)
                                 (list 'local
@@ -227,11 +255,18 @@
     [else (make-linfo expr empty gensym)]))
 
 ;; elim-anon: s-expr -> s-expr
+;; consumes a symbolic expression and names all anonymous procedures
 (define (elim-anon expr)
   (linfo-return (elim-anon-help expr 0)))
 
+;; ready-anormalize: (listof s-expr) -> (listof s-expr)
+;; consumes a list of toplevel symbolic expressions representing a program
+;; returns the program with all locally defined procedures lifted to toplevel,
+;;    all anonymous procedures lifted to local definitions, and all identifiers munged
+;;    such that the program is ready to be anormalized
 (define (ready-anormalize expr)
   (elim-anon (lift-program expr)))
 
+(provide ensugar)
 (provide ready-anormalize)
 

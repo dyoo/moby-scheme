@@ -24,17 +24,24 @@
     [(cons? expr) (map unwrap expr)]
     [else expr]))
 
-;; contains?: datum (listof datum) -> boolean
+;; contains?: any (listof any) -> boolean
 ;; consumes a datum and a list
 ;; returns true if the list contains the datum and false otherwise
 (define (contains? dat alod)
   (not (false? (member dat alod))))
 
-(define (member/get dat alod)
+;; member/get-rest: any (listof any) -> (listof any)/boolean
+;; consumes a datum and a list
+;; if the datum is in the list then returns 
+(define (member/get-rest dat alod)
   (cond
     [(empty? alod) false]
-    [(equal? dat (first alod)) alod]
-    [else (member/get dat (rest alod))]))
+    [(cons? alod)
+     (if (equal? dat (first alod))
+         (rest alod)
+         (member/get-rest dat (rest alod)))]
+    [else (error 'member/get-rest
+                 "second argument must be of type <list>, given something else")]))
 
 ;; make-id-pairs: string (listof symbol) -> hash
 ;; consumes a prepend string and a list of symbols
@@ -64,17 +71,23 @@
 ;;   or false if the struct name did not appear in the list
 (define (struct-replace? symb prepend struct-names)
   (cond
+    ;; if we're out of names, then false
     [(empty? struct-names) false]
+    ;; otherwise check the possible struct bindings
     [(cons? struct-names)
      (cond
+       ;; if symb is the struct name alone, munge the identifier
        [(equal? symb (first struct-names))
         (make-wrapped (mod-symbol prepend symb ""))]
+       ;; if symb is the struct constructor, return munged constructor
        [(equal? symb (mod-symbol "make-" (first struct-names) ""))
         (make-wrapped (mod-symbol (string-append "make-" prepend)
                                 (first struct-names)
                                 ""))]
+       ;; if symb is the struct predicate, return munged predicate
        [(equal? symb (mod-symbol "" (first struct-names) "?"))
         (make-wrapped (mod-symbol prepend (first struct-names) "?"))]
+       ;; if symb is a selector, return a munged selector for the same field
        [(and (> (string-length (symbol->string symb))
                 (string-length (symbol->string (first struct-names))))
              (equal? (string->symbol
@@ -83,6 +96,7 @@
                             (string-length (symbol->string (first struct-names)))))
                 (first struct-names)))
         (make-wrapped (mod-symbol prepend symb ""))]
+       ;; if none of the above, check the next element in the list
        [else (struct-replace? symb prepend (rest struct-names))])]))
 
 ;; replace-struct-ids: s-expr (listof symbol) -> s-expr
@@ -134,10 +148,11 @@
 ;;     all procedures
 (define (replace-ids expr id-hash)
   (cond
+    ;; if expr is a cons then check what it starts with
     [(cons? expr)
      (local [(define sub-expr (first expr))]
        (cond
-         
+         ;; if expr starts with define or lambda then get the arguments and munge them
          [(or (equal? sub-expr 'define)
               (equal? sub-expr 'lambda))
           (local [(define new-args (if (equal? sub-expr 'define)
@@ -156,22 +171,25 @@
                            id-hash
                            new-args))]
           (map (lambda (an-expr) (replace-ids an-expr new-hash)) expr))]
-         
+         ;; if expr starts with local then remove the locally bound identifiers from our hash
+         ;; because we don't want to munge them with higher level replacements
          [(equal? sub-expr 'local)
           (local [(define pruned-hash
                     (foldl (lambda (id a-hash)
-                             (hash-set a-hash id false))
+                             (hash-remove a-hash id))
                            id-hash
                            (get-outter-ids (second expr))))]
             (map (lambda (an-expr)
                    (replace-ids an-expr pruned-hash)) expr))]
-         
+         ;; if expr starts with quote then return it verbatim
          [(equal? sub-expr 'quote) expr]
-         
+         ;; otherwise map a recursive call across expr
          [else (map (lambda (an-expr) (replace-ids an-expr id-hash)) expr)]))]
+    ;; if expr is a symbol then replace it if it's in the hash and leave it otherwise
     [(symbol? expr) (if (not (false? (hash-ref id-hash expr false)))
                         (hash-ref id-hash expr false)
                         expr)]
+    ;; otherwise return expr as-is
     [else expr]))
 
 ;; rename-top-level: s-expr -> s-expr
@@ -185,7 +203,7 @@
 
 (define-struct linfo (return raise gensym))
 (define-struct gensym-hold (gensym dat))
-(define-struct temp-set (orig temp final))
+;(define-struct temp-set (orig temp final))
 
 ;; set-append/wrapped: list list -> list
 ;; consumes two lists which may contain wrappeds and neither of which have duplicates
@@ -210,24 +228,40 @@
                          expr)]
     [else false]))
 
+;; expr-ref/trans?: symbol s-expr (hashof symbol . s-expr) -> boolean
+;; consumes a symbol, a symbolic expression, and a hash of ids bound to procedures
+;;    to the function definition
+;; returns true if the identifier is referenced in the expression or any functions
+;;    in the hash that the expression references
+;;    false otherwise
+(define (expr-ref/trans? id expr funs)
+  (cond
+    [(symbol? expr) (if (equal? id expr)
+                        true
+                        (if (not (false? (hash-ref funs expr false)))
+                            (expr-ref/trans? id (hash-ref funs id) (hash-remove funs id))
+                            false))]
+    [(cons? expr) (foldl (lambda (an-expr bool)
+                           (or bool (expr-ref/trans? id an-expr funs)))
+                         false
+                         expr)]
+    [else false]))
+
 ;; fold-lambda-lift: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
 ;; consumes a symbolic expression, a list of formal arguments,
 ;;    a hash table of replacements, and a gensym counter
 ;; returns the result of folding lift-local-lambdas across the expression
 (define (fold-lambda-lift expr args replacements gensym)
   (foldr (lambda (an-expr new-info)
-           (local [(define rec-info
-;                     (begin
-;                       (printf "calling lift-info on \n ~a \n ~a \n ~a \n ~a \n"
-;                               (unwrap an-expr) (unwrap args) replacements gensym)
-                     (lift-local-lambdas an-expr args replacements (linfo-gensym new-info)))];)]
-;             (begin
-;               (printf "rec-info got back\n ~a\n" (unwrap (linfo-return rec-info)))
+           (local [(define rec-info (lift-local-lambdas an-expr
+                                                        args
+                                                        replacements
+                                                        (linfo-gensym new-info)))]
              (make-linfo (cons (linfo-return rec-info)
                                (linfo-return new-info))
                          (append (linfo-raise new-info)
                                  (linfo-raise rec-info))
-                         (linfo-gensym rec-info))));)
+                         (linfo-gensym rec-info))))
          (make-linfo empty empty gensym)
          expr))
 
@@ -245,23 +279,6 @@
                        (rest (rest def))))
           def)
       (error 'desugar "expected definition in abstract syntax, found something else.")))
-
-;; ensugar: s-expr -> s-expr
-;; takes a define statement in abstract syntax
-;; if the identifier is bound directly to a syntactic lambda
-;;    then it returns the syntactic sugar for the statement
-;;    otherwise it returns the original statement
-(define (ensugar def)
-  (if (and (cons? def)
-           (equal? (first def) 'define))
-      (if (and (not (cons? (second def)))
-               (and (cons? (third def))
-                    (equal? (first (third def)) 'lambda)))
-          (list 'define
-                (cons (second def) (second (third def)))
-                (rest (rest (third def))))
-          def)
-      (error 'ensugar "expected definition in abstract syntax, found something else.")))
 
 ;; get-new-def: s-expr number (listof wrapped) -> s-expr
 ;; consumes a define statement in symbolic form with no local definitions,
@@ -289,6 +306,11 @@
                                                          "")))))))
 
 ;; lift-local-lambdas: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
+;; consumes a symbolic expression, a list of visible arguments,
+;;    a hashtable mapping symbols to their replacements, and a gensym counter
+;; returns an linfo where the return is the statement with all locally defined
+;;    syntactic lambdas lifted out into thunks, raise is those thunks,
+;;    and gensym is the current gensym counter
 (define (lift-local-lambdas expr args replacements gensym)
   (cond
     [(symbol? expr) (make-linfo (if (false? (hash-ref replacements expr false))
@@ -325,8 +347,8 @@
                                                  (mod-symbol (string-append local-prepend "_")
                                                              an-id
                                                              "")))
-                                              (reverse (rest (member/get (second def)
-                                                                         rev-val-ids))))
+                                              (reverse (member/get-rest (second def)
+                                                                        rev-val-ids)))
                                          args)
                                         replacements
                                         (linfo-gensym rest-defs)))]
@@ -351,6 +373,10 @@
                                                           'lambda))))
                                        (second expr))))
                 (define old-fun-ids (map second old-fun-defs))
+                (define old-fun-hash (foldl (lambda (def a-hash)
+                                              (hash-set a-hash (second def) def))
+                                            empty-hash
+                                            old-fun-defs))
                 (define lifted-fun-defs
                   (foldr (lambda (def rest-defs)
                            (local [(define visible-args
@@ -361,7 +387,9 @@
                                                           (second elt)
                                                           "")))
                                            (filter (lambda (elt)
-                                                     (not (expr-ref? (second def) elt)))
+                                                     (not (expr-ref/trans? (second def)
+                                                                           elt
+                                                                           old-fun-hash)))
                                                    old-val-defs))
                                       args))
                                    (define rec-info
@@ -480,6 +508,7 @@
            (rename-top-level (rename-toplevel-structs expr))))))
 
 (provide contains?)
+(provide desugar)
 (provide lift-program)
 
 
