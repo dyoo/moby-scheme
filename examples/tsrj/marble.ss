@@ -85,7 +85,7 @@
    (cons "marble" (marble-styling (world-posn w)))
         
    (list "backgroundDiv"
-         (list "background-color" "blue")
+         (list "background-color" "white")
          (list "width" 
                (number->px WIDTH))
          (list "height"
