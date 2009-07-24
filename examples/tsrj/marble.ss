@@ -114,5 +114,4 @@
              '()
              (on-draw draw draw-css)
              (on-tick 1/20 tick)
-             (on-tilt tilt)
-             )
+             (on-tilt tilt))

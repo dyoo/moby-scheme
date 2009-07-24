@@ -11,12 +11,6 @@
 (define initial-world (make-world 0 0))
 
 
-;; How many seconds we wait between sending sms messages.
-(define delay-between-announcements 30)
-
-;; Announcements will be sent to a phone number.
-(define phone "5554")
-
 ;; update: world number number -> world
 ;; Update the world to the latest latitude and longitude reading.
 (define (update w lat long)
@@ -47,11 +41,18 @@
   '(("aPara" ("font-size" "30px"))))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; How many seconds we wait between sending sms messages.
+(define delay-between-announcements 30)
+
+;; Announcements will be sent to a phone number.
+(define phone "5554")
+
 ;; no-world-change: world -> world
 ;; Don't change the world.
 (define (no-world-change w)
   w)
-
 
 ;; announce-location: world -> effect
 ;; Produces an effect that sends an sms message out.
@@ -59,11 +60,15 @@
   (make-effect:send-sms phone 
                         (string-append "Current location is: " 
                                        (world->string w))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Start a big bang.
 (js-big-bang initial-world
              '()
              (on-draw draw draw-css)
              (on-location-change update)
              (on-tick* delay-between-announcements
-                       no-world-change announce-location))
+                       no-world-change
+                       announce-location))
 
