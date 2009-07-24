@@ -29,7 +29,8 @@
 ;; tick: world -> world
 ;; Every tick moves the ball by its velocity.
 (define (tick w)
-  (make-world (posn+vel (world-posn w) (world-vel w))
+  (make-world (posn+vel (world-posn w) 
+                        (world-vel w))
               (world-vel w)))
 
 ;; tilt: world number number number -> world
@@ -45,7 +46,18 @@
 (define (draw w)
   (list background
         (list marble)
-        ))
+        (list (js-text (vel->string (world-vel w))))))
+
+
+;; vel->string: vel -> string
+(define (vel->string v)
+  (string-append "("
+                 (number->string (vel-x v))
+                 " "
+                 (number->string (vel-y v))
+                 ")"))
+         
+
 
 ;; marble-styling: posn -> (listof css-style)
 (define (marble-styling a-posn)
@@ -54,8 +66,8 @@
    (list "position" "absolute")
    (list "width" (number->px MARBLE-WIDTH))
    (list "height" (number->px MARBLE-HEIGHT))
-   (list "top" (number->px (posn-x a-posn)))
-   (list "left" (number->px (posn-y a-posn)))))
+   (list "top" (number->px (posn-y a-posn)))
+   (list "left" (number->px (posn-x a-posn)))))
 
 
 ;; number->px: number -> string
@@ -82,9 +94,11 @@
 
 ;; posn+vel: posn velocity -> posn
 (define (posn+vel a-posn a-vel)
-  (make-posn (clamp (+ (posn-x a-posn) (vel-x a-vel))
+  (make-posn (clamp (+ (posn-x a-posn) 
+                       (vel-x a-vel))
                     0 WIDTH)
-             (clamp (+ (posn-y a-posn) (vel-y a-vel))
+             (clamp (+ (posn-y a-posn) 
+                       (vel-y a-vel))
                     0 HEIGHT)))
 
 ;; clamp: number number number -> number
