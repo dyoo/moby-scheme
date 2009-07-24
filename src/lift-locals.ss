@@ -1,8 +1,10 @@
-#lang scheme
+#lang s-exp "lang.ss"
 
-(define global-prepend "g_")
+(define global-prepend "glob_")
 (define struct-prepend "s_")
-(define arg-prepend "a_")
+(define arg-prepend "arg_")
+(define anon-prepend "anon")
+(define local-prepend "loc")
 (define empty-hash (make-immutable-hasheq empty))
 
 (define-struct wrapped (expr))
@@ -18,7 +20,7 @@
 ;; returns the same expression, unwrapping any wrapped statements
 (define (unwrap expr)
   (cond
-    [(wrapped? expr) (wrapped-expr expr)]
+    [(wrapped? expr) (unwrap (wrapped-expr expr))]
     [(cons? expr) (map unwrap expr)]
     [else expr]))
 
@@ -27,6 +29,12 @@
 ;; returns true if the list contains the datum and false otherwise
 (define (contains? dat alod)
   (not (false? (member dat alod))))
+
+(define (member/get dat alod)
+  (cond
+    [(empty? alod) false]
+    [(equal? dat (first alod)) alod]
+    [else (member/get dat (rest alod))]))
 
 ;; make-id-pairs: string (listof symbol) -> hash
 ;; consumes a prepend string and a list of symbols
@@ -89,12 +97,7 @@
                                                 (not (contains? elt new-names)))
                                               struct-names))]
            (map (lambda (elt) (replace-struct-ids elt prepend pruned-names)) expr))
-         (map (lambda (elt) (replace-struct-ids elt prepend struct-names)) expr))
-     #;(local [(define filtered-names
-               (if (equal? (first expr) 'define-struct)
-                   (filter (lambda (elt) (not (equal? elt (second expr)))) struct-names)
-                   struct-names))]
-       (map (lambda (elt) (replace-struct-ids elt prepend filtered-names)) expr))]
+         (map (lambda (elt) (replace-struct-ids elt prepend struct-names)) expr))]
     [(symbol? expr)
      (local [(define name-replace (struct-replace? expr prepend struct-names))]
        (if (false? name-replace)
@@ -122,25 +125,13 @@
                symb-list))
          empty
          expr))
-#;(define (get-outter-ids expr)
-  (cond
-    [(empty? expr) empty]
-    [(cons? expr)
-     (local [(define this-expr (first expr))]
-       (if (or (not (cons? this-expr))
-               (and (cons? this-expr)
-                    (not (equal? (first this-expr) 'define))))
-           (get-outter-ids (rest expr))
-           (cons (if (cons? (second this-expr))
-                     (first (second this-expr))
-                     (second this-expr))
-                 (get-outter-ids (rest expr)))))]))
 
 ;; replace-ids: s-expr (hashof symbol . wrapped) -> s-expr
 ;; consumes a program in abstract syntax and a hash table mapping identifiers to
 ;;     wrapped expression with which to replace the identifier
 ;; returns the same program with the specified identifiers replaced
-;;     except where they are locally defined
+;;     except where they are locally defined and also munges argument names of
+;;     all procedures
 (define (replace-ids expr id-hash)
   (cond
     [(cons? expr)
@@ -175,16 +166,6 @@
             (map (lambda (an-expr)
                    (replace-ids an-expr pruned-hash)) expr))]
          
-         #;[(equal? sub-expr 'lambda)
-          (local [(define new-hash
-                    (foldl (lambda (id a-hash)
-                             (hash-set a-hash
-                                       id
-                                       (make-wrapped (mod-symbol arg-prepend id ""))))
-                           id-hash
-                           (second expr)))]
-            (map (lambda (an-expr) (replace-ids an-expr new-hash)) expr))]
-         
          [(equal? sub-expr 'quote) expr]
          
          [else (map (lambda (an-expr) (replace-ids an-expr id-hash)) expr)]))]
@@ -195,47 +176,57 @@
 
 ;; rename-top-level: s-expr -> s-expr
 ;; consumes a list of statements of scheme source
-;; outputs the same list, but prepends all top-level identifiers with "g_"
+;; outputs the same list, but prepends all top-level identifiers with global-prepend
 (define (rename-top-level expr)
   (replace-ids expr (make-id-pairs global-prepend (get-outter-ids expr))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-struct linfo (return toplevel gensym))
+(define-struct linfo (return raise gensym))
 (define-struct gensym-hold (gensym dat))
 (define-struct temp-set (orig temp final))
 
-;; get-junk-def: s-expr -> s-expr
-;; consumes a define statement in abstract syntax
-;; returns a statement defining the munged identifier to be 'undefined
-(define (get-junk-def def-expr gensym)
-  (list 'define
-        (mod-symbol (string-append "l" (number->string gensym) "_")
-                    (if (cons? (second def-expr))
-                        (first (second def-expr))
-                        (second def-expr))
-                    "")
-        ''undefined))
+;; set-append/wrapped: list list -> list
+;; consumes two lists which may contain wrappeds and neither of which have duplicates
+;;    after being unwrapped
+;; returns a single list representing the first list appeneded to the second list
+;;    with all duplicates removed
+(define (set-append/wrapped list1 list2)
+  (local [(define unwrapped-list1 (unwrap list1))]
+    (append list1
+            (filter (lambda (elt) (not (contains? (unwrap elt) (unwrap list1))))
+                    list2))))
 
+;; expr-ref?: symbol s-expr -> boolean
+;; consumes a symbol and a symbolic expression
+;; returns true if the symbol is referenced (unwrapped) in the expression
+;;    false otherwise
+(define (expr-ref? id expr)
+  (cond
+    [(symbol? expr) (equal? id expr)]
+    [(cons? expr) (foldl (lambda (an-expr bool) (or bool (expr-ref? id an-expr)))
+                         false
+                         expr)]
+    [else false]))
 
-;; fold-expr: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
+;; fold-lambda-lift: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
 ;; consumes a symbolic expression, a list of formal arguments,
 ;;    a hash table of replacements, and a gensym counter
-;; returns the result of folding lift-local across the expression
-(define (fold-expr expr args replacements gensym)
+;; returns the result of folding lift-local-lambdas across the expression
+(define (fold-lambda-lift expr args replacements gensym)
   (foldr (lambda (an-expr new-info)
            (local [(define rec-info
 ;                     (begin
 ;                       (printf "calling lift-info on \n ~a \n ~a \n ~a \n ~a \n"
 ;                               (unwrap an-expr) (unwrap args) replacements gensym)
-                     (lift-local an-expr args replacements (linfo-gensym new-info)))];)]
+                     (lift-local-lambdas an-expr args replacements (linfo-gensym new-info)))];)]
 ;             (begin
 ;               (printf "rec-info got back\n ~a\n" (unwrap (linfo-return rec-info)))
              (make-linfo (cons (linfo-return rec-info)
                                (linfo-return new-info))
-                         (append (linfo-toplevel rec-info)
-                                 (linfo-toplevel new-info))
+                         (append (linfo-raise new-info)
+                                 (linfo-raise rec-info))
                          (linfo-gensym rec-info))));)
          (make-linfo empty empty gensym)
          expr))
@@ -255,12 +246,464 @@
           def)
       (error 'desugar "expected definition in abstract syntax, found something else.")))
 
+;; ensugar: s-expr -> s-expr
+;; takes a define statement in abstract syntax
+;; if the identifier is bound directly to a syntactic lambda
+;;    then it returns the syntactic sugar for the statement
+;;    otherwise it returns the original statement
+(define (ensugar def)
+  (if (and (cons? def)
+           (equal? (first def) 'define))
+      (if (and (not (cons? (second def)))
+               (and (cons? (third def))
+                    (equal? (first (third def)) 'lambda)))
+          (list 'define
+                (cons (second def) (second (third def)))
+                (rest (rest (third def))))
+          def)
+      (error 'ensugar "expected definition in abstract syntax, found something else.")))
+
+;; get-new-def: s-expr number (listof wrapped) -> s-expr
+;; consumes a define statement in symbolic form with no local definitions,
+;;    a gensym number, and a list of wrapped arguments
+;; returns a new lifted function definition that is a top-level thunk with closure
+(define (get-new-def def gensym ext-args)
+  (if (or (not (cons? def))
+          (not (equal? (first def) 'define)))
+      (error 'get-new-def "expected symbolic expression starting with 'define'.")
+      (local [(define id-prepend (string-append local-prepend (number->string gensym) "_"))
+              (define desugared-def (desugar def))
+              (define filtered-ext-args
+                (filter (lambda (elt) (not (contains? elt (second (third desugared-def)))))
+                        ext-args))]
+        (replace-ids (list 'define
+                           (cons (make-wrapped (mod-symbol id-prepend
+                                                           (second desugared-def)
+                                                           ""))
+                                 filtered-ext-args)
+                           (third desugared-def))
+                     (hash-set empty-hash
+                               (cons (second desugared-def) filtered-ext-args)
+                               (make-wrapped (mod-symbol id-prepend
+                                                         (second desugared-def)
+                                                         "")))))))
+
+;; lift-local-lambdas: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
+(define (lift-local-lambdas expr args replacements gensym)
+  (cond
+    [(symbol? expr) (make-linfo (if (false? (hash-ref replacements expr false))
+                                    expr
+                                    (hash-ref replacements expr false))
+                                empty
+                                gensym)]
+    [(cons? expr)
+     (cond
+       [(equal? (first expr) 'local)
+        (local [(define local-struct-prepend
+                    (string-append "s" (number->string gensym) "_"))
+                (define struct-defs (filter (lambda (elt) (equal? (first elt)
+                                                                  'define-struct))
+                                            (second expr)))
+                (define struct-names (get-struct-names (second expr)))
+                (define old-val-defs (filter (lambda (elt)
+                                               (not (or (equal? (first elt) 'define-struct)
+                                                        (cons? (second elt))
+                                                        (and (cons? (third elt))
+                                                             (equal? (first (third elt))
+                                                                     'lambda)))))
+                                             (second expr)))
+                (define old-val-ids (map second old-val-defs))
+                (define lifted-val-defs
+                  (local [(define rev-val-ids (reverse old-val-ids))]
+                    (foldr (lambda (def rest-defs)
+                             (local [(define rec-info
+                                       (lift-local-lambdas
+                                        def
+                                        (set-append/wrapped
+                                         (map (lambda (an-id)
+                                                (make-wrapped
+                                                 (mod-symbol (string-append local-prepend "_")
+                                                             an-id
+                                                             "")))
+                                              (reverse (rest (member/get (second def)
+                                                                         rev-val-ids))))
+                                         args)
+                                        replacements
+                                        (linfo-gensym rest-defs)))]
+                               (make-linfo (cons
+                                            (list 'define
+                                                  (mod-symbol (string-append local-prepend
+                                                                             "_")
+                                                              (second (linfo-return rec-info))
+                                                              "")
+                                                  (third (linfo-return rec-info)))
+                                            (linfo-return rest-defs))
+                                           (append (linfo-raise rest-defs)
+                                                   (linfo-raise rec-info))
+                                           (linfo-gensym rec-info))))
+                           (make-linfo empty empty gensym)
+                           old-val-defs)))
+                (define old-fun-defs
+                  (map desugar (filter (lambda (elt)
+                                         (or (cons? (second elt))
+                                             (and (cons? (third elt))
+                                                  (equal? (first (third elt))
+                                                          'lambda))))
+                                       (second expr))))
+                (define old-fun-ids (map second old-fun-defs))
+                (define lifted-fun-defs
+                  (foldr (lambda (def rest-defs)
+                           (local [(define visible-args
+                                     (set-append/wrapped
+                                      (map (lambda (elt)
+                                             (make-wrapped
+                                              (mod-symbol (string-append local-prepend "_")
+                                                          (second elt)
+                                                          "")))
+                                           (filter (lambda (elt)
+                                                     (not (expr-ref? (second def) elt)))
+                                                   old-val-defs))
+                                      args))
+                                   (define rec-info
+                                     (lift-local-lambdas def
+                                                         visible-args
+                                                         replacements
+                                                         (linfo-gensym rest-defs)))]
+                             (make-linfo (cons (get-new-def (linfo-return rec-info)
+                                                            (linfo-gensym rec-info)
+                                                            visible-args)
+                                               (linfo-return rest-defs))
+                                         (append (linfo-raise rest-defs)
+                                                 (linfo-raise rec-info))
+                                         (add1 (linfo-gensym rec-info)))))
+                         (make-linfo empty empty (linfo-gensym lifted-val-defs))
+                         old-fun-defs))
+                (define new-replacements
+                  (local
+                    [(define-struct temp-pair (id val))
+                     (define (make-wrapped-pair an-id a-def)
+                       (make-temp-pair an-id (make-wrapped (second a-def))))
+                     (define new-replace-pairs
+                       (append
+                        (map make-wrapped-pair
+                             old-val-ids
+                             (linfo-return lifted-val-defs))
+                        (map make-wrapped-pair
+                             old-fun-ids
+                             (linfo-return lifted-fun-defs))))]
+                    (foldl (lambda (a-pair a-hash)
+                             (hash-set a-hash
+                                       (temp-pair-id a-pair)
+                                       (temp-pair-val a-pair)))
+                           replacements
+                           new-replace-pairs)))
+                (define new-toplevel
+                  (append (map (lambda (struct-def)
+                                   (list 'define-struct
+                                         (make-wrapped (mod-symbol local-struct-prepend
+                                                                   (second struct-def)
+                                                                   ""))
+                                         (third struct-def)))
+                                 struct-defs)
+                          (linfo-raise lifted-val-defs)
+                          (linfo-raise lifted-fun-defs)
+                          (linfo-return lifted-fun-defs)))
+                (define lifted-body
+                  (lift-local-lambdas (third expr)
+                                      (set-append/wrapped
+                                       (map (lambda (an-id)
+                                              (make-wrapped
+                                               (mod-symbol (string-append local-prepend "_")
+                                                           an-id
+                                                           "")))
+                                            old-val-ids)
+                                       args)
+                                      new-replacements
+                                      (linfo-gensym lifted-fun-defs)))]
+          (make-linfo (replace-struct-ids
+                       (replace-ids (if (empty? (linfo-return lifted-val-defs))
+                                        (linfo-return lifted-body)
+                                        (list 'local
+                                              (linfo-return lifted-val-defs)
+                                              (linfo-return lifted-body)))
+                                    new-replacements)
+                       local-struct-prepend
+                       struct-names)
+                      (replace-struct-ids
+                       (append (replace-ids new-toplevel new-replacements)
+                               (linfo-raise lifted-body))
+                       local-struct-prepend
+                       struct-names)
+                      (linfo-gensym lifted-body)))]
+       [(or (equal? (first expr) 'define)
+              (equal? (first expr) 'lambda))
+          (local [(define new-args (if (equal? (first expr) 'lambda)
+                                       (second expr)
+                                       (if (cons? (second expr))
+                                           (rest (second expr))
+                                           empty)))
+                  (define total-args
+                    (append new-args (filter (lambda (elt)
+                                               (not (contains? elt new-args)))
+                                             args)))]
+            (fold-lambda-lift expr total-args replacements gensym))]
+         [(equal? (first expr) 'quote) (make-linfo expr empty gensym)]
+         [else (fold-lambda-lift expr args replacements gensym)])]
+    [else (make-linfo expr empty gensym)]))
+
+;; collect-lift: s-expr number -> gensym-hold
+;; consumes a top-level expression and a gensym counter
+;; returns a gensym-hold where the gensym counter is the new value
+;;    and the dat is a list of top-level expression with all locals from
+;;    the original lifted to top level such that the new list of expression
+;;    is symantically equivalent to the original expression
+(define (collect-lift expr gensym)
+  (local [(define lifted (lift-local-lambdas expr empty empty-hash gensym))]
+    (make-gensym-hold (linfo-gensym lifted)
+                      (reverse (cons (linfo-return lifted)
+                                     (linfo-raise lifted))))))
+
+;; lift-program: (listof s-expr) -> (listof s-expr)
+;; takes a list of top level statements
+;; outputs a symantically equivalent list of top level statements
+;;    with all local definitions in all statements lifted to top level
+(define (lift-program expr)
+  (unwrap
+   (gensym-hold-dat
+    (foldl (lambda (an-expr old-lifted)
+             (local [(define new-lifted
+                       (collect-lift an-expr (gensym-hold-gensym old-lifted)))]
+               (make-gensym-hold (gensym-hold-gensym new-lifted)
+                                 (append (gensym-hold-dat old-lifted)
+                                         (gensym-hold-dat new-lifted)))))
+           (make-gensym-hold 0 empty)
+           (rename-top-level (rename-toplevel-structs expr))))))
+
+(provide contains?)
+(provide lift-program)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Storage
+#|
+
+
+         
+         #;[(equal? sub-expr 'lambda)
+          (local [(define new-hash
+                    (foldl (lambda (id a-hash)
+                             (hash-set a-hash
+                                       id
+                                       (make-wrapped (mod-symbol arg-prepend id ""))))
+                           id-hash
+                           (second expr)))]
+            (map (lambda (an-expr) (replace-ids an-expr new-hash)) expr))]
+
+
+;; get-junk-def: s-expr -> s-expr
+;; consumes a define statement in abstract syntax
+;; returns a statement defining the munged identifier to be 'undefined
+#;(define (get-junk-def def-expr gensym)
+  (list 'define
+        (mod-symbol (string-append "l" (number->string gensym) "_")
+                    (if (cons? (second def-expr))
+                        (first (second def-expr))
+                        (second def-expr))
+                    "")
+        ''undefined))
+
+
+;; lambda-lift: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
+#;(define (lambda-lift expr args replacements gensym)
+  (cond
+    [(symbol? expr) (make-linfo (if (false? (hash-ref replacements expr false))
+                                    expr
+                                    (hash-ref replacements expr false))
+                                empty
+                                gensym)]
+    [(cons? expr)
+     (cond
+       [(equal? (first expr) 'lambda)
+        (local [(define new-proc-name
+                  (string->symbol (string-append anon-prepend
+                                                 (number->string gensym))))
+                (define all-args (append (second expr)
+                                         (filter (lambda (elt)
+                                                   (not (contains? elt (second expr))))
+                                                 args)))
+                (define rec-info (lambda-lift (third expr)
+                                              all-args
+                                              replacements
+                                              (add1 gensym)))]
+          (make-linfo (cons new-proc-name args)
+                      (cons (list 'define
+                                  (cons new-proc-name args)
+                                  (list 'local
+                                        (list (list 'define
+                                                    (cons (mod-symbol local-prepend
+                                                                      new-proc-name
+                                                                      "")
+                                                          (second expr))
+                                                    (linfo-return rec-info)))
+                                        (mod-symbol local-prepend new-proc-name "")))
+                            (linfo-raise rec-info))
+                      (linfo-gensym rec-info)))]
+       [(equal? (first expr) 'define)
+        (local [(define sugared-expr (ensugar expr))
+                (define new-args (if (cons? (second sugared-expr))
+                                     (rest (second sugared-expr))
+                                     empty))
+                (define all-args (append new-args
+                                         (filter (lambda (elt)
+                                                   (not (contains? elt new-args)))
+                                                 args)))
+                (define rec-info
+                  (lambda-lift (third sugared-expr) all-args replacements gensym))]
+          (make-linfo (list 'define
+                            (second sugared-expr)
+                            (linfo-return rec-info))
+                      (linfo-raise rec-info)
+                      (linfo-gensym rec-info)))]
+       [(equal? (first expr) 'quote) (make-linfo expr empty gensym)]
+       [(equal? (first expr) 'local)
+        (local [(define local-struct-prepend
+                    (string-append "s" (number->string gensym) "_"))
+                (define struct-defs (filter (lambda (elt) (equal? (first elt)
+                                                                  'define-struct))
+                                            (second expr)))
+                (define struct-names (get-struct-names (second expr)))
+                (define old-lambdas (filter (lambda (elt)
+                                              (or (cons? (second elt))
+                                                  (and (cons? (third elt))
+                                                       (equal? (first (third elt))
+                                                               'lambda))))
+                                            (second expr)))
+                (define value-defs (filter (lambda (elt)
+                                             (not (or (equal? (first elt) 'define-struct)
+                                                      (cons? (second elt))
+                                                      (and (cons? (third elt))
+                                                           (equal? (first (third elt))
+                                                                   'lambda)))))
+                                           (second expr)))
+                (define old-val-ids (map second value-defs))
+                (define visible-args (append old-val-ids
+                                             (filter (lambda (elt)
+                                                       (not (contains? elt old-val-ids)))
+                                                     args)))
+                (define lifted-fun-defs
+                  (foldr (lambda (def rest-info)
+                           (local [(define rec-info
+                                     (fold-expr def
+                                                visible-args
+                                                replacements
+                                                (linfo-gensym rest-info)))]
+                             (make-linfo (cons (get-new-def (linfo-return rec-info)
+                                                            (linfo-gensym rec-info)
+                                                            visible-args)
+                                               (linfo-return rest-info))
+                                         (append (linfo-raise rest-info)
+                                                 (linfo-raise rec-info))
+                                         (add1 (linfo-gensym rec-info)))))
+                         (make-linfo empty empty gensym)
+                         old-lambdas))
+                (define lifted-val-defs 
+                  (foldr (lambda (def def-info)
+                           (local [(define rec-info
+                                     (lambda-lift def
+                                                  (filter (lambda (elt)
+                                                            (not (equal? elt (second def))))
+                                                          visible-args)
+                                                  replacements
+                                                  (linfo-gensym def-info)))]
+                             (make-linfo (cons (linfo-return rec-info)
+                                               (linfo-return def-info))
+                                         (append (linfo-raise def-info)
+                                                 (linfo-raise rec-info))
+                                         (linfo-gensym rec-info))))
+                         (make-linfo empty empty (linfo-gensym lifted-fun-defs))
+                         value-defs))
+                (define new-replacements
+                  (local
+                    [(define-struct temp-pair (id val))
+                     (define (make-wrapped-pair an-id a-def)
+                       (make-temp-pair an-id (make-wrapped (second a-def))))
+                     (define new-replace-pairs
+                       (append
+                        (map make-wrapped-pair
+                             old-val-ids
+                             (linfo-return lifted-val-defs))
+                        (map make-wrapped-pair
+                             (map second old-lambdas)
+                             (linfo-return lifted-fun-defs))))]
+                    (foldl (lambda (a-pair a-hash)
+                             (hash-set a-hash
+                                       (temp-pair-id a-pair)
+                                       (temp-pair-val a-pair)))
+                           replacements
+                           new-replace-pairs)))
+                (define new-toplevel-defs
+                    (append (map (lambda (struct-def)
+                                   (list 'define-struct
+                                         (make-wrapped (mod-symbol local-struct-prepend
+                                                                   (second struct-def)
+                                                                   ""))
+                                         (third struct-def)))
+                                 struct-defs)
+                            (linfo-raise lifted-fun-defs)
+                            (reverse (linfo-return lifted-fun-defs))
+                            (linfo-raise lifted-val-defs)))
+                (define new-gensym (linfo-gensym lifted-val-defs))]
+          (local [(define lifted-body
+                    (lambda-lift (third expr) visible-args new-replacements new-gensym))]
+            (make-linfo (replace-struct-ids (if (empty? lifted-val-defs)
+                                                (linfo-return lifted-body)
+                                                (list 'local
+                                                      (linfo-return lifted-val-defs)
+                                                      (linfo-return lifted-body)))
+                                            local-struct-prepend
+                                            struct-names)
+                        (replace-struct-ids (append new-toplevel-defs
+                                                    (linfo-raise lifted-body))
+                                            local-struct-prepend
+                                            struct-names)
+                        (linfo-gensym lifted-body))))]
+       [else (fold-expr expr args replacements gensym)])]
+    [else (make-linfo expr empty gensym)]))
+
+
+   
+(cond
+          [(symbol? (second expr))
+           (replace-ids (list* 'define (cons (second expr) ext-args) (rest (rest expr)))
+                        (hash-set empty-hash
+                                  (second expr)
+                                  (mod-symbol id-prepend (second expr) "")))]
+          [(cons? (second expr))
+           (local [(define filtered-ext-args
+                     (filter (lambda (elt)
+                               (not (contains? elt (rest (second expr)))))
+                             ext-args))]
+             (replace-ids (list 'define
+                                (cons (first (second expr)) filtered-ext-args)
+                                (list* 'lambda
+                                       (rest (second expr))
+                                       (rest (rest expr))))
+                          (hash-set empty-hash
+                                    (first (second expr))
+                                    (make-wrapped
+                                     (mod-symbol id-prepend
+                                                 (first (second expr))
+                                                 "")))))]);)))
+
+
+
 ;; lift-local: s-expr (listof symbol) (hashof symbol . wrapped) number -> linfo
 ;; consumes a symbolic expression, a list of higher-up arguments, a hashtable mapping
 ;;    symbols to wrapped expressions to replace them with, and a gensym counter
 ;; returns linfo where return is the expression with local defines lifted out,
 ;;    toplevel is the new top level definitions, and gensym is the new gensym counter
-(define (lift-local expr args replacements gensym)
+#;(define (lift-local expr args replacements gensym)
   (cond
     [(symbol? expr) (make-linfo (if (false? (hash-ref replacements expr false))
                                     expr
@@ -392,40 +835,6 @@
          [(equal? sub-expr 'quote) (make-linfo expr empty gensym)]
          [else (fold-expr expr args replacements gensym)]))]
     [else (make-linfo expr empty gensym)]))
-
-;; collect-lift: s-expr number -> gensym-hold
-;; consumes a top-level expression and a gensym counter
-;; returns a gensym-hold where the gensym counter is the new value
-;;    and the dat is a list of top-level expression with all locals from
-;;    the original lifted to top level such that the new list of expression
-;;    is symantically equivalent to the original expression
-(define (collect-lift expr gensym)
-  (local [(define lifted (lift-local expr empty empty-hash gensym))]
-    (make-gensym-hold (linfo-gensym lifted)
-                      (reverse (cons (linfo-return lifted)
-                                     (linfo-toplevel lifted))))))
-
-;; lift-program: (listof s-expr) -> (listof s-expr)
-;; takes a list of top level statements
-;; outputs a symantically equivalent list of top level statements
-;;    with all local definitions in all statements lifted to top level
-(define (lift-program expr)
-  (unwrap
-   (gensym-hold-dat
-    (foldl (lambda (an-expr old-lifted)
-             (local [(define new-lifted
-                       (collect-lift an-expr (gensym-hold-gensym old-lifted)))]
-               (make-gensym-hold (gensym-hold-gensym new-lifted)
-                                 (append (gensym-hold-dat old-lifted)
-                                         (gensym-hold-dat new-lifted)))))
-           (make-gensym-hold 0 empty)
-           (rename-top-level (rename-toplevel-structs expr))))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Storage
-#;(
    
 ;; get-new-def: s-expr number (listof wrapped) -> s-expr
 ;; consumes a define statement in symbolic form with no local definitions,
@@ -681,4 +1090,4 @@
                   #;(define new-replacements (get-replacements replacements
                                                              old-local-ids
                                                              new-replace-list))
-)
+|#
