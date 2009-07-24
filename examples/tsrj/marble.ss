@@ -6,11 +6,11 @@
 (define WIDTH 300)
 (define HEIGHT 300)
 
-(define MARBLE-WIDTH 5)
-(define MARBLE-HEIGHT 5)
+(define MARBLE-WIDTH 20)
+(define MARBLE-HEIGHT 20)
 
 (define background (js-div '(("id" "backgroundDiv"))))
-(define marble (js-div "marble" '(("id" "marble"))))
+(define marble (js-div '(("id" "marble"))))
 
 
 ;; A velocity has an x and y component.
@@ -44,13 +44,13 @@
 ;; top of the background.
 (define (draw w)
   (list background
-        ;(list marble)
+        (list marble)
         ))
 
 ;; marble-styling: posn -> (listof css-style)
 (define (marble-styling a-posn)
   (list 
-   (list "background-color" "blue")
+   (list "background-color" "red")
    (list "position" "absolute")
    (list "width" (number->px MARBLE-WIDTH))
    (list "height" (number->px MARBLE-HEIGHT))
@@ -69,10 +69,11 @@
 ;; The marble is styled to be at a position and
 ;; a certain color.
 (define (draw-css w)
-  (list ;(cons "marble" (marble-styling (world-posn w)))
+  (list 
+   (cons "marble" (marble-styling (world-posn w)))
         
    (list "backgroundDiv"
-         (list "background-color" "gray")
+         (list "background-color" "blue")
          (list "width" 
                (number->px WIDTH))
          (list "height"
@@ -97,6 +98,6 @@
 (js-big-bang initial-world
              '()
              (on-draw draw draw-css)
- ;            (on-tick 1/20 tick)
- ;            (on-tilt tilt)
+             (on-tick 1/20 tick)
+             (on-tilt tilt)
              )
