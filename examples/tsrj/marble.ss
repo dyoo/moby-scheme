@@ -3,10 +3,14 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname marble) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Marble rolling program.
 
-(define WIDTH 320)
-(define HEIGHT 480)
+(define WIDTH 300)
+(define HEIGHT 300)
 
-(define marble (js-div '(("id" "marble"))))
+(define MARBLE-WIDTH 5)
+(define MARBLE-HEIGHT 5)
+
+(define background (js-div '(("id" "backgroundDiv"))))
+(define marble (js-div "marble" '(("id" "marble"))))
 
 
 ;; A velocity has an x and y component.
@@ -36,31 +40,44 @@
 
 
 ;; draw: world -> dom-sexp
-;; We draw a single marble on screen.
+;; We draw a single marble on screen on
+;; top of the background.
 (define (draw w)
-  (list marble))
+  (list background
+        ;(list marble)
+        ))
 
 ;; marble-styling: posn -> (listof css-style)
 (define (marble-styling a-posn)
   (list 
    (list "background-color" "blue")
    (list "position" "absolute")
-   (list "top" (string-append 
-                (number->string
-                 (posn-x (world-posn w)))
-                "px")
-         (list "left" (string-append
-                       (number->string
-                        (posn-y (world-posn w)))
-                       "px")))))
+   (list "width" (number->px MARBLE-WIDTH))
+   (list "height" (number->px MARBLE-HEIGHT))
+   (list "top" (number->px (posn-x a-posn)))
+   (list "left" (number->px (posn-y a-posn)))))
+
+
+;; number->px: number -> string
+;; Turns a number into a px string for css.
+(define (number->px a-num)
+  (string-append (number->string a-num)
+                 "px"))
+                    
 
 ;; draw-css: world -> css-sexp
 ;; The marble is styled to be at a position and
 ;; a certain color.
 (define (draw-css w)
-  (list (cons "marble" (marble-styling
-                        (world-posn w)))))
-              
+  (list ;(cons "marble" (marble-styling (world-posn w)))
+        
+   (list "backgroundDiv"
+         (list "background-color" "gray")
+         (list "width" 
+               (number->px WIDTH))
+         (list "height"
+               (number->px HEIGHT)))))
+
 
 ;; posn+vel: posn velocity -> posn
 (define (posn+vel a-posn a-vel)
@@ -80,5 +97,6 @@
 (js-big-bang initial-world
              '()
              (on-draw draw draw-css)
-             (on-tick 1/20 tick)
-             (on-tilt tilt))
+ ;            (on-tick 1/20 tick)
+ ;            (on-tilt tilt)
+             )
