@@ -70,10 +70,10 @@
 ;; draw: world -> DOM-sexp
 (define (draw a-world)
   (list (js-p '(("id" "aPara")))
-        ;(list (js-text (string-append "time ="
-        ;                              (number->string (world-time a-world)))))
-        (list (js-text (string-append "volume ="
-                                      (number->string (world-volume a-world)))))))
+        (list (js-text 
+               (string-append 
+                "volume ="
+                (number->string (world-volume a-world)))))))
 
 ;; draw-css: world -> CSS-sexp
 (define (draw-css a-world)
@@ -82,7 +82,6 @@
 
 (js-big-bang initial-world
              '()
-             (on-tick* 1 update get-effects)
              (on-draw draw draw-css)
+             (on-tick* 1 update get-effects)
              (on-shake* reset-world get-effects))
-

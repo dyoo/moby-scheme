@@ -22,6 +22,7 @@
 (define (update w lat long)
   (make-world lat long))
 
+
 ;; world->string: world -> string
 ;; Produces a string description of the world.
 (define (world->string w)
@@ -33,6 +34,7 @@
 
 
 ;; draw: world -> DOM-sexp
+;; Produces a DOM that shows the current location.
 (define (draw w)
   (list (js-p '(("id" "aPara")))
         (list (js-text "(latitude, longitude) = "))
@@ -57,7 +59,7 @@
   (make-effect:send-sms phone 
                         (string-append "Current location is: " 
                                        (world->string w))))
-
+;; Start a big bang.
 (js-big-bang initial-world
              '()
              (on-draw draw draw-css)

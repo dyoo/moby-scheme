@@ -53,7 +53,8 @@
 ;; a certain color.
 (define (draw-css w)
   (list 
-   (cons "marble" (marble-styling (world-posn w)))
+   (cons "marble" 
+         (marble-styling (world-posn w)))
         
    (list "backgroundDiv"
          (list "background-color" "white")
@@ -63,8 +64,8 @@
                (number->px HEIGHT)))))
 
 
-
 ;; vel->string: vel -> string
+;; Produces a string representation of a velocity.
 (define (vel->string v)
   (string-append "("
                  (number->string (vel-x v))
@@ -74,6 +75,7 @@
          
 
 ;; marble-styling: posn -> (listof css-style)
+;; Styles a marble with a color, a size, and a position.
 (define (marble-styling a-posn)
   (list 
    (list "background-color" "red")
@@ -90,8 +92,8 @@
                  "px"))
                     
 
-
 ;; posn+vel: posn velocity -> posn
+;; Adds a position to a velocity.
 (define (posn+vel a-posn a-vel)
   (make-posn (clamp (+ (posn-x a-posn) 
                        (vel-x a-vel))

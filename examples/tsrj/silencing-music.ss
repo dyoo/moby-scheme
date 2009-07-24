@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname silencing-music) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+;; Plays a song with a decaying volume.
+
 ;; The world is a volume number between 0 and 70.
 
 ;; timer and initial volume will be user-inputted parameters later
@@ -32,12 +34,14 @@
 
 
 ;; draw: world -> DOM-sexp
+;; Draws the current volume on screen.
 (define (draw w)
   (list (js-p '(("id" "aPara")))
         (list (js-text (string-append "volume = " (number->string w))))))
 
 
 ;; draw-css: world -> CSS-sexp
+;; The paragraph will have large text.
 (define (draw-css a-world)
   '(("aPara" ("font-size" "30px"))))
 

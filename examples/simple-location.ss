@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname location) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname simple-location) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; The world is a latitude and longitude.
 (define-struct world (lat long))
 
@@ -14,6 +14,7 @@
 
 
 ;; world->string: world -> string
+;; Produces a string representation of the world.
 (define (world->string w)
   (string-append "("
 		 (number->string (world-lat w))
@@ -23,6 +24,7 @@
 
 
 ;; draw: world -> DOM-sexp
+;; Produces the DOM tree that we display.
 (define (draw w)
   (list (js-p '(("id" "aPara")))
         (list (js-text "(latitude, longitude) = "))
@@ -30,11 +32,12 @@
 
 
 ;; draw-css: world -> CSS-sexp
-;; Style the paragraph so its internal text is large.
+;; Style the dom so that the font size is large.
 (define (draw-css w)
   '(("aPara" ("font-size" "30px"))))
 
 
+;; Finally, begin a big-bang.
 (js-big-bang initial-world
              '()
              (on-draw draw draw-css)

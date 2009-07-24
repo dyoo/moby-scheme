@@ -25,7 +25,7 @@
 
 
 ;; make-initial-trail: number -> (listof marble)
-;; Creates the initial trail.
+;; Creates the initial trail of marbles.
 (define (make-initial-trail n)
   (cond
     [(= n 0)
@@ -37,8 +37,7 @@
            (make-initial-trail (sub1 n)))]))
 
 
-;; The initial world has the marbles centered
-;; with no velocity.
+;; The initial world has the marbles centered.
 (define initial-world 
   (make-world (make-posn (quotient WIDTH 2)
                          (quotient HEIGHT 2))
@@ -72,14 +71,14 @@
 
 
 ;; draw: world -> dom-sexp
-;; We draw a single marble on screen on
-;; top of the background.
+;; We draw the background and the marbles.
 (define (draw w)
   (cons background
         (draw-trail (world-trail w))))
 
 
 ;; draw-trail: trail -> (listof dom-sexp)
+;; Produces the dom trees for the trail.
 (define (draw-trail a-trail)
   (cond
     [(empty? a-trail)
@@ -101,8 +100,10 @@
         (draw-trail-css (world-trail w) 0)))
 
 
-;; draw-trail-css: trail -> (listof css-style)
+;; draw-trail-css: trail number -> (listof css-style)
 ;; Produces the styling for the trail of marbles.
+;; Each marble is styled slightly differently based on
+;; i.
 (define (draw-trail-css a-trail i)
   (cond
     [(empty? a-trail)
@@ -126,8 +127,6 @@
    (list "top" (number->px (posn-y a-posn)))
    (list "left" (number->px (posn-x a-posn)))))
 
-
-
 ;; number->px: number -> string
 ;; Turns a number into a px string for css.
 (define (number->px a-num)
@@ -137,6 +136,7 @@
 
 
 ;; posn+vel: posn velocity -> posn
+;; Adds a posn to a velocity.
 (define (posn+vel a-posn a-vel)
   (make-posn (clamp (+ (posn-x a-posn) 
                        (vel-x a-vel))
