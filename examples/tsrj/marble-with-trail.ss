@@ -6,8 +6,6 @@
 (define WIDTH 320)
 (define HEIGHT 480)
 
-(define MARBLE-WIDTH 20)
-(define MARBLE-HEIGHT 20)
 
 ;; We'll have a trail of a certain length.
 (define TRAIL-LENGTH 5)
@@ -24,7 +22,6 @@
 
 ;; A world is a posn, a (listof marble), and a vel.
 (define-struct world (posn trail vel))
-
 
 
 ;; make-initial-trail: number -> (listof marble)
@@ -101,29 +98,35 @@
                     (number->px WIDTH))
               (list "height"
                     (number->px HEIGHT)))
-        (draw-trail-css (world-trail w))))
+        (draw-trail-css (world-trail w) 0)))
 
 
 ;; draw-trail-css: trail -> (listof css-style)
-(define (draw-trail-css a-trail)
+;; Produces the styling for the trail of marbles.
+(define (draw-trail-css a-trail i)
   (cond
     [(empty? a-trail)
      empty]
     [else
      (cons (cons (marble-div (first a-trail))
                  (marble-styling 
-                  (marble-posn (first a-trail))))
-           (draw-trail-css (rest a-trail)))]))
+                  (marble-posn (first a-trail))
+                  i))
+           (draw-trail-css (rest a-trail) (add1 i)))]))
 
-;; marble-styling: posn -> (listof css-style)
-(define (marble-styling a-posn)
+;; marble-styling: posn number -> (listof css-style)
+;; Styles the ith marble.  As 'i' gets larger, the
+;; marble gets larger and more red.
+(define (marble-styling a-posn i)
   (list 
    (list "background-color" "red")
    (list "position" "absolute")
-   (list "width" (number->px MARBLE-WIDTH))
-   (list "height" (number->px MARBLE-HEIGHT))
+   (list "width" (number->px (* (add1 i) 5)))
+   (list "height" (number->px (* (add1 i) 5)))
    (list "top" (number->px (posn-y a-posn)))
    (list "left" (number->px (posn-x a-posn)))))
+
+
 
 ;; number->px: number -> string
 ;; Turns a number into a px string for css.
