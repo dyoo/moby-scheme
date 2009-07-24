@@ -7,7 +7,7 @@
 (define song "file:///android_asset/song.ogg")
 
 ;; The world is a number counting the number of seconds until the music turns off
-(define initial-world 70)
+(define initial-world 100)
 
 
 ;; update: world -> world
@@ -46,4 +46,4 @@
              '()
              (on-draw draw draw-css)
              (on-shake reset)
-             (on-tick* 1/10 tick get-effects))
+             (on-tick* 1/5 tick get-effects))
