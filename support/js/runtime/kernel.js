@@ -15,6 +15,20 @@ var plt = plt || {};
     }
 
 
+    // Returns true if x is a number.
+    function isNumber(x) {
+	    return (x instanceof plt.types.Rational || 
+		    x instanceof plt.types.FloatPoint ||
+		    x instanceof plt.types.Complex);
+    }
+
+
+    function arrayEach(arr, f) {
+	for (var i = 0; i < arr.length; i++) {
+	    apply(arr[i], f, arr[i]);
+	}
+    }
+
 
  
     function chainTest(test, first, second, rest) {
@@ -48,6 +62,12 @@ var plt = plt || {};
 	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
     }
 
+    function check(x, f, msg) {
+	if (! f(x)) {
+	    throw new TypeError(msg);
+	}
+    }
+
     // Throws exception if x is not a list.
     function checkList(x, msg) {
 	if (! isList(x)) {
@@ -55,6 +75,18 @@ var plt = plt || {};
 	}
     }
 
+
+    function checkListof(x, f, msg) {
+	if (! isList(x)) {
+	    throw new TypeError(msg);
+	}
+	while (! x.isEmpty()) {
+	    if (! f(x.first())) {
+		throw new TypeError(msg);
+	    }
+	    x = x.next();
+	}
+    }
 
 
     plt.Kernel = {
@@ -71,9 +103,7 @@ var plt = plt || {};
   },
   
   number_question_ : function(x){
-	    return (x instanceof plt.types.Rational || 
-			   x instanceof plt.types.FloatPoint ||
-			   x instanceof plt.types.Complex);
+	    return isNumber(x);
   },
  
   equal_question_ : function(x, y) {
@@ -238,6 +268,11 @@ var plt = plt || {};
  
  
   _equal_ : function(first, second, rest) {
+	    check(first, isNumber, "first must be a number");
+	    check(second, isNumber, "second must be a number");
+	    arrayEach(rest, 
+		      function() { checkListof(this, isNumber, 
+					       "all arguments must be numbers") });
       // FIXME: check against other args too.
       return chainTest(plt.types.NumberTower.equal,
            first,
@@ -268,6 +303,11 @@ var plt = plt || {};
   },
  
   _lessthan_: function(first, second, rest) {
+	    check(first, isNumber, "first must be a number");
+	    check(second, isNumber, "second must be a number");
+	    arrayEach(rest, 
+		      function() { checkListof(this, isNumber, 
+					       "all arguments must be numbers") });
       return chainTest(plt.types.NumberTower.lessThan,
            first,
            second,
@@ -936,7 +976,15 @@ var plt = plt || {};
 
 
 
-
+    // DEBUGGING: get out all the functions defined in the kernel.
+    plt.Kernel._dumpKernelSymbols = function() {
+	var result = plt.types.Empty.EMPTY;
+	for (var sym in plt.Kernel) {
+	    result = plt.types.Cons.makeInstance(plt.types.Symbol.makeInstance(sym),
+						 result);
+	}
+	return result;
+    };
 
 
     function HashTable(inputHash) {
@@ -1572,8 +1620,9 @@ var plt = plt || {};
     plt.types.Rational.makeInstance = function(n, d) {
   if (n == undefined)
       die("n undefined");
-  if (d == undefined)
-      die("d undefined");
+
+  if (d == undefined) { d = 1; }
+
  
   if (d < 0) {
       n = -n;

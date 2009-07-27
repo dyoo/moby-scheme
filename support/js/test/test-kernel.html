@@ -52,6 +52,8 @@
     teardown: function() {
       
     },
+
+
     
     testRationalReduction: function() {
         var n1 = Rational.makeInstance(1,2);
@@ -72,6 +74,16 @@
 		this.assert(!Kernel.equal_question_(n3, n4));
 		
 		this.assert(Kernel.equal_question_(String.makeInstance("hi"), String.makeInstance("hi")));
+
+
+        this.assert(Kernel._equal_(Rational.makeInstance(1, 2),
+                                   Rational.makeInstance(2, 4),
+                                   [])); 
+
+        this.assert(false == Kernel._equal_(Rational.makeInstance(1, 2),
+                                            Rational.makeInstance(2, 5),
+                                            [])); 
+
 	},
 	
 	testAbs : function(){
@@ -156,6 +168,16 @@
 		this.assert(Kernel._greaterthan_(FloatPoint.makeInstance(2.1), Rational.makeInstance(2,1), []));
 		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0), Rational.makeInstance(2,1), []));
 		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0), Rational.makeInstance(2,1), []));
+
+
+                this.assert(Kernel._lessthan_(Rational.makeInstance(2),
+                                              Rational.makeInstance(3), []));
+
+                this.assert(! Kernel._lessthan_(Rational.makeInstance(3),
+                                                Rational.makeInstance(2), []));
+                this.assertRaise("TypeError",
+                                 function() {
+                                    Kernel._lessthan_(2, 3, [])});
 	},
 
 
@@ -337,6 +359,12 @@
 		this.assert(Kernel.equal_question_(n1, Kernel.min(n1, [n2,n3,n4])));
 	},
 	
+        testNumberQuestion : function() {
+                this.assert(Kernel.number_question_(plt.types.Rational.makeInstance(42)));
+                this.assert(Kernel.number_question_(42) == false);
+        },
+
+
 	testNumber_dash__greaterthan_string : function(){
 		this.assert(Kernel.string_equal__question_(String.makeInstance("1"), Kernel.number_dash__greaterthan_string(Rational.ONE),[]));
 		this.assert(!Kernel.string_equal__question_(String.makeInstance("2"), Kernel.number_dash__greaterthan_string(Rational.ONE),[]));
