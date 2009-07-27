@@ -172,12 +172,10 @@
                                          "plt.world.Kernel.imageWidth")
                                      (bf 'image-height module-path 1 false
                                          "plt.world.Kernel.imageHeight")
-                                     (bf 'image? module-path 1 false
-                                         "plt.world.Kernel.isImage")
-                                     (bf 'image=? module-path 2 false
-                                         "plt.world.Kernel.isImageEqual")
                                      (bf 'image-rotate module-path 2 false
-                                         "plt.world.Kernel.imageRotate"))))))
+                                         "plt.world.Kernel.imageRotate")
+                                     
+                                     )))))
 
 
 ;; world teachpack bindings

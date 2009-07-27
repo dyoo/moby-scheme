@@ -247,6 +247,11 @@
                      (string>? 2 true)
                      (string? 1)
                      (substring 3 )
+                     (string-ith 2)
+                     (int->string 1)
+                     (string->int 1)
+                     (explode 1)
+                     (implode 1)
                      
                      ;; Eof
                      (eof-object? 1)
@@ -279,6 +284,10 @@
                      (procedure? 1)           ;; *
                      (quicksort 2)            ;; *
                      (sort 2)                 ;; *
+
+                     ;; Images
+                     (image? 1)
+                     (image=? 2)
                      )))
           
           

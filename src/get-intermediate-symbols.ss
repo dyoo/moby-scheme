@@ -1,6 +1,8 @@
 #lang scheme
-
-(require syntax/docprovide)
+(require syntax/docprovide
+         "toplevel.ss"
+         "env.ss"
+         (only-in srfi/1 lset-union lset-difference lset-intersection))
 
 
 ;; Get the list of symbols in intermediate level.
@@ -12,9 +14,22 @@
          (first item))
        (rest cat)))
 
-
-(define ids 
+(define all-ids 
   (apply append
          (map (lambda (cat)
                 (process-category cat))
               docs)))
+
+
+(define implemented-ids
+  (env-keys toplevel-env))
+
+
+(define (union s1 s2)
+  (lset-union symbol=? s1 s2))
+
+(define (intersect s1 s2)
+  (lset-intersection symbol=? s1 s2))
+
+(define (subtract s1 s2)
+  (lset-difference symbol=? s1 s2))

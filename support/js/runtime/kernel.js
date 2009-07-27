@@ -747,6 +747,19 @@ var plt = plt || {};
   string_dash_ref : function(str, i){
 	return str.charAt(i.toInteger());
   },
+
+  string_dash_ith : function (str, i) {
+	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
+  },
+
+  int_dash_greaterthan_string: function (i) {
+	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
+  },
+
+  string_dash_greaterthan_int: function(str) {
+	    return plt.types.Rational.makeInstance(str.toString().charCodeAt(0), 1);
+  },
+
   
   string_question_ : function(str){
       return typeof(str) == 'string';
@@ -866,7 +879,17 @@ var plt = plt || {};
 	}
 	return plt.types.String.makeInstance(ret);
   },
+
+  implode: function(lst) {
+	var ret = [];
+	while (!lst.isEmpty()){
+	    ret.push(lst.first().toString());
+	    lst = lst.rest();
+	}
+	return plt.types.String.makeInstance(ret.join(""));
+  },
   
+
   make_dash_string : function(n, ch){
 	var ret = "";
 	var c = ch.val;
@@ -886,8 +909,21 @@ var plt = plt || {};
 		 ret);
 	}
 	return ret;
-  }
-  
+  },
+
+
+  explode: function (str) {
+	var s = str;
+	var ret = plt.types.Empty.EMPTY;
+	for (var i = s.length - 1; i >= 0; i--) {
+	    ret = plt.types.Cons.makeInstance
+		(plt.types.String.makeInstance(s.charAt(i)),
+		 ret);
+	}
+	return ret;	    
+	}
+
+
 
 	
   };
@@ -942,7 +978,7 @@ var plt = plt || {};
 	}
     };
     
-    plt.Kernel._kernelHashRemove = function(hash, key) {
+    plt.Kernel._kernelHashRemove = function(obj, key) {
 	var newHash = {};
 	var hash = obj.hash;
     	for (var k in hash) {
@@ -1101,6 +1137,43 @@ var plt = plt || {};
     }
  
  
+
+
+
+    // Base class for all images.
+    function BaseImage(pinholeX, pinholeY) {
+	this.pinholeX = pinholeX;
+	this.pinholeY = pinholeY;
+    }
+    plt.Kernel.BaseImage = BaseImage;
+
+
+    BaseImage.prototype.updatePinhole = function(x, y) {
+	var aCopy = {};
+	for (attr in this) {
+	    aCopy[attr] = this[attr];
+	}
+	aCopy.pinholeX = x;
+	aCopy.pinholeY = y;
+	return aCopy;
+    }
+
+
+    plt.Kernel.image_question_ = function(thing) {
+	return (thing instanceof BaseImage);
+    };
+
+
+
+    plt.Kernel.image_equal__question_ = function(thing, other) {
+	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+    };
+
+
+
+
+
+
  
     // Strings
     // For the moment, we just reuse Javascript strings.
