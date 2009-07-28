@@ -365,7 +365,7 @@ var plt = plt || {};
     };
     
     plt.types.Rational.prototype.imag_dash_part = function(){
-	return Rational.ZERO;
+	return plt.types.Rational.ZERO;
     };
     
     plt.types.Rational.prototype.real_dash_part = function(){
@@ -590,7 +590,7 @@ var plt = plt || {};
     
     
     plt.types.FloatPoint.prototype.round = function(){
-	if (plt.types.NumberTower.lessThan(this.subtract(FloatPoint.makeInstance(0.5)).floor(), this.floor()).valueOf())
+	if (plt.types.NumberTower.lessThan(this.subtract(plt.types.FloatPoint.makeInstance(0.5)).floor(), this.floor()).valueOf())
 	    return this.floor();
 	else 
 	    return this.ceiling();

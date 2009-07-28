@@ -488,12 +488,12 @@ var plt = plt || {};
 	
 	positive_question_ : function(x){
 	    check(x, isNumber, "number");
-	    return this._greaterthan_(x, Rational.ZERO, []);
+	    return this._greaterthan_(x, plt.types.Rational.ZERO, []);
 	},
 	
 	negative_question_ : function(x){
 	    check(x, isNumber, "number");
-	    return this._lessthan_(x, Rational.ZERO, []);
+	    return this._lessthan_(x, plt.types.Rational.ZERO, []);
 	},
 	
 	imag_dash_part : function(x){
