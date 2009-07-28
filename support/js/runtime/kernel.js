@@ -24,7 +24,7 @@ var plt = plt || {};
 
     function arrayEach(arr, f) {
 	for (var i = 0; i < arr.length; i++) {
-	    apply(arr[i], f, arr[i]);
+	    f.apply(arr[i], [arr[i]]);
 	}
     }
 
@@ -300,12 +300,16 @@ var plt = plt || {};
 
 	
 	min : function(first, rest) {
+	    check(first, isNumber, "number");
+	    arrayEach(rest, function() { check(this, isNumber, "number"); });
 	    return chainFind(plt.types.NumberTower.lessThanOrEqual,
 			     first, 
 			     rest);
 	},
 	
 	max : function(first, rest) {
+	    check(first, isNumber, "number");
+	    arrayEach(rest, function() { check(this, isNumber, "number"); });
 	    return chainFind(plt.types.NumberTower.greaterThanOrEqual,
 			     first, 
 			     rest);
