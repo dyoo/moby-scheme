@@ -7,6 +7,7 @@
   <script src="jsunittest/jsunittest.js" type="text/javascript"></script>
 
   <!-- TODO: REPLACE "example_library_to_test" throughout file with name of file to test -->
+  <script src="../runtime/types.js" type="text/javascript"></script>
   <script src="../runtime/kernel.js" type="text/javascript"></script>
   
   <link rel="stylesheet" href="jsunittest/unittest.css" type="text/css" />
@@ -178,6 +179,30 @@
                 this.assertRaise("TypeError",
                                  function() {
                                     Kernel._lessthan_(2, 3, [])});
+                this.assertRaise("TypeError",
+                                 function() {
+                                    Kernel._greaterthan_("2", "3", [])});
+
+                this.assert(! Kernel._greaterthan_(Rational.makeInstance(2),
+                                                   Rational.makeInstance(3), []));
+
+                this.assert(Kernel._greaterthan_(Rational.makeInstance(3),
+                                                 Rational.makeInstance(2), []));
+
+                this.assert(! Kernel._greaterthan_(Rational.makeInstance(3),
+                                                   Rational.makeInstance(3), []));
+
+                this.assert(Kernel._lessthan__equal_(Rational.makeInstance(17),
+                                                    Rational.makeInstance(17), []));
+
+                this.assert(Kernel._lessthan__equal_(Rational.makeInstance(16),
+                                                    Rational.makeInstance(17), []));
+
+                this.assert(!Kernel._lessthan__equal_(Rational.makeInstance(16),
+                                                      Rational.makeInstance(15), []));
+                this.assertRaise("TypeError",
+                                 function() {
+                                    Kernel._lessthan__equal_("2", "3", [])});
 	},
 
 
