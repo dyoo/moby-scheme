@@ -217,7 +217,12 @@ function getTests() {
 	},
 	
 	testExp : function(){
-	    this.assert(Kernel.equal_question_(Kernel.exp(Rational.ZERO), Rational.ONE));
+	    this.assert(Kernel._equal_(Kernel.exp(Rational.ZERO), Rational.ONE, []));
+	    this.assert(Kernel._equal_(Kernel.exp(Rational.ONE),
+				       Kernel.e, []));
+	    this.assert(Kernel._equal__tilde_(Kernel.exp(Rational.makeInstance(2)), 
+					      Kernel.sqr(Kernel.e),
+					      FloatPoint.makeInstance(0.0001)));
 	},
 	
 	
@@ -236,6 +241,23 @@ function getTests() {
 	    this.assert(Kernel.equal_question_(Kernel.cos(Rational.ZERO), Rational.ONE));
 	},
 	
+
+	testSqr: function() {
+	    var n1 = Rational.makeInstance(42);
+	    this.assertEqual(1764, Kernel.sqr(n1).toInteger());
+	    this.assertRaise("TypeError",
+			     function() { Kernel.sqr("42"); });
+	},
+
+	testIntegerSqrt: function() {
+	    var n1 = Rational.makeInstance(36);
+	    var n2 = Rational.makeInstance(6);
+	
+	    this.assertEqual(n2, Kernel.integer_dash_sqrt(n1));
+	    this.assertRaise("TypeError", function() { Kernel.integer_dash_sqrt(FloatPoint.makeInstance(3.5)); }); 
+	},
+
+
 	testSqrt : function(){
 	    this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(4)), FloatPoint.makeInstance(2)));
 	    this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(-1)), Complex.makeInstance(0,1)));
@@ -421,7 +443,17 @@ function getTests() {
 	    this.assert(Kernel.equal_question_(Kernel.remainder(FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)), FloatPoint.makeInstance(3)));	
 	    this.assert(Kernel.equal_question_(Kernel.remainder(FloatPoint.makeInstance(4), FloatPoint.makeInstance(3)), FloatPoint.makeInstance(1)));
 	},
+
 	
+	testModulo : function() {
+	    var n1 = Rational.makeInstance(17);
+	    var n2 = Rational.makeInstance(3);
+	    var n3 = Rational.makeInstance(2);
+	    this.assertEqual(n3, Kernel.modulo(n1, n2));
+	    this.assertEqual(n2, Kernel.modulo(n2, n1));
+	},
+
+
 	testReal_question_ : function(){
 	    this.assert(Kernel.real_question_(PI));
 	    this.assert(Kernel.real_question_(Rational.ONE));

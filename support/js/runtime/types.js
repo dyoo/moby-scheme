@@ -941,8 +941,8 @@ var plt = plt || {};
     };
     
     plt.types.NumberTower.approxEqual = function(x, y, delta) {
-	// fixme: use delta
-	return x.isEqual(y);
+	return plt.types.NumberTower.lessThan(plt.types.NumberTower.abs(plt.types.NumberTower.subtract(x, y)),
+                                              delta);
     };
     
     plt.types.NumberTower.greaterThanOrEqual = function(x, y){

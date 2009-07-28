@@ -1,22 +1,3 @@
- quotient
- remainder
- modulo
- sqr
- sqrt
- integer-sqrt
- expt
- abs
- sgn
- exp
- log
- sin
- cos
- tan
- asin
- acos
- atan
- sinh
- cosh
  exact?
  integer?
  zero?

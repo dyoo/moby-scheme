@@ -21,6 +21,11 @@ var plt = plt || {};
 		x instanceof plt.types.Complex);
     }
 
+    // Returns true if ix is an integer.
+    function isInteger(x) {
+	return isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
+    }
+
 
     function arrayEach(arr, f) {
 	for (var i = 0; i < arr.length; i++) {
@@ -210,18 +215,27 @@ var plt = plt || {};
 	},
 	
 	sqrt: function(x) {
+	    check(x, isNumber, "number");
 	    return x.sqrt();
+	},
+
+	integer_dash_sqrt: function(x) {
+	    check(x, isInteger, "integer");
+	    return Rational.makeInstance(x.sqrt().toInteger());
 	},
 	
 	sqr: function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.sqr(x);
 	},
 	
 	sin: function(x) {
+	    check(x, isNumber, "number");
 	    return x.sin();
 	},
 	
 	cos: function(x) {
+	    check(x, isNumber, "number");
 	    return x.cos();
 	},
 	
@@ -237,11 +251,11 @@ var plt = plt || {};
 	
 	
 	_equal__tilde_ : function(x, y, delta) {
-	    // FIXME: check against other args too.
 	    return plt.types.NumberTower.approxEqual(x, y, delta);
 	},
 	
 	abs: function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.abs(x);
 	},
 	
@@ -345,6 +359,7 @@ var plt = plt || {};
 	},
 	
 	log : function(x) {
+	    check(x, isNumber, "number");
 	    return x.log();
 	},
 	
@@ -353,26 +368,33 @@ var plt = plt || {};
 	},
 	
 	atan : function(x) {
+	    check(x, isNumber, "number");
 	    return x.atan();
 	},
 	
 	expt : function(x, y){
+	    check(x, isNumber, "number");
+	    check(y, isNumber, "number");
 	    return plt.types.NumberTower.expt(x, y);
 	},
 	
 	exp : function(x){
+	    check(x, isNumber, "number");
 	    return x.exp();
 	},
 	
 	acos : function(x){
+	    check(x, isNumber, "number");
 	    return x.acos();
 	},
 	
 	asin : function(x){
+	    check(x, isNumber, "number");
 	    return x.asin();
 	},
 	
 	tan : function(x){
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.divide(x.sin(), x.cos());
 	},
 	
@@ -383,10 +405,12 @@ var plt = plt || {};
 	},
 	
 	cosh : function(x) {
+	    check(x, isNumber, "number");
 	    return this._plus_([this.exp(x), this.exp(x.minus())]).half();
 	},
 	
 	sinh : function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.subtract(this.exp(x), this.exp(x.minus())).half();
 	},
 	
@@ -475,6 +499,7 @@ var plt = plt || {};
 	},
 	
 	sgn : function(x){
+	    check(x, isNumber, "number");
 	    if (this.positive_question_(x).valueOf())
 		return plt.types.Rational.ONE;
 	    if (this.negative_question_(x).valueOf())
