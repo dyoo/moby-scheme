@@ -76,6 +76,30 @@ function getTests() {
 	    var n5 = [Complex.makeInstance(2, 2), Complex.makeInstance(3, 2)];
 	    this.assert(Kernel.equal_question_(Kernel._plus_(n5), Complex.makeInstance(5, 4)));
 	},
+
+	testAdd1 : function() {
+	    this.assert(Kernel.equal_question_(Kernel.add1(Rational.ZERO), 
+					       Rational.ONE));
+
+	    this.assert(Kernel.equal_question_(Kernel.add1(Rational.ONE), 
+					       Rational.makeInstance(2)));
+
+	    this.assert(Kernel.equal_question_(Kernel.add1(Rational.makeInstance(2)), 
+					       Rational.makeInstance(3)));
+	},
+
+
+	testSub1 : function() {
+	    this.assert(Kernel.equal_question_(Kernel.sub1(Rational.ZERO), 
+					       Rational.makeInstance(-1)));
+
+	    this.assert(Kernel.equal_question_(Kernel.sub1(Rational.ONE), 
+					       Rational.makeInstance(0)));
+
+	    this.assert(Kernel.equal_question_(Kernel.sub1(Rational.makeInstance(2)), 
+					       Rational.makeInstance(1)));
+	},
+
 	
 	testSubtract : function(){
 	    var n1 = [Rational.makeInstance(2,1), Rational.makeInstance(3,1)];

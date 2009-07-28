@@ -21,12 +21,15 @@ var plt = plt || {};
 		x instanceof plt.types.Complex);
     }
 
-    // Returns true if ix is an integer.
+
+    // Returns true if x is an integer.
     function isInteger(x) {
 	return isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
     }
 
 
+    // arrayEach: (arrayof X) (X -> void) -> void
+    // Apply some function on each element of the array.
     function arrayEach(arr, f) {
 	for (var i = 0; i < arr.length; i++) {
 	    f.apply(arr[i], [arr[i]]);
@@ -34,7 +37,7 @@ var plt = plt || {};
     }
 
 
-    
+    // Apply a chaining test on pairs of elements of the list [first, second, rest ...].
     function chainTest(test, first, second, rest) {
 	if (! test(first, second).valueOf())
 	    return false;
@@ -49,7 +52,8 @@ var plt = plt || {};
 	return true;
     }
     
-    
+
+    // Apply a search on pairs of elements of the list [first, rest ...].
     function chainFind(comparator, first, rest) {
 	var i;
 	var best = first;
@@ -62,10 +66,13 @@ var plt = plt || {};
     }
     
 
+    // Returns true if x is a list.
     function isList(x) {
 	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
     }
 
+
+    // Checks if x satisfies f.  If not, a TypeError of msg is thrown.
     function check(x, f, msg) {
 	if (! f(x)) {
 	    throw new TypeError(msg);
@@ -79,7 +86,7 @@ var plt = plt || {};
 	}
     }
 
-
+    // Checks if x is a list of f.  If not, throws a TypeError of msg.
     function checkListof(x, f, msg) {
 	if (! isList(x)) {
 	    throw new TypeError(msg);
@@ -261,11 +268,13 @@ var plt = plt || {};
 	},
 	
 	add1 : function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.add(x, plt.types.Rational.ONE);
 	},
 	
 	
 	sub1 : function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.subtract(x, plt.types.Rational.ONE);
 	},
 	
@@ -1203,7 +1212,7 @@ var plt = plt || {};
     plt.Kernel.error = function(msg, args) {
 	die(msg + ": " + args);
     }
-    
+
     
     function die(msg) {
 	// We're trying to error out so that we get a stack track from firebug.

@@ -1,5 +1,3 @@
- add1
- sub1
  lcm
  gcd
  rational?
