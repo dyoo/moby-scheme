@@ -302,15 +302,32 @@ function getTests() {
 	testNumerator : function(){
 	    this.assert(Kernel.equal_question_(Kernel.numerator(Rational.makeInstance(7,2)), Rational.makeInstance(7,1)));
 	},
-	
+
+
+	testIsExact : function() {
+	    this.assert(Kernel.exact_question_(Rational.makeInstance(3)));
+	    this.assert(! Kernel.exact_question_(FloatPoint.makeInstance(3.0)));
+	    this.assert(! Kernel.exact_question_(FloatPoint.makeInstance(3.5)));
+	},
+
+	testIsInexact : function() {
+	    this.assert(! Kernel.inexact_question_(Rational.makeInstance(3)));
+	    this.assert(Kernel.inexact_question_(FloatPoint.makeInstance(3.0)));
+	    this.assert(Kernel.inexact_question_(FloatPoint.makeInstance(3.5)));
+	},
+
+
+		
 	testOdd_question_ : function(){
 	    this.assert(Kernel.odd_question_(Rational.ONE));
+	    this.assert(! Kernel.odd_question_(Rational.ZERO));
 	    this.assert(Kernel.odd_question_(FloatPoint.makeInstance(1)));
 	    this.assert(Kernel.odd_question_(Complex.makeInstance(1, 0)));
 	},
 	
 	testEven_question_ : function(){
 	    this.assert(Kernel.even_question_(Rational.ZERO));
+	    this.assert(! Kernel.even_question_(Rational.ONE));
 	    this.assert(Kernel.even_question_(FloatPoint.makeInstance(2)));
 	    this.assert(Kernel.even_question_(Complex.makeInstance(2, 0)));
 	},
@@ -323,6 +340,7 @@ function getTests() {
 	},
 	
 	testNegative_question_ : function(){
+	    this.assert(Kernel.negative_question_(Rational.makeInstance(-5)));
 	    this.assert(!Kernel.negative_question_(Rational.ONE));
 	    this.assert(!Kernel.negative_question_(Rational.ZERO));
 	    this.assert(!Kernel.negative_question_(FloatPoint.makeInstance(1.1)));

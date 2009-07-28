@@ -285,6 +285,10 @@ var plt = plt || {};
     plt.types.Rational.prototype.toExact = function() { 
 	return this;
     };
+
+    plt.types.Rational.prototype.isExact = function() {
+        return true;
+    };
     
     plt.types.Rational.prototype.toInteger = function() {
 	return Math.floor(this.n / this.d);  
@@ -448,6 +452,10 @@ var plt = plt || {};
     
     plt.types.FloatPoint.prototype.toExact = function() {
 	return plt.types.Rational.makeInstance(Math.floor(this.n), 1);
+    };
+
+    plt.types.FloatPoint.prototype.isExact = function() {
+	return false;
     };
 
 
@@ -656,6 +664,14 @@ var plt = plt || {};
 	}
 	return this.r.toExact();
     };
+
+    plt.types.Complex.prototype.isExact = function() { 
+        // FIXME: correct this when the numerator and denominator are
+        // represented as generic numbers, and not as floats.
+        return false;
+    };
+
+
 
     plt.types.Complex.prototype.level = function(){
 	return 2;

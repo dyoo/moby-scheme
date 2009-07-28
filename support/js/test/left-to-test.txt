@@ -1,10 +1,3 @@
- exact?
- integer?
- zero?
- positive?
- negative?
- odd?
- even?
  add1
  sub1
  lcm

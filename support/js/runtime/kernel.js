@@ -246,6 +246,7 @@ var plt = plt || {};
 	},
 	
 	zero_question_: function(m) {
+	    check(m, isNumber, "number");
 	    return plt.types.NumberTower.equal(m, plt.types.Rational.ZERO);
 	},
 	
@@ -336,9 +337,14 @@ var plt = plt || {};
 	    return plt.types.NumberTower.toExact(x);
 	},
 
+	exact_question_ : function(x) {
+	    check(x, isNumber, "number");
+	    return x.isExact();
+	},
+
 	inexact_question_ : function(x) {
-	    return plt.types.NumberTower.equal(x,
-					       plt.types.NumberTower.toExact(x));
+	    check(x, isNumber, "number");
+	    return ! x.isExact();
 	},
 	
 	rational_question_ : function(x) {
@@ -423,18 +429,22 @@ var plt = plt || {};
 	},
 	
 	odd_question_ : function(x){
+	    check(x, isNumber, "number");
 	    return (x.toInteger() % 2 == 1);
 	},
 	
 	even_question_ : function(x) {
+	    check(x, isNumber, "number");
 	    return (x.toInteger() % 2 == 0);
 	},
 	
 	positive_question_ : function(x){
+	    check(x, isNumber, "number");
 	    return this._greaterthan_(x, Rational.ZERO, []);
 	},
 	
 	negative_question_ : function(x){
+	    check(x, isNumber, "number");
 	    return this._lessthan_(x, Rational.ZERO, []);
 	},
 	
@@ -447,6 +457,7 @@ var plt = plt || {};
 	},
 	
 	integer_question_ : function(x){
+	    check(x, isNumber, "number");
 	    return this.equal_question_(x, x.floor());
 	},
 	
