@@ -245,7 +245,7 @@ var plt = plt || {};
 
 	integer_dash_sqrt: function(x) {
 	    check(x, isInteger, "integer");
-	    return Rational.makeInstance(x.sqrt().toInteger());
+	    return plt.types.Rational.makeInstance(x.sqrt().toInteger());
 	},
 	
 	sqr: function(x) {
@@ -366,7 +366,7 @@ var plt = plt || {};
 	    for (var i = 0; i < rest.length; i++) {
 		result = _lcm(result, rest[i].toInteger());
 	    }
-	    return Rational.makeInstance(result);
+	    return plt.types.Rational.makeInstance(result);
 	},
 
 	
@@ -377,7 +377,7 @@ var plt = plt || {};
 	    for (var i = 0; i < rest.length; i++) {
 		result = _gcd(result, rest[i].toInteger());
 	    }
-	    return Rational.makeInstance(result);
+	    return plt.types.Rational.makeInstance(result);
 	},
 
 	
