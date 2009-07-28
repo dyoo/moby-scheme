@@ -296,7 +296,7 @@
             ;; equality
             (string-append (symbol->string (identifier->munged-java-identifier id))
                            ".prototype.isEqual = function(other) {
-              if (other instanceof " (symbol->string (identifier->munged-java-identifier id)) ") {
+              if (other != null && other != undefined && other instanceof " (symbol->string (identifier->munged-java-identifier id)) ") {
                 return " equality-expression-string ";
               } else {
                 return false;
@@ -345,7 +345,7 @@
                            (symbol->string (identifier->munged-java-identifier (string->symbol (string-append (symbol->string id)
                                                                                                               "?"))))
                            "(obj) { 
-              return obj instanceof "
+              return obj != null && obj != undefined && obj instanceof "
                            (symbol->string (identifier->munged-java-identifier id))
                            "; }"))
            

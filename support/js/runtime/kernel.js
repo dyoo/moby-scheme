@@ -33,15 +33,27 @@ var plt = plt || {};
 
     // Returns true if x is a number.
     function isNumber(x) {
-	return (x instanceof plt.types.Rational || 
-		x instanceof plt.types.FloatPoint ||
-		x instanceof plt.types.Complex);
+	return (x != null && x != undefined && (x instanceof plt.types.Rational || 
+						x instanceof plt.types.FloatPoint ||
+						x instanceof plt.types.Complex));
+    }
+
+
+    function isRational(x) {
+	return x != null && x != undefined && x instanceof plt.types.Rational;
+    }
+
+
+    function isComplex(x) {
+	return x != null && x != undefined && (x instanceof plt.types.Complex || 
+					       x instanceof plt.types.Rational ||
+					       x instanceof plt.types.FloatPoint);
     }
 
 
     // Returns true if x is an integer.
     function isInteger(x) {
-	return isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
+	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
     }
 
 
@@ -85,7 +97,7 @@ var plt = plt || {};
 
     // Returns true if x is a list.
     function isList(x) {
-	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
+	return x != null && x != undefined && ((x instanceof plt.types.Cons) || (x instanceof plt.types.Empty));
     }
 
 
@@ -154,7 +166,7 @@ var plt = plt || {};
 
 	
 	struct_question_: function(thing) {
-	    return (thing instanceof this.Struct);
+	    return (thing != null && thing != undefined && thing instanceof this.Struct);
 	},
 	
 	number_question_ : function(x){
@@ -453,9 +465,7 @@ var plt = plt || {};
 	},
 	
 	complex_question_ : function(x){
-	    return (x instanceof plt.types.Complex || 
-		    x instanceof plt.types.Rational ||
-		    x instanceof plt.types.FloatPoint);
+	    return isComplex(x);
 	},
 	
 	cosh : function(x) {
@@ -469,10 +479,12 @@ var plt = plt || {};
 	},
 	
 	denominator : function(x) {
+	    check(x, isRational, "rational");
 	    return plt.types.Rational.makeInstance(x.d, 1);
 	},
 	
 	numerator : function(x){
+	    check(x, isRational, "rational");
 	    return plt.types.Rational.makeInstance(x.n, 1);
 	},
 	
@@ -592,7 +604,7 @@ var plt = plt || {};
 	},
 	
 	symbol_question_ : function(x){
-	    return (x instanceof plt.types.Symbol);
+	    return (x != null && x != undefined && x instanceof plt.types.Symbol);
 	},
 	
 	
@@ -703,7 +715,7 @@ var plt = plt || {};
 	},
 	
 	cons_question_: function(lst){
-	    return lst instanceof plt.types.Cons;
+	    return lst != null && lst != undefined && lst instanceof plt.types.Cons;
 	},
 	
 	sixth : function(lst){
@@ -795,15 +807,15 @@ var plt = plt || {};
 	},
 	
 	null_question_ : function(x){
-	    return x instanceof plt.types.Empty;
+	    return x != null && x != undefined && x instanceof plt.types.Empty;
 	},
 	
 	empty_question_: function(x) {
-	    return x instanceof plt.types.Empty;
+	    return x != null && x != undefined && x instanceof plt.types.Empty;
 	},
 	
 	pair_question_ : function(x){
-	    return x instanceof plt.types.Cons;
+	    return x != null && x != undefined && x instanceof plt.types.Cons;
 	},
 	
 	string_dash__greaterthan_number : function(str){
@@ -890,7 +902,7 @@ var plt = plt || {};
 	},
 
 	char_question_: function(x) {
-	    return x instanceof plt.types.Char;
+	    return x != null && x != undefined && x instanceof plt.types.Char;
 	},
 	
 	char_dash__greaterthan_integer : function(ch){
@@ -1206,7 +1218,7 @@ var plt = plt || {};
     posn.prototype = heir(plt.Kernel.Struct.prototype);
 
     posn.prototype.isEqual = function(other) {
-        if (other instanceof posn) {
+        if (other != null & other != undefined && other instanceof posn) {
             return (((plt.Kernel.equal_question_((posn_dash_y(this)),(posn_dash_y(other)))))&&((((plt.Kernel.equal_question_((posn_dash_x(this)),(posn_dash_x(other)))))&&(plt.types.Logic.TRUE))));
         } else {
             return plt.types.Logic.FALSE;
@@ -1225,7 +1237,7 @@ var plt = plt || {};
     function posn_dash_x(obj) { return obj.x; }
     function posn_dash_y(obj) { return obj.y; }
     function posn_question_(obj) { 
-        return obj instanceof posn ; 
+        return obj != null && obj != undefined && obj instanceof posn ; 
     }
     
     plt.Kernel.make_dash_posn = make_dash_posn;
@@ -1284,7 +1296,7 @@ var plt = plt || {};
 
 
     plt.Kernel.image_question_ = function(thing) {
-	return (thing instanceof BaseImage);
+	return (thing != null && thing != undefined && thing instanceof BaseImage);
     };
 
 

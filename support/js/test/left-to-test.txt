@@ -1,4 +1,3 @@
- rational?
  numerator
  denominator
  inexact?

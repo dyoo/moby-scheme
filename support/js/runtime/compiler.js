@@ -7,7 +7,7 @@ permission_colon_location.prototype.toWrittenString = function() {
                                return '(' + ['make-permission:location'].join(' ') + ')'; };permission_colon_location.prototype.toDisplayedString = permission_colon_location.prototype.toWrittenString;
 
 permission_colon_location.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_location) {
+              if (other != null && other != undefined && other instanceof permission_colon_location) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -16,14 +16,14 @@ permission_colon_location.prototype.isEqual = function(other) {
 function make_dash_permission_colon_location() { return new permission_colon_location(); }
 
 function permission_colon_location_question_(obj) { 
-              return obj instanceof permission_colon_location; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_location; }
 function permission_colon_send_dash_sms() {  }
                     permission_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
 permission_colon_send_dash_sms.prototype.toWrittenString = function() { 
                                return '(' + ['make-permission:send-sms'].join(' ') + ')'; };permission_colon_send_dash_sms.prototype.toDisplayedString = permission_colon_send_dash_sms.prototype.toWrittenString;
 
 permission_colon_send_dash_sms.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_send_dash_sms) {
+              if (other != null && other != undefined && other instanceof permission_colon_send_dash_sms) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -32,14 +32,14 @@ permission_colon_send_dash_sms.prototype.isEqual = function(other) {
 function make_dash_permission_colon_send_dash_sms() { return new permission_colon_send_dash_sms(); }
 
 function permission_colon_send_dash_sms_question_(obj) { 
-              return obj instanceof permission_colon_send_dash_sms; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_send_dash_sms; }
 function permission_colon_receive_dash_sms() {  }
                     permission_colon_receive_dash_sms.prototype = new plt.Kernel.Struct();
 permission_colon_receive_dash_sms.prototype.toWrittenString = function() { 
                                return '(' + ['make-permission:receive-sms'].join(' ') + ')'; };permission_colon_receive_dash_sms.prototype.toDisplayedString = permission_colon_receive_dash_sms.prototype.toWrittenString;
 
 permission_colon_receive_dash_sms.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_receive_dash_sms) {
+              if (other != null && other != undefined && other instanceof permission_colon_receive_dash_sms) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -48,14 +48,14 @@ permission_colon_receive_dash_sms.prototype.isEqual = function(other) {
 function make_dash_permission_colon_receive_dash_sms() { return new permission_colon_receive_dash_sms(); }
 
 function permission_colon_receive_dash_sms_question_(obj) { 
-              return obj instanceof permission_colon_receive_dash_sms; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_receive_dash_sms; }
 function permission_colon_tilt() {  }
                     permission_colon_tilt.prototype = new plt.Kernel.Struct();
 permission_colon_tilt.prototype.toWrittenString = function() { 
                                return '(' + ['make-permission:tilt'].join(' ') + ')'; };permission_colon_tilt.prototype.toDisplayedString = permission_colon_tilt.prototype.toWrittenString;
 
 permission_colon_tilt.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_tilt) {
+              if (other != null && other != undefined && other instanceof permission_colon_tilt) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -64,14 +64,14 @@ permission_colon_tilt.prototype.isEqual = function(other) {
 function make_dash_permission_colon_tilt() { return new permission_colon_tilt(); }
 
 function permission_colon_tilt_question_(obj) { 
-              return obj instanceof permission_colon_tilt; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_tilt; }
 function permission_colon_internet() {  }
                     permission_colon_internet.prototype = new plt.Kernel.Struct();
 permission_colon_internet.prototype.toWrittenString = function() { 
                                return '(' + ['make-permission:internet'].join(' ') + ')'; };permission_colon_internet.prototype.toDisplayedString = permission_colon_internet.prototype.toWrittenString;
 
 permission_colon_internet.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_internet) {
+              if (other != null && other != undefined && other instanceof permission_colon_internet) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -80,14 +80,14 @@ permission_colon_internet.prototype.isEqual = function(other) {
 function make_dash_permission_colon_internet() { return new permission_colon_internet(); }
 
 function permission_colon_internet_question_(obj) { 
-              return obj instanceof permission_colon_internet; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_internet; }
 function permission_colon_telephony() {  }
                     permission_colon_telephony.prototype = new plt.Kernel.Struct();
 permission_colon_telephony.prototype.toWrittenString = function() { 
                                return '(' + ['make-permission:telephony'].join(' ') + ')'; };permission_colon_telephony.prototype.toDisplayedString = permission_colon_telephony.prototype.toWrittenString;
 
 permission_colon_telephony.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_telephony) {
+              if (other != null && other != undefined && other instanceof permission_colon_telephony) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -96,14 +96,14 @@ permission_colon_telephony.prototype.isEqual = function(other) {
 function make_dash_permission_colon_telephony() { return new permission_colon_telephony(); }
 
 function permission_colon_telephony_question_(obj) { 
-              return obj instanceof permission_colon_telephony; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_telephony; }
 function permission_colon_wake_dash_lock() {  }
                     permission_colon_wake_dash_lock.prototype = new plt.Kernel.Struct();
 permission_colon_wake_dash_lock.prototype.toWrittenString = function() { 
                                return '(' + ['make-permission:wake-lock'].join(' ') + ')'; };permission_colon_wake_dash_lock.prototype.toDisplayedString = permission_colon_wake_dash_lock.prototype.toWrittenString;
 
 permission_colon_wake_dash_lock.prototype.isEqual = function(other) {
-              if (other instanceof permission_colon_wake_dash_lock) {
+              if (other != null && other != undefined && other instanceof permission_colon_wake_dash_lock) {
                 return plt.types.Logic.TRUE;
               } else {
                 return false;
@@ -112,7 +112,7 @@ permission_colon_wake_dash_lock.prototype.isEqual = function(other) {
 function make_dash_permission_colon_wake_dash_lock() { return new permission_colon_wake_dash_lock(); }
 
 function permission_colon_wake_dash_lock_question_(obj) { 
-              return obj instanceof permission_colon_wake_dash_lock; }
+              return obj != null && obj != undefined && obj instanceof permission_colon_wake_dash_lock; }
 function permission_question_(datum) { return ((permission_colon_location_question_(datum))||(permission_colon_send_dash_sms_question_(datum))||(permission_colon_receive_dash_sms_question_(datum))||(permission_colon_tilt_question_(datum))||(permission_colon_internet_question_(datum))||(permission_colon_telephony_question_(datum))||(permission_colon_wake_dash_lock_question_(datum))); }
 var PERMISSION_colon_LOCATION; 
 var PERMISSION_colon_SEND_dash_SMS; 
@@ -186,7 +186,7 @@ env.prototype.toWrittenString = function() {
                                return '(' + ['make-env',this.bindings.toWrittenString()].join(' ') + ')'; };env.prototype.toDisplayedString = env.prototype.toWrittenString;
 
 env.prototype.isEqual = function(other) {
-              if (other instanceof env) {
+              if (other != null && other != undefined && other instanceof env) {
                 return ((plt.Kernel.equal_question_((env_dash_bindings(this)),(env_dash_bindings(other))))&&plt.types.Logic.TRUE);
               } else {
                 return false;
@@ -195,7 +195,7 @@ env.prototype.isEqual = function(other) {
 function make_dash_env(id0) { return new env(id0); }
 function env_dash_bindings(obj) { return obj.bindings; }
 function env_question_(obj) { 
-              return obj instanceof env; }
+              return obj != null && obj != undefined && obj instanceof env; }
 var empty_dash_env; 
 function binding_question_(datum) { return ((binding_colon_constant_question_(datum))||(binding_colon_function_question_(datum))); }
 function binding_colon_constant(name,java_dash_string,permissions) { this.name = name;
@@ -206,7 +206,7 @@ binding_colon_constant.prototype.toWrittenString = function() {
                                return '(' + ['make-binding:constant',this.name.toWrittenString(),this.java_dash_string.toWrittenString(),this.permissions.toWrittenString()].join(' ') + ')'; };binding_colon_constant.prototype.toDisplayedString = binding_colon_constant.prototype.toWrittenString;
 
 binding_colon_constant.prototype.isEqual = function(other) {
-              if (other instanceof binding_colon_constant) {
+              if (other != null && other != undefined && other instanceof binding_colon_constant) {
                 return ((plt.Kernel.equal_question_((binding_colon_constant_dash_permissions(this)),(binding_colon_constant_dash_permissions(other))))&&((plt.Kernel.equal_question_((binding_colon_constant_dash_java_dash_string(this)),(binding_colon_constant_dash_java_dash_string(other))))&&((plt.Kernel.equal_question_((binding_colon_constant_dash_name(this)),(binding_colon_constant_dash_name(other))))&&plt.types.Logic.TRUE)));
               } else {
                 return false;
@@ -217,7 +217,7 @@ function binding_colon_constant_dash_name(obj) { return obj.name; }
 function binding_colon_constant_dash_java_dash_string(obj) { return obj.java_dash_string; }
 function binding_colon_constant_dash_permissions(obj) { return obj.permissions; }
 function binding_colon_constant_question_(obj) { 
-              return obj instanceof binding_colon_constant; }
+              return obj != null && obj != undefined && obj instanceof binding_colon_constant; }
 function binding_colon_function(name,module_dash_path,min_dash_arity,var_dash_arity_question_,java_dash_string,permissions,cps_question_) { this.name = name;
 this.module_dash_path = module_dash_path;
 this.min_dash_arity = min_dash_arity;
@@ -230,7 +230,7 @@ binding_colon_function.prototype.toWrittenString = function() {
                                return '(' + ['make-binding:function',this.name.toWrittenString(),this.module_dash_path.toWrittenString(),this.min_dash_arity.toWrittenString(),this.var_dash_arity_question_.toWrittenString(),this.java_dash_string.toWrittenString(),this.permissions.toWrittenString(),this.cps_question_.toWrittenString()].join(' ') + ')'; };binding_colon_function.prototype.toDisplayedString = binding_colon_function.prototype.toWrittenString;
 
 binding_colon_function.prototype.isEqual = function(other) {
-              if (other instanceof binding_colon_function) {
+              if (other != null && other != undefined && other instanceof binding_colon_function) {
                 return ((plt.Kernel.equal_question_((binding_colon_function_dash_cps_question_(this)),(binding_colon_function_dash_cps_question_(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_permissions(this)),(binding_colon_function_dash_permissions(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_java_dash_string(this)),(binding_colon_function_dash_java_dash_string(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_var_dash_arity_question_(this)),(binding_colon_function_dash_var_dash_arity_question_(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_min_dash_arity(this)),(binding_colon_function_dash_min_dash_arity(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_module_dash_path(this)),(binding_colon_function_dash_module_dash_path(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_name(this)),(binding_colon_function_dash_name(other))))&&plt.types.Logic.TRUE)))))));
               } else {
                 return false;
@@ -245,7 +245,7 @@ function binding_colon_function_dash_java_dash_string(obj) { return obj.java_das
 function binding_colon_function_dash_permissions(obj) { return obj.permissions; }
 function binding_colon_function_dash_cps_question_(obj) { return obj.cps_question_; }
 function binding_colon_function_question_(obj) { 
-              return obj instanceof binding_colon_function; }
+              return obj != null && obj != undefined && obj instanceof binding_colon_function; }
 function binding_dash_id(a_dash_binding) { return ((binding_colon_constant_question_(a_dash_binding)) ?
  (binding_colon_constant_dash_name(a_dash_binding)) :
  ((binding_colon_function_question_(a_dash_binding)) ?
@@ -480,7 +480,7 @@ module_dash_binding.prototype.toWrittenString = function() {
                                return '(' + ['make-module-binding',this.name.toWrittenString(),this.path.toWrittenString(),this.bindings.toWrittenString()].join(' ') + ')'; };module_dash_binding.prototype.toDisplayedString = module_dash_binding.prototype.toWrittenString;
 
 module_dash_binding.prototype.isEqual = function(other) {
-              if (other instanceof module_dash_binding) {
+              if (other != null && other != undefined && other instanceof module_dash_binding) {
                 return ((plt.Kernel.equal_question_((module_dash_binding_dash_bindings(this)),(module_dash_binding_dash_bindings(other))))&&((plt.Kernel.equal_question_((module_dash_binding_dash_path(this)),(module_dash_binding_dash_path(other))))&&((plt.Kernel.equal_question_((module_dash_binding_dash_name(this)),(module_dash_binding_dash_name(other))))&&plt.types.Logic.TRUE)));
               } else {
                 return false;
@@ -491,7 +491,7 @@ function module_dash_binding_dash_name(obj) { return obj.name; }
 function module_dash_binding_dash_path(obj) { return obj.path; }
 function module_dash_binding_dash_bindings(obj) { return obj.bindings; }
 function module_dash_binding_question_(obj) { 
-              return obj instanceof module_dash_binding; }
+              return obj != null && obj != undefined && obj instanceof module_dash_binding; }
 var world_dash_effects_dash_module; 
 var world_dash_handlers_dash_module; 
 function make_dash_world_dash_module(module_dash_path) { return ((function() { 
@@ -532,7 +532,7 @@ pinfo.prototype.toWrittenString = function() {
                                return '(' + ['make-pinfo',this.env.toWrittenString(),this.modules.toWrittenString(),this.used_dash_bindings_dash_hash.toWrittenString(),this.gensym_dash_counter.toWrittenString()].join(' ') + ')'; };pinfo.prototype.toDisplayedString = pinfo.prototype.toWrittenString;
 
 pinfo.prototype.isEqual = function(other) {
-              if (other instanceof pinfo) {
+              if (other != null && other != undefined && other instanceof pinfo) {
                 return ((plt.Kernel.equal_question_((pinfo_dash_gensym_dash_counter(this)),(pinfo_dash_gensym_dash_counter(other))))&&((plt.Kernel.equal_question_((pinfo_dash_used_dash_bindings_dash_hash(this)),(pinfo_dash_used_dash_bindings_dash_hash(other))))&&((plt.Kernel.equal_question_((pinfo_dash_modules(this)),(pinfo_dash_modules(other))))&&((plt.Kernel.equal_question_((pinfo_dash_env(this)),(pinfo_dash_env(other))))&&plt.types.Logic.TRUE))));
               } else {
                 return false;
@@ -544,7 +544,7 @@ function pinfo_dash_modules(obj) { return obj.modules; }
 function pinfo_dash_used_dash_bindings_dash_hash(obj) { return obj.used_dash_bindings_dash_hash; }
 function pinfo_dash_gensym_dash_counter(obj) { return obj.gensym_dash_counter; }
 function pinfo_question_(obj) { 
-              return obj instanceof pinfo; }
+              return obj != null && obj != undefined && obj instanceof pinfo; }
 var empty_dash_pinfo; 
 function get_dash_base_dash_pinfo(language) { return ((plt.Kernel.symbol_equal__question_(language,(plt.types.Symbol.makeInstance("moby")))) ?
  (make_dash_pinfo((extend_dash_env_slash_module_dash_binding(toplevel_dash_env,moby_dash_module_dash_binding)),plt.types.Empty.EMPTY,(plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1)))) :
@@ -925,7 +925,7 @@ compiled_dash_program.prototype.toWrittenString = function() {
                                return '(' + ['make-compiled-program',this.defns.toWrittenString(),this.toplevel_dash_exprs.toWrittenString(),this.pinfo.toWrittenString()].join(' ') + ')'; };compiled_dash_program.prototype.toDisplayedString = compiled_dash_program.prototype.toWrittenString;
 
 compiled_dash_program.prototype.isEqual = function(other) {
-              if (other instanceof compiled_dash_program) {
+              if (other != null && other != undefined && other instanceof compiled_dash_program) {
                 return ((plt.Kernel.equal_question_((compiled_dash_program_dash_pinfo(this)),(compiled_dash_program_dash_pinfo(other))))&&((plt.Kernel.equal_question_((compiled_dash_program_dash_toplevel_dash_exprs(this)),(compiled_dash_program_dash_toplevel_dash_exprs(other))))&&((plt.Kernel.equal_question_((compiled_dash_program_dash_defns(this)),(compiled_dash_program_dash_defns(other))))&&plt.types.Logic.TRUE)));
               } else {
                 return false;
@@ -936,7 +936,7 @@ function compiled_dash_program_dash_defns(obj) { return obj.defns; }
 function compiled_dash_program_dash_toplevel_dash_exprs(obj) { return obj.toplevel_dash_exprs; }
 function compiled_dash_program_dash_pinfo(obj) { return obj.pinfo; }
 function compiled_dash_program_question_(obj) { 
-              return obj instanceof compiled_dash_program; }
+              return obj != null && obj != undefined && obj instanceof compiled_dash_program; }
 function compiled_dash_program_dash_main(a_dash_compiled_dash_program) { return plt.Kernel.string_dash_append([(compiled_dash_program_dash_defns(a_dash_compiled_dash_program)),(plt.types.String.makeInstance("\n")),(plt.types.String.makeInstance("(function() { \n")),(plt.types.String.makeInstance("(")),(compiled_dash_program_dash_toplevel_dash_exprs(a_dash_compiled_dash_program)),(plt.types.String.makeInstance(")")),(plt.types.String.makeInstance("(plt.Kernel.identity)")),(plt.types.String.makeInstance("\n})();"))]); }
 function program_dash__greaterthan_compiled_dash_program(program) { return (program_dash__greaterthan_compiled_dash_program_slash_pinfo(program,(get_dash_base_dash_pinfo((plt.types.Symbol.makeInstance("base")))))); }
 function program_dash__greaterthan_compiled_dash_program_slash_pinfo(program, input_dash_pinfo) { return ((function() { 
@@ -1114,7 +1114,7 @@ return plt.Kernel.list([plt.Kernel.string_dash_append([plt.Kernel.string_dash_ap
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [fields]))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("].join(' ') + ')'; };")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.toDisplayedString = ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.toWrittenString;\n"))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.isEqual = function(other) {\n              if (other instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(") {\n                return ")),equality_dash_expression_dash_string,(plt.types.String.makeInstance(";\n              } else {\n                return false;\n              }\n           } "))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),((function() { 
+                   })()), [fields]))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("].join(' ') + ')'; };")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.toDisplayedString = ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.toWrittenString;\n"))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.isEqual = function(other) {\n              if (other != null && other != undefined && other instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(") {\n                return ")),equality_dash_expression_dash_string,(plt.types.String.makeInstance(";\n              } else {\n                return false;\n              }\n           } "))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),((function() { 
 
 var make_dash_id; 
 (function (toplevel_dash_expression_dash_show75) { 
@@ -1150,7 +1150,7 @@ return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [fields]),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance("?"))]))))))),(plt.types.String.makeInstance("(obj) { \n              return obj instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance("; }"))])]),(plt.types.String.makeInstance("")),updated_dash_pinfo]);
+                   })()), [fields]),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance("?"))]))))))),(plt.types.String.makeInstance("(obj) { \n              return obj != null && obj != undefined && obj instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance("; }"))])]),(plt.types.String.makeInstance("")),updated_dash_pinfo]);
               })()); }
 function expression_dash__greaterthan_javascript_dash_string(expr, env, a_dash_pinfo) { return ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("local")))) ?
  ((function() { 
