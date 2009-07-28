@@ -38,6 +38,10 @@ var plt = plt || {};
 						x instanceof plt.types.Complex));
     }
 
+    function isReal(x) {
+	return (isNumber(x) && x.isReal());
+
+    }
 
     function isRational(x) {
 	return x != null && x != undefined && x instanceof plt.types.Rational;
@@ -243,6 +247,7 @@ var plt = plt || {};
 	},
 	
 	floor: function(x) {
+	    
 	    return x.floor();
 	},
 	
@@ -560,8 +565,7 @@ var plt = plt || {};
 	
 
 	real_question_ : function(x){
-	    return (plt.Kernel.number_question_(x) &&
-		    x.isReal());
+	    return isReal(x);
 	},
 	
 	

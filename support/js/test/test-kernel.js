@@ -326,10 +326,14 @@ var getTests;
 	    
 	    testDenominator : function(){
 		this.assert(Kernel.equal_question_(Kernel.denominator(Rational.makeInstance(7,2)), Rational.makeInstance(2,1)));
+		this.assertRaise("TypeError",
+				 function() { Kernel.denominator(FloatPoint.makeInstance(3)); });
 	    },
 	    
 	    testNumerator : function(){
 		this.assert(Kernel.equal_question_(Kernel.numerator(Rational.makeInstance(7,2)), Rational.makeInstance(7,1)));
+		this.assertRaise("TypeError",
+				 function() { Kernel.numerator(FloatPoint.makeInstance(3)); });
 	    },
 
 

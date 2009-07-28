@@ -1,7 +1,3 @@
- numerator
- denominator
- inexact?
- real?
  floor
  ceiling
  round
