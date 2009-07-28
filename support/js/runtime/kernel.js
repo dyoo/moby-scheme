@@ -226,6 +226,8 @@ var plt = plt || {};
 	},
 	
 	modulo: function(m, n) {
+	    check(m, isNumber, "number");
+	    check(n, isNumber, "number");
 	    return plt.types.NumberTower.modulo(m, n);
 	},
 	
@@ -449,14 +451,19 @@ var plt = plt || {};
 	},
 	
 	quotient : function(x, y){
+	    check(x, isNumber, "number");
+	    check(y, isNumber, "number");
 	    return plt.types.Rational.makeInstance(plt.types.NumberTower.divide(x,y).floor().toInteger(),
 						   1);
 	},
 	
 	remainder : function(x, y) {
+	    check(x, isNumber, "number");
+	    check(y, isNumber, "number");
 	    return plt.types.Rational.makeInstance(x.toInteger() % y.toInteger(), 1);
 	},
 	
+
 	real_question_ : function(x){
 	    return (plt.Kernel.number_question_(x) &&
 		    x.isReal());
