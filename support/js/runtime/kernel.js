@@ -14,6 +14,23 @@ var plt = plt || {};
     }
 
 
+
+    // _gcd: integer integer -> integer
+    function _gcd(a, b) {
+	while (b != 0) {
+	    t = a;
+	    a = b;
+	    b = t % b;
+	}
+	return a;
+    }
+
+    // _lcm: integer integer -> integer
+    function _lcm(a, b) {
+	return a * b / _gcd(a, b);
+    }
+
+
     // Returns true if x is a number.
     function isNumber(x) {
 	return (x instanceof plt.types.Rational || 
@@ -341,6 +358,28 @@ var plt = plt || {};
 			     rest);
 	},
 	
+
+	lcm : function(first, rest) {
+	    check(first, isInteger, "number");
+	    arrayEach(rest, function() { check(this, isInteger, "number"); });
+	    var result = first.toInteger();
+	    for (var i = 0; i < rest.length; i++) {
+		result = _lcm(result, rest[i].toInteger());
+	    }
+	    return Rational.makeInstance(result);
+	},
+
+	
+	gcd : function(first, rest) {
+	    check(first, isInteger, "number");
+	    arrayEach(rest, function() { check(this, isInteger, "number"); });	    
+	    var result = first.toInteger();
+	    for (var i = 0; i < rest.length; i++) {
+		result = _gcd(result, rest[i].toInteger());
+	    }
+	    return Rational.makeInstance(result);
+	},
+
 	
 	inexact_dash__greaterthan_exact: function(x) {
 	    return plt.types.NumberTower.toExact(x);

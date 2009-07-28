@@ -419,6 +419,30 @@ function getTests() {
             this.assertEqual(n5, Kernel.max(n1, [n2, n3, n5]));
             this.assertEqual(n1, Kernel.min(n2, [n3, n4, n5, n1]));
 	},
+
+	testLcm : function () {
+	    this.assert(Kernel.equal_question_(Rational.makeInstance(12),
+					       Kernel.lcm(Rational.makeInstance(1),
+							  [Rational.makeInstance(2), Rational.makeInstance(3), Rational.makeInstance(4)])));
+	},
+
+	testGcd : function () {
+	    this.assert(Kernel.equal_question_(Rational.makeInstance(1),
+					       Kernel.gcd(Rational.makeInstance(1),
+							  [Rational.makeInstance(2), Rational.makeInstance(3), Rational.makeInstance(4)])));
+
+	    this.assert(Kernel.equal_question_(Rational.makeInstance(5),
+					       Kernel.gcd(Rational.makeInstance(100),
+							  [Rational.makeInstance(5), Rational.makeInstance(10), Rational.makeInstance(25)])));
+	},
+
+
+	testIsRational : function() {
+	    this.assert(Kernel.rational_question_(Rational.makeInstance(42)));
+	    this.assert(! Kernel.rational_question_(FloatPoint.makeInstance(3.1415)));
+	    this.assert(! Kernel.rational_question_("blah"));
+	},	
+
 	
 	testNumberQuestion : function() {
             this.assert(Kernel.number_question_(plt.types.Rational.makeInstance(42)));

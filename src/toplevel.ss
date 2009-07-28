@@ -95,14 +95,14 @@
                      (exp 1)
                      (expt 2)
                      (floor 1)
-                     (gcd 2 true)
+                     (gcd 1 true)
                      (imag-part 1)
                      (inexact->exact 1)
                      (inexact? 1)
                      (integer->char 1)
                      (integer-sqrt 1)         ;; *
                      (integer? 1)
-                     (lcm 2 true)
+                     (lcm 1 true)
                      (log 1)
                      (magnitude 1)
                      (make-polar 2)           ;; *

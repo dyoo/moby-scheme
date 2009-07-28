@@ -12,29 +12,6 @@ var plt = plt || {};
     
 
 
-    // Strings
-    // For the moment, we just reuse Javascript strings.
-    plt.types.String = String;
-    plt.types.String.makeInstance = function(s) {
-	return s;
-    };
-    
-    plt.types.String.prototype.isEqual = function(other){
-	return this == other;
-    };
-    
-
-    plt.types.String.prototype.toWrittenString = function() {
-    	return '"' + this.replace(/["\\]/g,
-    	                       function(match, submatch, index) {
-                                       return "\\" + match;
-                                   }) + '"';
-    }
-
-    plt.types.String.prototype.toDisplayedString = function() {
-        return this;
-    }
-
 
     // Chars
     // Char: string -> Char
@@ -1017,4 +994,35 @@ var plt = plt || {};
 	return x.expt(y);
     };
     
+
+
+
+
+
+
+    // Strings
+    // For the moment, we just reuse Javascript strings.
+    plt.types.String = String;
+    plt.types.String.makeInstance = function(s) {
+	return s;
+    };
+    
+    plt.types.String.prototype.isEqual = function(other){
+	return this == other;
+    };
+    
+
+    plt.types.String.prototype.toWrittenString = function() {
+    	return '"' + this.replace(/["\\]/g,
+    	                       function(match, submatch, index) {
+                                       return "\\" + match;
+                                   }) + '"';
+    }
+
+    plt.types.String.prototype.toDisplayedString = function() {
+        return this;
+    }
+
+
+
 })();
