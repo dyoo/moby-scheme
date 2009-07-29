@@ -318,6 +318,7 @@ var getTests;
 	    },
 
 
+
 	    testMakePolar : function() {
 		this.assert(Kernel.equal_question_(Kernel.make_dash_polar(Rational.makeInstance(5),
 									  Rational.makeInstance(0)),
@@ -335,8 +336,13 @@ var getTests;
 	    
 	    
 	    testMakeRectangular: function() {
-		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular(Rational.makeInstance(5),
-										Rational.makeInstance(4)),
+		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular
+						   (Rational.makeInstance(4),
+						    Rational.makeInstance(3)),
+						   Complex.makeInstance(4, 3)));		
+		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular
+						   (Rational.makeInstance(5),
+						    Rational.makeInstance(4)),
 						   Complex.makeInstance(5, 4)));
 	    },
 
@@ -976,7 +982,7 @@ var getTests;
 		var s3 = Char.makeInstance("h");
 		var s4 = Char.makeInstance("g");
 		this.assert(Kernel.char_equal__question_(s1, s2, [s3]));
-		this.assert(!Kernel.char_equal__question_(s1,s2,[s4]));
+		this.assert(! Kernel.char_equal__question_(s1, s2, [s4]));
 	    },
 	    
 	    testChar_lessthan__question_ : function(){

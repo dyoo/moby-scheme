@@ -18,7 +18,7 @@ var plt = plt || {};
     // _gcd: integer integer -> integer
     function _gcd(a, b) {
 	while (b != 0) {
-	    t = a;
+	    var t = a;
 	    a = b;
 	    b = t % b;
 	}
@@ -153,24 +153,32 @@ var plt = plt || {};
     }
 
 
-    // checkNumericComparison: (number number (arrayof number) -> boolean) -> (number number (arrayof number) -> boolean) 
-    function checkNumericComparison(comparisonF) {
+    // makeChainingComparator: (X -> boolean) string (X X (arrayof X) -> boolean) -> (X X (arrayof X) -> boolean) 
+    function makeChainingComparator(typeCheckF, typeName, comparisonF) {
 	return function(first, second, rest) {
-	    check(first, isNumber, "first must be a number");
-	    check(second, isNumber, "second must be a number");
+	    check(first, typeCheckF, "first must be a " + typeName);
+	    check(second, typeCheckF, "second must be a " + typeName);
 	    arrayEach(rest, 
-		      function() { checkListof(this, isNumber, 
-					       "all arguments must be numbers") });
+		      function() { check(this, typeCheckF, 
+					 "each argument must be a " + typeName) });
 	    return comparisonF(first, second, rest);
 	}
     }
 
 
 
-    function makeNumericComparator(test) {
-	return checkNumericComparison(function(first, second, rest) {
-	    return chainTest(test, first, second, rest);
-	});
+    function makeNumericChainingComparator(test) {
+	return makeChainingComparator(isNumber, "number",
+				      function(first, second, rest) {
+					  return chainTest(test, first, second, rest);
+				      });
+    }
+
+    function makeCharChainingComparator(test) {
+	return makeChainingComparator(isChar, "char",
+				      function(first, second, rest) {
+					  return chainTest(test, first, second, rest);
+				      });
     }
 
 
@@ -386,11 +394,11 @@ var plt = plt || {};
 	    return div;    
 	},
 	
-	_equal_ : makeNumericComparator(plt.types.NumberTower.equal),
-	_greaterthan__equal_: makeNumericComparator(plt.types.NumberTower.greaterThanOrEqual),
-	_lessthan__equal_: makeNumericComparator(plt.types.NumberTower.lessThanOrEqual),
-	_greaterthan_: makeNumericComparator(plt.types.NumberTower.greaterThan),
-	_lessthan_: makeNumericComparator(plt.types.NumberTower.lessThan),
+	_equal_ : makeNumericChainingComparator(plt.types.NumberTower.equal),
+	_greaterthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.greaterThanOrEqual),
+	_lessthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.lessThanOrEqual),
+	_greaterthan_: makeNumericChainingComparator(plt.types.NumberTower.greaterThan),
+	_lessthan_: makeNumericChainingComparator(plt.types.NumberTower.lessThan),
 
 	
 	min : function(first, rest) {
@@ -572,11 +580,6 @@ var plt = plt || {};
 	    var y = r.toFloat() * Math.sin(theta.toFloat());
 	    return plt.types.Complex.makeInstance(x, y);
 	},
-
-	make_dash_rectangular: function(a, b) {
-	    return plt.types.Complex.makeInstance(a, b);
-	},
-
 
 	integer_question_ : function(x){
 	    check(x, isNumber, "number");
@@ -988,60 +991,39 @@ var plt = plt || {};
 	    return (str >= "a" && str <= "z") || (str >= "A" && str <= "Z");
 	},
 	
-	char_equal__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x.isEqual(y);}, first, second, rest);
-	},
+	char_equal__question_ : makeCharChainingComparator(
+	    function(x, y) { return x.val == y.val; }),
 	
-	char_lessthan__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x.val < y.val}, first, second, rest);
-	},
+	char_lessthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val < y.val; }),
 	
-	char_lessthan__equal__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x.val <= y.val}, first, second, rest);
-	},
 	
-	char_greaterthan__question_ : function(first, second, rest){
-	    return !char_lessthan__equal__question_(first, second, rest);
-	},
-	
-	char_greaterthan__equal__question_ : function(first, second, rest){
-	    return !char_lessthan__question_(first, second, rest);
-	},
-	
-	char_dash_ci_equal__question_ : function(first, second, rest){
-	    first = plt.types.Char.makeInstance(first.val.toUpperCase());
-	    second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	    }
-	    return plt.Kernel.char_equal__question_(first, second, rest);
-	},
-	
-	char_dash_ci_lessthan__question_ : function(first, second, rest){
-	    first = plt.types.Char.makeInstance(first.val.toUpperCase());
-	    second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	    }
-	    return plt.Kernel.char_lessthan__question_(first, second, rest);
-	},
+	char_lessthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val <= y.val; }),
 
-	char_dash_ci_lessthan__equal__question_ : function(first, second, rest){
-	    first = plt.types.Char.makeInstance(first.val.toUpperCase());
-	    second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	    }
-	    return plt.Kernel.char_lessthan__equal__question_(first, second, rest);
-	},
 	
-	char_dash_ci_greaterthan__question_ : function(first, second, rest){
-	    return !plt.Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
-	},
+	char_greaterthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val > y.val; }),
 	
-	char_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	    return !plt.Kernel.char_dash_ci_lessthan__question_(first,second,rest);
-	},
+	char_greaterthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val >= y.val; }),
+	
+	char_dash_ci_equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() == y.val.toUpperCase(); }),
+
+	char_dash_ci_lessthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() < y.val.toUpperCase(); }),
+
+
+	char_dash_ci_lessthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() <= y.val.toUpperCase(); }),
+	
+	char_dash_ci_greaterthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() > y.val.toUpperCase(); }),
+
+	
+	char_dash_ci_greaterthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() >= y.val.toUpperCase(); }),
 	
 	char_dash_downcase : function(ch){
 	    var down = ch.val.toLowerCase();
