@@ -375,6 +375,24 @@ var getTests;
 	    },
 
 
+
+	    testExactToInexact : function() {
+		this.assert(Kernel._equal_(Kernel.exact_dash__greaterthan_inexact(Rational.makeInstance(3)),
+					   FloatPoint.makeInstance(3.0),
+					   []));
+		this.assert(Kernel.inexact_question_(Kernel.exact_dash__greaterthan_inexact(Rational.makeInstance(3))));
+	    },
+
+
+	    testInexactToExact : function() {
+		this.assert(Kernel._equal_(Kernel.inexact_dash__greaterthan_exact(FloatPoint.makeInstance(3)),
+					   Rational.makeInstance(3),
+					   []));
+		this.assert(Kernel.exact_question_(Kernel.inexact_dash__greaterthan_exact(FloatPoint.makeInstance(3))));
+	    },
+
+
+
 	    
 	    testOdd_question_ : function(){
 		this.assert(Kernel.odd_question_(Rational.ONE));

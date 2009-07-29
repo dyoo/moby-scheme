@@ -398,8 +398,13 @@ var plt = plt || {};
 	    return plt.types.Rational.makeInstance(result);
 	},
 
+	exact_dash__greaterthan_inexact: function(x) {
+	    check(x, isNumber, "number");
+	    return plt.types.FloatPoint.makeInstance(x.toFloat());
+	},
 	
 	inexact_dash__greaterthan_exact: function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.NumberTower.toExact(x);
 	},
 
@@ -419,14 +424,17 @@ var plt = plt || {};
 	},
 
 	number_dash__greaterthan_string: function(x) {
+	    check(x, isNumber, "number");
 	    return plt.types.String.makeInstance(x.toWrittenString());
 	},
 	
 	conjugate: function(x){
+	    check(x, isNumber, "number");
 	    return x.conjugate();
 	},
 	
 	magnitude: function(x){
+	    check(x, isNumber, "number");
 	    return x.magnitude();
 	},
 	
@@ -436,6 +444,7 @@ var plt = plt || {};
 	},
 	
 	angle : function(x) {
+	    check(x, isNumber, "number");
 	    return x.angle();
 	},
 	
@@ -515,10 +524,12 @@ var plt = plt || {};
 	},
 	
 	imag_dash_part : function(x){
+	    check(x, isNumber, "number");
 	    return x.imag_dash_part();
 	},
 	
 	real_dash_part : function(x){
+	    check(x, isNumber, "number");
 	    return x.real_dash_part();
 	},
 	
