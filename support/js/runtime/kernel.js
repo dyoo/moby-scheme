@@ -247,11 +247,12 @@ var plt = plt || {};
 	},
 	
 	floor: function(x) {
-	    
+	    check(x, isNumber, "number");
 	    return x.floor();
 	},
 	
 	ceiling: function(x) {
+	    check(x, isNumber, "number");
 	    return x.ceiling();
 	},
 	
@@ -521,6 +522,18 @@ var plt = plt || {};
 	    return x.real_dash_part();
 	},
 	
+
+	make_dash_polar: function(r, theta) {
+	    var x = r.toFloat() * Math.cos(theta.toFloat());
+	    var y = r.toFloat() * Math.sin(theta.toFloat());
+	    return plt.types.Complex.makeInstance(x, y);
+	},
+
+	make_dash_rectangular: function(a, b) {
+	    return plt.types.Complex.makeInstance(a, b);
+	},
+
+
 	integer_question_ : function(x){
 	    check(x, isNumber, "number");
 	    return this.equal_question_(x, x.floor());
@@ -570,6 +583,7 @@ var plt = plt || {};
 	
 	
 	round : function(x){
+	    check(x, isNumber, "number");
 	    return x.round();
 	},
 	

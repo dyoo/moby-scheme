@@ -310,11 +310,36 @@ var getTests;
 	    testComplex_question_ : function(){
 		this.assert(Kernel.complex_question_(PI));
 		this.assert(Kernel.complex_question_(Rational.ONE));
+		this.assert(Kernel.complex_question_(FloatPoint.makeInstance(2.718)));
 		this.assert(Kernel.complex_question_(Complex.makeInstance(0,1)));
 		this.assert(!Kernel.complex_question_(plt.types.Empty.EMPTY));
 		this.assert(!Kernel.complex_question_(String.makeInstance("hi")));
 		this.assert(!Kernel.complex_question_(Symbol.makeInstance('h')));
 	    },
+
+
+	    testMakePolar : function() {
+		this.assert(Kernel.equal_question_(Kernel.make_dash_polar(Rational.makeInstance(5),
+									  Rational.makeInstance(0)),
+						   Complex.makeInstance(5, 0)));
+		var n = Kernel.make_dash_polar(Rational.makeInstance(5),
+					       PI);
+		var delta = FloatPoint.makeInstance(0.0000001);
+		this.assert(Kernel._equal__tilde_(Kernel.imag_dash_part(n),
+						  Rational.makeInstance(0),
+						  delta));
+		this.assert(Kernel._equal__tilde_(Kernel.real_dash_part(n),
+						  Rational.makeInstance(-5),
+						  delta));
+	    },
+	    
+	    
+	    testMakeRectangular: function() {
+		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular(Rational.makeInstance(5),
+										Rational.makeInstance(4)),
+						   Complex.makeInstance(5, 4)));
+	    },
+
 	    
 	    testCosh : function(){
 		this.assert(Kernel.equal_question_(Kernel.cosh(Rational.ZERO), Rational.ONE));
@@ -540,9 +565,14 @@ var getTests;
 	    },
 	    
 	    testRound : function(){
-		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.499999)), FloatPoint.makeInstance(3), []));
-		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.5)), FloatPoint.makeInstance(4), []));
-		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.51)), FloatPoint.makeInstance(4), []));
+		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.499999)), 
+						   FloatPoint.makeInstance(3)));
+		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.5)), 
+						   FloatPoint.makeInstance(4)));
+		this.assert(Kernel.equal_question_(Kernel.round(FloatPoint.makeInstance(3.51)),
+						   FloatPoint.makeInstance(4)));
+		this.assert(Kernel.equal_question_(Kernel.round(Rational.makeInstance(3)),
+						   Rational.makeInstance(3)));
 	    },
 	    
 	    testSgn : function(){

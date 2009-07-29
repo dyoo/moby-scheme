@@ -1,7 +1,3 @@
- floor
- ceiling
- round
- complex?
  make-polar
  make-rectangular
  real-part
