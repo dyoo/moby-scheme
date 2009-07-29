@@ -1,16 +1,3 @@
- boolean?
- boolean=?
- false?
- not
- symbol?
- symbol=?
- symbol->string
- cons?
- pair?
- empty?
- null?
- cons
- null
  first
  car
  rest
@@ -141,4 +128,4 @@
 
 
 NOTE: inexact->exact isn't quite doing the right thing
-We are not supporting apply, exit, or for-each
+We are not supporting apply, exit, or for-each yet.

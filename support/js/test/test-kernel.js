@@ -609,6 +609,15 @@ var getTests;
 		this.assert(Kernel.boolean_equal__question_(Logic.TRUE, Logic.TRUE));
 		this.assert(!Kernel.boolean_equal__question_(Logic.TRUE, Logic.FALSE));
 		this.assert(Kernel.boolean_equal__question_(Logic.FALSE, Logic.FALSE));	
+		this.assertRaise("TypeError",
+				 function() {
+				     Kernel.boolean_equal__question_(Logic.TRUE, "true");
+				 });
+		this.assertRaise("TypeError",
+				 function() {
+				     Kernel.boolean_equal__question_("true", Logic.TRUE);
+				 });
+				
 	    },
 	    
 	    testBoolean_question_ : function(){

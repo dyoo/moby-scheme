@@ -38,6 +38,22 @@ var plt = plt || {};
 						x instanceof plt.types.Complex));
     }
 
+    function isSymbol(x) {
+	return (x != null && x != undefined && x instanceof plt.types.Symbol);
+    }
+
+    function isBoolean(x) {
+	return (x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
+    }
+
+    function isPair(x) {
+	return x != null && x != undefined && x instanceof plt.types.Cons;
+    }
+
+    function isEmpty(x) {
+	return x != null && x != undefined && x instanceof plt.types.Empty;
+    }
+
     function isReal(x) {
 	return (isNumber(x) && x.isReal());
 
@@ -616,11 +632,13 @@ var plt = plt || {};
 
 
 	boolean_equal__question_ : function(x, y){
+	    check(x, isBoolean, "boolean");
+	    check(y, isBoolean, "boolean");
 	    return x == y;
 	},
 	
 	boolean_question_ : function(x){
-	    return (x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
+	    return isBoolean(x);
 	},
 	
 	false_question_ : function(x){
@@ -628,19 +646,23 @@ var plt = plt || {};
 	},
 	
 	not : function(x){
+	    check(x, isBoolean, "boolean");
 	    return (!(x.valueOf())) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
 	},
 	
 	symbol_dash__greaterthan_string : function(x){
+	    check(x, isSymbol, "symbol");
 	    return plt.types.String.makeInstance(x.val);
 	},
 	
 	symbol_equal__question_ : function(x, y){
+	    check(x, isSymbol, "symbol");
+	    check(y, isSymbol, "symbol");
 	    return (x.val == y.val);
 	},
 	
 	symbol_question_ : function(x){
-	    return (x != null && x != undefined && x instanceof plt.types.Symbol);
+	    return isSymbol(x);
 	},
 	
 	
@@ -749,10 +771,23 @@ var plt = plt || {};
 	    checkList(lst, "cdr must consume a list");
 	    return lst.rest();
 	},
-	
-	cons_question_: function(lst){
-	    return lst != null && lst != undefined && lst instanceof plt.types.Cons;
+
+	null_question_ : function(x){
+	    return isEmpty(x);
 	},
+	
+	empty_question_: function(x) {
+	    return isEmpty(x);
+	},
+	
+	pair_question_ : function(x){
+	    return isPair(x);
+	},
+		
+	cons_question_: function(x){
+	    return isPair(x);
+	},
+
 	
 	sixth : function(lst){
 	    checkList(lst, "sixth must consume a list");
@@ -797,6 +832,7 @@ var plt = plt || {};
 	
 	list_dash_ref : function(lst, x){
 	    checkList(lst, "list-ref must consume a list");
+	    check(x, isInteger, "integer");
 	    var i = plt.types.Rational.ZERO;
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
 		lst = lst.rest();
@@ -840,18 +876,6 @@ var plt = plt || {};
 	    }
 	    
 	    return plt.types.Logic.FALSE;
-	},
-	
-	null_question_ : function(x){
-	    return x != null && x != undefined && x instanceof plt.types.Empty;
-	},
-	
-	empty_question_: function(x) {
-	    return x != null && x != undefined && x instanceof plt.types.Empty;
-	},
-	
-	pair_question_ : function(x){
-	    return x != null && x != undefined && x instanceof plt.types.Cons;
 	},
 	
 	string_dash__greaterthan_number : function(str){
