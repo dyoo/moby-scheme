@@ -115,6 +115,11 @@ var plt = plt || {};
 	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
     }
 
+    function isNatural(x) {
+	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor()) && x.toInteger() >= 0;
+    }
+
+
 
 
     // isAlphabeticString: string -> boolean
@@ -897,10 +902,7 @@ var plt = plt || {};
 	
 	list_dash_ref : function(lst, x){
 	    checkList(lst, "list-ref must consume a list");
-	    check(x, isInteger, "integer");
-	    if (x.toInteger() < 0) {
-		throw new MobyRuntimeError("list-ref: index < 0");
-	    }
+	    check(x, isNatural, "natural");
 	    var i = plt.types.Rational.ZERO;
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
 		if (lst.isEmpty()) {
@@ -960,6 +962,18 @@ var plt = plt || {};
 	string_dash_append : function(arr){
             return plt.types.String.makeInstance(arr.join(""));
 	},
+
+
+	replicate: function(n, s) {
+	    check(n, isNatural, "natural");
+	    check(s, isString, "string");
+	    var buffer = [];
+	    for (var i = 0; i < n.toInteger(); i++) {
+		buffer.push(s);
+	    }
+	    return plt.types.String.makeInstance(buffer.join(""));
+	},
+
 	
 	string_dash_ci_equal__question_ : function(first, second, rest){
 	    first = first.toUpperCase();
@@ -1006,23 +1020,30 @@ var plt = plt || {};
 	},
 	
 	string_dash_ref : function(str, i){
-	    return str.charAt(i.toInteger());
+	    check(str, isString, "string");
+	    check(i, isNatural, "natural");
+	    if (i.toInteger() >= str.length) {
+		throw new MobyRuntimeError("string-ref: index >= length");
+	    }
+	    return plt.types.String.makeInstance(str.charAt(i.toInteger()));
 	},
 
 	string_dash_ith : function (str, i) {
 	    check(str, isString, "string");
-	    check(i, isInteger, "integer");
+	    check(i, isNatural, "natural");
 	    if (i.toInteger() >= str.length) {
 		throw new MobyRuntimeError("index >= string length");
 	    }
 	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
 	},
 
-	int_dash_greaterthan_string: function (i) {
+	int_dash__greaterthan_string: function (i) {
+	    check(i, isInteger, "integer");
 	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
 	},
 
-	string_dash_greaterthan_int: function(str) {
+	string_dash__greaterthan_int: function(str) {
+	    check(str, isString, "string");
 	    return plt.types.Rational.makeInstance(str.toString().charCodeAt(0), 1);
 	},
 
@@ -1143,7 +1164,7 @@ var plt = plt || {};
 	},
 
 	implode: function(lst) {
-	    checkListof(lst, isChar, "listof char");
+	    checkListof(lst, isString, "listof string");
 	    var ret = [];
 	    while (!lst.isEmpty()){
 		ret.push(lst.first().toString());
@@ -1154,6 +1175,8 @@ var plt = plt || {};
 	
 
 	make_dash_string : function(n, ch){
+	    check(n, isNatural, "natural");
+	    check(ch, isChar, "char");
 	    var ret = "";
 	    var c = ch.val;
 	    var i = plt.types.Rational.ZERO;
@@ -1164,6 +1187,7 @@ var plt = plt || {};
 	},
 	
 	string_dash__greaterthan_list : function(str){
+	    check(str, isString, "string");
 	    var s = str;
 	    var ret = plt.types.Empty.EMPTY;
 	    for (var i = s.length - 1; i >= 0; i--) {
@@ -1176,6 +1200,7 @@ var plt = plt || {};
 
 
 	explode: function (str) {
+	    check(str, isString, "string");
 	    var s = str;
 	    var ret = plt.types.Empty.EMPTY;
 	    for (var i = s.length - 1; i >= 0; i--) {

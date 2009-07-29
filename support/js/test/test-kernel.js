@@ -950,9 +950,55 @@ var getTests;
 	    testString_dash_ref : function(){
 		var zhe = String.makeInstance("zhe");
 		var i = FloatPoint.makeInstance(2);
-		this.assert(Kernel.string_equal__question_(String.makeInstance("e"), Kernel.string_dash_ref(zhe, i), []));
+		this.assert(Kernel.string_equal__question_(String.makeInstance("e"), 
+							   Kernel.string_dash_ref(zhe, i), []));
 	    }, 
-	    
+	 
+
+	    testReplicate : function() {
+		this.assertEqual(String.makeInstance("hihihi"),
+				 Kernel.replicate(Rational.makeInstance(3),
+						  String.makeInstance("hi")));
+	    },
+
+	    testIntToString: function() {
+		this.assertEqual(String.makeInstance("d"),
+				 Kernel.int_dash__greaterthan_string(Rational.makeInstance(100)));
+	    },
+
+	    testStringToInt: function() {
+		this.assert(Kernel.equal_question_
+			    (Rational.makeInstance(100),
+			     Kernel.string_dash__greaterthan_int(String.makeInstance("d"))));
+	    },
+
+
+	    testExplode: function() {
+		this.assert(
+		    Kernel.equal_question_(
+			Kernel.list([String.makeInstance('b'),
+				     String.makeInstance('o'),
+				     String.makeInstance('o'),
+				     String.makeInstance('m'),
+				     String.makeInstance('!')]),
+			Kernel.explode(String.makeInstance("boom!"))));
+	    },
+
+
+	    testImplode: function() {
+		this.assert(
+		    Kernel.equal_question_(
+			String.makeInstance("floop!"),
+			Kernel.implode(Kernel.list([String.makeInstance('f'),
+						    String.makeInstance('l'),
+						    String.makeInstance('o'),
+						    String.makeInstance('o'),
+						    String.makeInstance('p'),
+						    String.makeInstance('!')]))));
+	    },
+
+
+   
 	    testString_question_ : function(){
 		this.assert(! Kernel.string_question_(Rational.ONE));
 		this.assert(Kernel.string_question_(String.makeInstance("hi")));
