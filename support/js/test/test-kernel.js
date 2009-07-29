@@ -1281,7 +1281,83 @@ var getTests;
 
 		this.assertRaise("MobyTypeError",
 				 function() { Kernel.posn_dash_x(42)} );
+	    },
+
+
+	    testError : function() {
+		this.assertRaise("MobyRuntimeError",
+				 function() { Kernel.error("sample error", []) });
+	    },
+
+
+	    testIsStruct : function() {
+		this.assert(! Kernel.struct_question_(String.makeInstance("hey")));
+		this.assert(Kernel.struct_question_(Kernel.make_dash_posn(3, 4)));
+	    },
+	    
+	    testEqualHuhApprox : function () {
+		this.assert(Kernel.equal_tilde__question_("hello", "hello", 
+							  FloatPoint.makeInstance("0.0001")));
+
+		
+		this.assert(! Kernel.equal_tilde__question_("hello", "world", 
+							    FloatPoint.makeInstance("0.0001")));
+		this.assert(! Kernel.equal_tilde__question_(Rational.makeInstance(22, 7),
+							    FloatPoint.makeInstance(3.1415),
+							    FloatPoint.makeInstance("0.001")));
+		this.assert(Kernel.equal_tilde__question_(Rational.makeInstance(22, 7),
+							  FloatPoint.makeInstance(3.1415),
+							  FloatPoint.makeInstance("0.01")));
+
+	    },
+
+	    testMap : function() {
+		this.assert(Kernel.equal_question_(Kernel.list([Rational.makeInstance(1),
+								Rational.makeInstance(4),
+								Rational.makeInstance(9)]),
+						   Kernel.map(function(args) { return Kernel.sqr(args[0])}, 
+							      [Kernel.list([Rational.makeInstance(1),
+									    Rational.makeInstance(2),
+									    Rational.makeInstance(3)])])));
+	    },
+
+
+
+	    testFoldl : function() {
+		this.assert(Kernel.equal_question_(
+		    Rational.makeInstance(6),
+		    Kernel.foldl(function(args) { return Kernel._plus_(args)}, 
+				 Rational.ZERO,
+				 [Kernel.list([Rational.makeInstance(1),
+					       Rational.makeInstance(2),
+					       Rational.makeInstance(3)])])));
+	    },
+
+
+
+	    testFoldr : function() {
+		this.assert(Kernel.equal_question_(
+		    Rational.makeInstance(6),
+		    Kernel.foldr(function(args) { return Kernel._plus_(args)}, 
+				 Rational.ZERO,
+				 [Kernel.list([Rational.makeInstance(1),
+					       Rational.makeInstance(2),
+					       Rational.makeInstance(3)])])));
+	    },
+
+
+
+
+	    testFilter : function() {
+		this.assert(Kernel.equal_question_(Kernel.list([Rational.makeInstance(2)]),
+						   Kernel.filter(function(args) { 
+						       return Kernel.even_question_(args[0])},
+								 Kernel.list([Rational.makeInstance(1),
+									      Rational.makeInstance(2),
+									      Rational.makeInstance(3)]))));
 	    }
+
+
 	
 	})
     }

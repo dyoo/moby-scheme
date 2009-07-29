@@ -1,25 +1,3 @@
- image?
- image=?
- identity
- error
- struct?
- equal?
- eq?
- eqv?
- =~
- equal~?
- eof
- eof-object?
- exit
- +
- *
- -
- /
- map
- for-each
- filter
- foldr
- foldl
  build-list
  build-string
  quicksort
@@ -37,4 +15,12 @@
 
 
 NOTE: inexact->exact isn't quite doing the right thing
-We are not supporting apply, exit, or for-each yet.
+We are not supporting:
+
+     apply, 
+     exit,
+     for-each,
+     eof
+     eof-object?
+
+at the moment.

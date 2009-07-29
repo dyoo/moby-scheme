@@ -143,6 +143,13 @@ var plt = plt || {};
     }());
 
 
+
+    function isImage(thing) {
+	return (thing != null && thing != undefined && thing instanceof BaseImage);
+    }
+
+
+
     // arrayEach: (arrayof X) (X -> void) -> void
     // Apply some function on each element of the array.
     function arrayEach(arr, f) {
@@ -289,6 +296,24 @@ var plt = plt || {};
 		return x.isEqual(y);
 	    }
 	},
+
+
+	equal_tilde__question_ : function(x, y, delta) {
+	    check(delta, isNumber, "number");
+	    if (plt.Kernel.number_question_(x).valueOf() && 
+		plt.Kernel.number_question_(y).valueOf()) {
+		if ("isEqual" in x) {
+		    return plt.types.NumberTower.approxEqual(x, y, delta);
+		} else if ("isEqual" in y) {
+		    return plt.types.NumberTower.approxEqual(y, x, delta);
+		} else {
+		    return (x == y);
+		}
+	    } else {
+		return x.isEqual(y);
+	    }
+	},
+
 	
 	eq_question_ : function(x, y){
 	    return (x == y);
@@ -405,6 +430,9 @@ var plt = plt || {};
 	
 	
 	_equal__tilde_ : function(x, y, delta) {
+	    check(x, isNumber, "number");
+	    check(y, isNumber, "number");
+	    check(delta, isNumber, "number");
 	    return plt.types.NumberTower.approxEqual(x, y, delta);
 	},
 	
@@ -426,6 +454,7 @@ var plt = plt || {};
 	
 	
 	_plus_ : function(args) {
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    var i, sum = plt.types.Rational.ZERO;
 	    for(i = 0; i < args.length; i++) {
 		sum = plt.types.NumberTower.add(sum, args[i]);
@@ -433,7 +462,10 @@ var plt = plt || {};
 	    return sum;
 	},
 	
+
 	_dash_ : function(first, args) {
+	    check(first, isNumber, "number");
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    if (args.length == 0) {
 		return plt.types.NumberTower.subtract
 		(plt.types.Rational.ZERO, first);
@@ -448,6 +480,7 @@ var plt = plt || {};
 	
 	
 	_star_ : function(args) {
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    var i, prod = plt.types.Rational.ONE;
 	    for(i = 0; i < args.length; i++) {
 		prod = plt.types.NumberTower.multiply(prod, args[i]);
@@ -457,6 +490,8 @@ var plt = plt || {};
 	
 	
 	_slash_ : function(first, args) {
+	    check(first, isNumber, "number");
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    var i, div = first;
 	    for(i = 0; i < args.length; i++) {
 		div = plt.types.NumberTower.divide(div, args[i]);
@@ -464,6 +499,7 @@ var plt = plt || {};
 	    return div;    
 	},
 	
+
 	_equal_ : makeNumericChainingComparator(plt.types.NumberTower.equal),
 	_greaterthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.greaterThanOrEqual),
 	_lessthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.lessThanOrEqual),
@@ -1377,6 +1413,8 @@ var plt = plt || {};
 
 
     plt.Kernel.map = function(f, arglists) {
+	arrayEach(arglists, function(x) { 
+	    checkList(x, "map: mapped arguments must be lists");});
 	var results = plt.types.Empty.EMPTY;
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -1389,7 +1427,21 @@ var plt = plt || {};
 	return plt.Kernel.reverse(results);
     };
 
+    plt.Kernel.filter = function(f, elts) {
+	check(elts, isList, "list");
+	var results = plt.types.Empty.EMPTY;
+	while (! elts.isEmpty()) {
+	    if (f([elts.first()])) {
+		results = plt.types.Cons.makeInstance(elts.first(), results);
+	    }
+	    elts = elts.rest();
+	}
+	return plt.Kernel.reverse(results);
+    };
+
+
     plt.Kernel.foldl = function(f, acc, arglists) {
+	arrayEach(arglists, function(x) { check(x, isList, "list")});
 	var result = acc;
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -1402,6 +1454,26 @@ var plt = plt || {};
 	}
 	return result;
     };
+
+
+    plt.Kernel.foldr = function(f, acc, arglists) {
+	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	var result = acc;
+	for (var i = 0; i < arglists.length; i++) {
+	    arglists[i] = plt.Kernel.reverse(arglists[i]);
+	}
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    args.push(result);
+	    result = f(args);
+	}
+	return result;
+    };
+
 
     plt.Kernel.build_dash_list = function(n, f) {
 	var result = plt.types.Empty.EMPTY;
@@ -1523,8 +1595,8 @@ var plt = plt || {};
 
 
     plt.Kernel.error = function(msg, args) {
-	// FIXME: use format.
-	throw new MobyRuntimeError(msg.toString() + ": " + args.toWrittenString());
+	check(msg, isString, "string");
+	throw new MobyRuntimeError(plt.Kernel.format(msg.toString(), args).toString());
     }
 
 
@@ -1550,12 +1622,13 @@ var plt = plt || {};
 
 
     plt.Kernel.image_question_ = function(thing) {
-	return (thing != null && thing != undefined && thing instanceof BaseImage);
+	return isImage(thing);
     };
 
 
-
     plt.Kernel.image_equal__question_ = function(thing, other) {
+	check(thing, isImage, "image");
+	check(other, isImage, "image");
 	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
     };
 
