@@ -240,12 +240,17 @@ var plt = plt || {};
 	
 	
 	random: function(x) {
-	    return plt.types.Rational.makeInstance
-	    (Math.floor(plt.types.NumberTower.toInteger(x) * 
-			Math.random()),
-	     1);
+	    check(x, isInteger, "integer");
+	    return plt.types.Rational.makeInstance(Math.floor(plt.types.NumberTower.toInteger(x) * 
+							      Math.random()),
+						   1);
 	},
 	
+	current_dash_seconds: function () {
+	    return plt.types.Rational.makeInstance(new Date().getMilliseconds() / 1000);	    
+	},
+
+
 	floor: function(x) {
 	    check(x, isNumber, "number");
 	    return x.floor();
@@ -608,6 +613,8 @@ var plt = plt || {};
 		return plt.types.Rational.ZERO;
 	},
 	
+
+
 	boolean_equal__question_ : function(x, y){
 	    return x == y;
 	},
@@ -940,6 +947,7 @@ var plt = plt || {};
 	},
 	
 	integer_dash__greaterthan_char : function(n){
+	    check(n, isInteger, "integer");
 	    var str = String.fromCharCode(n.toInteger());
 	    return plt.types.Char.makeInstance(str);
 	},

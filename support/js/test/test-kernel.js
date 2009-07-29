@@ -930,6 +930,18 @@ var getTests;
 	    testInteger_dash__greaterthan_char : function(){
 		this.assert(Kernel.equal_question_(Char.makeInstance("e"), Kernel.integer_dash__greaterthan_char(Rational.makeInstance(101, 1))));
 	    },
+
+	    testRandom : function() {
+		this.assert(Kernel.random(Rational.makeInstance(5)).toInteger() < 5);	
+		this.assertRaise("TypeError", function() { Kernel.random(42) });
+	    },
+
+	    testCurrentSeconds : function() {
+		var n1 = Kernel.current_dash_seconds();
+		var n2 = Kernel.current_dash_seconds();
+		this.assert(n1.toInteger() <= n2.toInteger());
+	    },
+
 	    
 	    testChar_dash_alphabetic_question_ : function(){
 		this.assert(Kernel.char_dash_alphabetic_question_(Char.makeInstance("e")));
