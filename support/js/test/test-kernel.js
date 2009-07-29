@@ -844,13 +844,26 @@ var getTests;
 		this.assert(!Kernel.member(FloatPoint.makeInstance(5), lst));
 	    },
 	    
+
 	    testMemq : function(){
 		var a = FloatPoint.makeInstance(3);
 		var arr = [FloatPoint.makeInstance(2), a, FloatPoint.makeInstance(4)];
 		var lst = Kernel.list(arr);
 		this.assert(Kernel.equal_question_(Kernel.memq(a, lst).first(), a));
-		this.assert(!Kernel.memq(FloatPoint.makeInstance(5), lst));
+		this.assert(! Kernel.memq(FloatPoint.makeInstance(5), lst));
+		this.assert(! Kernel.memq(FloatPoint.makeInstance(3), lst));
 	    },
+
+
+	    testMemv : function(){
+		var a = FloatPoint.makeInstance(3);
+		var arr = [FloatPoint.makeInstance(2), a, FloatPoint.makeInstance(4)];
+		var lst = Kernel.list(arr);
+		this.assert(Kernel.equal_question_(Kernel.memv(FloatPoint.makeInstance(3), lst).first(), a));
+		this.assert(!Kernel.memv(FloatPoint.makeInstance(5), lst));
+	    },
+
+
 	    
 	    testNull_question_: function(){
 		this.assert(!Kernel.null_question_(Rational.ONE));
@@ -1099,6 +1112,27 @@ var getTests;
 						   Empty.EMPTY).toWrittenString(),
 				 "((3.1415))");
 
+	    },
+
+
+	    testChar : function() {
+		this.assert(Kernel.char_question_(Char.makeInstance("x")));
+		this.assert(! Kernel.char_question_(String.makeInstance("x")));
+	    },
+
+
+	    testPosn : function() {
+		var x = Rational.makeInstance(31337);
+		var y = Rational.makeInstance(31337);
+		var p = Kernel.make_dash_posn(x, y);
+		this.assert(Kernel.posn_question_(p));
+		this.assert(! Kernel.posn_question_(x));
+
+		this.assertEqual(x, Kernel.posn_dash_x(p));
+		this.assertEqual(y, Kernel.posn_dash_y(p));
+
+		this.assertRaise("TypeError",
+				 function() { Kernel.posn_dash_x(42)} );
 	    }
 	
 	})

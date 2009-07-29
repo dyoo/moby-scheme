@@ -42,6 +42,10 @@ var plt = plt || {};
 	return (x != null && x != undefined && x instanceof plt.types.Symbol);
     }
 
+    function isChar(x) {
+	return x != null && x != undefined && x instanceof plt.types.Char;
+    }
+
     function isBoolean(x) {
 	return (x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
     }
@@ -212,7 +216,15 @@ var plt = plt || {};
 	    return (x == y);
 	}, 
 	
+
+	eqv_question_ : function(x, y){
+	    if (isNumber(x) && isNumber(y)) {
+		return plt.types.NumberTower.equal(x, y);
+	    }
+	    return x == y;
+	},
 	
+
 	identity : function (x){
 	    return x;
 	},
@@ -862,11 +874,6 @@ var plt = plt || {};
 	    return plt.types.Logic.FALSE;
 	},
 	
-	eqv_question_ : function(x, y){
-	    // FIXME: must check for number and do numerical equivalence.
-	    return x == y;
-	},
-	
 	memv : function(item, lst){
 	    checkList(lst, "memv must consume a list");
 	    while (!lst.isEmpty()){
@@ -962,7 +969,7 @@ var plt = plt || {};
 	},
 
 	char_question_: function(x) {
-	    return x != null && x != undefined && x instanceof plt.types.Char;
+	    return isChar(x);
 	},
 	
 	char_dash__greaterthan_integer : function(ch){
@@ -1294,9 +1301,20 @@ var plt = plt || {};
 	return "(make-posn " + this.x.toDisplayedString() + " " + this.y.toDisplayedString();
     }
 
-    function make_dash_posn(id0,id1) { return new posn(id0,id1); }
-    function posn_dash_x(obj) { return obj.x; }
-    function posn_dash_y(obj) { return obj.y; }
+    function make_dash_posn(id0,id1) { 
+	return new posn(id0,id1); 
+    }
+
+    function posn_dash_x(obj) { 
+	check(obj, posn_question_, "posn");
+	return obj.x; 
+    }
+
+    function posn_dash_y(obj) { 
+	check(obj, posn_question_, "posn");
+	return obj.y; 
+    }
+
     function posn_question_(obj) { 
         return obj != null && obj != undefined && obj instanceof posn ; 
     }
@@ -1307,7 +1325,8 @@ var plt = plt || {};
     plt.Kernel.posn_dash_y = posn_dash_y;
     
     
-    
+
+    // We are reusing the built-in Javascript boolean class here.
     plt.types.Logic = {
 	TRUE : true,
 	FALSE : false
