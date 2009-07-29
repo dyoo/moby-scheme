@@ -1,17 +1,3 @@
- string-ref
- substring
- string-copy
- string-append
- string=?
- string<?
- string>?
- string<=?
- string>=?
- string-ci=?
- string-ci<?
- string-ci>?
- string-ci<=?
- string-ci>=?
  string->symbol
  string->number
  string->list

@@ -893,10 +893,13 @@ var getTests;
 	    },
 	    
 	    testString_dash_append : function(){
-		var arr = [String.makeInstance("hello"),String.makeInstance("zhe"),String.makeInstance("zhang")];
+		var arr = [String.makeInstance("hello"),
+			   String.makeInstance("zhe"),
+			   String.makeInstance("zhang")];
 		var str = Kernel.string_dash_append(arr);
-		this.assert(Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang"), []));
-		this.assert(!Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang1"), []));
+
+//		this.assert(Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang"), []));
+//		this.assert(!Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang1"), []));
 	    },
 	    
 	    testString_dash_ci_equal__question_ : function(){
@@ -922,8 +925,11 @@ var getTests;
 		var str1 = String.makeInstance("hi");
 		var str2 = Kernel.string_dash_copy(str1);
 		this.assert(Kernel.string_equal__question_(str1, str2, []));
-		// Unnecessary to test for eq-ness of strings: in beginner student level, strings are immutable already.
-		//		this.assert(!Kernel.eq_question_(str1, str2));
+		// FLAW: javascript strings compare with == regardless
+		// of location.  It may be unnecessary to test for
+		// eq-ness of strings: in beginner student level,
+		// strings are immutable already.
+		// this.assert(!Kernel.eq_question_(str1, str2));
 
 	    },
 	    
@@ -952,6 +958,12 @@ var getTests;
 		var i = FloatPoint.makeInstance(2);
 		this.assert(Kernel.string_equal__question_(String.makeInstance("e"), 
 							   Kernel.string_dash_ref(zhe, i), []));
+		this.assertRaise("MobyTypeError",
+				 function() { Kernel.string_dash_ref
+					      (zhe, Rational.makeInstance(-1)) });
+		this.assertRaise("MobyRuntimeError",
+				 function() { Kernel.string_dash_ref
+					      (zhe, Rational.makeInstance(4)) });
 	    }, 
 	 
 
@@ -1050,9 +1062,19 @@ var getTests;
 	    testSubstring : function(){
 		var str1 = String.makeInstance("he");
 		var str2 = String.makeInstance("hello");
-		var str3 = Kernel.substring(str2, FloatPoint.makeInstance(0), FloatPoint.makeInstance(2));
-		
+		var str3 = Kernel.substring(str2, 
+					    Rational.makeInstance(0), 
+					    Rational.makeInstance(2));
 		this.assert(Kernel.string_equal__question_(str1, str3, []));
+		
+		this.assertEqual(String.makeInstance(""),
+				 Kernel.substring(String.makeInstance("foobar"), Rational.makeInstance(3), Rational.makeInstance(3)));
+		this.assertEqual(String.makeInstance("b"),
+				 Kernel.substring(String.makeInstance("foobar"), Rational.makeInstance(3), Rational.makeInstance(4)));
+		this.assertEqual(String.makeInstance("ba"),
+				 Kernel.substring(String.makeInstance("foobar"), Rational.makeInstance(3), Rational.makeInstance(5)));
+		this.assertEqual(String.makeInstance("bar"),
+				 Kernel.substring(String.makeInstance("foobar"), Rational.makeInstance(3), Rational.makeInstance(6)));
 	    },
 	    
 	    testChar_dash__greaterthan_integer : function(){	

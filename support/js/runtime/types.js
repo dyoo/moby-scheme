@@ -1004,7 +1004,7 @@ var plt = plt || {};
     // For the moment, we just reuse Javascript strings.
     plt.types.String = String;
     plt.types.String.makeInstance = function(s) {
-	return s;
+	return s.valueOf();
     };
     
     plt.types.String.prototype.isEqual = function(other){

@@ -79,6 +79,7 @@ var plt = plt || {};
 
     function isString(x) {
 	return typeof(x) == 'string';
+	//return x != null && x != undefined && x instanceof plt.types.String;
     }
 
     function isBoolean(x) {
@@ -220,7 +221,7 @@ var plt = plt || {};
 	    check(first, typeCheckF, "first must be a " + typeName);
 	    check(second, typeCheckF, "second must be a " + typeName);
 	    arrayEach(rest, 
-		      function() { check(this, typeCheckF, 
+		      function(x) { check(x, typeCheckF, 
 					 "each argument must be a " + typeName) });
 	    return comparisonF(first, second, rest);
 	}
@@ -243,6 +244,12 @@ var plt = plt || {};
     }
 
 
+    function makeStringChainingComparator(test) {
+	return makeChainingComparator(isString, "string",
+				      function(first, second, rest) {
+					  return chainTest(test, first, second, rest);
+				      });
+    }
 
 
 
@@ -261,7 +268,7 @@ var plt = plt || {};
 
 	
 	struct_question_: function(thing) {
-	    return (thing != null && thing != undefined && thing instanceof this.Struct);
+	    return (thing != null && thing != undefined && thing instanceof plt.Kernel.Struct);
 	},
 	
 	number_question_ : function(x){
@@ -653,26 +660,6 @@ var plt = plt || {};
 	    return plt.types.Complex.makeInstance(x.toFloat(), y.toFloat());
 	},
 	
-	string_equal__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x == y;}, first, second, rest);
-	},
-	
-	string_lessthan__equal__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x <= y;}, first, second, rest);
-	},
-	
-	string_lessthan__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x < y;}, first, second, rest);
-	},
-	
-	string_greaterthan__equal__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x >= y;}, first, second, rest);
-	},
-	
-	string_greaterthan__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x > y;}, first, second, rest);
-	},
-	
 	quotient : function(x, y){
 	    check(x, isNumber, "number");
 	    check(y, isNumber, "number");
@@ -945,6 +932,7 @@ var plt = plt || {};
 	    return plt.types.Logic.FALSE;
 	},
 	
+
 	memv : function(item, lst){
 	    checkList(lst, "memv must consume a list");
 	    while (!lst.isEmpty()){
@@ -956,6 +944,7 @@ var plt = plt || {};
 	    return plt.types.Logic.FALSE;
 	},
 	
+
 	string_dash__greaterthan_number : function(str){
 	    var aNum = str * 1;
 	    if (isNaN(aNum))
@@ -963,11 +952,14 @@ var plt = plt || {};
 	    return plt.types.FloatPoint.makeInstance(aNum);
 	},
 	
+
 	string_dash__greaterthan_symbol : function(str){
 	    return plt.types.Symbol.makeInstance(str);
 	},
+
 	
 	string_dash_append : function(arr){
+	    arrayEach(arr, function(x) { check(x, isString, "string") });
             return plt.types.String.makeInstance(arr.join(""));
 	},
 
@@ -983,43 +975,49 @@ var plt = plt || {};
 	},
 
 	
-	string_dash_ci_equal__question_ : function(first, second, rest){
-	    first = first.toUpperCase();
-	    second = second.toUpperCase();
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = rest[i].toUpperCase();
-	    }
-	    return plt.Kernel.string_equal__question_(first, second, rest);
-	},
+	string_equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x == y;}),
 	
-	string_dash_ci_lessthan__equal__question_ : function(first, second, rest){
-	    first = first.toUpperCase();
-	    second = second.toUpperCase();
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = rest[i].toUpperCase();
-	    }
-	    return plt.Kernel.string_lessthan__equal__question_(first, second, rest);
-	},
+
+	string_lessthan__equal__question_: makeStringChainingComparator(
+	    function(x, y){return x <= y;}),
+
+
+	string_lessthan__question_: makeStringChainingComparator(
+	    function(x, y){return x < y;}),
 	
-	string_dash_ci_lessthan__question_ : function(first, second, rest){
-	    first = first.toUpperCase();
-	    second = second.toUpperCase();
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = rest[i].toUpperCase();
-	    }
-	    return plt.Kernel.string_lessthan__question_(first, second, rest);
-	},
+
+	string_greaterthan__equal__question_: makeStringChainingComparator(
+	    function(x, y){return x >= y;}),
 	
-	string_dash_ci_greaterthan__question_ : function(first, second, rest){
-	    return !plt.Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
-	},
+
+	string_greaterthan__question_: makeStringChainingComparator(
+	    function(x, y){return x > y;}),
 	
-	string_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	    return !plt.Kernel.string_dash_ci_lessthan__question_(first, second, rest);
-	},
+
+	string_dash_ci_equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() == y.toUpperCase();}),
 	
+
+	string_dash_ci_lessthan__equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() <= y.toUpperCase();}),
+	
+
+	string_dash_ci_lessthan__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() < y.toUpperCase();}),
+	
+
+	string_dash_ci_greaterthan__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() > y.toUpperCase();}),
+	
+
+	string_dash_ci_greaterthan__equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() >= y.toUpperCase();}),
+	
+
 	string_dash_copy : function(str){
-	    return plt.types.String.makeInstance(str);
+	    check(str, isString, "string");
+	    return str.substring(0, str.length);
 	},
 	
 	string_dash_length : function(str){
@@ -1040,7 +1038,7 @@ var plt = plt || {};
 	    check(str, isString, "string");
 	    check(i, isNatural, "natural");
 	    if (i.toInteger() >= str.length) {
-		throw new MobyRuntimeError("index >= string length");
+		throw new MobyRuntimeError("string-ith: index >= string length");
 	    }
 	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
 	},
@@ -1062,7 +1060,16 @@ var plt = plt || {};
 	
 
 	substring : function(str, begin, end){
-	    return str.substring(begin.toInteger(), end.toInteger());
+	    check(str, isString, "string");
+	    check(begin, isNatural, "natural");
+	    check(end, isNatural, "natural");
+	    if (begin.toInteger() > end.toInteger()) {
+		throw new MobyRuntimeError("substring: begin > end");
+	    }
+	    if (end.toInteger() > str.length) {
+		throw new MobyRuntimeError("substring: end > length");
+	    }
+	    return String.makeInstance(str.substring(begin.toInteger(), end.toInteger()));
 	},
 
 	char_question_: function(x) {
