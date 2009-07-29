@@ -1004,6 +1004,49 @@ var getTests;
 		this.assert(Kernel.string_question_(String.makeInstance("hi")));
 	    },
 	    
+
+	    testStringIsNumeric : function() {
+		this.assert(Kernel.string_dash_numeric_question_(String.makeInstance("12345")));
+		this.assert(! Kernel.string_dash_numeric_question_(String.makeInstance("xxx")));
+		this.assert(! Kernel.string_dash_numeric_question_(String.makeInstance("12xxx34")));
+	    },
+
+
+	    testStringIsAlphabetic : function() {
+		this.assert(! Kernel.string_dash_alphabetic_question_(String.makeInstance("12345")));
+		this.assert(Kernel.string_dash_alphabetic_question_(String.makeInstance("xxx")));
+		this.assert(! Kernel.string_dash_alphabetic_question_(String.makeInstance("12xxx34")));
+	    },
+
+
+	    testStringIsWhitespace : function() {
+		this.assert(! Kernel.string_dash_whitespace_question_(String.makeInstance("12 345")));
+		this.assert(Kernel.string_dash_whitespace_question_(String.makeInstance("   ")));
+		this.assert(Kernel.string_dash_whitespace_question_(String.makeInstance(" ")));
+		this.assert(! Kernel.string_dash_whitespace_question_(String.makeInstance("   12xxx34")));
+	    },
+
+	    testStringIsLowerCase : function() {
+		this.assert(Kernel.string_dash_lower_dash_case_question_(String.makeInstance("hello")));
+		this.assert(!Kernel.string_dash_lower_dash_case_question_(String.makeInstance("Hello")));
+		this.assert(!Kernel.string_dash_lower_dash_case_question_(String.makeInstance("hello1")));
+	    },
+
+
+	    testStringIsUpperCase : function() {
+		this.assert(Kernel.string_dash_upper_dash_case_question_(String.makeInstance("HELLO")));
+		this.assert(!Kernel.string_dash_upper_dash_case_question_(String.makeInstance("HELLo")));
+		this.assert(!Kernel.string_dash_upper_dash_case_question_(String.makeInstance("HELLO1")));
+	    },
+
+
+	    testString: function() {
+		this.assertEqual("", Kernel.string([]));
+		this.assertEqual("abc", Kernel.string([Char.makeInstance('a'), 
+						       Char.makeInstance('b'),
+						       Char.makeInstance('c')]));
+	    },
+
 	    testSubstring : function(){
 		var str1 = String.makeInstance("he");
 		var str2 = String.makeInstance("hello");

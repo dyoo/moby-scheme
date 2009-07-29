@@ -133,6 +133,14 @@ var plt = plt || {};
 	return true;
     }
 
+    // isWhitespaceString: string -> boolean
+    var isWhitespaceString = (function() {
+	var pat = new RegExp("^\\s*$");
+	return function(s) {
+	    return (s.match(pat) ? true : false);
+	}
+    }());
+
 
     // arrayEach: (arrayof X) (X -> void) -> void
     // Apply some function on each element of the array.
@@ -1124,8 +1132,7 @@ var plt = plt || {};
 	char_dash_whitespace_question_ : function(ch){
 	    check(ch, isChar, "char");
 	    var str = ch.val;
-	    var pat = new RegExp("^\\s$");
-	    return (str.match(pat) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE);
+	    return isWhitespaceString(str);
 	},
 
 	char_dash_upper_dash_case_question_ : function(ch){
@@ -1173,6 +1180,53 @@ var plt = plt || {};
 	    return plt.types.String.makeInstance(ret.join(""));
 	},
 	
+
+
+
+	string_dash_numeric_question_: function(s) {
+	    check(s, isString, "string");
+	    for (var i = 0 ; i < s.length; i++) {
+		if (s[i] < '0' || s[i] > '9') {
+		    return plt.types.Logic.FALSE;
+		}
+	    }
+	    return plt.types.Logic.TRUE;
+	},
+
+
+	string_dash_alphabetic_question_: function(s) {
+	    check(s, isString, "string");
+	    return isAlphabeticString(s) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+	},
+
+
+	string_dash_whitespace_question_: function(s) {
+	    check(s, isString, "string");
+	    return isWhitespaceString(s) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+	},
+
+
+	string_dash_upper_dash_case_question_: function(s) {
+	    check(s, isString, "string");
+	    return isAlphabeticString(s) && s.toUpperCase() == s;
+	},
+
+
+	string_dash_lower_dash_case_question_: function(s) {
+	    check(s, isString, "string");
+	    return isAlphabeticString(s) && s.toLowerCase() == s;
+	},
+
+
+	string : function(chars) {
+	    arrayEach(chars, function() { check(this, isChar, "char"); });
+	    var buffer = [];
+	    for(var i = 0; i < chars.length; i++) {
+		buffer.push(chars[i].val);
+	    }
+	    return String.makeInstance(buffer.join(""));
+	},
+
 
 	make_dash_string : function(n, ch){
 	    check(n, isNatural, "natural");
