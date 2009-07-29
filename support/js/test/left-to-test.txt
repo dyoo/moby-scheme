@@ -1,24 +1,3 @@
- char=?
- char<?
- char>?
- char<=?
- char>=?
- char-ci=?
- char-ci<?
- char-ci>?
- char-ci<=?
- char-ci>=?
- char-numeric?
- char-alphabetic?
- char-whitespace?
- char-upper-case?
- char-lower-case?
- char-upcase
- char-downcase
- char->integer
- string?
- string-length
- string-ith
  replicate
  int->string
  string->int

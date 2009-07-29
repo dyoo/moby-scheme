@@ -5,6 +5,10 @@ var plt = plt || {};
 // Kernel
 (function() {
 
+   
+
+
+
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
     function heir(p) {
@@ -13,6 +17,33 @@ var plt = plt || {};
 	return new f();
     }
 
+
+    //////////////////////////////////////////////////////////////////////
+
+    function MobyError(msg) {
+	this.msg = msg;
+    }
+    MobyTypeError.prototype.name= 'MobyError';
+    MobyTypeError.prototype.toString = function () { return "MobyError: " + this.msg }
+    
+
+    function MobyTypeError(msg) {
+	MobyError.call(this, msg);
+    }
+    MobyTypeError.prototype = heir(MobyError.prototype);
+    MobyTypeError.prototype.name= 'MobyTypeError';
+    MobyTypeError.prototype.toString = function () { return "MobyTypeError: " + this.msg }
+
+
+
+    function MobyRuntimeError(msg) {
+	MobyError.call(this, msg);
+    }
+    MobyRuntimeError.prototype = heir(MobyError.prototype);
+    MobyRuntimeError.prototype.name= 'MobyRuntimeError';
+    MobyRuntimeError.prototype.toString = function () { return "MobyRuntimeError: " + this.msg }
+
+    //////////////////////////////////////////////////////////////////////
 
 
     // _gcd: integer integer -> integer
@@ -44,6 +75,10 @@ var plt = plt || {};
 
     function isChar(x) {
 	return x != null && x != undefined && x instanceof plt.types.Char;
+    }
+
+    function isString(x) {
+	return typeof(x) == 'string';
     }
 
     function isBoolean(x) {
@@ -78,6 +113,19 @@ var plt = plt || {};
     // Returns true if x is an integer.
     function isInteger(x) {
 	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
+    }
+
+
+
+    // isAlphabeticString: string -> boolean
+    function isAlphabeticString(s) {
+	for(var i = 0; i < s.length; i++) {
+	    if (! ((s[i] >= "a" && s[i] <= "z") ||
+		   (s[i] >= "A" && s[i] <= "Z"))) {
+		return false;
+	    }
+	}
+	return true;
     }
 
 
@@ -125,30 +173,30 @@ var plt = plt || {};
     }
 
 
-    // Checks if x satisfies f.  If not, a TypeError of msg is thrown.
+    // Checks if x satisfies f.  If not, a MobyTypeError of msg is thrown.
     function check(x, f, msg) {
 	if (! f(x)) {
-	    throw new TypeError(msg);
+	    throw new MobyTypeError(msg);
 	}
     }
 
     // Throws exception if x is not a list.
     function checkList(x, msg) {
 	if (! isList(x)) {
-	    throw new TypeError(msg);
+	    throw new MobyTypeError(msg);
 	}
     }
 
-    // Checks if x is a list of f.  If not, throws a TypeError of msg.
+    // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
     function checkListof(x, f, msg) {
 	if (! isList(x)) {
-	    throw new TypeError(msg);
+	    throw new MobyTypeError(msg);
 	}
 	while (! x.isEmpty()) {
 	    if (! f(x.first())) {
-		throw new TypeError(msg);
+		throw new MobyTypeError(msg);
 	    }
-	    x = x.next();
+	    x = x.rest();
 	}
     }
 
@@ -180,6 +228,8 @@ var plt = plt || {};
 					  return chainTest(test, first, second, rest);
 				      });
     }
+
+
 
 
 
@@ -839,7 +889,7 @@ var plt = plt || {};
 	list_star_ : function(items, otherItems){
 	    var lastListItem = otherItems.pop();
 	    if (lastListItem == undefined || ! lastListItem instanceof plt.types.Cons) {
-		throw new TypeError("list*: " + lastListItem + " not a list");
+		throw new MobyTypeError("list*: " + lastListItem + " not a list");
 	    }
 	    otherItems.unshift(items);
 	    return plt.Kernel.append(plt.Kernel.list(otherItems), [lastListItem]);
@@ -848,9 +898,17 @@ var plt = plt || {};
 	list_dash_ref : function(lst, x){
 	    checkList(lst, "list-ref must consume a list");
 	    check(x, isInteger, "integer");
+	    if (x.toInteger() < 0) {
+		throw new MobyRuntimeError("list-ref: index < 0");
+	    }
 	    var i = plt.types.Rational.ZERO;
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
-		lst = lst.rest();
+		if (lst.isEmpty()) {
+		    throw new MobyRuntimeError("list-ref: index too small");
+		}
+		else {
+		    lst = lst.rest();
+		}
 	    }
 	    return lst.first();
 	},
@@ -943,6 +1001,7 @@ var plt = plt || {};
 	},
 	
 	string_dash_length : function(str){
+	    check(str, isString, "string");
 	    return plt.types.Rational.makeInstance(str.length, 1);
 	},
 	
@@ -951,6 +1010,11 @@ var plt = plt || {};
 	},
 
 	string_dash_ith : function (str, i) {
+	    check(str, isString, "string");
+	    check(i, isInteger, "integer");
+	    if (i.toInteger() >= str.length) {
+		throw new MobyRuntimeError("index >= string length");
+	    }
 	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
 	},
 
@@ -964,9 +1028,10 @@ var plt = plt || {};
 
 	
 	string_question_ : function(str){
-	    return typeof(str) == 'string';
+	    return isString(str);
 	},
 	
+
 	substring : function(str, begin, end){
 	    return str.substring(begin.toInteger(), end.toInteger());
 	},
@@ -976,6 +1041,7 @@ var plt = plt || {};
 	},
 	
 	char_dash__greaterthan_integer : function(ch){
+	    check(ch, isChar, "char");
 	    var str = new String(ch.val);
 	    return plt.types.Rational.makeInstance(str.charCodeAt(0), 1);
 	},
@@ -986,10 +1052,6 @@ var plt = plt || {};
 	    return plt.types.Char.makeInstance(str);
 	},
 	
-	char_dash_alphabetic_question_ : function(c){
-	    var str = c.val;
-	    return (str >= "a" && str <= "z") || (str >= "A" && str <= "Z");
-	},
 	
 	char_equal__question_ : makeCharChainingComparator(
 	    function(x, y) { return x.val == y.val; }),
@@ -1025,35 +1087,53 @@ var plt = plt || {};
 	char_dash_ci_greaterthan__equal__question_ : makeCharChainingComparator(
 	    function(x, y){ return x.val.toUpperCase() >= y.val.toUpperCase(); }),
 	
-	char_dash_downcase : function(ch){
-	    var down = ch.val.toLowerCase();
-	    return plt.types.Char.makeInstance(down);
-	},
-	
-	char_dash_lower_dash_case_question_ : function(ch){
-	    return plt.Kernel.char_dash_alphabetic_question_(ch) && plt.Kernel.equal_question_(ch, plt.Kernel.char_dash_downcase(ch));
-	},
 	
 	char_dash_numeric_question_ : function(ch){
+	    check(ch, isChar, "char");
 	    var str = ch.val;
 	    return (str >= "0" && str <= "9");
 	},
-	
-	char_dash_upcase : function(ch){
-	    var up = ch.val.toUpperCase();
-	    return plt.types.Char.makeInstance(up);
+
+	char_dash_alphabetic_question_ : function(ch){
+	    check(ch, isChar, "char");
+	    var str = ch.val;
+	    return isAlphabeticString(str);
 	},
-	
-	char_dash_upper_dash_case_question_ : function(ch){
-	    return plt.Kernel.char_dash_alphabetic_question_(ch) && plt.Kernel.equal_question_(ch, plt.Kernel.char_dash_upcase(ch));
-	},
-	
+
 	char_dash_whitespace_question_ : function(ch){
-	    return plt.Kernel.equal_question_(ch, plt.types.Char.makeInstance(" "));
+	    check(ch, isChar, "char");
+	    var str = ch.val;
+	    var pat = new RegExp("^\\s$");
+	    return (str.match(pat) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE);
 	},
+
+	char_dash_upper_dash_case_question_ : function(ch){
+	    check(ch, isChar, "char");
+	    return isAlphabeticString(ch.val) && ch.val.toUpperCase() == ch.val;
+	},
+	
+	char_dash_lower_dash_case_question_ : function(ch){
+	    check(ch, isChar, "char");
+	    return isAlphabeticString(ch.val) && ch.val.toLowerCase() == ch.val;
+	},
+
+
+	char_dash_upcase : function(ch){
+	    check(ch, isChar, "char");
+	    return plt.types.Char.makeInstance(ch.val.toUpperCase());
+	},
+
+	
+	char_dash_downcase : function(ch){
+	    check(ch, isChar, "char");
+	    return plt.types.Char.makeInstance(ch.val.toLowerCase());
+	},
+	
+
 	
 	// list->string: (listof char) -> string
 	list_dash__greaterthan_string : function(lst){
+	    checkListof(lst, isChar, "listof char");
 	    var ret = "";
 	    while (!lst.isEmpty()){
 		ret += lst.first().val;
@@ -1063,6 +1143,7 @@ var plt = plt || {};
 	},
 
 	implode: function(lst) {
+	    checkListof(lst, isChar, "listof char");
 	    var ret = [];
 	    while (!lst.isEmpty()){
 		ret.push(lst.first().toString());
@@ -1323,18 +1404,10 @@ var plt = plt || {};
 
 
     plt.Kernel.error = function(msg, args) {
-	die(msg + ": " + args);
+	// FIXME: use format.
+	throw new MobyRuntimeError(msg.toString() + ": " + args.toWrittenString());
     }
 
-    
-    function die(msg) {
-	// We're trying to error out so that we get a stack track from firebug.
-	//  console.log(msg);
-	//  console.trace();
-	throw new TypeError(msg.toString());
-    }
-    
-    
 
 
 
