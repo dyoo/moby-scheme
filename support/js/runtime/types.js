@@ -12,6 +12,25 @@ var plt = plt || {};
     
 
 
+    // We are reusing the built-in Javascript boolean class here.
+    plt.types.Logic = {
+	TRUE : true,
+	FALSE : false
+    };
+    
+    Boolean.prototype.toWrittenString = function() {
+	if (this.valueOf()) { return "true"; }
+	return "false";
+    };
+    Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
+
+
+    Boolean.prototype.isEqual = function(other){
+	return this == other;
+    };
+
+
+
 
     // Chars
     // Char: string -> Char

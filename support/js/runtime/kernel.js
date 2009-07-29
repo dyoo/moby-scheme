@@ -652,12 +652,12 @@ var plt = plt || {};
 	
 	odd_question_ : function(x){
 	    check(x, isNumber, "number");
-	    return (x.toInteger() % 2 == 1);
+	    return ((x.toInteger() % 2) == 1);
 	},
 	
 	even_question_ : function(x) {
 	    check(x, isNumber, "number");
-	    return (x.toInteger() % 2 == 0);
+	    return ((x.toInteger() % 2) == 0);
 	},
 	
 	positive_question_ : function(x){
@@ -1415,6 +1415,7 @@ var plt = plt || {};
     plt.Kernel.map = function(f, arglists) {
 	arrayEach(arglists, function(x) { 
 	    checkList(x, "map: mapped arguments must be lists");});
+	// TODO: add contract on higher order argument f.
 	var results = plt.types.Empty.EMPTY;
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -1427,8 +1428,53 @@ var plt = plt || {};
 	return plt.Kernel.reverse(results);
     };
 
+
+
+    plt.Kernel.andmap = function(f, arglists) {
+	arrayEach(arglists, function(x) { 
+	    checkList(x, "andmap: mapped arguments must be lists");});
+
+	// TODO: add contract on higher order argument f.
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    if (! f(args)) {
+		return plt.types.Logic.FALSE;
+	    }
+	}
+
+	return plt.types.Logic.TRUE;
+    };
+
+
+
+    plt.Kernel.ormap = function(f, arglists) {
+	arrayEach(arglists, function(x) { 
+	    checkList(x, "ormap: mapped arguments must be lists");});
+	// TODO: add contract on higher order argument f.
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    if (f(args)) {
+		return plt.types.Logic.TRUE;
+	    }
+	}
+	return plt.types.Logic.FALSE;
+    };
+
+
+
+
+
     plt.Kernel.filter = function(f, elts) {
 	check(elts, isList, "list");
+	// TODO: add contract on higher order argument f.
 	var results = plt.types.Empty.EMPTY;
 	while (! elts.isEmpty()) {
 	    if (f([elts.first()])) {
@@ -1442,6 +1488,7 @@ var plt = plt || {};
 
     plt.Kernel.foldl = function(f, acc, arglists) {
 	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	// TODO: add contract on higher order argument f.
 	var result = acc;
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -1458,6 +1505,7 @@ var plt = plt || {};
 
     plt.Kernel.foldr = function(f, acc, arglists) {
 	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	// TODO: add contract on higher order argument f.
 	var result = acc;
 	for (var i = 0; i < arglists.length; i++) {
 	    arglists[i] = plt.Kernel.reverse(arglists[i]);
@@ -1475,7 +1523,26 @@ var plt = plt || {};
     };
 
 
+
+    plt.Kernel.sort = function(l, cmpF) {
+	check(l, isList, "list");
+	// TODO: add contract on higher order argument cmpF.
+	var arr = [];
+	while(!l.isEmpty()) {
+	    arr.push(l.first());
+	    l = l.rest();
+	}
+	arr.sort(function(x, y) { return cmpF([x, y]) ? -1 : 1; });
+	return plt.Kernel.list(arr);
+    };
+
+    plt.Kernel.quicksort = plt.Kernel.sort;
+
+
+
     plt.Kernel.build_dash_list = function(n, f) {
+	check(n, isNatural, "natural");
+	// TODO: add contract on higher order argument f.
 	var result = plt.types.Empty.EMPTY;
 	for(var i = 0; i < n.toInteger(); i++) {
 	    result = plt.Kernel.cons(f([plt.types.Rational.makeInstance(i, 1)]),
@@ -1483,6 +1550,22 @@ var plt = plt || {};
 	}
 	return plt.Kernel.reverse(result);
     };
+
+
+    plt.Kernel.build_dash_string = function(n, f) {
+	check(n, isNatural, "natural");
+	// TODO: add contract on higher order argument f.
+	var chars = [];
+	for(var i = 0; i < n.toInteger(); i++) {
+	    var ch = f([plt.types.Rational.makeInstance(i, 1)]);
+	    check(ch, isChar, "char");
+	    chars.push(ch.val);
+	}
+	return plt.types.String.makeInstance(chars.join(""));
+    };
+
+
+
 
     plt.Kernel.format = function(formatStr, args) {
 	check(formatStr, isString, "string");
@@ -1580,20 +1663,6 @@ var plt = plt || {};
     
     
 
-    // We are reusing the built-in Javascript boolean class here.
-    plt.types.Logic = {
-	TRUE : true,
-	FALSE : false
-    };
-    
-    Boolean.prototype.toWrittenString = function() {
-	if (this.valueOf()) { return "true"; }
-	return "false";
-    };
-    Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
-
-
-
     plt.Kernel.error = function(msg, args) {
 	check(msg, isString, "string");
 	throw new MobyRuntimeError(plt.Kernel.format(msg.toString(), args).toString());
@@ -1631,6 +1700,7 @@ var plt = plt || {};
 	check(other, isImage, "image");
 	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
     };
+
 
 
 

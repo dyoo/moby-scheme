@@ -1355,10 +1355,102 @@ var getTests;
 								 Kernel.list([Rational.makeInstance(1),
 									      Rational.makeInstance(2),
 									      Rational.makeInstance(3)]))));
-	    }
+	    },
+	    
+	    testBuildList: function() {
+		this.assert(Kernel.equal_question_(Kernel.list([]),
+						   Kernel.build_dash_list(Rational.ZERO,
+									  function(args) { return args[0]; })));
+		this.assert(Kernel.equal_question_(Kernel.list([Rational.ZERO]),
+						   Kernel.build_dash_list(Rational.makeInstance(1),
+									  function(args) { return args[0]; })));
+		this.assert(Kernel.equal_question_(Kernel.list([Rational.ZERO, Rational.ONE]),
+						   Kernel.build_dash_list(Rational.makeInstance(2),
+									  function(args) { return args[0]; })));
+	    },
+
+	    testBuildString: function() {
+		this.assert(Kernel.equal_question_(Kernel.string([]),
+						   Kernel.build_dash_string
+						   (Rational.ZERO,
+						    function(args) { return Char.makeInstance("x"); })));
+		this.assert(Kernel.equal_question_("x",
+						   Kernel.build_dash_string
+						   (Rational.makeInstance(1),
+						    function(args) { return Char.makeInstance("x"); })));
+		this.assert(Kernel.equal_question_("xx",
+						   Kernel.build_dash_string
+						   (Rational.makeInstance(2),
+						    function(args) { return Char.makeInstance("x"); })));
+	    },
 
 
 	
+
+	    testSort : function() {
+		this.assert(Kernel.equal_question_
+			    (Kernel.list([Rational.makeInstance(1),
+					  Rational.makeInstance(4),
+					  Rational.makeInstance(9)]),
+			     Kernel.sort(Kernel.list([Rational.makeInstance(4),
+						      Rational.makeInstance(1),
+						      Rational.makeInstance(9)]),
+					 function(args) {
+					     return Kernel._lessthan_(args[0], 
+								      args[1], []);
+					 })));
+	    }, 
+
+
+	    testAndmap : function() {
+		this.assert(Kernel.equal_question_(plt.types.Logic.FALSE,
+						   Kernel.andmap(function(args) { 
+						       var result = Kernel.even_question_(args[0]);
+						       return result; },
+								 [Kernel.list([Rational.makeInstance(1),
+									       Rational.makeInstance(2),
+									       Rational.makeInstance(3)])])));
+
+ 		this.assert(Kernel.equal_question_(plt.types.Logic.TRUE,
+ 						   Kernel.andmap(function(args) { 
+ 						       return Kernel.even_question_(args[0])},
+ 								 [Kernel.list([Rational.makeInstance(2)])])));
+ 		this.assert(Kernel.equal_question_(plt.types.Logic.TRUE,
+ 						   Kernel.andmap(function(args) { 
+ 						       return Kernel.even_question_(args[0])},
+ 								 [Kernel.list([])])));
+	    },
+
+
+	    testOrmap : function() {
+		this.assert(Kernel.equal_question_(plt.types.Logic.TRUE,
+						   Kernel.ormap(function(args) { 
+						       var result = Kernel.even_question_(args[0]);
+						       return result; },
+								 [Kernel.list([Rational.makeInstance(1),
+									       Rational.makeInstance(2),
+									       Rational.makeInstance(3)])])));
+
+ 		this.assert(Kernel.equal_question_(plt.types.Logic.TRUE,
+ 						   Kernel.ormap(function(args) { 
+ 						       return Kernel.even_question_(args[0])},
+ 								 [Kernel.list([Rational.makeInstance(2)])])));
+ 		this.assert(Kernel.equal_question_(plt.types.Logic.FALSE,
+ 						   Kernel.ormap(function(args) { 
+ 						       return Kernel.even_question_(args[0])},
+ 								 [Kernel.list([])])));
+	    }
+
+
+
+
+
+
+
+
+	    
+	    
+	    
 	})
     }
 })();

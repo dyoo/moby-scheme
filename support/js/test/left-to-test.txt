@@ -1,13 +1,6 @@
- build-list
- build-string
- quicksort
- sort
- andmap
- ormap
  argmin
  argmax
  memf
- apply
  compose
  procedure?
 
