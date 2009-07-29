@@ -1211,7 +1211,16 @@ var getTests;
 		var str = Kernel.list_dash__greaterthan_string(lst);
 		this.assert(Kernel.equal_question_(str, String.makeInstance("zhe")));
 	    },
-	    
+	
+
+	    testFormat : function() {
+		this.assertEqual("hello danny",
+				 Kernel.format("hello ~a", ["danny"]));
+		this.assertEqual("hello ethan and \"jeff\"!",
+				 Kernel.format("hello ~a and ~s!", ["ethan", "jeff"]));
+	    },
+    
+
 	    testMake_dash_string : function(){
 		var str = String.makeInstance("zz");
 		var c = Char.makeInstance("z");

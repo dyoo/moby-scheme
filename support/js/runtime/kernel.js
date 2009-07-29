@@ -946,15 +946,26 @@ var plt = plt || {};
 	
 
 	string_dash__greaterthan_number : function(str){
+	    check(str, isString, "string");
 	    var aNum = str * 1;
 	    if (isNaN(aNum))
 		return plt.types.Logic.FALSE;
+	    if (Math.floor(aNum) == aNum) {
+		return plt.types.Rational.makeInstance(aNum);
+	    }
 	    return plt.types.FloatPoint.makeInstance(aNum);
 	},
 	
 
 	string_dash__greaterthan_symbol : function(str){
+	    check(str, isString, "string");
 	    return plt.types.Symbol.makeInstance(str);
+	},
+
+
+	string_dash__greaterthan_int: function(str) {
+	    check(str, isString, "string");
+	    return plt.types.Rational.makeInstance(str.toString().charCodeAt(0), 1);
 	},
 
 	
@@ -1046,11 +1057,6 @@ var plt = plt || {};
 	int_dash__greaterthan_string: function (i) {
 	    check(i, isInteger, "integer");
 	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
-	},
-
-	string_dash__greaterthan_int: function(str) {
-	    check(str, isString, "string");
-	    return plt.types.Rational.makeInstance(str.toString().charCodeAt(0), 1);
 	},
 
 	
@@ -1407,8 +1413,35 @@ var plt = plt || {};
     };
 
     plt.Kernel.format = function(formatStr, args) {
-	// not right yet, but let's see how well this works.
-	return plt.types.String.makeInstance(formatStr + args.join(" "));
+	check(formatStr, isString, "string");
+	var pattern = new RegExp("~[sSaAn%~]", "g");
+	var buffer = args;
+	function f(s) {
+	    if (s == "~~") {
+		return "~";
+	    } else if (s == '~n' || s == '~%') {
+		return "\n";
+	    } else if (s == '~s' || s == "~S") {
+		if (buffer.length == 0) {
+		    throw new MobyRuntimeException(
+			"format: fewer arguments passed than expected");
+		}
+		return buffer.shift().toWrittenString();
+	    } else if (s == '~a' || s == "~A") {
+		if (buffer.length == 0) {
+		    throw new MobyRuntimeException(
+			"format: fewer arguments passed than expected");
+		}
+		return buffer.shift().toDisplayedString();
+	    } else {
+		throw new MobyRuntimeError("Unimplemented format " + s);
+	    }
+	}
+	var result = plt.types.String.makeInstance(formatStr.replace(pattern, f));
+	if (buffer.length > 0) {
+	    throw new MobyRuntimeException("format: More arguments passed than expected");
+	}
+	return result;
     }
 
 
