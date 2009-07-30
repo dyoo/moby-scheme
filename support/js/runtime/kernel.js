@@ -979,6 +979,20 @@ var plt = plt || {};
 	    
 	    return plt.types.Logic.FALSE;
 	},
+
+
+	memf : function(testF, lst) {
+	    checkList(lst, "memv must consume a list");
+	    // TODO: add contract on higher order argument testF.    
+	    while (!lst.isEmpty()){
+		if (testF([lst.first()])) {
+		    return lst;
+		}
+		lst = lst.rest();
+	    }
+	    return plt.types.Logic.FALSE;
+	},
+
 	
 
 	string_dash__greaterthan_number : function(str){

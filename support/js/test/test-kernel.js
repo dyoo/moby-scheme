@@ -1458,7 +1458,30 @@ var getTests;
 				 Kernel.argmax(function(args) {
 				     return Rational.makeInstance(args[0].length) },
 					       lst));
-	    }
+	    },
+
+
+	    testMemf: function() {
+		var lst = Kernel.list([Rational.makeInstance(2),
+				       Rational.makeInstance(4),
+				       Rational.makeInstance(7),
+				       Rational.makeInstance(8)]);
+		this.assertEqual(lst,
+				 Kernel.memf(function(args) {
+				     return args[0].toInteger() % 2 == 0},
+					     lst));
+		
+		this.assertEqual(lst.rest().rest(),
+				 Kernel.memf(function(args) {
+				     return args[0].toInteger() % 2 == 1},
+					     lst));
+
+		this.assert(! Kernel.memf(function(args) {
+		    return args[0].toInteger() > 8},
+					  lst));
+
+
+	    },
 
 	    
 	    
