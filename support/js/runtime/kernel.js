@@ -947,7 +947,7 @@ var plt = plt || {};
 	},
 	
 	member : function(item, lst){
-	    checkList(lst, "member must consume a list");
+	    checkList(lst, "member: must consume a list");
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.equal_question_(item, lst.first()).valueOf())
 		    return plt.types.Logic.TRUE;
@@ -958,7 +958,7 @@ var plt = plt || {};
 	},
 	
 	memq : function(item, lst){
-	    checkList(lst, "memq must consume a list");
+	    checkList(lst, "memq: must consume a list");
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.eq_question_(item, lst.first()).valueOf())
 		    return lst;
@@ -970,7 +970,7 @@ var plt = plt || {};
 	
 
 	memv : function(item, lst){
-	    checkList(lst, "memv must consume a list");
+	    checkList(lst, "memv: must consume a list");
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.eqv_question_(item, lst.first()).valueOf())
 		    return lst;
@@ -982,7 +982,7 @@ var plt = plt || {};
 
 
 	memf : function(testF, lst) {
-	    checkList(lst, "memv must consume a list");
+	    checkList(lst, "memf: must consume a list");
 	    // TODO: add contract on higher order argument testF.    
 	    while (!lst.isEmpty()){
 		if (testF([lst.first()])) {
@@ -993,6 +993,17 @@ var plt = plt || {};
 	    return plt.types.Logic.FALSE;
 	},
 
+
+	compose: function(functions) {
+	    // TODO: add contract on higher order argument testF.
+	    return function(args) {
+		var resultArray = args;
+		for (var i = functions.length - 1; i >= 0; i--) {
+		    resultArray = [functions[i](resultArray)];
+		}
+		return resultArray[0];
+	    }
+	},
 	
 
 	string_dash__greaterthan_number : function(str){

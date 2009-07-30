@@ -1483,6 +1483,17 @@ var getTests;
 
 	    },
 
+
+	    testCompose: function() { 
+		var f1 = Kernel.compose([]);
+		this.assertEqual(42, f1([42]));
+		this.assertEqual(42, f1([42, 43, 44]));
+
+
+		var f2 = Kernel.compose([function(args) { return args[0] * args[0]; },
+					 function(args) { return args[0] + 1; } ]);
+		this.assertEqual(36, f2([5]));
+	    }
 	    
 	    
 	    
