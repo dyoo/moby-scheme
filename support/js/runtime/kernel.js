@@ -5,7 +5,7 @@ var plt = plt || {};
 // Kernel
 (function() {
 
-   
+    
 
 
 
@@ -229,7 +229,7 @@ var plt = plt || {};
 	    check(second, typeCheckF, "second must be a " + typeName);
 	    arrayEach(rest, 
 		      function(x) { check(x, typeCheckF, 
-					 "each argument must be a " + typeName) });
+					  "each argument must be a " + typeName) });
 	    return comparisonF(first, second, rest);
 	}
     }
@@ -884,7 +884,7 @@ var plt = plt || {};
 	pair_question_ : function(x){
 	    return isPair(x);
 	},
-		
+	
 	cons_question_: function(x){
 	    return isPair(x);
 	},
@@ -1677,6 +1677,13 @@ var plt = plt || {};
     };
 
     
+
+
+    plt.Kernel.procedure_question_ = function(f) {
+	return typeof(f) == 'function';
+    };
+    
+
     
 
 
@@ -1733,7 +1740,7 @@ var plt = plt || {};
     plt.Kernel.error = function(msg, args) {
 	check(msg, isString, "string");
 	throw new MobyRuntimeError(plt.Kernel.format(msg.toString(), args).toString());
-    }
+    };
 
 
 

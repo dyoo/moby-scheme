@@ -1493,6 +1493,11 @@ var getTests;
 		var f2 = Kernel.compose([function(args) { return args[0] * args[0]; },
 					 function(args) { return args[0] + 1; } ]);
 		this.assertEqual(36, f2([5]));
+	    }, 
+
+	    testIsProcedure: function() {
+		this.assert(! Kernel.procedure_question_(42));
+		this.assert(Kernel.procedure_question_(function() {return 42;}));
 	    }
 	    
 	    
