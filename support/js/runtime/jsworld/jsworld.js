@@ -1,11 +1,9 @@
 
 if(typeof(plt) == 'undefined') {   
-    plt = {};
+    var plt = {};
 }
 
 plt.Jsworld = {};
-
-
 
 
 
@@ -58,7 +56,6 @@ plt.Jsworld = {};
 	try {
 	    world = updater(world);
 	} catch(e) {
-//	    console.log(e);
 	    return;
 	}
 	if (originalWorld != world) {
@@ -283,6 +280,20 @@ plt.Jsworld = {};
     return true;
     }*/
 
+
+    // node_to_tree: dom -> dom-tree
+    // Given a native dom node, produces the appropriate tree.
+    function node_to_tree(domNode) {
+	var result = [domNode];
+	for (var c = domNode.firstChild; c != null; c = c.nextSibling) {
+	    result.push(node_to_tree(c));
+	}
+	return result;
+    }
+    Jsworld.node_to_tree = node_to_tree;
+
+
+
     // nodes(tree(N)) = nodes(N)
     function nodes(tree) {
 	var ret = [tree.node];
@@ -292,6 +303,8 @@ plt.Jsworld = {};
 	
 	return ret;
     }
+
+
 
     // relations(tree(N)) = relations(N)
     function relations(tree) {
