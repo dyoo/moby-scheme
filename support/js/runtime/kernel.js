@@ -1524,6 +1524,48 @@ var plt = plt || {};
 
 
 
+    plt.Kernel.argmin = function(f, elts) {
+	check(elts, isPair, "nonempty list");
+	// TODO: add contract on higher order argument f.
+	var bestSoFar = elts.first();
+	var bestMetric = f([elts.first()]).toFloat();
+	elts = elts.rest();
+
+	while (! elts.isEmpty()) {
+	    var nextMetric = f([elts.first()]).toFloat();
+	    if (nextMetric < bestMetric) {
+		bestSoFar = elts.first();
+		bestMetric = nextMetric;
+	    }
+	    elts = elts.rest();
+	}
+	return bestSoFar;
+    };
+
+
+    plt.Kernel.argmax = function(f, elts) {
+	check(elts, isPair, "nonempty list");
+	// TODO: add contract on higher order argument f.
+	var bestSoFar = elts.first();
+	var bestMetric = f([elts.first()]).toFloat();
+	elts = elts.rest();
+
+	while (! elts.isEmpty()) {
+	    var nextMetric = f([elts.first()]).toFloat();
+	    if (nextMetric > bestMetric) {
+		bestSoFar = elts.first();
+		bestMetric = nextMetric;
+	    }
+	    elts = elts.rest();
+	}
+	return bestSoFar;
+    };
+
+
+
+
+
+
     plt.Kernel.sort = function(l, cmpF) {
 	check(l, isList, "list");
 	// TODO: add contract on higher order argument cmpF.

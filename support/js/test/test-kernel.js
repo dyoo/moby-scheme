@@ -1439,14 +1439,26 @@ var getTests;
  						   Kernel.ormap(function(args) { 
  						       return Kernel.even_question_(args[0])},
  								 [Kernel.list([])])));
+	    },
+
+
+
+	    testArgmin : function() {
+		var lst = Kernel.list(["hello", "world", "testing"]);
+		this.assertEqual("hello",
+				 Kernel.argmin(function(args) {
+				     return Rational.makeInstance(args[0].length) },
+					       lst));
+	    },
+
+
+	    testArgmax : function() {
+		var lst = Kernel.list(["hello", "world", "testing"]);
+		this.assertEqual("testing",
+				 Kernel.argmax(function(args) {
+				     return Rational.makeInstance(args[0].length) },
+					       lst));
 	    }
-
-
-
-
-
-
-
 
 	    
 	    
