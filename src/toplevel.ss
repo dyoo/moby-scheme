@@ -268,7 +268,7 @@
                      
                      ;; Higher-Order Functions
                      (andmap 2)
-;                     (apply 2 true)           ;; *
+;                    (apply 2 true)           ;; *
                      (argmax 2)               ;; *
                      (argmin 2)               ;; *
                      (build-list 2)

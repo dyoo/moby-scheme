@@ -3,6 +3,14 @@ var plt = plt || {};
 
 //////////////////////////////////////////////////////////////////////
 // Kernel
+// Depends on types.js.
+//
+// FIXME: there's a circular dependency between types.js and
+// kernel.js.  It hasn't bitten us yet only because the circular
+// references are in functions, rather than toplevel expressions, but
+// we need to be careful.
+
+
 (function() {
 
     
@@ -25,6 +33,7 @@ var plt = plt || {};
     }
     MobyTypeError.prototype.name= 'MobyError';
     MobyTypeError.prototype.toString = function () { return "MobyError: " + this.msg }
+
     
 
     function MobyTypeError(msg) {
@@ -108,6 +117,10 @@ var plt = plt || {};
 	return x != null && x != undefined && (x instanceof plt.types.Complex || 
 					       x instanceof plt.types.Rational ||
 					       x instanceof plt.types.FloatPoint);
+    }
+
+    function isFunction(x) {
+	return typeof(x) == 'function';
     }
 
 
@@ -1396,8 +1409,9 @@ var plt = plt || {};
 	if (key in obj.hash) {
 	    return obj.hash[key];
 	} else {
-	    if (typeof(defaultVal) == 'function')
+	    if (isFunction(defaultVal)) {
 		return defaultVal([]);
+	    }
 	    return defaultVal;
 	}
     };
@@ -1680,7 +1694,7 @@ var plt = plt || {};
 
 
     plt.Kernel.procedure_question_ = function(f) {
-	return typeof(f) == 'function';
+	return isFunction(f);
     };
     
 
@@ -1779,5 +1793,37 @@ var plt = plt || {};
 
 
 
+
+    // Expose the predicates.
+    plt.Kernel.isSymbol = isSymbol;
+    plt.Kernel.isChar = isChar;
+    plt.Kernel.isString = isString;
+    plt.Kernel.isBoolean = isBoolean;
+    plt.Kernel.isPair = isPair;
+    plt.Kernel.isEmpty = isEmpty;
+    plt.Kernel.isReal = isReal;
+    plt.Kernel.isRational = isRational;
+    plt.Kernel.isComplex = isComplex;
+    plt.Kernel.isInteger = isInteger;
+    plt.Kernel.isNatural = isNatural;
+    plt.Kernel.isAlphabeticString = isAlphabeticString;
+    plt.Kernel.isWhitespaceString = isWhitespaceString;
+    plt.Kernel.isImage = isImage;
+    plt.Kernel.isList = isList;
+    plt.Kernel.isFunction = isFunction;
+    
+
+    plt.Kernel.arrayEach = arrayEach;
+
+    // Expose the runtime type checkers.
+    plt.Kernel.check = check;
+    plt.Kernel.checkList = checkList;
+    plt.Kernel.checkListof = checkListof;
+
+
+    // Expose the error classes.
+    plt.Kernel.MobyError = MobyError;
+    plt.Kernel.MobyTypeError = MobyTypeError;
+    plt.Kernel.MobyRuntimeError = MobyRuntimeError;
     
 })();
