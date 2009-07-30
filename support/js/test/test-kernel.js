@@ -1286,7 +1286,7 @@ var getTests;
 
 	    testError : function() {
 		this.assertRaise("MobyRuntimeError",
-				 function() { Kernel.error("sample error", []) });
+				 function() { Kernel.error(Symbol.makeInstance("ah"), "blah")});
 	    },
 
 

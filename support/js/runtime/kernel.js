@@ -1737,9 +1737,10 @@ var plt = plt || {};
     
     
 
-    plt.Kernel.error = function(msg, args) {
+    plt.Kernel.error = function(name, msg) {
+	check(name, isSymbol, "name");
 	check(msg, isString, "string");
-	throw new MobyRuntimeError(plt.Kernel.format(msg.toString(), args).toString());
+	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
     };
 
 
