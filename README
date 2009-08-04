@@ -42,9 +42,14 @@ Dependencies
 
 You need the following:
 
+  PLT Scheme >=4.1.3 (http://plt-scheme.org/)
+
+
+If you wish to generate programs for the Android+Phonegap backend,
+you'll also need:
+
   Java >=1.6 (http://java.sun.com/)
   Apache Ant >=1.7.1 (http://ant.apache.org/)
-  PLT Scheme >=4.1.3 (http://plt-scheme.org/)
   Google Android SDK >= 1.5r3 (http://developer.android.com/)
 
 
@@ -80,16 +85,6 @@ To install Moby:
         within src/config.ss.  You should change those paths to the
         ones on your system.
 
-    5.  Add a symbolic link from moby to the collects directory of
-    your PLT Scheme installation.
-
-        For example, if moby is under the home directory, and PLT Scheme
-        under the ~/local/plt directory, then the command:
-
-            $ ln -s ~/moby ~/local/plt/collects/moby
-
-        will set up the necessary symbolic link.
-
 
 
 ----------------------------------------------------------------------
@@ -107,12 +102,25 @@ which rely on Javascript:
     * js: compiles to web application 
 
 
-By default, the command line utility with compile with the
-js+android-phonegap backend.  Let's run moby on the falling-ball.ss
-example in moby/examples/falling-ball.ss:
+By default, the command line utility with compile with the js backend.
+
+Let's run moby on the falling-ball.ss example in
+moby/examples/falling-ball.ss.  We can first generate a web program.
 
     $ cd moby/examples
     $ mred ../src/moby.ss falling-ball.ss
+    $ cd FallingBall/
+    $ ls
+    index.html  main.js  runtime  test
+
+If you open up index.html from your web browser, you should see red
+ball falling down the screen.
+
+
+Furthermore, we may want to generate an Android application.
+
+    $ cd moby/examples
+    $ mred ../src/moby.ss -t js+android-phonegap falling-ball.ss
     $ cd FallingBall
     $ ls
     AndroidManifest.xml  build.properties    gen               res
