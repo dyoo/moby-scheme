@@ -64,7 +64,7 @@ To install Moby:
 
     1.  Grab the Moby source, currently hosted on github at:
 
-        http://github.com/dyoo/moby-scheme/tree/master
+        http://github.com/dyoo/moby-scheme/tree/devel
 
     For example:
 
