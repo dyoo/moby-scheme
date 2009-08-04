@@ -1,92 +1,11 @@
- char=?
- char<?
- char>?
- char<=?
- char>=?
- char-ci=?
- char-ci<?
- char-ci>?
- char-ci<=?
- char-ci>=?
- char-numeric?
- char-alphabetic?
- char-whitespace?
- char-upper-case?
- char-lower-case?
- char-upcase
- char-downcase
- char->integer
- string?
- string-length
- string-ith
- replicate
- int->string
- string->int
- explode
- implode
- string-numeric?
- string-alphabetic?
- string-whitespace?
- string-upper-case?
- string-lower-case?
- string
- make-string
- string-ref
- substring
- string-copy
- string-append
- string=?
- string<?
- string>?
- string<=?
- string>=?
- string-ci=?
- string-ci<?
- string-ci>?
- string-ci<=?
- string-ci>=?
- string->symbol
- string->number
- string->list
- list->string
- format
- image?
- image=?
- identity
- error
- struct?
- equal?
- eq?
- eqv?
- =~
- equal~?
- eof
- eof-object?
- exit
- +
- *
- -
- /
- map
- for-each
- filter
- foldr
- foldl
- build-list
- build-string
- quicksort
- sort
- andmap
- ormap
- argmin
- argmax
- memf
- apply
- compose
- procedure?
-
-
-
 
 NOTE: inexact->exact isn't quite doing the right thing
-We are not supporting apply, exit, or for-each yet.
+We are not supporting:
+
+     apply, 
+     exit,
+     for-each,
+     eof
+     eof-object?
+
+at the moment.

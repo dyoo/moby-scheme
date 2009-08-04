@@ -220,12 +220,12 @@
                      (format 1 true)
                      (list->string 1)
                      (make-string 2)
-                     (replicate 2)            ;; *
+                     (replicate 2)
                      (string 0 true)
                      (string->list 1)
                      (string->number 1)
                      (string->symbol 1)
-                     (string-alphabetic? 1)   ;; *
+                     (string-alphabetic? 1)
                      (string-append 0 true)
                      (string-ci<=? 2 true)
                      (string-ci<? 2 true)
@@ -233,7 +233,6 @@
                      (string-ci>=? 2 true)
                      (string-ci>? 2 true)
                      (string-copy 1)
-;                     (string-ith 2)           ;; *
                      (string-length 1)
                      (string-lower-case? 1)   ;; *
                      (string-numeric? 1)      ;; *
@@ -269,7 +268,7 @@
                      
                      ;; Higher-Order Functions
                      (andmap 2)
-;                     (apply 2 true)           ;; *
+;                    (apply 2 true)           ;; *
                      (argmax 2)               ;; *
                      (argmin 2)               ;; *
                      (build-list 2)

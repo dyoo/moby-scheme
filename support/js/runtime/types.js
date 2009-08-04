@@ -1,6 +1,7 @@
 var plt = plt || {};
 
 
+// Depends on kernel.js.
 (function() {
 
 
@@ -10,6 +11,25 @@ var plt = plt || {};
     
     plt.types = plt.types || {};
     
+
+
+    // We are reusing the built-in Javascript boolean class here.
+    plt.types.Logic = {
+	TRUE : true,
+	FALSE : false
+    };
+    
+    Boolean.prototype.toWrittenString = function() {
+	if (this.valueOf()) { return "true"; }
+	return "false";
+    };
+    Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
+
+
+    Boolean.prototype.isEqual = function(other){
+	return this == other;
+    };
+
 
 
 
@@ -1004,7 +1024,7 @@ var plt = plt || {};
     // For the moment, we just reuse Javascript strings.
     plt.types.String = String;
     plt.types.String.makeInstance = function(s) {
-	return s;
+	return s.valueOf();
     };
     
     plt.types.String.prototype.isEqual = function(other){

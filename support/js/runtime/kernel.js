@@ -3,7 +3,19 @@ var plt = plt || {};
 
 //////////////////////////////////////////////////////////////////////
 // Kernel
+// Depends on types.js.
+//
+// FIXME: there's a circular dependency between types.js and
+// kernel.js.  It hasn't bitten us yet only because the circular
+// references are in functions, rather than toplevel expressions, but
+// we need to be careful.
+
+
 (function() {
+
+    
+
+
 
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
@@ -14,11 +26,39 @@ var plt = plt || {};
     }
 
 
+    //////////////////////////////////////////////////////////////////////
+
+    function MobyError(msg) {
+	this.msg = msg;
+    }
+    MobyTypeError.prototype.name= 'MobyError';
+    MobyTypeError.prototype.toString = function () { return "MobyError: " + this.msg }
+
+    
+
+    function MobyTypeError(msg) {
+	MobyError.call(this, msg);
+    }
+    MobyTypeError.prototype = heir(MobyError.prototype);
+    MobyTypeError.prototype.name= 'MobyTypeError';
+    MobyTypeError.prototype.toString = function () { return "MobyTypeError: " + this.msg }
+
+
+
+    function MobyRuntimeError(msg) {
+	MobyError.call(this, msg);
+    }
+    MobyRuntimeError.prototype = heir(MobyError.prototype);
+    MobyRuntimeError.prototype.name= 'MobyRuntimeError';
+    MobyRuntimeError.prototype.toString = function () { return "MobyRuntimeError: " + this.msg }
+
+    //////////////////////////////////////////////////////////////////////
+
 
     // _gcd: integer integer -> integer
     function _gcd(a, b) {
 	while (b != 0) {
-	    t = a;
+	    var t = a;
 	    a = b;
 	    b = t % b;
 	}
@@ -44,6 +84,11 @@ var plt = plt || {};
 
     function isChar(x) {
 	return x != null && x != undefined && x instanceof plt.types.Char;
+    }
+
+    function isString(x) {
+	return typeof(x) == 'string';
+	//return x != null && x != undefined && x instanceof plt.types.String;
     }
 
     function isBoolean(x) {
@@ -74,11 +119,48 @@ var plt = plt || {};
 					       x instanceof plt.types.FloatPoint);
     }
 
+    function isFunction(x) {
+	return typeof(x) == 'function';
+    }
+
 
     // Returns true if x is an integer.
     function isInteger(x) {
 	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
     }
+
+    function isNatural(x) {
+	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor()) && x.toInteger() >= 0;
+    }
+
+
+
+
+    // isAlphabeticString: string -> boolean
+    function isAlphabeticString(s) {
+	for(var i = 0; i < s.length; i++) {
+	    if (! ((s[i] >= "a" && s[i] <= "z") ||
+		   (s[i] >= "A" && s[i] <= "Z"))) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    // isWhitespaceString: string -> boolean
+    var isWhitespaceString = (function() {
+	var pat = new RegExp("^\\s*$");
+	return function(s) {
+	    return (s.match(pat) ? true : false);
+	}
+    }());
+
+
+
+    function isImage(thing) {
+	return (thing != null && thing != undefined && thing instanceof BaseImage);
+    }
+
 
 
     // arrayEach: (arrayof X) (X -> void) -> void
@@ -125,52 +207,68 @@ var plt = plt || {};
     }
 
 
-    // Checks if x satisfies f.  If not, a TypeError of msg is thrown.
+    // Checks if x satisfies f.  If not, a MobyTypeError of msg is thrown.
     function check(x, f, msg) {
 	if (! f(x)) {
-	    throw new TypeError(msg);
+	    throw new MobyTypeError(msg);
 	}
     }
 
     // Throws exception if x is not a list.
     function checkList(x, msg) {
 	if (! isList(x)) {
-	    throw new TypeError(msg);
+	    throw new MobyTypeError(msg);
 	}
     }
 
-    // Checks if x is a list of f.  If not, throws a TypeError of msg.
+    // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
     function checkListof(x, f, msg) {
 	if (! isList(x)) {
-	    throw new TypeError(msg);
+	    throw new MobyTypeError(msg);
 	}
 	while (! x.isEmpty()) {
 	    if (! f(x.first())) {
-		throw new TypeError(msg);
+		throw new MobyTypeError(msg);
 	    }
-	    x = x.next();
+	    x = x.rest();
 	}
     }
 
 
-    // checkNumericComparison: (number number (arrayof number) -> boolean) -> (number number (arrayof number) -> boolean) 
-    function checkNumericComparison(comparisonF) {
+    // makeChainingComparator: (X -> boolean) string (X X (arrayof X) -> boolean) -> (X X (arrayof X) -> boolean) 
+    function makeChainingComparator(typeCheckF, typeName, comparisonF) {
 	return function(first, second, rest) {
-	    check(first, isNumber, "first must be a number");
-	    check(second, isNumber, "second must be a number");
+	    check(first, typeCheckF, "first must be a " + typeName);
+	    check(second, typeCheckF, "second must be a " + typeName);
 	    arrayEach(rest, 
-		      function() { checkListof(this, isNumber, 
-					       "all arguments must be numbers") });
+		      function(x) { check(x, typeCheckF, 
+					  "each argument must be a " + typeName) });
 	    return comparisonF(first, second, rest);
 	}
     }
 
 
 
-    function makeNumericComparator(test) {
-	return checkNumericComparison(function(first, second, rest) {
-	    return chainTest(test, first, second, rest);
-	});
+    function makeNumericChainingComparator(test) {
+	return makeChainingComparator(isNumber, "number",
+				      function(first, second, rest) {
+					  return chainTest(test, first, second, rest);
+				      });
+    }
+
+    function makeCharChainingComparator(test) {
+	return makeChainingComparator(isChar, "char",
+				      function(first, second, rest) {
+					  return chainTest(test, first, second, rest);
+				      });
+    }
+
+
+    function makeStringChainingComparator(test) {
+	return makeChainingComparator(isString, "string",
+				      function(first, second, rest) {
+					  return chainTest(test, first, second, rest);
+				      });
     }
 
 
@@ -190,7 +288,7 @@ var plt = plt || {};
 
 	
 	struct_question_: function(thing) {
-	    return (thing != null && thing != undefined && thing instanceof this.Struct);
+	    return (thing != null && thing != undefined && thing instanceof plt.Kernel.Struct);
 	},
 	
 	number_question_ : function(x){
@@ -211,6 +309,24 @@ var plt = plt || {};
 		return x.isEqual(y);
 	    }
 	},
+
+
+	equal_tilde__question_ : function(x, y, delta) {
+	    check(delta, isNumber, "number");
+	    if (plt.Kernel.number_question_(x).valueOf() && 
+		plt.Kernel.number_question_(y).valueOf()) {
+		if ("isEqual" in x) {
+		    return plt.types.NumberTower.approxEqual(x, y, delta);
+		} else if ("isEqual" in y) {
+		    return plt.types.NumberTower.approxEqual(y, x, delta);
+		} else {
+		    return (x == y);
+		}
+	    } else {
+		return x.isEqual(y);
+	    }
+	},
+
 	
 	eq_question_ : function(x, y){
 	    return (x == y);
@@ -327,6 +443,9 @@ var plt = plt || {};
 	
 	
 	_equal__tilde_ : function(x, y, delta) {
+	    check(x, isNumber, "number");
+	    check(y, isNumber, "number");
+	    check(delta, isNumber, "number");
 	    return plt.types.NumberTower.approxEqual(x, y, delta);
 	},
 	
@@ -348,6 +467,7 @@ var plt = plt || {};
 	
 	
 	_plus_ : function(args) {
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    var i, sum = plt.types.Rational.ZERO;
 	    for(i = 0; i < args.length; i++) {
 		sum = plt.types.NumberTower.add(sum, args[i]);
@@ -355,7 +475,10 @@ var plt = plt || {};
 	    return sum;
 	},
 	
+
 	_dash_ : function(first, args) {
+	    check(first, isNumber, "number");
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    if (args.length == 0) {
 		return plt.types.NumberTower.subtract
 		(plt.types.Rational.ZERO, first);
@@ -370,6 +493,7 @@ var plt = plt || {};
 	
 	
 	_star_ : function(args) {
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    var i, prod = plt.types.Rational.ONE;
 	    for(i = 0; i < args.length; i++) {
 		prod = plt.types.NumberTower.multiply(prod, args[i]);
@@ -379,6 +503,8 @@ var plt = plt || {};
 	
 	
 	_slash_ : function(first, args) {
+	    check(first, isNumber, "number");
+	    arrayEach(args, function(x) { check(x, isNumber, "number") });
 	    var i, div = first;
 	    for(i = 0; i < args.length; i++) {
 		div = plt.types.NumberTower.divide(div, args[i]);
@@ -386,11 +512,12 @@ var plt = plt || {};
 	    return div;    
 	},
 	
-	_equal_ : makeNumericComparator(plt.types.NumberTower.equal),
-	_greaterthan__equal_: makeNumericComparator(plt.types.NumberTower.greaterThanOrEqual),
-	_lessthan__equal_: makeNumericComparator(plt.types.NumberTower.lessThanOrEqual),
-	_greaterthan_: makeNumericComparator(plt.types.NumberTower.greaterThan),
-	_lessthan_: makeNumericComparator(plt.types.NumberTower.lessThan),
+
+	_equal_ : makeNumericChainingComparator(plt.types.NumberTower.equal),
+	_greaterthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.greaterThanOrEqual),
+	_lessthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.lessThanOrEqual),
+	_greaterthan_: makeNumericChainingComparator(plt.types.NumberTower.greaterThan),
+	_lessthan_: makeNumericChainingComparator(plt.types.NumberTower.lessThan),
 
 	
 	min : function(first, rest) {
@@ -538,12 +665,12 @@ var plt = plt || {};
 	
 	odd_question_ : function(x){
 	    check(x, isNumber, "number");
-	    return (x.toInteger() % 2 == 1);
+	    return ((x.toInteger() % 2) == 1);
 	},
 	
 	even_question_ : function(x) {
 	    check(x, isNumber, "number");
-	    return (x.toInteger() % 2 == 0);
+	    return ((x.toInteger() % 2) == 0);
 	},
 	
 	positive_question_ : function(x){
@@ -573,11 +700,6 @@ var plt = plt || {};
 	    return plt.types.Complex.makeInstance(x, y);
 	},
 
-	make_dash_rectangular: function(a, b) {
-	    return plt.types.Complex.makeInstance(a, b);
-	},
-
-
 	integer_question_ : function(x){
 	    check(x, isNumber, "number");
 	    return this.equal_question_(x, x.floor());
@@ -585,26 +707,6 @@ var plt = plt || {};
 	
 	make_dash_rectangular : function(x, y){
 	    return plt.types.Complex.makeInstance(x.toFloat(), y.toFloat());
-	},
-	
-	string_equal__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x == y;}, first, second, rest);
-	},
-	
-	string_lessthan__equal__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x <= y;}, first, second, rest);
-	},
-	
-	string_lessthan__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x < y;}, first, second, rest);
-	},
-	
-	string_greaterthan__equal__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x >= y;}, first, second, rest);
-	},
-	
-	string_greaterthan__question_: function(first, second, rest){
-	    return chainTest(function(x, y){return x > y;}, first, second, rest);
 	},
 	
 	quotient : function(x, y){
@@ -795,7 +897,7 @@ var plt = plt || {};
 	pair_question_ : function(x){
 	    return isPair(x);
 	},
-		
+	
 	cons_question_: function(x){
 	    return isPair(x);
 	},
@@ -836,7 +938,7 @@ var plt = plt || {};
 	list_star_ : function(items, otherItems){
 	    var lastListItem = otherItems.pop();
 	    if (lastListItem == undefined || ! lastListItem instanceof plt.types.Cons) {
-		throw new TypeError("list*: " + lastListItem + " not a list");
+		throw new MobyTypeError("list*: " + lastListItem + " not a list");
 	    }
 	    otherItems.unshift(items);
 	    return plt.Kernel.append(plt.Kernel.list(otherItems), [lastListItem]);
@@ -844,16 +946,21 @@ var plt = plt || {};
 	
 	list_dash_ref : function(lst, x){
 	    checkList(lst, "list-ref must consume a list");
-	    check(x, isInteger, "integer");
+	    check(x, isNatural, "natural");
 	    var i = plt.types.Rational.ZERO;
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
-		lst = lst.rest();
+		if (lst.isEmpty()) {
+		    throw new MobyRuntimeError("list-ref: index too small");
+		}
+		else {
+		    lst = lst.rest();
+		}
 	    }
 	    return lst.first();
 	},
 	
 	member : function(item, lst){
-	    checkList(lst, "member must consume a list");
+	    checkList(lst, "member: must consume a list");
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.equal_question_(item, lst.first()).valueOf())
 		    return plt.types.Logic.TRUE;
@@ -864,7 +971,7 @@ var plt = plt || {};
 	},
 	
 	memq : function(item, lst){
-	    checkList(lst, "memq must consume a list");
+	    checkList(lst, "memq: must consume a list");
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.eq_question_(item, lst.first()).valueOf())
 		    return lst;
@@ -874,8 +981,9 @@ var plt = plt || {};
 	    return plt.types.Logic.FALSE;
 	},
 	
+
 	memv : function(item, lst){
-	    checkList(lst, "memv must consume a list");
+	    checkList(lst, "memv: must consume a list");
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.eqv_question_(item, lst.first()).valueOf())
 		    return lst;
@@ -884,88 +992,164 @@ var plt = plt || {};
 	    
 	    return plt.types.Logic.FALSE;
 	},
+
+
+	memf : function(testF, lst) {
+	    checkList(lst, "memf: must consume a list");
+	    // TODO: add contract on higher order argument testF.    
+	    while (!lst.isEmpty()){
+		if (testF([lst.first()])) {
+		    return lst;
+		}
+		lst = lst.rest();
+	    }
+	    return plt.types.Logic.FALSE;
+	},
+
+
+	compose: function(functions) {
+	    // TODO: add contract on higher order argument testF.
+	    return function(args) {
+		var resultArray = args;
+		for (var i = functions.length - 1; i >= 0; i--) {
+		    resultArray = [functions[i](resultArray)];
+		}
+		return resultArray[0];
+	    }
+	},
 	
+
 	string_dash__greaterthan_number : function(str){
+	    check(str, isString, "string");
 	    var aNum = str * 1;
 	    if (isNaN(aNum))
 		return plt.types.Logic.FALSE;
+	    if (Math.floor(aNum) == aNum) {
+		return plt.types.Rational.makeInstance(aNum);
+	    }
 	    return plt.types.FloatPoint.makeInstance(aNum);
 	},
 	
+
 	string_dash__greaterthan_symbol : function(str){
+	    check(str, isString, "string");
 	    return plt.types.Symbol.makeInstance(str);
 	},
-	
-	string_dash_append : function(arr){
-            return plt.types.String.makeInstance(arr.join(""));
-	},
-	
-	string_dash_ci_equal__question_ : function(first, second, rest){
-	    first = first.toUpperCase();
-	    second = second.toUpperCase();
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = rest[i].toUpperCase();
-	    }
-	    return plt.Kernel.string_equal__question_(first, second, rest);
-	},
-	
-	string_dash_ci_lessthan__equal__question_ : function(first, second, rest){
-	    first = first.toUpperCase();
-	    second = second.toUpperCase();
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = rest[i].toUpperCase();
-	    }
-	    return plt.Kernel.string_lessthan__equal__question_(first, second, rest);
-	},
-	
-	string_dash_ci_lessthan__question_ : function(first, second, rest){
-	    first = first.toUpperCase();
-	    second = second.toUpperCase();
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = rest[i].toUpperCase();
-	    }
-	    return plt.Kernel.string_lessthan__question_(first, second, rest);
-	},
-	
-	string_dash_ci_greaterthan__question_ : function(first, second, rest){
-	    return !plt.Kernel.string_dash_ci_lessthan__equal__question_(first, second, rest);
-	},
-	
-	string_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	    return !plt.Kernel.string_dash_ci_lessthan__question_(first, second, rest);
-	},
-	
-	string_dash_copy : function(str){
-	    return plt.types.String.makeInstance(str);
-	},
-	
-	string_dash_length : function(str){
-	    return plt.types.Rational.makeInstance(str.length, 1);
-	},
-	
-	string_dash_ref : function(str, i){
-	    return str.charAt(i.toInteger());
-	},
 
-	string_dash_ith : function (str, i) {
-	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
-	},
 
-	int_dash_greaterthan_string: function (i) {
-	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
-	},
-
-	string_dash_greaterthan_int: function(str) {
+	string_dash__greaterthan_int: function(str) {
+	    check(str, isString, "string");
 	    return plt.types.Rational.makeInstance(str.toString().charCodeAt(0), 1);
 	},
 
 	
-	string_question_ : function(str){
-	    return typeof(str) == 'string';
+	string_dash_append : function(arr){
+	    arrayEach(arr, function(x) { check(x, isString, "string") });
+            return plt.types.String.makeInstance(arr.join(""));
+	},
+
+
+	replicate: function(n, s) {
+	    check(n, isNatural, "natural");
+	    check(s, isString, "string");
+	    var buffer = [];
+	    for (var i = 0; i < n.toInteger(); i++) {
+		buffer.push(s);
+	    }
+	    return plt.types.String.makeInstance(buffer.join(""));
+	},
+
+	
+	string_equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x == y;}),
+	
+
+	string_lessthan__equal__question_: makeStringChainingComparator(
+	    function(x, y){return x <= y;}),
+
+
+	string_lessthan__question_: makeStringChainingComparator(
+	    function(x, y){return x < y;}),
+	
+
+	string_greaterthan__equal__question_: makeStringChainingComparator(
+	    function(x, y){return x >= y;}),
+	
+
+	string_greaterthan__question_: makeStringChainingComparator(
+	    function(x, y){return x > y;}),
+	
+
+	string_dash_ci_equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() == y.toUpperCase();}),
+	
+
+	string_dash_ci_lessthan__equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() <= y.toUpperCase();}),
+	
+
+	string_dash_ci_lessthan__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() < y.toUpperCase();}),
+	
+
+	string_dash_ci_greaterthan__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() > y.toUpperCase();}),
+	
+
+	string_dash_ci_greaterthan__equal__question_ : makeStringChainingComparator(
+	    function(x, y){return x.toUpperCase() >= y.toUpperCase();}),
+	
+
+	string_dash_copy : function(str){
+	    check(str, isString, "string");
+	    return str.substring(0, str.length);
 	},
 	
+	string_dash_length : function(str){
+	    check(str, isString, "string");
+	    return plt.types.Rational.makeInstance(str.length, 1);
+	},
+	
+	string_dash_ref : function(str, i){
+	    check(str, isString, "string");
+	    check(i, isNatural, "natural");
+	    if (i.toInteger() >= str.length) {
+		throw new MobyRuntimeError("string-ref: index >= length");
+	    }
+	    return plt.types.String.makeInstance(str.charAt(i.toInteger()));
+	},
+
+	string_dash_ith : function (str, i) {
+	    check(str, isString, "string");
+	    check(i, isNatural, "natural");
+	    if (i.toInteger() >= str.length) {
+		throw new MobyRuntimeError("string-ith: index >= string length");
+	    }
+	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
+	},
+
+	int_dash__greaterthan_string: function (i) {
+	    check(i, isInteger, "integer");
+	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
+	},
+
+	
+	string_question_ : function(str){
+	    return isString(str);
+	},
+	
+
 	substring : function(str, begin, end){
-	    return str.substring(begin.toInteger(), end.toInteger());
+	    check(str, isString, "string");
+	    check(begin, isNatural, "natural");
+	    check(end, isNatural, "natural");
+	    if (begin.toInteger() > end.toInteger()) {
+		throw new MobyRuntimeError("substring: begin > end");
+	    }
+	    if (end.toInteger() > str.length) {
+		throw new MobyRuntimeError("substring: end > length");
+	    }
+	    return String.makeInstance(str.substring(begin.toInteger(), end.toInteger()));
 	},
 
 	char_question_: function(x) {
@@ -973,6 +1157,7 @@ var plt = plt || {};
 	},
 	
 	char_dash__greaterthan_integer : function(ch){
+	    check(ch, isChar, "char");
 	    var str = new String(ch.val);
 	    return plt.types.Rational.makeInstance(str.charCodeAt(0), 1);
 	},
@@ -983,95 +1168,87 @@ var plt = plt || {};
 	    return plt.types.Char.makeInstance(str);
 	},
 	
-	char_dash_alphabetic_question_ : function(c){
-	    var str = c.val;
-	    return (str >= "a" && str <= "z") || (str >= "A" && str <= "Z");
-	},
 	
-	char_equal__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x.isEqual(y);}, first, second, rest);
-	},
+	char_equal__question_ : makeCharChainingComparator(
+	    function(x, y) { return x.val == y.val; }),
 	
-	char_lessthan__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x.val < y.val}, first, second, rest);
-	},
+	char_lessthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val < y.val; }),
 	
-	char_lessthan__equal__question_ : function(first, second, rest){
-	    return chainTest(function(x, y){return x.val <= y.val}, first, second, rest);
-	},
 	
-	char_greaterthan__question_ : function(first, second, rest){
-	    return !char_lessthan__equal__question_(first, second, rest);
-	},
-	
-	char_greaterthan__equal__question_ : function(first, second, rest){
-	    return !char_lessthan__question_(first, second, rest);
-	},
-	
-	char_dash_ci_equal__question_ : function(first, second, rest){
-	    first = plt.types.Char.makeInstance(first.val.toUpperCase());
-	    second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	    }
-	    return plt.Kernel.char_equal__question_(first, second, rest);
-	},
-	
-	char_dash_ci_lessthan__question_ : function(first, second, rest){
-	    first = plt.types.Char.makeInstance(first.val.toUpperCase());
-	    second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	    }
-	    return plt.Kernel.char_lessthan__question_(first, second, rest);
-	},
+	char_lessthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val <= y.val; }),
 
-	char_dash_ci_lessthan__equal__question_ : function(first, second, rest){
-	    first = plt.types.Char.makeInstance(first.val.toUpperCase());
-	    second = plt.types.Char.makeInstance(second.val.toUpperCase());
-	    for (var i = 0; i < rest.length; i++) {
-		rest[i] = plt.types.Char.makeInstance(rest[i].val.toUpperCase());
-	    }
-	    return plt.Kernel.char_lessthan__equal__question_(first, second, rest);
-	},
 	
-	char_dash_ci_greaterthan__question_ : function(first, second, rest){
-	    return !plt.Kernel.char_dash_ci_lessthan__equal__question_(first,second,rest);
-	},
+	char_greaterthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val > y.val; }),
 	
-	char_dash_ci_greaterthan__equal__question_ : function(first, second, rest){
-	    return !plt.Kernel.char_dash_ci_lessthan__question_(first,second,rest);
-	},
+	char_greaterthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val >= y.val; }),
 	
-	char_dash_downcase : function(ch){
-	    var down = ch.val.toLowerCase();
-	    return plt.types.Char.makeInstance(down);
-	},
+	char_dash_ci_equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() == y.val.toUpperCase(); }),
+
+	char_dash_ci_lessthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() < y.val.toUpperCase(); }),
+
+
+	char_dash_ci_lessthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() <= y.val.toUpperCase(); }),
 	
-	char_dash_lower_dash_case_question_ : function(ch){
-	    return plt.Kernel.char_dash_alphabetic_question_(ch) && plt.Kernel.equal_question_(ch, plt.Kernel.char_dash_downcase(ch));
-	},
+	char_dash_ci_greaterthan__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() > y.val.toUpperCase(); }),
+
+	
+	char_dash_ci_greaterthan__equal__question_ : makeCharChainingComparator(
+	    function(x, y){ return x.val.toUpperCase() >= y.val.toUpperCase(); }),
+	
 	
 	char_dash_numeric_question_ : function(ch){
+	    check(ch, isChar, "char");
 	    var str = ch.val;
 	    return (str >= "0" && str <= "9");
 	},
-	
-	char_dash_upcase : function(ch){
-	    var up = ch.val.toUpperCase();
-	    return plt.types.Char.makeInstance(up);
+
+	char_dash_alphabetic_question_ : function(ch){
+	    check(ch, isChar, "char");
+	    var str = ch.val;
+	    return isAlphabeticString(str);
 	},
-	
-	char_dash_upper_dash_case_question_ : function(ch){
-	    return plt.Kernel.char_dash_alphabetic_question_(ch) && plt.Kernel.equal_question_(ch, plt.Kernel.char_dash_upcase(ch));
-	},
-	
+
 	char_dash_whitespace_question_ : function(ch){
-	    return plt.Kernel.equal_question_(ch, plt.types.Char.makeInstance(" "));
+	    check(ch, isChar, "char");
+	    var str = ch.val;
+	    return isWhitespaceString(str);
 	},
+
+	char_dash_upper_dash_case_question_ : function(ch){
+	    check(ch, isChar, "char");
+	    return isAlphabeticString(ch.val) && ch.val.toUpperCase() == ch.val;
+	},
+	
+	char_dash_lower_dash_case_question_ : function(ch){
+	    check(ch, isChar, "char");
+	    return isAlphabeticString(ch.val) && ch.val.toLowerCase() == ch.val;
+	},
+
+
+	char_dash_upcase : function(ch){
+	    check(ch, isChar, "char");
+	    return plt.types.Char.makeInstance(ch.val.toUpperCase());
+	},
+
+	
+	char_dash_downcase : function(ch){
+	    check(ch, isChar, "char");
+	    return plt.types.Char.makeInstance(ch.val.toLowerCase());
+	},
+	
+
 	
 	// list->string: (listof char) -> string
 	list_dash__greaterthan_string : function(lst){
+	    checkListof(lst, isChar, "listof char");
 	    var ret = "";
 	    while (!lst.isEmpty()){
 		ret += lst.first().val;
@@ -1081,6 +1258,7 @@ var plt = plt || {};
 	},
 
 	implode: function(lst) {
+	    checkListof(lst, isString, "listof string");
 	    var ret = [];
 	    while (!lst.isEmpty()){
 		ret.push(lst.first().toString());
@@ -1090,7 +1268,56 @@ var plt = plt || {};
 	},
 	
 
+
+
+	string_dash_numeric_question_: function(s) {
+	    check(s, isString, "string");
+	    for (var i = 0 ; i < s.length; i++) {
+		if (s[i] < '0' || s[i] > '9') {
+		    return plt.types.Logic.FALSE;
+		}
+	    }
+	    return plt.types.Logic.TRUE;
+	},
+
+
+	string_dash_alphabetic_question_: function(s) {
+	    check(s, isString, "string");
+	    return isAlphabeticString(s) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+	},
+
+
+	string_dash_whitespace_question_: function(s) {
+	    check(s, isString, "string");
+	    return isWhitespaceString(s) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+	},
+
+
+	string_dash_upper_dash_case_question_: function(s) {
+	    check(s, isString, "string");
+	    return isAlphabeticString(s) && s.toUpperCase() == s;
+	},
+
+
+	string_dash_lower_dash_case_question_: function(s) {
+	    check(s, isString, "string");
+	    return isAlphabeticString(s) && s.toLowerCase() == s;
+	},
+
+
+	string : function(chars) {
+	    arrayEach(chars, function() { check(this, isChar, "char"); });
+	    var buffer = [];
+	    for(var i = 0; i < chars.length; i++) {
+		buffer.push(chars[i].val);
+	    }
+	    return String.makeInstance(buffer.join(""));
+	},
+
+
 	make_dash_string : function(n, ch){
+	    check(n, isNatural, "natural");
+	    check(ch, isChar, "char");
 	    var ret = "";
 	    var c = ch.val;
 	    var i = plt.types.Rational.ZERO;
@@ -1101,6 +1328,7 @@ var plt = plt || {};
 	},
 	
 	string_dash__greaterthan_list : function(str){
+	    check(str, isString, "string");
 	    var s = str;
 	    var ret = plt.types.Empty.EMPTY;
 	    for (var i = s.length - 1; i >= 0; i--) {
@@ -1113,6 +1341,7 @@ var plt = plt || {};
 
 
 	explode: function (str) {
+	    check(str, isString, "string");
 	    var s = str;
 	    var ret = plt.types.Empty.EMPTY;
 	    for (var i = s.length - 1; i >= 0; i--) {
@@ -1180,8 +1409,9 @@ var plt = plt || {};
 	if (key in obj.hash) {
 	    return obj.hash[key];
 	} else {
-	    if (typeof(defaultVal) == 'function')
+	    if (isFunction(defaultVal)) {
 		return defaultVal([]);
+	    }
 	    return defaultVal;
 	}
     };
@@ -1222,6 +1452,9 @@ var plt = plt || {};
 
 
     plt.Kernel.map = function(f, arglists) {
+	arrayEach(arglists, function(x) { 
+	    checkList(x, "map: mapped arguments must be lists");});
+	// TODO: add contract on higher order argument f.
 	var results = plt.types.Empty.EMPTY;
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -1234,7 +1467,67 @@ var plt = plt || {};
 	return plt.Kernel.reverse(results);
     };
 
+
+
+    plt.Kernel.andmap = function(f, arglists) {
+	arrayEach(arglists, function(x) { 
+	    checkList(x, "andmap: mapped arguments must be lists");});
+
+	// TODO: add contract on higher order argument f.
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    if (! f(args)) {
+		return plt.types.Logic.FALSE;
+	    }
+	}
+
+	return plt.types.Logic.TRUE;
+    };
+
+
+
+    plt.Kernel.ormap = function(f, arglists) {
+	arrayEach(arglists, function(x) { 
+	    checkList(x, "ormap: mapped arguments must be lists");});
+	// TODO: add contract on higher order argument f.
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    if (f(args)) {
+		return plt.types.Logic.TRUE;
+	    }
+	}
+	return plt.types.Logic.FALSE;
+    };
+
+
+
+
+
+    plt.Kernel.filter = function(f, elts) {
+	check(elts, isList, "list");
+	// TODO: add contract on higher order argument f.
+	var results = plt.types.Empty.EMPTY;
+	while (! elts.isEmpty()) {
+	    if (f([elts.first()])) {
+		results = plt.types.Cons.makeInstance(elts.first(), results);
+	    }
+	    elts = elts.rest();
+	}
+	return plt.Kernel.reverse(results);
+    };
+
+
     plt.Kernel.foldl = function(f, acc, arglists) {
+	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	// TODO: add contract on higher order argument f.
 	var result = acc;
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -1248,7 +1541,89 @@ var plt = plt || {};
 	return result;
     };
 
+
+    plt.Kernel.foldr = function(f, acc, arglists) {
+	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	// TODO: add contract on higher order argument f.
+	var result = acc;
+	for (var i = 0; i < arglists.length; i++) {
+	    arglists[i] = plt.Kernel.reverse(arglists[i]);
+	}
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    args.push(result);
+	    result = f(args);
+	}
+	return result;
+    };
+
+
+
+    plt.Kernel.argmin = function(f, elts) {
+	check(elts, isPair, "nonempty list");
+	// TODO: add contract on higher order argument f.
+	var bestSoFar = elts.first();
+	var bestMetric = f([elts.first()]).toFloat();
+	elts = elts.rest();
+
+	while (! elts.isEmpty()) {
+	    var nextMetric = f([elts.first()]).toFloat();
+	    if (nextMetric < bestMetric) {
+		bestSoFar = elts.first();
+		bestMetric = nextMetric;
+	    }
+	    elts = elts.rest();
+	}
+	return bestSoFar;
+    };
+
+
+    plt.Kernel.argmax = function(f, elts) {
+	check(elts, isPair, "nonempty list");
+	// TODO: add contract on higher order argument f.
+	var bestSoFar = elts.first();
+	var bestMetric = f([elts.first()]).toFloat();
+	elts = elts.rest();
+
+	while (! elts.isEmpty()) {
+	    var nextMetric = f([elts.first()]).toFloat();
+	    if (nextMetric > bestMetric) {
+		bestSoFar = elts.first();
+		bestMetric = nextMetric;
+	    }
+	    elts = elts.rest();
+	}
+	return bestSoFar;
+    };
+
+
+
+
+
+
+    plt.Kernel.sort = function(l, cmpF) {
+	check(l, isList, "list");
+	// TODO: add contract on higher order argument cmpF.
+	var arr = [];
+	while(!l.isEmpty()) {
+	    arr.push(l.first());
+	    l = l.rest();
+	}
+	arr.sort(function(x, y) { return cmpF([x, y]) ? -1 : 1; });
+	return plt.Kernel.list(arr);
+    };
+
+    plt.Kernel.quicksort = plt.Kernel.sort;
+
+
+
     plt.Kernel.build_dash_list = function(n, f) {
+	check(n, isNatural, "natural");
+	// TODO: add contract on higher order argument f.
 	var result = plt.types.Empty.EMPTY;
 	for(var i = 0; i < n.toInteger(); i++) {
 	    result = plt.Kernel.cons(f([plt.types.Rational.makeInstance(i, 1)]),
@@ -1257,9 +1632,52 @@ var plt = plt || {};
 	return plt.Kernel.reverse(result);
     };
 
+
+    plt.Kernel.build_dash_string = function(n, f) {
+	check(n, isNatural, "natural");
+	// TODO: add contract on higher order argument f.
+	var chars = [];
+	for(var i = 0; i < n.toInteger(); i++) {
+	    var ch = f([plt.types.Rational.makeInstance(i, 1)]);
+	    check(ch, isChar, "char");
+	    chars.push(ch.val);
+	}
+	return plt.types.String.makeInstance(chars.join(""));
+    };
+
+
+
+
     plt.Kernel.format = function(formatStr, args) {
-	// not right yet, but let's see how well this works.
-	return plt.types.String.makeInstance(formatStr + args.join(" "));
+	check(formatStr, isString, "string");
+	var pattern = new RegExp("~[sSaAn%~]", "g");
+	var buffer = args;
+	function f(s) {
+	    if (s == "~~") {
+		return "~";
+	    } else if (s == '~n' || s == '~%') {
+		return "\n";
+	    } else if (s == '~s' || s == "~S") {
+		if (buffer.length == 0) {
+		    throw new MobyRuntimeException(
+			"format: fewer arguments passed than expected");
+		}
+		return buffer.shift().toWrittenString();
+	    } else if (s == '~a' || s == "~A") {
+		if (buffer.length == 0) {
+		    throw new MobyRuntimeException(
+			"format: fewer arguments passed than expected");
+		}
+		return buffer.shift().toDisplayedString();
+	    } else {
+		throw new MobyRuntimeError("Unimplemented format " + s);
+	    }
+	}
+	var result = plt.types.String.makeInstance(formatStr.replace(pattern, f));
+	if (buffer.length > 0) {
+	    throw new MobyRuntimeException("format: More arguments passed than expected");
+	}
+	return result;
     }
 
 
@@ -1273,6 +1691,13 @@ var plt = plt || {};
     };
 
     
+
+
+    plt.Kernel.procedure_question_ = function(f) {
+	return isFunction(f);
+    };
+    
+
     
 
 
@@ -1326,33 +1751,12 @@ var plt = plt || {};
     
     
 
-    // We are reusing the built-in Javascript boolean class here.
-    plt.types.Logic = {
-	TRUE : true,
-	FALSE : false
+    plt.Kernel.error = function(name, msg) {
+	check(name, isSymbol, "name");
+	check(msg, isString, "string");
+	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
     };
-    
-    Boolean.prototype.toWrittenString = function() {
-	if (this.valueOf()) { return "true"; }
-	return "false";
-    };
-    Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
 
-
-
-    plt.Kernel.error = function(msg, args) {
-	die(msg + ": " + args);
-    }
-
-    
-    function die(msg) {
-	// We're trying to error out so that we get a stack track from firebug.
-	//  console.log(msg);
-	//  console.trace();
-	throw new TypeError(msg.toString());
-    }
-    
-    
 
 
 
@@ -1376,16 +1780,50 @@ var plt = plt || {};
 
 
     plt.Kernel.image_question_ = function(thing) {
-	return (thing != null && thing != undefined && thing instanceof BaseImage);
+	return isImage(thing);
     };
 
 
-
     plt.Kernel.image_equal__question_ = function(thing, other) {
+	check(thing, isImage, "image");
+	check(other, isImage, "image");
 	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
     };
 
 
 
+
+
+    // Expose the predicates.
+    plt.Kernel.isSymbol = isSymbol;
+    plt.Kernel.isChar = isChar;
+    plt.Kernel.isString = isString;
+    plt.Kernel.isBoolean = isBoolean;
+    plt.Kernel.isPair = isPair;
+    plt.Kernel.isEmpty = isEmpty;
+    plt.Kernel.isReal = isReal;
+    plt.Kernel.isRational = isRational;
+    plt.Kernel.isComplex = isComplex;
+    plt.Kernel.isInteger = isInteger;
+    plt.Kernel.isNatural = isNatural;
+    plt.Kernel.isAlphabeticString = isAlphabeticString;
+    plt.Kernel.isWhitespaceString = isWhitespaceString;
+    plt.Kernel.isImage = isImage;
+    plt.Kernel.isList = isList;
+    plt.Kernel.isFunction = isFunction;
+    
+
+    plt.Kernel.arrayEach = arrayEach;
+
+    // Expose the runtime type checkers.
+    plt.Kernel.check = check;
+    plt.Kernel.checkList = checkList;
+    plt.Kernel.checkListof = checkListof;
+
+
+    // Expose the error classes.
+    plt.Kernel.MobyError = MobyError;
+    plt.Kernel.MobyTypeError = MobyTypeError;
+    plt.Kernel.MobyRuntimeError = MobyRuntimeError;
     
 })();

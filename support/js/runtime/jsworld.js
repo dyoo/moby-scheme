@@ -12,6 +12,23 @@ plt.world.MobyJsworld = {};
     var _js = plt.Jsworld;
 
 
+
+    var MobyTypeError = plt.Kernel.MobyTypeError;
+
+
+
+
+
+    // isHandler: X -> boolean
+    // Right now, a handler is a function that consumes and produces
+    // configs.  We should tighten up the type check eventually.
+    function isHandler(x) {
+	return typeof(x) == 'function';
+    }
+
+
+
+
     //////////////////////////////////////////////////////////////////////
     //From this point forward, we define wrappers to integrate jsworld
     //with Moby.
@@ -85,18 +102,16 @@ plt.world.MobyJsworld = {};
 	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
     }
 
-    // Throws exception if x is not a list.
-    function checkList(x, msg) {
-	if (! isList(x)) {
-	    throw new TypeError(msg);
-	}
-    }
 
 
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, attribs, handlers) {
-	checkList(attribs, "2nd argument must be a list of global attributes");
+	plt.Kernel.checkList(attribs, "js-big-bang: 2nd argument must be a list of global attributes, i.e. empty");
+	plt.Kernel.arrayEach(handlers,
+			     function(x) {
+				 plt.Kernel.check(x, isHandler, 
+				       "js-big-bang: expects handler") });
 	var toplevelNode = Jsworld.makeToplevelNode();
 
 	var config = new plt.world.config.WorldConfig();
