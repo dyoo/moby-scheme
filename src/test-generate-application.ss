@@ -1,6 +1,6 @@
 #lang scheme/gui
 
-(require "compile-world.ss" 
+(require "generate-application.ss" 
          "config.ss"
          scheme/runtime-path)
 
@@ -135,34 +135,26 @@
     (test g w)))
 
 
-(define (run-all-tests #:j2me (with-j2me? #f)
-                       #:android (with-android? #f)
+(define (run-all-tests #:android (with-android? #f)
                        #:js (with-js? #t))
 
   ;; Compile with javascript backend.
   (when with-js?
     (test-all generate-javascript-application test-app-js-path))
   
-  ;; If you do not have the Sun Wireless SDK, change the value in config.ss.
-  (when (and (current-has-sun-wireless-sdk?) with-j2me?)
-    (test-all generate-j2me-application test-app-j2me-path))
-  
   ;; If you do not have the Android SDK, change the value in config.ss.
   (when (and (current-has-android-sdk?) with-android?)
-    (test-all generate-android-application test-app-android-path)))
+    (test-all generate-javascript+android-phonegap-application test-app-android-path)))
 
 
 
 (define (run-single-test a-test 
-                         #:j2me (with-j2me? #f)
                          #:android (with-android? #f)
                          #:js (with-js? #t))
   (when with-js?
     (a-test generate-javascript-application test-app-js-path))
-  (when (and (current-has-sun-wireless-sdk?) with-j2me?)
-    (a-test generate-j2me-application test-app-j2me-path))
   (when (and (current-has-android-sdk?) with-android?)
-    (a-test generate-android-application test-app-android-path)))
+    (a-test generate-javascript+android-phonegap-application test-app-android-path)))
 
 
 (run-all-tests)

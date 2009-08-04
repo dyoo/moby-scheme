@@ -1,9 +1,6 @@
 ;; The first three lines of this file were inserted by DrScheme. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname kathi-finder) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
-(require (lib "location.ss" "moby" "stub"))
-(require (lib "sms.ss" "moby" "stub"))
-(require (lib "world.ss" "moby" "stub"))
 
 ;; Kathi finder: A program to report where Kathi is.
 

@@ -2,24 +2,20 @@
 
 (provide (all-defined-out))
 
-(require syntax/modresolve
-         scheme/gui/base
+(require scheme/gui/base
          scheme/match
          scheme/file
          scheme/class
          "config.ss"
          "image-lift.ss"
-         "helpers.ss"
-         "pinfo.ss"
-         "env.ss"
-         "permission.ss")
+         "compiler/pinfo.ss"
+         "compiler/env.ss"
+         "compiler/permission.ss")
 
 ;; Common helper functions used in the compiler.
 
 
-(define WORLD-PATH-1 (resolve-module-path '(lib "world.ss" "moby" "stub") #f))
-(define WORLD-PATH-2 (resolve-module-path '(lib "world.ss" "teachpack" "htdp") #f))
-#;(define GUI-WORLD-PATH (resolve-module-path '(lib "gui-world.ss" "gui-world") #f))
+(define WORLD-PATH-1 "moby/world")
 
 
 
@@ -57,12 +53,10 @@
     (for ([b (pinfo-used-bindings a-pinfo)])
       (cond
         [(and (binding:function? b)
-              (binding:function-module-path b))
+              (binding:function-module-source b))
          (cond
-           [(or (path=? (binding:function-module-path b)
+           [(string=? (binding:function-module-source b)
                         WORLD-PATH-1)
-                (path=? (binding:function-module-path b)
-                        WORLD-PATH-2))
             (return STUB:WORLD)]
            #;[(path=? (binding:function-module-path b)
                     GUI-WORLD-PATH)

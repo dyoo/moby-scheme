@@ -4,7 +4,7 @@
 (require "env.ss")
 (require "permission.ss")
 
-(define-struct module-binding (name path bindings))
+(define-struct module-binding (name source bindings))
 
 
 
@@ -16,7 +16,7 @@
             (make-binding:function name module-path arity vararity? java-string empty false))
           
           (define module-path 
-            (resolve-module-path '(lib "world-effects.ss" "moby" "stub" "private") false))]
+            "moby/world-effects")]
     (make-module-binding 'world-effects
                          module-path
                          (list (bf 'make-effect:none module-path 0
@@ -62,7 +62,7 @@
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string empty false))
           (define module-path 
-            (resolve-module-path '(lib "world-handlers.ss" "moby" "stub" "private") false))]
+            "moby/world-handlers")]
     (make-module-binding 'world-config
                          module-path
                          (list (bf 'on-tick module-path 2 false "plt.world.config.Kernel.onTick")
@@ -181,14 +181,14 @@
 ;; world teachpack bindings
 (define world-module 
   (local [(define module-path
-            (resolve-module-path '(lib "world.ss" "teachpack" "htdp") false))]
+            "moby/world")]
     (make-world-module module-path)))
 
 
 ;; Alternative world teachpack bindings
 (define world-stub-module
   (local [(define module-path                       
-            (resolve-module-path '(lib "world.ss" "moby" "stub") false))]
+            "moby/world")]
     (make-world-module module-path)))
 
 
@@ -199,7 +199,7 @@
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string empty false))
           (define module-path
-            (resolve-module-path '(lib "bootstrap.ss" "moby" "stub") false))]
+            "moby/bootstrap-world")]
     (make-module-binding 'world
                          module-path
                          (append (list (bf 'start module-path 10 false "plt.world.Bootstrap.start"))
@@ -210,8 +210,8 @@
 
 ;; location library
 (define location-module 
-  (local [(define module-path 
-            (resolve-module-path '(lib "location.ss" "moby" "stub") false))
+  (local [(define module-path
+            "moby/geolocation")
           
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string 
@@ -236,7 +236,7 @@
 ;; accelerometer library
 (define tilt-module 
   (local [(define module-path 
-            (resolve-module-path '(lib "tilt.ss" "moby" "stub") false))
+            "moby/tilt")
           
           (define (bf name arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string
@@ -264,8 +264,8 @@
 
 (define telephony-module
   (local [(define module-path
-            (resolve-module-path 
-             '(lib "telephony.ss" "moby" "stub") false))]
+            "moby/telephony")]
+
     (make-module-binding 'telephony
                          module-path
                          (list (make-binding:function 'get-signal-strengths
@@ -282,8 +282,8 @@
 
 (define net-module
   (local [(define module-path
-            (resolve-module-path 
-             '(lib "net.ss" "moby" "stub") false))]
+            "moby/net")]
+
     (make-module-binding 'net
                          module-path
                          (list (make-binding:function 'get-url
@@ -296,8 +296,8 @@
 
 (define parser-module
   (local [(define module-path
-            (resolve-module-path 
-             '(lib "parser.ss" "moby" "stub") false))]
+            "moby/parser")]
+
     (make-module-binding 'parser
                          module-path
                          (list (make-binding:function 'parse-xml
@@ -317,8 +317,8 @@
 
 (define jsworld-module 
   (local [(define module-path
-            (resolve-module-path 
-             '(lib "jsworld.ss" "moby" "stub") false))
+            "moby/jsworld")
+
           (define (bf name arity java-string)
             (make-binding:function name module-path arity true java-string empty false))]
     (make-module-binding 'jsworld
@@ -349,7 +349,7 @@
 ;; stuff from jsworld
 (define moby-module-binding
   (make-module-binding 'moby
-                       (resolve-module-path '(lib "moby.ss" "moby" "stub") false)
+                       "moby/moby"
                        (append 
                         (module-binding-bindings world-stub-module)
                         (module-binding-bindings jsworld-module)
@@ -387,7 +387,7 @@
 
 
 (provide/contract [struct module-binding ([name symbol?]
-                                          [path path?]
+                                          [source string?]
                                           [bindings (listof binding?)])]
                   [extend-env/module-binding 
                    (env? module-binding? . -> . env?)]

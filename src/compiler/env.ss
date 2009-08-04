@@ -23,13 +23,13 @@
 ;; Function bindings try to record more information.
 (define-struct binding:function
 
-  (name         ;; name of the function
-   module-path  ;; path where the function's really defined
-   min-arity    ;; minimal arity to call
-   var-arity?   ;; is this vararity?
-   java-string  ;; the java-string name of the function
-   permissions  ;; what permissions do we need to call this function?
-   cps?         ;; does the function respect CPS calling conventions?
+  (name           ;; name of the function
+   module-source  ;; source where the function's really defined
+   min-arity      ;; minimal arity to call
+   var-arity?     ;; is this vararity?
+   java-string    ;; the java-string name of the function
+   permissions    ;; what permissions do we need to call this function?
+   cps?           ;; does the function respect CPS calling conventions?
    ))
 
 
@@ -81,12 +81,12 @@
               (make-binding:constant id java-string empty)))
 
 
-;; env-extend-function: env symbol (or/c module-path false) number boolean? string? -> env
+;; env-extend-function: env symbol (or/c string false) number boolean? string? -> env
 ;; Extends the environment with a new function binding
-(define (env-extend-function an-env id module-path min-arity var-arity? java-string)
+(define (env-extend-function an-env id module-source min-arity var-arity? java-string)
   (env-extend an-env
               (make-binding:function id 
-                                     module-path
+                                     module-source
                                      min-arity 
                                      var-arity?
                                      java-string
@@ -101,7 +101,7 @@
                            [java-string string?]
                            [permissions (listof permission?)])]
  [struct binding:function ([name symbol?]
-                           [module-path (or/c false/c path?)]
+                           [module-source (or/c false/c string?)]
                            [min-arity natural-number/c]
                            [var-arity? boolean?]
                            [java-string string?]
@@ -119,5 +119,5 @@
  [env-keys (env? . -> . (listof symbol?))]
  
  [env-extend-constant (env? symbol? string? . -> . env?)]
- [env-extend-function (env? symbol? (or/c false/c path?) number? boolean? string?
+ [env-extend-function (env? symbol? (or/c false/c string?) number? boolean? string?
                        . -> . env?)])
