@@ -40,9 +40,13 @@ music), though with support only for the Android platforms for now.
 
 Dependencies
 
-You need the following:
+Moby is mostly written in PLT Scheme, and the project sources are
+hosted by github.com.  To develop with Moby, you will need the
+following:
 
   PLT Scheme >=4.1.3 (http://plt-scheme.org/)
+  git (http://git-scm.org)
+
 
 
 If you wish to generate programs for the Android+Phonegap backend,
