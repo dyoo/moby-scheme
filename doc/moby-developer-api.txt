@@ -3,33 +3,33 @@ Compiler
 
 Moby consists of the following core files for the compiler:
 
-    src/beginner-to-javascript.ss: translates Scheme programs to
+    src/compiler/beginner-to-javascript.ss: translates Scheme programs to
     javascript programs.
 
-    src/env.ss: maintains the environment structures that map
+    src/compiler/env.ss: maintains the environment structures that map
     identifiers to bindings.
 
-    src/permission.ss: defines a list of capabilities that a function
+    src/compiler/permission.ss: defines a list of capabilities that a function
     can be tagged with.
 
-    src/toplevel.ss: maps the primitive toplevel names available in
+    src/compiler/toplevel.ss: maps the primitive toplevel names available in
     the base language.
 
-    src/modules.ss: adds a few extensions to the toplevel language,
+    src/compiler/modules.ss: adds a few extensions to the toplevel language,
     including the reactive world primitives.
 
-    src/pinfo.ss: maintains program information used to analyze a
+    src/compiler/pinfo.ss: maintains program information used to analyze a
     program and figure out what functions are used and what
     capabilities are needed.
 
-    src/helpers.ss: auxillary helper functions.
+    src/compiler/helpers.ss: auxillary helper functions.
 
 The compiler is intentionally written in a small superset of ISL
-(src/lang.ss).  As a consequence, it is self hosting, and we take
+(src/compiler/lang.ss).  As a consequence, it is self hosting, and we take
 advantage of this to produce a running compiler on the browser.
 (support/js/test/test-repl.html)
 
-    src/bootstrap-js-compiler.ss: compiles beginner-to-javascript.ss
+    src/compiler/bootstrap-js-compiler.ss: compiles beginner-to-javascript.ss
     against itself to produce support/js/compiler.js.
 
 
@@ -40,8 +40,6 @@ An example
 
 Let's see what beginner-to-javascript.ss gives us:
 
-
-    > (require "beginner-to-javascript.ss")
 
     > (define p '((define (f x)
                     (* x x))
