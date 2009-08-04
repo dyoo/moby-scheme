@@ -106,7 +106,7 @@ which rely on Javascript:
       use features of the mobile platform.
 
 
-By default, the command line utility with compile with the js backend.
+By default, the command line utility will use the js backend.
 
 Let's run moby on the falling-ball.ss example in
 moby/examples/falling-ball.ss.  We can first generate a web program.
