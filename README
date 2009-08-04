@@ -10,9 +10,9 @@ What is Moby?
 Moby is a project from the PLT Scheme team.  The Moby compiler
 consumes Intermediate Student Language (ISL) programs that use World
 primitives, and produces applications for mobile platforms.  The
-current prototype supports the Android platform.  Our long-term goal
-is to make Scheme the premiere reactive scripting language for mobile
-phones.
+current prototype supports the Android platform and desktop browsers.
+Our long-term goal is to make Scheme the premiere reactive scripting
+language for mobile phones.
 
 Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009;
 his talk "The Moby Scheme Compiler for Smartphones" can be found here:
@@ -26,7 +26,8 @@ How does it work?
 
 The compiler takes a ISL program and translates it to Javascript code.
 We've reimplemented the ISL primitives in a Javascript runtime library
-that's included with the compiled application.
+that's included with the compiled application.  (See
+doc/moby-developer-api.txt for more details.)
 
 To support Android, we use a bridge library called Phonegap, which
 provides access to the native facilities of several cell phones.  In
@@ -65,7 +66,7 @@ To install Moby:
         $ git checkout devel
 
 
-    3.  Pull other dependency packages.  Moby depends on two
+    3.  Pull the other dependency packages.  Moby depends on two
     additional libraries that we are developing: (1) jsworld (2)
     phonegap.  The following command will bring both of those
     dependencies into the source tree.
