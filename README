@@ -74,12 +74,12 @@ To install Moby:
         $ git submodule update
 
 
-    3.  Edit moby/src/config.ss.  The system hardcodes
+    4.  Edit moby/src/config.ss.  The system hardcodes
         paths to Apache Ant and Android SDK embedded as parameters
         within src/config.ss.  You should change those paths to the
         ones on your system.
 
-    3.  Add a symbolic link from moby to the collects directory of
+    5.  Add a symbolic link from moby to the collects directory of
     your PLT Scheme installation.
 
         For example, if moby is under the home directory, and PLT Scheme
@@ -88,6 +88,7 @@ To install Moby:
             $ ln -s ~/moby ~/local/plt/collects/moby
 
         will set up the necessary symbolic link.
+
 
 
 ----------------------------------------------------------------------
