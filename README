@@ -80,10 +80,10 @@ To install Moby:
         $ git submodule update
 
 
-    4.  Edit moby/src/config.ss.  The system hardcodes
-        paths to Apache Ant and Android SDK embedded as parameters
-        within src/config.ss.  You should change those paths to the
-        ones on your system.
+    4.  If you're going to do Android development, edit
+        moby/src/config.ss.  The system hardcodes paths to Apache Ant
+        and Android SDK embedded as parameters within src/config.ss.
+        You should change those paths to the ones on your system.
 
 
 
@@ -96,10 +96,10 @@ At this point, you can run the Moby command line utility
 (moby/src/moby.ss) on a BSL program.  Moby supports two backends, both
 which rely on Javascript:
 
+    * js: compiles to web application 
+
     * js+android-phonegap: compiles to Android application; can also
       use features of the mobile platform.
-
-    * js: compiles to web application 
 
 
 By default, the command line utility with compile with the js backend.
