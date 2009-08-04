@@ -117,7 +117,7 @@ moby/examples/falling-ball.ss.  We can first generate a web program.
     $ ls
     index.html  main.js  runtime  test
 
-If you open up index.html from your web browser, you should see red
+If you open up index.html from your web browser, you should see a red
 ball falling down the screen.
 
 
