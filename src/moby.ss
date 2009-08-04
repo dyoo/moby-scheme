@@ -11,7 +11,7 @@
 ;; Parameters with their default values.
 (define name (make-parameter #f))
 (define dest-dir (make-parameter #f))
-(define app-compiler (make-parameter generate-javascript+android-phonegap-application))
+(define app-compiler (make-parameter generate-javascript-application))
 
 
 
