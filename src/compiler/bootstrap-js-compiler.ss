@@ -13,18 +13,18 @@
 
 (define-runtime-path
   compiler-path
-  "../support/js/runtime/compiler.js")
+  "../../support/js/runtime/compiler.js")
 
 
 ;; The standalone compiler combines the sources of the regular compiler
 ;; and its dependent libraries.
 (define-runtime-path
   standalone-compiler-path
-  "../support/js/runtime/standalone-compiler.js")
+  "../../support/js/runtime/standalone-compiler.js")
 
-(define-runtime-path types.js "../support/js/runtime/types.js")
-(define-runtime-path kernel.js "../support/js/runtime/kernel.js")
-(define-runtime-path read.js "../support/js/runtime/read.js")
+(define-runtime-path types.js "../../support/js/runtime/types.js")
+(define-runtime-path kernel.js "../../support/js/runtime/kernel.js")
+(define-runtime-path read.js "../../support/js/runtime/read.js")
 
 
 ;; write-compiler: ->void
