@@ -108,11 +108,11 @@ function tokenize(s) {
       } else if (isType('`')) {
 	eat("`");
 	return plt.Kernel.cons(quasiquoteSymbol,
-				   plt.kernel.cons(quoted, empty));
+				   plt.Kernel.cons(quoted, empty));
       } else if (isType(',')) {
 	eat(",");
 	return plt.Kernel.cons(unquoteSymbol,
-				   plt.kernel.cons(quoted, empty));
+				   plt.Kernel.cons(quoted, empty));
       } else if (isType('number')) {
 	t = eat('number');
 	if (t[1].match(/\./)) {
