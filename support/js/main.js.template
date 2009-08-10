@@ -60,12 +60,13 @@ var main = {};
 
 	if (onLocationChange) {
 	    plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-
 		if (onLocationChangeEffect) {
 		    var effect = onLocationChangeEffect([w, flt(lat), flt(lng)]);
 		    plt.world.Kernel.applyEffect(effect);
 		}
-		return onLocationChange([w, flt(lat), flt(lng)]);
+
+		var result = onLocationChange([w, flt(lat), flt(lng)]);
+		return result;
 	    });
 	}
     };

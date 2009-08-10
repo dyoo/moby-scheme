@@ -193,12 +193,12 @@ plt.platform = {};
     W3CLocationService.prototype.startService = function() {
 	var that = this;
 	function locSuccessCallback(pos) {
-	    that.currentPosition.latitude = pos.latitude;
-	    that.currentPosition.longitude = pos.longitude;
+	    that.currentPosition.latitude = pos.coords.latitude;
+	    that.currentPosition.longitude = pos.coords.longitude;
 
     	    for ( var i = 0; i < that.locationListeners.length; i++ ) {
     		var listener = that.locationListeners[i];
-    		listener.locUpdate(pos.latitude, pos.longitude);
+    		listener.locUpdate(pos.coords.latitude, pos.coords.longitude);
     	    }
 	};
 	function noOp() {}
@@ -208,6 +208,11 @@ plt.platform = {};
     	    this.watchId = navigator.geolocation.watchPosition(locSuccessCallback, 
 							       noOp, 
 							       {});
+	}
+
+	if (typeof navigator.geolocation != 'undefined' &&
+	    typeof navigator.geolocation.getCurrentPosition != 'undefined') {
+	    navigator.geolocation.getCurrentPosition(locSuccessCallback, noOp);	    
 	}
     };
 
