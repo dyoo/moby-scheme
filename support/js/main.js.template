@@ -7,68 +7,20 @@ var main = {};
 
     var flt = plt.types.FloatPoint.makeInstance;
 
-
     listener.orientUpdate = function(azimuth, pitch, roll) {
-	plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-	    if (plt.world.config.CONFIG.lookup('onTiltEffect')) {
-		var effect = plt.world.config.CONFIG.lookup('onTiltEffect')([w, flt(azimuth), flt(pitch), flt(roll)]);
-		plt.world.Kernel.applyEffect(effect);
-	    }
-
-	    if (plt.world.config.CONFIG.lookup('onTilt')) {
-		return plt.world.config.CONFIG.lookup('onTilt')([w, flt(azimuth), flt(pitch), flt(roll)]);
-	    } else {
-		return w;
-	    }
-	});
+	plt.world.stimuli.onOrientation(azimuth, pitch, roll);
     };
 
     listener.accelUpdate = function(x, y, z) {
-	plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-	    if (plt.world.config.CONFIG.lookup('onAccelerationEffect')) {
-		var effect = plt.world.config.CONFIG.lookup('onAccelerationEffect')([w, flt(x), flt(y), flt(z)]);
-		plt.world.Kernel.applyEffect(effect);
-	    }
-	    
-	    if (plt.world.config.CONFIG.lookup('onAcceleration')) {
-		return plt.world.config.CONFIG.lookup('onAcceleration')([w, flt(x), flt(y), flt(z)]);
-	    } else {
-		return w;
-	    }
-	});
+	plt.world.stimuli.onAcceleration(x, y, z);
     };
 
     listener.shakeUpdate = function() {
-	var onShake = plt.world.config.CONFIG.lookup('onShake');
-	var onShakeEffect = plt.world.config.CONFIG.lookup('onShakeEffect');
-	if (onShake) {
-	    plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-
-		if (onShakeEffect) { 
-		    var effect = onShakeEffect([w]);
-		    plt.world.Kernel.applyEffect(effect);
-		}
-
-		return onShake([w]);
-	    });
-	}
+	plt.world.stimuli.onShake();
     };
 
     listener.locUpdate = function(lat, lng) {
-	var onLocationChange = plt.world.config.CONFIG.lookup('onLocationChange');
-	var onLocationChangeEffect = plt.world.config.CONFIG.lookup('onLocationChangeEffect');
-
-	if (onLocationChange) {
-	    plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-		if (onLocationChangeEffect) {
-		    var effect = onLocationChangeEffect([w, flt(lat), flt(lng)]);
-		    plt.world.Kernel.applyEffect(effect);
-		}
-
-		var result = onLocationChange([w, flt(lat), flt(lng)]);
-		return result;
-	    });
-	}
+	plt.world.stimuli.onLocation(lat, lng);
     };
 
 

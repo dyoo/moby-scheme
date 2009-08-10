@@ -2,6 +2,7 @@
 // Depends on kernel.js, world-config.js
 var plt = plt || {};
 plt.world = plt.world || {};
+plt.world.Kernel = plt.world.Kernel || {};
 (function() {
     
     var world;
@@ -36,6 +37,11 @@ plt.world = plt.world || {};
 	    } catch (e) {}
 	}
     };
+
+
+
+
+
 
 
 
@@ -150,16 +156,7 @@ plt.world = plt.world || {};
 
 	if (config.lookup('onKey')) {
 	    newWindow.onkeypress = function(e) {
-		if (! stopped) {
-		    var keyname = getKeyCodeName(e);
-		    if (config.lookup('onKeyEffect')) {
-		      var effect = config.lookup('onKeyEffect')([world, keyname]);
-			plt.world.Kernel.applyEffect(effect);
-                    }
-
-		    var newWorld = config.lookup('onKey')([world, keyname]);
-		    changeWorld(newWorld);
-		}
+		plt.world.stimuli.onKey(e);
 	    }
 	}
 
@@ -220,12 +217,7 @@ plt.world = plt.world || {};
 		    timerInterval = false;
 		}
 		else {
-		  if (config.lookup('onTickEffect')) {
-		    var effect = config.lookup('onTickEffect')([world]);
-			plt.world.Kernel.applyEffect(effect);
-                    }
-		    changeWorld(
-		      config.lookup('onTick')([world]));
+		    plt.world.stimuli.onTick();
 		}
 	    },
 	    config.lookup('tickDelay'));
