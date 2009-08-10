@@ -2,7 +2,6 @@
 // Depends on kernel.js, world-config.js
 var plt = plt || {};
 plt.world = plt.world || {};
-plt.world.Kernel = plt.world.Kernel || {};
 (function() {
     
     var world;
