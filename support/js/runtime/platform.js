@@ -35,7 +35,7 @@ plt.platform = {};
 
 
     // Dynamically choose which location service we grab
-    function chooseLocationService = function() {
+    function chooseLocationService() {
 	if (isPhonegapAvailable()) {
     	    return new PhonegapLocationService();
 	} else if (isW3CLocationAvailable()) {
@@ -239,7 +239,7 @@ plt.platform = {};
     };
 
     W3CLocationService.prototype.getSpeed = function () {
-	reutnr plt.types.FloatPoint.makeInstance(this.currentPosition.speed);
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.speed);
     };
 
     W3CLocationService.prototype.getDistanceBetween = function (lat1, long1, lat2, long2) {
