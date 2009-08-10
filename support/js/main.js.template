@@ -2,48 +2,23 @@ var main = {};
 
 
 (function() {
-
-    var listener = {};
-
-    var flt = plt.types.FloatPoint.makeInstance;
-
-    listener.orientUpdate = function(azimuth, pitch, roll) {
-	plt.world.stimuli.onOrientation(azimuth, pitch, roll);
-    };
-
-    listener.accelUpdate = function(x, y, z) {
-	plt.world.stimuli.onAcceleration(x, y, z);
-    };
-
-    listener.shakeUpdate = function() {
-	plt.world.stimuli.onShake();
-    };
-
-    listener.locUpdate = function(lat, lng) {
-	plt.world.stimuli.onLocation(lat, lng);
-    };
+    main.permissions = <<PERMISSIONS>>;
 
 
     main.startup = function() {
-	// NOTE: listener must be an object that's lexically bound
-	// and visible at this point.
-	    <<ON-START>>
+       for(var i = 0; i < main.permissions.length; i++) {
+           plt.permission.runStartupCode(main.permissions[i]);
+       }      
     };
 
     main.shutdown = function() {
-	// NOTE: listener must be an object that's lexically bound
-	// and visible at this point.
-	    <<ON-PAUSE>>
+       for(var i = 0; i < main.permissions.length; i++) {
+           plt.permission.runShutdownCode(main.permissions[i]);
+       }      
     };
-
 
     main.destroy = function() {
-	// NOTE: listener must be an object that's lexically bound
-	// and visible at this point.
-	    <<ON-DESTROY>>
     };
-
-
 
 
     main.onload = function() {
@@ -57,9 +32,10 @@ var main = {};
 	main.destroy();
     };
 
+
     main.runAgain = function() { 
 	main.runToplevel();
-    }
+    };
 
 
 

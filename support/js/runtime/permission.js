@@ -45,13 +45,14 @@ var plt = plt || {};
 
     plt.permission.runStartupCode = function(p) {
 	var platform = plt.platform.Platform.getInstance();
-	var stimuli = plt.stimuli;
+	var stimuli = plt.world.stimuli;
 
 	
 	if (isLocationP(p)) {
 	    platform.getLocationService().startService();
 	    platform.getLocationService().addLocationChangeListener(
 		function(lat, lng) {
+		    alert("location simuli");
 		    stimuli.onLocation(lat, lng);
 		});
 	}

@@ -33,6 +33,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;; permission-reference: permission -> symbol
+(define (permission-reference a-permission)
+  (cond
+    [(permission:location? a-permission)
+     'PERMISSION:LOCATION]
+    [(permission:send-sms? a-permission)
+     'PERMISSION:SEND-SMS]
+    [(permission:receive-sms? a-permission)
+     'PERMISSION:RECEIVE-SMS]
+    [(permission:tilt? a-permission)
+     'PERMISSION:TILT]
+    [(permission:shake? a-permission)
+     'PERMISSION:SHAKE]
+    [(permission:internet? a-permission)
+     'PERMISSION:INTERNET]
+    [(permission:telephony? a-permission)
+     'PERMISSION:TELEPHONY]
+    [(permission:wake-lock? a-permission)
+     'PERMISSION:WAKE-LOCK]))
+
+
 
 ;; permission->android-permissions: permission -> (listof string)
 (define (permission->android-permissions a-permission)
@@ -137,6 +158,8 @@
                   [PERMISSION:TELEPHONY permission?]
                   [PERMISSION:WAKE-LOCK permission?]
                   
+		  [permission-reference
+		   (permission? . -> . symbol?)]
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))]
                   

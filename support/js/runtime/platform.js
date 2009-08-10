@@ -122,12 +122,13 @@ plt.platform = {};
     PhonegapLocationService.prototype.startService = function() {
 	var that = this;
 	function locSuccessCallback(pos) {
+	    alert("got a location");
 	    that.currentPosition.latitude = pos.latitude;
 	    that.currentPosition.longitude = pos.longitude;
 
     	    for ( var i = 0; i < that.locationListeners.length; i++ ) {
     		var listener = that.locationListeners[i];
-    		listener.locUpdate(pos.latitude, pos.longitude);
+    		listener(pos.latitude, pos.longitude);
     	    }
 	}; 
     	this.watchId = navigator.geolocation.watchPosition(locSuccessCallback, function() {}, {});
@@ -196,15 +197,23 @@ plt.platform = {};
     W3CLocationService.prototype.startService = function() {
 	var that = this;
 	function locSuccessCallback(pos) {
+	    alert("got a pos");
+
 	    that.currentPosition.latitude = pos.coords.latitude;
 	    that.currentPosition.longitude = pos.coords.longitude;
 
     	    for ( var i = 0; i < that.locationListeners.length; i++ ) {
+		alert("Notifying a listener");
     		var listener = that.locationListeners[i];
-    		listener.locUpdate(pos.coords.latitude, pos.coords.longitude);
+    		listener(pos.coords.latitude, pos.coords.longitude);
     	    }
 	};
-	function noOp() {}
+
+	function noOp() {
+	}
+
+	function onError() {
+	}
  
 	if (typeof navigator.geolocation != 'undefined' &&
 	    typeof navigator.geolocation.watchPosition != 'undefined') {
@@ -215,7 +224,9 @@ plt.platform = {};
 
 	if (typeof navigator.geolocation != 'undefined' &&
 	    typeof navigator.geolocation.getCurrentPosition != 'undefined') {
-	    navigator.geolocation.getCurrentPosition(locSuccessCallback, noOp);	    
+	    navigator.geolocation.getCurrentPosition(locSuccessCallback, 
+						     onError,
+						     {maximumAge:600000});	    
 	}
     };
 
@@ -271,19 +282,19 @@ plt.platform = {};
 
     var accelSuccessCallback = function(accel) {
     	for ( var i = 0; i < accelListeners.length; i++ ) {
-    		accelListeners[i].accelUpdate(accel.x, accel.y, accel.z);
+    		accelListeners[i](accel.x, accel.y, accel.z);
     	}
     };
     
     var orientSuccessCallback = function(orient) {
 	for ( var i = 0; i < orientListeners.length; i++ ) {
-		orientListeners[i].orientUpdate(orient.azimuth, orient.pitch, orient.roll);
+		orientListeners[i](orient.azimuth, orient.pitch, orient.roll);
 	}
     };
 
     var shakeSuccessCallback = function() {
     	for ( var i = 0; i < shakeListeners.length; i++ ) {
-    		shakeListeners[i].shakeUpdate();
+    		shakeListeners[i]();
     	}
     };
 
@@ -379,7 +390,7 @@ plt.platform = {};
 	this.listeners = [];
     }
 
-    PhoneGapShakeService.prototype.startService = function() {
+    PhonegapShakeService.prototype.startService = function() {
 	var that = this;
 	function success() {
 	    for (var i = 0; i < that.listeners.length; i++) {
@@ -390,10 +401,10 @@ plt.platform = {};
 	navigator.accelerometer.watchShake(success, fail);
     };
 
-    PhoneGapShakeService.prototype.shutdownService = function() {
+    PhonegapShakeService.prototype.shutdownService = function() {
     };
 
-    PhoneGapShakeService.prototype.addListener = function(l) {
+    PhonegapShakeService.prototype.addListener = function(l) {
 	this.listeners.push(l);
     };
 

@@ -10,6 +10,7 @@
          "compiler/permission.ss"
          "compiler/pinfo.ss"
          (prefix-in javascript: "compiler/beginner-to-javascript.ss")
+         (only-in "compiler/helpers.ss" identifier->munged-java-identifier)
          "utils.ss"
          "template.ss"
          "config.ss")
@@ -100,97 +101,6 @@
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;
-;;; compile-program-to-android: text string path -> void
-;;; Writes out the compilation of the text program with the given name to the
-;;; destination directory.
-;(define (compile-program-to-android text name dest-dir)
-;  (log-info (format "Compiling ~a to ~s" name dest-dir))
-;  (make-android-directories dest-dir)
-;  (lift-images-to-directory text (build-path dest-dir "src"))
-;  (let* ([classname
-;          (upper-camel-case name)]
-;         [program
-;          (parse-text-as-program text)]
-;         [compiled-program
-;          (program->compiled-program program)]
-;         [pinfo
-;          (compiled-program-pinfo compiled-program)]
-;         [mappings
-;          (build-mappings 
-;           (PROGRAM-NAME classname)
-;           (PROGRAM-DEFINITIONS 
-;            (compiled-program-defns compiled-program))
-;           (PROGRAM-TOPLEVEL-EXPRESSIONS
-;            (compiled-program-toplevel-exprs compiled-program))
-;           (ON-START (get-on-start-code pinfo))
-;           (ON-PAUSE (get-on-pause-code pinfo))
-;           (ON-DESTROY (get-on-destroy-code pinfo)))]
-;         [source-path
-;          (build-path dest-dir "src" "org" "plt" classname (string-append classname ".java"))])
-;    (cond
-;      [(stub=? (choose-program-stub pinfo) STUB:WORLD)
-;       (fill-template-file j2me-world-stub-path source-path mappings)
-;       (write-android:world-resources pinfo name dest-dir)
-;       (run-ant-build.xml dest-dir)]      
-;
-;      [(stub=? (choose-program-stub pinfo) STUB:GUI-WORLD)
-;       ;; fixme!
-;       (fill-template-file android-gui-world-stub-path source-path mappings)
-;       (write-android:gui-world-resources pinfo name dest-dir)
-;       (run-ant-build.xml dest-dir)
-;       (void)]
-;      
-;      [else
-;       (error 'compile-program-to-android
-;              "Unrecognized stub ~s"
-;              (choose-program-stub pinfo))])))
-;
-;
-;(define (make-android-directories dest-dir)
-;  (when (directory-exists? dest-dir)
-;    (delete-directory/files dest-dir))
-;  (make-directory* dest-dir)
-;  (copy-directory/files* common-support-src-path (build-path dest-dir "src"))
-;  ;; At the moment, we use j2me bridge classes.
-;  (copy-directory/files* j2me-support-src-path (build-path dest-dir "src"))
-;  (copy-directory/files* android-skeleton-path dest-dir)
-;  (make-directory* (build-path dest-dir "libs")))
-;
-;
-;(define (write-android:world-resources pinfo a-name dest-dir)
-;  (let ([mappings (build-mappings (PROGRAM-NAME (upper-camel-case a-name))
-;                                  (ANDROID-SDK-PATH (current-android-sdk-path))
-;                                  (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
-;    (replace-template-file dest-dir "src/j2ab/android/app/J2ABMIDletActivity.java" mappings)
-;    (write-android-manifest dest-dir 
-;                            #:name a-name
-;                            #:package (string-append "plt." (upper-camel-case a-name))
-;                            #:permissions (pinfo-permissions pinfo))
-;    (replace-template-file dest-dir "build.xml" mappings)
-;    (replace-template-file dest-dir "res/values/strings.xml" mappings)
-;    (replace-template-file dest-dir "src/jad.properties" mappings)))
-;
-;
-;(define (write-android:gui-world-resources pinfo a-name dest-dir)
-;  (let* ([classname (upper-camel-case a-name)]
-;         [mappings (build-mappings (PROGRAM-NAME classname)
-;                                   (ANDROID-SDK-PATH (current-android-sdk-path))
-;                                   (ANDROID-TOOLS-PATH (current-android-sdk-tools-path)))])
-;    (write-android-manifest dest-dir 
-;                            #:name a-name
-;                            #:package (string-append "plt." (upper-camel-case a-name))
-;                            #:activity-class (string-append
-;                                              "plt." classname "." classname)
-;                            #:permissions (pinfo-permissions pinfo))
-;    (replace-template-file dest-dir "build.xml" mappings)
-;    (replace-template-file dest-dir "res/values/strings.xml" mappings)
-;    (replace-template-file dest-dir "src/jad.properties" mappings)))
-;
-;
-;
 
 
 ;; write-android-manifest: path (#:name string) (#:permissions (listof string)) -> void
@@ -292,13 +202,25 @@
                  (PROGRAM-TOPLEVEL-EXPRESSIONS
                   (javascript:compiled-program-toplevel-exprs
                    compiled-program))
-                 (ON-START (get-on-start-code pinfo))
-                 (ON-PAUSE (get-on-pause-code pinfo))
-                 (ON-DESTROY (get-on-destroy-code pinfo)))])
+		 (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
     (fill-template-port (open-input-file javascript-main-template)
                         output-port
                         mappings)
     (get-output-string output-port)))
+
+
+
+;; get-permission-js-array: (listof permission) -> string
+(define (get-permission-js-array perms) 
+  (string-append "["
+		 (string-join (map (lambda (p)
+                                     (symbol->string 
+                                      (identifier->munged-java-identifier
+                                       (permission-reference p))))
+				   perms)
+			      ", ")
+		 "]"))
+
 
 
 
