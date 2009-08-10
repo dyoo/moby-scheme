@@ -3,125 +3,151 @@ var main = {};
 
 (function() {
 
-var listener = {};
+    var listener = {};
 
-var flt = plt.types.FloatPoint.makeInstance;
-
-
-listener.orientUpdate = function(azimuth, pitch, roll) {
-  plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-     if (plt.world.config.CONFIG.lookup('onTiltEffect')) {
-         var effect = plt.world.config.CONFIG.lookup('onTiltEffect')([w, flt(azimuth), flt(pitch), flt(roll)]);
-         plt.world.Kernel.applyEffect(effect);
-     }
-
-     if (plt.world.config.CONFIG.lookup('onTilt')) {
-         return plt.world.config.CONFIG.lookup('onTilt')([w, flt(azimuth), flt(pitch), flt(roll)]);
-     } else {
-         return w;
-     }
-  });
-};
-
-listener.accelUpdate = function(x, y, z) {
-  plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-      if (plt.world.config.CONFIG.lookup('onAccelerationEffect')) {
-          var effect = plt.world.config.CONFIG.lookup('onAccelerationEffect')([w, flt(x), flt(y), flt(z)]);
-          plt.world.Kernel.applyEffect(effect);
-      }
-   
-      if (plt.world.config.CONFIG.lookup('onAcceleration')) {
-          return plt.world.config.CONFIG.lookup('onAcceleration')([w, flt(x), flt(y), flt(z)]);
-      } else {
-          return w;
-      }
-  });
-};
-
-listener.shakeUpdate = function() {
-  var onShake = plt.world.config.CONFIG.lookup('onShake');
-  var onShakeEffect = plt.world.config.CONFIG.lookup('onShakeEffect');
-  if (onShake) {
-     plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-
-       if (onShakeEffect) { 
-           var effect = onShakeEffect([w]);
-           plt.world.Kernel.applyEffect(effect);
-       }
-
-       return onShake([w]);
-    });
-  }
-};
-
-listener.locUpdate = function(lat, lng) {
-  var onLocationChange = plt.world.config.CONFIG.lookup('onLocationChange');
-  var onLocationChangeEffect = plt.world.config.CONFIG.lookup('onLocationChangeEffect');
-
-  if (onLocationChange) {
-    plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
-
-      if (onLocationChangeEffect) {
-          var effect = onLocationChangeEffect([w, flt(lat), flt(lng)]);
-          plt.world.Kernel.applyEffect(effect);
-      }
-      return onLocationChange([w, flt(lat), flt(lng)]);
-    });
-  }
-};
+    var flt = plt.types.FloatPoint.makeInstance;
 
 
-main.startup = function() {
-<<ON-START>>
-};
+    listener.orientUpdate = function(azimuth, pitch, roll) {
+	plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+	    if (plt.world.config.CONFIG.lookup('onTiltEffect')) {
+		var effect = plt.world.config.CONFIG.lookup('onTiltEffect')([w, flt(azimuth), flt(pitch), flt(roll)]);
+		plt.world.Kernel.applyEffect(effect);
+	    }
 
-main.shutdown = function() {
-<<ON-PAUSE>>
-};
+	    if (plt.world.config.CONFIG.lookup('onTilt')) {
+		return plt.world.config.CONFIG.lookup('onTilt')([w, flt(azimuth), flt(pitch), flt(roll)]);
+	    } else {
+		return w;
+	    }
+	});
+    };
+
+    listener.accelUpdate = function(x, y, z) {
+	plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+	    if (plt.world.config.CONFIG.lookup('onAccelerationEffect')) {
+		var effect = plt.world.config.CONFIG.lookup('onAccelerationEffect')([w, flt(x), flt(y), flt(z)]);
+		plt.world.Kernel.applyEffect(effect);
+	    }
+	    
+	    if (plt.world.config.CONFIG.lookup('onAcceleration')) {
+		return plt.world.config.CONFIG.lookup('onAcceleration')([w, flt(x), flt(y), flt(z)]);
+	    } else {
+		return w;
+	    }
+	});
+    };
+
+    listener.shakeUpdate = function() {
+	var onShake = plt.world.config.CONFIG.lookup('onShake');
+	var onShakeEffect = plt.world.config.CONFIG.lookup('onShakeEffect');
+	if (onShake) {
+	    plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+
+		if (onShakeEffect) { 
+		    var effect = onShakeEffect([w]);
+		    plt.world.Kernel.applyEffect(effect);
+		}
+
+		return onShake([w]);
+	    });
+	}
+    };
+
+    listener.locUpdate = function(lat, lng) {
+	var onLocationChange = plt.world.config.CONFIG.lookup('onLocationChange');
+	var onLocationChangeEffect = plt.world.config.CONFIG.lookup('onLocationChangeEffect');
+
+	if (onLocationChange) {
+	    plt.world.config.CONFIG.lookup('changeWorld')(function(w) {
+
+		if (onLocationChangeEffect) {
+		    var effect = onLocationChangeEffect([w, flt(lat), flt(lng)]);
+		    plt.world.Kernel.applyEffect(effect);
+		}
+		return onLocationChange([w, flt(lat), flt(lng)]);
+	    });
+	}
+    };
 
 
-main.destroy = function() {
-<<ON-DESTROY>>
-};
+    main.startup = function() {
+	// NOTE: listener must be an object that's lexically bound
+	// and visible at this point.
+	    <<ON-START>>
+    };
+
+    main.shutdown = function() {
+	// NOTE: listener must be an object that's lexically bound
+	// and visible at this point.
+	    <<ON-PAUSE>>
+    };
 
 
-// Waits until all images are loaded, after which we
-// evaluate the after thunk.
-main.afterPreloadImages = function(after) {
-  var imagePaths = <<IMAGES>>;
-  var images = [];
-  function wait(predicate, after) {
-      if (predicate()) 
-	  after();
-      else
-	  setTimeout(function() { wait(predicate, after); },
-		     100);
-  }
-
-  function isAllLoaded() {
-      var i;
-      for (i = 0; i < images.length; i++) {
-	  if (! (images[i].isLoaded)) {
-	      return false;
-	  }
-      }
-      return true;
-  }
-
-  var i;
-  for (i = 0; i < imagePaths.length; i++) {
-      images.push(plt.world.Kernel._kernelCreateImage
-		  (plt.types.String.makeInstance(imagePaths[i])));
-  }
-  wait(isAllLoaded, after);
-};
+    main.destroy = function() {
+	// NOTE: listener must be an object that's lexically bound
+	// and visible at this point.
+	    <<ON-DESTROY>>
+    };
 
 
-main.runToplevel = function() {
-   (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(plt.Kernel.identity);
-};
 
-<<PROGRAM-DEFINITIONS>>
+
+    main.onload = function() {
+	main.startup();
+	main.afterPreloadImages(main.runToplevel);
+    };
+
+
+    main.onunload = function() {
+	main.shutdown();
+	main.destroy();
+    };
+
+    main.runAgain = function() { 
+	main.runToplevel();
+    }
+
+
+
+
+    // Waits until all images are loaded, after which we
+    // evaluate the after thunk.
+    main.afterPreloadImages = function(after) {
+	var imagePaths = <<IMAGES>>;
+	var images = [];
+	function wait(predicate, after) {
+	    if (predicate()) 
+		after();
+	    else
+		setTimeout(function() { wait(predicate, after); },
+			   100);
+	}
+
+	function isAllLoaded() {
+	    var i;
+	    for (i = 0; i < images.length; i++) {
+		if (! (images[i].isLoaded)) {
+		    return false;
+		}
+	    }
+	    return true;
+	}
+
+	var i;
+	for (i = 0; i < imagePaths.length; i++) {
+	    images.push(plt.world.Kernel._kernelCreateImage
+			(plt.types.String.makeInstance(imagePaths[i])));
+	}
+	wait(isAllLoaded, after);
+    };
+
+
+    main.runToplevel = function() {
+	(<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(plt.Kernel.identity);
+    };
+
+	<<PROGRAM-DEFINITIONS>>
 
 
 
