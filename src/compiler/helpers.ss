@@ -291,11 +291,6 @@
       "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")]))
 
 
-;; path=?: path path -> boolean
-;; Returns true if the paths refer to the same file.
-(define (path=? path-1 path-2)
-  (string=? (path->string (normalize-path path-1))
-            (path->string (normalize-path path-2))))
 
 
 (provide/contract [program? (any/c . -> . boolean?)]
@@ -311,7 +306,6 @@
                   [desugar-cond (any/c . -> . any/c)]
                   [range (number? . -> . (listof number?))]
                   
-                  [path=? (path? path? . -> . boolean?)]
                   [case-analyze-definition (any/c 
                                             (symbol? (listof symbol?) any/c . -> . any)
                                             (symbol? any/c . -> . any)

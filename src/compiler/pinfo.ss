@@ -442,8 +442,8 @@
                (error 'require-analyze 
                       (format "Moby doesn't know about module ~s yet"
                               require-path))]
-              [(path=? (resolve-module-path require-path false)
-                       (module-binding-path (first modules)))
+              [(string=? require-path
+                         (module-binding-source (first modules)))
                (pinfo-accumulate-module 
                 (first modules)
                 (pinfo-accumulate-bindings

@@ -4,9 +4,6 @@
 ;; Parses out the places.
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
-(require (lib "net.ss" "moby" "stub"))
-(require (lib "parser.ss" "moby" "stub"))
-(require (lib "gui-world.ss" "gui-world"))
 
 ;; A location is the latitude/longitude pair.
 (define-struct loc (lat long))

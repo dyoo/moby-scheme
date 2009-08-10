@@ -4,7 +4,6 @@
 ;; Simple falling ball example.  A red ball falls down the screen
 ;; until hitting the bottom.
 
-(require (lib "world.ss" "moby" "stub"))
 
 
 ;; The dimensions of the screen:

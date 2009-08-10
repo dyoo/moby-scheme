@@ -1,0 +1,379 @@
+Moby User API
+
+This document describes the functions that are available from the
+user's point of view.  The base language includes the majority of the
+primitives in Intermediate Student Language (ISL), enriched with a few
+more world primitives, described below.
+
+
+
+Toplevel bindings
+=================
+
+
+The following toplevel bindings are available from Moby, and have the
+same meaning as in ISL.  See:
+
+    http://docs.plt-scheme.org/htdp-langs/intermediate-lambda-prim-op.html
+
+for documentation on these forms.
+
+
+(*
+ +
+ -
+ /
+ <
+ <=
+ =
+ =~
+ >
+ >=
+ abs
+ acos
+ add1
+ andmap
+ angle
+ append
+ asin
+ atan
+ boolean=?
+ boolean?
+ build-list
+ caaar
+ caadr
+ caar
+ cadar
+ cadddr
+ caddr
+ cadr
+ car
+ cdaar
+ cdadr
+ cdar
+ cddar
+ cdddr
+ cddr
+ cdr
+ ceiling
+ char->integer
+ char-alphabetic?
+ char-ci<=?
+ char-ci<?
+ char-ci=?
+ char-ci>=?
+ char-ci>?
+ char-downcase
+ char-lower-case?
+ char-numeric?
+ char-upcase
+ char-upper-case?
+ char-whitespace?
+ char<=?
+ char<?
+ char=?
+ char>=?
+ char>?
+ char?
+ complex?
+ conjugate
+ cons
+ cons?
+ cos
+ cosh
+ current-seconds
+ denominator
+ e
+ eighth
+ empty
+ empty?
+ eof
+ eof-object?
+ eq?
+ equal?
+ equal~?
+ eqv?
+ error
+ even?
+ exact->inexact
+ exp
+ expt
+ false
+ false?
+ fifth
+ first
+ floor
+ foldl
+ format
+ fourth
+ gcd
+ identity
+ imag-part
+ inexact->exact
+ inexact?
+ integer->char
+ integer?
+ lcm
+ length
+ list
+ list*
+ list->string
+ list-ref
+ log
+ magnitude
+ make-posn
+ make-string
+ map
+ max
+ member
+ memq
+ memv
+ min
+ modulo
+ negative?
+ not
+ null
+ null?
+ number->string
+ number?
+ numerator
+ odd?
+ pair?
+ pi
+ positive?
+ posn-x
+ posn-y
+ posn?
+ quotient
+ random
+ rational?
+ real-part
+ real?
+ remainder
+ rest
+ reverse
+ round
+ second
+ seventh
+ sgn
+ sin
+ sinh
+ sixth
+ sqr
+ sqrt
+ string
+ string->list
+ string->number
+ string->symbol
+ string-append
+ string-ci<=?
+ string-ci<?
+ string-ci=?
+ string-ci>=?
+ string-ci>?
+ string-copy
+ string-length
+ string-ref
+ string<=?
+ string<?
+ string=?
+ string>=?
+ string>?
+ string?
+ struct?
+ sub1
+ substring
+ symbol->string
+ symbol=?
+ symbol?
+ tan
+ third
+ true
+ zero?)
+
+----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+World API and its Extensions
+----------------------------------------------------------------------
+
+The Moby language includes extensions to support reactive World-style
+programming.  Moby programs compile to Javascript; the reactive
+libraries allow one to write interactive web sites that work with the
+DOM as well as CSS stylesheets.
+
+
+
+Big Bang
+========
+
+A Moby program may start a reactive computation with js-big-bang:
+
+
+    js-big-bang: world (listof attributes) handlers * -> void
+
+
+(The second argument to js-big-bang is undocumented at the moment.)
+
+The rest of the arguments hook into the reactive computation; one of
+the main handlers to js-big-bang is on-draw, which controls how the
+world is rendered on screen.
+
+
+
+
+on-draw handler
+===============
+
+on-draw: (world -> (DOM-sexp)) (world -> (CSS-sexp))
+
+The first argument computes a rendering of the world as a DOM tree,
+and the second argument computes that tree's styling.
+
+
+For example:
+
+    (js-big-bang 0                ;; initial world
+
+                 '()              ;; empty global attribs
+
+                 (on-draw ;; the dom tree renderer
+                          (lambda (w)
+                            (list (js-p '(("id" "myPara")))
+                                  (list (js-text "hello world"))))
+
+                          ;; the css renderer
+                          (lambda (w)
+                            '(("myPara" ("font-size" "30"))))))
+
+
+will render the world as a paragraph of text, styled with a font-size
+of 30.  Whenever the world is changed due to a stimuli, on-draw is
+called to re-draw the world.
+
+
+
+Types
+=====
+
+A DOM-sexp is a:
+
+   (list dom-element DOM-sexp ...)
+
+
+a CSS-sexp is a:
+
+   (listof (cons DOM-element-or-id
+                 (listof (list string string))))
+
+and a DOM-element-or-id is either a DOM-element or a string.
+
+
+
+
+Each of the DOM-elements can take in an optional attribute list to
+assign to the new DOM element; the only useful attribute so far is
+"id".
+
+
+js-div: (listof attrib)? -> DOM-element
+
+js-p: (listof attrib)? -> DOM-element
+
+js-button: (world -> world) (listof attrib)? -> DOM-element
+
+js-button*: (world -> world) (world -> effect) (listof attrib)? -> DOM-element
+
+js-text: string -> DOM-element
+
+
+
+
+
+Stimuli Handlers
+================
+
+Stimuli handlers are provided as additional arguments to a js-big-bang.
+
+Each stimuli has an unstarred and a starred version; the starred
+version allows you to provide a world -> effect function.  When the
+given stimuli is fired off, the old world is used to compute both the
+new world and the optional effect.  Afterwards, the effect is applied.
+
+
+
+on-tick: number (world -> world)
+on-tick*: number (world -> world) (world -> effect)
+
+Delays by n milliseconds, and then fires the on-tick handlers.
+
+
+
+on-shake: (world -> world)
+on-shake*: (world -> world) (world -> effect)
+
+Fires the shake handlers when the phone is physically jerked.
+
+
+
+on-location-change: (world number number -> world)
+on-location-change*: (world number number -> world) (world number number -> effect)
+
+Fires the location handlers when the latitude or longitude of the
+device has changed.
+
+
+
+on-tilt: (world number number number -> world) 
+on-tilt*: (world number number number -> world) (world number number number -> effect) 
+
+Fires the tile handlers when the phone has been tilted.
+
+
+
+on-acceleration: (world number number number -> world)
+on-acceleration*: (world number number number -> world) (world number number number -> effect)
+
+
+Fires the acceleration handlers when the device feels change in acceleration.
+
+
+
+
+Effects
+=======
+
+Effects allow world programs to apply side effects to the outside
+world.  These are used in conjunction with the starred version of the
+stimuli handlers.
+
+
+make-effect:none -> effect
+make-effect:beep -> effect
+
+make-effect:play-sound-url: string -> effect
+make-effect:stop-sound-url: string -> effect
+make-effect:pause-sound-url: string -> effect
+
+make-effect:set-sound-volume: number -> effect
+make-effect:raise-sound-volume: -> effect
+make-effect:lower-sound-volume: -> effect
+
+make-effect:play-dtmf-tone: number -> effect
+
+make-effect:set-wake-lock: number -> effect
+make-effect:release-wake-lock: number -> effect
+
+make-effect:send-sms: string string -> effect
+
+
+
+----------------------------------------------------------------------
+
+

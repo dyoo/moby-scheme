@@ -3,9 +3,9 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname get-ip-address) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Shows the current ip address.
 
-(require (lib "net.ss" "moby" "stub"))
-(require (lib "parser.ss" "moby" "stub"))
-(require (lib "gui-world.ss" "gui-world"))
+(require "moby/net")
+(require "moby/parser")
+(require "moby/gui-world")
 
 
 ;; The world is a string.

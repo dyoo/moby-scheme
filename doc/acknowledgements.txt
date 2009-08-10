@@ -1,0 +1,2 @@
+JUnit 4.5: http://junit.org/
+License: Common Public License 1.0

@@ -22,7 +22,7 @@
           (define (r env a-name arity vararity?)
             (env-extend-function env
                                  a-name 
-                                 (resolve-module-path 'lang/htdp-beginner false)
+                                 "moby/toplevel"
                                  arity 
                                  vararity?
                                  (string-append 
@@ -35,7 +35,7 @@
           (define (r* env a-name arity java-string)
             (env-extend-function env
                                  a-name 
-                                 (resolve-module-path 'lang/htdp-beginner false)
+                                 "moby/toplevel"
                                  arity 
                                  false
                                  java-string))
@@ -116,12 +116,10 @@
                      (numerator 1)
                      (odd? 1)
                      (positive? 1)
-                     (quotient 1)
                      (random 1)
                      (rational? 1)
                      (real-part 1)
                      (real? 1)
-                     (remainder 1)
                      (round 1)
                      (sgn 1)
                      (sin 1)

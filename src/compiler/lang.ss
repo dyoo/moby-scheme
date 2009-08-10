@@ -6,10 +6,8 @@
 ;; bootstrap things.
 
 (require (prefix-in base: scheme/base)
-         scheme/path
          scheme/contract
-         lang/htdp-intermediate-lambda
-         syntax/modresolve)
+         lang/htdp-intermediate-lambda)
 
                      
 (provide (except-out (all-from-out lang/htdp-intermediate-lambda)
@@ -41,5 +39,5 @@
          hash-set hash-ref hash-remove make-immutable-hasheq hash-map
          
 
-         path->string normalize-path path? resolve-module-path build-path
+         ;path->string normalize-path path? resolve-module-path build-path
          )

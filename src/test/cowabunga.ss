@@ -188,7 +188,10 @@
 1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0 0 1 1 1 255 0 0 0 0 0 -1 -1 8 24
 #"drscheme:text:ports err\0"
 0 -1 1 #"\0"
-1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0 0 1 1 1 255 0 0 0 0 0 -1 -1 4 1
+1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0 0 1 1 1 255 0 0 0 0 0 -1 -1 0 1
+#"\0"
+0 75 26 #" Bitstream Vera Sans Mono\0"
+0 9 90 -1 90 -1 3 -1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 255 255 255 1 -1 4 1
 #"\0"
 0 71 1 #"\0"
 1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 -1 -1 4 1
@@ -201,9 +204,6 @@
 #"\0"
 0 71 1 #"\0"
 1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0 0 1 1 1 0 100 0 0 0 0 -1 -1 0 1
-#"\0"
-0 75 26 #" Bitstream Vera Sans Mono\0"
-0 9 90 -1 90 -1 3 -1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 255 255 255 1 -1 0 1
 #"\0"
 0 -1 1 #"\0"
 1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0 0 1 1 1 200 0 0 0 0 0 -1 -1 4 1
@@ -366,7 +366,7 @@
 -1 15 1 #"\0"
 0 -1 1 #"\0"
 1 0 -1 -1 -1 -1 -1 -1 0 0 0 0 0 1 0 0 0 0 0 0 255 165 0 0 0 0 -1 -1
-00000000002 0 00000000000 3 00000000000 3573 0 4 3 85
+00000000002 0 00000000000 3 00000000000 3559 0 4 3 85
 (
  #";; The first three lines of this file were inserted by DrScheme. Th"
  #"ey record metadata"
@@ -382,19 +382,6 @@
  #"cowabunga) (read-case-sensitive #t) (teachpacks ()) (htdp-settings "
  #"#(#t constructor repeating-decimal #f #t none #f ())))"
 ) 0 0 4 29 1 #"\n"
-0 0 22 3 1 #"("
-0 0 14 3 7 #"require"
-0 0 4 3 1 #" "
-0 0 22 3 1 #"("
-0 0 14 3 3 #"lib"
-0 0 4 3 1 #" "
-0 0 19 3 10 #"\"world.ss\""
-0 0 4 3 1 #" "
-0 0 19 3 6 #"\"moby\""
-0 0 4 3 1 #" "
-0 0 19 3 6 #"\"stub\""
-0 0 22 3 2 #"))"
-0 0 4 29 1 #"\n"
 0 0 17 3 72
 (
  #";; Version 8: UFO moves down, and can be shifted left or right.  We"
@@ -3987,12 +3974,11 @@
 0 0 4 29 1 #"\n"
 0 0 17 3 40 #";; (draw-cows empty)  ==> an empty scene"
 0 0 4 29 1 #"\n"
-0 0 17 3 77
+0 0 17 3 101
 (
  #";; (draw-cows (cons (make-cow (/ WIDTH 2) \"left\") empty))  =="
- #"> a single left "
-) 0 0 17 3 24 #"facing cow in the middle"
-0 0 4 29 1 #"\n"
+ #"> a single left facing cow in the middle"
+) 0 0 4 29 1 #"\n"
 0 0 17 3 85
 (
  #";; (draw-cows (cons (make-cow 0 \"right\") (cons (make-cow (/ W"

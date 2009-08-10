@@ -1806,6 +1806,7 @@ var plt = plt || {};
     plt.Kernel.isComplex = isComplex;
     plt.Kernel.isInteger = isInteger;
     plt.Kernel.isNatural = isNatural;
+    plt.Kernel.isNumber = isNumber;
     plt.Kernel.isAlphabeticString = isAlphabeticString;
     plt.Kernel.isWhitespaceString = isWhitespaceString;
     plt.Kernel.isImage = isImage;

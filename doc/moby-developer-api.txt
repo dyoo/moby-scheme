@@ -1,0 +1,85 @@
+Compiler
+========
+
+Moby consists of the following core files for the compiler:
+
+    src/compiler/beginner-to-javascript.ss: translates Scheme programs to
+    javascript programs.
+
+    src/compiler/env.ss: maintains the environment structures that map
+    identifiers to bindings.
+
+    src/compiler/permission.ss: defines a list of capabilities that a function
+    can be tagged with.
+
+    src/compiler/toplevel.ss: maps the primitive toplevel names available in
+    the base language.
+
+    src/compiler/modules.ss: adds a few extensions to the toplevel language,
+    including the reactive world primitives.
+
+    src/compiler/pinfo.ss: maintains program information used to analyze a
+    program and figure out what functions are used and what
+    capabilities are needed.
+
+    src/compiler/helpers.ss: auxillary helper functions.
+
+The compiler is intentionally written in a small superset of ISL
+(src/compiler/lang.ss).  As a consequence, it is self hosting, and we take
+advantage of this to produce a running compiler on the browser.
+(support/js/test/test-repl.html)
+
+    src/compiler/bootstrap-js-compiler.ss: compiles beginner-to-javascript.ss
+    against itself to produce support/js/compiler.js.
+
+
+
+
+An example
+----------
+
+Let's see what beginner-to-javascript.ss gives us:
+
+
+    > (define p '((define (f x)
+                    (* x x))
+              
+                  (f 3)))
+
+    > (define cp (program->compiled-program p))
+
+program->compiled-program consumes a program --- a list of
+s-expressions --- and produces a compiled-program structure.
+
+    > cp
+    #<compiled-program>
+
+
+The compiled program consists of a list of toplevel definitions and
+expressions.
+
+
+    > (compiled-program-defns cp)
+    "\nfunction f(x) { return plt.Kernel._star_([x,x]); }"
+
+    > (compiled-program-toplevel-exprs cp)
+    "(function (toplevel_dash_expression_dash_show0) { \n\ntoplevel_dash_expression_dash_show0((f((plt.types.Rational.makeInstance(3, 1))))); })"
+
+
+If we want to embed the evaluation of this program in a web page, we
+can use the two strings above to do so.  For convenience, we provide a
+helper function "compiled-program-main" that ties both the definitions
+and expression evaluation together.
+
+
+
+
+
+
+
+Runtime
+=======
+
+The Javascript program that's emitted depends on a runtime kernel
+that's currently implemented in Javascript.  See the files in
+support/js/runtime.

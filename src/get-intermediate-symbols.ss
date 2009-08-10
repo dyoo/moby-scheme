@@ -1,7 +1,7 @@
 #lang scheme
 (require syntax/docprovide
-         "toplevel.ss"
-         "env.ss"
+         "compiler/toplevel.ss"
+         "compiler/env.ss"
          (only-in srfi/1 lset-union lset-difference lset-intersection))
 
 

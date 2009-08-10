@@ -3,7 +3,6 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname bubble-2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Running out of time: the bubble-chasing game.
 
-(require (lib "world.ss" "moby" "stub"))
 
 (define WIDTH 320)
 (define HEIGHT 480)

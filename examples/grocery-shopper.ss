@@ -7,11 +7,9 @@
 (define WIDTH 320)
 (define HEIGHT 480)
 
-
-(require (lib "net.ss" "moby" "stub"))
-(require (lib "parser.ss" "moby" "stub"))
-(require (lib "location.ss" "moby" "stub"))
-(require (lib "world.ss" "moby" "stub"))
+(require "moby/net")
+(require "moby/parser")
+(require "moby/geolocation")
 
 
 ;; A location is the latitude/longitude pair.

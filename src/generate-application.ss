@@ -7,9 +7,9 @@
          (only-in xml xexpr->string)
          "compile-helpers.ss"
          "image-lift.ss"
-         "permission.ss"
-         "pinfo.ss"
-         (prefix-in javascript: "beginner-to-javascript.ss")
+         "compiler/permission.ss"
+         "compiler/pinfo.ss"
+         (prefix-in javascript: "compiler/beginner-to-javascript.ss")
          "utils.ss"
          "template.ss"
          "config.ss")
