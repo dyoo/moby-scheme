@@ -338,7 +338,7 @@ plt.platform = {};
     function PhonegapTelephonyService() {
     }
 
-    PhonegapTelephony.prototype.getSignalStrengths = function() {
+    PhonegapTelephonyService.prototype.getSignalStrengths = function() {
 	var result = plt.types.Empty.EMPTY;
 	var infos = Device.getSignalStrengths();
 	for (var i = 0; i < infos.length; i++) {
