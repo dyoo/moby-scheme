@@ -34,6 +34,8 @@ var main = {};
 
 
     main.runAgain = function() { 
+        main.shutdown();
+        main.startup();
 	main.runToplevel();
     };
 

@@ -52,7 +52,6 @@ var plt = plt || {};
 	    platform.getLocationService().startService();
 	    platform.getLocationService().addLocationChangeListener(
 		function(lat, lng) {
-		    alert("location simuli");
 		    stimuli.onLocation(lat, lng);
 		});
 	}

@@ -122,7 +122,6 @@ plt.platform = {};
     PhonegapLocationService.prototype.startService = function() {
 	var that = this;
 	function locSuccessCallback(pos) {
-	    alert("got a location");
 	    that.currentPosition.latitude = pos.latitude;
 	    that.currentPosition.longitude = pos.longitude;
 
@@ -197,13 +196,11 @@ plt.platform = {};
     W3CLocationService.prototype.startService = function() {
 	var that = this;
 	function locSuccessCallback(pos) {
-	    alert("got a pos");
 
 	    that.currentPosition.latitude = pos.coords.latitude;
 	    that.currentPosition.longitude = pos.coords.longitude;
 
     	    for ( var i = 0; i < that.locationListeners.length; i++ ) {
-		alert("Notifying a listener");
     		var listener = that.locationListeners[i];
     		listener(pos.coords.latitude, pos.coords.longitude);
     	    }

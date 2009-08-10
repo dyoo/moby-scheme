@@ -16,7 +16,6 @@ plt.world = plt.world || {};
     // Processes a stimuli by compute the effect and applying it, and
     // computing a new world to replace the old.
     function doStimuli(computeEffectF, computeWorldF) {
-	alert("doStimuli");
 	change(function(w) {
 	    if (computeEffectF) {
 		var effect = computeEffectF(w);
