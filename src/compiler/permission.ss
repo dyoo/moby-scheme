@@ -97,7 +97,7 @@
     [(permission:tilt? a-permission)
      "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
     [(permission:shake? a-permission)
-     "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+     ""]
     [(permission:internet? a-permission)
      ""]
     [(permission:telephony? a-permission)
