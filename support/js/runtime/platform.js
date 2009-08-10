@@ -17,8 +17,10 @@ plt.platform = {};
     
     function JavascriptPlatform() {
     	this.tiltService = JavascriptTiltService;
+	this.shakeService = chooseShakeService();
     	this.locationService = chooseLocationService();
 	this.telephonyService = chooseTelephonyService();
+
     };
     
     JavascriptPlatform.prototype.getTiltService = function() {
@@ -60,6 +62,7 @@ plt.platform = {};
 		typeof(navigator.geolocation != 'undefined'));
 		     
     }
+
 
 
 
@@ -358,6 +361,58 @@ plt.platform = {};
 
 
 
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    function chooseShakeService() {
+	if (isPhonegapAvailable()) {
+	    return new PhonegapShakeService();
+	} else {
+	    return new NoOpShakeService();
+	}
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
+    function PhonegapShakeService() {
+	this.listeners = [];
+    }
+
+    PhoneGapShakeService.prototype.startService = function() {
+	var that = this;
+	function success() {
+	    for (var i = 0; i < that.listeners.length; i++) {
+		that.listeners[i]();
+	    }
+	}
+	function fail() {}
+	navigator.accelerometer.watchShake(success, fail);
+    };
+
+    PhoneGapShakeService.prototype.shutdownService = function() {
+    };
+
+    PhoneGapShakeService.prototype.addListener = function(l) {
+	this.listeners.push(l);
+    };
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    function NoOpShakeService() {
+    }
+
+    NoOpShakeService.prototype.startService = function() {
+    };
+
+    NoOpShakeService.prototype.shutdownService = function() {
+    };
+
+    NoOpShakeService.prototype.addListener = function(l) {
+    };
 
  
 })();
