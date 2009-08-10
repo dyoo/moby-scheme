@@ -7,6 +7,7 @@
 (define-struct permission:send-sms ())
 (define-struct permission:receive-sms ())
 (define-struct permission:tilt ())
+(define-struct permission:shake ())
 (define-struct permission:internet ())
 (define-struct permission:telephony ())
 (define-struct permission:wake-lock ())
@@ -16,6 +17,7 @@
       (permission:send-sms? datum)
       (permission:receive-sms? datum)
       (permission:tilt? datum)
+      (permission:shake? datum)
       (permission:internet? datum)
       (permission:telephony? datum)
       (permission:wake-lock? datum)))
@@ -24,6 +26,7 @@
 (define PERMISSION:LOCATION (make-permission:location))
 (define PERMISSION:SEND-SMS (make-permission:send-sms))
 (define PERMISSION:TILT (make-permission:tilt))
+(define PERMISSION:SHAKE (make-permission:shake))
 (define PERMISSION:INTERNET (make-permission:internet))
 (define PERMISSION:TELEPHONY (make-permission:telephony))
 (define PERMISSION:WAKE-LOCK (make-permission:wake-lock))
@@ -44,6 +47,8 @@
     [(permission:receive-sms? a-permission)
      (list "android.permission.RECEIVE_SMS")]
     [(permission:tilt? a-permission)
+     (list)]
+    [(permission:shake? a-permission)
      (list)]
     [(permission:internet? a-permission)
      (list "android.permission.INTERNET")]
@@ -69,6 +74,9 @@
       plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);
       plt.platform.Platform.getInstance().getTiltService().addShakeListener(listener);"
      ]
+   [(permission:shake? a-permission)
+     ""
+     ] 
     [(permission:internet? a-permission)
      ""]
     [(permission:telephony? a-permission)
@@ -87,6 +95,8 @@
     [(permission:receive-sms? a-permission)
      ""]
     [(permission:tilt? a-permission)
+     "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+    [(permission:shake? a-permission)
      "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
     [(permission:internet? a-permission)
      ""]
@@ -107,6 +117,8 @@
      ""]
     [(permission:tilt? a-permission)
      "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
+    [(permission:shake? a-permission)
+     ""]
     [(permission:internet? a-permission)
      ""]
     [(permission:telephony? a-permission)
