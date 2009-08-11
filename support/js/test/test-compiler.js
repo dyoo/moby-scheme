@@ -7,10 +7,13 @@ function init() {
     function cons(x, y) {
 	return plt.Kernel.cons(x, y);
     }
+
     var empty = plt.types.Empty.EMPTY;
     var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
     var symbol = plt.types.Symbol.makeInstance;
 
+    var TRUE = plt.types.Logic.TRUE;
+    var FALSE = plt.types.Logic.FALSE;
 
     // run: string -> scheme-value
     // Evaluates the string and produces the evaluated scheme value.
@@ -50,6 +53,64 @@ function init() {
 			    run("(define (f x) (* x x))" +
 				"(f 3)"));
 			    
+	    },
+
+	    testBegin: function() {
+		// normal behaviour
+		this.assert(TRUE,
+			    run("(begin (+ 1 2) (+ 3 4) true)"));
+
+		// sequencial evaluation
+		this.assert(number(3),
+			    run("(define x 5)(define y 3)" +
+				"(begin (set! x y) (set! y x) y)"));
+	    },
+
+	    testBoxMutation: function() {
+		this.assert(number(2),
+			    run("(define bx (box 5))" +
+				"(begin (set-box! bx 2)" +
+					"(unbox bx))"));
+		this.assertRaise("MobyTypeError",
+				 run("(define bx (box 5))" +
+				     "(begin (set-box! 2 bx)" +
+					"(unbox bx))"));
+	    },
+
+	    testStructureMutators: function() {
+		this.assert(number(9),
+			    run("(define ps (make-posn 3 4))" +
+				"(begin (set-posn-x! ps 9) " +
+					"(posn-x ps))"));
+		this.assert("MobyTypeError",
+			    run("(define ps (make-posn 3 4))" +
+				"(begin (set-posn-x! 5 ps) " +
+					"(posn-x ps))"));
+	    },
+
+	    testSet: function() {
+		// normal behaviour
+		this.assert("a",
+			    run("(define x 5)" +
+				"(begin (set! x \"a\") x)"));
+
+		// undefined top-level variable
+		this.assertRaise("MobyRuntimeError",
+				 run("(begin (set! c 42) 3)"));
+
+		// function arguments are immutable
+		// is this a run-time error?
+		this.assertRaise("MobyRuntimeError",
+		                 run("(define (f x) (set! x 3))"));
+
+		// scoping
+		// this seems like a test of "local" instead of "set"
+		this.assert(number(42),
+				   run("(define a 42)" +
+				       "(define (f x) " +
+					 "(local ((define a 3)) " +
+					   "(begin (set! a x) a)))" +
+	      			       "(begin (f 21) a)"));
 	    }
     }); 
 }
