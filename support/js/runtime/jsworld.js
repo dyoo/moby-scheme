@@ -227,7 +227,14 @@ plt.world.MobyJsworld = {};
 
     // BidirectionalInput
     Jsworld.bidirectionalInput = function(type, args) {
-	throw new Error("FIXME: not implemented yet.");
+	var attribs = getAttribs(args);
+	return _js.bidirectional_input(type, attribs);
+    };
+
+    // Images.
+    Jsworld.img = function(src, args) {
+	var attribs = getAttribs(args);
+	return _js.img(src, attribs);
     };
 
 
