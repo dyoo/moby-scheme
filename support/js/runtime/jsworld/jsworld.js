@@ -17,6 +17,10 @@ plt.Jsworld = {};
     var Jsworld = plt.Jsworld;
 
 
+    var currentFocusedNode = false;
+
+
+
     //
     // WORLD STUFFS
     //
@@ -60,7 +64,11 @@ plt.Jsworld = {};
 	}
 	if (originalWorld != world) {
 	    for(var i = 0; i < worldListeners.length; i++) {
-		worldListeners[i](world, originalWorld);
+		try {
+		    worldListeners[i](world, originalWorld);
+		} catch (e) {
+		    alert(e);
+		}
 	    }
 	}
     }
@@ -322,8 +330,10 @@ plt.Jsworld = {};
 	return ret;
     }
 
+
     // update_dom(nodes(Node), relations(Node)) = void
     function update_dom(toplevelNode, nodes, relations) {
+
 	// TODO: rewrite this to move stuff all in one go... possible? necessary?
 	
 	// move all children to their proper parents
@@ -430,6 +440,8 @@ plt.Jsworld = {};
 		else { node = next; break; }
 	    }
 	}
+	
+	refresh_node_values(nodes);
     }
 
     function set_css_attribs(node, attribs) {
@@ -457,6 +469,18 @@ plt.Jsworld = {};
     }
 
 
+
+    // If any node cares about the world, send it in.
+    function refresh_node_values(nodes) {
+	for (var i = 0; i < nodes.length; i++) {
+	    if (nodes[i].onWorldChange) {
+		nodes[i].onWorldChange(world);
+	    }
+	}
+    }
+
+
+
     function do_redraw(world, oldWorld, toplevelNode, redraw_func, redraw_css_func) {
 	if (oldWorld instanceof InitialWorld) {
 	    // Simple path
@@ -466,6 +490,8 @@ plt.Jsworld = {};
 	    update_css(ns, sexp2css(redraw_css_func(world)));
 	    return;
 	} else {
+	    var currentFocusedSelection = getCurrentFocusedSelection();
+
 	    // We try to avoid updating the dom if the value
 	    // hasn't changed.
  	    var oldRedraw = redraw_func(oldWorld);
@@ -475,6 +501,9 @@ plt.Jsworld = {};
 	    var t = sexp2tree(newRedraw);
  	    var ns = nodes(t);
 
+	    // Try to save the current selection and preserve it across
+	    // dom updates.
+
  	    if(oldRedraw != newRedraw) {
  		update_dom(toplevelNode, ns, relations(t));
  		update_css(ns, sexp2css(newRedrawCss));
@@ -483,7 +512,37 @@ plt.Jsworld = {};
  		    update_css(ns, sexp2css(newRedrawCss));
 		}
  	    }
+	    currentFocusedSelection.restore();
 	}
+    }
+
+
+    function FocusedSelection() {
+	this.focused = currentFocusedNode;
+	this.selectionStart = currentFocusedNode.selectionStart;
+	this.selectionEnd = currentFocusedNode.selectionEnd;
+    }
+
+    // Try to restore the focus.
+    FocusedSelection.prototype.restore = function() {
+	// FIXME: if we're scrolling through, what's visible
+	// isn't restored yet.
+	if (this.focused.parentNode) {
+	    this.focused.selectionStart = this.selectionStart;
+	    this.focused.selectionEnd = this.selectionEnd;
+	    this.focused.focus();
+	} else if (this.focused.id) {
+	    var matching = document.getElementById(this.focused.id);
+	    if (matching) {
+		matching.selectionStart = this.selectionStart;
+		matching.selectionEnd = this.selectionEnd;
+		matching.focus();
+	    }
+	}
+    };
+
+    function getCurrentFocusedSelection() {
+	return new FocusedSelection();
     }
 
 
@@ -644,7 +703,8 @@ plt.Jsworld = {};
     // DOM CREATION STUFFS
     //
 
-    // apparently add_event is taken...
+    // add_ev: node string (world event -> world) -> void
+    // Attaches a world-updating handler when the world is changed.
     function add_ev(node, event, f) {
 	node.addEventListener(event, 
 			      function (e) { 
@@ -653,6 +713,42 @@ plt.Jsworld = {};
 				      }) }, 
 			      false);
     }
+
+    // add_ev_after: node string (world event -> world) -> void
+    // Attaches a world-updating handler when the world is changed, but only
+    // after the fired event has finished.
+    function add_ev_after(node, event, f) {
+	node.addEventListener(event, 
+			      function (e) {
+				  setTimeout(
+				      function() {
+					  change_world(function(w) { 
+					      return f(w, e);
+					  });
+
+				      }, 0);
+			      },
+			      false);
+    }
+
+
+    function addFocusTracking(node) {
+	node.addEventListener("focus",
+			      function(e) {
+				  currentFocusedNode = node;
+			      },
+			      false);
+
+	node.addEventListener("blur",
+			      function(e) {
+				  currentFocusedNode = undefined;
+			      },
+			      false);
+	return node;
+    }
+
+
+
 
 
     //
@@ -746,32 +842,53 @@ plt.Jsworld = {};
 	return node;
     }
 
+
+    //
+    // NODE TYPES
+    //
+
     function p(attribs) {
-	return copy_attribs(document.createElement('p'), attribs);
+	return addFocusTracking(copy_attribs(document.createElement('p'), attribs));
     }
     Jsworld.p = p;
 
     function div(attribs) {
-	return copy_attribs(document.createElement('div'), attribs);
+	return addFocusTracking(copy_attribs(document.createElement('div'), attribs));
     }
     Jsworld.div = div;
 
     function button(f, attribs) {
 	var n = document.createElement('button');
 	add_ev(n, 'click', f);
-	return copy_attribs(n, attribs);
+	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.button = button;
+
+
+    function bidirectional_input(type, toVal, updateVal, attribs) {
+	var n = document.createElement('input');
+	n.type = type;
+	function onKey(w, e) {
+	    return updateVal(w, n.value);
+	}
+	// This established the widget->world direction
+	add_ev_after(n, 'keypress', onKey);
+	// and this establishes the world->widget.
+	n.onWorldChange = function(w) {n.value = toVal(w)};
+	return addFocusTracking(copy_attribs(n, attribs));
+    }
+    Jsworld.bidirectional_input = bidirectional_input;
+    
 
     function input(type, attribs) {
 	var n = document.createElement('input');
 	n.type = type;
-	return copy_attribs(n, attribs);
+	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.input = input;
 
     function text(s, attribs) {
-	return copy_attribs(document.createTextNode(s), attribs);
+	return addFocusTracking(copy_attribs(document.createTextNode(s), attribs));
     }
     Jsworld.text = text;
 
@@ -780,33 +897,35 @@ plt.Jsworld = {};
 	for(var i = 0; i < opts.length; i++)
 	    n.appendChild(option({value: opts[i]}));
 	add_ev(n, 'change', f);
-	return copy_attribs(n, attribs);
+	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.select = select;
 
     function option(attribs){
-	return copy_attribs(document.createElement('option'), attribs);
+	return addFocusTracking(copy_attribs(document.createElement('option'), attribs));
     }
     Jsworld.option = option;
 
     function textarea(attribs){
-	return copy_attribs(document.createElement('textarea'), attribs);
+	return addFocusTracking(copy_attribs(document.createElement('textarea'), attribs));
     }
     Jsworld.textarea = textarea;
 
     function h1(attribs){
-	return copy_attribs(document.createElement('h1'), attribs);
+	return addFocusTracking(copy_attribs(document.createElement('h1'), attribs));
     }
     Jsworld.h1 = h1;
 
     function canvas(attribs){
-	return copy_attribs(document.createElement('canvas'), attribs);	
+	return addFocusTracking(copy_attribs(document.createElement('canvas'), attribs));	
     }
     Jsworld.canvas = canvas;
 
 
-    function img(attribs) {
-	return copy_attribs(document.createElement('img'), attribs);
+    function img(src, attribs) {
+	var n = document.createElement('img');
+	n.src = src;
+	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.img = img;
 
