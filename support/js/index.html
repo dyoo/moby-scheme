@@ -9,13 +9,15 @@
 <script type="text/javascript" charset="utf-8" src="runtime/world.js"></script>
 <script type="text/javascript" charset="utf-8" src="runtime/jsworld/jsworld.js"></script>
 <script type="text/javascript" charset="utf-8" src="runtime/jsworld.js"></script>
-
+<script type="text/javascript" charset="utf-8" src="runtime/world-stimuli.js"></script>
+<script type="text/javascript" charset="utf-8" src="runtime/permission.js"></script>
+<script type="text/javascript" charset="utf-8" src="runtime/compiler.js"></script>
 <script type="text/javascript" charset="utf-8" src="main.js"></script>
 
 </head>
 
-<body id="body" onload="main.startup(); main.afterPreloadImages(main.runToplevel);" 
-                onunload="main.shutdown(); main.destroy();">
+<body id="body" onload="main.onload();"
+                onunload="main.onunload();"
 
 
 <div id="jsworld-div"></div>
@@ -23,7 +25,7 @@
 </canvas>
 
 <input type="button" value="Run again"
-       onclick="main.afterPreloadImages(main.runToplevel);">
+       onclick="main.runAgain()">
 
 </body>
 </html>

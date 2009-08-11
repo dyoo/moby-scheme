@@ -5,81 +5,36 @@ plt.lib = {};
 
 
 (function () {
-    function toNum(x) {
-	return plt.types.Rational.makeInstance(x, 1);
-    }
+
     plt.lib.Telephony = {};
     plt.lib.Telephony.getSignalStrengths = function() {
-	var result = plt.types.Empty.EMPTY;
-	if (typeof Device != 'undefined') {
-	    var infos = Device.getSignalStrengths();
-	    for (var i = 0; i < infos.length; i++) {
-		var info = infos.get(i);
-		result = plt.types.Cons.makeInstance(
-		    plt.Kernel.list([toNum(info.getId()),
-				     toNum(info.getStrength())]),
-		    result);
-	    }
-	}
-	return result;
+	return plt.platform.Platform.getInstance().getTelephonyService().getSignalStrengths();
     };
 
     
     plt.lib.Location = {};
     plt.lib.Location.getLatitude = function () {
-	if (typeof navigator.geolocation != 'undefined') {
-	    return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.latitude);
-	} else {
-	    return plt.types.Rational.ZERO;
-	}
+	return plt.platform.Platform.getInstance().getLocationService().getLatitude();
     };
 
     plt.lib.Location.getLongitude = function () {
-	if (typeof navigator.geolocation != 'undefined') {
-	    return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.longitude);
-	} else {
-	    return plt.types.Rational.ZERO;
-	}
-
+	return plt.platform.Platform.getInstance().getLocationService().getLongitude();
     };
 
     plt.lib.Location.getAttitude = function () {
-	if (typeof navigator.geolocation != 'undefined') {
-	    return plt.types.Rational.ZERO;
-	} else {
-	    return plt.types.Rational.ZERO;
-	}
-
+	return plt.platform.Platform.getInstance().getLocationService().getAttitude();
     };
 
     plt.lib.Location.getBearing = function () {
-	if (typeof navigator.geolocation != 'undefined') {
-	    return plt.types.Rational.ZERO;
-	} else {
-	    return plt.types.Rational.ZERO;
-	}
-
+	return plt.platform.Platform.getInstance().getLocationService().getBearing();
     };
 
     plt.lib.Location.getSpeed = function () {
-	if (typeof navigator.geolocation != 'undefined') {
-	    return plt.types.Rational.ZERO;
-	} else {
-	    return plt.types.Rational.ZERO;
-	}
-
+	return plt.platform.Platform.getInstance().getLocationService().getSpeed();
     };
 
     plt.lib.Location.getDistanceBetween = function (lat1, long1, lat2, long2) {
-	if (typeof navigator.geolocation != 'undefined') {
-	    return plt.types.FloatPoint.makeInstance(
-		navigator.geolocation.getDistanceBetween(lat1.toFloat(),
-							 long1.toFloat(),
-							 lat2.toFloat(),
-							 long2.toFloat()));
-	} else {
-	    return plt.types.Rational.ZERO;
-	}
+	return plt.platform.Platform.getInstance().getLocationService().getDistanceBetween(lat1, long1, lat2, long2);
     };
 
 

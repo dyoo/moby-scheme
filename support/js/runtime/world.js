@@ -42,6 +42,11 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
 
+
+
+
+
+
     // changeWorld: world -> void
     // Changes the current world to newWorld.
     function changeWorld(newWorld) {
@@ -151,16 +156,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 	if (config.lookup('onKey')) {
 	    newWindow.onkeypress = function(e) {
-		if (! stopped) {
-		    var keyname = getKeyCodeName(e);
-		    if (config.lookup('onKeyEffect')) {
-		      var effect = config.lookup('onKeyEffect')([world, keyname]);
-			plt.world.Kernel.applyEffect(effect);
-                    }
-
-		    var newWorld = config.lookup('onKey')([world, keyname]);
-		    changeWorld(newWorld);
-		}
+		plt.world.stimuli.onKey(e);
 	    }
 	}
 
@@ -221,12 +217,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 		    timerInterval = false;
 		}
 		else {
-		  if (config.lookup('onTickEffect')) {
-		    var effect = config.lookup('onTickEffect')([world]);
-			plt.world.Kernel.applyEffect(effect);
-                    }
-		    changeWorld(
-		      config.lookup('onTick')([world]));
+		    plt.world.stimuli.onTick();
 		}
 	    },
 	    config.lookup('tickDelay'));

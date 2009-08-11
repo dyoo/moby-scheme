@@ -2,27 +2,22 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname marble-with-trail) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 ;; Marble rolling program, with a trail.
-
 (define WIDTH 320)
 (define HEIGHT 480)
-
-
-;; We'll have a trail of a certain length.
-(define TRAIL-LENGTH 5)
-
-
-(define background (js-div '(("id" "backgroundDiv"))))
 
 
 ;; A velocity has an x and y component.
 (define-struct vel (x y))
 
-;; A marble consists of its div element and its posn.
-(define-struct marble (div posn))
 
+;; CHANGE: the world now holds a list of marbles.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; A world is a posn, a (listof marble), and a vel.
 (define-struct world (posn trail vel))
 
+;; A marble consists of its div element and its posn.
+(define-struct marble (div posn))
 
 ;; make-initial-trail: number -> (listof marble)
 ;; Creates the initial trail of marbles.
@@ -36,6 +31,8 @@
                                    (quotient HEIGHT 2)))
            (make-initial-trail (sub1 n)))]))
 
+;; We'll have a trail of a certain length.
+(define TRAIL-LENGTH 5)
 
 ;; The initial world has the marbles centered.
 (define initial-world 
@@ -43,6 +40,9 @@
                          (quotient HEIGHT 2))
               (make-initial-trail TRAIL-LENGTH)             
               (make-vel 0 0)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 
 ;; tick: world -> world
@@ -55,11 +55,16 @@
               (world-vel w)))
 
 
+
+;; We keep a sliding window of marbles.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; add-posn-to-trail: posn (listof marble) -> (listof marble)
-;; Adds a posn to the end of the trail.
+;; Adds a posn to the end of the trail window.
 (define (add-posn-to-trail a-posn a-trail)
   (append (rest a-trail)
           (list (make-marble (js-div) a-posn))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
 ;; tilt: world number number number -> world
@@ -70,10 +75,13 @@
               (make-vel roll (- pitch))))
 
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; draw: world -> dom-sexp
 ;; We draw the background and the marbles.
 (define (draw w)
-  (cons background
+  (cons (js-div '(("id" "backgroundDiv")))
         (draw-trail (world-trail w))))
 
 
@@ -86,7 +94,6 @@
     [else
      (cons (list (marble-div (first a-trail)))
            (draw-trail (rest a-trail)))]))
-
 
 ;; draw-css: world -> css-sexp
 ;; Style both the trail and the background.
@@ -114,6 +121,9 @@
                   (marble-posn (first a-trail))
                   i))
            (draw-trail-css (rest a-trail) (add1 i)))]))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 ;; marble-styling: posn number -> (listof css-style)
 ;; Styles the ith marble.  As 'i' gets larger, the

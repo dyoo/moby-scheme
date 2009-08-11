@@ -1,43 +1,43 @@
-function isArray(x) {
-    return typeof(x) == 'object' && 'length' in x;
-}
-
-function isEqual(x, y) {
-    if (isArray(x) && isArray(y)) {
-	if (x.length == y.length) {
-	    for (var i = 0; i < x.length; i++) {
-		if (! isEqual(x[i], y[i])) {
-		    return false;
-		}
-	    }
-	    return true;
-	} else {
-	    return false;
-	}
-    } else if (!isArray(x) && !isArray(y)) {
-	return x == y;         
-    } else {
-	return false;
-    }
-}
-
-function schemeIsEqual(x, y) {
-    return plt.Kernel.equal_question_(x, y);
-}
-function cons(x, y) {
-    return plt.Kernel.cons(x, y);
-}
-
-
-var empty = plt.types.Empty.EMPTY;
-var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
-var symbol = plt.types.Symbol.makeInstance;
-
-var testResults;
 
 
 function init() {
-    testResults = new Test.Unit.Runner({
+    function isArray(x) {
+	return typeof(x) == 'object' && 'length' in x;
+    }
+
+    function isEqual(x, y) {
+	if (isArray(x) && isArray(y)) {
+	    if (x.length == y.length) {
+		for (var i = 0; i < x.length; i++) {
+		    if (! isEqual(x[i], y[i])) {
+			return false;
+		    }
+		}
+		return true;
+	    } else {
+		return false;
+	    }
+	} else if (!isArray(x) && !isArray(y)) {
+	    return x == y;         
+	} else {
+	    return false;
+	}
+    }
+
+    function schemeIsEqual(x, y) {
+	return plt.Kernel.equal_question_(x, y);
+    }
+    function cons(x, y) {
+	return plt.Kernel.cons(x, y);
+    }
+
+
+    var empty = plt.types.Empty.EMPTY;
+    var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
+    var symbol = plt.types.Symbol.makeInstance;
+
+
+    return new Test.Unit.Runner({
 	    setup: function() {},
     
 		teardown: function() {},
