@@ -8,7 +8,7 @@ function init() {
 	return plt.Kernel.cons(x, y);
     }
 
-    var empty = plt.types.Empty.EMPTY;
+    var empty = plt.Danny Yoo <dyoo@cs.wpi.edu>types.Empty.EMPTY;
     var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
     var symbol = plt.types.Symbol.makeInstance;
 
@@ -72,9 +72,10 @@ function init() {
 				"(begin (set-box! bx 2)" +
 					"(unbox bx))"));
 		this.assertRaise("MobyTypeError",
+				function () {
 				 run("(define bx (box 5))" +
 				     "(begin (set-box! 2 bx)" +
-					"(unbox bx))"));
+					"(unbox bx))")});
 	    },
 
 	    testStructureMutators: function() {
@@ -82,10 +83,11 @@ function init() {
 			    run("(define ps (make-posn 3 4))" +
 				"(begin (set-posn-x! ps 9) " +
 					"(posn-x ps))"));
-		this.assert("MobyTypeError",
-			    run("(define ps (make-posn 3 4))" +
-				"(begin (set-posn-x! 5 ps) " +
-					"(posn-x ps))"));
+		this.assertRaise("MobyTypeError",
+				function () {
+			    	  run("(define ps (make-posn 3 4))" +
+				      "(begin (set-posn-x! 5 ps) " +
+					   "(posn-x ps))")});
 	    },
 
 	    testSet: function() {
@@ -96,12 +98,12 @@ function init() {
 
 		// undefined top-level variable
 		this.assertRaise("MobyRuntimeError",
-				 run("(begin (set! c 42) 3)"));
+				function () {
+				 run("(begin (set! c 42) 3)")});
 
-		// function arguments are immutable
-		// is this a run-time error?
-		this.assertRaise("MobyRuntimeError",
-		                 run("(define (f x) (set! x 3))"));
+		// function arguments are mutable
+		this.assertRaise(number(3),
+		                 run("(define (f x) (begin (set! x 3) x)) (f 42)"));
 
 		// scoping
 		// this seems like a test of "local" instead of "set"
