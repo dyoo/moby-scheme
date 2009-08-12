@@ -126,12 +126,13 @@ plt.platform = {};
     PhonegapLocationService.prototype.startService = function() {
 	var that = this;
 	function locSuccessCallback(pos) {
-	    that.currentPosition.latitude = pos.latitude;
-	    that.currentPosition.longitude = pos.longitude;
+	    that.currentPosition.latitude = parseFloat(pos.latitude);
+	    that.currentPosition.longitude = parseFloat(pos.longitude);
 
     	    for ( var i = 0; i < that.locationListeners.length; i++ ) {
     		var listener = that.locationListeners[i];
-    		listener(pos.latitude, pos.longitude);
+    		listener(that.currentPosition.latitude,
+			 that.currentPosition.longitude);
     	    }
 	}; 
     	this.watchId = navigator.geolocation.watchPosition(locSuccessCallback, function() {}, {});
@@ -283,13 +284,13 @@ plt.platform = {};
 
     var accelSuccessCallback = function(accel) {
     	for ( var i = 0; i < accelListeners.length; i++ ) {
-    		accelListeners[i](accel.x, accel.y, accel.z);
+    	    accelListeners[i](parseFloat(accel.x), parseFloat(accel.y), parseFloat(accel.z));
     	}
     };
     
     var orientSuccessCallback = function(orient) {
 	for ( var i = 0; i < orientListeners.length; i++ ) {
-		orientListeners[i](orient.azimuth, orient.pitch, orient.roll);
+	    orientListeners[i](parseFloat(orient.azimuth), parseFloat(orient.pitch), parseFloat(orient.roll));
 	}
     };
 
