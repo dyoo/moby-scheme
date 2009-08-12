@@ -735,14 +735,12 @@ plt.Jsworld = {};
     function addFocusTracking(node) {
 	node.addEventListener("focus",
 			      function(e) {
-				  console.log("focused on " + node);
 				  currentFocusedNode = node;
 			      },
 			      false);
 
 	node.addEventListener("blur",
 			      function(e) {
-				  console.log("blurred on " + node);
 				  currentFocusedNode = undefined;
 			      },
 			      false);
