@@ -158,7 +158,11 @@ return [tokens, s];
 	
 
 
-	return readExprs();
+	var result = readExprs();
+	if (tokens.length > 0) {
+	    throw new Error("More elements in the program's token stream than expected: the next unconsumed token is: "  + tokens[0][1])
+	}
+	return result;
     }
     
 }());
