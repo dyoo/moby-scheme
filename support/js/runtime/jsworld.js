@@ -228,7 +228,12 @@ plt.world.MobyJsworld = {};
     // BidirectionalInput
     Jsworld.bidirectionalInput = function(type, valF, updateF, args) {
 	var attribs = getAttribs(args);
-	return _js.bidirectional_input(type, valF, updateF, attribs);
+	return _js.bidirectional_input(type,
+				       function(w) { return valF([w]) },
+				       function(w, v) { 
+					   return updateF([w, v])
+				       },
+				       attribs);
     };
 
     // Images.

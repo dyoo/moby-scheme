@@ -528,15 +528,15 @@ plt.Jsworld = {};
 	// FIXME: if we're scrolling through, what's visible
 	// isn't restored yet.
 	if (this.focused.parentNode) {
+	    this.focused.focus();
 	    this.focused.selectionStart = this.selectionStart;
 	    this.focused.selectionEnd = this.selectionEnd;
-	    this.focused.focus();
 	} else if (this.focused.id) {
 	    var matching = document.getElementById(this.focused.id);
 	    if (matching) {
+		matching.focus();
 		matching.selectionStart = this.selectionStart;
 		matching.selectionEnd = this.selectionEnd;
-		matching.focus();
 	    }
 	}
     };
@@ -735,12 +735,14 @@ plt.Jsworld = {};
     function addFocusTracking(node) {
 	node.addEventListener("focus",
 			      function(e) {
+				  console.log("focused on " + node);
 				  currentFocusedNode = node;
 			      },
 			      false);
 
 	node.addEventListener("blur",
 			      function(e) {
+				  console.log("blurred on " + node);
 				  currentFocusedNode = undefined;
 			      },
 			      false);
