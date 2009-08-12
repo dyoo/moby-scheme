@@ -461,7 +461,7 @@ plt.Jsworld = {};
 	for (var i = 0; i < css.length; i++)
 	    if ('id' in css[i]) {
 		for (var j = 0; j < nodes.length; j++)
-		    if (nodes[j].id == css[i].id){
+		    if ('id' in nodes[j] && nodes[j].id == css[i].id){
 			set_css_attribs(nodes[j], css[i].attribs);
 		    }
 	    }
