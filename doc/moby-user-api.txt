@@ -254,7 +254,12 @@ The first argument computes a rendering of the world as a DOM tree,
 and the second argument computes that tree's styling.
 
 
-For example:
+Example 1:
+
+The following will render the world as a paragraph of text, styled
+with a font-size of 30.  Whenever the world is changed due to a
+stimuli, on-draw is called to re-draw the world.
+
 
     (js-big-bang 0                ;; initial world
 
@@ -270,9 +275,38 @@ For example:
                             '(("myPara" ("font-size" "30"))))))
 
 
-will render the world as a paragraph of text, styled with a font-size
-of 30.  Whenever the world is changed due to a stimuli, on-draw is
-called to re-draw the world.
+
+
+Example 2:
+
+The following will show a funny logo and an input text field.
+Whenever the number in the text is changed, the world will reflect
+that change.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (form-value w)
+  (format "~a" w))
+
+(define (update-form-value w v)
+  (string->number v))
+
+(define elt
+  (js-bidirectional-input "text" form-value update-form-value))
+
+(define (draw w)
+  (list (js-div)
+        (list (js-img "http://plt-scheme.org/logo.png"))
+        (list elt)
+        (list (js-p '(("id" "aPara"))) (list (js-text (format "~a" w))))))
+
+(define (draw-css)
+  '(("aPara" ("font-size" "50px"))))
+
+(js-big-bang 0
+             '()
+             (on-draw draw draw-css))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
 
