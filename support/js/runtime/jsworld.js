@@ -219,16 +219,16 @@ plt.world.MobyJsworld = {};
 	return _js.button(wrappedF, attribs);
     };
     
-    // input: string assoc -> node
-    Jsworld.input = function(type, args) {
-	var attribs = getAttribs(args);
-	return _js.input(type, attribs);
-    };
+//     // input: string assoc -> node
+//     Jsworld.input = function(type, args) {
+// 	var attribs = getAttribs(args);
+// 	return _js.input(type, attribs);
+//     };
 
     // BidirectionalInput
-    Jsworld.bidirectionalInput = function(type, args) {
+    Jsworld.bidirectionalInput = function(type, valF, updateF, args) {
 	var attribs = getAttribs(args);
-	return _js.bidirectional_input(type, attribs);
+	return _js.bidirectional_input(type, valF, updateF, attribs);
     };
 
     // Images.

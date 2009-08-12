@@ -338,7 +338,7 @@
                                (bf 'js-button 1 "plt.world.MobyJsworld.button")
                                (bf 'js-button* 2 "plt.world.MobyJsworld.buttonStar")
                                ;(bf 'js-input 1 "plt.world.MobyJsworld.input")
-			       (bf 'js-bidirectional-input 2 
+			       (bf 'js-bidirectional-input 3 
 				   "plt.world.MobyJsworld.bidirectionalInput")
 			       (bf 'js-img 1
 				   "plt.world.MobyJsworld.img")

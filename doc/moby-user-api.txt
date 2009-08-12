@@ -309,6 +309,8 @@ js-button*: (world -> world) (world -> effect) (listof attrib)? -> DOM-element
 
 js-text: string -> DOM-element
 
+js-bidirectional-input: string (world -> string) (world string -> world) (listof attrib)?
+
 
 
 
