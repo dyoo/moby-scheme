@@ -43,7 +43,7 @@ plt.lib = {};
 
     plt.lib.Net = {};
     plt.lib.Net.getUrl = function(url) {
-	return plt.platform.Platform.getInstnace().getNetworkService().getUrl(url);
+	return plt.platform.Platform.getInstance().getNetworkService().getUrl(url);
     }
 
 
