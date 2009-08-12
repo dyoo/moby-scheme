@@ -194,7 +194,24 @@ for documentation on these forms.
 ----------------------------------------------------------------------
 
 
+Extensions
 
+
+get-url: string (listof (list string string)) -> string
+
+Do an HTTP GET to grab the string content from a URL.  If the second
+argument is non-empty, it is treated as a list of key-value pairs to
+be encoded in the query portion of the string.
+
+    Example: (get-url "http://plt-scheme.org/" '())
+
+
+
+post-url: string (listof (list string string)) -> string
+
+Do an HTTP GET to grab the string content from a URL.  If the second
+argument is non-empty, it is treated as a list of key-value pairs to
+be encoded in the DATA portion of the post.
 
 
 
@@ -216,7 +233,7 @@ Big Bang
 A Moby program may start a reactive computation with js-big-bang:
 
 
-    js-big-bang: world (listof attributes) handlers * -> void
+js-big-bang: world (listof attributes) handlers * -> void
 
 
 (The second argument to js-big-bang is undocumented at the moment.)
