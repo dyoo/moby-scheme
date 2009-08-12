@@ -20,7 +20,7 @@ plt.platform = {};
 	this.shakeService = chooseShakeService();
     	this.locationService = chooseLocationService();
 	this.telephonyService = chooseTelephonyService();
-
+	this.networkService = chooseNetworkService();
     };
     
     JavascriptPlatform.prototype.getTiltService = function() {
@@ -421,6 +421,40 @@ plt.platform = {};
 
     NoOpShakeService.prototype.addListener = function(l) {
     };
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    function chooseNetworkService() {
+	if (isPhonegapAvailable()) {
+	    return new PhonegapNetworkService();
+	} else {
+	    return new WeSchemeNetworkService();
+	}
+    }
+
+
+    function PhonegapNetworkService() {}
+    PhonegapNetworkService.prototype.getUrl = function(aUrl) {
+	// FIXME!
+    };
+
+
+
+    function WeSchemeNetworkService() {}
+    WeSchemeNetworkService.prototype.getUrl = function(aUrl) {
+	var req = new XMLHttpRequest();
+	var url = "/networkProxy?url=" + encodeURIComponent(aUrl);
+	req.open("GET", url, false);
+	req.send(null);
+	return req.responseText;
+    };
+
+    //////////////////////////////////////////////////////////////////////
+
 
  
 })();

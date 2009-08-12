@@ -10,7 +10,7 @@ plt.lib = {};
     plt.lib.Telephony.getSignalStrengths = function() {
 	return plt.platform.Platform.getInstance().getTelephonyService().getSignalStrengths();
     };
-
+    //////////////////////////////////////////////////////////////////////
     
     plt.lib.Location = {};
     plt.lib.Location.getLatitude = function () {
@@ -36,6 +36,15 @@ plt.lib = {};
     plt.lib.Location.getDistanceBetween = function (lat1, long1, lat2, long2) {
 	return plt.platform.Platform.getInstance().getLocationService().getDistanceBetween(lat1, long1, lat2, long2);
     };
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    plt.lib.Net = {};
+    plt.lib.Net.getUrl = function(url) {
+	return plt.platform.Platform.getInstnace().getNetworkService().getUrl(url);
+    }
 
 
 }());

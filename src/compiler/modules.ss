@@ -357,7 +357,8 @@
                         (module-binding-bindings world-stub-module)
                         (module-binding-bindings jsworld-module)
                         (module-binding-bindings telephony-module)
-                        (module-binding-bindings location-module))))
+                        (module-binding-bindings location-module)
+			(module-binding-bindings net-module))))
 
                                
                                
