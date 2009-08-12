@@ -35,6 +35,10 @@ plt.platform = {};
 	return this.telephonyService;
     };
 
+    JavascriptPlatform.prototype.getNetworkService = function() {
+	return this.networkService;
+    };
+
 
     // Dynamically choose which location service we grab
     function chooseLocationService() {
