@@ -1451,6 +1451,38 @@ var plt = plt || {};
     };
 
 
+    plt.Kernel.apply = function(f, secondArg, restArgs) {
+	var argList;
+	var argArray = [];
+
+	if (restArgs.length == 0) {
+	    argList = secondArg;
+	    checkList(argList, "apply: second argument must be a list");
+	    while (! argList.isEmpty()) {
+		var elt = argList.first()
+		argArray.push(elt);
+		argList = argList.rest();
+	    }	
+	} else {
+	    argList = restArgs.pop();
+	    checkList(argList, "apply: second argument must be a list");
+	    while (! argList.isEmpty()) {
+		var elt = argList.first()
+		argArray.push(elt);
+		argList = argList.rest();
+	    }	
+	    while(restArgs.length > 0) {
+		argArray.unshift(restArgs.pop());
+	    }
+	    argArray.unshift(secondArg);
+
+	}
+	check(f, isFunction, "apply: first argument must be a function");
+	console.log(argArray);
+	return f(argArray);
+    };
+
+
     plt.Kernel.map = function(f, arglists) {
 	arrayEach(arglists, function(x) { 
 	    checkList(x, "map: mapped arguments must be lists");});

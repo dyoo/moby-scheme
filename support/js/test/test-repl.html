@@ -107,7 +107,7 @@ function runSource(aSource) {
     }
 }
 
-_updatePermissionList = function(permissionList) {
+var _updatePermissionList = function(permissionList) {
     while (! permissionList.isEmpty()) {
         var nextPermission = permissionList.first();
         plt.permission.runStartupCode(nextPermission);
