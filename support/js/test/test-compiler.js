@@ -8,17 +8,19 @@ function init() {
 	return plt.Kernel.cons(x, y);
     }
 
-    var empty = plt.Danny Yoo <dyoo@cs.wpi.edu>types.Empty.EMPTY;
+    var empty = plt.types.Empty.EMPTY;
     var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
+    var str = function(x) { return plt.types.String.makeInstance(x); };
     var symbol = plt.types.Symbol.makeInstance;
 
     var TRUE = plt.types.Logic.TRUE;
     var FALSE = plt.types.Logic.FALSE;
 
+    var pinfo = get_dash_base_dash_pinfo(symbol("moby"));
+
     // run: string -> scheme-value
     // Evaluates the string and produces the evaluated scheme value.
     function run(aSource) {
-	var pinfo = get_dash_base_dash_pinfo(symbol("moby"));
 	var namespace = new Namespace();
 	var program = readSchemeExpressions(aSource);
 	var compiledProgram = (program_dash__greaterthan_compiled_dash_program_slash_pinfo
@@ -54,6 +56,28 @@ function init() {
 				"(f 3)"));
 			    
 	    },
+
+
+	testHigherOrderFunction: function() {
+	    this.assert(isEqual(cons(str("A"),
+				     cons(str("B"),
+					  cons(str("F"),
+					       cons(str("X"),
+						    cons(str("Y"), empty)))))),
+			
+			"(define (insert cmp elt l)"+
+			"  (cond"+
+			"    [(empty? l) (list elt)]"+
+			"    [(cons? l) (if (cmp elt (first l))"+
+			"                   (cons elt l)"+
+			"                   (cons (first l)"+
+			"                         (insert cmp elt (rest l))))]))"+
+			""+
+			"(insert string<=? \"F\" '(\"A\" \"B\" \"X\" \"Y\"))"
+		       );
+	},
+
+
 
 	    testBegin: function() {
 		// normal behaviour
