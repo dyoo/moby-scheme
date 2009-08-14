@@ -42,10 +42,12 @@ plt.platform = {};
 
     // Dynamically choose which location service we grab
     function chooseLocationService() {
-	if (isPhonegapAvailable()) {
+	if (isGoogleGearsAvailable()) {
+	    return new GoogleGearsLocationService();
+	} else if (isPhonegapAvailable()) {
     	    return new PhonegapLocationService();
 	} else if (isW3CLocationAvailable()) {
-    	    return new W3CLocationService();
+   	    return new W3CLocationService();
 	} else {
 	    return new NoOpLocationService();
 	}
@@ -59,6 +61,14 @@ plt.platform = {};
     }
 
 
+    // isGoogleGearsAvailable: -> boolean
+    // Returns true if Google Gears exists.
+    function isGoogleGearsAvailable() {
+	return (window.google && window.google.gears && true);
+    }
+
+
+
     // isW3CLocationAvailable: -> boolean
     // Returns true if the W3C Location API is available.
     function isW3CLocationAvailable() {
@@ -66,6 +76,68 @@ plt.platform = {};
 		typeof(navigator.geolocation != 'undefined'));
 		     
     }
+
+    //////////////////////////////////////////////////////////////////////
+
+    function GoogleGearsLocationService() {
+	this.geo = google.gears.factory.create("beta.geolocation");
+	this.listeners = [];
+	this.currentPosition = {latitude: 0, 
+				longitude: 0,
+				altitude: 0,
+				bearing: 0,
+				speed: 0};
+	this.watchId = false;
+    };
+    
+    GoogleGearsLocationService.prototype.startService = function() {
+	var that = this;
+	function success(position) {
+	    that.currentPosition.latitude = position.latitude;
+	    that.currentPosition.longitude = position.longitude;
+	    that.currentPosition.altitude = position.altitude;
+	    for(var i = 0; i < that.listeners.length; i++) {
+		that.listeners[i](position.latitude,
+				  position.longitude);
+	    }
+	}
+	this.watchId = this.geo.watchPosition(success);
+    };
+
+    GoogleGearsLocationService.prototype.shutdownService = function() {
+	this.geo.clearWatch(this.watchId);
+    };
+    
+    GoogleGearsLocationService.prototype.addLocationChangeListener = function(listener) {
+	this.listeners.push(listener);
+    };
+
+    GoogleGearsLocationService.prototype.getLatitude = function () {
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.latitude);
+    };
+
+    GoogleGearsLocationService.prototype.getLongitude = function () {
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.longitude);
+    };
+
+    GoogleGearsLocationService.prototype.getAltitude = function () {
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.altitude);
+    };
+
+    GoogleGearsLocationService.prototype.getBearing = function () {
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.bearing);
+    };
+
+    GoogleGearsLocationService.prototype.getSpeed = function () {
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.speed);
+    };
+
+    GoogleGearsLocationService.prototype.getDistanceBetween = function (lat1, long1, lat2, long2) {
+	// FIXME: do something smarter here!
+	return plt.types.Rational.ZERO;
+    };
+
+
 
 
 
@@ -93,7 +165,7 @@ plt.platform = {};
 	return plt.types.Rational.ZERO;
     };
 
-    NoOpLocationService.prototype.getAttitude = function () {
+    NoOpLocationService.prototype.getAltitude = function () {
 	return plt.types.Rational.ZERO;
     };
 
@@ -154,7 +226,7 @@ plt.platform = {};
 	return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.longitude);
     };
 
-    PhonegapLocationService.prototype.getAttitude = function () {
+    PhonegapLocationService.prototype.getAltitude = function () {
 	return plt.types.Rational.ZERO;
     };
 
@@ -251,8 +323,8 @@ plt.platform = {};
 	return plt.types.FloatPOint.makeInstance(this.currentPosition.longitude);
     };
 
-    W3CLocationService.prototype.getAttitude = function () {
-	return plt.types.FloatPoint.makeInstance(this.currentPosition.attitude);
+    W3CLocationService.prototype.getAltitude = function () {
+	return plt.types.FloatPoint.makeInstance(this.currentPosition.altitude);
     };
 
     W3CLocationService.prototype.getBearing = function () {

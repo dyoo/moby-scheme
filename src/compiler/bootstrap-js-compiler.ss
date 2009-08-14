@@ -55,7 +55,7 @@
       (copy-path-to-port read.js op)
       (display (bootstrap-compile "beginner-to-javascript.ss") op)
       
-      (display "return function(s) {
+      (display "
    function listToArray(aList) {
        var anArray = [];
        while (!aList.isEmpty()) {     
@@ -64,23 +64,24 @@
        }
        return anArray;
    }
-   var exprs = readSchemeExpressions(s);
+   var aPinfo = get_dash_base_dash_pinfo(plt.types.Symbol.makeInstance('moby'));
 
-   var compiledProgram =
-       program_dash__greaterthan_compiled_dash_program(exprs);
+   return function(s) {
+       var exprs = readSchemeExpressions(s);
+       var compiledProgram =
+           program_dash__greaterthan_compiled_dash_program_slash_pinfo(exprs, aPinfo);
 
-   var compiledSrc = compiled_dash_program_dash_main(compiledProgram);
-   var permList = pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram));
-   var perms = [];
-   while (!permList.isEmpty()) {     
-      perms = perms.concat(
-                listToArray(permission_dash__greaterthan_android_dash_permissions(permList.first())));
-      permList = permList.rest();
-   }
-   return [compiledSrc, perms];
-}"
-               op)
-      (display "})();" op))
+       var compiledSrc = compiled_dash_program_dash_main(compiledProgram);
+       var permList = pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram));
+       var perms = [];
+       while (!permList.isEmpty()) {     
+           perms = perms.concat(
+                    listToArray(permission_dash__greaterthan_android_dash_permissions(permList.first())));
+           permList = permList.rest();
+       }
+       return [compiledSrc, perms];
+   }})();"
+               op))
     #:exists 'replace))
       
 

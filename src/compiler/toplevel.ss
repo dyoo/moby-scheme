@@ -4,8 +4,9 @@
 (require "helpers.ss")
 
 
-;; toplevel-env: env
-(define toplevel-env
+;; get-toplevel-env: symbol ->env
+(define (get-toplevel-env lang)
+  ;; fixme: use the language to limit what symbols get in the toplevel.
   (local [(define top-env-1
             (foldl (lambda (id+name env)
                      (env-extend-constant env (first id+name) (second id+name)))
@@ -311,4 +312,4 @@
 
 
 (provide/contract
- [toplevel-env env?])
+ [get-toplevel-env (symbol? . -> .  env?)])

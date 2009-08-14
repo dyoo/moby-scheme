@@ -1,5 +1,6 @@
 <html>
 <head>
+<script src="../runtime/gears_init.js"></script>
 <script src="../runtime/types.js"></script>
 <script src="../runtime/kernel.js"></script>
 <script src="../runtime/read.js"></script>
@@ -12,6 +13,7 @@
 <script src="../runtime/jsworld/jsworld.js"></script>
 <script src="../runtime/jsworld.js"></script>
 <script src="../runtime/world-stimuli.js"></script>
+<script src="../runtime/permission.js"></script>
 
 <script lang="javascript">
 // <![CDATA[
@@ -80,6 +82,12 @@ function runSource(aSource) {
             program_dash__greaterthan_compiled_dash_program_slash_pinfo(
                 program, _pinfo);
 
+	var newPinfo = 
+	    compiled_dash_program_dash_pinfo(compiledProgram);
+
+	_updatePermissionList(pinfo_dash_permissions(newPinfo));
+
+
         var defns = compiled_dash_program_dash_defns(compiledProgram);
         var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
             compiledProgram);
@@ -99,6 +107,14 @@ function runSource(aSource) {
     }
 }
 
+_updatePermissionList = function(permissionList) {
+    while (! permissionList.isEmpty()) {
+        var nextPermission = permissionList.first();
+        plt.permission.runStartupCode(nextPermission);
+        permissionList = permissionList.rest();
+    }
+
+};
 
 
 _resetAndRunDefns = function() {
