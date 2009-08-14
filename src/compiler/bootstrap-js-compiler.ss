@@ -64,10 +64,12 @@
        }
        return anArray;
    }
+   var pinfo = get_dash_base_dash_pinfo(plt.types.Symbol.makeInstance('moby'));
+
    var exprs = readSchemeExpressions(s);
 
    var compiledProgram =
-       program_dash__greaterthan_compiled_dash_program(exprs);
+       program_dash__greaterthan_compiled_dash_program_slash_pinfo(exprs, pinfo);
 
    var compiledSrc = compiled_dash_program_dash_main(compiledProgram);
    var permList = pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram));

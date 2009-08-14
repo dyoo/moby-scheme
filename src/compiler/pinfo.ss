@@ -35,13 +35,13 @@
   ;; support different language levels.
   (cond
     [(symbol=? language 'moby)
-     (make-pinfo (extend-env/module-binding toplevel-env
+     (make-pinfo (extend-env/module-binding (get-toplevel-env language)
                                             moby-module-binding)
                  empty 
                  (make-immutable-hasheq empty) 
                  0)]
     [(symbol=? language 'base)
-     (make-pinfo toplevel-env empty (make-immutable-hasheq empty) 0)]))
+     (make-pinfo (get-toplevel-env language) empty (make-immutable-hasheq empty) 0)]))
 
 
 
