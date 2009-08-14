@@ -223,8 +223,8 @@
                                    "plt.lib.Location.getLatitude")
                                (bf 'get-longitude module-path 0 false 
                                    "plt.lib.Location.getLongitude")
-                               (bf 'get-attitude module-path 0 false 
-                                   "plt.lib.Location.getAttitude")
+                               (bf 'get-altitude module-path 0 false 
+                                   "plt.lib.Location.getAltitude")
                                (bf 'get-bearing module-path 0 false 
                                    "plt.lib.Location.getBearing")
                                (bf 'get-speed module-path 0 false 

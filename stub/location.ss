@@ -15,7 +15,7 @@
 (define (get-longitude)
   (- (degree&minute->float 71 52)))
 
-(define (get-attitude)
+(define (get-altitude)
   0)
 
 (define (get-bearing)
