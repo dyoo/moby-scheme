@@ -490,7 +490,9 @@ plt.Jsworld = {};
 	    update_css(ns, sexp2css(redraw_css_func(world)));
 	    return;
 	} else {
-	    var currentFocusedSelection = getCurrentFocusedSelection();
+	    if (hasCurrentFocusedSelection()) {
+		var currentFocusedSelection = getCurrentFocusedSelection();
+	    }
 
 	    // We try to avoid updating the dom if the value
 	    // hasn't changed.
@@ -512,7 +514,9 @@ plt.Jsworld = {};
  		    update_css(ns, sexp2css(newRedrawCss));
 		}
  	    }
-	    currentFocusedSelection.restore();
+	    if (hasCurrentFocusedSelection()) {
+		currentFocusedSelection.restore();
+	    }
 	}
     }
 
@@ -528,18 +532,22 @@ plt.Jsworld = {};
 	// FIXME: if we're scrolling through, what's visible
 	// isn't restored yet.
 	if (this.focused.parentNode) {
-	    this.focused.focus();
 	    this.focused.selectionStart = this.selectionStart;
 	    this.focused.selectionEnd = this.selectionEnd;
+	    this.focused.focus();
 	} else if (this.focused.id) {
 	    var matching = document.getElementById(this.focused.id);
 	    if (matching) {
-		matching.focus();
 		matching.selectionStart = this.selectionStart;
 		matching.selectionEnd = this.selectionEnd;
+		matching.focus();
 	    }
 	}
     };
+
+    function hasCurrentFocusedSelection() {
+	return currentFocusedNode != undefined;
+    }
 
     function getCurrentFocusedSelection() {
 	return new FocusedSelection();
