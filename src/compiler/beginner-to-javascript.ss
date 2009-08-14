@@ -646,7 +646,7 @@
              (string-append "((function() { var result = (function(args) {
                     return "
                             (binding:function-java-string binding)
-                            ".apply(null, args);
+                            ".apply(null, args.slice(0, " (number->string (binding:function-min-arity binding)) ").concat([args.slice("(number->string (binding:function-min-arity binding))")]));
                   }); result.toWrittenString = function() {return '<function:" (symbol->string (binding-id binding)) ">'; }
                       result.toDisplayedString = function() {return '<function:" (symbol->string (binding-id binding)) ">';}
                       return result; })())")]

@@ -63,20 +63,17 @@ function init() {
 				     cons(str("B"),
 					  cons(str("F"),
 					       cons(str("X"),
-						    cons(str("Y"), empty)))))),
-			
-			"(define (insert cmp elt l)"+
-			"  (cond"+
-			"    [(empty? l) (list elt)]"+
-			"    [(cons? l) (if (cmp elt (first l))"+
-			"                   (cons elt l)"+
-			"                   (cons (first l)"+
-			"                         (insert cmp elt (rest l))))]))"+
-			""+
-			"(insert string<=? \"F\" '(\"A\" \"B\" \"X\" \"Y\"))"
-		       );
+						    cons(str("Y"), empty))))),
+				run("(define (insert cmp elt l)"+
+				    "  (cond"+
+				    "    [(empty? l) (list elt)]"+
+				    "    [(cons? l) (if (cmp elt (first l))"+
+				    "                   (cons elt l)"+
+				    "                   (cons (first l)"+
+				    "                         (insert cmp elt (rest l))))]))"+
+				    "(insert string<=? \"F\" '(\"A\" \"B\" \"X\" \"Y\"))")))
 	},
-
+	
 
 
 	    testBegin: function() {
