@@ -1478,7 +1478,7 @@ function number_dash__greaterthan_javascript_dash_string(a_dash_num) { return ((
  ((plt.Kernel.rational_question_(a_dash_num)) ?
  plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.number_dash__greaterthan_string((plt.Kernel.numerator(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.number_dash__greaterthan_string((plt.Kernel.denominator(a_dash_num)))),(plt.types.String.makeInstance("))"))]) :
  ((plt.Kernel.real_question_(a_dash_num)) ?
- plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(\"")),(plt.Kernel.number_dash__greaterthan_string(a_dash_num)),(plt.types.String.makeInstance("\"))"))]) :
+ plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(")),(plt.Kernel.number_dash__greaterthan_string(a_dash_num)),(plt.types.String.makeInstance("))"))]) :
  ((plt.Kernel.complex_question_(a_dash_num)) ?
  plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(")),(plt.Kernel.number_dash__greaterthan_string((plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.number_dash__greaterthan_string((plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance("))"))]) :
  (plt.types.Logic.TRUE ?

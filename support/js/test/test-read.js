@@ -34,6 +34,7 @@ function init() {
 
     var empty = plt.types.Empty.EMPTY;
     var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
+    var makeFloat = function(x) { return plt.types.FloatPoint.makeInstance(x); };
     var symbol = plt.types.Symbol.makeInstance;
 
 
@@ -68,6 +69,19 @@ function init() {
 					  cons(symbol("hello"),
 					       empty)));
 	    },
+
+	testReadRational: function() {
+	    this.assert(schemeIsEqual(readSchemeExpressions("1"),
+				      cons(number(1), empty)));
+				      
+	},
+
+
+	testReadFloat: function() {
+	    this.assert(schemeIsEqual(readSchemeExpressions("0.1"),
+				      cons(makeFloat(0.1), empty)));
+				      
+	},
 
 		testReadSymbolInList: function() {
 		this.assert(schemeIsEqual(readSchemeExpressions("(hello again)"),

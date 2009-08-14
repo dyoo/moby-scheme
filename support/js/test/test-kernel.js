@@ -105,6 +105,12 @@ var getTests;
 						   Rational.makeInstance(1)));
 	    },
 
+	    testAddFloats: function() {
+		this.assertEqual(0.1, 
+				 Kernel._plus_([Rational.makeInstance(0), 
+						FloatPoint.makeInstance(0.1)]).toFloat());
+	    },
+
 	    
 	    testSubtract : function(){
 		var n1 = [Rational.makeInstance(2,1), Rational.makeInstance(3,1)];

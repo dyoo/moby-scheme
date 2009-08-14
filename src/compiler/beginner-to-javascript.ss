@@ -744,8 +744,8 @@
                         (number->string (denominator a-num))
                         "))")]
         [(real? a-num)
-         (string-append "(plt.types.FloatPoint.makeInstance(\"" 
-                        (number->string a-num)"\"))")]
+         (string-append "(plt.types.FloatPoint.makeInstance(" 
+                        (number->string a-num)"))")]
         [(complex? a-num)
          (string-append "(plt.types.Complex.makeInstance("
                         (number->string (real-part a-num))
