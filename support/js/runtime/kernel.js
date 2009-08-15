@@ -1478,7 +1478,6 @@ var plt = plt || {};
 
 	}
 	check(f, isFunction, "apply: first argument must be a function");
-	console.log(argArray);
 	return f(argArray);
     };
 
