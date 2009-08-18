@@ -1690,13 +1690,13 @@ var plt = plt || {};
 		return "\n";
 	    } else if (s == '~s' || s == "~S") {
 		if (buffer.length == 0) {
-		    throw new MobyRuntimeException(
+		    throw new MobyRuntimeError(
 			"format: fewer arguments passed than expected");
 		}
 		return buffer.shift().toWrittenString();
 	    } else if (s == '~a' || s == "~A") {
 		if (buffer.length == 0) {
-		    throw new MobyRuntimeException(
+		    throw new MobyRuntimeError(
 			"format: fewer arguments passed than expected");
 		}
 		return buffer.shift().toDisplayedString();
@@ -1706,7 +1706,7 @@ var plt = plt || {};
 	}
 	var result = plt.types.String.makeInstance(formatStr.replace(pattern, f));
 	if (buffer.length > 0) {
-	    throw new MobyRuntimeException("format: More arguments passed than expected");
+	    throw new MobyRuntimeError("format: More arguments passed than expected");
 	}
 	return result;
     }
