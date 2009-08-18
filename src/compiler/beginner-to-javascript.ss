@@ -216,7 +216,7 @@
              (string-append (symbol->string struct-name)
                             "-"
                             (symbol->string field-name))))
-                    
+          
           (define new-env-1 (env-extend env
                                         (make-binding:constant
                                          'this
@@ -245,7 +245,21 @@
                                                         a-pinfo))
           
           (define equality-expression-string (first equality-expression-string+pinfo))
-          (define updated-pinfo (second equality-expression-string+pinfo))]
+          (define updated-pinfo (second equality-expression-string+pinfo))
+          
+          ;; predicate-name: string
+          (define predicate-name 
+            (symbol->string (identifier->munged-java-identifier 
+                             (string->symbol (string-append (symbol->string id)
+                                                            "?")))))
+          ;; make-accessor-name: symbol -> string
+          (define (make-accessor-name a-field)
+            (symbol->string
+             (identifier->munged-java-identifier
+              (string->symbol
+               (string-append (symbol->string id)
+                              "-"
+                              (symbol->string a-field))))))]
     
     (list  (string-append
             
@@ -326,25 +340,21 @@
             ;; accessors
             (string-join 
              (map (lambda (a-field)
-                    (string-append "function "
-                                   (local [(define acc-id (string->symbol
-                                                           (string-append (symbol->string id)
-                                                                          "-"
-                                                                          (symbol->string a-field))))]
-                                     (symbol->string (identifier->munged-java-identifier acc-id)))
-                                   "(obj) { return obj."
-                                   (symbol->string (identifier->munged-java-identifier a-field))
-                                   "; }"))
+                    (string-append "function " (make-accessor-name a-field) "(obj) {"
+                                   "     if (" predicate-name" (obj)) {"
+                                   "        return obj." (symbol->string (identifier->munged-java-identifier a-field)) ";"
+                                   "     } else { "
+                                   "        throw new plt.Kernel.MobyRuntimeError("
+                                   "            plt.Kernel.format('" (make-accessor-name a-field) ": not a " (symbol->string id) ": ~s', [obj]));"
+                                   "     } "
+                                   "}"))
                   fields)
              "\n")
             
             "\n"
             
             ;; structure predicate
-            (string-append "function "
-                           (symbol->string (identifier->munged-java-identifier (string->symbol (string-append (symbol->string id)
-                                                                                                              "?"))))
-                           "(obj) { 
+            (string-append "function " predicate-name "(obj) { 
               return obj != null && obj != undefined && obj instanceof "
                            (symbol->string (identifier->munged-java-identifier id))
                            "; }"))
