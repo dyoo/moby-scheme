@@ -490,35 +490,46 @@ plt.Jsworld = {};
 	    update_css(ns, sexp2css(redraw_css_func(world)));
 	    return;
 	} else {
-	    if (hasCurrentFocusedSelection()) {
-		var currentFocusedSelection = getCurrentFocusedSelection();
-	    }
+	    maintainingSelection(
+		function() {
+		    // We try to avoid updating the dom if the value
+		    // hasn't changed.
+ 		    var oldRedraw = redraw_func(oldWorld);
+ 		    var newRedraw = redraw_func(world);	    
+ 		    var oldRedrawCss = redraw_css_func(oldWorld);
+		    var newRedrawCss = redraw_css_func(world);
+		    var t = sexp2tree(newRedraw);
+ 		    var ns = nodes(t);
 
-	    // We try to avoid updating the dom if the value
-	    // hasn't changed.
- 	    var oldRedraw = redraw_func(oldWorld);
- 	    var newRedraw = redraw_func(world);	    
- 	    var oldRedrawCss = redraw_css_func(oldWorld);
-	    var newRedrawCss = redraw_css_func(world);
-	    var t = sexp2tree(newRedraw);
- 	    var ns = nodes(t);
+		    // Try to save the current selection and preserve it across
+		    // dom updates.
 
-	    // Try to save the current selection and preserve it across
-	    // dom updates.
-
- 	    if(oldRedraw != newRedraw) {
- 		update_dom(toplevelNode, ns, relations(t));
- 		update_css(ns, sexp2css(newRedrawCss));
- 	    } else {
-		if(oldRedrawCss != newRedrawCss) {
- 		    update_css(ns, sexp2css(newRedrawCss));
-		}
- 	    }
-	    if (hasCurrentFocusedSelection()) {
-		currentFocusedSelection.restore();
-	    }
+ 		    if(oldRedraw != newRedraw) {
+ 			update_dom(toplevelNode, ns, relations(t));
+ 			update_css(ns, sexp2css(newRedrawCss));
+ 		    } else {
+			if(oldRedrawCss != newRedrawCss) {
+ 			    update_css(ns, sexp2css(newRedrawCss));
+			}
+ 		    }
+		});
 	}
     }
+
+
+    // maintainingSelection: (-> void) -> void
+    // Calls the thunk f while trying to maintain the current focused selection.
+    function maintainingSelection(f) {
+	var currentFocusedSelection;
+	if (hasCurrentFocusedSelection()) {
+	    currentFocusedSelection = getCurrentFocusedSelection();
+	    f();
+	    currentFocusedSelection.restore();
+	} else {
+	    f();
+	}
+    }
+
 
 
     function FocusedSelection() {
@@ -703,6 +714,22 @@ plt.Jsworld = {};
 	};
     }
     Jsworld.stop_when = stop_when;
+
+
+
+    function on_world_change(f) {
+	var listener = function(world, oldW) { f(world); };
+	return function() {
+	    return { 
+		onRegister: function (top) { 
+		    add_world_listener(listener); },
+		onUnregister: function (top) {
+		    remove_world_listener(listener)}
+	    };
+	};
+    }
+    Jsworld.on_world_change = on_world_change;
+
 
 
 
@@ -894,6 +921,20 @@ plt.Jsworld = {};
 	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.input = input;
+
+
+    // worldToValF: world -> string
+    // updateF: world string -> world
+    function bidirectional_text_input(worldToValF, updateF, attribs) {
+	var n = document.createElement('input');
+	n.type = "text";
+	var lastValue = undefined;
+	function monitor(w, e) {
+	    return updateF(w, n.value);
+	}
+	add_ev(n, 'keypress', monitor);
+    }
+    
 
     function text(s, attribs) {
 	return addFocusTracking(copy_attribs(document.createTextNode(s), attribs));
