@@ -105,6 +105,19 @@ plt.world.MobyJsworld = {};
 
 
 
+    // The default printWorldHook will write the written content of the node.
+    // We probably want to invoke the pretty printer here instead!
+    Jsworld.printWorldHook = function(world, node) {
+	if(node.lastChild == null) {
+	    node.appendChild(document.createTextNode(world.toWrittenString()));
+	} else {
+	    node.replaceChild(document.createTextNode(world.toWrittenString()),
+			      node.lastChild);
+	}
+    };
+
+
+
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, attribs, handlers) {
 	plt.Kernel.checkList(attribs, "js-big-bang: 2nd argument must be a list of global attributes, i.e. empty");
@@ -136,6 +149,9 @@ plt.world.MobyJsworld = {};
 	    return result;
 	  }
 	  wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
+	} else {
+	    wrappedHandlers.push(_js.on_world_change(
+		function(w) { Jsworld.printWorldHook(w, toplevelNode); }));
 	}
 
 
