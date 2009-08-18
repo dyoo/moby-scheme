@@ -67,7 +67,9 @@ plt.Jsworld = {};
 		try {
 		    worldListeners[i](world, originalWorld);
 		} catch (e) {
-		    alert(e);
+		    // Revert the world state
+		    world = originalWorld;
+		    throw e;
 		}
 	    }
 	}
