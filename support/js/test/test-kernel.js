@@ -82,6 +82,26 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel._plus_(n5), Complex.makeInstance(5, 4)));
 	    },
 
+	    testDivisionByZero: function() {
+		Kernel._slash_(Rational.ONE, [Rational.ONE]);
+		this.assertRaise("MobyRuntimeError", 
+				 function() {
+				     Kernel._slash_(Rational.ONE, [Rational.ZERO]);
+				 });
+
+		this.assertRaise("MobyRuntimeError", 
+				 function() {
+				     Kernel._slash_(FloatPoint.makeInstance(1),
+						    [Rational.ZERO]);
+				 });
+
+		this.assertRaise("MobyRuntimeError", 
+				 function() {
+				     Kernel._slash_(FloatPoint.makeInstance(1),
+						    [FloatPoint.makeInstance(0)]);
+				 });
+	    },
+
 	    testAdd1 : function() {
 		this.assert(Kernel.equal_question_(Kernel.add1(Rational.ZERO), 
 						   Rational.ONE));
