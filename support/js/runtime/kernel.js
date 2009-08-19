@@ -1835,6 +1835,8 @@ var plt = plt || {};
 	this.render(ctx, 0, 0);
 	return canvas;
     };
+    BaseImage.prototype.toWrittenString = function() { return "<image>"; }
+    BaseImage.prototype.toDisplayedString = function() { return "<image>"; }
 
 
 

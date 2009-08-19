@@ -109,9 +109,9 @@ plt.world.MobyJsworld = {};
     // We probably want to invoke the pretty printer here instead!
     Jsworld.printWorldHook = function(world, node) {
 	if(node.lastChild == null) {
-	    node.appendChild(document.createTextNode(plt.Kernel.toWrittenString(world)));
+	    node.appendChild(plt.Kernel.toDomNode(world));
 	} else {
-	    node.replaceChild(document.createTextNode(plt.Kernel.toWrittenString(world)),
+	    node.replaceChild(plt.Kernel.toDomNode(world),
 			      node.lastChild);
 	}
     };
