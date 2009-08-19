@@ -1857,7 +1857,7 @@ var plt = plt || {};
 	if (x == undefined || x == null) {
 	    throw new MobyRuntimeError("value must not be null or undefined");
 	}
-	if (typeof(x) != 'object') {
+	if (typeof(x) != 'object' && typeof(x) != 'function') {
 	    var node = document.createTextNode(x.toString());
 	    return node;
 	}
