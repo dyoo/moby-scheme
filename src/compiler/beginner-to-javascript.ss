@@ -272,6 +272,14 @@
                                              fields)
                                         ",")
                            ") { "
+			   (format "plt.Kernel.Struct.call(this, ~s, [~a]);"
+				   (string-append "make-"
+						  (symbol->string 
+						   (identifier->munged-java-identifier id)))
+				   (string-join (map (lambda (i) (symbol->string
+								  (identifier->munged-java-identifier i)))
+						     fields)
+						","))
                            (string-join (map (lambda (i) (string-append "this."
                                                                         (symbol->string 
                                                                          (identifier->munged-java-identifier i))

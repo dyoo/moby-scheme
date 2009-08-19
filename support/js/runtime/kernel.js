@@ -283,7 +283,9 @@ var plt = plt || {};
 	e : plt.types.FloatPoint.makeInstance(Math.E),
 
 
-	Struct: function () {
+	Struct: function (constructorName, fields) {
+	    this._constructorName = constructorName; 
+	    this._fields = fields;
 	},
 
 	
@@ -1744,8 +1746,11 @@ var plt = plt || {};
     
     // Posns
     
-    function posn(x,y) { this.x = x;
-			 this.y = y; }
+    function posn(x,y) { 
+	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
+	this.x = x;
+	this.y = y; 
+    }
 
     posn.prototype = heir(plt.Kernel.Struct.prototype);
 
@@ -1762,7 +1767,7 @@ var plt = plt || {};
     }
 
     posn.prototype.toDisplayedString = function () {
-	return "(make-posn " + this.x.toDisplayedString() + " " + this.y.toDisplayedString();
+	return "(make-posn " + this.x.toDisplayedString() + " " + this.y.toDisplayedString() + ")";
     }
 
     function make_dash_posn(id0,id1) { 
@@ -1872,6 +1877,18 @@ var plt = plt || {};
 	}
     };
 
+
+    plt.Kernel.Struct.prototype.toDomNode = function() {
+	var node = document.createElement("div");
+	node.appendChild(document.createTextNode("("));
+	node.appendChild(documelnt.createTextNode(this._constructorName));
+	for(var i = 0; i < this._fields.length; i++) {
+	    node.appendChild(document.createTextNode(" "));
+	    node.appendChild(plt.Kernel.toDomNode(this._fields[i]));
+	}
+	node.appendChild(document.createTextNode(")"));
+	return node;
+    }
 
 
 
