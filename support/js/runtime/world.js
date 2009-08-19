@@ -277,7 +277,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
-    plt.world.Kernel._kernelCreateImage = function(path) {
+    plt.world.Kernel.openImageUrl = function(path) {
 	return FileImage.makeInstance(path.toString());
     };
 

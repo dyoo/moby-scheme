@@ -18,7 +18,7 @@
 
 ;; lift-images!: text -> (listof named-bitmap)
 ;; Lifts up the image snips in the text.
-;; The snips in the text will be replaced with the expression (-kernel-create-image <path>)
+;; The snips in the text will be replaced with the expression (open-image-url <path>)
 ;; where path refers to the file name of the named bitmap.
 ;; Mutates the text, and produces a list of bitmap objects that should be saved.
 (define (lift-images! a-text)
@@ -30,7 +30,7 @@
        (let* ([file-name (make-image-name)]
               [bitmap (send a-snip get-bitmap)]
               [replacement-snip (make-object string-snip%
-                                  (format "(-kernel-create-image ~s)" 
+                                  (format "(open-image-url ~s)" 
                                           file-name))])
          (send a-text set-position 
                (send a-text get-snip-position a-snip)

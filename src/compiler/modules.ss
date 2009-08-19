@@ -162,12 +162,8 @@
                                          "plt.world.Kernel.isKeyEqual")
                                      (bf 'text module-path 3 false
                                          "plt.world.Kernel.text")
-                                     
-                                     ;; Fixme: -kernel-create-image is a special case of a function not in the original language.
-                                     ;; We can fix this by extending expression to include a special "magic" identifier.  We should
-                                     ;; ensure students don't accidently hit this function.
-                                     (bf '-kernel-create-image module-path 1 false
-                                         "plt.world.Kernel._kernelCreateImage")
+				     (bf 'open-image-url module-path 1 false
+                                         "plt.world.Kernel.openImageUrl")
                                      (bf 'image-width module-path 1 false
                                          "plt.world.Kernel.imageWidth")
                                      (bf 'image-height module-path 1 false
