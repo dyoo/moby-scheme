@@ -981,4 +981,12 @@ plt.Jsworld = {};
     Jsworld.img = img;
 
 
+
+    function raw_node(node, attribs) {
+	var n = node.cloneNode(true);
+	return addFocusTracking(copy_attribs(n, attribs));
+    }
+    Jsworld.raw_node = raw_node;
+
+
 })();
