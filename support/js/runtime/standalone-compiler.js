@@ -196,6 +196,22 @@ var plt = plt || {};
 	return "(" + texts.join(" ") + ")";
     };
 
+
+    plt.types.Cons.prototype.toDomNode = function() {
+	var node = document.createElement("div");
+	node.appendChild(document.createTextNode("("));
+	var p = this;
+	while (! p.isEmpty()) {
+	    node.appendChild(plt.Kernel.toDomNode(p.first()));
+	    p = p.rest();
+	    if (! p.isEmpty()) {
+		node.appendChild(document.createTextNode(" "));
+	    }
+	}
+	node.appendChild(document.createTextNode(")"));
+	return node;
+    };
+
     
     // Rationals
     

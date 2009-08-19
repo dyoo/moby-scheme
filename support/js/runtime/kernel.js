@@ -1881,7 +1881,7 @@ var plt = plt || {};
     plt.Kernel.Struct.prototype.toDomNode = function() {
 	var node = document.createElement("div");
 	node.appendChild(document.createTextNode("("));
-	node.appendChild(documelnt.createTextNode(this._constructorName));
+	node.appendChild(document.createTextNode(this._constructorName));
 	for(var i = 0; i < this._fields.length; i++) {
 	    node.appendChild(document.createTextNode(" "));
 	    node.appendChild(plt.Kernel.toDomNode(this._fields[i]));
