@@ -233,6 +233,9 @@ var plt = plt || {};
     
     plt.types.Rational = function(n, d) {
 	if (d == undefined) { d = 1; }
+	if (d == 0) {
+	    throw new plt.Kernel.MobyRuntimeError("cannot have zero denominator.");
+	}
 	var divisor = gcd(Math.abs(n), Math.abs(d));
 	this.n = n / divisor;
 	this.d = d / divisor;
@@ -295,6 +298,9 @@ var plt = plt || {};
     };
     
     plt.types.Rational.prototype.divide = function(other) {
+	if (this.d * other.n == 0) {
+	    throw new plt.Kernel.MobyRuntimeError("division by zero");
+	}
 	return plt.types.Rational.makeInstance(this.n * other.d,
 					       this.d * other.n);
     };
@@ -519,6 +525,9 @@ var plt = plt || {};
     };
     
     plt.types.FloatPoint.prototype.divide = function(other) {
+	if (other.n == 0) {
+	    throw new plt.Kernel.MobyRuntimeError("division by zero");
+	}
         return plt.types.FloatPoint.makeInstance(this.n / other.n);
     };
     
@@ -2903,6 +2912,8 @@ var plt = plt || {};
 	this.render(ctx, 0, 0);
 	return canvas;
     };
+    BaseImage.prototype.toWrittenString = function() { return "<image>"; }
+    BaseImage.prototype.toDisplayedString = function() { return "<image>"; }
 
 
 
@@ -4888,7 +4899,7 @@ function bf(name, arity, java_dash_string) { return (make_dash_binding_colon_fun
 (function (toplevel_dash_expression_dash_show26) { 
 module_dash_path = (plt.types.String.makeInstance("moby/jsworld"));
  })(plt.Kernel.identity)
-return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("jsworld")),module_dash_path,plt.Kernel.list([(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("js-big-bang")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.TRUE,(plt.types.String.makeInstance("plt.world.MobyJsworld.bigBang")),plt.types.Empty.EMPTY,plt.types.Logic.FALSE)),(bf((plt.types.Symbol.makeInstance("js-div")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.div")))),(bf((plt.types.Symbol.makeInstance("js-p")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.p")))),(bf((plt.types.Symbol.makeInstance("js-button")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.button")))),(bf((plt.types.Symbol.makeInstance("js-button*")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.buttonStar")))),(bf((plt.types.Symbol.makeInstance("js-bidirectional-input")),(plt.types.Rational.makeInstance(3, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.bidirectionalInput")))),(bf((plt.types.Symbol.makeInstance("js-img")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.img")))),(bf((plt.types.Symbol.makeInstance("js-text")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.text"))))])));
+return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("jsworld")),module_dash_path,plt.Kernel.list([(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("js-big-bang")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.TRUE,(plt.types.String.makeInstance("plt.world.MobyJsworld.bigBang")),plt.types.Empty.EMPTY,plt.types.Logic.FALSE)),(bf((plt.types.Symbol.makeInstance("js-div")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.div")))),(bf((plt.types.Symbol.makeInstance("js-p")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.p")))),(bf((plt.types.Symbol.makeInstance("js-button")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.button")))),(bf((plt.types.Symbol.makeInstance("js-button*")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.buttonStar")))),(bf((plt.types.Symbol.makeInstance("js-bidirectional-input")),(plt.types.Rational.makeInstance(3, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.bidirectionalInput")))),(bf((plt.types.Symbol.makeInstance("js-img")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.img")))),(bf((plt.types.Symbol.makeInstance("js-text")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.text")))),(bf((plt.types.Symbol.makeInstance("js-node")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.rawNode"))))])));
               })());
 moby_dash_module_dash_binding = (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("moby")),(plt.types.String.makeInstance("moby/moby")),plt.Kernel.append((module_dash_binding_dash_bindings(world_dash_stub_dash_module)), [(module_dash_binding_dash_bindings(jsworld_dash_module)),(module_dash_binding_dash_bindings(telephony_dash_module)),(module_dash_binding_dash_bindings(location_dash_module)),(module_dash_binding_dash_bindings(net_dash_module))])));
 

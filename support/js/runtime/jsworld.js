@@ -203,6 +203,8 @@ plt.world.MobyJsworld = {};
 	}
     }
 
+
+
     // p: assoc -> node
     Jsworld.p = function(args) {
 	var attribs = getAttribs(args);
@@ -211,6 +213,7 @@ plt.world.MobyJsworld = {};
 	    return plt.Kernel.format("(js-p)", []);
 	};
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
 
@@ -222,6 +225,7 @@ plt.world.MobyJsworld = {};
 	    return plt.Kernel.format("(js-div)", []);
 	};
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
 
@@ -235,6 +239,7 @@ plt.world.MobyJsworld = {};
 				      args);
 	node.toWrittenString = function() { return "(js-button ...)"; }
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
 
@@ -247,6 +252,7 @@ plt.world.MobyJsworld = {};
 	var node = _js.button(wrappedF, attribs);
 	node.toWrittenString = function() { return "(js-button ...)"; }
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
     
@@ -263,6 +269,7 @@ plt.world.MobyJsworld = {};
 				       attribs);
 	node.toWrittenString = function() { return "(js-bidirectional-input ...)"; }
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
 
@@ -272,6 +279,7 @@ plt.world.MobyJsworld = {};
 	var node = _js.img(src, attribs);
 	node.toWrittenString = function() { return "(js-img ...)"; }
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
 
@@ -282,12 +290,25 @@ plt.world.MobyJsworld = {};
 	var node = _js.text(s, attribs);
 	node.toWrittenString = function() { return "(js-img ...)"; }
 	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
 	return node;
     };
 
 
 
     // fixme: add support for select, option, textarea, h1, canvas
+
+
+    // raw_node: scheme-value assoc -> node
+    Jsworld.rawNode = function(x, args) {
+	var attribs = getAttribs(args);
+	var node = _js.raw_node(plt.Kernel.toDomNode(x), attribs);
+	node.toWrittenString = function() { return "(js-img ...)"; }
+	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
+	return node;
+    };
+
 
 
 })();

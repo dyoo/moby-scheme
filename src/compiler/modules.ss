@@ -339,7 +339,8 @@
 			       (bf 'js-img 1
 				   "plt.world.MobyJsworld.img")
 
-                               (bf 'js-text 1 "plt.world.MobyJsworld.text")))))
+                               (bf 'js-text 1 "plt.world.MobyJsworld.text")
+                               (bf 'js-node 1 "plt.world.MobyJsworld.rawNode")))))
   
 
 
