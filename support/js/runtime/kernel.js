@@ -1815,7 +1815,21 @@ var plt = plt || {};
 	aCopy.pinholeX = x;
 	aCopy.pinholeY = y;
 	return aCopy;
-    }
+    };
+
+
+    BaseImage.prototype.render = function(ctx, x, y) {
+	throw new MobyRuntimeError("Unimplemented method render");
+    };
+
+
+    BaseImage.prototype.toDomNode = function() {
+	var canvas = document.createElement("canvas");
+	var ctx = canvas.getContext("2d");
+	this.render(ctx, 0, 0);
+	return canvas;
+    };
+
 
 
     plt.Kernel.image_question_ = function(thing) {
@@ -1828,6 +1842,30 @@ var plt = plt || {};
 	check(other, isImage, "image");
 	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
     };
+
+
+
+    // toDomNode: scheme-value -> dom-node
+    plt.Kernel.toDomNode = function(x) {
+	if (x == undefined || x == null) {
+	    throw new MobyRuntimeError("value must not be null or undefined");
+	}
+	if ('toDomNode' in x) {
+	    return x.toDomNode();
+	}
+	if ('toWrittenString' in x) {
+	    var node = document.createTextNode(x.toWrittenString());
+	    return node;
+	}
+	if ('toDisplayedString' in x) {
+	    var node = document.createTextNode(x.toDisplayedString());
+	    return node;
+	} else {
+	    var node = document.createTextNode(x.toString());
+	    return node;
+	}
+    };
+
 
 
 

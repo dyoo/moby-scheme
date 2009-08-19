@@ -351,7 +351,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     
-    function FileImage(path) {
+    function FileImage(src) {
 	BaseImage.call(this, 0, 0);
 	var self = this;
 	this.isLoaded = false;
@@ -365,7 +365,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    self.pinholeX = self.img.width / 2;
 	    self.pinholeY = self.img.height / 2;
 	};
-	this.img.src = path;
+	this.img.src = src;
     }
     FileImage.prototype = heir(BaseImage.prototype);
     
