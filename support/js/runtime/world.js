@@ -529,7 +529,9 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
     plt.world.Kernel.effect_question_ = effect_question_;
     
-    function effect_colon_none() {  }
+    function effect_colon_none() { 
+	plt.Kernel.Struct.call(this, "make-effect:none", []);
+    }
     effect_colon_none.prototype = heir(plt.Kernel.Struct.prototype);
     effect_colon_none.prototype.isEqual = function(other) {
 	if (other instanceof effect_colon_none) {
@@ -552,7 +554,9 @@ plt.world.Kernel = plt.world.Kernel || {};
 	return obj instanceof effect_colon_none; }
     plt.world.Kernel.effect_colon_none_question_ = effect_colon_none_question_;
    
-    function effect_colon_beep() {  }
+    function effect_colon_beep() {  
+	plt.Kernel.Struct.call(this, "make-effect:beep", []);
+    }
 
     effect_colon_beep.prototype = heir(plt.Kernel.Struct.prototype);
 
@@ -582,7 +586,8 @@ plt.world.Kernel = plt.world.Kernel || {};
     function effect_colon_beep_question_(obj) { 
 	return obj instanceof effect_colon_beep; }
     plt.world.Kernel.effect_colon_beep_question_ = effect_colon_beep_question_;
-    function effect_colon_send_dash_sms(address,msg) { 
+    function effect_colon_send_dash_sms(address,msg) {
+	plt.Kernel.Struct.call(this, "make-effect:send-sms", [address, msg]);
 	this.address = address;
 	this.msg = msg; }
     
@@ -606,7 +611,9 @@ plt.world.Kernel = plt.world.Kernel || {};
     //////////////////////////////////////////////////////////////////////
     // dtmf tones
     
-    function effect_colon_play_dash_dtmf_dash_tone(tone,duration) { this.tone = tone;
+    function effect_colon_play_dash_dtmf_dash_tone(tone,duration) { 
+	plt.Kernel.Struct.call(this, "make-effect:play-dtmf-tone", [tone, duration]);
+	this.tone = tone;
 	this.duration = duration; }
     effect_colon_play_dash_dtmf_dash_tone.prototype = heir(plt.Kernel.Struct.prototype);
     effect_colon_play_dash_dtmf_dash_tone.prototype.isEqual = function(other) {
@@ -671,6 +678,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     function effect_colon_play_dash_sound_dash_url(url, string) {
+	plt.Kernel.Struct.call(this, "make-effect:play-sound-url", [url, string]);
     	this.url = url;
 	this.string = string;
     }
@@ -717,6 +725,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 //////////////////////////////////////////////////////////////////////////
 
     function effect_colon_stop_dash_sound_dash_url(url, string) {
+	plt.Kernel.Struct.call(this, "make-effect:stop-sound-url", [url, string]);
     	this.url = url;
 	this.string = string;
     }
@@ -763,6 +772,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 //////////////////////////////////////////////////////////////////////
 
     function effect_colon_pause_dash_sound_dash_url(url, string) {
+	plt.Kernel.Struct.call(this, "make-effect:pause-sound-url", [url, string]);
     	this.url = url;
 	this.string = string;
     }
@@ -809,6 +819,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 //////////////////////////////////////////////////////////////////////
 
     function effect_colon_set_dash_sound_dash_volume(volume) {
+	plt.Kernel.Struct.call(this, "make-effect:set-sound-volume", [volume]);
     	this.volume = volume;
     }
 
@@ -843,7 +854,9 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 /////////////////////////////////////////////////////////////////////////
 
-    function effect_colon_raise_dash_sound_dash_volume() {  }
+    function effect_colon_raise_dash_sound_dash_volume() { 
+	plt.Kernel.Struct.call(this, "make-effect:raise-sound-volume", []);
+    }
 
     effect_colon_raise_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
@@ -873,7 +886,9 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
 
-    function effect_colon_lower_dash_sound_dash_volume() {  }
+    function effect_colon_lower_dash_sound_dash_volume() { 
+	plt.Kernel.Struct.call(this, "make-effect:lower-sound-volume", []);
+    }
 
     effect_colon_lower_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
@@ -907,7 +922,10 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // Loading DHTML files dynamically
 
-    function effect_colon_js_dash_load_dash_script(url) { this.url = url; }
+    function effect_colon_js_dash_load_dash_script(url) {
+	plt.Kernel.Struct.call(this, "make-effect:load-script", [url]);
+	this.url = url; 
+    }
     effect_colon_js_dash_load_dash_script.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_js_dash_load_dash_script.prototype.run = function() {
@@ -939,7 +957,10 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // Dynamic javascript string evaluation
     
-    function effect_colon_js_dash_exec_dash_string(cmd) { this.cmd = cmd; }
+    function effect_colon_js_dash_exec_dash_string(cmd) {
+	plt.Kernel.Struct.call(this, "make-effect:js-exec-string", [cmd]);
+	this.cmd = cmd; 
+    }
     effect_colon_js_dash_exec_dash_string.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_js_dash_exec_dash_string.prototype.run = function() {
@@ -971,6 +992,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // flags: (listof number)
     function effect_colon_set_dash_wake_dash_lock(flags) {
+	plt.Kernel.Struct.call(this, "make-effect:set-wake-lock", [flags]);
     	this.flags = flags;
     }
 
@@ -1008,7 +1030,9 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 //////////////////////////////////////////////////////////////////////////
 
-    function effect_colon_release_dash_wake_dash_lock() {  }
+    function effect_colon_release_dash_wake_dash_lock() { 
+	plt.Kernel.Struct.call(this, "make-effect:release-wake-lock", []);
+    }
 
     effect_colon_release_dash_wake_dash_lock.prototype = heir(plt.Kernel.Struct.prototype);
 

@@ -587,7 +587,7 @@ var plt = plt || {};
 
 	number_dash__greaterthan_string: function(x) {
 	    check(x, isNumber, "number");
-	    return plt.types.String.makeInstance(x.toWrittenString());
+	    return plt.types.String.makeInstance(plt.Kernel.toWrittenString(x));
 	},
 	
 	conjugate: function(x){
@@ -1363,8 +1363,6 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.Struct.prototype.toWrittenString = function() { return "<struct>"};
-
 
 
     // DEBUGGING: get out all the functions defined in the kernel.
@@ -1695,13 +1693,13 @@ var plt = plt || {};
 		    throw new MobyRuntimeError(
 			"format: fewer arguments passed than expected");
 		}
-		return buffer.shift().toWrittenString();
+		return plt.Kernel.toWrittenString(buffer.shift());
 	    } else if (s == '~a' || s == "~A") {
 		if (buffer.length == 0) {
 		    throw new MobyRuntimeError(
 			"format: fewer arguments passed than expected");
 		}
-		return buffer.shift().toDisplayedString();
+		return plt.Kernel.toDisplayedString(buffer.shift());
 	    } else {
 		throw new MobyRuntimeError("Unimplemented format " + s);
 	    }
@@ -1763,7 +1761,8 @@ var plt = plt || {};
     } 
 
     posn.prototype.toWrittenString = function() {
-	return "(make-posn " + this.x.toWrittenString() + " " + this.y.toWrittenString() + ")";
+	return ("(make-posn " + plt.Kernel.toWrittenString(this.x) +
+		" " + plt.Kernel.toWrittenString(this.y) + ")");
     }
 
     posn.prototype.toDisplayedString = function () {
@@ -1852,10 +1851,57 @@ var plt = plt || {};
 
 
 
+    plt.Kernel.toWrittenString = function(x) {
+	if (x == undefined || x == null) {
+	    throw new MobyRuntimeError("value must not be null or undefined");
+	}
+	if (typeof(x) == 'string') {
+	    return x.toWrittenString();
+	}
+	if (typeof(x) != 'object' && typeof(x) != 'function') {
+	    return x.toString();
+	}
+	if ('toWrittenString' in x) {
+	    return x.toWrittenString();
+	}
+	if ('toDisplayedString' in x) {
+	    return x.toDisplayedString();
+	} else {
+	    return x.toString();
+	}
+    };
+
+
+    plt.Kernel.toDisplayedString = function(x) {
+	if (x == undefined || x == null) {
+	    throw new MobyRuntimeError("value must not be null or undefined");
+	}
+	if (typeof(x) == 'string') {
+	    return x.toDisplayedString();
+	}
+	if (typeof(x) != 'object' && typeof(x) != 'function') {
+	    return x.toString();
+	}
+	if ('toWrittenString' in x) {
+	    return x.toWrittenString();
+	}
+	if ('toDisplayedString' in x) {
+	    return x.toDisplayedString();
+	} else {
+	    return x.toString();
+	}
+    };
+
+
+
     // toDomNode: scheme-value -> dom-node
     plt.Kernel.toDomNode = function(x) {
 	if (x == undefined || x == null) {
 	    throw new MobyRuntimeError("value must not be null or undefined");
+	}
+	if (typeof(x) == 'string') {
+	    var node = document.createTextNode(x.toWrittenString());
+	    return node;
 	}
 	if (typeof(x) != 'object' && typeof(x) != 'function') {
 	    var node = document.createTextNode(x.toString());
@@ -1877,6 +1923,22 @@ var plt = plt || {};
 	}
     };
 
+
+
+
+    plt.Kernel.Struct.prototype.toWrittenString = function() { 
+	var buffer = [];
+	buffer.push("(");
+	buffer.push(this._constructorName);
+	for(var i = 0; i < this._fields.length; i++) {
+	    buffer.push(" ");
+	    buffer.push(plt.Kernel.toWrittenString(this._fields[i]));
+	}
+	buffer.push(")");
+	return plt.types.String.makeInstance(buffer.join(""));
+    };
+
+    plt.Kernel.Struct.prototype.toDisplayedString = plt.Kernel.Struct.prototype.toWrittenString;
 
     plt.Kernel.Struct.prototype.toDomNode = function() {
 	var node = document.createElement("div");

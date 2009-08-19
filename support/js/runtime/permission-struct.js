@@ -3,8 +3,6 @@
 
 function permission_colon_location() { plt.Kernel.Struct.call(this, "make-permission_colon_location", []); }
                     permission_colon_location.prototype = new plt.Kernel.Struct();
-permission_colon_location.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:location'].join(' ') + ')'; };permission_colon_location.prototype.toDisplayedString = permission_colon_location.prototype.toWrittenString;
 
 permission_colon_location.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_location) {
@@ -19,8 +17,6 @@ function permission_colon_location_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_location; }
 function permission_colon_send_dash_sms() { plt.Kernel.Struct.call(this, "make-permission_colon_send_dash_sms", []); }
                     permission_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
-permission_colon_send_dash_sms.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:send-sms'].join(' ') + ')'; };permission_colon_send_dash_sms.prototype.toDisplayedString = permission_colon_send_dash_sms.prototype.toWrittenString;
 
 permission_colon_send_dash_sms.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_send_dash_sms) {
@@ -35,8 +31,6 @@ function permission_colon_send_dash_sms_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_send_dash_sms; }
 function permission_colon_receive_dash_sms() { plt.Kernel.Struct.call(this, "make-permission_colon_receive_dash_sms", []); }
                     permission_colon_receive_dash_sms.prototype = new plt.Kernel.Struct();
-permission_colon_receive_dash_sms.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:receive-sms'].join(' ') + ')'; };permission_colon_receive_dash_sms.prototype.toDisplayedString = permission_colon_receive_dash_sms.prototype.toWrittenString;
 
 permission_colon_receive_dash_sms.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_receive_dash_sms) {
@@ -51,8 +45,6 @@ function permission_colon_receive_dash_sms_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_receive_dash_sms; }
 function permission_colon_tilt() { plt.Kernel.Struct.call(this, "make-permission_colon_tilt", []); }
                     permission_colon_tilt.prototype = new plt.Kernel.Struct();
-permission_colon_tilt.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:tilt'].join(' ') + ')'; };permission_colon_tilt.prototype.toDisplayedString = permission_colon_tilt.prototype.toWrittenString;
 
 permission_colon_tilt.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_tilt) {
@@ -67,8 +59,6 @@ function permission_colon_tilt_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_tilt; }
 function permission_colon_shake() { plt.Kernel.Struct.call(this, "make-permission_colon_shake", []); }
                     permission_colon_shake.prototype = new plt.Kernel.Struct();
-permission_colon_shake.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:shake'].join(' ') + ')'; };permission_colon_shake.prototype.toDisplayedString = permission_colon_shake.prototype.toWrittenString;
 
 permission_colon_shake.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_shake) {
@@ -83,8 +73,6 @@ function permission_colon_shake_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_shake; }
 function permission_colon_internet() { plt.Kernel.Struct.call(this, "make-permission_colon_internet", []); }
                     permission_colon_internet.prototype = new plt.Kernel.Struct();
-permission_colon_internet.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:internet'].join(' ') + ')'; };permission_colon_internet.prototype.toDisplayedString = permission_colon_internet.prototype.toWrittenString;
 
 permission_colon_internet.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_internet) {
@@ -99,8 +87,6 @@ function permission_colon_internet_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_internet; }
 function permission_colon_telephony() { plt.Kernel.Struct.call(this, "make-permission_colon_telephony", []); }
                     permission_colon_telephony.prototype = new plt.Kernel.Struct();
-permission_colon_telephony.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:telephony'].join(' ') + ')'; };permission_colon_telephony.prototype.toDisplayedString = permission_colon_telephony.prototype.toWrittenString;
 
 permission_colon_telephony.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_telephony) {
@@ -115,8 +101,6 @@ function permission_colon_telephony_question_(obj) {
               return obj != null && obj != undefined && obj instanceof permission_colon_telephony; }
 function permission_colon_wake_dash_lock() { plt.Kernel.Struct.call(this, "make-permission_colon_wake_dash_lock", []); }
                     permission_colon_wake_dash_lock.prototype = new plt.Kernel.Struct();
-permission_colon_wake_dash_lock.prototype.toWrittenString = function() { 
-                               return '(' + ['make-permission:wake-lock'].join(' ') + ')'; };permission_colon_wake_dash_lock.prototype.toDisplayedString = permission_colon_wake_dash_lock.prototype.toWrittenString;
 
 permission_colon_wake_dash_lock.prototype.isEqual = function(other) {
               if (other != null && other != undefined && other instanceof permission_colon_wake_dash_lock) {

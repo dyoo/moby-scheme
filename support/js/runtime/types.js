@@ -174,7 +174,7 @@ var plt = plt || {};
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
-	    texts.push(p.first().toWrittenString());
+	    texts.push(plt.Kernel.toWrittenString(p.first()));
 	    p = p.rest();
 	}
 	return "(" + texts.join(" ") + ")";
@@ -661,7 +661,7 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.toWrittenString = function() {
-        return this.r.toWrittenString() + "+" + this.i.toWrittenString()+"i";
+        return plt.Kernel.toWrittenString(this.r) + "+" + plt.Kernel.toWrittenString(this.i)+"i";
     };
 
     plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
