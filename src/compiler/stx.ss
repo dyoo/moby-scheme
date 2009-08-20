@@ -12,7 +12,7 @@
 
 
 ;; stx-e: stx -> any
-;; Shallow unwrap of the element.
+;; Shallow unwrap of the element out of the syntax.
 (define (stx-e a-stx)
   (cond
     [(stx:atom? a-stx)
@@ -37,9 +37,10 @@
      #f]
     [(stx:list? a-stx)
      (and (not (empty? (stx:list-elts a-stx)))
-          (symbol? (first (stx:list-elts a-stx)))
-          (symbol=? (first (stx:list-elts a-stx))
+          (symbol? (stx-e (first (stx:list-elts a-stx))))
+          (symbol=? (stx-e (first (stx:list-elts a-stx)))
                     a-sym))]))
+
 
 
 ;; datum->stx: any loc -> stx
@@ -62,4 +63,5 @@
                   [stx? (any/c . -> . boolean?)]
                   [stx-e (stx? . -> . any)]
                   [stx-loc (stx? . -> . any)]
-                  [stx-begins-with? (stx? symbol? . -> . boolean?)])
+                  [stx-begins-with? (stx? symbol? . -> . boolean?)]
+                  [datum->stx (any/c any/c . -> . stx?)])

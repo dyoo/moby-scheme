@@ -1,5 +1,7 @@
 #lang s-exp "lang.ss"
 
+(require "stx.ss")
+
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 
@@ -30,12 +32,12 @@
        (not (library-require? an-expr))))
 
 
-;; defn?: s-expression -> boolean
+;; defn?: stx -> boolean
 (define (defn? an-sexp)
   (cond
-    [(list-begins-with? an-sexp 'define)
+    [(stx-begins-with? an-sexp 'define)
      true]
-    [(list-begins-with? an-sexp 'define-struct)
+    [(stx-begins-with? an-sexp 'define-struct)
      true]
     [else
      false]))
@@ -55,29 +57,18 @@
       (string-join (rest strs) delim))]))
 
 
-;; list-begins-with?: sexp symbol -> boolean
-;; Returns true if the input is a list with the label as the first element.
-(define (list-begins-with? an-sexp a-label)
-  (and (list? an-sexp)
-       (not (empty? an-sexp))
-       (symbol? (first an-sexp))
-       (symbol=? (first an-sexp) a-label)))
 
-
-;; test-case?: s-expression -> boolean
+;; test-case?: stx -> boolean
 (define (test-case? an-sexp)
-  (or (list-begins-with? an-sexp 'check-expect)
-      (list-begins-with? an-sexp 'check-within)
-      (list-begins-with? an-sexp 'check-error)))
+  (or (stx-begins-with? an-sexp 'check-expect)
+      (stx-begins-with? an-sexp 'check-within)
+      (stx-begins-with? an-sexp 'check-error)))
 
 
 
-;; library-require?: s-expression -> boolean
+;; library-require?: stx -> boolean
 (define (library-require? an-sexp)
-  (list-begins-with? an-sexp 'require))
-
-
-
+  (stx-begins-with? an-sexp 'require))
 
 
 ;; identifier->munged-java-identifier: symbol -> symbol
@@ -159,36 +150,50 @@
 
 
 
-;; desugar-cond: expr -> expr
+;; desugar-cond: stx:list -> stx:list
 ;; Translates conds to ifs.
 (define (desugar-cond an-expr)
   (local
-    [(define (loop questions answers question-last answer-last)
+    [;; loop: (listof stx) (listof stx) (listof stx) stx stx -> stx
+     (define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          (list 'if question-last answer-last '(error 'cond "Fell out of cond"))]
-         
+          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
+                               question-last
+                               answer-last 
+                               (datum->stx '(error 'cond "Fell out of cond")
+                                           (stx-loc an-expr)))
+                         (stx-loc an-expr))]
+
          [else
-          (list 'if 
-                (first questions)
-                (first answers)
-                (loop (rest questions)
-                      (rest answers)
-                      question-last
-                      answer-last))]))
+          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
+                               (first questions)
+                               (first answers)
+                               (loop (rest questions)
+                                     (rest answers)
+                                     question-last
+                                     answer-last))
+                         (stx-loc an-expr))]))
+     ;; process-clauses: (listof stx) (listof stx) (listof stx) -> stx
      (define (process-clauses clauses questions/rev answers/rev)
        (cond
-         [(list-begins-with? (first clauses) 'else)
-          (loop (reverse questions/rev) (reverse answers/rev) 'true (second (first clauses)))]
+         [(stx-begins-with? (first clauses) 'else)
+          (loop (reverse questions/rev) 
+                (reverse answers/rev) 
+                (datum->stx 'true (stx-loc (first clauses)))
+                (second (stx-e (first clauses))))]
          [(empty? (rest clauses))
-          (loop (reverse questions/rev) (reverse answers/rev) (first (first clauses)) (second (first clauses)))]
+          (loop (reverse questions/rev) 
+                (reverse answers/rev) 
+                (first (stx-e (first clauses)))
+                (second (stx-e (first clauses))))]
          [else
           (process-clauses (rest clauses)
-                           (cons (first (first clauses)) questions/rev) 
-                           (cons (second (first clauses)) answers/rev))]))]
+                           (cons (first (stx-e (first clauses))) questions/rev) 
+                           (cons (second (stx-e (first clauses))) answers/rev))]))]
     (cond
-      [(list-begins-with? an-expr 'cond)
-       (process-clauses (rest an-expr) empty empty)]
+      [(stx-begins-with? an-expr 'cond)
+       (process-clauses (rest (stx-e an-expr)) empty empty)]
       [else
        (error 'desugar-cond (format "Not a cond clause: ~s" an-expr))])))
 
@@ -235,61 +240,66 @@
 
 ;; Helper to help with the destructuring and case analysis of functions.
 (define (case-analyze-definition a-definition 
-                                 f-function            ;; (symbol (listof symbol) expr) -> ...
-                                 f-regular-definition  ;; (symbol expr) -> ...
-                                 f-define-struct)      ;; (symbol (listof symbol)) -> ...
+                                 f-function            ;; (stx (listof symbol) expr-stx) -> ...
+                                 f-regular-definition  ;; (stx expr-stx) -> ...
+                                 f-define-struct)      ;; (stx (listof id-stx)) -> ...
   (cond
     ;; (define (id args ...) body)
-    [(and (list-begins-with? a-definition 'define)
-          (= (length a-definition) 3)
-          (pair? (second a-definition)))
-     (local [(define id (first (second a-definition)))
-             (define args (rest (second a-definition)))
-             (define body (third a-definition))]
+    [(and (stx-begins-with? a-definition 'define)
+          (= (length (stx-e a-definition)) 3)
+          (pair? (stx-e (stx-e (second a-definition)))))
+     (local [(define id (first (stx-e (second (stx-e a-definition)))))
+             (define args (rest (second (stx-e a-definition))))
+             (define body (third (stx-e a-definition)))]
        (f-function id args body))]
 
 
     ;; (define id (lambda (args ...) body))
-    [(and (list-begins-with? a-definition 'define)
-          (= (length a-definition) 3)
-          (symbol? (second a-definition))
-          (list-begins-with? (third a-definition) 'lambda))
-     (local [(define id (second a-definition))
-             (define args (second (third a-definition)))
-             (define body (third (third a-definition)))]
+    [(and (stx-begins-with? a-definition 'define)
+          (= (length (stx-e a-definition)) 3)
+          (symbol? (stx-e (second (stx-e a-definition))))
+          (stx-begins-with? (third (stx-e a-definition)) 'lambda))
+     (local [(define id (second (stx-e a-definition)))
+             (define args (second (stx-e (third (stx-e a-definition)))))
+             (define body (third (stx-e (third (stx-e a-definition)))))]
        (f-function id args body))]
     
     ;; (define id body)
-    [(and (list-begins-with? a-definition 'define)
-          (= (length a-definition) 3)
-          (symbol? (second a-definition))
-          (not (list-begins-with? (third a-definition) 'lambda)))
-     (local [(define id (second a-definition))
-             (define body (third a-definition))]
+    [(and (stx-begins-with? a-definition 'define)
+          (= (length (stx-e a-definition)) 3)
+          (symbol? (stx-e (second (stx-e a-definition))))
+          (not (stx-begins-with? (third (stx-e a-definition)) 'lambda)))
+     (local [(define id (second (stx-e a-definition)))
+             (define body (third (stx-e a-definition)))]
        (f-regular-definition id body))]
     
     ;(define-struct id (fields ...))    
-    [(and (list-begins-with? a-definition 'define-struct)
-          (= (length a-definition) 3)
-          (symbol? (second a-definition))
-          (or (empty? (third a-definition))
-              (pair? (third a-definition))))
-     (local [(define id (second a-definition))
-             (define fields (third a-definition))]
+    [(and (stx-begins-with? a-definition 'define-struct)
+          (= (length (stx-e a-definition)) 3)
+          (symbol? (stx-e (second (stx-e a-definition))))
+          (or (empty? (stx-e (third (stx-e a-definition))))
+              (pair? (stx-e (third (stx-e a-definition))))))
+     (local [(define id (second (stx-e a-definition)))
+             (define fields (stx-e (third a-definition)))]
        (f-define-struct id fields))]
     
     
     ;; FIXME: add more error productions as necessary to get
     ;; reasonable error messages.
-    [(list-begins-with? a-definition 'define)
+    [(stx-begins-with? a-definition 'define)
      (error 
       'define 
       "define expects an identifier and a body.  i.e. (define answer 42)")]
-    [(list-begins-with? a-definition 'define-struct)
+    [(stx-begins-with? a-definition 'define-struct)
      (error 
       'define-struct 
       "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")]))
 
+
+
+(define (symbol-stx? x)
+  (and (stx? x)
+       (symbol? (stx-e x))))
 
 
 
@@ -298,17 +308,16 @@
                   [defn? (any/c . -> . boolean?)]
                   [test-case? (any/c . -> . boolean?)]
                   [library-require? (any/c . -> . boolean?)]
-                  [list-begins-with? (any/c symbol? . -> . boolean?)]
                   [take ((listof any/c) number? . -> . (listof any/c))]
                   [list-tail ((listof any/c) number? . -> . (listof any/c))]
                   [remove-leading-whitespace (string? . -> . string?)]
                   [identifier->munged-java-identifier (symbol? . -> . symbol?)]
-                  [desugar-cond (any/c . -> . any/c)]
+                  [desugar-cond (stx? . -> . stx?)]
                   [range (number? . -> . (listof number?))]
                   
                   [case-analyze-definition (any/c 
-                                            (symbol? (listof symbol?) any/c . -> . any)
-                                            (symbol? any/c . -> . any)
-                                            (symbol? (listof symbol?) . -> . any)
+                                            (stx? (listof symbol-stx?) stx? . -> . any)
+                                            (stx? any/c . -> . any)
+                                            (stx? (listof symbol-stx?) . -> . any)
                                             . -> . any)]
                   [string-join ((listof string?) string? . -> . string?)])

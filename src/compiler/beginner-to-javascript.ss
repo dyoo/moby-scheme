@@ -6,9 +6,10 @@
 ;; http://docs.plt-scheme.org/htdp-langs/beginner.html
 
 
-
+(require "stx.ss")
 (require "env.ss")
 (require "pinfo.ss")
+(require "analyzer.ss")
 (require "helpers.ss")
 
 
@@ -365,34 +366,34 @@
 (define (expression->javascript-string expr env a-pinfo)
   (cond
     ;; (local ([define ...] ...) body)
-    [(list-begins-with? expr 'local)
+    [(stx-begins-with? expr 'local)
      (local [(define defns (second expr))
              (define body (third expr))]
        (local-expression->javascript-string defns body env a-pinfo))]
     
     ;; (cond ...)
-    [(list-begins-with? expr 'cond)
+    [(stx-begins-with? expr 'cond)
      (expression->javascript-string (desugar-cond expr) env a-pinfo)]    
     
     ;; (if test consequent alternative)
-    [(list-begins-with? expr 'if)
+    [(stx-begins-with? expr 'if)
      (local [(define test (second expr))
              (define consequent (third expr))
              (define alternative (fourth expr))]
        (if-expression->javascript-string test consequent alternative env a-pinfo))]
     
     ;; (and exprs ...)
-    [(list-begins-with? expr 'and)
+    [(stx-begins-with? expr 'and)
      (local [(define exprs (rest expr))]
        (boolean-chain->javascript-string "&&" exprs env a-pinfo))]
 
     ;; (or exprs ...)
-    [(list-begins-with? expr 'or)
+    [(stx-begins-with? expr 'or)
      (local [(define exprs (rest expr))]
        (boolean-chain->javascript-string "||" exprs env a-pinfo))]
 
     ;; (lambda args body)
-    [(list-begins-with? expr 'lambda)
+    [(stx-begins-with? expr 'lambda)
      (local [(define args (second expr))
              (define body (third expr))]
        (lambda-expression->javascript-string args body env a-pinfo))]
@@ -425,7 +426,7 @@
       a-pinfo)]
     
     ;; Quoted datums
-    [(list-begins-with? expr 'quote)
+    [(stx-begins-with? expr 'quote)
      (list (quote-expression->javascript-string (second expr))
            a-pinfo)]
      
