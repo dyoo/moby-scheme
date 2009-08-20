@@ -280,7 +280,7 @@
           (or (empty? (stx-e (third (stx-e a-definition))))
               (pair? (stx-e (third (stx-e a-definition))))))
      (local [(define id (second (stx-e a-definition)))
-             (define fields (stx-e (third a-definition)))]
+             (define fields (stx-e (third (stx-e a-definition))))]
        (f-define-struct id fields))]
     
     

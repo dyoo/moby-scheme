@@ -235,7 +235,7 @@
           
           (define equality-expression
             (foldl (lambda (a-field acc)
-                     (local [(define acc-id (field->accessor-name (stx-e id) a-field))]
+                     (local [(define acc-id (field->accessor-name (stx-e id) (stx-e a-field)))]
                        (list 'and 
                              (list 'equal? (list acc-id 'this) (list acc-id 'other))
                              acc)))

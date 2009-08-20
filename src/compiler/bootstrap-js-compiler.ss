@@ -2,6 +2,7 @@
 (require (only-in scheme/list empty? empty first rest)
          scheme/runtime-path
          scheme/port
+         "stx.ss"
          "beginner-to-javascript.ss"
          "helpers.ss")
 
@@ -159,12 +160,15 @@
   (call-with-input-file a-path
     (lambda (ip)
       (check-special-lang-line! a-path (read-line ip)) ;; skip the first language-level line
-      (let loop ([elt (read ip)])
-        (cond
-          [(eof-object? elt)
-           empty]
-          [else
-           (cons elt (loop (read ip)))])))))
+      (stx-e
+       (datum->stx 
+        (let loop ([elt (read ip)])
+          (cond
+            [(eof-object? elt)
+             empty]
+            [else
+             (cons elt (loop (read ip)))]))
+        "fixme")))))
 
 
 ;; make sure the line is a #lang s-exp "lang.ss" line.
@@ -183,7 +187,7 @@
     [(empty? a-program)
      empty]
     [(library-require? (first a-program))
-     (append (rest (first a-program))
+     (append (map stx-e (rest (stx-e (first a-program))))
              (get-require-paths (rest a-program)))]
     [else
      (get-require-paths (rest a-program))]))
@@ -192,14 +196,14 @@
 ;; remove-provide/contracts: program -> program
 (define (remove-provide/contracts a-program)
   (filter (lambda (top-level)
-            (not (list-begins-with? top-level 'provide/contract)))
+            (not (stx-begins-with? top-level 'provide/contract)))
           a-program))
 
 
 ;; remove-requires: program -> program
 (define (remove-requires a-program)
   (filter (lambda (top-level)
-            (not (list-begins-with? top-level 'require)))
+            (not (stx-begins-with? top-level 'require)))
           a-program))
 
 
