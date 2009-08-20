@@ -2,10 +2,8 @@
 
 (require "env.ss")
 (require "pinfo.ss")
-(require "toplevel.ss")
 (require "stx.ss")
 (require "helpers.ss")
-(require "permission.ss")
 (require "modules.ss")
 
 
@@ -42,7 +40,7 @@
                          [(test-case? (first a-program))
                           pinfo]
                          [(library-require? (first a-program))
-                          (require-analyze (second (first a-program)) pinfo)]
+                          (require-analyze (second (stx-e (first a-program))) pinfo)]
                          [(expression? (first a-program))
                           pinfo]))]
            (program-analyze-collect-definitions (rest a-program)
@@ -84,25 +82,27 @@
    
    ;; For functions
    (lambda (id args body)
-     (pinfo-accumulate-binding (bf id
+     (pinfo-accumulate-binding (bf (stx-e id)
                                    false
                                    (length args) 
                                    false 
                                    (symbol->string
-                                    (identifier->munged-java-identifier id)))
+                                    (identifier->munged-java-identifier (stx-e id))))
                                pinfo))
    
    ;; For regular defintions
    (lambda (id expr)
-     (pinfo-accumulate-binding (make-binding:constant id
+     (pinfo-accumulate-binding (make-binding:constant (stx-e id)
                                                       (symbol->string 
-                                                       (identifier->munged-java-identifier id))
+                                                       (identifier->munged-java-identifier (stx-e id)))
                                                       empty)
                                pinfo))
    
    ;; For structure definitions
    (lambda (id fields)
-     (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) id fields)))))
+     (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) 
+                                                      (stx-e id) 
+                                                      (map stx-e fields))))))
 
 
 
@@ -157,25 +157,24 @@
                              pinfo)))
 
 
-;; function-definition-analyze-uses: symbol (listof symbol) expression program-info -> program-info
+;; function-definition-analyze-uses: stx (listof stx) stx program-info -> program-info
 (define (function-definition-analyze-uses fun args body pinfo)
-  
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2 
-            (env-extend env-1 (bf fun false (length args) false
-                                  (symbol->string (identifier->munged-java-identifier fun)))))]
+            (env-extend env-1 (bf (stx-e fun) false (length args) false
+                                  (symbol->string (identifier->munged-java-identifier (stx-e fun))))))]
     (lambda-expression-analyze-uses args body (pinfo-update-env pinfo env-2))))
 
 
 
-;; lambda-expression-analyze-uses: (listof symbol) expression program-info -> program-info
+;; lambda-expression-analyze-uses: (listof stx) stx program-info -> program-info
 (define (lambda-expression-analyze-uses args body pinfo)
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2
             (foldl (lambda (arg-id env) 
-                     (env-extend env (make-binding:constant arg-id 
+                     (env-extend env (make-binding:constant (stx-e arg-id)
                                                             (symbol->string
-                                                             arg-id)
+                                                             (stx-e arg-id))
                                                             empty)))
                    env-1
                    args))]
@@ -186,7 +185,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; expression-analyze-uses: expression program-info env -> program-info
+;; expression-analyze-uses: stx program-info env -> program-info
 (define (expression-analyze-uses an-expression pinfo env)
   (cond
     
@@ -202,43 +201,43 @@
      (if-expression-analyze-uses an-expression pinfo env)]
     
     [(stx-begins-with? an-expression 'and)
-     (local [(define exprs (rest an-expression))]
+     (local [(define exprs (rest (stx-e an-expression)))]
        (foldl (lambda (e p) (expression-analyze-uses e p env))
               pinfo 
               exprs))]
     
     [(stx-begins-with? an-expression 'or)
-     (local [(define exprs (rest an-expression))]
+     (local [(define exprs (rest (stx-e an-expression)))]
        (foldl (lambda (e p) (expression-analyze-uses e p env))
               pinfo 
               exprs))]
     
     [(stx-begins-with? an-expression 'lambda)
-     (local [(define args (second an-expression))
-             (define body (third an-expression))]
+     (local [(define args (stx-e (second (stx-e an-expression))))
+             (define body (third (stx-e an-expression)))]
        (lambda-expression-analyze-uses args body pinfo))]
     
     ;; Numbers
-    [(number? an-expression)
+    [(number? (stx-e an-expression))
      pinfo]
     
     ;; Strings
-    [(string? an-expression)
+    [(string? (stx-e an-expression))
      pinfo]
     
     ;; Literal booleans
-    [(boolean? an-expression)
+    [(boolean? (stx-e an-expression))
      pinfo]
     
     ;; Characters
-    [(char? an-expression)
+    [(char? (stx-e an-expression))
      pinfo]
     
     ;; Identifiers
-    [(symbol? an-expression)
+    [(symbol? (stx-e an-expression))
      (cond
-       [(env-contains? env an-expression)
-        (pinfo-accumulate-binding-use (env-lookup env an-expression) pinfo)]
+       [(env-contains? env (stx-e an-expression))
+        (pinfo-accumulate-binding-use (env-lookup env (stx-e an-expression)) pinfo)]
        [else
         pinfo])]
     
@@ -252,10 +251,10 @@
 
 
 
-;; local-definition-analyze-uses: expression pinfo env -> pinfo
+;; local-definition-analyze-uses: stx pinfo env -> pinfo
 (define (local-expression-analyze-uses an-expression pinfo env)
-  (local [(define defns (second an-expression))
-          (define body (third an-expression))
+  (local [(define defns (stx-e (second (stx-e an-expression))))
+          (define body (third (stx-e an-expression)))
           (define nested-pinfo (foldl (lambda (a-defn a-pinfo)
                                         (definition-analyze-uses a-defn a-pinfo))
                                       pinfo
@@ -268,9 +267,9 @@
   
 
 (define (if-expression-analyze-uses an-expression pinfo env)
-  (local [(define test (second an-expression))
-          (define consequent (third an-expression))
-          (define alternative (fourth an-expression))]
+  (local [(define test (second (stx-e an-expression)))
+          (define consequent (third (stx-e an-expression)))
+          (define alternative (fourth (stx-e an-expression)))]
     (foldl (lambda (e p) (expression-analyze-uses e p env))
            pinfo 
            (list test consequent alternative))))
@@ -281,7 +280,7 @@
             (foldl (lambda (e p)
                      (expression-analyze-uses e p env))
                    pinfo
-                   an-expression))]
+                   (stx-e an-expression)))]
     updated-pinfo))
 
 
@@ -293,7 +292,7 @@
 
 
 
-;; require-analyze: require-path -> pinfo
+;; require-analyze: require-path-stx -> pinfo
 (define (require-analyze require-path pinfo)
   (local [(define (loop modules)
             (cond
@@ -301,7 +300,7 @@
                (error 'require-analyze 
                       (format "Moby doesn't know about module ~s yet"
                               require-path))]
-              [(string=? require-path
+              [(string=? (stx-e require-path)
                          (module-binding-source (first modules)))
                (pinfo-accumulate-module 
                 (first modules)
