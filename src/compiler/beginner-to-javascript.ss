@@ -220,35 +220,8 @@
                             "-"
                             (symbol->string field-name))))
           
-          (define new-env-1 (env-extend env
-                                        (make-binding:constant
-                                         'this
-                                         (symbol->string
-                                          (identifier->munged-java-identifier 'this))
-                                         empty)))
-          (define new-env-2 (env-extend new-env-1
-                                        (make-binding:constant
-                                         'other
-                                         (symbol->string
-                                          (identifier->munged-java-identifier 'other))
-                                         empty)))
           
-          (define equality-expression
-            (foldl (lambda (a-field acc)
-                     (local [(define acc-id (field->accessor-name (stx-e id) (stx-e a-field)))]
-                       (list 'and 
-                             (list 'equal? (list acc-id 'this) (list acc-id 'other))
-                             acc)))
-                   'true
-                   fields))
-
-          (define equality-expression-string+pinfo
-            (expression->javascript-string equality-expression
-                                                        new-env-2
-                                                        a-pinfo))
-          
-          (define equality-expression-string (first equality-expression-string+pinfo))
-          (define updated-pinfo (second equality-expression-string+pinfo))
+          (define updated-pinfo a-pinfo)
           
           ;; predicate-name: string
           (define predicate-name 
@@ -301,17 +274,6 @@
                            ".prototype = new plt.Kernel.Struct();\n"
 
                            )
-            "\n"
-            
-            ;; equality
-            (string-append (symbol->string (identifier->munged-java-identifier (stx-e id)))
-                           ".prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof " (symbol->string (identifier->munged-java-identifier (stx-e id))) ") {
-                return " equality-expression-string ";
-              } else {
-                return false;
-              }
-           } ")
             
             "\n"
             
@@ -336,14 +298,14 @@
             ;; accessors
             (string-join 
              (map (lambda (a-field)
-                    (string-append "function " (make-accessor-name (stx-e a-field)) "(obj) {"
-                                   "     if (" predicate-name" (obj)) {"
-                                   "        return obj." (symbol->string (identifier->munged-java-identifier a-field)) ";"
-                                   "     } else { "
+                    (string-append "function " (make-accessor-name (stx-e a-field)) "(obj) {\n"
+                                   "     if (" predicate-name" (obj)) {\n"
+                                   "        return obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) ";\n"
+                                   "     } else {\n"
                                    "        throw new plt.Kernel.MobyRuntimeError("
-                                   "            plt.Kernel.format('" (make-accessor-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));"
-                                   "     } "
-                                   "}"))
+                                   "            plt.Kernel.format('" (make-accessor-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
+                                   "     }\n"
+                                   "}\n"))
                   fields)
              "\n")
             
@@ -640,7 +602,7 @@
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
     [(not (env-contains? an-env (stx-e an-id)))
-     (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
+     p(error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
     [else     
      (local [(define binding (env-lookup an-env (stx-e an-id)))]
        (cond

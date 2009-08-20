@@ -1955,6 +1955,25 @@ var plt = plt || {};
     }
 
 
+    plt.Kernel.Struct.prototype.isEqual = function(other) {
+	if (typeof(other) != 'object') {
+	    return false;
+	}
+	if (! '_fields' in other) {
+	    return false;
+	}
+	if (this._fields.length != other._fields.length) {
+	    return false;
+	}
+	for (var i = 0; i < this._fields.length; i++) {
+	    if (! plt.Kernel.equal_question_(this._fields[i],
+					     other._fields[i])) {
+		return false;
+	    }
+	}
+	return true;
+    };
+
 
 
 
