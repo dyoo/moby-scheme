@@ -145,22 +145,24 @@
      
 
 
-;; function-definition->java-string: symbol (listof symbol) expr env pinfo -> (list string string pinfo)
+;; function-definition->java-string: symbol-stx (listof symbol-stx) expr env pinfo -> (list string string pinfo)
 ;; Converts the function definition into a static function declaration whose
 ;; return value is an object.
 (define (function-definition->java-string fun args body env a-pinfo)
   (local [(define munged-fun-id
-            (identifier->munged-java-identifier fun))
+            (identifier->munged-java-identifier (stx-e fun)))
           (define munged-arg-ids
-            (map identifier->munged-java-identifier args))
+            (map (lambda (id) (identifier->munged-java-identifier (stx-e id)))
+                 args))
           (define new-env 
-            (env-extend-function env fun false (length args) false
+            (env-extend-function env (stx-e fun) false (length args) false
                                  (symbol->string munged-fun-id)))
           (define env-with-arg-bindings
             (foldl (lambda (arg-id env) 
-                     (env-extend env (make-binding:constant arg-id 
+                     (env-extend env (make-binding:constant (stx-e arg-id)
                                                             (symbol->string
-                                                             (identifier->munged-java-identifier arg-id))
+                                                             (identifier->munged-java-identifier
+                                                              (stx-e arg-id)))
                                                             empty)))
                    new-env
                    args))
@@ -181,14 +183,14 @@
      updated-pinfo)))
 
 
-;; variable-definition->javascript-strings: symbol expr env pinfo -> (list string string pinfo)
+;; variable-definition->javascript-strings: symbol-stx expr env pinfo -> (list string string pinfo)
 ;; Converts the variable definition into a static variable declaration and its
 ;; initializer at the toplevel.
 (define (variable-definition->javascript-strings id body env a-pinfo)
-  (local [(define munged-id (identifier->munged-java-identifier id))
+  (local [(define munged-id (identifier->munged-java-identifier (stx-e id)))
           (define new-env (env-extend env 
                                       (make-binding:constant 
-                                       id 
+                                       (stx-e id)
                                        (symbol->string munged-id)
                                        empty)))
           (define str+p (expression->javascript-string body new-env a-pinfo))]
@@ -207,7 +209,7 @@
 
 
 
-;; struct-definition->javascript-string: symbol (listof symbol) env pinfo -> (list string string pinfo)
+;; struct-definition->javascript-string: symbol-stx (listof symbol-stx) env pinfo -> (list string string pinfo)
 (define (struct-definition->javascript-string id fields env a-pinfo)
   (local [
           ;; field->accessor-name: symbol symbol -> symbol
@@ -233,7 +235,7 @@
           
           (define equality-expression
             (foldl (lambda (a-field acc)
-                     (local [(define acc-id (field->accessor-name id a-field))]
+                     (local [(define acc-id (field->accessor-name (stx-e id) a-field))]
                        (list 'and 
                              (list 'equal? (list acc-id 'this) (list acc-id 'other))
                              acc)))
@@ -251,14 +253,14 @@
           ;; predicate-name: string
           (define predicate-name 
             (symbol->string (identifier->munged-java-identifier 
-                             (string->symbol (string-append (symbol->string id)
+                             (string->symbol (string-append (symbol->string (stx-e id))
                                                             "?")))))
           ;; make-accessor-name: symbol -> string
           (define (make-accessor-name a-field)
             (symbol->string
              (identifier->munged-java-identifier
               (string->symbol
-               (string-append (symbol->string id)
+               (string-append (symbol->string (stx-e id))
                               "-"
                               (symbol->string a-field))))))]
     
@@ -266,43 +268,45 @@
             
             ;; default constructor
             (string-append "function "
-                           (symbol->string (identifier->munged-java-identifier id))
+                           (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            "("
                            (string-join (map (lambda (i) (symbol->string
-                                                          (identifier->munged-java-identifier i)))
+                                                          (identifier->munged-java-identifier 
+                                                           (stx-e i))))
                                              fields)
                                         ",")
                            ") { "
 			   (format "plt.Kernel.Struct.call(this, ~s, [~a]);"
 				   (string-append "make-"
 						  (symbol->string 
-						   (identifier->munged-java-identifier id)))
+						   (identifier->munged-java-identifier (stx-e id))))
 				   (string-join (map (lambda (i) (symbol->string
-								  (identifier->munged-java-identifier i)))
+								  (identifier->munged-java-identifier
+                                                                   (stx-e i))))
 						     fields)
 						","))
                            (string-join (map (lambda (i) (string-append "this."
                                                                         (symbol->string 
-                                                                         (identifier->munged-java-identifier i))
+                                                                         (identifier->munged-java-identifier (stx-e i)))
                                                                         " = "
                                                                         (symbol->string 
-                                                                         (identifier->munged-java-identifier i))
+                                                                         (identifier->munged-java-identifier (stx-e i)))
                                                                         ";"))
                                              fields) 
                                         "\n")
                            
                            " }
                     "
-                           (symbol->string (identifier->munged-java-identifier id))
+                           (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            ".prototype = new plt.Kernel.Struct();\n"
 
                            )
             "\n"
             
             ;; equality
-            (string-append (symbol->string (identifier->munged-java-identifier id))
+            (string-append (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            ".prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof " (symbol->string (identifier->munged-java-identifier id)) ") {
+              if (other != null && other != undefined && other instanceof " (symbol->string (identifier->munged-java-identifier (stx-e id))) ") {
                 return " equality-expression-string ";
               } else {
                 return false;
@@ -314,13 +318,13 @@
             ;; make-id
             (string-append "function "
                            (local [(define make-id (string->symbol 
-                                                    (string-append "make-" (symbol->string id))))]
+                                                    (string-append "make-" (symbol->string (stx-e id)))))]
                              (symbol->string (identifier->munged-java-identifier make-id)))
                            "(" (string-join (build-list (length fields) (lambda (i) 
                                                                           (string-append "id" (number->string i))))
                                             ",")
                            ") { return new "
-                           (symbol->string (identifier->munged-java-identifier id))
+                           (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            "("
                            (string-join (build-list (length fields) (lambda (i) 
                                                                       (string-append "id" (number->string i))))
@@ -332,12 +336,12 @@
             ;; accessors
             (string-join 
              (map (lambda (a-field)
-                    (string-append "function " (make-accessor-name a-field) "(obj) {"
+                    (string-append "function " (make-accessor-name (stx-e a-field)) "(obj) {"
                                    "     if (" predicate-name" (obj)) {"
                                    "        return obj." (symbol->string (identifier->munged-java-identifier a-field)) ";"
                                    "     } else { "
                                    "        throw new plt.Kernel.MobyRuntimeError("
-                                   "            plt.Kernel.format('" (make-accessor-name a-field) ": not a " (symbol->string id) ": ~s', [obj]));"
+                                   "            plt.Kernel.format('" (make-accessor-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));"
                                    "     } "
                                    "}"))
                   fields)
@@ -348,7 +352,7 @@
             ;; structure predicate
             (string-append "function " predicate-name "(obj) { 
               return obj != null && obj != undefined && obj instanceof "
-                           (symbol->string (identifier->munged-java-identifier id))
+                           (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            "; }"))
            
            "" ;; no introduced toplevel expressions
@@ -392,7 +396,7 @@
      (local [(define exprs (rest (stx-e expr)))]
        (boolean-chain->javascript-string "||" exprs env a-pinfo))]
 
-    ;; (lambda args body)
+    ;; (lambda (args ...) body)
     [(stx-begins-with? expr 'lambda)
      (local [(define args (stx-e (second (stx-e expr))))
              (define body (third (stx-e expr)))]
@@ -401,12 +405,12 @@
     ;; Numbers
     [(number? (stx-e expr))
      (list
-      (number->javascript-string expr)
+      (number->javascript-string (stx-e expr))
       a-pinfo)]
     
     ;; Strings
     [(string? (stx-e expr))
-     (list (string->javascript-string expr)
+     (list (string->javascript-string (stx-e expr))
            a-pinfo)]
 
     ;; Literal booleans
@@ -416,7 +420,7 @@
                                     a-pinfo)]
     ;; Characters
     [(char? (stx-e expr))
-     (list (char->javascript-string expr)
+     (list (char->javascript-string (stx-e expr))
            a-pinfo)]
     
     ;; Identifiers
@@ -431,7 +435,7 @@
            a-pinfo)]
      
     ;; Function call/primitive operation call
-    [(pair? expr)
+    [(pair? (stx-e expr))
      (local [(define operator (first (stx-e expr)))
              (define operands (rest (stx-e expr)))]
        (application-expression->javascript-string operator operands env a-pinfo))]))
