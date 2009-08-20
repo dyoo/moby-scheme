@@ -246,7 +246,7 @@
      pinfo]
     
     ;; Function call/primitive operation call
-    [(pair? an-expression)
+    [(pair? (stx-e an-expression))
      (application-expression-analyze-uses an-expression pinfo env)]))
 
 

@@ -360,15 +360,15 @@
 
 
 
-;; expression->java-string: expr env pinfo -> (list string pinfo)
+;; expression->java-string: expr-stx env pinfo -> (list string pinfo)
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (expression->javascript-string expr env a-pinfo)
   (cond
     ;; (local ([define ...] ...) body)
     [(stx-begins-with? expr 'local)
-     (local [(define defns (second expr))
-             (define body (third expr))]
+     (local [(define defns (stx-e (second (stx-e expr))))
+             (define body (third (stx-e expr)))]
        (local-expression->javascript-string defns body env a-pinfo))]
     
     ;; (cond ...)
@@ -377,68 +377,68 @@
     
     ;; (if test consequent alternative)
     [(stx-begins-with? expr 'if)
-     (local [(define test (second expr))
-             (define consequent (third expr))
-             (define alternative (fourth expr))]
+     (local [(define test (second (stx-e expr)))
+             (define consequent (third (stx-e expr)))
+             (define alternative (fourth (stx-e expr)))]
        (if-expression->javascript-string test consequent alternative env a-pinfo))]
     
     ;; (and exprs ...)
     [(stx-begins-with? expr 'and)
-     (local [(define exprs (rest expr))]
+     (local [(define exprs (rest (stx-e expr)))]
        (boolean-chain->javascript-string "&&" exprs env a-pinfo))]
 
     ;; (or exprs ...)
     [(stx-begins-with? expr 'or)
-     (local [(define exprs (rest expr))]
+     (local [(define exprs (rest (stx-e expr)))]
        (boolean-chain->javascript-string "||" exprs env a-pinfo))]
 
     ;; (lambda args body)
     [(stx-begins-with? expr 'lambda)
-     (local [(define args (second expr))
-             (define body (third expr))]
+     (local [(define args (stx-e (second (stx-e expr))))
+             (define body (third (stx-e expr)))]
        (lambda-expression->javascript-string args body env a-pinfo))]
     
     ;; Numbers
-    [(number? expr)
+    [(number? (stx-e expr))
      (list
       (number->javascript-string expr)
       a-pinfo)]
     
     ;; Strings
-    [(string? expr)
+    [(string? (stx-e expr))
      (list (string->javascript-string expr)
            a-pinfo)]
 
     ;; Literal booleans
-    [(boolean? expr)
-     (expression->javascript-string (if expr 'true 'false)
+    [(boolean? (stx-e expr))
+     (expression->javascript-string (if (stx-e expr) 'true 'false)
                                     env
                                     a-pinfo)]
     ;; Characters
-    [(char? expr)
+    [(char? (stx-e expr))
      (list (char->javascript-string expr)
            a-pinfo)]
     
     ;; Identifiers
-    [(symbol? expr)
+    [(symbol? (stx-e expr))
      (list
       (identifier-expression->javascript-string expr env)
       a-pinfo)]
     
     ;; Quoted datums
     [(stx-begins-with? expr 'quote)
-     (list (quote-expression->javascript-string (second expr))
+     (list (quote-expression->javascript-string (second (stx-e expr)))
            a-pinfo)]
      
     ;; Function call/primitive operation call
     [(pair? expr)
-     (local [(define operator (first expr))
-             (define operands (rest expr))]
+     (local [(define operator (first (stx-e expr)))
+             (define operands (rest (stx-e expr)))]
        (application-expression->javascript-string operator operands env a-pinfo))]))
 
 
 
-;; expressions->javascript-strings: (listof expr) env pinfo -> (list (listof string) pinfo)
+;; expressions->javascript-strings: (listof expr-stx) env pinfo -> (list (listof string) pinfo)
 ;; Computes the string representation of all of the expressions, and returns those
 ;; as well as the updated pinfo.
 (define (expressions->javascript-strings expressions env a-pinfo)
@@ -474,32 +474,32 @@
 ;; quote-expression->javascript-string: expr -> string
 (define (quote-expression->javascript-string expr)
   (cond
-    [(empty? expr)
+    [(empty? (stx-e expr))
      "plt.types.Empty.EMPTY"]
     
-    [(pair? expr)
+    [(pair? (stx-e expr))
      (string-append "(plt.Kernel.list(["
                           (string-join 
-                           (map quote-expression->javascript-string expr)
+                           (map quote-expression->javascript-string (stx-e expr))
                            ",")
                           "]))")]
     
-    [(symbol? expr)
+    [(symbol? (stx-e expr))
      (string-append "(plt.types.Symbol.makeInstance(\""
-                    (symbol->string expr)
+                    (symbol->string (stx-e expr))
                     "\"))")]
     
     ;; Numbers
-    [(number? expr)
-     (number->javascript-string expr)]
+    [(number? (stx-e expr))
+     (number->javascript-string (stx-e expr))]
     
     ;; Strings
-    [(string? expr)
-     (string->javascript-string expr)]
+    [(string? (stx-e expr))
+     (string->javascript-string (stx-e expr))]
     
     ;; Characters
-    [(char? expr)
-     (char->javascript-string expr)]
+    [(char? (stx-e expr))
+     (char->javascript-string (stx-e expr))]
     
     [else
      (error 'quote-expression->javascript-string 
@@ -541,18 +541,18 @@
 
 
 
-;; application-expression->java-string: symbol (listof expr) env pinfo -> (list string pinfo)
+;; application-expression->java-string: symbol-stx (listof expr) env pinfo -> (list string pinfo)
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string operator operands env a-pinfo)
   (cond 
     ;; Special case: when the operator is named
-    [(and (symbol? operator)
-          (not (env-contains? env operator)))
+    [(and (symbol? (stx-e operator))
+          (not (env-contains? env (stx-e operator))))
      (error 'application-expression->java-string
             (format "Moby doesn't know about ~s" operator))]
     
-    [(symbol? operator)
-     (local [(define operator-binding (env-lookup env operator))
+    [(symbol? (stx-e operator))
+     (local [(define operator-binding (env-lookup env (stx-e operator)))
              (define operand-strings+pinfo
                (expressions->javascript-strings operands env a-pinfo))
              
@@ -630,15 +630,15 @@
 
 
 
-;; identifier-expression->javascript-string: symbol env -> string
+;; identifier-expression->javascript-string: symbol-stx env -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
-    [(not (env-contains? an-env an-id))
+    [(not (env-contains? an-env (stx-e an-id)))
      (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
     [else     
-     (local [(define binding (env-lookup an-env an-id))]
+     (local [(define binding (env-lookup an-env (stx-e an-id)))]
        (cond
          [(binding:constant? binding)
           (binding:constant-java-string binding)]
@@ -668,7 +668,7 @@
 
 
 
-;; lambda-expression->javascript-string (listof symbol) expression env pinfo -> string
+;; lambda-expression->javascript-string (listof symbol-stx) expression env pinfo -> string
 (define (lambda-expression->javascript-string args body env a-pinfo)
   (local [;; mapi: (X number -> Y) (listof X) -> (listof Y)
           (define (mapi f elts)
@@ -683,15 +683,16 @@
           
           
           (define munged-arg-ids
-            (map identifier->munged-java-identifier args))
+            (map (lambda (id) (identifier->munged-java-identifier (stx-e id)))
+                 args))
           
           (define new-env
             (foldl (lambda (arg-id env) 
                      (env-extend env 
                                  (make-binding:constant 
-                                  arg-id 
+                                  (stx-e arg-id)
                                   (symbol->string
-                                   (identifier->munged-java-identifier arg-id))
+                                   (identifier->munged-java-identifier (stx-e arg-id)))
                                   empty)))
                    env
                    args))
