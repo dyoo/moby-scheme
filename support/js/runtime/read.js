@@ -162,7 +162,7 @@ return [tokens, s];
 	if (tokens.length > 0) {
 	    throw new Error("More elements in the program's token stream than expected: the next unconsumed token is: "  + tokens[0][1])
 	}
-	return result;
+	return stx_dash_e(datum_dash__greaterthan_stx(result, "fixme"));
     }
     
 }());
