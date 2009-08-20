@@ -7,7 +7,8 @@
 
 (require (prefix-in base: scheme/base)
          scheme/contract
-         lang/htdp-intermediate-lambda)
+         lang/htdp-intermediate-lambda
+         (for-syntax scheme/base))
 
                      
 (provide (except-out (all-from-out lang/htdp-intermediate-lambda)
@@ -18,13 +19,20 @@
                      let*))
 
 
+(define-syntax (my-define-struct stx)
+  (syntax-case stx ()
+    [(_ id (fields ...))
+     (syntax/loc stx 
+       (base:define-struct id (fields ...) #:transparent))]))
+    
+
 
 
 ;; The following primitives will need support in the runtime,
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
                      (base:quote quote)
-                     (base:define-struct define-struct))
+                     (my-define-struct define-struct))
 
          
          ;; Contract-related stuff: the following will be erased on 
