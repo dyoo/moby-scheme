@@ -3032,6 +3032,25 @@ var plt = plt || {};
     }
 
 
+    plt.Kernel.Struct.prototype.isEqual = function(other) {
+	if (typeof(other) != 'object') {
+	    return false;
+	}
+	if (! '_fields' in other) {
+	    return false;
+	}
+	if (this._fields.length != other._fields.length) {
+	    return false;
+	}
+	for (var i = 0; i < this._fields.length; i++) {
+	    if (! plt.Kernel.equal_question_(this._fields[i],
+					     other._fields[i])) {
+		return false;
+	    }
+	}
+	return true;
+    };
+
 
 
 
@@ -3238,16 +3257,84 @@ return [tokens, s];
     
 }());
 
+function stx_colon_atom(datum,loc) { plt.Kernel.Struct.call(this, "make-stx_colon_atom", [datum,loc]);this.datum = datum;
+this.loc = loc; }
+                    stx_colon_atom.prototype = new plt.Kernel.Struct();
+
+function make_dash_stx_colon_atom(id0,id1) { return new stx_colon_atom(id0,id1); }
+function stx_colon_atom_dash_datum(obj) {
+     if (stx_colon_atom_question_ (obj)) {
+        return obj.datum;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('stx_colon_atom_dash_datum: not a stx:atom: ~s', [obj]));
+     }
+}
+
+function stx_colon_atom_dash_loc(obj) {
+     if (stx_colon_atom_question_ (obj)) {
+        return obj.loc;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('stx_colon_atom_dash_loc: not a stx:atom: ~s', [obj]));
+     }
+}
+
+function stx_colon_atom_question_(obj) { 
+              return obj != null && obj != undefined && obj instanceof stx_colon_atom; }
+function stx_colon_list(elts,loc) { plt.Kernel.Struct.call(this, "make-stx_colon_list", [elts,loc]);this.elts = elts;
+this.loc = loc; }
+                    stx_colon_list.prototype = new plt.Kernel.Struct();
+
+function make_dash_stx_colon_list(id0,id1) { return new stx_colon_list(id0,id1); }
+function stx_colon_list_dash_elts(obj) {
+     if (stx_colon_list_question_ (obj)) {
+        return obj.elts;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('stx_colon_list_dash_elts: not a stx:list: ~s', [obj]));
+     }
+}
+
+function stx_colon_list_dash_loc(obj) {
+     if (stx_colon_list_question_ (obj)) {
+        return obj.loc;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('stx_colon_list_dash_loc: not a stx:list: ~s', [obj]));
+     }
+}
+
+function stx_colon_list_question_(obj) { 
+              return obj != null && obj != undefined && obj instanceof stx_colon_list; }
+function stx_question_(x) { return ((stx_colon_atom_question_(x))||(stx_colon_list_question_(x))); }
+function stx_dash_e(a_dash_stx) { return ((stx_colon_atom_question_(a_dash_stx)) ?
+ (stx_colon_atom_dash_datum(a_dash_stx)) :
+ ((stx_colon_list_question_(a_dash_stx)) ?
+ (stx_colon_list_dash_elts(a_dash_stx)) :
+ (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function stx_dash_loc(a_dash_stx) { return ((stx_colon_atom_question_(a_dash_stx)) ?
+ (stx_colon_atom_dash_loc(a_dash_stx)) :
+ ((stx_colon_list_question_(a_dash_stx)) ?
+ (stx_colon_list_dash_loc(a_dash_stx)) :
+ (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function stx_dash_begins_dash_with_question_(a_dash_stx, a_dash_sym) { return ((stx_colon_atom_question_(a_dash_stx)) ?
+ plt.types.Logic.FALSE :
+ ((stx_colon_list_question_(a_dash_stx)) ?
+ ((plt.Kernel.not((plt.Kernel.empty_question_((stx_colon_list_dash_elts(a_dash_stx))))))&&(plt.Kernel.symbol_question_((stx_dash_e((plt.Kernel.first((stx_colon_list_dash_elts(a_dash_stx))))))))&&(plt.Kernel.symbol_equal__question_((stx_dash_e((plt.Kernel.first((stx_colon_list_dash_elts(a_dash_stx)))))),a_dash_sym))) :
+ (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function datum_dash__greaterthan_stx(a_dash_datum, a_dash_loc) { return (((plt.Kernel.pair_question_(a_dash_datum))||(plt.Kernel.empty_question_(a_dash_datum))) ?
+ (make_dash_stx_colon_list(plt.Kernel.map(((function() {
+                        var result = (function(args1) { var x = args1[0];
+                             return (datum_dash__greaterthan_stx(x,a_dash_loc)); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()), [a_dash_datum]),a_dash_loc)) :
+ (plt.types.Logic.TRUE ?
+ (make_dash_stx_colon_atom(a_dash_datum,a_dash_loc)) :
+ (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function permission_colon_location() { plt.Kernel.Struct.call(this, "make-permission_colon_location", []); }
                     permission_colon_location.prototype = new plt.Kernel.Struct();
 
-permission_colon_location.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_location) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_location() { return new permission_colon_location(); }
 
 function permission_colon_location_question_(obj) { 
@@ -3255,13 +3342,6 @@ function permission_colon_location_question_(obj) {
 function permission_colon_send_dash_sms() { plt.Kernel.Struct.call(this, "make-permission_colon_send_dash_sms", []); }
                     permission_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
 
-permission_colon_send_dash_sms.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_send_dash_sms) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_send_dash_sms() { return new permission_colon_send_dash_sms(); }
 
 function permission_colon_send_dash_sms_question_(obj) { 
@@ -3269,13 +3349,6 @@ function permission_colon_send_dash_sms_question_(obj) {
 function permission_colon_receive_dash_sms() { plt.Kernel.Struct.call(this, "make-permission_colon_receive_dash_sms", []); }
                     permission_colon_receive_dash_sms.prototype = new plt.Kernel.Struct();
 
-permission_colon_receive_dash_sms.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_receive_dash_sms) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_receive_dash_sms() { return new permission_colon_receive_dash_sms(); }
 
 function permission_colon_receive_dash_sms_question_(obj) { 
@@ -3283,13 +3356,6 @@ function permission_colon_receive_dash_sms_question_(obj) {
 function permission_colon_tilt() { plt.Kernel.Struct.call(this, "make-permission_colon_tilt", []); }
                     permission_colon_tilt.prototype = new plt.Kernel.Struct();
 
-permission_colon_tilt.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_tilt) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_tilt() { return new permission_colon_tilt(); }
 
 function permission_colon_tilt_question_(obj) { 
@@ -3297,13 +3363,6 @@ function permission_colon_tilt_question_(obj) {
 function permission_colon_shake() { plt.Kernel.Struct.call(this, "make-permission_colon_shake", []); }
                     permission_colon_shake.prototype = new plt.Kernel.Struct();
 
-permission_colon_shake.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_shake) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_shake() { return new permission_colon_shake(); }
 
 function permission_colon_shake_question_(obj) { 
@@ -3311,13 +3370,6 @@ function permission_colon_shake_question_(obj) {
 function permission_colon_internet() { plt.Kernel.Struct.call(this, "make-permission_colon_internet", []); }
                     permission_colon_internet.prototype = new plt.Kernel.Struct();
 
-permission_colon_internet.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_internet) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_internet() { return new permission_colon_internet(); }
 
 function permission_colon_internet_question_(obj) { 
@@ -3325,13 +3377,6 @@ function permission_colon_internet_question_(obj) {
 function permission_colon_telephony() { plt.Kernel.Struct.call(this, "make-permission_colon_telephony", []); }
                     permission_colon_telephony.prototype = new plt.Kernel.Struct();
 
-permission_colon_telephony.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_telephony) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_telephony() { return new permission_colon_telephony(); }
 
 function permission_colon_telephony_question_(obj) { 
@@ -3339,13 +3384,6 @@ function permission_colon_telephony_question_(obj) {
 function permission_colon_wake_dash_lock() { plt.Kernel.Struct.call(this, "make-permission_colon_wake_dash_lock", []); }
                     permission_colon_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
-permission_colon_wake_dash_lock.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_wake_dash_lock) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_wake_dash_lock() { return new permission_colon_wake_dash_lock(); }
 
 function permission_colon_wake_dash_lock_question_(obj) { 
@@ -3446,15 +3484,15 @@ function permission_dash__greaterthan_on_dash_destroy_dash_code(a_dash_permissio
 function env(bindings) { plt.Kernel.Struct.call(this, "make-env", [bindings]);this.bindings = bindings; }
                     env.prototype = new plt.Kernel.Struct();
 
-env.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof env) {
-                return ((plt.Kernel.equal_question_((env_dash_bindings(this)),(env_dash_bindings(other))))&&plt.types.Logic.TRUE);
-              } else {
-                return false;
-              }
-           } 
 function make_dash_env(id0) { return new env(id0); }
-function env_dash_bindings(obj) {     if (env_question_ (obj)) {        return obj.bindings;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('env_dash_bindings: not a env: ~s', [obj]));     } }
+function env_dash_bindings(obj) {
+     if (env_question_ (obj)) {
+        return obj.bindings;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('env_dash_bindings: not a env: ~s', [obj]));
+     }
+}
+
 function env_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof env; }
 var empty_dash_env; 
@@ -3464,17 +3502,31 @@ this.java_dash_string = java_dash_string;
 this.permissions = permissions; }
                     binding_colon_constant.prototype = new plt.Kernel.Struct();
 
-binding_colon_constant.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof binding_colon_constant) {
-                return ((plt.Kernel.equal_question_((binding_colon_constant_dash_permissions(this)),(binding_colon_constant_dash_permissions(other))))&&((plt.Kernel.equal_question_((binding_colon_constant_dash_java_dash_string(this)),(binding_colon_constant_dash_java_dash_string(other))))&&((plt.Kernel.equal_question_((binding_colon_constant_dash_name(this)),(binding_colon_constant_dash_name(other))))&&plt.types.Logic.TRUE)));
-              } else {
-                return false;
-              }
-           } 
 function make_dash_binding_colon_constant(id0,id1,id2) { return new binding_colon_constant(id0,id1,id2); }
-function binding_colon_constant_dash_name(obj) {     if (binding_colon_constant_question_ (obj)) {        return obj.name;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_constant_dash_name: not a binding:constant: ~s', [obj]));     } }
-function binding_colon_constant_dash_java_dash_string(obj) {     if (binding_colon_constant_question_ (obj)) {        return obj.java_dash_string;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_constant_dash_java_dash_string: not a binding:constant: ~s', [obj]));     } }
-function binding_colon_constant_dash_permissions(obj) {     if (binding_colon_constant_question_ (obj)) {        return obj.permissions;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_constant_dash_permissions: not a binding:constant: ~s', [obj]));     } }
+function binding_colon_constant_dash_name(obj) {
+     if (binding_colon_constant_question_ (obj)) {
+        return obj.name;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_constant_dash_name: not a binding:constant: ~s', [obj]));
+     }
+}
+
+function binding_colon_constant_dash_java_dash_string(obj) {
+     if (binding_colon_constant_question_ (obj)) {
+        return obj.java_dash_string;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_constant_dash_java_dash_string: not a binding:constant: ~s', [obj]));
+     }
+}
+
+function binding_colon_constant_dash_permissions(obj) {
+     if (binding_colon_constant_question_ (obj)) {
+        return obj.permissions;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_constant_dash_permissions: not a binding:constant: ~s', [obj]));
+     }
+}
+
 function binding_colon_constant_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof binding_colon_constant; }
 function binding_colon_function(name,module_dash_source,min_dash_arity,var_dash_arity_question_,java_dash_string,permissions,cps_question_) { plt.Kernel.Struct.call(this, "make-binding_colon_function", [name,module_dash_source,min_dash_arity,var_dash_arity_question_,java_dash_string,permissions,cps_question_]);this.name = name;
@@ -3486,21 +3538,63 @@ this.permissions = permissions;
 this.cps_question_ = cps_question_; }
                     binding_colon_function.prototype = new plt.Kernel.Struct();
 
-binding_colon_function.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof binding_colon_function) {
-                return ((plt.Kernel.equal_question_((binding_colon_function_dash_cps_question_(this)),(binding_colon_function_dash_cps_question_(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_permissions(this)),(binding_colon_function_dash_permissions(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_java_dash_string(this)),(binding_colon_function_dash_java_dash_string(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_var_dash_arity_question_(this)),(binding_colon_function_dash_var_dash_arity_question_(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_min_dash_arity(this)),(binding_colon_function_dash_min_dash_arity(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_module_dash_source(this)),(binding_colon_function_dash_module_dash_source(other))))&&((plt.Kernel.equal_question_((binding_colon_function_dash_name(this)),(binding_colon_function_dash_name(other))))&&plt.types.Logic.TRUE)))))));
-              } else {
-                return false;
-              }
-           } 
 function make_dash_binding_colon_function(id0,id1,id2,id3,id4,id5,id6) { return new binding_colon_function(id0,id1,id2,id3,id4,id5,id6); }
-function binding_colon_function_dash_name(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.name;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_name: not a binding:function: ~s', [obj]));     } }
-function binding_colon_function_dash_module_dash_source(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.module_dash_source;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_module_dash_source: not a binding:function: ~s', [obj]));     } }
-function binding_colon_function_dash_min_dash_arity(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.min_dash_arity;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_min_dash_arity: not a binding:function: ~s', [obj]));     } }
-function binding_colon_function_dash_var_dash_arity_question_(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.var_dash_arity_question_;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_var_dash_arity_question_: not a binding:function: ~s', [obj]));     } }
-function binding_colon_function_dash_java_dash_string(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.java_dash_string;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_java_dash_string: not a binding:function: ~s', [obj]));     } }
-function binding_colon_function_dash_permissions(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.permissions;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_permissions: not a binding:function: ~s', [obj]));     } }
-function binding_colon_function_dash_cps_question_(obj) {     if (binding_colon_function_question_ (obj)) {        return obj.cps_question_;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_cps_question_: not a binding:function: ~s', [obj]));     } }
+function binding_colon_function_dash_name(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.name;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_name: not a binding:function: ~s', [obj]));
+     }
+}
+
+function binding_colon_function_dash_module_dash_source(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.module_dash_source;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_module_dash_source: not a binding:function: ~s', [obj]));
+     }
+}
+
+function binding_colon_function_dash_min_dash_arity(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.min_dash_arity;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_min_dash_arity: not a binding:function: ~s', [obj]));
+     }
+}
+
+function binding_colon_function_dash_var_dash_arity_question_(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.var_dash_arity_question_;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_var_dash_arity_question_: not a binding:function: ~s', [obj]));
+     }
+}
+
+function binding_colon_function_dash_java_dash_string(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.java_dash_string;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_java_dash_string: not a binding:function: ~s', [obj]));
+     }
+}
+
+function binding_colon_function_dash_permissions(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.permissions;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_permissions: not a binding:function: ~s', [obj]));
+     }
+}
+
+function binding_colon_function_dash_cps_question_(obj) {
+     if (binding_colon_function_question_ (obj)) {
+        return obj.cps_question_;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('binding_colon_function_dash_cps_question_: not a binding:function: ~s', [obj]));
+     }
+}
+
 function binding_colon_function_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof binding_colon_function; }
 function binding_dash_id(a_dash_binding) { return ((binding_colon_constant_question_(a_dash_binding)) ?
@@ -3513,8 +3607,8 @@ function env_dash_lookup(an_dash_env, name) { return (plt.Kernel._kernelHashRef(
 function env_dash_remove(an_dash_env, name) { return (make_dash_env((plt.Kernel._kernelHashRemove((env_dash_bindings(an_dash_env)),name)))); }
 function env_dash_contains_question_(an_dash_env, name) { return (binding_question_((plt.Kernel._kernelHashRef((env_dash_bindings(an_dash_env)),name,plt.types.Logic.FALSE)))); }
 function env_dash_keys(an_dash_env) { return (plt.Kernel._kernelHashMap((env_dash_bindings(an_dash_env)),((function() {
-                        var result = (function(args1) { var k = args1[0];
-var v = args1[1];
+                        var result = (function(args2) { var k = args2[0];
+var v = args2[1];
                              return k; });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -3526,7 +3620,7 @@ function env_dash_extend_dash_constant(an_dash_env, id, java_dash_string) { retu
 function env_dash_extend_dash_function(an_dash_env, id, module_dash_source, min_dash_arity, var_dash_arity_question_, java_dash_string) { return (env_dash_extend(an_dash_env,(make_dash_binding_colon_function(id,module_dash_source,min_dash_arity,var_dash_arity_question_,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)))); }
 function list_question_(datum) { return ((plt.Kernel.empty_question_(datum))||((plt.Kernel.pair_question_(datum))&&(list_question_((plt.Kernel.rest(datum)))))); }
 function program_question_(datum) { return ((list_question_(datum))&&(plt.Kernel.andmap(((function() {
-                        var result = (function(args2) { var x = args2[0];
+                        var result = (function(args3) { var x = args3[0];
                              return ((defn_question_(x))||(expression_question_(x))||(test_dash_case_question_(x))||(library_dash_require_question_(x))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -3535,9 +3629,9 @@ function program_question_(datum) { return ((list_question_(datum))&&(plt.Kernel
                       return result;
                    })()),datum))); }
 function expression_question_(an_dash_expr) { return ((plt.Kernel.not((defn_question_(an_dash_expr))))&&(plt.Kernel.not((test_dash_case_question_(an_dash_expr))))&&(plt.Kernel.not((library_dash_require_question_(an_dash_expr))))); }
-function defn_question_(an_dash_sexp) { return ((list_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("define")))) ?
+function defn_question_(an_dash_sexp) { return ((stx_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("define")))) ?
  plt.types.Logic.TRUE :
- ((list_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("define-struct")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("define-struct")))) ?
  plt.types.Logic.TRUE :
  (plt.types.Logic.TRUE ?
  plt.types.Logic.FALSE :
@@ -3549,9 +3643,8 @@ function string_dash_join(strs, delim) { return ((plt.Kernel.empty_question_(str
  (plt.types.Logic.TRUE ?
  plt.Kernel.string_dash_append([(plt.Kernel.first(strs)),delim,(string_dash_join((plt.Kernel.rest(strs)),delim))]) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-function list_dash_begins_dash_with_question_(an_dash_sexp, a_dash_label) { return ((list_question_(an_dash_sexp))&&(plt.Kernel.not((plt.Kernel.empty_question_(an_dash_sexp))))&&(plt.Kernel.symbol_question_((plt.Kernel.first(an_dash_sexp))))&&(plt.Kernel.symbol_equal__question_((plt.Kernel.first(an_dash_sexp)),a_dash_label))); }
-function test_dash_case_question_(an_dash_sexp) { return ((list_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("check-expect"))))||(list_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("check-within"))))||(list_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("check-error"))))); }
-function library_dash_require_question_(an_dash_sexp) { return (list_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("require")))); }
+function test_dash_case_question_(an_dash_sexp) { return ((stx_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("check-expect"))))||(stx_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("check-within"))))||(stx_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("check-error"))))); }
+function library_dash_require_question_(an_dash_sexp) { return (stx_dash_begins_dash_with_question_(an_dash_sexp,(plt.types.Symbol.makeInstance("require")))); }
 function identifier_dash__greaterthan_munged_dash_java_dash_identifier(an_dash_id) { return ((function() { 
 
 function member_question_(an_dash_id, elts) { return ((plt.Kernel.empty_question_(elts)) ?
@@ -3603,7 +3696,7 @@ function trans(ch) { return (plt.Kernel.char_equal__question_(ch,(plt.types.Char
  (plt.types.Logic.TRUE ?
  plt.Kernel.string([ch]) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))))))))))))))))))); }
-(function (toplevel_dash_expression_dash_show3) { 
+(function (toplevel_dash_expression_dash_show4) { 
 
 java_dash_identifiers = (plt.Kernel.list([(plt.types.Symbol.makeInstance("abstract")),(plt.types.Symbol.makeInstance("continue")),(plt.types.Symbol.makeInstance("for")),(plt.types.Symbol.makeInstance("new")),(plt.types.Symbol.makeInstance("switch")),(plt.types.Symbol.makeInstance("assert")),(plt.types.Symbol.makeInstance("default")),(plt.types.Symbol.makeInstance("goto")),(plt.types.Symbol.makeInstance("package")),(plt.types.Symbol.makeInstance("synchronized")),(plt.types.Symbol.makeInstance("boolean")),(plt.types.Symbol.makeInstance("do")),(plt.types.Symbol.makeInstance("if")),(plt.types.Symbol.makeInstance("private")),(plt.types.Symbol.makeInstance("break")),(plt.types.Symbol.makeInstance("double")),(plt.types.Symbol.makeInstance("implements")),(plt.types.Symbol.makeInstance("protected")),(plt.types.Symbol.makeInstance("throw")),(plt.types.Symbol.makeInstance("byte")),(plt.types.Symbol.makeInstance("else")),(plt.types.Symbol.makeInstance("import")),(plt.types.Symbol.makeInstance("public")),(plt.types.Symbol.makeInstance("throws")),(plt.types.Symbol.makeInstance("case")),(plt.types.Symbol.makeInstance("enum")),(plt.types.Symbol.makeInstance("instanceof")),(plt.types.Symbol.makeInstance("return")),(plt.types.Symbol.makeInstance("transient")),(plt.types.Symbol.makeInstance("catch")),(plt.types.Symbol.makeInstance("extends")),(plt.types.Symbol.makeInstance("int")),(plt.types.Symbol.makeInstance("short")),(plt.types.Symbol.makeInstance("try")),(plt.types.Symbol.makeInstance("char")),(plt.types.Symbol.makeInstance("final")),(plt.types.Symbol.makeInstance("interface")),(plt.types.Symbol.makeInstance("static")),(plt.types.Symbol.makeInstance("void")),(plt.types.Symbol.makeInstance("class")),(plt.types.Symbol.makeInstance("finally")),(plt.types.Symbol.makeInstance("long")),(plt.types.Symbol.makeInstance("strictfp")),(plt.types.Symbol.makeInstance("volatile")),(plt.types.Symbol.makeInstance("const")),(plt.types.Symbol.makeInstance("float")),(plt.types.Symbol.makeInstance("native")),(plt.types.Symbol.makeInstance("super")),(plt.types.Symbol.makeInstance("while")),(plt.types.Symbol.makeInstance("null"))]));
  })(plt.Kernel.identity)
@@ -3615,7 +3708,7 @@ return ((member_question_(an_dash_id,java_dash_identifiers)) ?
 var chars; 
 var translated_dash_chunks; 
 var translated_dash_id; 
-(function (toplevel_dash_expression_dash_show4) { 
+(function (toplevel_dash_expression_dash_show5) { 
 chars = (plt.Kernel.string_dash__greaterthan_list((plt.Kernel.symbol_dash__greaterthan_string(an_dash_id))));
 translated_dash_chunks = plt.Kernel.map((function() { var result = (function(args) {
                     return trans(args[0]);
@@ -3630,22 +3723,22 @@ return translated_dash_id;
 function desugar_dash_cond(an_dash_expr) { return ((function() { 
 
 function loop(questions, answers, question_dash_last, answer_dash_last) { return ((plt.Kernel.empty_question_(questions)) ?
- plt.Kernel.list([(plt.types.Symbol.makeInstance("if")),question_dash_last,answer_dash_last,(plt.Kernel.list([(plt.types.Symbol.makeInstance("error")),(plt.Kernel.list([(plt.types.Symbol.makeInstance("quote")),(plt.types.Symbol.makeInstance("cond"))])),(plt.types.String.makeInstance("Fell out of cond"))]))]) :
+ (make_dash_stx_colon_list(plt.Kernel.list([(datum_dash__greaterthan_stx((plt.types.Symbol.makeInstance("if")),(stx_dash_loc(an_dash_expr)))),question_dash_last,answer_dash_last,(datum_dash__greaterthan_stx((plt.Kernel.list([(plt.types.Symbol.makeInstance("error")),(plt.Kernel.list([(plt.types.Symbol.makeInstance("quote")),(plt.types.Symbol.makeInstance("cond"))])),(plt.types.String.makeInstance("Fell out of cond"))])),(stx_dash_loc(an_dash_expr))))]),(stx_dash_loc(an_dash_expr)))) :
  (plt.types.Logic.TRUE ?
- plt.Kernel.list([(plt.types.Symbol.makeInstance("if")),(plt.Kernel.first(questions)),(plt.Kernel.first(answers)),(loop((plt.Kernel.rest(questions)),(plt.Kernel.rest(answers)),question_dash_last,answer_dash_last))]) :
+ (make_dash_stx_colon_list(plt.Kernel.list([(datum_dash__greaterthan_stx((plt.types.Symbol.makeInstance("if")),(stx_dash_loc(an_dash_expr)))),(plt.Kernel.first(questions)),(plt.Kernel.first(answers)),(loop((plt.Kernel.rest(questions)),(plt.Kernel.rest(answers)),question_dash_last,answer_dash_last))]),(stx_dash_loc(an_dash_expr)))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-function process_dash_clauses(clauses, questions_slash_rev, answers_slash_rev) { return ((list_dash_begins_dash_with_question_((plt.Kernel.first(clauses)),(plt.types.Symbol.makeInstance("else")))) ?
- (loop((plt.Kernel.reverse(questions_slash_rev)),(plt.Kernel.reverse(answers_slash_rev)),(plt.types.Symbol.makeInstance("true")),(plt.Kernel.second((plt.Kernel.first(clauses)))))) :
+function process_dash_clauses(clauses, questions_slash_rev, answers_slash_rev) { return ((stx_dash_begins_dash_with_question_((plt.Kernel.first(clauses)),(plt.types.Symbol.makeInstance("else")))) ?
+ (loop((plt.Kernel.reverse(questions_slash_rev)),(plt.Kernel.reverse(answers_slash_rev)),(datum_dash__greaterthan_stx((plt.types.Symbol.makeInstance("true")),(stx_dash_loc((plt.Kernel.first(clauses)))))),(plt.Kernel.second((stx_dash_e((plt.Kernel.first(clauses)))))))) :
  ((plt.Kernel.empty_question_((plt.Kernel.rest(clauses)))) ?
- (loop((plt.Kernel.reverse(questions_slash_rev)),(plt.Kernel.reverse(answers_slash_rev)),(plt.Kernel.first((plt.Kernel.first(clauses)))),(plt.Kernel.second((plt.Kernel.first(clauses)))))) :
+ (loop((plt.Kernel.reverse(questions_slash_rev)),(plt.Kernel.reverse(answers_slash_rev)),(plt.Kernel.first((stx_dash_e((plt.Kernel.first(clauses)))))),(plt.Kernel.second((stx_dash_e((plt.Kernel.first(clauses)))))))) :
  (plt.types.Logic.TRUE ?
- (process_dash_clauses((plt.Kernel.rest(clauses)),(plt.Kernel.cons((plt.Kernel.first((plt.Kernel.first(clauses)))),questions_slash_rev)),(plt.Kernel.cons((plt.Kernel.second((plt.Kernel.first(clauses)))),answers_slash_rev)))) :
+ (process_dash_clauses((plt.Kernel.rest(clauses)),(plt.Kernel.cons((plt.Kernel.first((stx_dash_e((plt.Kernel.first(clauses)))))),questions_slash_rev)),(plt.Kernel.cons((plt.Kernel.second((stx_dash_e((plt.Kernel.first(clauses)))))),answers_slash_rev)))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-(function (toplevel_dash_expression_dash_show5) { 
+(function (toplevel_dash_expression_dash_show6) { 
 
  })(plt.Kernel.identity)
-return ((list_dash_begins_dash_with_question_(an_dash_expr,(plt.types.Symbol.makeInstance("cond")))) ?
- (process_dash_clauses((plt.Kernel.rest(an_dash_expr)),plt.types.Empty.EMPTY,plt.types.Empty.EMPTY)) :
+return ((stx_dash_begins_dash_with_question_(an_dash_expr,(plt.types.Symbol.makeInstance("cond")))) ?
+ (process_dash_clauses((plt.Kernel.rest((stx_dash_e(an_dash_expr)))),plt.types.Empty.EMPTY,plt.types.Empty.EMPTY)) :
  (plt.types.Logic.TRUE ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("desugar-cond")),plt.Kernel.format((plt.types.String.makeInstance("Not a cond clause: ~s")), [an_dash_expr]))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))));
@@ -3659,7 +3752,7 @@ function remove_dash_leading_dash_whitespace_slash_list(chars) { return ((plt.Ke
  (plt.types.Logic.TRUE ?
  (plt.Kernel.list_dash__greaterthan_string(chars)) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-(function (toplevel_dash_expression_dash_show6) { 
+(function (toplevel_dash_expression_dash_show7) { 
  })(plt.Kernel.identity)
 return (remove_dash_leading_dash_whitespace_slash_list((plt.Kernel.string_dash__greaterthan_list(a_dash_str))));
               })()); }
@@ -3678,55 +3771,56 @@ function range(n) { return (plt.Kernel._equal_(n,(plt.types.Rational.makeInstanc
  (plt.types.Logic.TRUE ?
  plt.Kernel.append((range((plt.Kernel.sub1(n)))), [plt.Kernel.list([(plt.Kernel.sub1(n))])]) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-function case_dash_analyze_dash_definition(a_dash_definition, f_dash_function, f_dash_regular_dash_definition, f_dash_define_dash_struct) { return (((list_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define"))))&&plt.Kernel._equal_((plt.Kernel.length(a_dash_definition)),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.pair_question_((plt.Kernel.second(a_dash_definition))))) ?
- ((function() { 
-
-var id; 
-var args; 
-var body; 
-(function (toplevel_dash_expression_dash_show7) { 
-id = (plt.Kernel.first((plt.Kernel.second(a_dash_definition))));
-args = (plt.Kernel.rest((plt.Kernel.second(a_dash_definition))));
-body = (plt.Kernel.third(a_dash_definition)); })(plt.Kernel.identity)
-return ((f_dash_function).apply(null, [[id, args, body]]));
-              })()) :
- (((list_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define"))))&&plt.Kernel._equal_((plt.Kernel.length(a_dash_definition)),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.symbol_question_((plt.Kernel.second(a_dash_definition))))&&(list_dash_begins_dash_with_question_((plt.Kernel.third(a_dash_definition)),(plt.types.Symbol.makeInstance("lambda"))))) ?
+function case_dash_analyze_dash_definition(a_dash_definition, f_dash_function, f_dash_regular_dash_definition, f_dash_define_dash_struct) { return (((stx_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define"))))&&plt.Kernel._equal_((plt.Kernel.length((stx_dash_e(a_dash_definition)))),(plt.types.Rational.makeInstance(3, 1)), [])&&(stx_colon_list_question_((plt.Kernel.second((stx_dash_e(a_dash_definition))))))) ?
  ((function() { 
 
 var id; 
 var args; 
 var body; 
 (function (toplevel_dash_expression_dash_show8) { 
-id = (plt.Kernel.second(a_dash_definition));
-args = (plt.Kernel.second((plt.Kernel.third(a_dash_definition))));
-body = (plt.Kernel.third((plt.Kernel.third(a_dash_definition)))); })(plt.Kernel.identity)
+id = (plt.Kernel.first((stx_dash_e((plt.Kernel.second((stx_dash_e(a_dash_definition))))))));
+args = (plt.Kernel.rest((stx_dash_e((plt.Kernel.second((stx_dash_e(a_dash_definition))))))));
+body = (plt.Kernel.third((stx_dash_e(a_dash_definition)))); })(plt.Kernel.identity)
 return ((f_dash_function).apply(null, [[id, args, body]]));
               })()) :
- (((list_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define"))))&&plt.Kernel._equal_((plt.Kernel.length(a_dash_definition)),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.symbol_question_((plt.Kernel.second(a_dash_definition))))&&(plt.Kernel.not((list_dash_begins_dash_with_question_((plt.Kernel.third(a_dash_definition)),(plt.types.Symbol.makeInstance("lambda"))))))) ?
+ (((stx_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define"))))&&plt.Kernel._equal_((plt.Kernel.length((stx_dash_e(a_dash_definition)))),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.symbol_question_((stx_dash_e((plt.Kernel.second((stx_dash_e(a_dash_definition))))))))&&(stx_dash_begins_dash_with_question_((plt.Kernel.third((stx_dash_e(a_dash_definition)))),(plt.types.Symbol.makeInstance("lambda"))))) ?
+ ((function() { 
+
+var id; 
+var args; 
+var body; 
+(function (toplevel_dash_expression_dash_show9) { 
+id = (plt.Kernel.second((stx_dash_e(a_dash_definition))));
+args = (plt.Kernel.second((stx_dash_e((plt.Kernel.third((stx_dash_e(a_dash_definition))))))));
+body = (plt.Kernel.third((stx_dash_e((plt.Kernel.third((stx_dash_e(a_dash_definition)))))))); })(plt.Kernel.identity)
+return ((f_dash_function).apply(null, [[id, args, body]]));
+              })()) :
+ (((stx_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define"))))&&plt.Kernel._equal_((plt.Kernel.length((stx_dash_e(a_dash_definition)))),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.symbol_question_((stx_dash_e((plt.Kernel.second((stx_dash_e(a_dash_definition))))))))&&(plt.Kernel.not((stx_dash_begins_dash_with_question_((plt.Kernel.third((stx_dash_e(a_dash_definition)))),(plt.types.Symbol.makeInstance("lambda"))))))) ?
  ((function() { 
 
 var id; 
 var body; 
-(function (toplevel_dash_expression_dash_show9) { 
-id = (plt.Kernel.second(a_dash_definition));
-body = (plt.Kernel.third(a_dash_definition)); })(plt.Kernel.identity)
+(function (toplevel_dash_expression_dash_show10) { 
+id = (plt.Kernel.second((stx_dash_e(a_dash_definition))));
+body = (plt.Kernel.third((stx_dash_e(a_dash_definition)))); })(plt.Kernel.identity)
 return ((f_dash_regular_dash_definition).apply(null, [[id, body]]));
               })()) :
- (((list_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define-struct"))))&&plt.Kernel._equal_((plt.Kernel.length(a_dash_definition)),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.symbol_question_((plt.Kernel.second(a_dash_definition))))&&((plt.Kernel.empty_question_((plt.Kernel.third(a_dash_definition))))||(plt.Kernel.pair_question_((plt.Kernel.third(a_dash_definition)))))) ?
+ (((stx_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define-struct"))))&&plt.Kernel._equal_((plt.Kernel.length((stx_dash_e(a_dash_definition)))),(plt.types.Rational.makeInstance(3, 1)), [])&&(plt.Kernel.symbol_question_((stx_dash_e((plt.Kernel.second((stx_dash_e(a_dash_definition))))))))&&((plt.Kernel.empty_question_((stx_dash_e((plt.Kernel.third((stx_dash_e(a_dash_definition))))))))||(plt.Kernel.pair_question_((stx_dash_e((plt.Kernel.third((stx_dash_e(a_dash_definition)))))))))) ?
  ((function() { 
 
 var id; 
 var fields; 
-(function (toplevel_dash_expression_dash_show10) { 
-id = (plt.Kernel.second(a_dash_definition));
-fields = (plt.Kernel.third(a_dash_definition)); })(plt.Kernel.identity)
+(function (toplevel_dash_expression_dash_show11) { 
+id = (plt.Kernel.second((stx_dash_e(a_dash_definition))));
+fields = (stx_dash_e((plt.Kernel.third((stx_dash_e(a_dash_definition)))))); })(plt.Kernel.identity)
 return ((f_dash_define_dash_struct).apply(null, [[id, fields]]));
               })()) :
- ((list_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define")))) ?
+ ((stx_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define")))) ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("define")),(plt.types.String.makeInstance("define expects an identifier and a body.  i.e. (define answer 42)")))) :
- ((list_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define-struct")))) ?
+ ((stx_dash_begins_dash_with_question_(a_dash_definition,(plt.types.Symbol.makeInstance("define-struct")))) ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("define-struct")),(plt.types.String.makeInstance("define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))))); }
+function symbol_dash_stx_question_(x) { return ((stx_question_(x))&&(plt.Kernel.symbol_question_((stx_dash_e(x))))); }
 function get_dash_toplevel_dash_env(lang) { return ((function() { 
 
 var top_dash_env_dash_1; 
@@ -3734,10 +3828,10 @@ function r(env, a_dash_name, arity, vararity_question_) { return (env_dash_exten
 function r_star_(env, a_dash_name, arity, java_dash_string) { return (env_dash_extend_dash_function(env,a_dash_name,(plt.types.String.makeInstance("moby/toplevel")),arity,plt.types.Logic.FALSE,java_dash_string)); }
 var top_dash_env_dash_2; 
 var top_dash_env_dash_3; 
-(function (toplevel_dash_expression_dash_show11) { 
+(function (toplevel_dash_expression_dash_show12) { 
 top_dash_env_dash_1 = plt.Kernel.foldl(((function() {
-                        var result = (function(args12) { var id_plus_name = args12[0];
-var env = args12[1];
+                        var result = (function(args13) { var id_plus_name = args13[0];
+var env = args13[1];
                              return (env_dash_extend_dash_constant(env,(plt.Kernel.first(id_plus_name)),(plt.Kernel.second(id_plus_name)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -3748,8 +3842,8 @@ var env = args12[1];
 
 
 top_dash_env_dash_2 = plt.Kernel.foldl(((function() {
-                        var result = (function(args13) { var name_plus_arity = args13[0];
-var env = args13[1];
+                        var result = (function(args14) { var name_plus_arity = args14[0];
+var env = args14[1];
                              return (plt.Kernel._equal_((plt.Kernel.length(name_plus_arity)),(plt.types.Rational.makeInstance(2, 1)), []) ?
  (r(env,(plt.Kernel.first(name_plus_arity)),(plt.Kernel.second(name_plus_arity)),plt.types.Logic.FALSE)) :
  (plt.Kernel._equal_((plt.Kernel.length(name_plus_arity)),(plt.types.Rational.makeInstance(3, 1)), []) ?
@@ -3764,8 +3858,8 @@ var env = args13[1];
                       return result;
                    })()),top_dash_env_dash_1, [(plt.Kernel.list([(plt.Kernel.list([(plt.types.Symbol.makeInstance("<")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("<=")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("=")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance(">")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance(">=")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("=~")),(plt.types.Rational.makeInstance(3, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("number->string")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("even?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("odd?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("positive?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("negative?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("number?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("rational?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("quotient")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("remainder")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("numerator")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("denominator")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("integer?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("real?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("abs")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("acos")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("add1")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("angle")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("asin")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("atan")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("ceiling")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("complex?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("conjugate")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cos")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cosh")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("denominator")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("even?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("exact->inexact")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("exact?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("exp")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("expt")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("floor")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("gcd")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("imag-part")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("inexact->exact")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("inexact?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("integer->char")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("integer-sqrt")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("integer?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("lcm")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("log")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("magnitude")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("make-polar")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("make-rectangular")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("max")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("min")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("modulo")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("negative?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("number->string")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("number?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("numerator")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("odd?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("positive?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("random")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("rational?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("real-part")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("real?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("round")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sgn")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sin")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sinh")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sqr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sqrt")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sub1")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("tan")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("zero?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("+")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("-")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("*")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("/")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("not")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("false?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("boolean?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("boolean=?")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("symbol->string")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("symbol=?")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("symbol?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("append")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("assq")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("caaar")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("caadr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("caar")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cadar")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cadddr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("caddr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cadr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("car")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cddar")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cdddr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cddr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cdr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cdaar")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cdadr")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cdar")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cons?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("cons")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("empty?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("length")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("list")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("list*")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("list-ref")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("member")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("memq")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("memv")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("null?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("pair?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("rest")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("reverse")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("first")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("second")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("third")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("fourth")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("fifth")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sixth")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("seventh")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("eighth")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("make-posn")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("posn-x")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("posn-y")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("posn?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char->integer")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-alphabetic?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-ci<=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-ci<?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-ci=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-ci>=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-ci>?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-downcase")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-lower-case?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-numeric?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-upcase")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-upper-case?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char-whitespace?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char<=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char<?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char>=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char>?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("char?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("format")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("list->string")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("make-string")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("replicate")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string->list")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string->number")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string->symbol")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-alphabetic?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-append")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ci<=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ci<?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ci=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ci>=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ci>?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-copy")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-length")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-lower-case?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-numeric?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ref")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-upper-case?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-whitespace?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string<=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string<?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string>=?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string>?")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("substring")),(plt.types.Rational.makeInstance(3, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string-ith")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("int->string")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("string->int")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("explode")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("implode")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("eof-object?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("=~")),(plt.types.Rational.makeInstance(3, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("eq?")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("equal?")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("equal~?")),(plt.types.Rational.makeInstance(3, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("eqv?")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("error")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("identity")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("struct?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("current-seconds")),(plt.types.Rational.makeInstance(0, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("andmap")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("apply")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("argmax")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("argmin")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("build-list")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("build-string")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("compose")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("filter")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("foldl")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("foldr")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("map")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.Symbol.makeInstance("true"))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("memf")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("ormap")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("procedure?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("quicksort")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("sort")),(plt.types.Rational.makeInstance(2, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("image?")),(plt.types.Rational.makeInstance(1, 1))])),(plt.Kernel.list([(plt.types.Symbol.makeInstance("image=?")),(plt.types.Rational.makeInstance(2, 1))]))]))]);
 top_dash_env_dash_3 = plt.Kernel.foldl(((function() {
-                        var result = (function(args14) { var id_plus_arity_plus_name = args14[0];
-var env = args14[1];
+                        var result = (function(args15) { var id_plus_arity_plus_name = args15[0];
+var env = args15[1];
                              return (r_star_(env,(plt.Kernel.first(id_plus_arity_plus_name)),(plt.Kernel.second(id_plus_arity_plus_name)),(plt.Kernel.third(id_plus_arity_plus_name)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -3780,17 +3874,31 @@ this.source = source;
 this.bindings = bindings; }
                     module_dash_binding.prototype = new plt.Kernel.Struct();
 
-module_dash_binding.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof module_dash_binding) {
-                return ((plt.Kernel.equal_question_((module_dash_binding_dash_bindings(this)),(module_dash_binding_dash_bindings(other))))&&((plt.Kernel.equal_question_((module_dash_binding_dash_source(this)),(module_dash_binding_dash_source(other))))&&((plt.Kernel.equal_question_((module_dash_binding_dash_name(this)),(module_dash_binding_dash_name(other))))&&plt.types.Logic.TRUE)));
-              } else {
-                return false;
-              }
-           } 
 function make_dash_module_dash_binding(id0,id1,id2) { return new module_dash_binding(id0,id1,id2); }
-function module_dash_binding_dash_name(obj) {     if (module_dash_binding_question_ (obj)) {        return obj.name;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('module_dash_binding_dash_name: not a module-binding: ~s', [obj]));     } }
-function module_dash_binding_dash_source(obj) {     if (module_dash_binding_question_ (obj)) {        return obj.source;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('module_dash_binding_dash_source: not a module-binding: ~s', [obj]));     } }
-function module_dash_binding_dash_bindings(obj) {     if (module_dash_binding_question_ (obj)) {        return obj.bindings;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('module_dash_binding_dash_bindings: not a module-binding: ~s', [obj]));     } }
+function module_dash_binding_dash_name(obj) {
+     if (module_dash_binding_question_ (obj)) {
+        return obj.name;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('module_dash_binding_dash_name: not a module-binding: ~s', [obj]));
+     }
+}
+
+function module_dash_binding_dash_source(obj) {
+     if (module_dash_binding_question_ (obj)) {
+        return obj.source;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('module_dash_binding_dash_source: not a module-binding: ~s', [obj]));
+     }
+}
+
+function module_dash_binding_dash_bindings(obj) {
+     if (module_dash_binding_question_ (obj)) {
+        return obj.bindings;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('module_dash_binding_dash_bindings: not a module-binding: ~s', [obj]));
+     }
+}
+
 function module_dash_binding_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof module_dash_binding; }
 var world_dash_effects_dash_module; 
@@ -3798,7 +3906,7 @@ var world_dash_handlers_dash_module;
 function make_dash_world_dash_module(module_dash_path) { return ((function() { 
 
 function bf(name, module_dash_path, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)); }
-(function (toplevel_dash_expression_dash_show17) { 
+(function (toplevel_dash_expression_dash_show18) { 
  })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("world")),module_dash_path,plt.Kernel.append((module_dash_binding_dash_bindings(world_dash_handlers_dash_module)), [(module_dash_binding_dash_bindings(world_dash_effects_dash_module)),plt.Kernel.list([(bf((plt.types.Symbol.makeInstance("big-bang")),module_dash_path,(plt.types.Rational.makeInstance(3, 1)),plt.types.Logic.TRUE,(plt.types.String.makeInstance("plt.world.Kernel.bigBang")))),(bf((plt.types.Symbol.makeInstance("empty-scene")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.emptyScene")))),(bf((plt.types.Symbol.makeInstance("place-image")),module_dash_path,(plt.types.Rational.makeInstance(4, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.placeImage")))),(bf((plt.types.Symbol.makeInstance("circle")),module_dash_path,(plt.types.Rational.makeInstance(3, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.circle")))),(bf((plt.types.Symbol.makeInstance("nw:rectangle")),module_dash_path,(plt.types.Rational.makeInstance(4, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.nwRectangle")))),(bf((plt.types.Symbol.makeInstance("rectangle")),module_dash_path,(plt.types.Rational.makeInstance(4, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.rectangle")))),(bf((plt.types.Symbol.makeInstance("key=?")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.isKeyEqual")))),(bf((plt.types.Symbol.makeInstance("text")),module_dash_path,(plt.types.Rational.makeInstance(3, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.text")))),(bf((plt.types.Symbol.makeInstance("open-image-url")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.openImageUrl")))),(bf((plt.types.Symbol.makeInstance("image-width")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.imageWidth")))),(bf((plt.types.Symbol.makeInstance("image-height")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.imageHeight")))),(bf((plt.types.Symbol.makeInstance("image-rotate")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.imageRotate"))))])])));
               })()); }
@@ -3819,7 +3927,7 @@ function loop(an_dash_env, contents) { return ((plt.Kernel.empty_question_(conte
  (plt.types.Logic.TRUE ?
  (loop((env_dash_extend(an_dash_env,(plt.Kernel.first(contents)))),(plt.Kernel.rest(contents)))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-(function (toplevel_dash_expression_dash_show27) { 
+(function (toplevel_dash_expression_dash_show28) { 
  })(plt.Kernel.identity)
 return (loop(an_dash_env,(module_dash_binding_dash_bindings(a_dash_module_dash_binding))));
               })()); }
@@ -3830,29 +3938,45 @@ this.used_dash_bindings_dash_hash = used_dash_bindings_dash_hash;
 this.gensym_dash_counter = gensym_dash_counter; }
                     pinfo.prototype = new plt.Kernel.Struct();
 
-pinfo.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof pinfo) {
-                return ((plt.Kernel.equal_question_((pinfo_dash_gensym_dash_counter(this)),(pinfo_dash_gensym_dash_counter(other))))&&((plt.Kernel.equal_question_((pinfo_dash_used_dash_bindings_dash_hash(this)),(pinfo_dash_used_dash_bindings_dash_hash(other))))&&((plt.Kernel.equal_question_((pinfo_dash_modules(this)),(pinfo_dash_modules(other))))&&((plt.Kernel.equal_question_((pinfo_dash_env(this)),(pinfo_dash_env(other))))&&plt.types.Logic.TRUE))));
-              } else {
-                return false;
-              }
-           } 
 function make_dash_pinfo(id0,id1,id2,id3) { return new pinfo(id0,id1,id2,id3); }
-function pinfo_dash_env(obj) {     if (pinfo_question_ (obj)) {        return obj.env;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_env: not a pinfo: ~s', [obj]));     } }
-function pinfo_dash_modules(obj) {     if (pinfo_question_ (obj)) {        return obj.modules;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_modules: not a pinfo: ~s', [obj]));     } }
-function pinfo_dash_used_dash_bindings_dash_hash(obj) {     if (pinfo_question_ (obj)) {        return obj.used_dash_bindings_dash_hash;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_used_dash_bindings_dash_hash: not a pinfo: ~s', [obj]));     } }
-function pinfo_dash_gensym_dash_counter(obj) {     if (pinfo_question_ (obj)) {        return obj.gensym_dash_counter;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_gensym_dash_counter: not a pinfo: ~s', [obj]));     } }
+function pinfo_dash_env(obj) {
+     if (pinfo_question_ (obj)) {
+        return obj.env;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_env: not a pinfo: ~s', [obj]));
+     }
+}
+
+function pinfo_dash_modules(obj) {
+     if (pinfo_question_ (obj)) {
+        return obj.modules;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_modules: not a pinfo: ~s', [obj]));
+     }
+}
+
+function pinfo_dash_used_dash_bindings_dash_hash(obj) {
+     if (pinfo_question_ (obj)) {
+        return obj.used_dash_bindings_dash_hash;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_used_dash_bindings_dash_hash: not a pinfo: ~s', [obj]));
+     }
+}
+
+function pinfo_dash_gensym_dash_counter(obj) {
+     if (pinfo_question_ (obj)) {
+        return obj.gensym_dash_counter;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('pinfo_dash_gensym_dash_counter: not a pinfo: ~s', [obj]));
+     }
+}
+
 function pinfo_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof pinfo; }
 var empty_dash_pinfo; 
-function get_dash_base_dash_pinfo(language) { return ((plt.Kernel.symbol_equal__question_(language,(plt.types.Symbol.makeInstance("moby")))) ?
- (make_dash_pinfo((extend_dash_env_slash_module_dash_binding((get_dash_toplevel_dash_env(language)),moby_dash_module_dash_binding)),plt.types.Empty.EMPTY,(plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1)))) :
- ((plt.Kernel.symbol_equal__question_(language,(plt.types.Symbol.makeInstance("base")))) ?
- (make_dash_pinfo((get_dash_toplevel_dash_env(language)),plt.types.Empty.EMPTY,(plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1)))) :
- (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function pinfo_dash_used_dash_bindings(a_dash_pinfo) { return (plt.Kernel._kernelHashMap((pinfo_dash_used_dash_bindings_dash_hash(a_dash_pinfo)),((function() {
-                        var result = (function(args28) { var k = args28[0];
-var v = args28[1];
+                        var result = (function(args29) { var k = args29[0];
+var v = args29[1];
                              return v; });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -3886,12 +4010,12 @@ function member_question_(x, lst) { return ((plt.Kernel.empty_question_(lst)) ?
  (plt.types.Logic.TRUE ?
  (member_question_(x,(plt.Kernel.rest(lst)))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-(function (toplevel_dash_expression_dash_show29) { 
+(function (toplevel_dash_expression_dash_show30) { 
 
  })(plt.Kernel.identity)
 return (unique(plt.Kernel.foldl(((function() {
-                        var result = (function(args30) { var a_dash_binding = args30[0];
-var permissions = args30[1];
+                        var result = (function(args31) { var a_dash_binding = args31[0];
+var permissions = args31[1];
                              return ((binding_colon_function_question_(a_dash_binding)) ?
  plt.Kernel.append((binding_colon_function_dash_permissions(a_dash_binding)), [permissions]) :
  ((binding_colon_constant_question_(a_dash_binding)) ?
@@ -3904,11 +4028,16 @@ var permissions = args30[1];
                       return result;
                    })()),plt.types.Empty.EMPTY, [(pinfo_dash_used_dash_bindings(a_dash_pinfo))])));
               })()); }
+function get_dash_base_dash_pinfo(language) { return ((plt.Kernel.symbol_equal__question_(language,(plt.types.Symbol.makeInstance("moby")))) ?
+ (make_dash_pinfo((extend_dash_env_slash_module_dash_binding((get_dash_toplevel_dash_env(language)),moby_dash_module_dash_binding)),plt.types.Empty.EMPTY,(plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1)))) :
+ ((plt.Kernel.symbol_equal__question_(language,(plt.types.Symbol.makeInstance("base")))) ?
+ (make_dash_pinfo((get_dash_toplevel_dash_env(language)),plt.types.Empty.EMPTY,(plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1)))) :
+ (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function program_dash_analyze(a_dash_program) { return (program_dash_analyze_slash_pinfo(a_dash_program,(get_dash_base_dash_pinfo((plt.types.Symbol.makeInstance("base")))))); }
 function program_dash_analyze_slash_pinfo(a_dash_program, pinfo) { return ((function() { 
 
 var pinfo_dash_1; 
-(function (toplevel_dash_expression_dash_show31) { 
+(function (toplevel_dash_expression_dash_show32) { 
 pinfo_dash_1 = (program_dash_analyze_dash_collect_dash_definitions(a_dash_program,pinfo)); })(plt.Kernel.identity)
 return (program_dash_analyze_dash_uses(a_dash_program,pinfo_dash_1));
               })()); }
@@ -3918,13 +4047,13 @@ function program_dash_analyze_dash_collect_dash_definitions(a_dash_program, pinf
  ((function() { 
 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show32) { 
+(function (toplevel_dash_expression_dash_show33) { 
 updated_dash_pinfo = ((defn_question_((plt.Kernel.first(a_dash_program)))) ?
  (definition_dash_analyze_dash_collect_dash_definitions((plt.Kernel.first(a_dash_program)),pinfo)) :
  ((test_dash_case_question_((plt.Kernel.first(a_dash_program)))) ?
  pinfo :
  ((library_dash_require_question_((plt.Kernel.first(a_dash_program)))) ?
- (require_dash_analyze((plt.Kernel.second((plt.Kernel.first(a_dash_program)))),pinfo)) :
+ (require_dash_analyze((plt.Kernel.second((stx_dash_e((plt.Kernel.first(a_dash_program)))))),pinfo)) :
  ((expression_question_((plt.Kernel.first(a_dash_program)))) ?
  pinfo :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))); })(plt.Kernel.identity)
@@ -3937,7 +4066,7 @@ function program_dash_analyze_dash_uses(a_dash_program, pinfo) { return ((plt.Ke
  ((function() { 
 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show33) { 
+(function (toplevel_dash_expression_dash_show34) { 
 updated_dash_pinfo = ((defn_question_((plt.Kernel.first(a_dash_program)))) ?
  (definition_dash_analyze_dash_uses((plt.Kernel.first(a_dash_program)),pinfo)) :
  ((test_dash_case_question_((plt.Kernel.first(a_dash_program)))) ?
@@ -3952,19 +4081,10 @@ return (program_dash_analyze_dash_uses((plt.Kernel.rest(a_dash_program)),updated
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function bf(name, module_dash_path, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)); }
 function definition_dash_analyze_dash_collect_dash_definitions(a_dash_definition, pinfo) { return (case_dash_analyze_dash_definition(a_dash_definition,((function() {
-                        var result = (function(args34) { var id = args34[0];
-var args = args34[1];
-var body = args34[2];
-                             return (pinfo_dash_accumulate_dash_binding((bf(id,plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))))),pinfo)); });
-                      result.toWrittenString = function () {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })()),((function() {
                         var result = (function(args35) { var id = args35[0];
-var expr = args35[1];
-                             return (pinfo_dash_accumulate_dash_binding((make_dash_binding_colon_constant(id,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),plt.types.Empty.EMPTY)),pinfo)); });
+var args = args35[1];
+var body = args35[2];
+                             return (pinfo_dash_accumulate_dash_binding((bf((stx_dash_e(id)),plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))))))),pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -3972,8 +4092,21 @@ var expr = args35[1];
                       return result;
                    })()),((function() {
                         var result = (function(args36) { var id = args36[0];
-var fields = args36[1];
-                             return (pinfo_dash_update_dash_env(pinfo,(extend_dash_env_slash_struct_dash_defns((pinfo_dash_env(pinfo)),id,fields)))); });
+var expr = args36[1];
+                             return (pinfo_dash_accumulate_dash_binding((make_dash_binding_colon_constant((stx_dash_e(id)),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))))),plt.types.Empty.EMPTY)),pinfo)); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()),((function() {
+                        var result = (function(args37) { var id = args37[0];
+var fields = args37[1];
+                             return (pinfo_dash_update_dash_env(pinfo,(extend_dash_env_slash_struct_dash_defns((pinfo_dash_env(pinfo)),(stx_dash_e(id)),plt.Kernel.map((function() { var result = (function(args) {
+                    return stx_dash_e(args[0]);
+                 }); result.toWrittenString = function() {return '<function:stx-e>'; }
+                     result.toDisplayedString = function() {return '<function:stx-e>';}
+                     return result; })(), [fields]))))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -3988,13 +4121,13 @@ var predicate_dash_id;
 var predicate_dash_binding; 
 var selector_dash_ids; 
 var selector_dash_bindings; 
-(function (toplevel_dash_expression_dash_show37) { 
+(function (toplevel_dash_expression_dash_show38) { 
 constructor_dash_id = (plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.symbol_dash__greaterthan_string(id))])));
 constructor_dash_binding = (bf(constructor_dash_id,plt.types.Logic.FALSE,(plt.Kernel.length(fields)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(constructor_dash_id))))));
 predicate_dash_id = (plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance("?"))])));
 predicate_dash_binding = (bf(predicate_dash_id,plt.types.Logic.FALSE,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(predicate_dash_id))))));
 selector_dash_ids = plt.Kernel.map(((function() {
-                        var result = (function(args38) { var f = args38[0];
+                        var result = (function(args39) { var f = args39[0];
                              return (plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance("-")),(plt.Kernel.symbol_dash__greaterthan_string(f))]))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4003,7 +4136,7 @@ selector_dash_ids = plt.Kernel.map(((function() {
                       return result;
                    })()), [fields]);
 selector_dash_bindings = plt.Kernel.map(((function() {
-                        var result = (function(args39) { var sel_dash_id = args39[0];
+                        var result = (function(args40) { var sel_dash_id = args40[0];
                              return (bf(sel_dash_id,plt.types.Logic.FALSE,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(sel_dash_id)))))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4012,8 +4145,8 @@ selector_dash_bindings = plt.Kernel.map(((function() {
                       return result;
                    })()), [selector_dash_ids]); })(plt.Kernel.identity)
 return plt.Kernel.foldl(((function() {
-                        var result = (function(args40) { var a_dash_binding = args40[0];
-var an_dash_env = args40[1];
+                        var result = (function(args41) { var a_dash_binding = args41[0];
+var an_dash_env = args41[1];
                              return (env_dash_extend(an_dash_env,a_dash_binding)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4023,9 +4156,9 @@ var an_dash_env = args40[1];
                    })()),an_dash_env, [plt.Kernel.list_star_(constructor_dash_binding, [predicate_dash_binding,selector_dash_bindings])]);
               })()); }
 function definition_dash_analyze_dash_uses(a_dash_definition, pinfo) { return (case_dash_analyze_dash_definition(a_dash_definition,((function() {
-                        var result = (function(args41) { var id = args41[0];
-var args = args41[1];
-var body = args41[2];
+                        var result = (function(args42) { var id = args42[0];
+var args = args42[1];
+var body = args42[2];
                              return (function_dash_definition_dash_analyze_dash_uses(id,args,body,pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4033,8 +4166,8 @@ var body = args41[2];
                       result.toDisplayedString = result.toWrittenString;
                       return result;
                    })()),((function() {
-                        var result = (function(args42) { var id = args42[0];
-var expr = args42[1];
+                        var result = (function(args43) { var id = args43[0];
+var expr = args43[1];
                              return (expression_dash_analyze_dash_uses(expr,pinfo,(pinfo_dash_env(pinfo)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4042,8 +4175,8 @@ var expr = args42[1];
                       result.toDisplayedString = result.toWrittenString;
                       return result;
                    })()),((function() {
-                        var result = (function(args43) { var id = args43[0];
-var fields = args43[1];
+                        var result = (function(args44) { var id = args44[0];
+var fields = args44[1];
                              return pinfo; });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4055,21 +4188,21 @@ function function_dash_definition_dash_analyze_dash_uses(fun, args, body, pinfo)
 
 var env_dash_1; 
 var env_dash_2; 
-(function (toplevel_dash_expression_dash_show44) { 
+(function (toplevel_dash_expression_dash_show45) { 
 env_dash_1 = (pinfo_dash_env(pinfo));
-env_dash_2 = (env_dash_extend(env_dash_1,(bf(fun,plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(fun)))))))); })(plt.Kernel.identity)
+env_dash_2 = (env_dash_extend(env_dash_1,(bf((stx_dash_e(fun)),plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(fun)))))))))); })(plt.Kernel.identity)
 return (lambda_dash_expression_dash_analyze_dash_uses(args,body,(pinfo_dash_update_dash_env(pinfo,env_dash_2))));
               })()); }
 function lambda_dash_expression_dash_analyze_dash_uses(args, body, pinfo) { return ((function() { 
 
 var env_dash_1; 
 var env_dash_2; 
-(function (toplevel_dash_expression_dash_show45) { 
+(function (toplevel_dash_expression_dash_show46) { 
 env_dash_1 = (pinfo_dash_env(pinfo));
 env_dash_2 = plt.Kernel.foldl(((function() {
-                        var result = (function(args46) { var arg_dash_id = args46[0];
-var env = args46[1];
-                             return (env_dash_extend(env,(make_dash_binding_colon_constant(arg_dash_id,(plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)),plt.types.Empty.EMPTY)))); });
+                        var result = (function(args47) { var arg_dash_id = args47[0];
+var env = args47[1];
+                             return (env_dash_extend(env,(make_dash_binding_colon_constant((stx_dash_e(arg_dash_id)),(plt.Kernel.symbol_dash__greaterthan_string((stx_dash_e(arg_dash_id)))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -4078,21 +4211,21 @@ var env = args46[1];
                    })()),env_dash_1, [args]); })(plt.Kernel.identity)
 return (expression_dash_analyze_dash_uses(body,pinfo,env_dash_2));
               })()); }
-function expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("local")))) ?
+function expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("local")))) ?
  (local_dash_expression_dash_analyze_dash_uses(an_dash_expression,pinfo,env)) :
- ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("cond")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("cond")))) ?
  (expression_dash_analyze_dash_uses((desugar_dash_cond(an_dash_expression)),pinfo,env)) :
- ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("if")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("if")))) ?
  (if_dash_expression_dash_analyze_dash_uses(an_dash_expression,pinfo,env)) :
- ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("and")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("and")))) ?
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show47) { 
-exprs = (plt.Kernel.rest(an_dash_expression)); })(plt.Kernel.identity)
+(function (toplevel_dash_expression_dash_show48) { 
+exprs = (plt.Kernel.rest((stx_dash_e(an_dash_expression)))); })(plt.Kernel.identity)
 return plt.Kernel.foldl(((function() {
-                        var result = (function(args48) { var e = args48[0];
-var p = args48[1];
+                        var result = (function(args49) { var e = args49[0];
+var p = args49[1];
                              return (expression_dash_analyze_dash_uses(e,p,env)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4101,15 +4234,15 @@ var p = args48[1];
                       return result;
                    })()),pinfo, [exprs]);
               })()) :
- ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("or")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("or")))) ?
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show49) { 
-exprs = (plt.Kernel.rest(an_dash_expression)); })(plt.Kernel.identity)
+(function (toplevel_dash_expression_dash_show50) { 
+exprs = (plt.Kernel.rest((stx_dash_e(an_dash_expression)))); })(plt.Kernel.identity)
 return plt.Kernel.foldl(((function() {
-                        var result = (function(args50) { var e = args50[0];
-var p = args50[1];
+                        var result = (function(args51) { var e = args51[0];
+var p = args51[1];
                              return (expression_dash_analyze_dash_uses(e,p,env)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4118,33 +4251,33 @@ var p = args50[1];
                       return result;
                    })()),pinfo, [exprs]);
               })()) :
- ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("lambda")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("lambda")))) ?
  ((function() { 
 
 var args; 
 var body; 
-(function (toplevel_dash_expression_dash_show51) { 
-args = (plt.Kernel.second(an_dash_expression));
-body = (plt.Kernel.third(an_dash_expression)); })(plt.Kernel.identity)
+(function (toplevel_dash_expression_dash_show52) { 
+args = (stx_dash_e((plt.Kernel.second((stx_dash_e(an_dash_expression))))));
+body = (plt.Kernel.third((stx_dash_e(an_dash_expression)))); })(plt.Kernel.identity)
 return (lambda_dash_expression_dash_analyze_dash_uses(args,body,pinfo));
               })()) :
- ((plt.Kernel.number_question_(an_dash_expression)) ?
+ ((plt.Kernel.number_question_((stx_dash_e(an_dash_expression)))) ?
  pinfo :
- ((plt.Kernel.string_question_(an_dash_expression)) ?
+ ((plt.Kernel.string_question_((stx_dash_e(an_dash_expression)))) ?
  pinfo :
- ((plt.Kernel.boolean_question_(an_dash_expression)) ?
+ ((plt.Kernel.boolean_question_((stx_dash_e(an_dash_expression)))) ?
  pinfo :
- ((plt.Kernel.char_question_(an_dash_expression)) ?
+ ((plt.Kernel.char_question_((stx_dash_e(an_dash_expression)))) ?
  pinfo :
- ((plt.Kernel.symbol_question_(an_dash_expression)) ?
- ((env_dash_contains_question_(env,an_dash_expression)) ?
- (pinfo_dash_accumulate_dash_binding_dash_use((env_dash_lookup(env,an_dash_expression)),pinfo)) :
+ ((plt.Kernel.symbol_question_((stx_dash_e(an_dash_expression)))) ?
+ ((env_dash_contains_question_(env,(stx_dash_e(an_dash_expression)))) ?
+ (pinfo_dash_accumulate_dash_binding_dash_use((env_dash_lookup(env,(stx_dash_e(an_dash_expression)))),pinfo)) :
  (plt.types.Logic.TRUE ?
  pinfo :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))) :
- ((list_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("quote")))) ?
+ ((stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("quote")))) ?
  pinfo :
- ((plt.Kernel.pair_question_(an_dash_expression)) ?
+ ((plt.Kernel.pair_question_((stx_dash_e(an_dash_expression)))) ?
  (application_dash_expression_dash_analyze_dash_uses(an_dash_expression,pinfo,env)) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))))))); }
 function local_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((function() { 
@@ -4152,12 +4285,12 @@ function local_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo,
 var defns; 
 var body; 
 var nested_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show52) { 
-defns = (plt.Kernel.second(an_dash_expression));
-body = (plt.Kernel.third(an_dash_expression));
+(function (toplevel_dash_expression_dash_show53) { 
+defns = (stx_dash_e((plt.Kernel.second((stx_dash_e(an_dash_expression))))));
+body = (plt.Kernel.third((stx_dash_e(an_dash_expression))));
 nested_dash_pinfo = plt.Kernel.foldl(((function() {
-                        var result = (function(args53) { var a_dash_defn = args53[0];
-var a_dash_pinfo = args53[1];
+                        var result = (function(args54) { var a_dash_defn = args54[0];
+var a_dash_pinfo = args54[1];
                              return (definition_dash_analyze_dash_uses(a_dash_defn,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4172,13 +4305,13 @@ function if_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, en
 var test; 
 var consequent; 
 var alternative; 
-(function (toplevel_dash_expression_dash_show54) { 
-test = (plt.Kernel.second(an_dash_expression));
-consequent = (plt.Kernel.third(an_dash_expression));
-alternative = (plt.Kernel.fourth(an_dash_expression)); })(plt.Kernel.identity)
+(function (toplevel_dash_expression_dash_show55) { 
+test = (plt.Kernel.second((stx_dash_e(an_dash_expression))));
+consequent = (plt.Kernel.third((stx_dash_e(an_dash_expression))));
+alternative = (plt.Kernel.fourth((stx_dash_e(an_dash_expression)))); })(plt.Kernel.identity)
 return plt.Kernel.foldl(((function() {
-                        var result = (function(args55) { var e = args55[0];
-var p = args55[1];
+                        var result = (function(args56) { var e = args56[0];
+var p = args56[1];
                              return (expression_dash_analyze_dash_uses(e,p,env)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4190,29 +4323,29 @@ var p = args55[1];
 function application_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((function() { 
 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show56) { 
+(function (toplevel_dash_expression_dash_show57) { 
 updated_dash_pinfo = plt.Kernel.foldl(((function() {
-                        var result = (function(args57) { var e = args57[0];
-var p = args57[1];
+                        var result = (function(args58) { var e = args58[0];
+var p = args58[1];
                              return (expression_dash_analyze_dash_uses(e,p,env)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()),pinfo, [an_dash_expression]); })(plt.Kernel.identity)
+                   })()),pinfo, [(stx_dash_e(an_dash_expression))]); })(plt.Kernel.identity)
 return updated_dash_pinfo;
               })()); }
 function require_dash_analyze(require_dash_path, pinfo) { return ((function() { 
 
 function loop(modules) { return ((plt.Kernel.empty_question_(modules)) ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("require-analyze")),plt.Kernel.format((plt.types.String.makeInstance("Moby doesn't know about module ~s yet")), [require_dash_path]))) :
- (plt.Kernel.string_equal__question_(require_dash_path,(module_dash_binding_dash_source((plt.Kernel.first(modules)))), []) ?
+ (plt.Kernel.string_equal__question_((stx_dash_e(require_dash_path)),(module_dash_binding_dash_source((plt.Kernel.first(modules)))), []) ?
  (pinfo_dash_accumulate_dash_module((plt.Kernel.first(modules)),(pinfo_dash_accumulate_dash_bindings((module_dash_binding_dash_bindings((plt.Kernel.first(modules)))),pinfo)))) :
  (plt.types.Logic.TRUE ?
  (loop((plt.Kernel.rest(modules)))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-(function (toplevel_dash_expression_dash_show58) { 
+(function (toplevel_dash_expression_dash_show59) { 
  })(plt.Kernel.identity)
 return (loop(known_dash_modules));
               })()); }
@@ -4221,17 +4354,31 @@ this.toplevel_dash_exprs = toplevel_dash_exprs;
 this.pinfo = pinfo; }
                     compiled_dash_program.prototype = new plt.Kernel.Struct();
 
-compiled_dash_program.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof compiled_dash_program) {
-                return ((plt.Kernel.equal_question_((compiled_dash_program_dash_pinfo(this)),(compiled_dash_program_dash_pinfo(other))))&&((plt.Kernel.equal_question_((compiled_dash_program_dash_toplevel_dash_exprs(this)),(compiled_dash_program_dash_toplevel_dash_exprs(other))))&&((plt.Kernel.equal_question_((compiled_dash_program_dash_defns(this)),(compiled_dash_program_dash_defns(other))))&&plt.types.Logic.TRUE)));
-              } else {
-                return false;
-              }
-           } 
 function make_dash_compiled_dash_program(id0,id1,id2) { return new compiled_dash_program(id0,id1,id2); }
-function compiled_dash_program_dash_defns(obj) {     if (compiled_dash_program_question_ (obj)) {        return obj.defns;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('compiled_dash_program_dash_defns: not a compiled-program: ~s', [obj]));     } }
-function compiled_dash_program_dash_toplevel_dash_exprs(obj) {     if (compiled_dash_program_question_ (obj)) {        return obj.toplevel_dash_exprs;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('compiled_dash_program_dash_toplevel_dash_exprs: not a compiled-program: ~s', [obj]));     } }
-function compiled_dash_program_dash_pinfo(obj) {     if (compiled_dash_program_question_ (obj)) {        return obj.pinfo;     } else {         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('compiled_dash_program_dash_pinfo: not a compiled-program: ~s', [obj]));     } }
+function compiled_dash_program_dash_defns(obj) {
+     if (compiled_dash_program_question_ (obj)) {
+        return obj.defns;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('compiled_dash_program_dash_defns: not a compiled-program: ~s', [obj]));
+     }
+}
+
+function compiled_dash_program_dash_toplevel_dash_exprs(obj) {
+     if (compiled_dash_program_question_ (obj)) {
+        return obj.toplevel_dash_exprs;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('compiled_dash_program_dash_toplevel_dash_exprs: not a compiled-program: ~s', [obj]));
+     }
+}
+
+function compiled_dash_program_dash_pinfo(obj) {
+     if (compiled_dash_program_question_ (obj)) {
+        return obj.pinfo;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('compiled_dash_program_dash_pinfo: not a compiled-program: ~s', [obj]));
+     }
+}
+
 function compiled_dash_program_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof compiled_dash_program; }
 function compiled_dash_program_dash_main(a_dash_compiled_dash_program) { return plt.Kernel.string_dash_append([(compiled_dash_program_dash_defns(a_dash_compiled_dash_program)),(plt.types.String.makeInstance("\n")),(plt.types.String.makeInstance("(function() { \n")),(plt.types.String.makeInstance("(")),(compiled_dash_program_dash_toplevel_dash_exprs(a_dash_compiled_dash_program)),(plt.types.String.makeInstance(")")),(plt.types.String.makeInstance("(plt.Kernel.identity)")),(plt.types.String.makeInstance("\n})();"))]); }
@@ -4249,7 +4396,7 @@ function loop(program, defns, tops, a_dash_pinfo) { return ((plt.Kernel.empty_qu
  ((function() { 
 
 var defn_dash_string_plus_expr_dash_string_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show60) { 
+(function (toplevel_dash_expression_dash_show61) { 
 defn_dash_string_plus_expr_dash_string_plus_pinfo = (definition_dash__greaterthan_javascript_dash_strings((plt.Kernel.first(program)),toplevel_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (loop((plt.Kernel.rest(program)),plt.Kernel.string_dash_append([defns,(plt.types.String.makeInstance("\n")),(plt.Kernel.first(defn_dash_string_plus_expr_dash_string_plus_pinfo))]),plt.Kernel.string_dash_append([tops,(plt.types.String.makeInstance("\n")),(plt.Kernel.second(defn_dash_string_plus_expr_dash_string_plus_pinfo))]),(plt.Kernel.third(defn_dash_string_plus_expr_dash_string_plus_pinfo))));
               })()) :
@@ -4261,13 +4408,13 @@ return (loop((plt.Kernel.rest(program)),plt.Kernel.string_dash_append([defns,(pl
  ((function() { 
 
 var expression_dash_string_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show61) { 
+(function (toplevel_dash_expression_dash_show62) { 
 expression_dash_string_plus_pinfo = (expression_dash__greaterthan_javascript_dash_string((plt.Kernel.first(program)),toplevel_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (loop((plt.Kernel.rest(program)),defns,plt.Kernel.string_dash_append([tops,(plt.types.String.makeInstance("\n")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(toplevel_dash_expression_dash_show)))),(plt.types.String.makeInstance("(")),(plt.Kernel.first(expression_dash_string_plus_pinfo)),(plt.types.String.makeInstance(");"))]),(plt.Kernel.second(expression_dash_string_plus_pinfo))));
               })()) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-(function (toplevel_dash_expression_dash_show59) { 
+(function (toplevel_dash_expression_dash_show60) { 
 pinfo_dash_1_plus_gensym = (pinfo_dash_gensym(input_dash_pinfo,(plt.types.Symbol.makeInstance("toplevel-expression-show"))));
 toplevel_dash_expression_dash_show = (plt.Kernel.second(pinfo_dash_1_plus_gensym));
 a_dash_pinfo = (program_dash_analyze_slash_pinfo(program,(plt.Kernel.first(pinfo_dash_1_plus_gensym))));
@@ -4276,9 +4423,9 @@ toplevel_dash_env = (pinfo_dash_env(a_dash_pinfo));
 return (loop(program,(plt.types.String.makeInstance("")),(plt.types.String.makeInstance("")),a_dash_pinfo));
               })()); }
 function definition_dash__greaterthan_javascript_dash_strings(defn, env, a_dash_pinfo) { return (case_dash_analyze_dash_definition(defn,((function() {
-                        var result = (function(args62) { var fun = args62[0];
-var args = args62[1];
-var body = args62[2];
+                        var result = (function(args63) { var fun = args63[0];
+var args = args63[1];
+var body = args63[2];
                              return (function_dash_definition_dash__greaterthan_java_dash_string(fun,args,body,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4286,8 +4433,8 @@ var body = args62[2];
                       result.toDisplayedString = result.toWrittenString;
                       return result;
                    })()),((function() {
-                        var result = (function(args63) { var id = args63[0];
-var body = args63[1];
+                        var result = (function(args64) { var id = args64[0];
+var body = args64[1];
                              return (variable_dash_definition_dash__greaterthan_javascript_dash_strings(id,body,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4295,8 +4442,8 @@ var body = args63[1];
                       result.toDisplayedString = result.toWrittenString;
                       return result;
                    })()),((function() {
-                        var result = (function(args64) { var id = args64[0];
-var fields = args64[1];
+                        var result = (function(args65) { var id = args65[0];
+var fields = args65[1];
                              return (struct_dash_definition_dash__greaterthan_javascript_dash_string(id,fields,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4313,18 +4460,22 @@ var env_dash_with_dash_arg_dash_bindings;
 var body_dash_string_plus_pinfo; 
 var body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show65) { 
-munged_dash_fun_dash_id = (identifier_dash__greaterthan_munged_dash_java_dash_identifier(fun));
-munged_dash_arg_dash_ids = plt.Kernel.map((function() { var result = (function(args) {
-                    return identifier_dash__greaterthan_munged_dash_java_dash_identifier(args[0]);
-                 }); result.toWrittenString = function() {return '<function:identifier->munged-java-identifier>'; }
-                     result.toDisplayedString = function() {return '<function:identifier->munged-java-identifier>';}
-                     return result; })(), [args]);
-new_dash_env = (env_dash_extend_dash_function(env,fun,plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id))));
+(function (toplevel_dash_expression_dash_show66) { 
+munged_dash_fun_dash_id = (identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(fun))));
+munged_dash_arg_dash_ids = plt.Kernel.map(((function() {
+                        var result = (function(args67) { var id = args67[0];
+                             return (identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()), [args]);
+new_dash_env = (env_dash_extend_dash_function(env,(stx_dash_e(fun)),plt.types.Logic.FALSE,(plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id))));
 env_dash_with_dash_arg_dash_bindings = plt.Kernel.foldl(((function() {
-                        var result = (function(args66) { var arg_dash_id = args66[0];
-var env = args66[1];
-                             return (env_dash_extend(env,(make_dash_binding_colon_constant(arg_dash_id,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(arg_dash_id)))),plt.types.Empty.EMPTY)))); });
+                        var result = (function(args68) { var arg_dash_id = args68[0];
+var env = args68[1];
+                             return (env_dash_extend(env,(make_dash_binding_colon_constant((stx_dash_e(arg_dash_id)),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(arg_dash_id)))))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -4335,7 +4486,7 @@ body_dash_string_plus_pinfo = (expression_dash__greaterthan_javascript_dash_stri
 body_dash_string = (plt.Kernel.first(body_dash_string_plus_pinfo));
 updated_dash_pinfo = (plt.Kernel.second(body_dash_string_plus_pinfo)); })(plt.Kernel.identity)
 return plt.Kernel.list([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id)),(plt.types.String.makeInstance("(")),(string_dash_join(plt.Kernel.map(((function() {
-                        var result = (function(args67) { var arg_dash_id = args67[0];
+                        var result = (function(args69) { var arg_dash_id = args69[0];
                              return (plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4349,59 +4500,34 @@ function variable_dash_definition_dash__greaterthan_javascript_dash_strings(id, 
 var munged_dash_id; 
 var new_dash_env; 
 var str_plus_p; 
-(function (toplevel_dash_expression_dash_show68) { 
-munged_dash_id = (identifier_dash__greaterthan_munged_dash_java_dash_identifier(id));
-new_dash_env = (env_dash_extend(env,(make_dash_binding_colon_constant(id,(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_id)),plt.types.Empty.EMPTY))));
+(function (toplevel_dash_expression_dash_show70) { 
+munged_dash_id = (identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id))));
+new_dash_env = (env_dash_extend(env,(make_dash_binding_colon_constant((stx_dash_e(id)),(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_id)),plt.types.Empty.EMPTY))));
 str_plus_p = (expression_dash__greaterthan_javascript_dash_string(body,new_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return plt.Kernel.list([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_id)),(plt.types.String.makeInstance("; "))]),plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(munged_dash_id)),(plt.types.String.makeInstance(" = ")),(plt.Kernel.first(str_plus_p)),(plt.types.String.makeInstance(";"))]),(plt.Kernel.second(str_plus_p))]);
               })()); }
 function struct_dash_definition_dash__greaterthan_javascript_dash_string(id, fields, env, a_dash_pinfo) { return ((function() { 
 
 function field_dash__greaterthan_accessor_dash_name(struct_dash_name, field_dash_name) { return (plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(struct_dash_name)),(plt.types.String.makeInstance("-")),(plt.Kernel.symbol_dash__greaterthan_string(field_dash_name))]))); }
-var new_dash_env_dash_1; 
-var new_dash_env_dash_2; 
-var equality_dash_expression; 
-var equality_dash_expression_dash_string_plus_pinfo; 
-var equality_dash_expression_dash_string; 
 var updated_dash_pinfo; 
 var predicate_dash_name; 
-function make_dash_accessor_dash_name(a_dash_field) { return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance("-")),(plt.Kernel.symbol_dash__greaterthan_string(a_dash_field))]))))))); }
-(function (toplevel_dash_expression_dash_show69) { 
-
-new_dash_env_dash_1 = (env_dash_extend(env,(make_dash_binding_colon_constant((plt.types.Symbol.makeInstance("this")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.types.Symbol.makeInstance("this")))))),plt.types.Empty.EMPTY))));
-new_dash_env_dash_2 = (env_dash_extend(new_dash_env_dash_1,(make_dash_binding_colon_constant((plt.types.Symbol.makeInstance("other")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.types.Symbol.makeInstance("other")))))),plt.types.Empty.EMPTY))));
-equality_dash_expression = plt.Kernel.foldl(((function() {
-                        var result = (function(args70) { var a_dash_field = args70[0];
-var acc = args70[1];
-                             return ((function() { 
-
-var acc_dash_id; 
+function make_dash_accessor_dash_name(a_dash_field) { return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string((stx_dash_e(id)))),(plt.types.String.makeInstance("-")),(plt.Kernel.symbol_dash__greaterthan_string(a_dash_field))]))))))); }
 (function (toplevel_dash_expression_dash_show71) { 
-acc_dash_id = (field_dash__greaterthan_accessor_dash_name(id,a_dash_field)); })(plt.Kernel.identity)
-return plt.Kernel.list([(plt.types.Symbol.makeInstance("and")),plt.Kernel.list([(plt.types.Symbol.makeInstance("equal?")),plt.Kernel.list([acc_dash_id,(plt.types.Symbol.makeInstance("this"))]),plt.Kernel.list([acc_dash_id,(plt.types.Symbol.makeInstance("other"))])]),acc]);
-              })()); });
-                      result.toWrittenString = function () {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })()),(plt.types.Symbol.makeInstance("true")), [fields]);
-equality_dash_expression_dash_string_plus_pinfo = (expression_dash__greaterthan_javascript_dash_string(equality_dash_expression,new_dash_env_dash_2,a_dash_pinfo));
-equality_dash_expression_dash_string = (plt.Kernel.first(equality_dash_expression_dash_string_plus_pinfo));
-updated_dash_pinfo = (plt.Kernel.second(equality_dash_expression_dash_string_plus_pinfo));
-predicate_dash_name = (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance("?"))])))))));
+
+updated_dash_pinfo = a_dash_pinfo;
+predicate_dash_name = (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string((stx_dash_e(id)))),(plt.types.String.makeInstance("?"))])))))));
  })(plt.Kernel.identity)
-return plt.Kernel.list([plt.Kernel.string_dash_append([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance("(")),(string_dash_join(plt.Kernel.map(((function() {
+return plt.Kernel.list([plt.Kernel.string_dash_append([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))))),(plt.types.String.makeInstance("(")),(string_dash_join(plt.Kernel.map(((function() {
                         var result = (function(args72) { var i = args72[0];
-                             return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(i)))); });
+                             return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(i)))))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [fields]),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { ")),plt.Kernel.format((plt.types.String.makeInstance("plt.Kernel.Struct.call(this, ~s, [~a]);")), [plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id))))]),(string_dash_join(plt.Kernel.map(((function() {
+                   })()), [fields]),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { ")),plt.Kernel.format((plt.types.String.makeInstance("plt.Kernel.Struct.call(this, ~s, [~a]);")), [plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id))))))]),(string_dash_join(plt.Kernel.map(((function() {
                         var result = (function(args73) { var i = args73[0];
-                             return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(i)))); });
+                             return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(i)))))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -4409,17 +4535,17 @@ return plt.Kernel.list([plt.Kernel.string_dash_append([plt.Kernel.string_dash_ap
                       return result;
                    })()), [fields]),(plt.types.String.makeInstance(","))))]),(string_dash_join(plt.Kernel.map(((function() {
                         var result = (function(args74) { var i = args74[0];
-                             return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("this.")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(i)))),(plt.types.String.makeInstance(" = ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(i)))),(plt.types.String.makeInstance(";"))]); });
+                             return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("this.")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(i)))))),(plt.types.String.makeInstance(" = ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(i)))))),(plt.types.String.makeInstance(";"))]); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [fields]),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance(" }\n                    ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype = new plt.Kernel.Struct();\n"))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(".prototype.isEqual = function(other) {\n              if (other != null && other != undefined && other instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance(") {\n                return ")),equality_dash_expression_dash_string,(plt.types.String.makeInstance(";\n              } else {\n                return false;\n              }\n           } "))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),((function() { 
+                   })()), [fields]),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance(" }\n                    ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))))),(plt.types.String.makeInstance(".prototype = new plt.Kernel.Struct();\n"))]),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),((function() { 
 
 var make_dash_id; 
 (function (toplevel_dash_expression_dash_show75) { 
-make_dash_id = (plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.symbol_dash__greaterthan_string(id))]))); })(plt.Kernel.identity)
+make_dash_id = (plt.Kernel.string_dash__greaterthan_symbol(plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.symbol_dash__greaterthan_string((stx_dash_e(id))))]))); })(plt.Kernel.identity)
 return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(make_dash_id))));
               })()),(plt.types.String.makeInstance("(")),(string_dash_join((plt.Kernel.build_dash_list((plt.Kernel.length(fields)),((function() {
                         var result = (function(args76) { var i = args76[0];
@@ -4429,7 +4555,7 @@ return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { return new ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance("(")),(string_dash_join((plt.Kernel.build_dash_list((plt.Kernel.length(fields)),((function() {
+                   })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { return new ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))))),(plt.types.String.makeInstance("(")),(string_dash_join((plt.Kernel.build_dash_list((plt.Kernel.length(fields)),((function() {
                         var result = (function(args77) { var i = args77[0];
                              return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("id")),(plt.Kernel.number_dash__greaterthan_string(i))]); });
                       result.toWrittenString = function () {
@@ -4439,86 +4565,86 @@ return (plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan
                       return result;
                    })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("); }"))]),(plt.types.String.makeInstance("\n")),(string_dash_join(plt.Kernel.map(((function() {
                         var result = (function(args78) { var a_dash_field = args78[0];
-                             return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(make_dash_accessor_dash_name(a_dash_field)),(plt.types.String.makeInstance("(obj) {")),(plt.types.String.makeInstance("     if (")),predicate_dash_name,(plt.types.String.makeInstance(" (obj)) {")),(plt.types.String.makeInstance("        return obj.")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(a_dash_field)))),(plt.types.String.makeInstance(";")),(plt.types.String.makeInstance("     } else { ")),(plt.types.String.makeInstance("        throw new plt.Kernel.MobyRuntimeError(")),(plt.types.String.makeInstance("            plt.Kernel.format('")),(make_dash_accessor_dash_name(a_dash_field)),(plt.types.String.makeInstance(": not a ")),(plt.Kernel.symbol_dash__greaterthan_string(id)),(plt.types.String.makeInstance(": ~s', [obj]));")),(plt.types.String.makeInstance("     } ")),(plt.types.String.makeInstance("}"))]); });
+                             return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(make_dash_accessor_dash_name((stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance("(obj) {\n")),(plt.types.String.makeInstance("     if (")),predicate_dash_name,(plt.types.String.makeInstance(" (obj)) {\n")),(plt.types.String.makeInstance("        return obj.")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(a_dash_field)))))),(plt.types.String.makeInstance(";\n")),(plt.types.String.makeInstance("     } else {\n")),(plt.types.String.makeInstance("        throw new plt.Kernel.MobyRuntimeError(")),(plt.types.String.makeInstance("            plt.Kernel.format('")),(make_dash_accessor_dash_name((stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance(": not a ")),(plt.Kernel.symbol_dash__greaterthan_string((stx_dash_e(id)))),(plt.types.String.makeInstance(": ~s', [obj]));\n")),(plt.types.String.makeInstance("     }\n")),(plt.types.String.makeInstance("}\n"))]); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [fields]),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),predicate_dash_name,(plt.types.String.makeInstance("(obj) { \n              return obj != null && obj != undefined && obj instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(id)))),(plt.types.String.makeInstance("; }"))])]),(plt.types.String.makeInstance("")),updated_dash_pinfo]);
+                   })()), [fields]),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance("\n")),plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),predicate_dash_name,(plt.types.String.makeInstance("(obj) { \n              return obj != null && obj != undefined && obj instanceof ")),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))))),(plt.types.String.makeInstance("; }"))])]),(plt.types.String.makeInstance("")),updated_dash_pinfo]);
               })()); }
-function expression_dash__greaterthan_javascript_dash_string(expr, env, a_dash_pinfo) { return ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("local")))) ?
+function expression_dash__greaterthan_javascript_dash_string(expr, env, a_dash_pinfo) { return ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("local")))) ?
  ((function() { 
 
 var defns; 
 var body; 
 (function (toplevel_dash_expression_dash_show79) { 
-defns = (plt.Kernel.second(expr));
-body = (plt.Kernel.third(expr)); })(plt.Kernel.identity)
+defns = (stx_dash_e((plt.Kernel.second((stx_dash_e(expr))))));
+body = (plt.Kernel.third((stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (local_dash_expression_dash__greaterthan_javascript_dash_string(defns,body,env,a_dash_pinfo));
               })()) :
- ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("cond")))) ?
+ ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("cond")))) ?
  (expression_dash__greaterthan_javascript_dash_string((desugar_dash_cond(expr)),env,a_dash_pinfo)) :
- ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("if")))) ?
+ ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("if")))) ?
  ((function() { 
 
 var test; 
 var consequent; 
 var alternative; 
 (function (toplevel_dash_expression_dash_show80) { 
-test = (plt.Kernel.second(expr));
-consequent = (plt.Kernel.third(expr));
-alternative = (plt.Kernel.fourth(expr)); })(plt.Kernel.identity)
+test = (plt.Kernel.second((stx_dash_e(expr))));
+consequent = (plt.Kernel.third((stx_dash_e(expr))));
+alternative = (plt.Kernel.fourth((stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (if_dash_expression_dash__greaterthan_javascript_dash_string(test,consequent,alternative,env,a_dash_pinfo));
               })()) :
- ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("and")))) ?
+ ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("and")))) ?
  ((function() { 
 
 var exprs; 
 (function (toplevel_dash_expression_dash_show81) { 
-exprs = (plt.Kernel.rest(expr)); })(plt.Kernel.identity)
+exprs = (plt.Kernel.rest((stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (boolean_dash_chain_dash__greaterthan_javascript_dash_string((plt.types.String.makeInstance("&&")),exprs,env,a_dash_pinfo));
               })()) :
- ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("or")))) ?
+ ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("or")))) ?
  ((function() { 
 
 var exprs; 
 (function (toplevel_dash_expression_dash_show82) { 
-exprs = (plt.Kernel.rest(expr)); })(plt.Kernel.identity)
+exprs = (plt.Kernel.rest((stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (boolean_dash_chain_dash__greaterthan_javascript_dash_string((plt.types.String.makeInstance("||")),exprs,env,a_dash_pinfo));
               })()) :
- ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("lambda")))) ?
+ ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("lambda")))) ?
  ((function() { 
 
 var args; 
 var body; 
 (function (toplevel_dash_expression_dash_show83) { 
-args = (plt.Kernel.second(expr));
-body = (plt.Kernel.third(expr)); })(plt.Kernel.identity)
+args = (stx_dash_e((plt.Kernel.second((stx_dash_e(expr))))));
+body = (plt.Kernel.third((stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (lambda_dash_expression_dash__greaterthan_javascript_dash_string(args,body,env,a_dash_pinfo));
               })()) :
- ((plt.Kernel.number_question_(expr)) ?
- plt.Kernel.list([(number_dash__greaterthan_javascript_dash_string(expr)),a_dash_pinfo]) :
- ((plt.Kernel.string_question_(expr)) ?
- plt.Kernel.list([(string_dash__greaterthan_javascript_dash_string(expr)),a_dash_pinfo]) :
- ((plt.Kernel.boolean_question_(expr)) ?
- (expression_dash__greaterthan_javascript_dash_string((expr ?
- (plt.types.Symbol.makeInstance("true")) :
- (plt.types.Symbol.makeInstance("false"))),env,a_dash_pinfo)) :
- ((plt.Kernel.char_question_(expr)) ?
- plt.Kernel.list([(char_dash__greaterthan_javascript_dash_string(expr)),a_dash_pinfo]) :
- ((plt.Kernel.symbol_question_(expr)) ?
+ ((plt.Kernel.number_question_((stx_dash_e(expr)))) ?
+ plt.Kernel.list([(number_dash__greaterthan_javascript_dash_string((stx_dash_e(expr)))),a_dash_pinfo]) :
+ ((plt.Kernel.string_question_((stx_dash_e(expr)))) ?
+ plt.Kernel.list([(string_dash__greaterthan_javascript_dash_string((stx_dash_e(expr)))),a_dash_pinfo]) :
+ ((plt.Kernel.boolean_question_((stx_dash_e(expr)))) ?
+ (expression_dash__greaterthan_javascript_dash_string(((stx_dash_e(expr)) ?
+ (make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("true")),(stx_dash_loc(expr)))) :
+ (make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("false")),(stx_dash_loc(expr))))),env,a_dash_pinfo)) :
+ ((plt.Kernel.char_question_((stx_dash_e(expr)))) ?
+ plt.Kernel.list([(char_dash__greaterthan_javascript_dash_string((stx_dash_e(expr)))),a_dash_pinfo]) :
+ ((plt.Kernel.symbol_question_((stx_dash_e(expr)))) ?
  plt.Kernel.list([(identifier_dash_expression_dash__greaterthan_javascript_dash_string(expr,env)),a_dash_pinfo]) :
- ((list_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("quote")))) ?
- plt.Kernel.list([(quote_dash_expression_dash__greaterthan_javascript_dash_string((plt.Kernel.second(expr)))),a_dash_pinfo]) :
- ((plt.Kernel.pair_question_(expr)) ?
+ ((stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("quote")))) ?
+ plt.Kernel.list([(quote_dash_expression_dash__greaterthan_javascript_dash_string((plt.Kernel.second((stx_dash_e(expr)))))),a_dash_pinfo]) :
+ ((plt.Kernel.pair_question_((stx_dash_e(expr)))) ?
  ((function() { 
 
 var operator; 
 var operands; 
 (function (toplevel_dash_expression_dash_show84) { 
-operator = (plt.Kernel.first(expr));
-operands = (plt.Kernel.rest(expr)); })(plt.Kernel.identity)
+operator = (plt.Kernel.first((stx_dash_e(expr))));
+operands = (plt.Kernel.rest((stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (application_dash_expression_dash__greaterthan_javascript_dash_string(operator,operands,env,a_dash_pinfo));
               })()) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))))))); }
@@ -4557,22 +4683,22 @@ s2 = (plt.Kernel.second((plt.Kernel.first(es_plus_p))));
 s3 = (plt.Kernel.third((plt.Kernel.first(es_plus_p)))); })(plt.Kernel.identity)
 return plt.Kernel.list([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(")),s1,(plt.types.String.makeInstance(" ?\n ")),s2,(plt.types.String.makeInstance(" :\n ")),s3,(plt.types.String.makeInstance(")"))]),(plt.Kernel.second(es_plus_p))]);
               })()); }
-function quote_dash_expression_dash__greaterthan_javascript_dash_string(expr) { return ((plt.Kernel.empty_question_(expr)) ?
+function quote_dash_expression_dash__greaterthan_javascript_dash_string(expr) { return ((plt.Kernel.empty_question_((stx_dash_e(expr)))) ?
  (plt.types.String.makeInstance("plt.types.Empty.EMPTY")) :
- ((plt.Kernel.pair_question_(expr)) ?
+ ((plt.Kernel.pair_question_((stx_dash_e(expr)))) ?
  plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.Kernel.list([")),(string_dash_join(plt.Kernel.map((function() { var result = (function(args) {
                     return quote_dash_expression_dash__greaterthan_javascript_dash_string(args[0]);
                  }); result.toWrittenString = function() {return '<function:quote-expression->javascript-string>'; }
                      result.toDisplayedString = function() {return '<function:quote-expression->javascript-string>';}
-                     return result; })(), [expr]),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("]))"))]) :
- ((plt.Kernel.symbol_question_(expr)) ?
- plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Symbol.makeInstance(\"")),(plt.Kernel.symbol_dash__greaterthan_string(expr)),(plt.types.String.makeInstance("\"))"))]) :
- ((plt.Kernel.number_question_(expr)) ?
- (number_dash__greaterthan_javascript_dash_string(expr)) :
- ((plt.Kernel.string_question_(expr)) ?
- (string_dash__greaterthan_javascript_dash_string(expr)) :
- ((plt.Kernel.char_question_(expr)) ?
- (char_dash__greaterthan_javascript_dash_string(expr)) :
+                     return result; })(), [(stx_dash_e(expr))]),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("]))"))]) :
+ ((plt.Kernel.symbol_question_((stx_dash_e(expr)))) ?
+ plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Symbol.makeInstance(\"")),(plt.Kernel.symbol_dash__greaterthan_string((stx_dash_e(expr)))),(plt.types.String.makeInstance("\"))"))]) :
+ ((plt.Kernel.number_question_((stx_dash_e(expr)))) ?
+ (number_dash__greaterthan_javascript_dash_string((stx_dash_e(expr)))) :
+ ((plt.Kernel.string_question_((stx_dash_e(expr)))) ?
+ (string_dash__greaterthan_javascript_dash_string((stx_dash_e(expr)))) :
+ ((plt.Kernel.char_question_((stx_dash_e(expr)))) ?
+ (char_dash__greaterthan_javascript_dash_string((stx_dash_e(expr)))) :
  (plt.types.Logic.TRUE ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("quote-expression->javascript-string")),plt.Kernel.format((plt.types.String.makeInstance("I don't know how to deal with ~s")), [expr]))) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))); }
@@ -4596,9 +4722,9 @@ inner_dash_body_dash_string = (plt.Kernel.first(inner_dash_body_dash_string_plus
 updated_dash_pinfo = (plt.Kernel.second(inner_dash_body_dash_string_plus_pinfo)); })(plt.Kernel.identity)
 return plt.Kernel.list([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((function() { \n")),(compiled_dash_program_dash_defns(inner_dash_compiled_dash_program)),(plt.types.String.makeInstance("\n")),(compiled_dash_program_dash_toplevel_dash_exprs(inner_dash_compiled_dash_program)),(plt.types.String.makeInstance("(plt.Kernel.identity)")),(plt.types.String.makeInstance("\n")),(plt.types.String.makeInstance("return ")),inner_dash_body_dash_string,(plt.types.String.makeInstance(";\n              })())"))]),(pinfo_dash_update_dash_env(updated_dash_pinfo,(pinfo_dash_env(a_dash_pinfo))))]);
               })()); }
-function application_dash_expression_dash__greaterthan_javascript_dash_string(operator, operands, env, a_dash_pinfo) { return (((plt.Kernel.symbol_question_(operator))&&(plt.Kernel.not((env_dash_contains_question_(env,operator))))) ?
+function application_dash_expression_dash__greaterthan_javascript_dash_string(operator, operands, env, a_dash_pinfo) { return (((plt.Kernel.symbol_question_((stx_dash_e(operator))))&&(plt.Kernel.not((env_dash_contains_question_(env,(stx_dash_e(operator))))))) ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("application-expression->java-string")),plt.Kernel.format((plt.types.String.makeInstance("Moby doesn't know about ~s")), [operator]))) :
- ((plt.Kernel.symbol_question_(operator)) ?
+ ((plt.Kernel.symbol_question_((stx_dash_e(operator)))) ?
  ((function() { 
 
 var operator_dash_binding; 
@@ -4606,7 +4732,7 @@ var operand_dash_strings_plus_pinfo;
 var operand_dash_strings; 
 var updated_dash_pinfo; 
 (function (toplevel_dash_expression_dash_show91) { 
-operator_dash_binding = (env_dash_lookup(env,operator));
+operator_dash_binding = (env_dash_lookup(env,(stx_dash_e(operator))));
 operand_dash_strings_plus_pinfo = (expressions_dash__greaterthan_javascript_dash_strings(operands,env,a_dash_pinfo));
 operand_dash_strings = (plt.Kernel.first(operand_dash_strings_plus_pinfo));
 updated_dash_pinfo = (plt.Kernel.second(operand_dash_strings_plus_pinfo)); })(plt.Kernel.identity)
@@ -4645,14 +4771,14 @@ updated_dash_pinfo = (plt.Kernel.second(expression_dash_strings_plus_pinfo)); })
 return plt.Kernel.list([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((")),operator_dash_string,(plt.types.String.makeInstance(").apply(null, [[")),(string_dash_join(operand_dash_strings,(plt.types.String.makeInstance(", ")))),(plt.types.String.makeInstance("]]))"))]),updated_dash_pinfo]);
               })()) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-function identifier_dash_expression_dash__greaterthan_javascript_dash_string(an_dash_id, an_dash_env) { return ((plt.Kernel.not((env_dash_contains_question_(an_dash_env,an_dash_id)))) ?
+function identifier_dash_expression_dash__greaterthan_javascript_dash_string(an_dash_id, an_dash_env) { return ((plt.Kernel.not((env_dash_contains_question_(an_dash_env,(stx_dash_e(an_dash_id)))))) ?
  (plt.Kernel.error((plt.types.Symbol.makeInstance("translate-toplevel-id")),plt.Kernel.format((plt.types.String.makeInstance("Moby doesn't know about ~s.")), [an_dash_id]))) :
  (plt.types.Logic.TRUE ?
  ((function() { 
 
 var binding; 
 (function (toplevel_dash_expression_dash_show93) { 
-binding = (env_dash_lookup(an_dash_env,an_dash_id)); })(plt.Kernel.identity)
+binding = (env_dash_lookup(an_dash_env,(stx_dash_e(an_dash_id)))); })(plt.Kernel.identity)
 return ((binding_colon_constant_question_(binding)) ?
  (binding_colon_constant_dash_java_dash_string(binding)) :
  ((binding_colon_function_question_(binding)) ?
@@ -4695,15 +4821,19 @@ var body_dash_string;
 var updated_dash_pinfo; 
 (function (toplevel_dash_expression_dash_show95) { 
 
-munged_dash_arg_dash_ids = plt.Kernel.map((function() { var result = (function(args) {
-                    return identifier_dash__greaterthan_munged_dash_java_dash_identifier(args[0]);
-                 }); result.toWrittenString = function() {return '<function:identifier->munged-java-identifier>'; }
-                     result.toDisplayedString = function() {return '<function:identifier->munged-java-identifier>';}
-                     return result; })(), [args]);
+munged_dash_arg_dash_ids = plt.Kernel.map(((function() {
+                        var result = (function(args97) { var id = args97[0];
+                             return (identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(id)))); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()), [args]);
 new_dash_env = plt.Kernel.foldl(((function() {
-                        var result = (function(args97) { var arg_dash_id = args97[0];
-var env = args97[1];
-                             return (env_dash_extend(env,(make_dash_binding_colon_constant(arg_dash_id,(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier(arg_dash_id)))),plt.types.Empty.EMPTY)))); });
+                        var result = (function(args98) { var arg_dash_id = args98[0];
+var env = args98[1];
+                             return (env_dash_extend(env,(make_dash_binding_colon_constant((stx_dash_e(arg_dash_id)),(plt.Kernel.symbol_dash__greaterthan_string((identifier_dash__greaterthan_munged_dash_java_dash_identifier((stx_dash_e(arg_dash_id)))))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -4717,8 +4847,8 @@ body_dash_string_plus_p = (expression_dash__greaterthan_javascript_dash_string(b
 body_dash_string = (plt.Kernel.first(body_dash_string_plus_p));
 updated_dash_pinfo = (plt.Kernel.second(body_dash_string_plus_p)); })(plt.Kernel.identity)
 return plt.Kernel.list([plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((function() {\n                        var result = (function(")),(plt.Kernel.symbol_dash__greaterthan_string(args_dash_sym)),(plt.types.String.makeInstance(") { ")),(string_dash_join((mapi(((function() {
-                        var result = (function(args98) { var arg_dash_id = args98[0];
-var i = args98[1];
+                        var result = (function(args99) { var arg_dash_id = args99[0];
+var i = args99[1];
                              return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)),(plt.types.String.makeInstance(" = ")),(plt.Kernel.symbol_dash__greaterthan_string(args_dash_sym)),(plt.types.String.makeInstance("[")),(plt.Kernel.number_dash__greaterthan_string(i)),(plt.types.String.makeInstance("];"))]); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4750,7 +4880,7 @@ function escape_dash_char_dash_code(a_dash_char) { return (plt.Kernel.char_equal
  (plt.types.Logic.TRUE ?
  plt.Kernel.string([a_dash_char]) :
  (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))); }
-(function (toplevel_dash_expression_dash_show99) { 
+(function (toplevel_dash_expression_dash_show100) { 
  })(plt.Kernel.identity)
 return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(string_dash_join(plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);
@@ -4760,6 +4890,13 @@ return plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types
               })()); }
 (function() { 
 ((function (toplevel_dash_expression_dash_show0) { 
+
+
+
+
+
+
+
 
 
 
@@ -4815,7 +4952,7 @@ world_dash_effects_dash_module = ((function() {
 
 function bf(name, module_dash_path, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)); }
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show15) { 
+(function (toplevel_dash_expression_dash_show16) { 
 
 module_dash_path = (plt.types.String.makeInstance("moby/world-effects")); })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("world-effects")),module_dash_path,plt.Kernel.list([(bf((plt.types.Symbol.makeInstance("make-effect:none")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_none")))),(bf((plt.types.Symbol.makeInstance("make-effect:beep")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_beep")))),(bf((plt.types.Symbol.makeInstance("make-effect:play-sound-url")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url")))),(bf((plt.types.Symbol.makeInstance("make-effect:stop-sound-url")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url")))),(bf((plt.types.Symbol.makeInstance("make-effect:pause-sound-url")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url")))),(bf((plt.types.Symbol.makeInstance("make-effect:set-sound-volume")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume")))),(bf((plt.types.Symbol.makeInstance("make-effect:raise-sound-volume")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume")))),(bf((plt.types.Symbol.makeInstance("make-effect:lower-sound-volume")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")))),(bf((plt.types.Symbol.makeInstance("make-effect:play-dtmf-tone")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")))),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("make-effect:set-wake-lock")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock")),plt.Kernel.list([PERMISSION_colon_WAKE_dash_LOCK]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("make-effect:release-wake-lock")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock")),plt.Kernel.list([PERMISSION_colon_WAKE_dash_LOCK]),plt.types.Logic.FALSE)),(bf((plt.types.Symbol.makeInstance("make-effect:js-load-script")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_js_dash_load_dash_script")))),(bf((plt.types.Symbol.makeInstance("make-effect:js-exec-string")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_js_dash_exec_dash_string")))),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("make-effect:send-sms")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Kernel.make_dash_effect_colon_sms")),plt.Kernel.list([PERMISSION_colon_SEND_dash_SMS]),plt.types.Logic.FALSE))])));
@@ -4824,7 +4961,7 @@ world_dash_handlers_dash_module = ((function() {
 
 function bf(name, module_dash_path, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)); }
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show16) { 
+(function (toplevel_dash_expression_dash_show17) { 
 
 module_dash_path = (plt.types.String.makeInstance("moby/world-handlers")); })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("world-config")),module_dash_path,plt.Kernel.list([(bf((plt.types.Symbol.makeInstance("on-tick")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onTick")))),(bf((plt.types.Symbol.makeInstance("on-tick*")),module_dash_path,(plt.types.Rational.makeInstance(3, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onTick_star_")))),(bf((plt.types.Symbol.makeInstance("on-mouse")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onMouse")))),(bf((plt.types.Symbol.makeInstance("on-mouse*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onMouse_star_")))),(bf((plt.types.Symbol.makeInstance("initial-effect")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.initialEffect")))),(bf((plt.types.Symbol.makeInstance("on-key")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onKey")))),(bf((plt.types.Symbol.makeInstance("on-key*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onKey_star_")))),(bf((plt.types.Symbol.makeInstance("on-announce")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onAnnounce")))),(bf((plt.types.Symbol.makeInstance("on-announce*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onAnnounce_star_")))),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-location-change")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onLocationChange")),plt.Kernel.list([PERMISSION_colon_LOCATION]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-location-change*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onLocationChange_star_")),plt.Kernel.list([PERMISSION_colon_LOCATION]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-tilt")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onTilt")),plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-tilt*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onTilt_star_")),plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-acceleration")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onAcceleration")),plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-acceleration*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onAcceleration_star_")),plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-shake")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onShake")),plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("on-shake*")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onShake_star_")),plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.FALSE)),(bf((plt.types.Symbol.makeInstance("on-redraw")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onRedraw")))),(bf((plt.types.Symbol.makeInstance("on-draw")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.onDraw")))),(bf((plt.types.Symbol.makeInstance("stop-when")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.config.Kernel.stopWhen"))))])));
@@ -4833,14 +4970,14 @@ return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("world-conf
 world_dash_module = ((function() { 
 
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show18) { 
+(function (toplevel_dash_expression_dash_show19) { 
 module_dash_path = (plt.types.String.makeInstance("moby/world")); })(plt.Kernel.identity)
 return (make_dash_world_dash_module(module_dash_path));
               })());
 world_dash_stub_dash_module = ((function() { 
 
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show19) { 
+(function (toplevel_dash_expression_dash_show20) { 
 module_dash_path = (plt.types.String.makeInstance("moby/world")); })(plt.Kernel.identity)
 return (make_dash_world_dash_module(module_dash_path));
               })());
@@ -4848,7 +4985,7 @@ bootstrap_dash_module = ((function() {
 
 function bf(name, module_dash_path, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)); }
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show20) { 
+(function (toplevel_dash_expression_dash_show21) { 
 
 module_dash_path = (plt.types.String.makeInstance("moby/bootstrap-world")); })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("world")),module_dash_path,plt.Kernel.append(plt.Kernel.list([(bf((plt.types.Symbol.makeInstance("start")),module_dash_path,(plt.types.Rational.makeInstance(10, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.world.Bootstrap.start"))))]), [(module_dash_binding_dash_bindings(world_dash_stub_dash_module))])));
@@ -4857,7 +4994,7 @@ location_dash_module = ((function() {
 
 var module_dash_path; 
 function bf(name, module_dash_path, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.Kernel.list([PERMISSION_colon_LOCATION]),plt.types.Logic.FALSE)); }
-(function (toplevel_dash_expression_dash_show21) { 
+(function (toplevel_dash_expression_dash_show22) { 
 module_dash_path = (plt.types.String.makeInstance("moby/geolocation"));
  })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("location")),module_dash_path,plt.Kernel.list([(bf((plt.types.Symbol.makeInstance("get-latitude")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getLatitude")))),(bf((plt.types.Symbol.makeInstance("get-longitude")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getLongitude")))),(bf((plt.types.Symbol.makeInstance("get-altitude")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getAltitude")))),(bf((plt.types.Symbol.makeInstance("get-bearing")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getBearing")))),(bf((plt.types.Symbol.makeInstance("get-speed")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getSpeed")))),(bf((plt.types.Symbol.makeInstance("location-distance")),module_dash_path,(plt.types.Rational.makeInstance(4, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getDistanceBetween"))))])));
@@ -4866,7 +5003,7 @@ tilt_dash_module = ((function() {
 
 var module_dash_path; 
 function bf(name, arity, vararity_question_, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,vararity_question_,java_dash_string,plt.Kernel.list([PERMISSION_colon_TILT]),plt.types.Logic.TRUE)); }
-(function (toplevel_dash_expression_dash_show22) { 
+(function (toplevel_dash_expression_dash_show23) { 
 module_dash_path = (plt.types.String.makeInstance("moby/tilt"));
  })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("tilt")),module_dash_path,plt.Kernel.list([(bf((plt.types.Symbol.makeInstance("get-x-acceleration")),(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Tilt.getXAcceleration")))),(bf((plt.types.Symbol.makeInstance("get-y-acceleration")),(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Tilt.getYAcceleration")))),(bf((plt.types.Symbol.makeInstance("get-z-acceleration")),(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Location.getZAcceleration")))),(bf((plt.types.Symbol.makeInstance("get-azimuth")),(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Tilt.getAzimuth")))),(bf((plt.types.Symbol.makeInstance("get-pitch")),(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Tilt.getPitch")))),(bf((plt.types.Symbol.makeInstance("get-roll")),(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Tilt.getRoll"))))])));
@@ -4874,21 +5011,21 @@ return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("tilt")),mo
 telephony_dash_module = ((function() { 
 
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show23) { 
+(function (toplevel_dash_expression_dash_show24) { 
 module_dash_path = (plt.types.String.makeInstance("moby/telephony")); })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("telephony")),module_dash_path,plt.Kernel.list([(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("get-signal-strengths")),module_dash_path,(plt.types.Rational.makeInstance(0, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Telephony.getSignalStrengths")),plt.Kernel.list([PERMISSION_colon_TELEPHONY]),plt.types.Logic.FALSE))])));
               })());
 net_dash_module = ((function() { 
 
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show24) { 
+(function (toplevel_dash_expression_dash_show25) { 
 module_dash_path = (plt.types.String.makeInstance("moby/net")); })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("net")),module_dash_path,plt.Kernel.list([(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("get-url")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Net.getUrl")),plt.Kernel.list([PERMISSION_colon_INTERNET]),plt.types.Logic.FALSE))])));
               })());
 parser_dash_module = ((function() { 
 
 var module_dash_path; 
-(function (toplevel_dash_expression_dash_show25) { 
+(function (toplevel_dash_expression_dash_show26) { 
 module_dash_path = (plt.types.String.makeInstance("moby/parser")); })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("parser")),module_dash_path,plt.Kernel.list([(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("parse-xml")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Parser.parseXml")),plt.types.Empty.EMPTY,plt.types.Logic.FALSE)),(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("split-whitespace")),module_dash_path,(plt.types.Rational.makeInstance(1, 1)),plt.types.Logic.FALSE,(plt.types.String.makeInstance("plt.lib.Parser.splitWhitespace")),plt.types.Empty.EMPTY,plt.types.Logic.FALSE))])));
               })());
@@ -4896,7 +5033,7 @@ jsworld_dash_module = ((function() {
 
 var module_dash_path; 
 function bf(name, arity, java_dash_string) { return (make_dash_binding_colon_function(name,module_dash_path,arity,plt.types.Logic.TRUE,java_dash_string,plt.types.Empty.EMPTY,plt.types.Logic.FALSE)); }
-(function (toplevel_dash_expression_dash_show26) { 
+(function (toplevel_dash_expression_dash_show27) { 
 module_dash_path = (plt.types.String.makeInstance("moby/jsworld"));
  })(plt.Kernel.identity)
 return (make_dash_module_dash_binding((plt.types.Symbol.makeInstance("jsworld")),module_dash_path,plt.Kernel.list([(make_dash_binding_colon_function((plt.types.Symbol.makeInstance("js-big-bang")),module_dash_path,(plt.types.Rational.makeInstance(2, 1)),plt.types.Logic.TRUE,(plt.types.String.makeInstance("plt.world.MobyJsworld.bigBang")),plt.types.Empty.EMPTY,plt.types.Logic.FALSE)),(bf((plt.types.Symbol.makeInstance("js-div")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.div")))),(bf((plt.types.Symbol.makeInstance("js-p")),(plt.types.Rational.makeInstance(0, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.p")))),(bf((plt.types.Symbol.makeInstance("js-button")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.button")))),(bf((plt.types.Symbol.makeInstance("js-button*")),(plt.types.Rational.makeInstance(2, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.buttonStar")))),(bf((plt.types.Symbol.makeInstance("js-bidirectional-input")),(plt.types.Rational.makeInstance(3, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.bidirectionalInput")))),(bf((plt.types.Symbol.makeInstance("js-img")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.img")))),(bf((plt.types.Symbol.makeInstance("js-text")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.text")))),(bf((plt.types.Symbol.makeInstance("js-node")),(plt.types.Rational.makeInstance(1, 1)),(plt.types.String.makeInstance("plt.world.MobyJsworld.rawNode"))))])));

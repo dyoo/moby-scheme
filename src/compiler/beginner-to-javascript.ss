@@ -377,7 +377,9 @@
 
     ;; Literal booleans
     [(boolean? (stx-e expr))
-     (expression->javascript-string (if (stx-e expr) 'true 'false)
+     (expression->javascript-string (if (stx-e expr) 
+                                        (make-stx:atom 'true (stx-loc expr))
+                                        (make-stx:atom 'false (stx-loc expr)))
                                     env
                                     a-pinfo)]
     ;; Characters
@@ -602,7 +604,7 @@
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
     [(not (env-contains? an-env (stx-e an-id)))
-     p(error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
+     (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
     [else     
      (local [(define binding (env-lookup an-env (stx-e an-id)))]
        (cond

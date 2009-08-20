@@ -4,13 +4,6 @@
 function permission_colon_location() { plt.Kernel.Struct.call(this, "make-permission_colon_location", []); }
                     permission_colon_location.prototype = new plt.Kernel.Struct();
 
-permission_colon_location.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_location) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_location() { return new permission_colon_location(); }
 
 function permission_colon_location_question_(obj) { 
@@ -18,13 +11,6 @@ function permission_colon_location_question_(obj) {
 function permission_colon_send_dash_sms() { plt.Kernel.Struct.call(this, "make-permission_colon_send_dash_sms", []); }
                     permission_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
 
-permission_colon_send_dash_sms.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_send_dash_sms) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_send_dash_sms() { return new permission_colon_send_dash_sms(); }
 
 function permission_colon_send_dash_sms_question_(obj) { 
@@ -32,13 +18,6 @@ function permission_colon_send_dash_sms_question_(obj) {
 function permission_colon_receive_dash_sms() { plt.Kernel.Struct.call(this, "make-permission_colon_receive_dash_sms", []); }
                     permission_colon_receive_dash_sms.prototype = new plt.Kernel.Struct();
 
-permission_colon_receive_dash_sms.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_receive_dash_sms) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_receive_dash_sms() { return new permission_colon_receive_dash_sms(); }
 
 function permission_colon_receive_dash_sms_question_(obj) { 
@@ -46,13 +25,6 @@ function permission_colon_receive_dash_sms_question_(obj) {
 function permission_colon_tilt() { plt.Kernel.Struct.call(this, "make-permission_colon_tilt", []); }
                     permission_colon_tilt.prototype = new plt.Kernel.Struct();
 
-permission_colon_tilt.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_tilt) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_tilt() { return new permission_colon_tilt(); }
 
 function permission_colon_tilt_question_(obj) { 
@@ -60,13 +32,6 @@ function permission_colon_tilt_question_(obj) {
 function permission_colon_shake() { plt.Kernel.Struct.call(this, "make-permission_colon_shake", []); }
                     permission_colon_shake.prototype = new plt.Kernel.Struct();
 
-permission_colon_shake.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_shake) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_shake() { return new permission_colon_shake(); }
 
 function permission_colon_shake_question_(obj) { 
@@ -74,13 +39,6 @@ function permission_colon_shake_question_(obj) {
 function permission_colon_internet() { plt.Kernel.Struct.call(this, "make-permission_colon_internet", []); }
                     permission_colon_internet.prototype = new plt.Kernel.Struct();
 
-permission_colon_internet.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_internet) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_internet() { return new permission_colon_internet(); }
 
 function permission_colon_internet_question_(obj) { 
@@ -88,13 +46,6 @@ function permission_colon_internet_question_(obj) {
 function permission_colon_telephony() { plt.Kernel.Struct.call(this, "make-permission_colon_telephony", []); }
                     permission_colon_telephony.prototype = new plt.Kernel.Struct();
 
-permission_colon_telephony.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_telephony) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_telephony() { return new permission_colon_telephony(); }
 
 function permission_colon_telephony_question_(obj) { 
@@ -102,13 +53,6 @@ function permission_colon_telephony_question_(obj) {
 function permission_colon_wake_dash_lock() { plt.Kernel.Struct.call(this, "make-permission_colon_wake_dash_lock", []); }
                     permission_colon_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
-permission_colon_wake_dash_lock.prototype.isEqual = function(other) {
-              if (other != null && other != undefined && other instanceof permission_colon_wake_dash_lock) {
-                return plt.types.Logic.TRUE;
-              } else {
-                return false;
-              }
-           } 
 function make_dash_permission_colon_wake_dash_lock() { return new permission_colon_wake_dash_lock(); }
 
 function permission_colon_wake_dash_lock_question_(obj) { 
