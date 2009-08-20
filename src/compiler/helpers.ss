@@ -247,9 +247,9 @@
     ;; (define (id args ...) body)
     [(and (stx-begins-with? a-definition 'define)
           (= (length (stx-e a-definition)) 3)
-          (pair? (stx-e (stx-e (second (stx-e a-definition))))))
+          (stx:list? (second (stx-e a-definition))))
      (local [(define id (first (stx-e (second (stx-e a-definition)))))
-             (define args (rest (second (stx-e a-definition))))
+             (define args (rest (stx-e (second (stx-e a-definition)))))
              (define body (third (stx-e a-definition)))]
        (f-function id args body))]
 

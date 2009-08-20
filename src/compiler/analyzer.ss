@@ -1,4 +1,4 @@
-#lang scheme
+#lang s-exp "lang.ss"
 
 (require "env.ss")
 (require "pinfo.ss")
