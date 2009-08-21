@@ -224,7 +224,7 @@ var plt = plt || {};
 	    "~a: expects type <~a> as ~a argument, given: ~s",
 	    [functionName, 
 	     typeName,
-	     position + suffixes[Math.max(suffixes.length-1, position)],
+	     position + suffixes[Math.min(suffixes.length-1, position)],
 	     value]);
     }
 
