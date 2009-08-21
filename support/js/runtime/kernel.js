@@ -217,7 +217,9 @@ var plt = plt || {};
 
 
     function makeTypeErrorMessage(functionName, typeName, position, value) {
-	var suffixes = ["st", "nd", "rd", "th"];
+	// This is not right: we really need to turn the position into English
+	// first.  This is just a hack for now.
+	var suffixes = ["th", "st", "nd", "rd", "th", "th", "th", "th"];
 	return plt.Kernel.format(
 	    "~a: expects type <~a> as ~a argument, given: ~s",
 	    [functionName, 
