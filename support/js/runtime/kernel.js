@@ -606,7 +606,7 @@ var plt = plt || {};
 	},
 
 	number_dash__greaterthan_string: function(x) {
-	    check(x, isNumber, "number->string" "number", 1);
+	    check(x, isNumber, "number->string", "number", 1);
 	    return plt.types.String.makeInstance(plt.Kernel.toWrittenString(x));
 	},
 	
