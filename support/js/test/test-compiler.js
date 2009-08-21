@@ -56,6 +56,18 @@ function init() {
 				"(f 3)"));
 			    
 	    },
+	testLambda: function() {
+	    this.assert(number(25),
+			run("((lambda (x) (* x x)) 5)"));
+	},
+
+
+	testDivisionByZero: function() {
+	    plt.Kernel.lastLoc = undefined;
+	    this.assertRaise("MobyRuntimeError",
+			     function() { run("   (/ 1 0)")});
+	    this.assert("offset=3 line=1 span=7 id=\"\"", plt.Kernel.lastLoc);
+	},
 
 
 	testHigherOrderFunction: function() {
