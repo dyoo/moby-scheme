@@ -124,12 +124,12 @@ plt.world.MobyJsworld = {};
 	plt.Kernel.arrayEach(handlers,
 			     function(x) {
 				 plt.Kernel.check(x, isHandler, 
-				       "js-big-bang: expects handler") });
+						  "js-big-bang: expects handler") });
 	var toplevelNode = Jsworld.makeToplevelNode();
 
 	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
-	  config = handlers[i](config);
+	    config = handlers[i](config);
 	}
 	config = config.updateAll({'changeWorld': Jsworld.updateWorld});
 	plt.world.config.CONFIG = config;
@@ -138,17 +138,28 @@ plt.world.MobyJsworld = {};
 	
 
 	if (config.lookup('onDraw')) {
-	  function wrappedRedraw(w) {
-	    var result = [toplevelNode, 
-			  deepListToArray(config.lookup('onDraw')([w]))];
-	    return result;
-	  }
+	    function wrappedRedraw(w) {
+		var result = [toplevelNode, 
+			      deepListToArray(config.lookup('onDraw')([w]))];
+		return result;
+	    }
 
-	  function wrappedRedrawCss(w) {
-	    var result = deepListToArray(config.lookup('onDrawCss')([w]));
-	    return result;
-	  }
-	  wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
+	    function wrappedRedrawCss(w) {
+		var result = deepListToArray(config.lookup('onDrawCss')([w]));
+		return result;
+	    }
+	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
+	} else if (config.lookup('onRedraw')) {
+	    function wrappedRedraw(w) {
+		var result = [toplevelNode, 
+			      [plt.Kernel.toDomNode(config.lookup('onRedraw')([w]))]];
+		return result;
+	    }
+
+	    function wrappedRedrawCss(w) {
+		return [];
+	    }
+	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
 	} else {
 	    wrappedHandlers.push(_js.on_world_change(
 		function(w) { Jsworld.printWorldHook(w, toplevelNode); }));
@@ -168,9 +179,9 @@ plt.world.MobyJsworld = {};
 	if (config.lookup('initialEffect')) {
 	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
 	}
-
+	
 	// Fixme: handle stopwhen.
-
+	
 	return _js.big_bang(toplevelNode,
 			    initWorld,
 			    wrappedHandlers,
