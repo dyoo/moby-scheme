@@ -120,11 +120,10 @@ plt.world.MobyJsworld = {};
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, attribs, handlers) {
-	plt.Kernel.checkList(attribs, "js-big-bang: 2nd argument must be a list of global attributes, i.e. empty");
+	plt.Kernel.checkList(attribs, "js-big-bang", 2);
 	plt.Kernel.arrayEach(handlers,
-			     function(x) {
-				 plt.Kernel.check(x, isHandler, 
-						  "js-big-bang: expects handler") });
+			     function(x, i) {
+				 plt.Kernel.check(x, isHandler, "js-big-bang", "handler", i+3) });
 	var toplevelNode = Jsworld.makeToplevelNode();
 
 	var config = new plt.world.config.WorldConfig();

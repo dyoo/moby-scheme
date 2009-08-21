@@ -98,7 +98,7 @@ plt.world.config = plt.world.config || {};
     // WorldConfig.lookup: string -> handler
     // Looks up a value in the configuration.
     WorldConfig.prototype.lookup = function(key) {
-	plt.Kernel.check(key, plt.Kernel.isString, "WorldConfig.lookup: key not a string");
+	plt.Kernel.check(key, plt.Kernel.isString, "WorldConfig.lookup", "string", 1);
 	if (key in this.vals) {
 	    return this.vals[key];
 	} else {
@@ -139,7 +139,7 @@ plt.world.config = plt.world.config || {};
 
     plt.world.config.Kernel = plt.world.config.Kernel || {};
     plt.world.config.Kernel.onRedraw = function(f) {
-	plt.Kernel.check(f, plt.Kernel.isFunction, "on-redraw: first argument needs to be a function");
+	plt.Kernel.check(f, plt.Kernel.isFunction, "on-redraw", "function", 1);
 	return function(config) {
 	    return config.updateAll({'onRedraw': f});
 	};
@@ -156,8 +156,8 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onDraw = function(domHandler, styleHandler) {
-	plt.Kernel.check(domHandler, plt.Kernel.isFunction, "on-draw: first argument needs to be a function");
-	plt.Kernel.check(styleHandler, plt.Kernel.isFunction, "on-draw: second argument needs to be a function");
+	plt.Kernel.check(domHandler, plt.Kernel.isFunction, "on-draw", "function", 1);
+	plt.Kernel.check(styleHandler, plt.Kernel.isFunction, "on-draw", "function", 2);
 	return function(config) {
 	    return config.updateAll({onDraw: domHandler,
 				     onDrawCss : styleHandler});
@@ -166,8 +166,8 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onTick = function(aDelay, f) {
-	plt.Kernel.check(aDelay, plt.Kernel.isNumber, "on-tick: first argument needs to be a number");
-	plt.Kernel.check(f, plt.Kernel.isFunction, "on-tick: second argument needs to be a function");
+	plt.Kernel.check(aDelay, plt.Kernel.isNumber, "on-tick", "number", 1);
+	plt.Kernel.check(f, plt.Kernel.isFunction, "on-tick", "function", 2);
 	return plt.world.config.Kernel.onTick_star_(aDelay, 
 						    f,
 						    function(w) { 
@@ -175,9 +175,9 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onTick_star_ = function(aDelay, handler, effectHandler) {
-	plt.Kernel.check(aDelay, plt.Kernel.isNumber, "on-tick*: first argument needs to be a number");
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tick*: second argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tick*: third argument needs to be a function");
+	plt.Kernel.check(aDelay, plt.Kernel.isNumber, "on-tick*", "number", 1);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tick*", "function", 2);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tick*","function", 3);
 	return function(config) {
 	    var newVals = { onTick: handler,
 			    onTickEffect: effectHandler,
@@ -192,15 +192,15 @@ plt.world.config = plt.world.config || {};
     };
   
     plt.world.config.Kernel.onTilt = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tilt: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tilt", "function", 1);
 	return plt.world.config.Kernel.onTilt_star_(handler, 
 						    function(w, a, p, r) { 
 							return getNoneEffect(); });
     };
 
     plt.world.config.Kernel.onTilt_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tilt*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tilt*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tilt*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tilt*", "function", 2);
 	return function(config) {
 	    return config.updateAll({onTilt : handler,
 				     onTiltEffect : effectHandler});
@@ -210,15 +210,15 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onAnnounce = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-announce: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-announce", "function", 1);
 	return plt.world.config.Kernel.onAnnounce_star_(handler, 
 							function(w, eventName, vals) { 
 							    return getNoneEffect(); });
     };
 
     plt.world.config.Kernel.onAnnounce_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-announce*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-announce*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-announce*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-announce*", "function", 2);
 	return function(config) {
 	    return config.updateAll({onAnnounce : handler,
 				     onAnnounceEffect : effectHandler});
@@ -228,15 +228,15 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onAcceleration = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-acceleration: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-acceleration", "function", 1);
 	return plt.world.config.Kernel.onAcceleration_star_(handler, 
 							    function(w, a, p, r) { 
 								return getNoneEffect(); });
     };
 
     plt.world.config.Kernel.onAcceleration_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-acceleration*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-acceleration*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-acceleration*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-acceleration*", "function", 2);
 	return function(config) {
 	    return config.updateAll({onAcceleration : handler,
 				     onAccelerationEffect : effectHandler});
@@ -245,15 +245,15 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onShake = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-shake: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-shake", "function", 1);
 	return plt.world.config.Kernel.onShake_star_(handler, 
 						     function(w, a, p, r) { 
 							 return getNoneEffect(); });
     };
 
     plt.world.config.Kernel.onShake_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-shake*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-shake*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-shake*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-shake*", "function", 2);
 	return function(config) {
 	    return config.updateAll({onShake : handler,
 				     onShakeEffect : effectHandler});
@@ -263,15 +263,15 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onKey = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-key: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-key", "function", 1);
 	return plt.world.config.Kernel.onKey_star_(handler,
 						   function(w, k) {
 						       return getNoneEffect(); });
     };
 
     plt.world.config.Kernel.onKey_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-key*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-key*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-key*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-key*", "function", 2);
 	return function(config) {
 	    return config.updateAll({onKey : handler,
 				     onKeyEffect: effectHandler});
@@ -280,15 +280,15 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.onLocationChange = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-location-change: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-location-change", "function", 1);
 	return plt.world.config.Kernel.onLocationChange_star_(handler,
 							      function(w, latitude, longitude) {
 								  return getNoneEffect(); });
     }
 
     plt.world.config.Kernel.onLocationChange_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-location-change*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-location-change*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-location-change*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-location-change*", "function", 2);
 
 	return function(config) {
 	    return config.updateAll({onLocationChange: handler,
@@ -299,15 +299,15 @@ plt.world.config = plt.world.config || {};
 
 
     plt.world.config.Kernel.stopWhen = function(handler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "stop-when: first argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "stop-when", "function", 1);
 	return function(config) {
 	    return config.updateAll({'stopWhen': handler});
 	};
     };
 
     plt.world.config.Kernel.stopWhen_star_ = function(stopHandler, stopEffect) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "stop-when*: first argument needs to be a function");
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "stop-when*: second argument needs to be a function");
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "stop-when*", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "stop-when*", "function", 2);
 
 	return function(config) {
 	    return config.updateAll({'stopWhen': stopHandler,
