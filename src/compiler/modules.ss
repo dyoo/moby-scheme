@@ -322,7 +322,7 @@
                          (list (make-binding:function 
                                 'js-big-bang
                                 module-path
-                                2
+                                1
                                 true
                                 "plt.world.MobyJsworld.bigBang"
                                 empty
