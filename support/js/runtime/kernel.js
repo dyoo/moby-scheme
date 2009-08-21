@@ -489,7 +489,7 @@ var plt = plt || {};
 	
 	
 	_plus_ : function(args) {
-	    arrayEach(args, function(x, i) { check(x, isNumber, "+", "number", i) });
+	    arrayEach(args, function(x, i) { check(x, isNumber, "+", "number", i+1) });
 	    var i, sum = plt.types.Rational.ZERO;
 	    for(i = 0; i < args.length; i++) {
 		sum = plt.types.NumberTower.add(sum, args[i]);
@@ -500,7 +500,7 @@ var plt = plt || {};
 
 	_dash_ : function(first, args) {
 	    check(first, isNumber, "-", "number", 1);
-	    arrayEach(args, function(x, i) { check(x, isNumber, "-", "number", i+1) });
+	    arrayEach(args, function(x, i) { check(x, isNumber, "-", "number", i+2) });
 	    if (args.length == 0) {
 		return plt.types.NumberTower.subtract
 		(plt.types.Rational.ZERO, first);
@@ -515,7 +515,7 @@ var plt = plt || {};
 	
 	
 	_star_ : function(args) {
-	    arrayEach(args, function(x, i) { check(x, isNumber, "*", "number", i) });
+	    arrayEach(args, function(x, i) { check(x, isNumber, "*", "number", i+1) });
 	    var i, prod = plt.types.Rational.ONE;
 	    for(i = 0; i < args.length; i++) {
 		prod = plt.types.NumberTower.multiply(prod, args[i]);
@@ -526,7 +526,7 @@ var plt = plt || {};
 	
 	_slash_ : function(first, args) {
 	    check(first, isNumber, "/", "number", 1);
-	    arrayEach(args, function(x, i) { check(x, isNumber, "/", "number", i+1) });
+	    arrayEach(args, function(x, i) { check(x, isNumber, "/", "number", i+2) });
 	    var i, div = first;
 	    for(i = 0; i < args.length; i++) {
 		div = plt.types.NumberTower.divide(div, args[i]);
@@ -544,7 +544,7 @@ var plt = plt || {};
 	
 	min : function(first, rest) {
 	    check(first, isNumber, "min", "number", 1);
-	    arrayEach(rest, function(x, i) { check(this, isNumber, "min", "number", i+1); });
+	    arrayEach(rest, function(x, i) { check(this, isNumber, "min", "number", i+2); });
 	    return chainFind(plt.types.NumberTower.lessThanOrEqual,
 			     first, 
 			     rest);
@@ -552,7 +552,7 @@ var plt = plt || {};
 	
 	max : function(first, rest) {
 	    check(first, isNumber, "max", "number", 1);
-	    arrayEach(rest, function(x, i) { check(this, isNumber, "max", "number", i+1); });
+	    arrayEach(rest, function(x, i) { check(this, isNumber, "max", "number", i+2); });
 	    return chainFind(plt.types.NumberTower.greaterThanOrEqual,
 			     first, 
 			     rest);
@@ -561,7 +561,7 @@ var plt = plt || {};
 
 	lcm : function(first, rest) {
 	    check(first, isInteger, "lcm", "number", 1);
-	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+1); });
+	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
 	    var result = first.toInteger();
 	    for (var i = 0; i < rest.length; i++) {
 		result = _lcm(result, rest[i].toInteger());
@@ -572,7 +572,7 @@ var plt = plt || {};
 	
 	gcd : function(first, rest) {
 	    check(first, isInteger, "gcd", "number", 1);
-	    arrayEach(rest, function(x, i) { check(this, isInteger, "gcd", "number", i+1); });	    
+	    arrayEach(rest, function(x, i) { check(this, isInteger, "gcd", "number", i+2); });	    
 	    var result = first.toInteger();
 	    for (var i = 0; i < rest.length; i++) {
 		result = _gcd(result, rest[i].toInteger());
@@ -1066,7 +1066,7 @@ var plt = plt || {};
 
 	
 	string_dash_append : function(arr){
-	    arrayEach(arr, function(x, i) { check(x, isString, "string-append", "string", i) });
+	    arrayEach(arr, function(x, i) { check(x, isString, "string-append", "string", i+1) });
             return plt.types.String.makeInstance(arr.join(""));
 	},
 
@@ -1328,7 +1328,7 @@ var plt = plt || {};
 
 
 	string : function(chars) {
-	    arrayEach(chars, function(x, i) { check(this, isChar, "string", "char", i); });
+	    arrayEach(chars, function(x, i) { check(this, isChar, "string", "char", i+1); });
 	    var buffer = [];
 	    for(var i = 0; i < chars.length; i++) {
 		buffer.push(chars[i].val);
@@ -1583,7 +1583,7 @@ var plt = plt || {};
 
     plt.Kernel.foldl = function(f, acc, arglists) {
 	check(f, isFunction, "foldl", "function", 1);
-	arrayEach(arglists, function(x, i) { check(x, isList, "foldl", "list", i+2)});
+	arrayEach(arglists, function(x, i) { check(x, isList, "foldl", "list", i+3)});
 	// TODO: add contract on higher order argument f.
 	var result = acc;
 	while (!arglists[0].isEmpty()) {
@@ -1601,7 +1601,7 @@ var plt = plt || {};
 
     plt.Kernel.foldr = function(f, acc, arglists) {
 	check(f, isFunction, "foldr", "function", 1);
-	arrayEach(arglists, function(x, i) { check(x, isList, "foldr", "list", i+2)});
+	arrayEach(arglists, function(x, i) { check(x, isList, "foldr", "list", i+3)});
 	// TODO: add contract on higher order argument f.
 	var result = acc;
 	for (var i = 0; i < arglists.length; i++) {
