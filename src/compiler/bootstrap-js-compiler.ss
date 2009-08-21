@@ -101,7 +101,7 @@
        var perms = [];
        while (!permList.isEmpty()) {     
            perms.push(
-               plt.Kernel.symbol_dash__greaterthan_string(permission_dash_reference(permList.first())));
+               plt.Kernel.symbol_dash__greaterthan_string(permission_dash__greaterthan_symbol(permList.first())));
            permList = permList.rest();
        }
        return [compiledSrc, perms];
