@@ -79,37 +79,38 @@ function Loc_dash_id(obj) {
 
 function Loc_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof Loc; }
-function Loc_dash__greaterthan_string(a_dash_loc) { return plt.Kernel.format((plt.types.String.makeInstance("offset=~a span=~a")), [(Loc_dash_offset(a_dash_loc)),(Loc_dash_span(a_dash_loc))]); }
-function stx_question_(x) { return ((stx_colon_atom_question_(x))||(stx_colon_list_question_(x))); }
-function stx_dash_e(a_dash_stx) { return ((stx_colon_atom_question_(a_dash_stx)) ?
- (stx_colon_atom_dash_datum(a_dash_stx)) :
- ((stx_colon_list_question_(a_dash_stx)) ?
- (stx_colon_list_dash_elts(a_dash_stx)) :
- (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-function stx_dash_loc(a_dash_stx) { return ((stx_colon_atom_question_(a_dash_stx)) ?
- (stx_colon_atom_dash_loc(a_dash_stx)) :
- ((stx_colon_list_question_(a_dash_stx)) ?
- (stx_colon_list_dash_loc(a_dash_stx)) :
- (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-function stx_dash_begins_dash_with_question_(a_dash_stx, a_dash_sym) { return ((stx_colon_atom_question_(a_dash_stx)) ?
+function Loc_dash__greaterthan_string(a_dash_loc) { return (plt.Kernel.setLastLoc("offset=0 span=0") && plt.Kernel.format((plt.types.String.makeInstance("offset=~a span=~a")), [(plt.Kernel.setLastLoc("offset=0 span=0")   && Loc_dash_offset(a_dash_loc)),(plt.Kernel.setLastLoc("offset=0 span=0")   && Loc_dash_span(a_dash_loc))])); }
+function stx_question_(x) { return ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_atom_question_(x))||(plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_question_(x))); }
+function stx_dash_e(a_dash_stx) { return ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_atom_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_atom_dash_datum(a_dash_stx)) :
+ ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_dash_elts(a_dash_stx)) :
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function stx_dash_loc(a_dash_stx) { return ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_atom_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_atom_dash_loc(a_dash_stx)) :
+ ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_dash_loc(a_dash_stx)) :
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function stx_dash_begins_dash_with_question_(a_dash_stx, a_dash_sym) { return ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_atom_question_(a_dash_stx)) ?
  plt.types.Logic.FALSE :
- ((stx_colon_list_question_(a_dash_stx)) ?
- ((plt.Kernel.not((plt.Kernel.empty_question_((stx_colon_list_dash_elts(a_dash_stx))))))&&(plt.Kernel.symbol_question_((stx_dash_e((plt.Kernel.first((stx_colon_list_dash_elts(a_dash_stx))))))))&&(plt.Kernel.symbol_equal__question_((stx_dash_e((plt.Kernel.first((stx_colon_list_dash_elts(a_dash_stx)))))),a_dash_sym))) :
- (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-function datum_dash__greaterthan_stx(a_dash_datum, a_dash_loc) { return (((plt.Kernel.pair_question_(a_dash_datum))||(plt.Kernel.empty_question_(a_dash_datum))) ?
- (make_dash_stx_colon_list(plt.Kernel.map(((function() {
-   plt.Kernel.lastLoc = "offset=0 span=0";   var result = (function(args1) {
+ ((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_question_(a_dash_stx)) ?
+ ((plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.not((plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.empty_question_((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_dash_elts(a_dash_stx))))))&&(plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.symbol_question_((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_dash_elts(a_dash_stx))))))))&&(plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.symbol_equal__question_((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 span=0")   && stx_colon_list_dash_elts(a_dash_stx)))))),a_dash_sym))) :
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function datum_dash__greaterthan_stx(a_dash_datum, a_dash_loc) { return (((plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.pair_question_(a_dash_datum))||(plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.empty_question_(a_dash_datum))) ?
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 span=0") && plt.Kernel.map(((function() {
+   plt.Kernel.setLastLoc("offset=0 span=0");
+   var result = (function(args1) {
 var x = args1[0];
-                             return (datum_dash__greaterthan_stx(x,a_dash_loc)); });
+                             return (plt.Kernel.setLastLoc("offset=0 span=0")   && datum_dash__greaterthan_stx(x,a_dash_loc)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [a_dash_datum]),a_dash_loc)) :
+                   })()), [a_dash_datum])),a_dash_loc)) :
  (plt.types.Logic.TRUE ?
- (make_dash_stx_colon_atom(a_dash_datum,a_dash_loc)) :
- (plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && make_dash_stx_colon_atom(a_dash_datum,a_dash_loc)) :
+ (plt.Kernel.setLastLoc("offset=0 span=0")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 (function() { 
 ((function (toplevel_dash_expression_dash_show0) { 
 

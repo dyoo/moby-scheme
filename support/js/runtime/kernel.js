@@ -1979,7 +1979,11 @@ var plt = plt || {};
     // As a program runs, the lastLoc will be assigned to the last location
     // we've evaluated in the program.
     plt.Kernel.lastLoc = undefined;
-
+    plt.Kernel.setLastLoc = function(loc) {
+	plt.Kernel.lastLoc = loc;
+	return true;
+    }
+    
 
 
     // Expose the predicates.
