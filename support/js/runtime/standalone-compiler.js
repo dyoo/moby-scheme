@@ -1108,8 +1108,8 @@ var plt = plt || {};
     function MobyError(msg) {
 	this.msg = msg;
     }
-    MobyTypeError.prototype.name= 'MobyError';
-    MobyTypeError.prototype.toString = function () { return "MobyError: " + this.msg }
+    MobyError.prototype.name= 'MobyError';
+    MobyError.prototype.toString = function () { return "MobyError: " + this.msg }
 
     
     function MobySyntaxError(msg, stx) {
@@ -1252,7 +1252,7 @@ var plt = plt || {};
     // Apply some function on each element of the array.
     function arrayEach(arr, f) {
 	for (var i = 0; i < arr.length; i++) {
-	    f.apply(arr[i], [arr[i]]);
+	    f.apply(arr[i], [arr[i], i]);
 	}
     }
 
@@ -1292,28 +1292,42 @@ var plt = plt || {};
     }
 
 
+
+    function makeTypeErrorMessage(functionName, typeName, position, value) {
+	// This is not right: we really need to turn the position into English
+	// first.  This is just a hack for now.
+	var suffixes = ["th", "st", "nd", "rd", "th", "th", "th", "th"];
+	return plt.Kernel.format(
+	    "~a: expects type <~a> as ~a argument, given: ~s",
+	    [functionName, 
+	     typeName,
+	     position + suffixes[Math.min(suffixes.length-1, position)],
+	     value]);
+    }
+
+
     // Checks if x satisfies f.  If not, a MobyTypeError of msg is thrown.
-    function check(x, f, msg) {
+    function check(x, f, functionName, typeName, position) {
 	if (! f(x)) {
-	    throw new MobyTypeError(msg);
+	    throw new MobyTypeError(makeTypeErrorMessage(functionName, typeName, position, x));
 	}
     }
 
     // Throws exception if x is not a list.
-    function checkList(x, msg) {
+    function checkList(x, functionName, position) {
 	if (! isList(x)) {
-	    throw new MobyTypeError(msg);
+	    throw new MobyTypeError(makeTypeErrorMessage(functionName, "list", position, x));
 	}
     }
 
     // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
-    function checkListof(x, f, msg) {
+    function checkListof(x, f, functionName, typeName, position) {
 	if (! isList(x)) {
-	    throw new MobyTypeError(msg);
+	    throw new MobyTypeError(makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
 	}
 	while (! x.isEmpty()) {
 	    if (! f(x.first())) {
-		throw new MobyTypeError(msg);
+		throw new MobyTypeError(makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
 	    }
 	    x = x.rest();
 	}
@@ -1326,8 +1340,8 @@ var plt = plt || {};
 	    check(first, typeCheckF, "first must be a " + typeName);
 	    check(second, typeCheckF, "second must be a " + typeName);
 	    arrayEach(rest, 
-		      function(x) { check(x, typeCheckF, 
-					  "each argument must be a " + typeName) });
+		      function(x, i) { check(x, typeCheckF, 
+					     "each argument must be a " + typeName) });
 	    return comparisonF(first, second, rest);
 	}
     }
@@ -1399,7 +1413,7 @@ var plt = plt || {};
 
 
 	equal_tilde__question_ : function(x, y, delta) {
-	    check(delta, isNumber, "number");
+	    check(delta, isNumber, "equal~?", "number", 3);
 	    if (plt.Kernel.number_question_(x).valueOf() && 
 		plt.Kernel.number_question_(y).valueOf()) {
 		if ("isEqual" in x) {
@@ -1434,44 +1448,44 @@ var plt = plt || {};
 	
 	
 	cons: function(x, y) {
-	    checkList(y, "second argument to cons must be a list.");
+	    checkList(y, "cons", 2);
 	    return plt.types.Cons.makeInstance(x, y);
 	},
 	
 	first: function(thing) {
-	    checkList(thing, "first must consume a list");
+	    checkList(thing, "first", 1);
 	    return thing.first();
 	},
 	
 	rest: function(thing) {
-	    checkList(thing, "rest must consume a list");
+	    checkList(thing, "rest", 1);
 	    return thing.rest();
 	},
 	
 	
 	second: function(thing) {
-	    checkList(thing, "second must consume a list");
+	    checkList(thing, "second", 1);
 	    return thing.rest().first();
 	},
 	
 	third: function(thing) {
-	    checkList(thing, "third must consume a list");
+	    checkList(thing, "third", 1);
 	    return thing.rest().rest().first();
 	},
 	
 	fourth: function(thing) {
-	    checkList(thing, "fourth must consume a list");
+	    checkList(thing, "fourth", 1);
 	    return thing.rest().rest().rest().first();
 	},
 	
 	fifth: function(thing) {
-	    checkList(thing, "fifth must consume a list");
+	    checkList(thing, "fifth", 1);
 	    return thing.rest().rest().rest().rest().first();
 	},
 	
 	
 	random: function(x) {
-	    check(x, isInteger, "integer");
+	    check(x, isInteger, "random", "integer", 1);
 	    return plt.types.Rational.makeInstance(Math.floor(plt.types.NumberTower.toInteger(x) * 
 							      Math.random()),
 						   1);
@@ -1483,78 +1497,78 @@ var plt = plt || {};
 
 
 	floor: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "floor", "number", 1);
 	    return x.floor();
 	},
 	
 	ceiling: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "ceiling", "number", 1);
 	    return x.ceiling();
 	},
 	
 	sqrt: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "sqrt", "number", 1);
 	    return x.sqrt();
 	},
 
 	integer_dash_sqrt: function(x) {
-	    check(x, isInteger, "integer");
+	    check(x, isInteger, "integer-sqrt", "integer", 1);
 	    return plt.types.Rational.makeInstance(x.sqrt().toInteger());
 	},
 	
 	sqr: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "sqr", "number", 1);
 	    return plt.types.NumberTower.sqr(x);
 	},
 	
 	sin: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "sin", "number", 1);
 	    return x.sin();
 	},
 	
 	cos: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "cos", "number", 1);
 	    return x.cos();
 	},
 	
 	modulo: function(m, n) {
-	    check(m, isNumber, "number");
-	    check(n, isNumber, "number");
+	    check(m, isNumber, "modulo", "number", 1);
+	    check(n, isNumber, "modulo", "number", 2);
 	    return plt.types.NumberTower.modulo(m, n);
 	},
 	
 	zero_question_: function(m) {
-	    check(m, isNumber, "number");
+	    check(m, isNumber, "zero?", "number", 1);
 	    return plt.types.NumberTower.equal(m, plt.types.Rational.ZERO);
 	},
 	
 	
 	_equal__tilde_ : function(x, y, delta) {
-	    check(x, isNumber, "number");
-	    check(y, isNumber, "number");
-	    check(delta, isNumber, "number");
+	    check(x, isNumber, "=~", "number", 1);
+	    check(y, isNumber, "=~", "number", 2);
+	    check(delta, isNumber, "=~", "number", 3);
 	    return plt.types.NumberTower.approxEqual(x, y, delta);
 	},
 	
 	abs: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "abs", "number", 1);
 	    return plt.types.NumberTower.abs(x);
 	},
 	
 	add1 : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "add1", "number", 1);
 	    return plt.types.NumberTower.add(x, plt.types.Rational.ONE);
 	},
 	
 	
 	sub1 : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "sub1", "number", 1);
 	    return plt.types.NumberTower.subtract(x, plt.types.Rational.ONE);
 	},
 	
 	
 	_plus_ : function(args) {
-	    arrayEach(args, function(x) { check(x, isNumber, "number") });
+	    arrayEach(args, function(x, i) { check(x, isNumber, "+", "number", i+1) });
 	    var i, sum = plt.types.Rational.ZERO;
 	    for(i = 0; i < args.length; i++) {
 		sum = plt.types.NumberTower.add(sum, args[i]);
@@ -1564,8 +1578,8 @@ var plt = plt || {};
 	
 
 	_dash_ : function(first, args) {
-	    check(first, isNumber, "number");
-	    arrayEach(args, function(x) { check(x, isNumber, "number") });
+	    check(first, isNumber, "-", "number", 1);
+	    arrayEach(args, function(x, i) { check(x, isNumber, "-", "number", i+2) });
 	    if (args.length == 0) {
 		return plt.types.NumberTower.subtract
 		(plt.types.Rational.ZERO, first);
@@ -1580,7 +1594,7 @@ var plt = plt || {};
 	
 	
 	_star_ : function(args) {
-	    arrayEach(args, function(x) { check(x, isNumber, "number") });
+	    arrayEach(args, function(x, i) { check(x, isNumber, "*", "number", i+1) });
 	    var i, prod = plt.types.Rational.ONE;
 	    for(i = 0; i < args.length; i++) {
 		prod = plt.types.NumberTower.multiply(prod, args[i]);
@@ -1590,8 +1604,8 @@ var plt = plt || {};
 	
 	
 	_slash_ : function(first, args) {
-	    check(first, isNumber, "number");
-	    arrayEach(args, function(x) { check(x, isNumber, "number") });
+	    check(first, isNumber, "/", "number", 1);
+	    arrayEach(args, function(x, i) { check(x, isNumber, "/", "number", i+2) });
 	    var i, div = first;
 	    for(i = 0; i < args.length; i++) {
 		div = plt.types.NumberTower.divide(div, args[i]);
@@ -1608,16 +1622,16 @@ var plt = plt || {};
 
 	
 	min : function(first, rest) {
-	    check(first, isNumber, "number");
-	    arrayEach(rest, function() { check(this, isNumber, "number"); });
+	    check(first, isNumber, "min", "number", 1);
+	    arrayEach(rest, function(x, i) { check(this, isNumber, "min", "number", i+2); });
 	    return chainFind(plt.types.NumberTower.lessThanOrEqual,
 			     first, 
 			     rest);
 	},
 	
 	max : function(first, rest) {
-	    check(first, isNumber, "number");
-	    arrayEach(rest, function() { check(this, isNumber, "number"); });
+	    check(first, isNumber, "max", "number", 1);
+	    arrayEach(rest, function(x, i) { check(this, isNumber, "max", "number", i+2); });
 	    return chainFind(plt.types.NumberTower.greaterThanOrEqual,
 			     first, 
 			     rest);
@@ -1625,8 +1639,8 @@ var plt = plt || {};
 	
 
 	lcm : function(first, rest) {
-	    check(first, isInteger, "number");
-	    arrayEach(rest, function() { check(this, isInteger, "number"); });
+	    check(first, isInteger, "lcm", "number", 1);
+	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
 	    var result = first.toInteger();
 	    for (var i = 0; i < rest.length; i++) {
 		result = _lcm(result, rest[i].toInteger());
@@ -1636,8 +1650,8 @@ var plt = plt || {};
 
 	
 	gcd : function(first, rest) {
-	    check(first, isInteger, "number");
-	    arrayEach(rest, function() { check(this, isInteger, "number"); });	    
+	    check(first, isInteger, "gcd", "number", 1);
+	    arrayEach(rest, function(x, i) { check(this, isInteger, "gcd", "number", i+2); });	    
 	    var result = first.toInteger();
 	    for (var i = 0; i < rest.length; i++) {
 		result = _gcd(result, rest[i].toInteger());
@@ -1646,22 +1660,22 @@ var plt = plt || {};
 	},
 
 	exact_dash__greaterthan_inexact: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "exact->inexact", "number", 1);
 	    return plt.types.FloatPoint.makeInstance(x.toFloat());
 	},
 	
 	inexact_dash__greaterthan_exact: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "inexact->exact", "number", 1);
 	    return plt.types.NumberTower.toExact(x);
 	},
 
 	exact_question_ : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "exact?", "number", 1);
 	    return x.isExact();
 	},
 
 	inexact_question_ : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "inexact?", "number", 1);
 	    return ! x.isExact();
 	},
 	
@@ -1671,58 +1685,58 @@ var plt = plt || {};
 	},
 
 	number_dash__greaterthan_string: function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "number->string", "number", 1);
 	    return plt.types.String.makeInstance(plt.Kernel.toWrittenString(x));
 	},
 	
 	conjugate: function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "conjugate", "number", 1);
 	    return x.conjugate();
 	},
 	
 	magnitude: function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "magnitude", "number", 1);
 	    return x.magnitude();
 	},
 	
 	log : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "log", "number", 1);
 	    return x.log();
 	},
 	
 	angle : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "angle", "number", 1);
 	    return x.angle();
 	},
 	
 	atan : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "atan", "number", 1);
 	    return x.atan();
 	},
 	
 	expt : function(x, y){
-	    check(x, isNumber, "number");
-	    check(y, isNumber, "number");
+	    check(x, isNumber, "expt", "number", 1);
+	    check(y, isNumber, "expt", "number", 2);
 	    return plt.types.NumberTower.expt(x, y);
 	},
 	
 	exp : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "exp", "number", 1);
 	    return x.exp();
 	},
 	
 	acos : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "acos", "number", 1);
 	    return x.acos();
 	},
 	
 	asin : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "asin", "number", 1);
 	    return x.asin();
 	},
 	
 	tan : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "tan", "number", 1);
 	    return plt.types.NumberTower.divide(x.sin(), x.cos());
 	},
 	
@@ -1731,52 +1745,52 @@ var plt = plt || {};
 	},
 	
 	cosh : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "cosh", "number", 1);
 	    return this._plus_([this.exp(x), this.exp(x.minus())]).half();
 	},
 	
 	sinh : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "sinh", "number", 1);
 	    return plt.types.NumberTower.subtract(this.exp(x), this.exp(x.minus())).half();
 	},
 	
 	denominator : function(x) {
-	    check(x, isRational, "rational");
+	    check(x, isRational, "denominator", "rational", 1);
 	    return plt.types.Rational.makeInstance(x.d, 1);
 	},
 	
 	numerator : function(x){
-	    check(x, isRational, "rational");
+	    check(x, isRational, "numerator", "rational", 1);
 	    return plt.types.Rational.makeInstance(x.n, 1);
 	},
 	
 	odd_question_ : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "odd?", "number", 1);
 	    return ((x.toInteger() % 2) == 1);
 	},
 	
 	even_question_ : function(x) {
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "even?", "number", 1);
 	    return ((x.toInteger() % 2) == 0);
 	},
 	
 	positive_question_ : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "positive?", "number", 1);
 	    return this._greaterthan_(x, plt.types.Rational.ZERO, []);
 	},
 	
 	negative_question_ : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "negative?", "number", 1);
 	    return this._lessthan_(x, plt.types.Rational.ZERO, []);
 	},
 	
 	imag_dash_part : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "imag-part", "number", 1);
 	    return x.imag_dash_part();
 	},
 	
 	real_dash_part : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "real-part", "number", 1);
 	    return x.real_dash_part();
 	},
 	
@@ -1788,7 +1802,7 @@ var plt = plt || {};
 	},
 
 	integer_question_ : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "integer?", "number", 1);
 	    return this.equal_question_(x, x.floor());
 	},
 	
@@ -1797,15 +1811,15 @@ var plt = plt || {};
 	},
 	
 	quotient : function(x, y){
-	    check(x, isNumber, "number");
-	    check(y, isNumber, "number");
+	    check(x, isNumber, "quotient", "number", 1);
+	    check(y, isNumber, "quotient", "number", 2);
 	    return plt.types.Rational.makeInstance(plt.types.NumberTower.divide(x,y).floor().toInteger(),
 						   1);
 	},
 	
 	remainder : function(x, y) {
-	    check(x, isNumber, "number");
-	    check(y, isNumber, "number");
+	    check(x, isNumber, "remainder", "number", 1);
+	    check(y, isNumber, "remainder", "number", 2);
 	    return plt.types.Rational.makeInstance(x.toInteger() % y.toInteger(), 1);
 	},
 	
@@ -1816,12 +1830,12 @@ var plt = plt || {};
 	
 	
 	round : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "round", "number", 1);
 	    return x.round();
 	},
 	
 	sgn : function(x){
-	    check(x, isNumber, "number");
+	    check(x, isNumber, "sgn", "number", 1);
 	    if (this.positive_question_(x).valueOf())
 		return plt.types.Rational.ONE;
 	    if (this.negative_question_(x).valueOf())
@@ -1833,8 +1847,8 @@ var plt = plt || {};
 
 
 	boolean_equal__question_ : function(x, y){
-	    check(x, isBoolean, "boolean");
-	    check(y, isBoolean, "boolean");
+	    check(x, isBoolean, "boolean=?", "boolean", 1);
+	    check(y, isBoolean, "boolean=?", "boolean", 2);
 	    return x == y;
 	},
 	
@@ -1847,18 +1861,18 @@ var plt = plt || {};
 	},
 	
 	not : function(x){
-	    check(x, isBoolean, "boolean");
+	    check(x, isBoolean, "not", "boolean", 1);
 	    return (!(x.valueOf())) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
 	},
 	
 	symbol_dash__greaterthan_string : function(x){
-	    check(x, isSymbol, "symbol");
+	    check(x, isSymbol, "symbol->string", "symbol", 1);
 	    return plt.types.String.makeInstance(x.val);
 	},
 	
 	symbol_equal__question_ : function(x, y){
-	    check(x, isSymbol, "symbol");
-	    check(y, isSymbol, "symbol");
+	    check(x, isSymbol, "symbol=?", "symbol", 1);
+	    check(y, isSymbol, "symbol=?", "symbol", 2);
 	    return (x.val == y.val);
 	},
 	
@@ -1868,18 +1882,18 @@ var plt = plt || {};
 	
 	
 	append : function(first, rest){
-	    checkList(first, "append must consume lists");
+	    checkList(first, "append", 1);
             var ret = first;
 	    var i;
 	    for (i = 0; i < rest.length; i++) {
-		checkList(rest[i], "append must consume lists");
+		checkList(rest[i], "append", i+2);
 		ret = ret.append(rest[i]);
 	    }
 	    return ret;
 	},
 	
 	reverse : function(lst){
-	    checkList(lst, "reverse must consume a list");
+	    checkList(lst, "reverse", 1);
 	    var ret = plt.types.Empty.EMPTY;
 	    while (!lst.isEmpty()){
 		ret = plt.types.Cons.makeInstance(lst.first(), ret);
@@ -1890,7 +1904,7 @@ var plt = plt || {};
 	}, 
 	
 	assq : function(x, lst){
-	    checkList(lst, "assq must consume a list");
+	    checkList(lst, "assq", 2);
 	    while (!lst.isEmpty() && !plt.Kernel.eq_question_(x, lst.first().first()))
 		lst = lst.rest();
 	    if (lst.isEmpty())
@@ -1899,77 +1913,77 @@ var plt = plt || {};
 	},
 	
 	caaar : function(lst){
-	    checkList(lst, "caaar must consume a list");
+	    checkList(lst, "caaar", 1);
 	    return lst.first().first().first();
 	},
 	
 	caadr : function(lst){
-	    checkList(lst, "caadr must consume a list");
+	    checkList(lst, "caadr", 1);
 	    return lst.first().first().rest();
 	},
 	
 	caar : function(lst){
-	    checkList(lst, "caar must consume a list");
+	    checkList(lst, "caar", 1);
 	    return lst.first().first();
 	},
 	
 	cadar : function(lst){
-	    checkList(lst, "cadar must consume a list");
+	    checkList(lst, "cadar", 1);
 	    return lst.first().rest().first();
 	},
 	
 	cadddr : function(lst){
-	    checkList(lst, "cadddr must consume a list");
+	    checkList(lst, "cadddr", 1);
 	    return lst.rest().rest().rest().first();
 	},
 	
 	caddr : function(lst){
-	    checkList(lst, "caddr must consume a list");
+	    checkList(lst, "caddr", 1);
 	    return lst.rest().rest().first();
 	},
 	
 	cadr : function(lst){
-	    checkList(lst, "cadr must consume a list");
+	    checkList(lst, "cadr", 1);
 	    return lst.rest().first();
 	},
 	
 	car : function(lst){
-	    checkList(lst, "car must consume a list");
+	    checkList(lst, "car", 1);
 	    return lst.first();
 	},
 	
 	cdaar : function(lst){
-	    checkList(lst, "cdaar must consume a list");
+	    checkList(lst, "cdaar", 1);
 	    return lst.first().first().rest();
 	},
 	
 	cdadr : function(lst){
-	    checkList(lst, "cdadr must consume a list");
+	    checkList(lst, "cdadr", 1);
 	    return lst.rest().first().rest();
 	},
 	
 	cdar : function(lst){
-	    checkList(lst, "cdar must consume a list");
+	    checkList(lst, "cdar", 1);
 	    return lst.first().rest();
 	},
 	
 	cddar : function(lst){
-	    checkList(lst, "cddar must consume a list");
+	    checkList(lst, "cddar", 1);
 	    return lst.first().rest().rest();
 	},
 	
 	cdddr : function(lst){
-	    checkList(lst, "cdddr must consume a list");
+	    checkList(lst, "cdddr", 1);
 	    return lst.rest().rest().rest();
 	},
 	
 	cddr : function(lst){
-	    checkList(lst, "cddr must consume a list");
+	    checkList(lst, "cddr", 1);
 	    return lst.rest().rest();
 	},
 	
 	cdr : function(lst){
-	    checkList(lst, "cdr must consume a list");
+	    checkList(lst, "cdr", 1);
 	    return lst.rest();
 	},
 
@@ -1991,22 +2005,22 @@ var plt = plt || {};
 
 	
 	sixth : function(lst){
-	    checkList(lst, "sixth must consume a list");
+	    checkList(lst, "sixth", 1);
 	    return lst.rest().rest().rest().rest().rest().first();
 	},
 	
 	seventh: function(lst){
-	    checkList(lst, "seventh must consume a list");
+	    checkList(lst, "seventh", 1);
 	    return lst.rest().rest().rest().rest().rest().rest().first();
 	},
 	
 	eighth : function(lst){
-	    checkList(lst, "eighth must consume a list");
+	    checkList(lst, "eighth", 1);
 	    return lst.rest().rest().rest().rest().rest().rest().rest().first();
 	},
 	
 	length : function(lst){
-	    checkList(lst, "length must consume a list");
+	    checkList(lst, "length", 1);
 	    var ret = plt.types.Rational.ZERO;
 	    for (; !lst.isEmpty(); lst = lst.rest()) {
 		ret = plt.Kernel.add1(ret);
@@ -2032,8 +2046,8 @@ var plt = plt || {};
 	},
 	
 	list_dash_ref : function(lst, x){
-	    checkList(lst, "list-ref must consume a list");
-	    check(x, isNatural, "natural");
+	    checkList(lst, "list-ref", 1);
+	    check(x, isNatural, "list-ref", "natural", 2);
 	    var i = plt.types.Rational.ZERO;
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
 		if (lst.isEmpty()) {
@@ -2047,7 +2061,7 @@ var plt = plt || {};
 	},
 	
 	member : function(item, lst){
-	    checkList(lst, "member: must consume a list");
+	    checkList(lst, "member", 2);
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.equal_question_(item, lst.first()).valueOf())
 		    return plt.types.Logic.TRUE;
@@ -2058,7 +2072,7 @@ var plt = plt || {};
 	},
 	
 	memq : function(item, lst){
-	    checkList(lst, "memq: must consume a list");
+	    checkList(lst, "memq", 2);
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.eq_question_(item, lst.first()).valueOf())
 		    return lst;
@@ -2070,7 +2084,7 @@ var plt = plt || {};
 	
 
 	memv : function(item, lst){
-	    checkList(lst, "memv: must consume a list");
+	    checkList(lst, "memv", 2);
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.eqv_question_(item, lst.first()).valueOf())
 		    return lst;
@@ -2082,7 +2096,8 @@ var plt = plt || {};
 
 
 	memf : function(testF, lst) {
-	    checkList(lst, "memf: must consume a list");
+	    check(testF, isFunction, "memf", "function", 1);
+	    checkList(lst, "memf", 2);
 	    // TODO: add contract on higher order argument testF.    
 	    while (!lst.isEmpty()){
 		if (testF([lst.first()])) {
@@ -2107,7 +2122,7 @@ var plt = plt || {};
 	
 
 	string_dash__greaterthan_number : function(str){
-	    check(str, isString, "string");
+	    check(str, isString, "string->number", "string", 1);
 	    var aNum = str * 1;
 	    if (isNaN(aNum))
 		return plt.types.Logic.FALSE;
@@ -2119,26 +2134,26 @@ var plt = plt || {};
 	
 
 	string_dash__greaterthan_symbol : function(str){
-	    check(str, isString, "string");
+	    check(str, isString, "string->symbol", "string", 1);
 	    return plt.types.Symbol.makeInstance(str);
 	},
 
 
 	string_dash__greaterthan_int: function(str) {
-	    check(str, isString, "string");
+	    check(str, isString, "string->int", "string", 1);
 	    return plt.types.Rational.makeInstance(str.toString().charCodeAt(0), 1);
 	},
 
 	
 	string_dash_append : function(arr){
-	    arrayEach(arr, function(x) { check(x, isString, "string") });
+	    arrayEach(arr, function(x, i) { check(x, isString, "string-append", "string", i+1) });
             return plt.types.String.makeInstance(arr.join(""));
 	},
 
 
 	replicate: function(n, s) {
-	    check(n, isNatural, "natural");
-	    check(s, isString, "string");
+	    check(n, isNatural, "replicate", "natural", 1);
+	    check(s, isString, "replicate", "string", 2);
 	    var buffer = [];
 	    for (var i = 0; i < n.toInteger(); i++) {
 		buffer.push(s);
@@ -2188,18 +2203,18 @@ var plt = plt || {};
 	
 
 	string_dash_copy : function(str){
-	    check(str, isString, "string");
+	    check(str, isString, "string-copy", "string", 1);
 	    return str.substring(0, str.length);
 	},
 	
 	string_dash_length : function(str){
-	    check(str, isString, "string");
+	    check(str, isString, "string-length", "string", 1);
 	    return plt.types.Rational.makeInstance(str.length, 1);
 	},
 	
 	string_dash_ref : function(str, i){
-	    check(str, isString, "string");
-	    check(i, isNatural, "natural");
+	    check(str, isString, "string-ref", "string", 1);
+	    check(i, isNatural, "string-ref", "natural", 2);
 	    if (i.toInteger() >= str.length) {
 		throw new MobyRuntimeError("string-ref: index >= length");
 	    }
@@ -2207,8 +2222,8 @@ var plt = plt || {};
 	},
 
 	string_dash_ith : function (str, i) {
-	    check(str, isString, "string");
-	    check(i, isNatural, "natural");
+	    check(str, isString, "string-ith", "string", 1);
+	    check(i, isNatural, "string-ith", "natural", 2);
 	    if (i.toInteger() >= str.length) {
 		throw new MobyRuntimeError("string-ith: index >= string length");
 	    }
@@ -2216,7 +2231,7 @@ var plt = plt || {};
 	},
 
 	int_dash__greaterthan_string: function (i) {
-	    check(i, isInteger, "integer");
+	    check(i, isInteger, "int->string", "integer", 1);
 	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
 	},
 
@@ -2227,9 +2242,9 @@ var plt = plt || {};
 	
 
 	substring : function(str, begin, end){
-	    check(str, isString, "string");
-	    check(begin, isNatural, "natural");
-	    check(end, isNatural, "natural");
+	    check(str, isString, "substring", "string", 1);
+	    check(begin, isNatural, "substring", "natural", 2);
+	    check(end, isNatural, "substring", "natural", 3);
 	    if (begin.toInteger() > end.toInteger()) {
 		throw new MobyRuntimeError("substring: begin > end");
 	    }
@@ -2244,13 +2259,13 @@ var plt = plt || {};
 	},
 	
 	char_dash__greaterthan_integer : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char->integer", "char", 1);
 	    var str = new String(ch.val);
 	    return plt.types.Rational.makeInstance(str.charCodeAt(0), 1);
 	},
 	
 	integer_dash__greaterthan_char : function(n){
-	    check(n, isInteger, "integer");
+	    check(n, isInteger, "integer->char", "integer", 1);
 	    var str = String.fromCharCode(n.toInteger());
 	    return plt.types.Char.makeInstance(str);
 	},
@@ -2292,42 +2307,42 @@ var plt = plt || {};
 	
 	
 	char_dash_numeric_question_ : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-numeric?", "char", 1);
 	    var str = ch.val;
 	    return (str >= "0" && str <= "9");
 	},
 
 	char_dash_alphabetic_question_ : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-alphabetic?", "char", 1);
 	    var str = ch.val;
 	    return isAlphabeticString(str);
 	},
 
 	char_dash_whitespace_question_ : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-whitespace?", "char", 1);
 	    var str = ch.val;
 	    return isWhitespaceString(str);
 	},
 
 	char_dash_upper_dash_case_question_ : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-upper-case?", "char", 1);
 	    return isAlphabeticString(ch.val) && ch.val.toUpperCase() == ch.val;
 	},
 	
 	char_dash_lower_dash_case_question_ : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-lower-case?", "char", 1);
 	    return isAlphabeticString(ch.val) && ch.val.toLowerCase() == ch.val;
 	},
 
 
 	char_dash_upcase : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-upcase", "char", 1);
 	    return plt.types.Char.makeInstance(ch.val.toUpperCase());
 	},
 
 	
 	char_dash_downcase : function(ch){
-	    check(ch, isChar, "char");
+	    check(ch, isChar, "char-downcase", "char", 1);
 	    return plt.types.Char.makeInstance(ch.val.toLowerCase());
 	},
 	
@@ -2335,7 +2350,7 @@ var plt = plt || {};
 	
 	// list->string: (listof char) -> string
 	list_dash__greaterthan_string : function(lst){
-	    checkListof(lst, isChar, "listof char");
+	    checkListof(lst, isChar, "list->string", "char", 1);
 	    var ret = "";
 	    while (!lst.isEmpty()){
 		ret += lst.first().val;
@@ -2345,7 +2360,7 @@ var plt = plt || {};
 	},
 
 	implode: function(lst) {
-	    checkListof(lst, isString, "listof string");
+	    checkListof(lst, isString, "implode", "string", 1);
 	    var ret = [];
 	    while (!lst.isEmpty()){
 		ret.push(lst.first().toString());
@@ -2358,7 +2373,7 @@ var plt = plt || {};
 
 
 	string_dash_numeric_question_: function(s) {
-	    check(s, isString, "string");
+	    check(s, isString, "string-numeric?", "string", 1);
 	    for (var i = 0 ; i < s.length; i++) {
 		if (s[i] < '0' || s[i] > '9') {
 		    return plt.types.Logic.FALSE;
@@ -2369,31 +2384,31 @@ var plt = plt || {};
 
 
 	string_dash_alphabetic_question_: function(s) {
-	    check(s, isString, "string");
+	    check(s, isString, "string-alphabetic?", "string", 1);
 	    return isAlphabeticString(s) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
 	},
 
 
 	string_dash_whitespace_question_: function(s) {
-	    check(s, isString, "string");
+	    check(s, isString, "string-whitespace?", "string", 1);
 	    return isWhitespaceString(s) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
 	},
 
 
 	string_dash_upper_dash_case_question_: function(s) {
-	    check(s, isString, "string");
+	    check(s, isString, "string-upper-case?", "string", 1);
 	    return isAlphabeticString(s) && s.toUpperCase() == s;
 	},
 
 
 	string_dash_lower_dash_case_question_: function(s) {
-	    check(s, isString, "string");
+	    check(s, isString, "string-lower-case?", "string", 1);
 	    return isAlphabeticString(s) && s.toLowerCase() == s;
 	},
 
 
 	string : function(chars) {
-	    arrayEach(chars, function() { check(this, isChar, "char"); });
+	    arrayEach(chars, function(x, i) { check(this, isChar, "string", "char", i+1); });
 	    var buffer = [];
 	    for(var i = 0; i < chars.length; i++) {
 		buffer.push(chars[i].val);
@@ -2403,8 +2418,8 @@ var plt = plt || {};
 
 
 	make_dash_string : function(n, ch){
-	    check(n, isNatural, "natural");
-	    check(ch, isChar, "char");
+	    check(n, isNatural, "make-string", "natural", 1);
+	    check(ch, isChar, "make-string", "char", 2);
 	    var ret = "";
 	    var c = ch.val;
 	    var i = plt.types.Rational.ZERO;
@@ -2415,7 +2430,7 @@ var plt = plt || {};
 	},
 	
 	string_dash__greaterthan_list : function(str){
-	    check(str, isString, "string");
+	    check(str, isString, "string->list", "string", 1);
 	    var s = str;
 	    var ret = plt.types.Empty.EMPTY;
 	    for (var i = s.length - 1; i >= 0; i--) {
@@ -2428,7 +2443,7 @@ var plt = plt || {};
 
 
 	explode: function (str) {
-	    check(str, isString, "string");
+	    check(str, isString, "explode", "string", 1);
 	    var s = str;
 	    var ret = plt.types.Empty.EMPTY;
 	    for (var i = s.length - 1; i >= 0; i--) {
@@ -2540,9 +2555,10 @@ var plt = plt || {};
 	var argList;
 	var argArray = [];
 
+	check(f, isFunction, "apply", "function", 1);
 	if (restArgs.length == 0) {
 	    argList = secondArg;
-	    checkList(argList, "apply: second argument must be a list");
+	    checkList(argList, "apply", 2);
 	    while (! argList.isEmpty()) {
 		var elt = argList.first()
 		argArray.push(elt);
@@ -2550,7 +2566,7 @@ var plt = plt || {};
 	    }	
 	} else {
 	    argList = restArgs.pop();
-	    checkList(argList, "apply: second argument must be a list");
+	    checkList(argList, "apply", 3);
 	    while (! argList.isEmpty()) {
 		var elt = argList.first()
 		argArray.push(elt);
@@ -2562,14 +2578,15 @@ var plt = plt || {};
 	    argArray.unshift(secondArg);
 
 	}
-	check(f, isFunction, "apply: first argument must be a function");
+
 	return f(argArray);
     };
 
 
     plt.Kernel.map = function(f, arglists) {
-	arrayEach(arglists, function(x) { 
-	    checkList(x, "map: mapped arguments must be lists");});
+	check(f, isFunction, "map", "function", 1);
+	arrayEach(arglists, function(x, i) { 
+	    checkList(x, "map", i+2); });
 	// TODO: add contract on higher order argument f.
 	var results = plt.types.Empty.EMPTY;
 	while (!arglists[0].isEmpty()) {
@@ -2586,8 +2603,9 @@ var plt = plt || {};
 
 
     plt.Kernel.andmap = function(f, arglists) {
-	arrayEach(arglists, function(x) { 
-	    checkList(x, "andmap: mapped arguments must be lists");});
+	check(f, isFunction, "andmap", "function", 1);
+	arrayEach(arglists, function(x, i) { 
+	    checkList(x, "andmap", i+2); });
 
 	// TODO: add contract on higher order argument f.
 	while (!arglists[0].isEmpty()) {
@@ -2607,8 +2625,9 @@ var plt = plt || {};
 
 
     plt.Kernel.ormap = function(f, arglists) {
-	arrayEach(arglists, function(x) { 
-	    checkList(x, "ormap: mapped arguments must be lists");});
+	check(f, isFunction, "ormap", "function", 1);
+	arrayEach(arglists, function(x, i) { 
+	    checkList(x, "ormap", i+2);});
 	// TODO: add contract on higher order argument f.
 	while (!arglists[0].isEmpty()) {
 	    var args = [];
@@ -2628,7 +2647,8 @@ var plt = plt || {};
 
 
     plt.Kernel.filter = function(f, elts) {
-	check(elts, isList, "list");
+	check(f, isFunction, "filter", "function", 1);
+	check(elts, isList, "filter", "list", 2);
 	// TODO: add contract on higher order argument f.
 	var results = plt.types.Empty.EMPTY;
 	while (! elts.isEmpty()) {
@@ -2642,7 +2662,8 @@ var plt = plt || {};
 
 
     plt.Kernel.foldl = function(f, acc, arglists) {
-	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	check(f, isFunction, "foldl", "function", 1);
+	arrayEach(arglists, function(x, i) { check(x, isList, "foldl", "list", i+3)});
 	// TODO: add contract on higher order argument f.
 	var result = acc;
 	while (!arglists[0].isEmpty()) {
@@ -2659,7 +2680,8 @@ var plt = plt || {};
 
 
     plt.Kernel.foldr = function(f, acc, arglists) {
-	arrayEach(arglists, function(x) { check(x, isList, "list")});
+	check(f, isFunction, "foldr", "function", 1);
+	arrayEach(arglists, function(x, i) { check(x, isList, "foldr", "list", i+3)});
 	// TODO: add contract on higher order argument f.
 	var result = acc;
 	for (var i = 0; i < arglists.length; i++) {
@@ -2680,7 +2702,8 @@ var plt = plt || {};
 
 
     plt.Kernel.argmin = function(f, elts) {
-	check(elts, isPair, "nonempty list");
+	check(f, isFunction, "argmin", "function", 1);
+	check(elts, isPair, "argmin", "nonempty list", 2);
 	// TODO: add contract on higher order argument f.
 	var bestSoFar = elts.first();
 	var bestMetric = f([elts.first()]).toFloat();
@@ -2699,7 +2722,8 @@ var plt = plt || {};
 
 
     plt.Kernel.argmax = function(f, elts) {
-	check(elts, isPair, "nonempty list");
+	check(f, isFunction, "argmax", "function", 1);
+	check(elts, isPair, "argmax", "nonempty list", 2);
 	// TODO: add contract on higher order argument f.
 	var bestSoFar = elts.first();
 	var bestMetric = f([elts.first()]).toFloat();
@@ -2722,7 +2746,9 @@ var plt = plt || {};
 
 
     plt.Kernel.sort = function(l, cmpF) {
-	check(l, isList, "list");
+	check(l, isList, "sort", "list", 1);
+	check(cmpF, isFunction, "sort", "function", 2);
+
 	// TODO: add contract on higher order argument cmpF.
 	var arr = [];
 	while(!l.isEmpty()) {
@@ -2738,7 +2764,9 @@ var plt = plt || {};
 
 
     plt.Kernel.build_dash_list = function(n, f) {
-	check(n, isNatural, "natural");
+	check(n, isNatural, "build-list", "natural", 1);
+	check(f, isFunction, "build-list", "function", 2);
+
 	// TODO: add contract on higher order argument f.
 	var result = plt.types.Empty.EMPTY;
 	for(var i = 0; i < n.toInteger(); i++) {
@@ -2750,12 +2778,14 @@ var plt = plt || {};
 
 
     plt.Kernel.build_dash_string = function(n, f) {
-	check(n, isNatural, "natural");
+	check(n, isNatural, "build-string", "natural", 1);
+	check(f, isFunction, "build-string", "function", 2);
+
 	// TODO: add contract on higher order argument f.
 	var chars = [];
 	for(var i = 0; i < n.toInteger(); i++) {
 	    var ch = f([plt.types.Rational.makeInstance(i, 1)]);
-	    check(ch, isChar, "char");
+//	    check(ch, isChar, "char");
 	    chars.push(ch.val);
 	}
 	return plt.types.String.makeInstance(chars.join(""));
@@ -2765,7 +2795,7 @@ var plt = plt || {};
 
 
     plt.Kernel.format = function(formatStr, args) {
-	check(formatStr, isString, "string");
+	check(formatStr, isString, "format", "string", 1);
 	var pattern = new RegExp("~[sSaAn%~]", "g");
 	var buffer = args;
 	function f(s) {
@@ -2859,12 +2889,12 @@ var plt = plt || {};
     }
 
     function posn_dash_x(obj) { 
-	check(obj, posn_question_, "posn");
+	check(obj, posn_question_, "posn-x", "posn", 1);
 	return obj.x; 
     }
 
     function posn_dash_y(obj) { 
-	check(obj, posn_question_, "posn");
+	check(obj, posn_question_, "posn-y", "posn", 1);
 	return obj.y; 
     }
 
@@ -2880,14 +2910,14 @@ var plt = plt || {};
     
 
     plt.Kernel.error = function(name, msg) {
-	check(name, isSymbol, "name");
-	check(msg, isString, "string");
+	check(name, isSymbol, "error", "symbol", 1);
+	check(msg, isString, "error", "string", 2);
 	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
     };
 
     plt.Kernel.syntax_dash_error = function(name, msg, stx) {
-	check(name, isSymbol, "name");
-	check(msg, isString, "string");
+	check(name, isSymbol, "syntax-error", "symbol", 1);
+	check(msg, isString, "syntax-error", "string", 2);
 	throw new MobyRuntimeError(
 	    plt.Kernel.format("~a: ~a", [name, msg]).toString(),
 	    stx);
@@ -2939,8 +2969,8 @@ var plt = plt || {};
 
 
     plt.Kernel.image_equal__question_ = function(thing, other) {
-	check(thing, isImage, "image");
-	check(other, isImage, "image");
+	check(thing, isImage, "image=?", "image", 1);
+	check(other, isImage, "image=?", "image", 2);
 	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
     };
 
