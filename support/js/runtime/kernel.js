@@ -1273,7 +1273,7 @@ var plt = plt || {};
 	
 	// list->string: (listof char) -> string
 	list_dash__greaterthan_string : function(lst){
-	    checkListof(lst, isChar, "list->string" "char", 1);
+	    checkListof(lst, isChar, "list->string", "char", 1);
 	    var ret = "";
 	    while (!lst.isEmpty()){
 		ret += lst.first().val;
@@ -1283,7 +1283,7 @@ var plt = plt || {};
 	},
 
 	implode: function(lst) {
-	    checkListof(lst, isString, "implode" "string", 1);
+	    checkListof(lst, isString, "implode", "string", 1);
 	    var ret = [];
 	    while (!lst.isEmpty()){
 		ret.push(lst.first().toString());
