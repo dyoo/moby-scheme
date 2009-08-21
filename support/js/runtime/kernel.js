@@ -35,6 +35,14 @@ var plt = plt || {};
     MobyTypeError.prototype.toString = function () { return "MobyError: " + this.msg }
 
     
+    function MobySyntaxError(msg, stx) {
+	MobyError.call(this, msg);
+	this.stx = stx;
+    }
+    MobySyntaxError.prototype = heir(MobyError.prototype);
+    MobySyntaxError.prototype.name= 'MobySyntaxError';
+    MobySyntaxError.prototype.toString = function () { return "MobySyntaxError: " + this.msg }
+
 
     function MobyTypeError(msg) {
 	MobyError.call(this, msg);
@@ -1798,6 +1806,14 @@ var plt = plt || {};
 	check(name, isSymbol, "name");
 	check(msg, isString, "string");
 	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
+    };
+
+    plt.Kernel.syntax_dash_error = function(name, msg, stx) {
+	check(name, isSymbol, "name");
+	check(msg, isString, "string");
+	throw new MobyRuntimeError(
+	    plt.Kernel.format("~a: ~a", [name, msg]).toString(),
+	    stx);
     };
 
 

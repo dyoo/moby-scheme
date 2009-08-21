@@ -26,6 +26,10 @@
        (base:define-struct id (fields ...) #:transparent))]))
     
 
+(define (syntax-error name msg stx)
+  (raise-syntax-error name msg stx)) 
+
+
 
 
 ;; The following primitives will need support in the runtime,
@@ -46,6 +50,8 @@
          ;; We should use contracts here.
          hash-set hash-ref hash-remove make-immutable-hasheq hash-map
          
+
+	 syntax-error
 
          ;path->string normalize-path path? resolve-module-path build-path
          )

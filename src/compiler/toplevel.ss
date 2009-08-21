@@ -261,6 +261,7 @@
                      (equal~? 3)
                      (eqv? 2)
                      (error 2)
+                     (syntax-error 3)
                      (identity 1)
                      (struct? 1)
                      (current-seconds 0)

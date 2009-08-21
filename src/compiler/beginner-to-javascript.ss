@@ -31,7 +31,7 @@
                  "(plt.Kernel.identity)"
                  "\n})();"))
 
-  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -48,8 +48,8 @@
 ;; program->compiled-program/pinfo: program pinfo -> compiled-program
 (define (program->compiled-program/pinfo program input-pinfo)
   (local [(define pinfo-1+gensym (pinfo-gensym input-pinfo 'toplevel-expression-show))
-
-
+          
+          
           (define toplevel-expression-show (second pinfo-1+gensym))
           (define a-pinfo (program-analyze/pinfo program (first pinfo-1+gensym)))
           (define toplevel-env (pinfo-env a-pinfo))
@@ -100,9 +100,9 @@
                          [(expression? (first program))
                           (local [(define expression-string+pinfo
                                     (expression->javascript-string 
-                                                (first program) 
-                                                toplevel-env
-                                                a-pinfo))]
+                                     (first program) 
+                                     toplevel-env
+                                     a-pinfo))]
                             
                             (loop (rest program)
                                   defns
@@ -142,7 +142,7 @@
    (lambda (id fields)
      (struct-definition->javascript-string id fields env a-pinfo))))
 
-     
+
 
 
 ;; function-definition->java-string: symbol-stx (listof symbol-stx) expr env pinfo -> (list string string pinfo)
@@ -197,7 +197,7 @@
     (list (string-append "var "
                          (symbol->string munged-id)
                          "; ")
-
+          
           (string-append (symbol->string munged-id)
                          " = "
                          (first str+p)
@@ -249,15 +249,15 @@
                                              fields)
                                         ",")
                            ") { "
-			   (format "plt.Kernel.Struct.call(this, ~s, [~a]);"
-				   (string-append "make-"
-						  (symbol->string 
-						   (identifier->munged-java-identifier (stx-e id))))
-				   (string-join (map (lambda (i) (symbol->string
-								  (identifier->munged-java-identifier
+                           (format "plt.Kernel.Struct.call(this, ~s, [~a]);"
+                                   (string-append "make-"
+                                                  (symbol->string 
+                                                   (identifier->munged-java-identifier (stx-e id))))
+                                   (string-join (map (lambda (i) (symbol->string
+                                                                  (identifier->munged-java-identifier
                                                                    (stx-e i))))
-						     fields)
-						","))
+                                                     fields)
+                                                ","))
                            (string-join (map (lambda (i) (string-append "this."
                                                                         (symbol->string 
                                                                          (identifier->munged-java-identifier (stx-e i)))
@@ -272,7 +272,7 @@
                     "
                            (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            ".prototype = new plt.Kernel.Struct();\n"
-
+                           
                            )
             
             "\n"
@@ -319,7 +319,7 @@
            
            "" ;; no introduced toplevel expressions
            updated-pinfo)))
-  
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -352,12 +352,12 @@
     [(stx-begins-with? expr 'and)
      (local [(define exprs (rest (stx-e expr)))]
        (boolean-chain->javascript-string "&&" exprs env a-pinfo))]
-
+    
     ;; (or exprs ...)
     [(stx-begins-with? expr 'or)
      (local [(define exprs (rest (stx-e expr)))]
        (boolean-chain->javascript-string "||" exprs env a-pinfo))]
-
+    
     ;; (lambda (args ...) body)
     [(stx-begins-with? expr 'lambda)
      (local [(define args (stx-e (second (stx-e expr))))
@@ -367,14 +367,14 @@
     ;; Numbers
     [(number? (stx-e expr))
      (list
-      (number->javascript-string (stx-e expr))
+      (number->javascript-string (stx-e expr) expr)
       a-pinfo)]
     
     ;; Strings
     [(string? (stx-e expr))
      (list (string->javascript-string (stx-e expr))
            a-pinfo)]
-
+    
     ;; Literal booleans
     [(boolean? (stx-e expr))
      (expression->javascript-string (if (stx-e expr) 
@@ -397,12 +397,12 @@
     [(stx-begins-with? expr 'quote)
      (list (quote-expression->javascript-string (second (stx-e expr)))
            a-pinfo)]
-     
+    
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
      (local [(define operator (first (stx-e expr)))
              (define operands (rest (stx-e expr)))]
-       (application-expression->javascript-string (stx-loc expr) operator operands env a-pinfo))]))
+       (application-expression->javascript-string expr operator operands env a-pinfo))]))
 
 
 
@@ -437,7 +437,7 @@
      (string-append "(" s1 " ?\n " s2 " :\n " s3 ")")
      (second es+p))))
 
-       
+
 
 ;; quote-expression->javascript-string: expr -> string
 (define (quote-expression->javascript-string expr)
@@ -447,10 +447,10 @@
     
     [(pair? (stx-e expr))
      (string-append "(plt.Kernel.list(["
-                          (string-join 
-                           (map quote-expression->javascript-string (stx-e expr))
-                           ",")
-                          "]))")]
+                    (string-join 
+                     (map quote-expression->javascript-string (stx-e expr))
+                     ",")
+                    "]))")]
     
     [(symbol? (stx-e expr))
      (string-append "(plt.types.Symbol.makeInstance(\""
@@ -459,7 +459,7 @@
     
     ;; Numbers
     [(number? (stx-e expr))
-     (number->javascript-string (stx-e expr))]
+     (number->javascript-string (stx-e expr) expr)]
     
     ;; Strings
     [(string? (stx-e expr))
@@ -470,8 +470,9 @@
      (char->javascript-string (stx-e expr))]
     
     [else
-     (error 'quote-expression->javascript-string 
-            (format "I don't know how to deal with ~s" expr))]))
+     (syntax-error 'quote-expression->javascript-string 
+                   "Unknown quoted expression encountered"
+                   expr)]))
 
 
 
@@ -511,13 +512,14 @@
 
 ;; application-expression->java-string: symbol-stx (listof expr) env pinfo -> (list string pinfo)
 ;; Converts the function application to a string.
-(define (application-expression->javascript-string original-loc operator operands env a-pinfo)
+(define (application-expression->javascript-string original-stx operator operands env a-pinfo)
   (cond 
     ;; Special case: when the operator is named
     [(and (symbol? (stx-e operator))
           (not (env-contains? env (stx-e operator))))
-     (error 'application-expression->java-string
-            (format "Moby doesn't know about ~s" operator))]
+     (syntax-error 'application-expression->java-string
+                   (format "name ~s is not defined, not a parameter, and not a primitive name" (stx-e operator))
+                   operator)]
     
     [(symbol? (stx-e operator))
      (local [(define operator-binding (env-lookup env (stx-e operator)))
@@ -529,7 +531,7 @@
        (cond
          
          [(binding:constant? operator-binding)
-          (list (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string original-loc))
+          (list (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
                                "  && "
                                (binding:constant-java-string operator-binding)".apply(null, [["
                                (string-join operand-strings ", ")
@@ -540,14 +542,16 @@
           (cond
             [(< (length operands)
                 (binding:function-min-arity operator-binding))
-             (error 'application-expression->javascript-string
-                    (format "Too few arguments passed to ~s.  Operands were ~s"
-                            operator
-                            operands))]
+             (syntax-error 'application-expression->javascript-string
+                           (format "Too few arguments passed to ~s.  Expects at least ~a arguments, given ~a."
+                                   (stx-e operator)
+                                   (binding:function-min-arity operator-binding)
+                                   (length operands))
+                           original-stx)]
             [(binding:function-var-arity? operator-binding)
              (cond [(> (binding:function-min-arity operator-binding) 0)
                     (list 
-                     (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string original-loc))
+                     (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
                                     " && "
                                     (binding:function-java-string operator-binding)
                                     "("
@@ -559,7 +563,7 @@
                      updated-pinfo)]
                    [else
                     (list
-                     (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string original-loc))
+                     (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
                                     " && "
                                     (binding:function-java-string operator-binding) 
                                     "(["
@@ -571,13 +575,14 @@
                [(> (length operands)
                    (binding:function-min-arity operator-binding))
                 (error 'application-expression->javascript-string 
-                       (format "Too many arguments passed to ~s.  Operands were ~s"
-                               operator
-                               operands))]
+                       (format "Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a."
+                               (stx-e operator)
+                               (binding:function-min-arity operator-binding)
+                               (length operands)))]
                [else
                 (list 
                  (string-append "("
-                                (format "plt.Kernel.setLastLoc(~s)" (Loc->string original-loc))
+                                (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
                                 "   && "
                                 (binding:function-java-string operator-binding)
                                 "(" (string-join operand-strings ",") "))")
@@ -593,7 +598,7 @@
              (define operand-strings (rest (first expression-strings+pinfo)))
              (define updated-pinfo (second expression-strings+pinfo))]
        (list
-        (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string original-loc)) 
+        (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx))) 
                        " && "
                        "(" operator-string ").apply(null, [["
                        (string-join operand-strings ", ")
@@ -608,7 +613,9 @@
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
     [(not (env-contains? an-env (stx-e an-id)))
-     (error 'translate-toplevel-id (format "Moby doesn't know about ~s." an-id))]
+     (syntax-error 'translate-toplevel-id 
+                   (format "name ~s is not defined, not a parameter, and not a primitive name." (stx-e an-id))
+                   an-id)]
     [else     
      (local [(define binding (env-lookup an-env (stx-e an-id)))]
        (cond
@@ -694,7 +701,7 @@
                     "
                              return "
                     body-string
-                   "; });
+                    "; });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -706,7 +713,7 @@
 
 
 ;; number->java-string: number -> string
-(define (number->javascript-string a-num)
+(define (number->javascript-string a-num original-stx)
   (cond [(integer? a-num)
          (string-append "(plt.types.Rational.makeInstance("
                         (number->string (inexact->exact a-num))
@@ -727,7 +734,9 @@
                         (number->string (imag-part a-num))"))")]
         
         [else
-         (error 'number->java-string (format "Don't know how to handle ~s yet" a-num))]))
+         (syntax-error 'number->java-string 
+                       (format "Don't know how to handle ~s yet" a-num)
+                       original-stx)]))
 
 
 
@@ -769,8 +778,8 @@
                                             [toplevel-exprs 
                                              string?]
                                             [pinfo pinfo?])]
-
-                   
+                  
+                  
                   [compiled-program-main
                    (compiled-program? . -> . string?)]
                   
