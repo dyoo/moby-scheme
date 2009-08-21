@@ -100,8 +100,8 @@
        var permList = pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram));
        var perms = [];
        while (!permList.isEmpty()) {     
-           perms = perms.concat(
-                    listToArray(permission_dash__greaterthan_android_dash_permissions(permList.first())));
+           perms.push(
+               plt.Kernel.symbol_dash__greaterthan_string(permission_dash_reference(permList.first())));
            permList = permList.rest();
        }
        return [compiledSrc, perms];
