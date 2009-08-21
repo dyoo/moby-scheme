@@ -244,13 +244,13 @@ var plt = plt || {};
     }
 
     // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
-    function checkListof(x, f, msg) {
+    function checkListof(x, f, functionName, typeName, position) {
 	if (! isList(x)) {
-	    throw new MobyTypeError(msg);
+	    throw new MobyTypeError(makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
 	}
 	while (! x.isEmpty()) {
 	    if (! f(x.first())) {
-		throw new MobyTypeError(msg);
+		throw new MobyTypeError(makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
 	    }
 	    x = x.rest();
 	}
@@ -1273,7 +1273,7 @@ var plt = plt || {};
 	
 	// list->string: (listof char) -> string
 	list_dash__greaterthan_string : function(lst){
-	    checkListof(lst, isChar, "listof char");
+	    checkListof(lst, isChar, "list->string" "char", 1);
 	    var ret = "";
 	    while (!lst.isEmpty()){
 		ret += lst.first().val;
@@ -1283,7 +1283,7 @@ var plt = plt || {};
 	},
 
 	implode: function(lst) {
-	    checkListof(lst, isString, "listof string");
+	    checkListof(lst, isString, "implode" "string", 1);
 	    var ret = [];
 	    while (!lst.isEmpty()){
 		ret.push(lst.first().toString());
