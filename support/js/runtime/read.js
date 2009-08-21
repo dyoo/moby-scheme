@@ -1,15 +1,9 @@
 var readSchemeExpressions;
 var tokenize;
-var StxLocation;
 
 
 
 (function(){
-
-    function StxLoc(offset, span) {
-	this.offset = offset;
-	this.span = span;
-    }
 
 
     // replaceEscapes: string -> string
@@ -60,8 +54,9 @@ var StxLocation;
 		    if (patternName != 'whitespace' && patternName != 'comment') {
 			tokens.push([patternName, 
 				     result[1], 
-				     new StxLoc(offset,
-						result[0].length)]);
+				     new Loc(offset,
+					     result[0].length, 
+					     "")]);
 		    }
 		    offset = offset + result[0].length;
 		    s = s.substring(result[0].length);
@@ -121,10 +116,11 @@ var StxLocation;
 	    return makeList(plt.Kernel.cons(
 		makeAtom(quoteSymbol, leadingQuote[2]),
 		plt.Kernel.cons(quoted, empty)),
-			    new StxLoc(leadingQuote[2].offset,
-				       (quoted.loc.offset -
-					leadingQuote[2].offset +
-					quoted.loc.span)));
+			    new Loc(leadingQuote[2].offset,
+				    (quoted.loc.offset -
+				     leadingQuote[2].offset +
+				     quoted.loc.span),
+				    ""));
 	};
 
 
@@ -142,8 +138,9 @@ var StxLocation;
 		var rparen = eat(')');
 		return make_dash_stx_colon_list(
 		    result,
-		    new StxLoc(lparen[2].offset,
-			       rparen[2].offset - lparen[2].offset + 1));
+		    new Loc(lparen[2].offset,
+			    rparen[2].offset - lparen[2].offset + 1,
+			    ""));
 
 	    case '\'':
 		return readQuoted("'", quoteSymbol);

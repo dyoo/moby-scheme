@@ -168,7 +168,8 @@
              empty]
             [else
              (cons elt (loop (read ip)))]))
-        "fixme")))))
+        ;; FIXME: read the program and do the right thing with the lexer.
+        (make-Loc 0 0 ""))))))
 
 
 ;; make sure the line is a #lang s-exp "lang.ss" line.

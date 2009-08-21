@@ -362,7 +362,7 @@
     [(stx-begins-with? expr 'lambda)
      (local [(define args (stx-e (second (stx-e expr))))
              (define body (third (stx-e expr)))]
-       (lambda-expression->javascript-string args body env a-pinfo))]
+       (lambda-expression->javascript-string expr args body env a-pinfo))]
     
     ;; Numbers
     [(number? (stx-e expr))
@@ -636,8 +636,8 @@
 
 
 
-;; lambda-expression->javascript-string (listof symbol-stx) expression env pinfo -> string
-(define (lambda-expression->javascript-string args body env a-pinfo)
+;; lambda-expression->javascript-string stx (listof symbol-stx) expression env pinfo -> string
+(define (lambda-expression->javascript-string original-stx args body env a-pinfo)
   (local [;; mapi: (X number -> Y) (listof X) -> (listof Y)
           (define (mapi f elts)
             (local [(define (loop i elts)
@@ -676,10 +676,9 @@
           (define body-string (first body-string+p))
           (define updated-pinfo (second body-string+p))]
     (list
-     (string-append "((function() {
-                        var result = (function("
-                    (symbol->string args-sym)
-                    ") { "
+     (string-append "((function() {\n"
+                    "   plt.Kernel.lastLoc = " (format "~s" (Loc->string (stx-loc original-stx))) ";"
+                    "   var result = (function(" (symbol->string args-sym) ") {\n"
                     (string-join (mapi (lambda (arg-id i)
                                          (string-append "var "
                                                         (symbol->string arg-id)

@@ -4,6 +4,11 @@
 (define-struct stx:atom (datum loc))
 (define-struct stx:list (elts loc))
 
+(define-struct Loc (offset span id))
+
+(define (Loc->string a-loc)
+  (format "offset=~a span=~a" (Loc-offset a-loc) (Loc-span a-loc)))
+
 
 ;; stx?: any -> boolean
 (define (stx? x)
@@ -60,8 +65,12 @@
                                     [loc any/c])]
                   [struct stx:list ([elts (listof stx?)]
                                     [loc any/c])]
+                  [struct Loc ([offset number?]
+                               [span number?]
+                               [id string?])]
                   [stx? (any/c . -> . boolean?)]
                   [stx-e (stx? . -> . any)]
                   [stx-loc (stx? . -> . any)]
+                  [Loc->string (Loc? . -> . string?)]
                   [stx-begins-with? (stx? symbol? . -> . boolean?)]
                   [datum->stx (any/c any/c . -> . stx?)])
