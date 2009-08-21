@@ -4,10 +4,14 @@
 (define-struct stx:atom (datum loc))
 (define-struct stx:list (elts loc))
 
-(define-struct Loc (offset span id))
+(define-struct Loc (offset line span id))
 
 (define (Loc->string a-loc)
-  (format "offset=~a span=~a" (Loc-offset a-loc) (Loc-span a-loc)))
+  (format "offset=~a line=~a span=~a id=~s" 
+          (Loc-offset a-loc) 
+          (Loc-line a-loc) 
+          (Loc-span a-loc) 
+          (Loc-id a-loc)))
 
 
 ;; stx?: any -> boolean
@@ -66,6 +70,7 @@
                   [struct stx:list ([elts (listof stx?)]
                                     [loc any/c])]
                   [struct Loc ([offset number?]
+                               [line number?]
                                [span number?]
                                [id string?])]
                   [stx? (any/c . -> . boolean?)]

@@ -23,9 +23,22 @@ var tokenize;
 	});
     }
 
+    function countLines(s) {
+	var i;
+	var c = 0;
+	for(i = 0; i < s.length; i++) {
+	    if (s[i] == '\n') { 
+		c++; 
+	    }
+	}
+	return c;
+    }
+
+
 
     tokenize = function(s) {
 	var offset = 0;
+	var line = 1;
 	var tokens = [];
 	var PATTERNS = [['whitespace' , /^(\s+)/],
 			['comment' , /(^;[^\n]*)/],
@@ -55,10 +68,12 @@ var tokenize;
 			tokens.push([patternName, 
 				     result[1], 
 				     new Loc(offset,
+					     line,
 					     result[0].length, 
 					     "")]);
 		    }
 		    offset = offset + result[0].length;
+		    line = line + countLines(result[0]);
 		    s = s.substring(result[0].length);
 		    shouldContinue = true;
 		}
@@ -117,6 +132,7 @@ var tokenize;
 		makeAtom(quoteSymbol, leadingQuote[2]),
 		plt.Kernel.cons(quoted, empty)),
 			    new Loc(leadingQuote[2].offset,
+				    leadingQuote[2].line,
 				    (quoted.loc.offset -
 				     leadingQuote[2].offset +
 				     quoted.loc.span),
@@ -139,6 +155,7 @@ var tokenize;
 		return make_dash_stx_colon_list(
 		    result,
 		    new Loc(lparen[2].offset,
+			    lparen[2].line,
 			    rparen[2].offset - lparen[2].offset + 1,
 			    ""));
 
