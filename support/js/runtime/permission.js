@@ -50,14 +50,27 @@ var plt = plt || {};
     // Evaluates all of the startup codes, and only after everything's
     // done do we evaluate the thunk.  Asynchronous.
     plt.permission.startupAllPermissions = function(perms, thunk) {
-	
+	if (perms.length > 0) {
+	    var p = perms.pop();
+	    console.log(plt.Kernel.toWrittenString(p));
+	    plt.permission._runStartupCode(p, perms, thunk);
+
+	} else {
+	    thunk();
+	}
     };
 
 
-    plt.permission._runStartupCode = function(p) {
+    plt.permission._runStartupCode = function(p, otherPerms, thunk) {
 	var platform = plt.platform.Platform.getInstance();
 	var stimuli = plt.world.stimuli;
 
+	var keepGoing = function() {
+	    setTimeout(function() {
+		plt.permission.startupAllPermissions(otherPerms, thunk); 
+	    },
+		       0);
+	};
 	
 	if (isLocationP(p)) {
 	    platform.getLocationService().startService();
@@ -65,17 +78,20 @@ var plt = plt || {};
 		function(lat, lng) {
 		    stimuli.onLocation(lat, lng);
 		});
+	    keepGoing();
 	}
 	
-	if (isSendSmsP(p)) {
+	else if (isSendSmsP(p)) {
 	    // Do nothing
+	    keepGoing();
 	}
 		
-	if (isReceiveSmsP(p)) {
+	else if (isReceiveSmsP(p)) {
 	    // Do nothing
+	    keepGoing();
 	}
 
-	if (isTiltP(p)) {
+	else if (isTiltP(p)) {
 	    platform.getTiltService().startService();
 	    platform.getTiltService().addOrientationChangeListener(
 		function(azimuth, pitch, roll) {
@@ -86,31 +102,38 @@ var plt = plt || {};
 		function(x, y, z) {
 		    stimuli.onAcceleration(x, y, z);
 		});
-
+	    keepGoing();
 	}
 	
-	if (isShakeP(p)) {
+	else if (isShakeP(p)) {
 	    platform.getShakeService().startService();
 	    platform.getShakeService().addShakeListener(
 		function(azimuth, pitch, roll) {
 		    stimuli.onTilt(azimuth, pitch, roll);
 		});
+	    keepGoing();
 	}
 	
-	if (isInternetP(p)) {
+	else if (isInternetP(p)) {
 	    // Do nothing
+	    keepGoing();
 	}
 	
-	if (isTelephonyP(p)) {
+	else if (isTelephonyP(p)) {
 	    // Do nothing
+	    keepGoing();
 	}
 	
-	if (isWakeLockP(p)) {
+	else if (isWakeLockP(p)) {
 	    // Do nothing
+	    keepGoing();
 	}
 
-	if (isOpenImageUrlP(p)) {
+	else if (isOpenImageUrlP(p)) {
 	    // Do nothing
+	    keepGoing();
+	} else {
+	    keepGoing();
 	}
     };
 
