@@ -40,10 +40,21 @@ var plt = plt || {};
 	return permission_colon_wake_dash_lock_question_(p);
     }
 
+    function isOpenImageUrlP(p) {
+	return permission_colon_open_dash_image_dash_url_question_(p);
+    }
 
 
 
-    plt.permission.runStartupCode = function(p) {
+    // startupAllPermissions: arrayof permission (-> void) -> void
+    // Evaluates all of the startup codes, and only after everything's
+    // done do we evaluate the thunk.  Asynchronous.
+    plt.permission.startupAllPermissions = function(perms, thunk) {
+	
+    };
+
+
+    plt.permission._runStartupCode = function(p) {
 	var platform = plt.platform.Platform.getInstance();
 	var stimuli = plt.world.stimuli;
 
@@ -97,6 +108,10 @@ var plt = plt || {};
 	if (isWakeLockP(p)) {
 	    // Do nothing
 	}
+
+	if (isOpenImageUrlP(p)) {
+	    // Do nothing
+	}
     };
 
 
@@ -128,6 +143,10 @@ var plt = plt || {};
 	}
 	
 	if (isWakeLockP(p)){
+	}
+
+	if (isOpenImageUrlP(p)) {
+	    // Do nothing
 	}
     };
 

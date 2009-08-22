@@ -11,6 +11,7 @@
 (define-struct permission:internet ())
 (define-struct permission:telephony ())
 (define-struct permission:wake-lock ())
+(define-struct permission:open-image-url (url))
 
 (define (permission? datum)
   (or (permission:location? datum)
@@ -20,7 +21,8 @@
       (permission:shake? datum)
       (permission:internet? datum)
       (permission:telephony? datum)
-      (permission:wake-lock? datum)))
+      (permission:wake-lock? datum)
+      (permission:open-image-url? datum)))
 
 
 (define PERMISSION:LOCATION (make-permission:location))
@@ -34,47 +36,56 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; permission->symbol: permission -> symbol
-(define (permission->symbol a-permission)
+;; permission->string: permission -> string
+(define (permission->string a-permission)
   (cond
     [(permission:location? a-permission)
-     'PERMISSION:LOCATION]
+     "PERMISSION:LOCATION"]
     [(permission:send-sms? a-permission)
-     'PERMISSION:SEND-SMS]
+     "PERMISSION:SEND-SMS"]
     [(permission:receive-sms? a-permission)
-     'PERMISSION:RECEIVE-SMS]
+     "PERMISSION:RECEIVE-SMS"]
     [(permission:tilt? a-permission)
-     'PERMISSION:TILT]
+     "PERMISSION:TILT"]
     [(permission:shake? a-permission)
-     'PERMISSION:SHAKE]
+     "PERMISSION:SHAKE"]
     [(permission:internet? a-permission)
-     'PERMISSION:INTERNET]
+     "PERMISSION:INTERNET"]
     [(permission:telephony? a-permission)
-     'PERMISSION:TELEPHONY]
+     "PERMISSION:TELEPHONY"]
     [(permission:wake-lock? a-permission)
-     'PERMISSION:WAKE-LOCK]))
+     "PERMISSION:WAKE-LOCK"]
+    [(permission:open-image-url? a-permission)
+     (format "PERMISSION:OPEN-IMAGE-URL ~a" (permission:open-image-url-url a-permission))]))
 
 
-;; symbol->permission: symbol -> permission
-(define (symbol->permission a-ref)
+;; string->permission: string -> permission
+(define (string->permission a-ref)
   (cond
-    [(symbol=? a-ref 'PERMISSION:LOCATION)
+    [(string=? a-ref "PERMISSION:LOCATION")
      PERMISSION:LOCATION]
-    [(symbol=? a-ref 'PERMISSION:SEND-SMS)
+    [(string=? a-ref "PERMISSION:SEND-SMS")
      PERMISSION:SEND-SMS]     
-    [(symbol=? a-ref 'PERMISSION:RECEIVE-SMS)
+    [(string=? a-ref "PERMISSION:RECEIVE-SMS")
      PERMISSION:RECEIVE-SMS]
-    [(symbol=? a-ref 'PERMISSION:TILT)
+    [(string=? a-ref "PERMISSION:TILT")
      PERMISSION:TILT]
-    [(symbol=? a-ref 'PERMISSION:SHAKE)
+    [(string=? a-ref "PERMISSION:SHAKE")
      PERMISSION:SHAKE]
-    [(symbol=? a-ref 'PERMISSION:INTERNET)
+    [(string=? a-ref "PERMISSION:INTERNET")
      PERMISSION:INTERNET]
-    [(symbol=? a-ref 'PERMISSION:TELEPHONY)
+    [(string=? a-ref "PERMISSION:TELEPHONY")
      PERMISSION:TELEPHONY]
-    [(symbol=? a-ref 'PERMISSION:WAKE-LOCK)
-     PERMISSION:WAKE-LOCK]))
-  
+    [(string=? a-ref "PERMISSION:WAKE-LOCK")
+     PERMISSION:WAKE-LOCK]
+    [(and (> (string-length a-ref)
+             (string-length "PERMISSION:OPEN-IMAGE-URL"))
+          (string=? (substring a-ref 0 (string-length "PERMISSION:OPEN-IMAGE-URL"))
+                    "PERMISSION:OPEN-IMAGE-URL"))
+     (make-permission:open-image-url (substring a-ref 
+                                                (add1 (string-length "PERMISSION:OPEN-IMAGE-URL"))
+                                                (string-length a-ref)))]))
+
 
 
 
@@ -99,7 +110,9 @@
     [(permission:telephony? a-permission)
      (list "android.permission.ACCESS_COARSE_UPDATES")]
     [(permission:wake-lock? a-permission)
-     (list "android.permission.WAKE_LOCK")]))
+     (list "android.permission.WAKE_LOCK")]
+    [(permission:open-image-url? a-permission)
+     (list)]))
 
 
 ;; permission->on-start-code: permission -> string
@@ -126,6 +139,8 @@
     [(permission:telephony? a-permission)
      ""]
     [(permission:wake-lock? a-permission)
+     ""]
+    [(permission:open-image-url? a-permission)
      ""]))
 
 
@@ -147,6 +162,8 @@
     [(permission:telephony? a-permission)
      ""]
     [(permission:wake-lock? a-permission)
+     ""]
+    [(permission:open-image-url? a-permission)
      ""]))
 
 
@@ -168,11 +185,15 @@
     [(permission:telephony? a-permission)
      ""]
     [(permission:wake-lock? a-permission)
+     ""]
+    [(permission:open-image-url? a-permission)
      ""]))
 
 
 
 (provide/contract [permission? (any/c . -> . boolean?)]
+                  
+                  [struct permission:open-image-url ((url string?))]
                   
                   [PERMISSION:LOCATION permission?]
                   [PERMISSION:SEND-SMS permission?]
@@ -181,10 +202,10 @@
                   [PERMISSION:TELEPHONY permission?]
                   [PERMISSION:WAKE-LOCK permission?]
                   
-		  [permission->symbol
-		   (permission? . -> . symbol?)]
-                  [symbol->permission
-		   (permission? . -> . symbol?)]
+		  [permission->string
+		   (permission? . -> . string?)]
+                  [string->permission
+		   (permission? . -> . string?)]
 
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))]

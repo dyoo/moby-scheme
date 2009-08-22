@@ -4,11 +4,8 @@ var main = {};
 (function() {
     main.permissions = <<PERMISSIONS>>;
 
-
-    main.startup = function() {
-       for(var i = 0; i < main.permissions.length; i++) {
-           plt.permission.runStartupCode(main.permissions[i]);
-       }      
+    main.startup = function(thunk) {
+        plt.permission.startupAllPermissions(main.permissions, thunk);
     };
 
     main.shutdown = function() {
@@ -22,8 +19,8 @@ var main = {};
 
 
     main.onload = function() {
-	main.startup();
-	main.afterPreloadImages(main.runToplevel);
+	main.startup(function() {
+	   	main.afterPreloadImages(main.runToplevel); });
     };
 
 
@@ -35,8 +32,7 @@ var main = {};
 
     main.runAgain = function() { 
         main.shutdown();
-        main.startup();
-	main.runToplevel();
+        main.startup(function() { main.runToplevel(); });
     };
 
 
