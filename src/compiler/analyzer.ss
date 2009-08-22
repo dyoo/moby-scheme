@@ -287,7 +287,7 @@
 
 
 ;; handle-image-url-kludge: expr-stx pinfo -> pinfo
-;; Doing something somewhat unprincipled here: we're hacking open-image-url on strings
+;; Doing something very unprincipled here: we're hacking open-image-url on strings
 ;; so they emit a particular permission.
 (define (handle-image-url-kludge expr a-pinfo env)
 
@@ -301,7 +301,9 @@
           (string=? (binding:function-java-string (env-lookup env 'open-image-url))
                     "plt.world.Kernel.openImageUrl"))
      (local [(define b (env-lookup env 'open-image-url))]
-       (pinfo-accumulate-binding-use (make-binding:function (binding:function-name b)
+       (pinfo-accumulate-binding-use (make-binding:function (string->symbol
+                                                             (format "~a-~a" (binding:function-name b)
+                                                                     (stx-e (second (stx-e expr)))))
                                                             (binding:function-module-source b)
                                                             (binding:function-min-arity b) 
                                                             (binding:function-var-arity? b)

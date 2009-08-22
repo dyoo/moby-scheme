@@ -350,25 +350,33 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
-    
-    function FileImage(src) {
+   
+    function FileImage(src, rawImage) {
 	BaseImage.call(this, 0, 0);
 	var self = this;
 	this.isLoaded = false;
-	// fixme: we may want to do something blocking here for
-	// onload, since we don't know at this time what the file size
-	// should be, nor will drawImage do the right thing until the
-	// file is loaded.
-	this.img = new Image();
-	this.img.onload = function() {
-	    self.isLoaded = true;
-	    self.pinholeX = self.img.width / 2;
-	    self.pinholeY = self.img.height / 2;
-	};
-	this.img.src = src;
+	if (rawImage && rawImage.complete) { 
+	    this.img = rawImage;
+	    this.pinholeX = self.img.width / 2;
+	    this.pinholeY = self.img.height / 2;
+	} else {
+	    // fixme: we may want to do something blocking here for
+	    // onload, since we don't know at this time what the file size
+	    // should be, nor will drawImage do the right thing until the
+	    // file is loaded.
+	    this.img = new Image();
+	    this.img.onload = function() {
+		self.isLoaded = true;
+		self.pinholeX = self.img.width / 2;
+		self.pinholeY = self.img.height / 2;
+	    };
+	    this.img.src = src;
+	}
     }
     FileImage.prototype = heir(BaseImage.prototype);
-    
+    plt.world.Kernel.FileImage = FileImage;
+
+ 
     var imageCache = {};
     FileImage.makeInstance = function(path) {
 	if (! (path in imageCache)) {
@@ -376,6 +384,9 @@ plt.world.Kernel = plt.world.Kernel || {};
 	} 
 	return imageCache[path];
     };
+    FileImage.installInstance = function(path, rawImage) {
+	imageCache[path] = new FileImage(path, rawImage);
+    }
 
 
     FileImage.prototype.render = function(ctx, x, y) {

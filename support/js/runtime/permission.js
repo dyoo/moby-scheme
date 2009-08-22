@@ -52,7 +52,6 @@ var plt = plt || {};
     plt.permission.startupAllPermissions = function(perms, thunk) {
 	if (perms.length > 0) {
 	    var p = perms.pop();
-	    console.log(plt.Kernel.toWrittenString(p));
 	    plt.permission._runStartupCode(p, perms, thunk);
 
 	} else {
@@ -130,9 +129,16 @@ var plt = plt || {};
 	}
 
 	else if (isOpenImageUrlP(p)) {
-	    // Do nothing
-	    keepGoing();
-	} else {
+	    var path = permission_colon_open_dash_image_dash_url_dash_url(p);
+	    var img = new Image();
+	    img.onload = function() {
+		plt.world.Kernel.FileImage.installInstance(path, img);
+		keepGoing();
+	    };
+	    img.src = path;
+	} 
+
+	else {
 	    keepGoing();
 	}
     };
