@@ -135,6 +135,14 @@ var plt = plt || {};
 		plt.world.Kernel.FileImage.installInstance(path, img);
 		keepGoing();
 	    };
+	    // If something goes wrong, we should show
+	    // some default image.
+	    img.onerror = function() {
+		img.onerror = function() {
+		    keepGoing();
+		};
+		img.src = "http://www.wescheme.org/images/broken.png";
+	    };
 	    img.src = path;
 	} 
 

@@ -370,6 +370,10 @@ plt.world.Kernel = plt.world.Kernel || {};
 		self.pinholeX = self.img.width / 2;
 		self.pinholeY = self.img.height / 2;
 	    };
+	    this.img.onerror = function(e) {
+		self.img.onerror = "";
+		self.img.src = "http://www.wescheme.org/images/broken.png";
+	    }
 	    this.img.src = src;
 	}
     }
