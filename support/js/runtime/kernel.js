@@ -2063,6 +2063,7 @@ var plt = plt || {};
     // Expose the error classes.
     plt.Kernel.MobyError = MobyError;
     plt.Kernel.MobyTypeError = MobyTypeError;
+    plt.Kernel.MobySyntaxError = MobySyntaxError;
     plt.Kernel.MobyRuntimeError = MobyRuntimeError;
     
 })();
