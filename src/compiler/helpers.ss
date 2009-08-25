@@ -240,7 +240,7 @@
 
 ;; Helper to help with the destructuring and case analysis of functions.
 (define (case-analyze-definition a-definition 
-                                 f-function            ;; (stx (listof symbol) expr-stx) -> ...
+                                 f-function            ;; (stx (listof stx) expr-stx) -> ...
                                  f-regular-definition  ;; (stx expr-stx) -> ...
                                  f-define-struct)      ;; (stx (listof id-stx)) -> ...
   (cond
@@ -260,7 +260,7 @@
           (symbol? (stx-e (second (stx-e a-definition))))
           (stx-begins-with? (third (stx-e a-definition)) 'lambda))
      (local [(define id (second (stx-e a-definition)))
-             (define args (second (stx-e (third (stx-e a-definition)))))
+             (define args (stx-e (second (stx-e (third (stx-e a-definition))))))
              (define body (third (stx-e (third (stx-e a-definition)))))]
        (f-function id args body))]
     

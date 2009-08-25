@@ -85,6 +85,13 @@ function init() {
 				    "                         (insert cmp elt (rest l))))]))"+
 				    "(insert string<=? \"F\" '(\"A\" \"B\" \"X\" \"Y\"))")))
 	},
+
+		// Bug reported by Alex Kruckman
+		testLambdaDefinition: function() {
+		this.assert(isEqual(number(43),
+				    run("(define add1 (lambda (x) (+ x 1)))" +
+					"(add1 42)")));
+	    },
 	
 
 
