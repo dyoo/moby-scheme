@@ -2918,7 +2918,7 @@ var plt = plt || {};
     plt.Kernel.syntax_dash_error = function(name, msg, stx) {
 	check(name, isSymbol, "syntax-error", "symbol", 1);
 	check(msg, isString, "syntax-error", "string", 2);
-	throw new MobyRuntimeError(
+	throw new MobySyntaxError(
 	    plt.Kernel.format("~a: ~a", [name, msg]).toString(),
 	    stx);
     };
@@ -3140,6 +3140,7 @@ var plt = plt || {};
     // Expose the error classes.
     plt.Kernel.MobyError = MobyError;
     plt.Kernel.MobyTypeError = MobyTypeError;
+    plt.Kernel.MobySyntaxError = MobySyntaxError;
     plt.Kernel.MobyRuntimeError = MobyRuntimeError;
     
 })();
@@ -3997,7 +3998,7 @@ var args;
 var body; 
 (function (toplevel_dash_expression_dash_show9) { 
 id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_definition))));
-args = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_definition))))))));
+args = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_definition))))))))));
 body = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_definition)))))))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")  && f_dash_function.apply(null, [[id, args, body]]));
               })()) :
