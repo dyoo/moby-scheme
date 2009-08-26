@@ -1874,11 +1874,16 @@ var plt = plt || {};
 
 
     BaseImage.prototype.toDomNode = function() {
+	var that = this;
 	var canvas = document.createElement("canvas");
  	canvas.width = plt.world.Kernel.imageWidth(this).toInteger();
  	canvas.height = plt.world.Kernel.imageHeight(this).toInteger();
 	var ctx = canvas.getContext("2d");
-	this.render(ctx, 0, 0);
+	// KLUDGE: we render in a timeout because there's a bug in IE excanvas
+	// that requires the canvas element to be in the dom before drawing
+	// occurs.
+	setTimeout(function{} { that.render(ctx, 0, 0) }, 
+		   0);
 	return canvas;
     };
     BaseImage.prototype.toWrittenString = function() { return "<image>"; }
