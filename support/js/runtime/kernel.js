@@ -1878,11 +1878,20 @@ var plt = plt || {};
 	var canvas = document.createElement("canvas");
  	canvas.width = plt.world.Kernel.imageWidth(this).toInteger();
  	canvas.height = plt.world.Kernel.imageHeight(this).toInteger();
-	var ctx = canvas.getContext("2d");
+ 	canvas.style.width = canvas.width + "px";
+ 	canvas.style.height = canvas.height + "px";
+	
+	// KLUDGE: IE compatibility uses /js/excanvas.js, and dynamic
+	// elements must be marked this way.
+	if (typeof window.G_vmlCanvasManager != 'undefined') {
+	    canvas = window.G_vmlCanvasManager.initElement(canvas);
+	}
 	// KLUDGE: we render in a timeout because there's a bug in IE excanvas
 	// that requires the canvas element to be in the dom before drawing
 	// occurs.
-	setTimeout(function{} { that.render(ctx, 0, 0) }, 
+	setTimeout(function() {
+ 	    var ctx = canvas.getContext("2d");
+	    that.render(ctx, 0, 0) }, 
 		   0);
 	return canvas;
     };
