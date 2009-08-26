@@ -736,6 +736,17 @@ plt.Jsworld = {};
 
 
 
+    // Compatibility for attaching events to nodes.
+    function attachEvent(node, eventName, fn) {
+	if (node.addEventListener) {
+	    // Mozilla
+	    node.addEventListener(eventName, fn, false);
+	} else {
+	    // IE
+	    node.attachevent('on' + event, fn, false);
+	}
+    }
+
     //
     // DOM CREATION STUFFS
     //
@@ -743,20 +754,17 @@ plt.Jsworld = {};
     // add_ev: node string (world event -> world) -> void
     // Attaches a world-updating handler when the world is changed.
     function add_ev(node, event, f) {
-	node.addEventListener(event, 
-			      function (e) { 
-				  change_world(function(w) { 
+	attachEvent(node, event, function (e) { 
+				      change_world(function(w) { 
 					  return f(w, e); 
-				      }) }, 
-			      false);
+				      })});	
     }
 
     // add_ev_after: node string (world event -> world) -> void
     // Attaches a world-updating handler when the world is changed, but only
     // after the fired event has finished.
     function add_ev_after(node, event, f) {
-	node.addEventListener(event, 
-			      function (e) {
+	attachEvent(node, event, function (e) {
 				  setTimeout(
 				      function() {
 					  change_world(function(w) { 
@@ -764,23 +772,16 @@ plt.Jsworld = {};
 					  });
 
 				      }, 0);
-			      },
-			      false);
+	});
     }
 
 
     function addFocusTracking(node) {
-	node.addEventListener("focus",
-			      function(e) {
-				  currentFocusedNode = node;
-			      },
-			      false);
-
-	node.addEventListener("blur",
-			      function(e) {
-				  currentFocusedNode = undefined;
-			      },
-			      false);
+	attachEvent(node, "focus", function(e) {
+	    currentFocusedNode = node; });
+	attachEvent(node, "blur", function(e) {
+	    currentFocusedNode = undefined;
+	});
 	return node;
     }
 
