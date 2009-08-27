@@ -267,7 +267,7 @@
                      (current-seconds 0)
                      
                      ;; Higher-Order Functions
-                     (andmap 2)
+                     (andmap 1 true)
 		     (apply 2 true)           ;; *
                      (argmax 2)               ;; *
                      (argmin 2)               ;; *
@@ -279,7 +279,7 @@
                      (foldr 2)                ;; *
                      (map 1 true)
                      (memf 2)                 ;; *
-                     (ormap 2)                ;; *
+                     (ormap 1 true)                ;; *
                      (procedure? 1)           ;; *
                      (quicksort 2)            ;; *
                      (sort 2)                 ;; *

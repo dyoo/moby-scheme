@@ -1552,7 +1552,7 @@ var plt = plt || {};
 	arrayEach(arglists, function(x, i) { 
 	    checkList(x, "ormap", i+2);});
 	// TODO: add contract on higher order argument f.
-	while (!arglists[0].isEmpty()) {
+	while (! arglists[0].isEmpty()) {
 	    var args = [];
 	    for (var i = 0; i < arglists.length; i++) {
 		args.push(arglists[i].first());

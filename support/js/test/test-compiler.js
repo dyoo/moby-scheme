@@ -94,6 +94,40 @@ function init() {
 	    },
 	
 
+	testOrmap: function() {
+	    this.assert(isEqual(TRUE,
+				run("(ormap (lambda (x) x) (list true))")));
+
+ 	    this.assert(isEqual(FALSE,
+ 				run("(ormap (lambda (x) x) (list))")));
+
+ 	    this.assert(isEqual(FALSE,
+ 				run("(ormap (lambda (x) x) (list false))")));
+
+ 	    this.assert(isEqual(TRUE,
+ 				run("(ormap (lambda (x) x) (list false true))")));
+
+	},
+
+	testAndmap: function() {
+	    this.assert(isEqual(TRUE,
+				run("(andmap (lambda (x) x) (list true))")));
+
+	    this.assert(isEqual(TRUE,
+				run("(andmap (lambda (x) x) (list))")));
+
+	    this.assert(isEqual(FALSE,
+				run("(andmap (lambda (x) x) (list false))")));
+
+	    this.assert(isEqual(FALSE,
+				run("(andmap (lambda (x) x) (list false true))")));
+
+	    this.assert(isEqual(TRUE,
+				run("(andmap (lambda (x) x) (list true true))")));
+
+	},
+
+
 
 	    testBegin: function() {
 		// normal behaviour
