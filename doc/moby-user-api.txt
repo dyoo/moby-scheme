@@ -363,7 +363,7 @@ new world and the optional effect.  Afterwards, the effect is applied.
 on-tick: number (world -> world)
 on-tick*: number (world -> world) (world -> effect)
 
-Delays by n milliseconds, and then fires the on-tick handlers.
+Delays by n seconds, and then fires the on-tick handlers.
 
 
 
