@@ -82,12 +82,16 @@
                                   (third defn-string+expr-string+pinfo)))]
                          
                          [(test-case? (first program))
-                          (loop (rest program)
-                                (string-append defns
-                                               "\n"
-                                               "// Test case erased\n")
-                                tops
-                                a-pinfo)]
+                          (syntax-error 'program->compiled-program/pinfo
+                                        "Test case support (check-*) is unimplemented at the moment."
+                                        (first program))
+                          ;(loop (rest program)
+                          ;      (string-append defns
+                          ;                     "\n"
+                          ;                     "// Test case erased\n")
+                          ;      tops
+                          ;      a-pinfo)
+                          ]
                          
                          [(library-require? (first program))
                           (loop (rest program)

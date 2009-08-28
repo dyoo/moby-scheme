@@ -179,8 +179,6 @@
 
 
 
-
-
 ;; get-require-paths: program -> (listof module-path)
 ;; Produces the module paths that are required in the program.
 (define (get-require-paths a-program)
