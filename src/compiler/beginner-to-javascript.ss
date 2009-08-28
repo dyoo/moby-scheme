@@ -340,6 +340,12 @@
      (local [(define defns (stx-e (second (stx-e expr))))
              (define body (third (stx-e expr)))]
        (local-expression->javascript-string defns body env a-pinfo))]
+
+    ;; (begin ...)
+    [(stx-begins-with? expr 'begin)
+     (local [(define exprs (rest expr))]
+	    (begin-sequence->javascript-string exprs env a-pinfo))]
+
     
     ;; (cond ...)
     [(stx-begins-with? expr 'cond)
@@ -425,6 +431,30 @@
                    expressions))]
     (list (reverse (first strings/rev+pinfo))
           (second strings/rev+pinfo))))
+
+
+;; begin-sequence->javascript-string: (listof expr) env pinfo -> (list string pinfo)
+(define (begin-sequence->javascript-string exprs env a-pinfo)
+  (local [;; exclude-last-element: (listof any) -> (listof (listof any) any)
+          ;; (exclude-last-element (list x y z)) --> (list (list x y) z)
+          (define (exclude-last-element ls)
+            (cond
+              [(empty? ls) (error 'exclude-last-element "There should be at least one element")]
+              [else
+               (local [(define rev-ls (reverse ls))]
+                 (list (reverse (rest rev-ls)) (first rev-ls)))]))
+
+          (define strings+pinfo
+	    (expressions->javascript-strings exprs env a-pinfo))
+	  (define exprs+last-expr
+	    (exclude-last-element (first strings+pinfo)))]
+	 (list (string-append "(function(){"
+			      (string-join (first exprs+last-expr) ";\n")
+			      ";\n"
+			      "return "
+			      (second exprs+last-expr) ";"
+			      "})()")
+	       (second strings+pinfo))))
 
 
 
