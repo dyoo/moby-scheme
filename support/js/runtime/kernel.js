@@ -1853,7 +1853,7 @@ var plt = plt || {};
 
     plt.Kernel.syntax_dash_error = function(msg, stx) {
 	check(msg, isString, "syntax-error", "string", 1);
-	check(msg, isStx, "syntax-error", "stx", 2);
+	check(stx, isStx, "syntax-error", "stx", 2);
 	throw new MobySyntaxError(msg, stx);
     };
 
