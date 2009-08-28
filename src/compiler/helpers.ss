@@ -195,7 +195,8 @@
       [(stx-begins-with? an-expr 'cond)
        (process-clauses (rest (stx-e an-expr)) empty empty)]
       [else
-       (error 'desugar-cond (format "Not a cond clause: ~s" an-expr))])))
+       (syntax-error (format "Not a cond clause: ~s" (stx-e an-expr))
+                     an-expr)])))
 
 
 

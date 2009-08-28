@@ -26,10 +26,8 @@
        (base:define-struct id (fields ...) #:transparent))]))
     
 
-(define (syntax-error name msg stx)
-  (raise-syntax-error name msg stx)) 
-
-
+(define (syntax-error msg stx)
+  (raise-syntax-error 'syntax-error msg stx)) 
 
 
 ;; The following primitives will need support in the runtime,

@@ -82,8 +82,7 @@
                                   (third defn-string+expr-string+pinfo)))]
                          
                          [(test-case? (first program))
-                          (syntax-error 'program->compiled-program/pinfo
-                                        "Test case support (check-*) is unimplemented at the moment."
+                          (syntax-error "Test case support (check-*) is unimplemented at the moment."
                                         (first program))
                           ;(loop (rest program)
                           ;      (string-append defns
@@ -437,8 +436,7 @@
 (define (begin-sequence->javascript-string original-stx exprs env a-pinfo)
   (cond
     [(empty? exprs)
-     (syntax-error 'begin
-                   "expected a sequence of expressions after `begin', but nothing's there"
+     (syntax-error "expected a sequence of expressions after `begin', but nothing's there"
                    original-stx)]
     [else
      (local [;; split-last-element: (listof any) -> (listof (listof any) any)
@@ -508,8 +506,7 @@
      (char->javascript-string (stx-e expr))]
     
     [else
-     (syntax-error 'quote-expression->javascript-string 
-                   "Unknown quoted expression encountered"
+     (syntax-error "Unknown quoted expression encountered"
                    expr)]))
 
 
@@ -555,8 +552,7 @@
     ;; Special case: when the operator is named
     [(and (symbol? (stx-e operator))
           (not (env-contains? env (stx-e operator))))
-     (syntax-error 'application-expression->java-string
-                   (format "name ~s is not defined, not a parameter, and not a primitive name" (stx-e operator))
+     (syntax-error (format "name ~s is not defined, not a parameter, and not a primitive name" (stx-e operator))
                    operator)]
     
     [(symbol? (stx-e operator))
@@ -580,8 +576,7 @@
           (cond
             [(< (length operands)
                 (binding:function-min-arity operator-binding))
-             (syntax-error 'application-expression->javascript-string
-                           (format "Too few arguments passed to ~s.  Expects at least ~a arguments, given ~a."
+             (syntax-error (format "Too few arguments passed to ~s.  Expects at least ~a arguments, given ~a."
                                    (stx-e operator)
                                    (binding:function-min-arity operator-binding)
                                    (length operands))
@@ -612,8 +607,7 @@
              (cond
                [(> (length operands)
                    (binding:function-min-arity operator-binding))
-                (syntax-error 'application-expression->javascript-string 
-                              (format "Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a."
+                (syntax-error (format "Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a."
                                       (stx-e operator)
                                       (binding:function-min-arity operator-binding)
                                       (length operands))
@@ -652,8 +646,7 @@
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
     [(not (env-contains? an-env (stx-e an-id)))
-     (syntax-error 'translate-toplevel-id 
-                   (format "name ~s is not defined, not a parameter, and not a primitive name." (stx-e an-id))
+     (syntax-error (format "name ~s is not defined, not a parameter, and not a primitive name." (stx-e an-id))
                    an-id)]
     [else     
      (local [(define binding (env-lookup an-env (stx-e an-id)))]
@@ -773,8 +766,7 @@
                         (number->string (imag-part a-num))"))")]
         
         [else
-         (syntax-error 'number->java-string 
-                       (format "Don't know how to handle ~s yet" a-num)
+         (syntax-error (format "Don't know how to handle ~s yet" a-num)
                        original-stx)]))
 
 

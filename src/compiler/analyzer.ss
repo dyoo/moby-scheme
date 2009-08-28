@@ -344,9 +344,9 @@
   (local [(define (loop modules)
             (cond
               [(empty? modules)
-               (error 'require-analyze 
-                      (format "Moby doesn't know about module ~s yet"
-                              require-path))]
+               (syntax-error (format "Moby doesn't know about module ~s yet"
+                                     (stx-e require-path))
+                             require-path)]
               [(string=? (stx-e require-path)
                          (module-binding-source (first modules)))
                (pinfo-accumulate-module 

@@ -94,6 +94,10 @@ var plt = plt || {};
 	return x != null && x != undefined && x instanceof plt.types.Char;
     }
 
+    function isStx(x) {
+	return stx_question_(x);
+    }
+
     function isString(x) {
 	return typeof(x) == 'string';
 	//return x != null && x != undefined && x instanceof plt.types.String;
@@ -1847,12 +1851,10 @@ var plt = plt || {};
 	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
     };
 
-    plt.Kernel.syntax_dash_error = function(name, msg, stx) {
-	check(name, isSymbol, "syntax-error", "symbol", 1);
-	check(msg, isString, "syntax-error", "string", 2);
-	throw new MobySyntaxError(
-	    plt.Kernel.format("~a: ~a", [name, msg]).toString(),
-	    stx);
+    plt.Kernel.syntax_dash_error = function(msg, stx) {
+	check(msg, isString, "syntax-error", "string", 1);
+	check(msg, isStx, "syntax-error", "stx", 2);
+	throw new MobySyntaxError(msg, stx);
     };
 
 
