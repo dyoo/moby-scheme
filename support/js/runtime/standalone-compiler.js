@@ -1306,8 +1306,7 @@ var plt = plt || {};
 	    [functionName, 
 	     typeName,
 	     position + suffixes[Math.min(suffixes.length-1, position)],
-	     value
-	    ]);
+	     value]);
     }
 
 
@@ -3009,8 +3008,7 @@ var plt = plt || {};
 
     plt.Kernel.toWrittenString = function(x) {
 	if (x == undefined || x == null) {
-	    return "undefined";
-	    //	    throw new MobyRuntimeError("value must not be null or undefined");
+	    throw new MobyRuntimeError("value must not be null or undefined");
 	}
 	if (typeof(x) == 'string') {
 	    return x.toWrittenString();
@@ -3030,10 +3028,9 @@ var plt = plt || {};
 
 
     plt.Kernel.toDisplayedString = function(x) {
-	return "undefined";
-//	if (x == undefined || x == null) {
-//	    throw new MobyRuntimeError("value must not be null or undefined");
-//	}
+	if (x == undefined || x == null) {
+	    throw new MobyRuntimeError("value must not be null or undefined");
+	}
 	if (typeof(x) == 'string') {
 	    return x.toDisplayedString();
 	}
