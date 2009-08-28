@@ -4464,6 +4464,8 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_
               })()); }
 function expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("local")))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && local_dash_expression_dash_analyze_dash_uses(an_dash_expression,pinfo,env)) :
+ ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("begin")))) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && begin_dash_expression_dash_analyze_dash_uses(an_dash_expression,pinfo,env)) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("cond")))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash_analyze_dash_uses((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_cond(an_dash_expression)),pinfo,env)) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(an_dash_expression,(plt.types.Symbol.makeInstance("if")))) ?
@@ -4534,7 +4536,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && lambda_dash
  pinfo :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.pair_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression)))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && application_dash_expression_dash_analyze_dash_uses(an_dash_expression,pinfo,env)) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))))))); }
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))))))))))))); }
 function local_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((function() { 
 
 var defns; 
@@ -4557,20 +4559,32 @@ var a_dash_pinfo = args54[1];
                    })()),pinfo, [defns])); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_update_dash_env((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash_analyze_dash_uses(body,nested_dash_pinfo,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_env(nested_dash_pinfo)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_env(pinfo))));
               })()); }
+function begin_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args55) {
+var e = args55[0];
+var p = args55[1];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash_analyze_dash_uses(e,p,env)); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()),pinfo, [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression))))])); }
 function if_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((function() { 
 
 var test; 
 var consequent; 
 var alternative; 
-(function (toplevel_dash_expression_dash_show55) { 
+(function (toplevel_dash_expression_dash_show56) { 
 test = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression))));
 consequent = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression))));
 alternative = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.fourth((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args56) {
-var e = args56[0];
-var p = args56[1];
+   var result = (function(args57) {
+var e = args57[0];
+var p = args57[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash_analyze_dash_uses(e,p,env)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4582,32 +4596,33 @@ var p = args56[1];
 function application_dash_expression_dash_analyze_dash_uses(an_dash_expression, pinfo, env) { return ((function() { 
 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show57) { 
-updated_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
-   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args58) {
-var e = args58[0];
-var p = args58[1];
-                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash_analyze_dash_uses(e,p,env)); });
-                      result.toWrittenString = function () {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })()),pinfo, [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression))])); })(plt.Kernel.identity)
-return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && handle_dash_image_dash_url_dash_kludge(an_dash_expression,updated_dash_pinfo,env));
-              })()); }
 function handle_dash_image_dash_url_dash_kludge(expr, a_dash_pinfo, env) { return (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("open-image-url"))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_question_(expr))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel._equal_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))),(plt.types.Rational.makeInstance(2, 1)), []))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_contains_question_(env,(plt.types.Symbol.makeInstance("open-image-url"))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(env,(plt.types.Symbol.makeInstance("open-image-url"))))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_java_dash_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(env,(plt.types.Symbol.makeInstance("open-image-url")))))),(plt.types.String.makeInstance("plt.world.Kernel.openImageUrl")), []))) ?
  ((function() { 
 
 var b; 
-(function (toplevel_dash_expression_dash_show59) { 
+(function (toplevel_dash_expression_dash_show60) { 
 b = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(env,(plt.types.Symbol.makeInstance("open-image-url")))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_accumulate_dash_binding_dash_use((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_function((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("~a-~a")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_name(b)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))))])))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_module_dash_source(b)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_min_dash_arity(b)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_var_dash_arity_question_(b)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_java_dash_string(b)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_open_dash_image_dash_url((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_cps_question_(b)))),a_dash_pinfo));
               })()) :
  (plt.types.Logic.TRUE ?
  a_dash_pinfo :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+(function (toplevel_dash_expression_dash_show58) { 
+updated_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args59) {
+var e = args59[0];
+var p = args59[1];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash_analyze_dash_uses(e,p,env)); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()),pinfo, [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expression))]));
+ })(plt.Kernel.identity)
+return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && handle_dash_image_dash_url_dash_kludge(an_dash_expression,updated_dash_pinfo,env));
+              })()); }
 function require_dash_analyze(require_dash_path, pinfo) { return ((function() { 
 
 function loop(modules) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(modules)) ?
@@ -4617,7 +4632,7 @@ function loop(modules) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(modules)))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); }
-(function (toplevel_dash_expression_dash_show60) { 
+(function (toplevel_dash_expression_dash_show61) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(known_dash_modules));
               })()); }
@@ -4668,7 +4683,7 @@ function loop(program, defns, tops, a_dash_pinfo) { return ((plt.Kernel.setLastL
  ((function() { 
 
 var defn_dash_string_plus_expr_dash_string_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show62) { 
+(function (toplevel_dash_expression_dash_show63) { 
 defn_dash_string_plus_expr_dash_string_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && definition_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(program)),toplevel_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([defns,(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(defn_dash_string_plus_expr_dash_string_plus_pinfo))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([tops,(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(defn_dash_string_plus_expr_dash_string_plus_pinfo))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third(defn_dash_string_plus_expr_dash_string_plus_pinfo))));
               })()) :
@@ -4680,13 +4695,13 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.K
  ((function() { 
 
 var expression_dash_string_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show63) { 
+(function (toplevel_dash_expression_dash_show64) { 
 expression_dash_string_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(program)),toplevel_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(program)),defns,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([tops,(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier(toplevel_dash_expression_dash_show)))),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(expression_dash_string_plus_pinfo)),(plt.types.String.makeInstance(");"))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(expression_dash_string_plus_pinfo))));
               })()) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-(function (toplevel_dash_expression_dash_show61) { 
+(function (toplevel_dash_expression_dash_show62) { 
 pinfo_dash_1_plus_gensym = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_gensym(input_dash_pinfo,(plt.types.Symbol.makeInstance("toplevel-expression-show"))));
 toplevel_dash_expression_dash_show = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(pinfo_dash_1_plus_gensym));
 a_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && program_dash_analyze_slash_pinfo(program,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(pinfo_dash_1_plus_gensym))));
@@ -4696,22 +4711,11 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(progra
               })()); }
 function definition_dash__greaterthan_javascript_dash_strings(defn, env, a_dash_pinfo) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && case_dash_analyze_dash_definition(defn,((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args64) {
-var fun = args64[0];
-var args = args64[1];
-var body = args64[2];
-                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && function_dash_definition_dash__greaterthan_java_dash_string(fun,args,body,env,a_dash_pinfo)); });
-                      result.toWrittenString = function () {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })()),((function() {
-   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args65) {
-var id = args65[0];
-var body = args65[1];
-                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && variable_dash_definition_dash__greaterthan_javascript_dash_strings(id,body,env,a_dash_pinfo)); });
+var fun = args65[0];
+var args = args65[1];
+var body = args65[2];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && function_dash_definition_dash__greaterthan_java_dash_string(fun,args,body,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
@@ -4721,7 +4725,18 @@ var body = args65[1];
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args66) {
 var id = args66[0];
-var fields = args66[1];
+var body = args66[1];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && variable_dash_definition_dash__greaterthan_javascript_dash_strings(id,body,env,a_dash_pinfo)); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()),((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args67) {
+var id = args67[0];
+var fields = args67[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && struct_dash_definition_dash__greaterthan_javascript_dash_string(id,fields,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4738,12 +4753,12 @@ var env_dash_with_dash_arg_dash_bindings;
 var body_dash_string_plus_pinfo; 
 var body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show67) { 
+(function (toplevel_dash_expression_dash_show68) { 
 munged_dash_fun_dash_id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(fun))));
 munged_dash_arg_dash_ids = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args68) {
-var id = args68[0];
+   var result = (function(args69) {
+var id = args69[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4754,9 +4769,9 @@ var id = args68[0];
 new_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend_dash_function(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(fun)),plt.types.Logic.FALSE,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id))));
 env_dash_with_dash_arg_dash_bindings = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args69) {
-var arg_dash_id = args69[0];
-var env = args69[1];
+   var result = (function(args70) {
+var arg_dash_id = args70[0];
+var env = args70[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_constant((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)))))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4769,8 +4784,8 @@ body_dash_string = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   &&
 updated_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(body_dash_string_plus_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id)),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args70) {
-var arg_dash_id = args70[0];
+   var result = (function(args71) {
+var arg_dash_id = args71[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4784,7 +4799,7 @@ function variable_dash_definition_dash__greaterthan_javascript_dash_strings(id, 
 var munged_dash_id; 
 var new_dash_env; 
 var str_plus_p; 
-(function (toplevel_dash_expression_dash_show71) { 
+(function (toplevel_dash_expression_dash_show72) { 
 munged_dash_id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))));
 new_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_constant((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(munged_dash_id)),plt.types.Empty.EMPTY))));
 str_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string(body,new_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
@@ -4796,22 +4811,12 @@ function field_dash__greaterthan_accessor_dash_name(struct_dash_name, field_dash
 var updated_dash_pinfo; 
 var predicate_dash_name; 
 function make_dash_accessor_dash_name(a_dash_field) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance("-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(a_dash_field))])))))))); }
-(function (toplevel_dash_expression_dash_show72) { 
+(function (toplevel_dash_expression_dash_show73) { 
 
 updated_dash_pinfo = a_dash_pinfo;
 predicate_dash_name = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance("?"))]))))))));
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
-   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args73) {
-var i = args73[0];
-                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))); });
-                      result.toWrittenString = function () {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })()), [fields])),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("plt.Kernel.Struct.call(this, ~s, [~a]);")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args74) {
 var i = args74[0];
@@ -4821,10 +4826,20 @@ var i = args74[0];
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()), [fields])),(plt.types.String.makeInstance(","))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
+                   })()), [fields])),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("plt.Kernel.Struct.call(this, ~s, [~a]);")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args75) {
 var i = args75[0];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()), [fields])),(plt.types.String.makeInstance(","))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args76) {
+var i = args76[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("this.")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))),(plt.types.String.makeInstance(" = ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))),(plt.types.String.makeInstance(";"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4834,20 +4849,10 @@ var i = args75[0];
                    })()), [fields])),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance(" }\n                    ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance(".prototype = new plt.Kernel.Struct();\n"))])),(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),((function() { 
 
 var make_dash_id; 
-(function (toplevel_dash_expression_dash_show76) { 
+(function (toplevel_dash_expression_dash_show77) { 
 make_dash_id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))))])))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier(make_dash_id))));
               })()),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.build_dash_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(fields)),((function() {
-   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args77) {
-var i = args77[0];
-                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("id")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i))])); });
-                      result.toWrittenString = function () {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { return new ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.build_dash_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(fields)),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args78) {
 var i = args78[0];
@@ -4857,10 +4862,20 @@ var i = args78[0];
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
-                   })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("); }"))])),(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
+                   })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { return new ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.build_dash_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(fields)),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args79) {
-var a_dash_field = args79[0];
+var i = args79[0];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("id")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i))])); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("); }"))])),(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args80) {
+var a_dash_field = args80[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("function ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_accessor_dash_name((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance("(obj) {\n")),(plt.types.String.makeInstance("     if (")),predicate_dash_name,(plt.types.String.makeInstance(" (obj)) {\n")),(plt.types.String.makeInstance("        return obj.")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))))),(plt.types.String.makeInstance(";\n")),(plt.types.String.makeInstance("     } else {\n")),(plt.types.String.makeInstance("        throw new plt.Kernel.MobyRuntimeError(")),(plt.types.String.makeInstance("            plt.Kernel.format('")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_accessor_dash_name((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance(": not a ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance(": ~s', [obj]));\n")),(plt.types.String.makeInstance("     }\n")),(plt.types.String.makeInstance("}\n"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -4874,10 +4889,18 @@ function expression_dash__greaterthan_javascript_dash_string(expr, env, a_dash_p
 
 var defns; 
 var body; 
-(function (toplevel_dash_expression_dash_show80) { 
+(function (toplevel_dash_expression_dash_show81) { 
 defns = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))));
 body = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && local_dash_expression_dash__greaterthan_javascript_dash_string(defns,body,env,a_dash_pinfo));
+              })()) :
+ ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("begin")))) ?
+ ((function() { 
+
+var exprs; 
+(function (toplevel_dash_expression_dash_show82) { 
+exprs = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
+return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && begin_dash_sequence_dash__greaterthan_javascript_dash_string(expr,exprs,env,a_dash_pinfo));
               })()) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(expr,(plt.types.Symbol.makeInstance("cond")))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_cond(expr)),env,a_dash_pinfo)) :
@@ -4887,7 +4910,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && local_dash_
 var test; 
 var consequent; 
 var alternative; 
-(function (toplevel_dash_expression_dash_show81) { 
+(function (toplevel_dash_expression_dash_show83) { 
 test = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 consequent = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 alternative = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.fourth((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
@@ -4897,7 +4920,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && if_dash_exp
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show82) { 
+(function (toplevel_dash_expression_dash_show84) { 
 exprs = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_dash_chain_dash__greaterthan_javascript_dash_string((plt.types.String.makeInstance("&&")),exprs,env,a_dash_pinfo));
               })()) :
@@ -4905,7 +4928,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_das
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show83) { 
+(function (toplevel_dash_expression_dash_show85) { 
 exprs = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_dash_chain_dash__greaterthan_javascript_dash_string((plt.types.String.makeInstance("||")),exprs,env,a_dash_pinfo));
               })()) :
@@ -4914,7 +4937,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_das
 
 var args; 
 var body; 
-(function (toplevel_dash_expression_dash_show84) { 
+(function (toplevel_dash_expression_dash_show86) { 
 args = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))));
 body = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && lambda_dash_expression_dash__greaterthan_javascript_dash_string(expr,args,body,env,a_dash_pinfo));
@@ -4938,25 +4961,25 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && lambda_dash
 
 var operator; 
 var operands; 
-(function (toplevel_dash_expression_dash_show85) { 
+(function (toplevel_dash_expression_dash_show87) { 
 operator = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 operands = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && application_dash_expression_dash__greaterthan_javascript_dash_string(expr,operator,operands,env,a_dash_pinfo));
               })()) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))))))); }
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))))))))))))); }
 function expressions_dash__greaterthan_javascript_dash_strings(expressions, env, a_dash_pinfo) { return ((function() { 
 
 var strings_slash_rev_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show86) { 
+(function (toplevel_dash_expression_dash_show88) { 
 strings_slash_rev_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args87) {
-var e = args87[0];
-var ss_plus_p = args87[1];
+   var result = (function(args89) {
+var e = args89[0];
+var ss_plus_p = args89[1];
                              return ((function() { 
 
 var new_dash_string_plus_p; 
-(function (toplevel_dash_expression_dash_show88) { 
+(function (toplevel_dash_expression_dash_show90) { 
 new_dash_string_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string(e,env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(ss_plus_p)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(new_dash_string_plus_p)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(ss_plus_p)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(new_dash_string_plus_p))]));
               })()); });
@@ -4968,13 +4991,28 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.li
                    })()),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([plt.types.Empty.EMPTY,a_dash_pinfo])), [expressions])); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(strings_slash_rev_plus_pinfo)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(strings_slash_rev_plus_pinfo))]));
               })()); }
+function begin_dash_sequence_dash__greaterthan_javascript_dash_string(original_dash_stx, exprs, env, a_dash_pinfo) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(exprs)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.syntax_dash_error((plt.types.Symbol.makeInstance("begin")),(plt.types.String.makeInstance("expected a sequence of expressions after `begin', but nothing's there")),original_dash_stx)) :
+ (plt.types.Logic.TRUE ?
+ ((function() { 
+
+function exclude_dash_last_dash_element(ls) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(ls)))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(ls))))])); }
+var strings_plus_pinfo; 
+var exprs_plus_last_dash_expr; 
+(function (toplevel_dash_expression_dash_show91) { 
+
+strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings(exprs,env,a_dash_pinfo));
+exprs_plus_last_dash_expr = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && exclude_dash_last_dash_element((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(strings_plus_pinfo)))); })(plt.Kernel.identity)
+return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(function(){")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(exprs_plus_last_dash_expr)),(plt.types.String.makeInstance(";\n")))),(plt.types.String.makeInstance(";\n")),(plt.types.String.makeInstance("return ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(exprs_plus_last_dash_expr)),(plt.types.String.makeInstance(";")),(plt.types.String.makeInstance("})()"))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(strings_plus_pinfo))]));
+              })()) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function if_dash_expression_dash__greaterthan_javascript_dash_string(test, consequent, alternative, env, a_dash_pinfo) { return ((function() { 
 
 var es_plus_p; 
 var s1; 
 var s2; 
 var s3; 
-(function (toplevel_dash_expression_dash_show89) { 
+(function (toplevel_dash_expression_dash_show92) { 
 es_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([test,consequent,alternative])),env,a_dash_pinfo));
 s1 = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(es_plus_p))));
 s2 = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(es_plus_p))));
@@ -5003,7 +5041,7 @@ function quote_dash_expression_dash__greaterthan_javascript_dash_string(expr) { 
 function boolean_dash_chain_dash__greaterthan_javascript_dash_string(joiner, exprs, env, a_dash_pinfo) { return ((function() { 
 
 var strings_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show90) { 
+(function (toplevel_dash_expression_dash_show93) { 
 strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings(exprs,env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(strings_plus_pinfo)),joiner)),(plt.types.String.makeInstance(")"))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(strings_plus_pinfo))]));
               })()); }
@@ -5013,7 +5051,7 @@ var inner_dash_compiled_dash_program;
 var inner_dash_body_dash_string_plus_pinfo; 
 var inner_dash_body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show91) { 
+(function (toplevel_dash_expression_dash_show94) { 
 inner_dash_compiled_dash_program = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && program_dash__greaterthan_compiled_dash_program_slash_pinfo(defns,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_update_dash_env(a_dash_pinfo,env))));
 inner_dash_body_dash_string_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string(body,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_env((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_pinfo(inner_dash_compiled_dash_program)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_pinfo(inner_dash_compiled_dash_program))));
 inner_dash_body_dash_string = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(inner_dash_body_dash_string_plus_pinfo));
@@ -5029,7 +5067,7 @@ var operator_dash_binding;
 var operand_dash_strings_plus_pinfo; 
 var operand_dash_strings; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show92) { 
+(function (toplevel_dash_expression_dash_show95) { 
 operator_dash_binding = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(operator))));
 operand_dash_strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings(operands,env,a_dash_pinfo));
 operand_dash_strings = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(operand_dash_strings_plus_pinfo));
@@ -5061,7 +5099,7 @@ var expression_dash_strings_plus_pinfo;
 var operator_dash_string; 
 var operand_dash_strings; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show93) { 
+(function (toplevel_dash_expression_dash_show96) { 
 expression_dash_strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons(operator,operands)),env,a_dash_pinfo));
 operator_dash_string = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(expression_dash_strings_plus_pinfo))));
 operand_dash_strings = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(expression_dash_strings_plus_pinfo))));
@@ -5075,7 +5113,7 @@ function identifier_dash_expression_dash__greaterthan_javascript_dash_string(an_
  ((function() { 
 
 var binding; 
-(function (toplevel_dash_expression_dash_show94) { 
+(function (toplevel_dash_expression_dash_show97) { 
 binding = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(an_dash_env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_id)))); })(plt.Kernel.identity)
 return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_constant_question_(binding)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_constant_dash_java_dash_string(binding)) :
@@ -5085,8 +5123,8 @@ return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_co
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(function() { var result = (function(args) {\n                    return ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_java_dash_string(binding)),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args95) {
-var i = args95[0];
+   var result = (function(args98) {
+var i = args98[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("args[")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i)),(plt.types.String.makeInstance("]"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5107,7 +5145,7 @@ function loop(i, elts) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")  && f.apply(null, [[(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(elts)), i]])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.add1(i)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(elts)))))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
-(function (toplevel_dash_expression_dash_show97) { 
+(function (toplevel_dash_expression_dash_show100) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.types.Rational.makeInstance(0, 1)),elts));
               })()); }
@@ -5119,12 +5157,12 @@ var args_dash_sym;
 var body_dash_string_plus_p; 
 var body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show96) { 
+(function (toplevel_dash_expression_dash_show99) { 
 
 munged_dash_arg_dash_ids = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args98) {
-var id = args98[0];
+   var result = (function(args101) {
+var id = args101[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5134,9 +5172,9 @@ var id = args98[0];
                    })()), [args]));
 new_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args99) {
-var arg_dash_id = args99[0];
-var env = args99[1];
+   var result = (function(args102) {
+var arg_dash_id = args102[0];
+var env = args102[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_constant((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)))))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5152,9 +5190,9 @@ body_dash_string = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   &&
 updated_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(body_dash_string_plus_p)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((function() {\n")),(plt.types.String.makeInstance("   plt.Kernel.setLastLoc(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("~s")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(original_dash_stx))))])),(plt.types.String.makeInstance(");\n")),(plt.types.String.makeInstance("   var result = (function(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(args_dash_sym)),(plt.types.String.makeInstance(") {\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && mapi(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args100) {
-var arg_dash_id = args100[0];
-var i = args100[1];
+   var result = (function(args103) {
+var arg_dash_id = args103[0];
+var i = args103[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)),(plt.types.String.makeInstance(" = ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(args_dash_sym)),(plt.types.String.makeInstance("[")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i)),(plt.types.String.makeInstance("];"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5186,7 +5224,7 @@ function escape_dash_char_dash_code(a_dash_char) { return ((plt.Kernel.setLastLo
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string([a_dash_char])) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))); }
-(function (toplevel_dash_expression_dash_show101) { 
+(function (toplevel_dash_expression_dash_show104) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);
@@ -5354,6 +5392,7 @@ moby_dash_module_dash_binding = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 i
 known_dash_modules = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([world_dash_module,world_dash_stub_dash_module,location_dash_module,tilt_dash_module,net_dash_module,parser_dash_module,bootstrap_dash_module,telephony_dash_module,moby_dash_module_dash_binding]));
 
 empty_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_pinfo(empty_dash_env,plt.types.Empty.EMPTY,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1))));
+
 
 
 

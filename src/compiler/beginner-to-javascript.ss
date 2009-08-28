@@ -343,8 +343,8 @@
 
     ;; (begin ...)
     [(stx-begins-with? expr 'begin)
-     (local [(define exprs (rest expr))]
-	    (begin-sequence->javascript-string exprs env a-pinfo))]
+     (local [(define exprs (rest (stx-e expr)))]
+	    (begin-sequence->javascript-string expr exprs env a-pinfo))]
 
     
     ;; (cond ...)
@@ -433,28 +433,32 @@
           (second strings/rev+pinfo))))
 
 
-;; begin-sequence->javascript-string: (listof expr) env pinfo -> (list string pinfo)
-(define (begin-sequence->javascript-string exprs env a-pinfo)
-  (local [;; exclude-last-element: (listof any) -> (listof (listof any) any)
-          ;; (exclude-last-element (list x y z)) --> (list (list x y) z)
-          (define (exclude-last-element ls)
-            (cond
-              [(empty? ls) (error 'exclude-last-element "There should be at least one element")]
-              [else
-               (local [(define rev-ls (reverse ls))]
-                 (list (reverse (rest rev-ls)) (first rev-ls)))]))
+;; begin-sequence->javascript-string: (listof expr-stx) env pinfo -> (list string pinfo)
+(define (begin-sequence->javascript-string original-stx exprs env a-pinfo)
+  (cond
+    [(empty? exprs)
+     (syntax-error 'begin
+                   "expected a sequence of expressions after `begin', but nothing's there"
+                   original-stx)]
+    [else
+     (local [;; split-last-element: (listof any) -> (listof (listof any) any)
+             ;; (split-last-element (list x y z)) --> (list (list x y) z)
+             (define (exclude-last-element ls)
+               (list (reverse (rest (reverse ls))) 
+                     (first (reverse ls))))
 
-          (define strings+pinfo
-	    (expressions->javascript-strings exprs env a-pinfo))
-	  (define exprs+last-expr
-	    (exclude-last-element (first strings+pinfo)))]
-	 (list (string-append "(function(){"
-			      (string-join (first exprs+last-expr) ";\n")
-			      ";\n"
-			      "return "
-			      (second exprs+last-expr) ";"
-			      "})()")
-	       (second strings+pinfo))))
+             (define strings+pinfo
+               (expressions->javascript-strings exprs env a-pinfo))
+             
+             (define exprs+last-expr
+               (exclude-last-element (first strings+pinfo)))]
+       (list (string-append "(function(){"
+                            (string-join (first exprs+last-expr) ";\n")
+                            ";\n"
+                            "return "
+                            (second exprs+last-expr) ";"
+                            "})()")
+             (second strings+pinfo)))]))
 
 
 
