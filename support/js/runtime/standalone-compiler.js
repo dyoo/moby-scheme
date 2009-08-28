@@ -1306,28 +1306,32 @@ var plt = plt || {};
 	    [functionName, 
 	     typeName,
 	     position + suffixes[Math.min(suffixes.length-1, position)],
-	     value]);
+	     value
+	    ]);
     }
 
 
     // Checks if x satisfies f.  If not, a MobyTypeError of msg is thrown.
     function check(x, f, functionName, typeName, position) {
 	if (! f(x)) {
-	    throw new MobyTypeError(makeTypeErrorMessage(functionName, typeName, position, x));
+	    throw new MobyTypeError(
+		makeTypeErrorMessage(functionName, typeName, position, x));
 	}
     }
 
     // Throws exception if x is not a list.
     function checkList(x, functionName, position) {
 	if (! isList(x)) {
-	    throw new MobyTypeError(makeTypeErrorMessage(functionName, "list", position, x));
+	    throw new MobyTypeError(
+		makeTypeErrorMessage(functionName, "list", position, x));
 	}
     }
 
     // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
     function checkListof(x, f, functionName, typeName, position) {
 	if (! isList(x)) {
-	    throw new MobyTypeError(makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
+	    throw new MobyTypeError(
+		makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
 	}
 	while (! x.isEmpty()) {
 	    if (! f(x.first())) {
@@ -1339,39 +1343,41 @@ var plt = plt || {};
 
 
     // makeChainingComparator: (X -> boolean) string (X X (arrayof X) -> boolean) -> (X X (arrayof X) -> boolean) 
-    function makeChainingComparator(typeCheckF, typeName, comparisonF) {
+    function makeChainingComparator(typeCheckF, typeName, comparisonF, comparatorName) {
 	return function(first, second, rest) {
-	    check(first, typeCheckF, "first must be a " + typeName);
-	    check(second, typeCheckF, "second must be a " + typeName);
+	    check(first, typeCheckF, comparatorName, typeName, 1);
+	    check(second, typeCheckF, comparatorName, typeName, 2);
 	    arrayEach(rest, 
-		      function(x, i) { check(x, typeCheckF, 
-					     "each argument must be a " + typeName) });
+		      function(x, i) { check(x, typeCheckF, comparatorName, typeName, i+3) });
 	    return comparisonF(first, second, rest);
 	}
     }
 
 
 
-    function makeNumericChainingComparator(test) {
+    function makeNumericChainingComparator(test, comparatorName) {
 	return makeChainingComparator(isNumber, "number",
 				      function(first, second, rest) {
 					  return chainTest(test, first, second, rest);
-				      });
+				      },
+				      comparatorName);
     }
 
-    function makeCharChainingComparator(test) {
+    function makeCharChainingComparator(test, comparatorName) {
 	return makeChainingComparator(isChar, "char",
 				      function(first, second, rest) {
 					  return chainTest(test, first, second, rest);
-				      });
+				      },
+				      comparatorName);
     }
 
 
-    function makeStringChainingComparator(test) {
+    function makeStringChainingComparator(test, comparatorName) {
 	return makeChainingComparator(isString, "string",
 				      function(first, second, rest) {
 					  return chainTest(test, first, second, rest);
-				      });
+				      },
+				      comparatorName);
     }
 
 
@@ -1618,11 +1624,11 @@ var plt = plt || {};
 	},
 	
 
-	_equal_ : makeNumericChainingComparator(plt.types.NumberTower.equal),
-	_greaterthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.greaterThanOrEqual),
-	_lessthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.lessThanOrEqual),
-	_greaterthan_: makeNumericChainingComparator(plt.types.NumberTower.greaterThan),
-	_lessthan_: makeNumericChainingComparator(plt.types.NumberTower.lessThan),
+	_equal_ : makeNumericChainingComparator(plt.types.NumberTower.equal, "="),
+	_greaterthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.greaterThanOrEqual, ">="),
+	_lessthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.lessThanOrEqual, "<="),
+	_greaterthan_: makeNumericChainingComparator(plt.types.NumberTower.greaterThan, ">"),
+	_lessthan_: makeNumericChainingComparator(plt.types.NumberTower.lessThan, "<"),
 
 	
 	min : function(first, rest) {
@@ -2167,43 +2173,43 @@ var plt = plt || {};
 
 	
 	string_equal__question_ : makeStringChainingComparator(
-	    function(x, y){return x == y;}),
+	    function(x, y){return x == y;}, "string=?"),
 	
 
 	string_lessthan__equal__question_: makeStringChainingComparator(
-	    function(x, y){return x <= y;}),
+	    function(x, y){return x <= y;}, "string<=?"),
 
 
 	string_lessthan__question_: makeStringChainingComparator(
-	    function(x, y){return x < y;}),
+	    function(x, y){return x < y;}, "string<?"),
 	
 
 	string_greaterthan__equal__question_: makeStringChainingComparator(
-	    function(x, y){return x >= y;}),
+	    function(x, y){return x >= y;}, "string>=?"),
 	
 
 	string_greaterthan__question_: makeStringChainingComparator(
-	    function(x, y){return x > y;}),
+	    function(x, y){return x > y;}, "string>?"),
 	
 
 	string_dash_ci_equal__question_ : makeStringChainingComparator(
-	    function(x, y){return x.toUpperCase() == y.toUpperCase();}),
+	    function(x, y){return x.toUpperCase() == y.toUpperCase();}, "string-ci=?"),
 	
 
 	string_dash_ci_lessthan__equal__question_ : makeStringChainingComparator(
-	    function(x, y){return x.toUpperCase() <= y.toUpperCase();}),
+	    function(x, y){return x.toUpperCase() <= y.toUpperCase();}, "string-ci<=?"),
 	
 
 	string_dash_ci_lessthan__question_ : makeStringChainingComparator(
-	    function(x, y){return x.toUpperCase() < y.toUpperCase();}),
+	    function(x, y){return x.toUpperCase() < y.toUpperCase();}, "string-ci<?"),
 	
 
 	string_dash_ci_greaterthan__question_ : makeStringChainingComparator(
-	    function(x, y){return x.toUpperCase() > y.toUpperCase();}),
+	    function(x, y){return x.toUpperCase() > y.toUpperCase();}, "string-ci>?"),
 	
 
 	string_dash_ci_greaterthan__equal__question_ : makeStringChainingComparator(
-	    function(x, y){return x.toUpperCase() >= y.toUpperCase();}),
+	    function(x, y){return x.toUpperCase() >= y.toUpperCase();}, "string-ci>=?"),
 	
 
 	string_dash_copy : function(str){
@@ -2276,38 +2282,38 @@ var plt = plt || {};
 	
 	
 	char_equal__question_ : makeCharChainingComparator(
-	    function(x, y) { return x.val == y.val; }),
+	    function(x, y) { return x.val == y.val; }, "char=?"),
 	
 	char_lessthan__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val < y.val; }),
+	    function(x, y){ return x.val < y.val; }, "char<?"),
 	
 	
 	char_lessthan__equal__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val <= y.val; }),
+	    function(x, y){ return x.val <= y.val; }, "char<=?"),
 
 	
 	char_greaterthan__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val > y.val; }),
+	    function(x, y){ return x.val > y.val; }, "char>?"),
 	
 	char_greaterthan__equal__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val >= y.val; }),
+	    function(x, y){ return x.val >= y.val; }, "char>=?"),
 	
 	char_dash_ci_equal__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val.toUpperCase() == y.val.toUpperCase(); }),
+	    function(x, y){ return x.val.toUpperCase() == y.val.toUpperCase(); }, "char-ci=?"),
 
 	char_dash_ci_lessthan__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val.toUpperCase() < y.val.toUpperCase(); }),
+	    function(x, y){ return x.val.toUpperCase() < y.val.toUpperCase(); }, "char-ci<?"),
 
 
 	char_dash_ci_lessthan__equal__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val.toUpperCase() <= y.val.toUpperCase(); }),
+	    function(x, y){ return x.val.toUpperCase() <= y.val.toUpperCase(); }, "char-ci<=?"),
 	
 	char_dash_ci_greaterthan__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val.toUpperCase() > y.val.toUpperCase(); }),
+	    function(x, y){ return x.val.toUpperCase() > y.val.toUpperCase(); }, "char-ci>?"),
 
 	
 	char_dash_ci_greaterthan__equal__question_ : makeCharChainingComparator(
-	    function(x, y){ return x.val.toUpperCase() >= y.val.toUpperCase(); }),
+	    function(x, y){ return x.val.toUpperCase() >= y.val.toUpperCase(); }, "char-ci>=?"),
 	
 	
 	char_dash_numeric_question_ : function(ch){
@@ -2930,7 +2936,7 @@ var plt = plt || {};
 
     plt.Kernel.syntax_dash_error = function(msg, stx) {
 	check(msg, isString, "syntax-error", "string", 1);
-	check(msg, isStx, "syntax-error", "stx", 2);
+	check(stx, isStx, "syntax-error", "stx", 2);
 	throw new MobySyntaxError(msg, stx);
     };
 
@@ -3003,7 +3009,8 @@ var plt = plt || {};
 
     plt.Kernel.toWrittenString = function(x) {
 	if (x == undefined || x == null) {
-	    throw new MobyRuntimeError("value must not be null or undefined");
+	    return "undefined";
+	    //	    throw new MobyRuntimeError("value must not be null or undefined");
 	}
 	if (typeof(x) == 'string') {
 	    return x.toWrittenString();
@@ -3023,9 +3030,10 @@ var plt = plt || {};
 
 
     plt.Kernel.toDisplayedString = function(x) {
-	if (x == undefined || x == null) {
-	    throw new MobyRuntimeError("value must not be null or undefined");
-	}
+	return "undefined";
+//	if (x == undefined || x == null) {
+//	    throw new MobyRuntimeError("value must not be null or undefined");
+//	}
 	if (typeof(x) == 'string') {
 	    return x.toDisplayedString();
 	}

@@ -16,6 +16,7 @@ var getTests;
     var EMPTY = Empty.EMPTY;
     var Char = plt.types.Char;
 
+
     getTests = function() {
 
 	return new Test.Unit.Runner( {
@@ -188,10 +189,17 @@ var getTests;
 	    },
 	    
 	    testComparison : function(){	
-		this.assert(Kernel._greaterthan_(Rational.makeInstance(2,1), Rational.makeInstance(1,1), []));
-		this.assert(Kernel._greaterthan_(FloatPoint.makeInstance(2.1), Rational.makeInstance(2,1), []));
-		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0), Rational.makeInstance(2,1), []));
-		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0), Rational.makeInstance(2,1), []));
+		this.assert(Kernel._greaterthan_(Rational.makeInstance(2,1),
+						 Rational.makeInstance(1,1), 
+						 []));
+		this.assert(Kernel._greaterthan_(FloatPoint.makeInstance(2.1),
+						 Rational.makeInstance(2,1), []));
+		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0),
+							Rational.makeInstance(2,1),
+							[]));
+		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0),
+							Rational.makeInstance(2,1),
+							[]));
 
 
 		this.assert(Kernel._lessthan_(Rational.makeInstance(2),
@@ -199,13 +207,18 @@ var getTests;
 
 		this.assert(! Kernel._lessthan_(Rational.makeInstance(3),
 						Rational.makeInstance(2), []));
+	    },
+
+	    testComparisionTypes : function() {
 		this.assertRaise("MobyTypeError",
 				 function() {
 				     Kernel._lessthan_(2, 3, [])});
 		this.assertRaise("MobyTypeError",
 				 function() {
 				     Kernel._greaterthan_("2", "3", [])});
+	    },
 
+	    testComparisonMore: function() {
 		this.assert(! Kernel._greaterthan_(Rational.makeInstance(2),
 						   Rational.makeInstance(3), []));
 
