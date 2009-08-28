@@ -2861,13 +2861,6 @@ var plt = plt || {};
 
     Box.prototype = heir(plt.Kernel.Struct.prototype);
     
-    Box.prototype.isEqual = function(other) {
-	if (other != null & other != undefined && other instanceof Box) {
-	    return (((plt.Kernel.equal_question_((unbox(this)),(unbox(other)))))&&(plt.types.Logic.TRUE));
-	} else {
-	    return plt.types.Logic.FALSE;
-	}
-    };
         
     plt.Kernel.box = function(any) {
 	return new Box(any);
@@ -2875,7 +2868,7 @@ var plt = plt || {};
     
     plt.Kernel.unbox = function(obj) {
 	check(obj, plt.Kernel.box_question_, "unbox", "box", 1);
-	return obj.x;
+	return obj._fields[0];
     };
     
     plt.Kernel.box_question_ = function(obj) {
@@ -2884,13 +2877,11 @@ var plt = plt || {};
 
     plt.Kernel.set_dash_box_bang_ = function(obj, newVal) {
 	check(obj, plt.Kernel.box_question_, "set-box!", "box", 1);
-	obj.x = newVal;
-	// FIXME: we should return some undefined value here.
-	return obj;
+	this._fields[0] = newVal;
+	return undefined;
     };
     
     
-
 
 
     
@@ -2899,19 +2890,9 @@ var plt = plt || {};
     
     function posn(x,y) { 
 	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
-	this.x = x;
-	this.y = y; 
     }
 
     posn.prototype = heir(plt.Kernel.Struct.prototype);
-
-    posn.prototype.isEqual = function(other) {
-        if (other != null & other != undefined && other instanceof posn) {
-            return (((plt.Kernel.equal_question_((posn_dash_y(this)),(posn_dash_y(other)))))&&((((plt.Kernel.equal_question_((posn_dash_x(this)),(posn_dash_x(other)))))&&(plt.types.Logic.TRUE))));
-        } else {
-            return plt.types.Logic.FALSE;
-        }
-    } 
 
     function make_dash_posn(id0,id1) { 
 	return new posn(id0,id1); 
@@ -2919,12 +2900,12 @@ var plt = plt || {};
 
     function posn_dash_x(obj) { 
 	check(obj, posn_question_, "posn-x", "posn", 1);
-	return obj.x; 
+	return obj._fields[0]; 
     }
 
     function posn_dash_y(obj) { 
 	check(obj, posn_question_, "posn-y", "posn", 1);
-	return obj.y; 
+	return obj._fields[1]; 
     }
 
     function posn_question_(obj) { 
@@ -3123,6 +3104,12 @@ var plt = plt || {};
 
     plt.Kernel.Struct.prototype.isEqual = function(other) {
 	if (typeof(other) != 'object') {
+	    return false;
+	}
+	if (! other._constructorName) {
+	    return false;
+	}
+	if (other._constructorName != this._constructorName) {
 	    return false;
 	}
 	if (! '_fields' in other) {
