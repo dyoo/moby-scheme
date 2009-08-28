@@ -88,34 +88,33 @@ function runSource(aSource) {
 
 	var perms = _getPermissionList(pinfo_dash_permissions(newPinfo));
 
-
-        plt.permission.startupAllPermissions(
-	    perms,
-	    function() {
-		try {
-		    var defns = compiled_dash_program_dash_defns(compiledProgram);
-		    var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
-			compiledProgram);
-		    var runToplevel = _namespace.eval(defns, interFunc);
-		    
-		    runToplevel(function(val) {
-			if (val != undefined) {
-			    addToInteractions(val.toWrittenString() + "\n");
-			}
-		    });
-
-		    // Update the pinfo.
-		    _pinfo = compiled_dash_program_dash_pinfo(compiledProgram);
-		} catch (err) {
-		    addToInteractions(err.toString() + "\n");
-		    throw err;
-		}
-
-	    });
     } catch (err) {
 	addToInteractions(err.toString() + "\n");
 	throw err;
     }
+
+    plt.permission.startupAllPermissions(
+	perms,
+	function() {
+	    try {
+		var defns = compiled_dash_program_dash_defns(compiledProgram);
+		var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(
+		    compiledProgram);
+		var runToplevel = _namespace.eval(defns, interFunc);
+		
+		runToplevel(function(val) {
+		    if (val != undefined) {
+			addToInteractions(val.toWrittenString() + "\n");
+		    }
+		});
+
+		// Update the pinfo.
+		_pinfo = compiled_dash_program_dash_pinfo(compiledProgram);
+	    } catch (err) {
+		addToInteractions(err.toString() + "\n");
+	    }
+
+	});
 }
 
 var _getPermissionList = function(permissionList) {
