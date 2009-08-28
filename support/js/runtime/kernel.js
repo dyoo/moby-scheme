@@ -1775,6 +1775,44 @@ var plt = plt || {};
 
 
 
+    // Boxes
+    
+    var Box = function(x) { 
+	plt.Kernel.Struct.call(this, "box", [x]);
+	this.x = x;
+    };
+
+    Box.prototype = heir(plt.Kernel.Struct.prototype);
+    
+    Box.prototype.isEqual = function(other) {
+	if (other != null & other != undefined && other instanceof Box) {
+	    return (((plt.Kernel.equal_question_((unbox(this)),(unbox(other)))))&&(plt.types.Logic.TRUE));
+	} else {
+	    return plt.types.Logic.FALSE;
+	}
+    };
+        
+    plt.Kernel.box = function(any) {
+	return new Box(any);
+    };
+    
+    plt.Kernel.unbox = function(obj) {
+	check(obj, plt.Kernel.box_question_, "unbox", "box", 1);
+	return obj.x;
+    };
+    
+    plt.Kernel.box_question_ = function(obj) {
+	return obj != null && obj != undefined && obj instanceof Box ;
+    };
+
+    plt.Kernel.set_dash_box_bang_ = function(obj, newVal) {
+	check(obj, plt.Kernel.box_question_, "set-box!", "box", 1);
+	obj.x = newVal;
+	// FIXME: we should return some undefined value here.
+	return obj;
+    };
+    
+    
 
 
 
@@ -1797,15 +1835,6 @@ var plt = plt || {};
             return plt.types.Logic.FALSE;
         }
     } 
-
-    posn.prototype.toWrittenString = function() {
-	return ("(make-posn " + plt.Kernel.toWrittenString(this.x) +
-		" " + plt.Kernel.toWrittenString(this.y) + ")");
-    }
-
-    posn.prototype.toDisplayedString = function () {
-	return "(make-posn " + this.x.toDisplayedString() + " " + this.y.toDisplayedString() + ")";
-    }
 
     function make_dash_posn(id0,id1) { 
 	return new posn(id0,id1); 

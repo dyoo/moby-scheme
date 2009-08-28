@@ -188,6 +188,12 @@
                      (seventh 1)
                      (eighth 1)
                      
+		     ;; Box
+		     (box 1)
+		     (unbox 1)
+		     (set-box! 2)
+		     (box? 1)
+
                      ;; Posn
                      (make-posn 2)
                      (posn-x 1)
