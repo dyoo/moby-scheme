@@ -2629,7 +2629,7 @@ var plt = plt || {};
 	arrayEach(arglists, function(x, i) { 
 	    checkList(x, "ormap", i+2);});
 	// TODO: add contract on higher order argument f.
-	while (!arglists[0].isEmpty()) {
+	while (! arglists[0].isEmpty()) {
 	    var args = [];
 	    for (var i = 0; i < arglists.length; i++) {
 		args.push(arglists[i].first());
@@ -5047,7 +5047,7 @@ return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_co
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))) :
  (plt.types.Logic.TRUE ?
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel._greaterthan_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(operands)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_min_dash_arity(operator_dash_binding)), [])) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("application-expression->javascript-string")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a.")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(operator)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_min_dash_arity(operator_dash_binding)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(operands))])))) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.syntax_dash_error((plt.types.Symbol.makeInstance("application-expression->javascript-string")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a.")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(operator)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_min_dash_arity(operator_dash_binding)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(operands))])),original_dash_stx)) :
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("plt.Kernel.setLastLoc(~s)")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(original_dash_stx))))])),(plt.types.String.makeInstance("   && ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_java_dash_string(operator_dash_binding)),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join(operand_dash_strings,(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("))"))])),updated_dash_pinfo])) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))) :

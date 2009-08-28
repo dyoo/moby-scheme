@@ -574,11 +574,12 @@
              (cond
                [(> (length operands)
                    (binding:function-min-arity operator-binding))
-                (error 'application-expression->javascript-string 
-                       (format "Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a."
-                               (stx-e operator)
-                               (binding:function-min-arity operator-binding)
-                               (length operands)))]
+                (syntax-error 'application-expression->javascript-string 
+                              (format "Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a."
+                                      (stx-e operator)
+                                      (binding:function-min-arity operator-binding)
+                                      (length operands))
+                              original-stx)]
                [else
                 (list 
                  (string-append "("
