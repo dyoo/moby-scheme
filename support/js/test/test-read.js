@@ -122,6 +122,12 @@ function init() {
 					   empty)));
 	},
 
+	testBlockySymbolInList: function() {
+	    this.assert(schemeIsEqual(read("[hello again]"),
+				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
+					   empty)));
+	},
+
 
 	testReadHashComment: function() {
 	    this.assert(schemeIsEqual(read("(hello #;42 again)"),
@@ -134,6 +140,26 @@ function init() {
 				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
 					   empty)));
 	},
+
+	testReadHashComment3: function() {
+	    this.assert(schemeIsEqual(read("(             #;'black blue )"),
+				      cons(cons(symbol("blue"), empty),
+					   empty)));
+	},
+
+
+	testReadHashComment4: function() {
+	    this.assert(schemeIsEqual(read("(             #; black blue )"),
+				      cons(cons(symbol("blue"), empty),
+					   empty)));
+	},
+
+
+	testReadHashComment5: function() {
+	    this.assert(schemeIsEqual(read("(             #; black  )"),
+				      cons(empty, empty)));
+	},
+
 
 
 	testPipedComment: function() {
