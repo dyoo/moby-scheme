@@ -120,6 +120,15 @@ var x = args1[0];
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom(a_dash_datum,a_dash_loc)) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function stx_dash__greaterthan_datum(a_dash_stx) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_dash_datum(a_dash_stx)) :
+ ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map((function() { var result = (function(args) {
+                    return stx_dash__greaterthan_datum(args[0]);
+                 }); result.toWrittenString = function() {return '<function:stx->datum>'; }
+                     result.toDisplayedString = function() {return '<function:stx->datum>';}
+                     return result; })(), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_dash_elts(a_dash_stx))])) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function permission_colon_location() { plt.Kernel.Struct.call(this, "make-permission:location", []); }
                     permission_colon_location.prototype = new plt.Kernel.Struct();
 
@@ -1849,6 +1858,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.st
               })()); }
 (function() { 
 ((function (toplevel_dash_expression_dash_show0) { 
+
 
 
 

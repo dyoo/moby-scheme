@@ -34,6 +34,15 @@ var plt = plt || {};
     MobyError.prototype.name= 'MobyError';
     MobyError.prototype.toString = function () { return "MobyError: " + this.msg }
 
+
+    function MobyParserError(msg, startLoc) {
+	MobyError.call(this, msg);
+	this.startLoc = startLoc;
+    }
+    MobyParserError.prototype = heir(MobyError.prototype);
+    MobyParserError.prototype.name= 'MobyParserError';
+    MobyParserError.prototype.toString = function () { return "MobyParserError: " + this.msg }
+
     
     function MobySyntaxError(msg, stx) {
 	MobyError.call(this, msg);
@@ -2098,8 +2107,9 @@ var plt = plt || {};
 
     // Expose the error classes.
     plt.Kernel.MobyError = MobyError;
-    plt.Kernel.MobyTypeError = MobyTypeError;
+    plt.Kernel.MobyParserError = MobyParserError;
     plt.Kernel.MobySyntaxError = MobySyntaxError;
+    plt.Kernel.MobyTypeError = MobyTypeError;
     plt.Kernel.MobyRuntimeError = MobyRuntimeError;
     
 })();

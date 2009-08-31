@@ -1,6 +1,8 @@
 
 
 function init() {
+
+
     function isArray(x) {
 	return typeof(x) == 'object' && 'length' in x;
     }
@@ -30,6 +32,27 @@ function init() {
     function cons(x, y) {
 	return plt.Kernel.cons(x, y);
     }
+
+    var stxToDatum = function(aStx) {
+	return stx_dash__greaterthan_datum(aStx);
+    }
+
+    var tokenize = function(s) {
+	var tokensAndLocs = plt.reader.tokenize(s)[0];
+	var result = [];
+	for (var i = 0; i < tokensAndLocs.length; i++) {
+	    result.push([tokensAndLocs[i][0], tokensAndLocs[i][1]]);
+	}
+
+	return [result, plt.reader.tokenize(s)[1]];
+    }
+
+    var read = function(s) {
+	return plt.Kernel.map(function(args) { 
+	    return stxToDatum(args[0]) },
+			      [plt.reader.readSchemeExpressions(s)]);
+    }
+
 
 
     var empty = plt.types.Empty.EMPTY;
@@ -65,43 +88,43 @@ function init() {
 	    },
    
 		testReadSymbol: function() {
-		this.assert(schemeIsEqual(readSchemeExpressions("hello"),
+		this.assert(schemeIsEqual(read("hello"),
 					  cons(symbol("hello"),
 					       empty)));
 	    },
 
 	testReadRational: function() {
-	    this.assert(schemeIsEqual(readSchemeExpressions("1"),
+	    this.assert(schemeIsEqual(read("1"),
 				      cons(number(1), empty)));
 				      
 	},
 
 
 	testReadFloat: function() {
-	    this.assert(schemeIsEqual(readSchemeExpressions("0.1"),
+	    this.assert(schemeIsEqual(read("0.1"),
 				      cons(makeFloat(0.1), empty)));
 				      
 	},
 
 		testReadSymbolInList: function() {
-		this.assert(schemeIsEqual(readSchemeExpressions("(hello again)"),
+		this.assert(schemeIsEqual(read("(hello again)"),
 					  cons(cons(symbol("hello"), cons(symbol("again"), empty)),
 					       empty)));
 	    },
 
 
 		testReadListOfNumbers: function() {
-		this.assert(schemeIsEqual(readSchemeExpressions("(1) (2 3)"),
+		this.assert(schemeIsEqual(read("(1) (2 3)"),
 					  cons(cons(number(1), empty),
 					       cons(cons(number(2), cons(number(3), empty)),
 						    empty))));
 
-		this.assert(schemeIsEqual(readSchemeExpressions("(1.4) (2 3)"),
+		this.assert(schemeIsEqual(read("(1.4) (2 3)"),
 					  cons(cons(number(1.4), empty),
 					       cons(cons(number(2), cons(number(3), empty)),
 						    empty))));
 
-		this.assert(schemeIsEqual(readSchemeExpressions("(1.4) (2 3)"),
+		this.assert(schemeIsEqual(read("(1.4) (2 3)"),
 					  cons(cons(number(1.4), empty),
 					       cons(cons(number(2), cons(number(3), empty)),
 						    empty))));

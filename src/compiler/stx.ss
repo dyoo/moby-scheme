@@ -64,6 +64,16 @@
      (make-stx:atom a-datum a-loc)]))
 
 
+;; stx->datum: stx -> any
+;; Rip out the location information
+(define (stx->datum a-stx)
+  (cond
+    [(stx:atom? a-stx)
+     (stx:atom-datum a-stx)]
+    [(stx:list? a-stx)
+     (map stx->datum (stx:list-elts a-stx))]))
+  
+
 
 (provide/contract [struct stx:atom ([datum any/c]
                                     [loc any/c])]
@@ -78,4 +88,5 @@
                   [stx-loc (stx? . -> . any)]
                   [Loc->string (Loc? . -> . string?)]
                   [stx-begins-with? (stx? symbol? . -> . boolean?)]
-                  [datum->stx (any/c any/c . -> . stx?)])
+                  [datum->stx (any/c any/c . -> . stx?)]
+                  [stx->datum (stx? . -> . any)])

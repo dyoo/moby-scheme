@@ -1111,6 +1111,15 @@ var plt = plt || {};
     MobyError.prototype.name= 'MobyError';
     MobyError.prototype.toString = function () { return "MobyError: " + this.msg }
 
+
+    function MobyParserError(msg, startLoc) {
+	MobyError.call(this, msg);
+	this.startLoc = startLoc;
+    }
+    MobyParserError.prototype = heir(MobyError.prototype);
+    MobyParserError.prototype.name= 'MobyParserError';
+    MobyParserError.prototype.toString = function () { return "MobyParserError: " + this.msg }
+
     
     function MobySyntaxError(msg, stx) {
 	MobyError.call(this, msg);
@@ -3175,21 +3184,24 @@ var plt = plt || {};
 
     // Expose the error classes.
     plt.Kernel.MobyError = MobyError;
-    plt.Kernel.MobyTypeError = MobyTypeError;
+    plt.Kernel.MobyParserError = MobyParserError;
     plt.Kernel.MobySyntaxError = MobySyntaxError;
+    plt.Kernel.MobyTypeError = MobyTypeError;
     plt.Kernel.MobyRuntimeError = MobyRuntimeError;
     
 })();
-var readSchemeExpressions;
-var tokenize;
+// Depends on kernel.js, stx.ss
 
+var plt = plt || {};
+
+plt.reader = {};
 
 
 (function(){
 
 
     // replaceEscapes: string -> string
-    function replaceEscapes(s) {
+    var replaceEscapes = function(s) {
 	return s.replace(/\\./g, function(match, submatch, index) {
 	    switch(match) {
 	    case '\\b': return "\b";
@@ -3205,7 +3217,7 @@ var tokenize;
 	});
     }
 
-    function countLines(s) {
+    var countLines = function(s) {
 	var i;
 	var c = 0;
 	for(i = 0; i < s.length; i++) {
@@ -3218,7 +3230,17 @@ var tokenize;
 
 
 
-    tokenize = function(s) {
+    var locOffset = function(loc) {
+	return Loc_dash_offset(loc);
+    }
+
+    var locSpan = function(loc) {
+	return Loc_dash_span(loc);
+    }
+
+
+    var tokenize = function(s, source) {
+
 	var offset = 0;
 	var line = 1;
 	var tokens = [];
@@ -3235,6 +3257,8 @@ var tokenize;
 			['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
 			['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
 		       ];
+
+	if (! source) { source = ""; }
 	
 	while (true) {
 	    var shouldContinue = false;
@@ -3252,7 +3276,7 @@ var tokenize;
 				     new Loc(offset,
 					     line,
 					     result[0].length, 
-					     "")]);
+					     source)]);
 		    }
 		    offset = offset + result[0].length;
 		    line = line + countLines(result[0]);
@@ -3268,17 +3292,27 @@ var tokenize;
     }
 
 
-
-    readSchemeExpressions = function(s) {
+    // readSchemeExpressions: string string -> (listof stx)
+    var readSchemeExpressions = function(s, source) {
 	var makeList = make_dash_stx_colon_list;
 	var makeAtom = make_dash_stx_colon_atom;
 
-	var tokensAndError = tokenize(s);
+	var tokensAndError = tokenize(s, source);
 	var tokens = tokensAndError[0];
-	if (tokensAndError[1].length > 0) {
-	    throw new Error("Error while tokenizing: the rest of the stream is: " + tokensAndError[1]);
-	}
 
+	var lastToken = undefined;
+
+	if (tokensAndError[1].length > 0) {
+	    throw new plt.Kernel.MobyParserError(
+		"Error while tokenizing: the rest of the stream is: " +
+		    tokensAndError[1],
+		new Loc(s.length - tokensAndError[1].length,
+			countLines(s.substring(
+			    0, s.length - tokensAndError[1].length)),
+			tokensAndError[1].length,
+			source));
+	}
+	
 	var quoteSymbol = plt.types.Symbol.makeInstance("quote");
 	var quasiquoteSymbol = plt.types.Symbol.makeInstance("quasiquote");
 	var unquoteSymbol = plt.types.Symbol.makeInstance("unquote");
@@ -3289,14 +3323,27 @@ var tokenize;
 	}
 	
 	function eat(expectedType) {
-	    if (tokens.length == 0)
-		throw new Error("token stream exhausted while trying to eat " +
-				expectedType);
+	    if (tokens.length == 0) {
+		if (lastToken) { 
+		    throw new plt.Kernel.MobyParserError(
+			"token stream exhausted while trying to eat " +
+			    expectedType,
+			lastToken[2]);
+		} else {
+		    throw new plt.Kernel.MobyParserError(
+			"token stream exhausted while trying to eat " +
+			    expectedType,
+			new Loc(0, 0, s.length, source));
+		}
+	    }
 	    var t = tokens.shift();
+	    lastToken = t;
 	    if (t[0] == expectedType) {
 		return t;
 	    } else {
-		throw new Error("Unexpected token " + t);
+		throw new plt.Kernel.MobyParserError(
+		    "Unexpected token " + t,
+		    t[2]);
 	    }
 	}
 
@@ -3325,7 +3372,15 @@ var tokenize;
 	// readExpr: -> stx
 	readExpr = function() {
 	    if (tokens.length == 0) {
-		throw new Error("Parse broke with token stream " + tokens);
+		if (lastToken) { 
+		    throw new plt.Kernel.MobyParserError(
+			"Parse broke with empty token stream",
+			lastToken[2]);
+		} else {
+		    throw new plt.Kernel.MobyParserError(
+			"Parse broke with empty token stream",
+			new Loc(0, 0, s.length, source));
+		}
 	    }
 
 	    switch(tokens[0][0]) {
@@ -3377,7 +3432,9 @@ var tokenize;
 		return makeAtom(plt.types.Symbol.makeInstance(t[1]), t[2]);
 
 	    default:
-		throw new Error("Parse broke with token stream " + tokens);
+		throw new plt.Kernel.MobyParserError
+		("Parse broke with token stream " + tokens, 
+		 tokens[0][2]);
 	    }
 	};
 
@@ -3401,11 +3458,20 @@ var tokenize;
 
 	var result = readExprs();
 	if (tokens.length > 0) {
-	    throw new Error("More elements in the program's token stream than expected: the next unconsumed token is: "  + tokens[0][1])
+	    throw new plt.Kernel.MobyParserError
+	    ("More elements in the program's token stream than expected: "+
+	     "the next unconsumed token is: "  + tokens[0][1],
+	     tokens[0][2])
 	}
 	return result;
     }
     
+
+
+
+    // provides:
+    plt.reader.tokenize = tokenize;
+    plt.reader.readSchemeExpressions = readSchemeExpressions;
 }());
 
 function stx_colon_atom(datum,loc) { plt.Kernel.Struct.call(this, "make-stx:atom", [datum,loc]);this.datum = datum;
@@ -3526,6 +3592,15 @@ var x = args1[0];
                    })()), [a_dash_datum])),a_dash_loc)) :
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom(a_dash_datum,a_dash_loc)) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
+function stx_dash__greaterthan_datum(a_dash_stx) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_dash_datum(a_dash_stx)) :
+ ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_question_(a_dash_stx)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map((function() { var result = (function(args) {
+                    return stx_dash__greaterthan_datum(args[0]);
+                 }); result.toWrittenString = function() {return '<function:stx->datum>'; }
+                     result.toDisplayedString = function() {return '<function:stx->datum>';}
+                     return result; })(), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_dash_elts(a_dash_stx))])) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); }
 function permission_colon_location() { plt.Kernel.Struct.call(this, "make-permission:location", []); }
                     permission_colon_location.prototype = new plt.Kernel.Struct();
@@ -5275,6 +5350,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.st
 
 
 
+
 PERMISSION_colon_LOCATION = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_location());
 PERMISSION_colon_SEND_dash_SMS = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_send_dash_sms());
 PERMISSION_colon_RECEIVE_dash_SMS = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_send_dash_sms());
@@ -5472,7 +5548,7 @@ empty_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   &&
    var aPinfo = get_dash_base_dash_pinfo(plt.types.Symbol.makeInstance('moby'));
 
    return function(s) {
-       var exprs = readSchemeExpressions(s);
+       var exprs = plt.reader.readSchemeExpressions(s);
        var compiledProgram =
            program_dash__greaterthan_compiled_dash_program_slash_pinfo(exprs, aPinfo);
 
