@@ -53,7 +53,7 @@ plt.reader = {};
 			['\'' , /^(\')/],
 			['`' , /^(`)/],
 			[',' , /^(,)/],
-			['char', /^\#\\(newline)/],
+			['char', /^\#\\(newline|backspace)/],
 			['char', /^\#\\(.)/],
 			['number' , /^([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/],
 			['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
@@ -248,8 +248,11 @@ plt.reader = {};
 		var t = eat('char');
 		if (t[1] == 'newline') {
 		    return makeAtom(plt.types.Char.makeInstance('\n'), t[2]);
-		}
-		else {
+		} else if (t[1] == 'backspace') {
+		    // FIXME: add more character constants.
+		    // See: http://docs.plt-scheme.org/reference/reader.html#%28idx._%28gentag._172._%28lib._scribblings/reference/reference..scrbl%29%29%29
+		    return makeAtom(plt.types.Char.makeInstance(String.fromCharCode(8)), t[2]);
+		} else {
 		    return makeAtom(plt.types.Char.makeInstance(t[1]), t[2]);
 		}
 
