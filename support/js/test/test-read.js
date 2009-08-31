@@ -123,6 +123,34 @@ function init() {
 	},
 
 
+	testReadHashComment: function() {
+	    this.assert(schemeIsEqual(read("(hello #;42 again)"),
+				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
+					   empty)));
+	},
+
+	testReadHashComment2: function() {
+	    this.assert(schemeIsEqual(read("(hello #;((())) again)"),
+				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
+					   empty)));
+	},
+
+
+	testPipedComment: function() {
+	    this.assert(schemeIsEqual(read("(hello #|((())|# again)"),
+				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
+					   empty)));
+
+	},
+
+	testPipedComment2: function() {
+	    this.assert(schemeIsEqual(read("(hello #|(((#||##|))))|# again)"),
+				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
+					   empty)));
+
+	},
+
+
 	testReadListOfNumbers: function() {
 	    this.assert(schemeIsEqual(read("(1) (2 3)"),
 				      cons(cons(number(1), empty),
@@ -154,7 +182,7 @@ function init() {
 	testErrorLocsUnclosedParen : function() {
 	    this.assertRaise("MobyParserError", function() { read("    (") });
 	    try {
-		read("    (")
+		read("    (");
 	    } catch (e) {
 		this.assertEqual(4, locOffset(e.loc));
 	    }
@@ -163,12 +191,22 @@ function init() {
 	testErrorLocsMismatching : function() {
 	    this.assertRaise("MobyParserError", function() { read(" (]") });
 	    try {
-		read(" (]")
+		read(" (]");
 	    } catch (e) {
 		this.assertEqual(2, locOffset(e.loc));
 	    }
-	}
+	}, 
 
+	testReadHashCommentError: function() {
+	    this.assertRaise("MobyParserError",
+			     function() { read("(hello #;") });
+	    try {
+		read("(hello #;");
+	    } catch (e) {
+		this.assertEqual(7, locOffset(e.loc));
+	    }
+
+	},
 
 
     }); 

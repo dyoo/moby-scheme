@@ -42,6 +42,11 @@ plt.reader = {};
 	var line = 1;
 	var tokens = [];
 	var PATTERNS = [['whitespace' , /^(\s+)/],
+			['#;', /^#;/],
+			['comment' , // piped comments
+			 new RegExp("^[#][|]"+
+				    "(?:(?:\\|[^\\#])|[^\\|])*"+
+				    "[|][#]")],
 			['comment' , /(^;[^\n]*)/],
 			['(' , /^(\(|\[|\{)/],
 			[')' , /^(\)|\]|\})/],
@@ -212,6 +217,11 @@ plt.reader = {};
 			    rparen[2].offset - lparen[2].offset + 1,
 			    ""));
 
+	    case '#;':
+		var hashcomment = eat('#;');
+		var skippingExpr = readExpr();
+		return readExpr();
+		
 	    case '\'':
 		return readQuoted("'", quoteSymbol);
 
