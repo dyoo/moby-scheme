@@ -2,6 +2,16 @@
 
 function init() {
 
+    var locOffset = function(loc) {
+	return Loc_dash_offset(loc);
+    }
+
+    var locSpan = function(loc) {
+	return Loc_dash_span(loc);
+    }
+
+
+
 
     function isArray(x) {
 	return typeof(x) == 'object' && 'length' in x;
@@ -128,7 +138,38 @@ function init() {
 				      cons(cons(number(1.4), empty),
 					   cons(cons(number(2), cons(number(3), empty)),
 						empty))));
+	},
+
+
+	testErrorLocsExtraParen : function() {
+	    this.assertRaise("MobyParserError", function() { read("   ())") });
+	    try {
+		read("   ())");
+	    } catch (e) {
+		this.assertEqual(5, locOffset(e.loc));
+	    }
+	},
+
+
+	testErrorLocsUnclosedParen : function() {
+	    this.assertRaise("MobyParserError", function() { read("    (") });
+	    try {
+		read("    (")
+	    } catch (e) {
+		this.assertEqual(4, locOffset(e.loc));
+	    }
+	},
+
+	testErrorLocsMismatching : function() {
+	    this.assertRaise("MobyParserError", function() { read(" (]") });
+	    try {
+		read(" (]")
+	    } catch (e) {
+		this.assertEqual(2, locOffset(e.loc));
+	    }
 	}
+
+
 
     }); 
 }

@@ -36,16 +36,6 @@ plt.reader = {};
 	return c;
     }
 
-
-    var locOffset = function(loc) {
-	return Loc_dash_offset(loc);
-    }
-
-    var locSpan = function(loc) {
-	return Loc_dash_span(loc);
-    }
-
-
     var tokenize = function(s, source) {
 
 	var offset = 0;
@@ -53,8 +43,8 @@ plt.reader = {};
 	var tokens = [];
 	var PATTERNS = [['whitespace' , /^(\s+)/],
 			['comment' , /(^;[^\n]*)/],
-			['(' , /^(\(|\[)/],
-			[')' , /^(\)|\])/],
+			['(' , /^(\(|\[|\{)/],
+			[')' , /^(\)|\]|\})/],
 			['\'' , /^(\')/],
 			['`' , /^(`)/],
 			[',' , /^(,)/],
@@ -175,6 +165,14 @@ plt.reader = {};
 				    ""));
 	};
 
+	var getParenRShape = function(lparen) {
+	    switch(lparen) {
+	    case '(': return ')';
+	    case '[' : return ']';
+	    case '{' : return '}';
+	    }
+	}
+
 
 	// readExpr: -> stx
 	readExpr = function() {
@@ -194,8 +192,19 @@ plt.reader = {};
 
 	    case '(': 
 		var lparen = eat('(');
+		var lshape = lparen[1];
+		var rshape = getParenRShape(lparen[1]);
 		var result = readExprs();
-		var rparen = eat(')');
+		if (tokens.length == 0) {
+		    throw new plt.Kernel.MobyParserError(
+			"Expected a " + rshape + " to close " + lshape,
+			lparen[2]);
+		} else if (tokens[0][1] != rshape) {
+		    throw new plt.Kernel.MobyParserError(
+			"Expected a " + rshape + " to close " + lshape,
+			tokens[0][2]);
+		}
+		var rparen = eat(rshape);
 		return make_dash_stx_colon_list(
 		    result,
 		    new Loc(lparen[2].offset,

@@ -35,9 +35,9 @@ var plt = plt || {};
     MobyError.prototype.toString = function () { return "MobyError: " + this.msg }
 
 
-    function MobyParserError(msg, startLoc) {
+    function MobyParserError(msg, loc) {
 	MobyError.call(this, msg);
-	this.startLoc = startLoc;
+	this.loc = loc;
     }
     MobyParserError.prototype = heir(MobyError.prototype);
     MobyParserError.prototype.name= 'MobyParserError';
