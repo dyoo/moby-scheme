@@ -208,10 +208,14 @@ function init() {
 	},
 
 
-	testSet2: function() {
+	testSetWithNonIdentifier: function() {
 	    this.assertRaise("MobySyntaxError",
 			     function() {
 				 run("(set! \"a string\" 17)")});
+	    this.assertRaise("MobySyntaxError",
+			     function() {
+				 run("(set! 'a-quoted-id 17)")});
+
 	}
     });
 
