@@ -22,6 +22,22 @@ function stx_colon_atom_dash_loc(obj) {
      }
 }
 
+function set_dash_stx_colon_atom_dash_datum_bang_(obj,newVal) {
+	 if (stx_colon_atom_question_ (obj)) {
+		obj.datum = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_stx_colon_atom_dash_datum_bang_: not a stx:atom: ~s', [obj]));
+     }
+}
+
+function set_dash_stx_colon_atom_dash_loc_bang_(obj,newVal) {
+	 if (stx_colon_atom_question_ (obj)) {
+		obj.loc = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_stx_colon_atom_dash_loc_bang_: not a stx:atom: ~s', [obj]));
+     }
+}
+
 function stx_colon_atom_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof stx_colon_atom; }
 function stx_colon_list(elts,loc) { plt.Kernel.Struct.call(this, "make-stx_colon_list", [elts,loc]);this.elts = elts;
@@ -42,6 +58,22 @@ function stx_colon_list_dash_loc(obj) {
         return obj.loc;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('stx_colon_list_dash_loc: not a stx:list: ~s', [obj]));
+     }
+}
+
+function set_dash_stx_colon_list_dash_elts_bang_(obj,newVal) {
+	 if (stx_colon_list_question_ (obj)) {
+		obj.elts = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_stx_colon_list_dash_elts_bang_: not a stx:list: ~s', [obj]));
+     }
+}
+
+function set_dash_stx_colon_list_dash_loc_bang_(obj,newVal) {
+	 if (stx_colon_list_question_ (obj)) {
+		obj.loc = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_stx_colon_list_dash_loc_bang_: not a stx:list: ~s', [obj]));
      }
 }
 
@@ -83,6 +115,38 @@ function Loc_dash_id(obj) {
         return obj.id;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('Loc_dash_id: not a Loc: ~s', [obj]));
+     }
+}
+
+function set_dash_Loc_dash_offset_bang_(obj,newVal) {
+	 if (Loc_question_ (obj)) {
+		obj.offset = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_Loc_dash_offset_bang_: not a Loc: ~s', [obj]));
+     }
+}
+
+function set_dash_Loc_dash_line_bang_(obj,newVal) {
+	 if (Loc_question_ (obj)) {
+		obj.line = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_Loc_dash_line_bang_: not a Loc: ~s', [obj]));
+     }
+}
+
+function set_dash_Loc_dash_span_bang_(obj,newVal) {
+	 if (Loc_question_ (obj)) {
+		obj.span = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_Loc_dash_span_bang_: not a Loc: ~s', [obj]));
+     }
+}
+
+function set_dash_Loc_dash_id_bang_(obj,newVal) {
+	 if (Loc_question_ (obj)) {
+		obj.id = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_Loc_dash_id_bang_: not a Loc: ~s', [obj]));
      }
 }
 

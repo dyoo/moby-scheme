@@ -35,30 +35,30 @@ function init() {
     }
 
     return new Test.Unit.Runner({
-	    setup: function() {},
-    
-            teardown: function() {},
-    
-	    testSimpleDatum: function() {
-		this.assert(isEqual(number(42), run("42")))
-	    },
+	setup: function() {},
+	
+        teardown: function() {},
+	
+	testSimpleDatum: function() {
+	    this.assert(isEqual(number(42), run("42")))
+	},
 
-	    testSimpleConditionals: function() {
-		this.assert("foo",
-			    run("(if true \"foo\" \"bar\")"));
-		this.assert("bar",
-			    run("(if false \"foo\" \"bar\")"));
-	    },
+	testSimpleConditionals: function() {
+	    this.assert(isEqual("foo",
+				run("(if true \"foo\" \"bar\")")));
+	    this.assert(isEqual("bar",
+				run("(if false \"foo\" \"bar\")")));
+	},
 
-	    testSimpleFunctionDefinition: function() {
-		this.assert(number(9),
-			    run("(define (f x) (* x x))" +
-				"(f 3)"));
-			    
-	    },
+	testSimpleFunctionDefinition: function() {
+	    this.assert(isEqual(number(9),
+				run("(define (f x) (* x x))" +
+				    "(f 3)")));
+	    
+	},
 	testLambda: function() {
-	    this.assert(number(25),
-			run("((lambda (x) (* x x)) 5)"));
+	    this.assert(isEqual(number(25),
+				run("((lambda (x) (* x x)) 5)")));
 	},
 
 
@@ -86,12 +86,12 @@ function init() {
 				    "(insert string<=? \"F\" '(\"A\" \"B\" \"X\" \"Y\"))")))
 	},
 
-		// Bug reported by Alex Kruckman
-		testLambdaDefinition: function() {
-		this.assert(isEqual(number(43),
-				    run("(define add1 (lambda (x) (+ x 1)))" +
-					"(add1 42)")));
-	    },
+	// Bug reported by Alex Kruckman
+	testLambdaDefinition: function() {
+	    this.assert(isEqual(number(43),
+				run("(define add1 (lambda (x) (+ x 1)))" +
+				    "(add1 42)")));
+	},
 	
 
 	testOrmap: function() {
@@ -130,83 +130,89 @@ function init() {
 
 
 	testBegin: function() {
-		// normal behaviour
-		this.assert(isEqual(TRUE,
-			    run("(begin (+ 1 2) (+ 3 4) true)")));
+	    // normal behaviour
+	    this.assert(isEqual(TRUE,
+				run("(begin (+ 1 2) (+ 3 4) true)")));
 
-		// non top-level definition
-		this.assertRaise("MobySyntaxError",
-				function () {
+	    // non top-level definition
+	    this.assertRaise("MobySyntaxError",
+			     function () {
 				 run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))")});
 
-		// sequencial evaluation
-		this.assert(number(3),
-			    run("(define x 5)(define y 3)" +
-				"(begin (set! x y) (set! y x) y)"));
-		
-	    },
-
-	    testBoxMutation: function() {
-		this.assert(number(2),
-			    run("(define bx (box 5))" +
-				"(begin (set-box! bx 2)" +
-					"(unbox bx))"));
-		this.assertRaise("MobyTypeError",
-				function () {
-				 run("(define bx (box 5))" +
-				     "(begin (set-box! 2 bx)" +
-					"(unbox bx))")});
+	    // sequencial evaluation
+	    this.assert(isEqual(number(3),
+				run("(define x 5)(define y 3)" +
+				    "(begin (set! x y) (set! y x) y)")));
+	    
 	},
 
-    testStructureMutators: function() {
+	testBoxMutation: function() {
+	    this.assert(isEqual(number(2),
+				run("(define bx (box 5))" +
+				    "(begin (set-box! bx 2)" +
+				    "(unbox bx))")));
+	    this.assertRaise("MobyTypeError",
+			     function () {
+				 run("(define bx (box 5))" +
+				     "(begin (set-box! 2 bx)" +
+				     "(unbox bx))")});
+	},
 
-		this.assert(number(9),
-			    run("(define-struct str (a b c))" +
-					"(define a-str (make-str 1 2 3))" +
+	testStructureMutators: function() {
+
+	    this.assert(isEqual(number(9),
+				run("(define-struct str (a b c))" +
+				    "(define a-str (make-str 1 2 3))" +
 				    "(set-str-b! a-str 9)" +
-					"(str-b a-str)"));
+				    "(str-b a-str)")));
 
-		this.assertRaise("MobyRuntimeError",
-				function () {
-			    	  run("(define-struct str (a b c))" +
-						  "(define a-str (make-str 1 2 3))" +
-				    	  "(set-str-b! 9 a-str)" +
-						  "(str-b a-str)")});
+	    this.assertRaise("MobyRuntimeError",
+			     function () {
+			    	 run("(define-struct str (a b c))" +
+				     "(define a-str (make-str 1 2 3))" +
+				     "(set-str-b! 9 a-str)" +
+				     "(str-b a-str)")});
 
-		// posns are immutable
-		this.assertRaise("MobySyntaxError",
-				function () {
-			    	  run("(define a-posn (make-posn 1 3))" +
-				    	  "(set-posn-x! a-posn 6)" +
-						  "(posn-x a-posn)")});
-    },
+	    // posns are immutable
+	    this.assertRaise("MobySyntaxError",
+			     function () {
+			    	 run("(define a-posn (make-posn 1 3))" +
+				     "(set-posn-x! a-posn 6)" +
+				     "(posn-x a-posn)")});
+	},
 
 	testSet: function() {
-		// normal behaviour
-		this.assert("a",
-			    run("(define x 5)" +
-					"(set! x \"a\")" +
-					"x"));
-		
-		// undefined top-level variable
-		this.assertRaise("MobySyntaxError",
-				function () {
+	    // normal behaviour
+	    this.assert(isEqual("a",
+				run("(define x 5)" +
+				    "(set! x \"a\")" +
+				    "x")));
+
+	    // undefined top-level variable
+	    this.assertRaise("MobySyntaxError",
+			     function () {
 				 run("(set! c 42)")});
-		
-		// function arguments are mutable
-		this.assert(number(3),
-		            run("(define (func x) (begin (set! x 3) x))" +
-					"(func 42)"));
-		
-		// scoping
-		this.assert(number(42),
-				   run("(define a 42)" +
-				       "(define (f x) " +
-					 	"(local ((define a 3)) " +
-					   		"(begin (set! a x) a)))" +
-	      			   "(begin (f 21) a)"));
-		
+	    
+	    // function arguments are mutable
+	    this.assert(isEqual(number(3),
+				run("(define (func x) (begin (set! x 3) x))" +
+				    "(func 42)")));
+	    
+	    // scoping
+	    this.assert(isEqual(number(42),
+				run("(define a 42)" +
+				    "(define (f x) " +
+				    "(local ((define a 3)) " +
+				    "(begin (set! a x) a)))" +
+	      			    "(begin (f 21) a)")));
+	},
+
+
+	testSet2: function() {
+	    this.assertRaise("MobySyntaxError",
+			     function() {
+				 run("(set! \"a string\" 17)")});
 	}
-});
+    });
 
 }
