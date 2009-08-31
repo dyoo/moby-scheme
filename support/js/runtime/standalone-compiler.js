@@ -3401,7 +3401,7 @@ plt.reader = {};
 			"Expected a " + rshape + " to close " + lshape,
 			tokens[0][2]);
 		}
-		var rparen = eat(rshape);
+		var rparen = eat(')');
 		return make_dash_stx_colon_list(
 		    result,
 		    new Loc(lparen[2].offset,
@@ -3464,6 +3464,9 @@ plt.reader = {};
 	    while (true) {
 		if (tokens.length == 0 || isType(')')) {
 		    break;
+		} else if (isType('#;')){
+		    eat('#;');
+		    var skippingExpr = readExpr();
 		} else {
 		    var nextElt = readExpr();
 		    result = plt.types.Cons.makeInstance(nextElt, result);
@@ -3472,7 +3475,6 @@ plt.reader = {};
 	    return plt.Kernel.reverse(result);
 	};
 	
-
 
 	var result = readExprs();
 	if (tokens.length > 0) {
