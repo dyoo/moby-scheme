@@ -129,15 +129,21 @@ function init() {
 
 
 
-	    testBegin: function() {
+	testBegin: function() {
 		// normal behaviour
-		this.assert(TRUE,
-			    run("(begin (+ 1 2) (+ 3 4) true)"));
+		this.assert(isEqual(TRUE,
+			    run("(begin (+ 1 2) (+ 3 4) true)")));
+
+		// non top-level definition
+		this.assertRaise("MobySyntaxError",
+				function () {
+				 run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))")});
 
 		// sequencial evaluation
 		this.assert(number(3),
 			    run("(define x 5)(define y 3)" +
 				"(begin (set! x y) (set! y x) y)"));
+		
 	    },
 
 	    testBoxMutation: function() {
@@ -150,43 +156,57 @@ function init() {
 				 run("(define bx (box 5))" +
 				     "(begin (set-box! 2 bx)" +
 					"(unbox bx))")});
-	    },
+	},
 
-	    testStructureMutators: function() {
+    testStructureMutators: function() {
+
 		this.assert(number(9),
-			    run("(define ps (make-posn 3 4))" +
-				"(begin (set-posn-x! ps 9) " +
-					"(posn-x ps))"));
-		this.assertRaise("MobyTypeError",
-				function () {
-			    	  run("(define ps (make-posn 3 4))" +
-				      "(begin (set-posn-x! 5 ps) " +
-					   "(posn-x ps))")});
-	    },
+			    run("(define-struct str (a b c))" +
+					"(define a-str (make-str 1 2 3))" +
+				    "(set-str-b! a-str 9)" +
+					"(str-b a-str)"));
 
-	    testSet: function() {
+		this.assertRaise("MobyRuntimeError",
+				function () {
+			    	  run("(define-struct str (a b c))" +
+						  "(define a-str (make-str 1 2 3))" +
+				    	  "(set-str-b! 9 a-str)" +
+						  "(str-b a-str)")});
+
+		// posns are immutable
+		this.assertRaise("MobySyntaxError",
+				function () {
+			    	  run("(define a-posn (make-posn 1 3))" +
+				    	  "(set-posn-x! a-posn 6)" +
+						  "(posn-x a-posn)")});
+    },
+
+	testSet: function() {
 		// normal behaviour
 		this.assert("a",
 			    run("(define x 5)" +
-				"(begin (set! x \"a\") x)"));
-
+					"(set! x \"a\")" +
+					"x"));
+		
 		// undefined top-level variable
-		this.assertRaise("MobyRuntimeError",
+		this.assertRaise("MobySyntaxError",
 				function () {
-				 run("(begin (set! c 42) 3)")});
-
+				 run("(set! c 42)")});
+		
 		// function arguments are mutable
-		this.assertRaise(number(3),
-		                 run("(define (f x) (begin (set! x 3) x)) (f 42)"));
-
+		this.assert(number(3),
+		            run("(define (func x) (begin (set! x 3) x))" +
+					"(func 42)"));
+		
 		// scoping
-		// this seems like a test of "local" instead of "set"
 		this.assert(number(42),
 				   run("(define a 42)" +
 				       "(define (f x) " +
-					 "(local ((define a 3)) " +
-					   "(begin (set! a x) a)))" +
-	      			       "(begin (f 21) a)"));
-	    }
-    }); 
+					 	"(local ((define a 3)) " +
+					   		"(begin (set! a x) a)))" +
+	      			   "(begin (f 21) a)"));
+		
+	}
+});
+
 }
