@@ -253,9 +253,7 @@
                                         ",")
                            ") { "
                            (format "plt.Kernel.Struct.call(this, ~s, [~a]);"
-                                   (string-append "make-"
-                                                  (symbol->string 
-                                                   (identifier->munged-java-identifier (stx-e id))))
+                                   (string-append "make-" (symbol->string (stx-e id)))
                                    (string-join (map (lambda (i) (symbol->string
                                                                   (identifier->munged-java-identifier
                                                                    (stx-e i))))
