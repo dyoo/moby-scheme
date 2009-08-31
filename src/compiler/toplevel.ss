@@ -282,7 +282,7 @@
                      (compose 0 true)         ;; *
                      (filter 2)               ;; *
                      (foldl 2 true)
-                     (foldr 2)                ;; *
+                     (foldr 2 true)                ;; *
                      (map 1 true)
                      (memf 2)                 ;; *
                      (ormap 1 true)                ;; *
