@@ -950,6 +950,19 @@ var plt = plt || {};
 	    checkList(lst, "eighth", 1);
 	    return lst.rest().rest().rest().rest().rest().rest().rest().first();
 	},
+
+	set_dash_car_bang_ : function(lst, newVal){
+		checkList(lst, "set-car!", 1);
+		lst.f = newVal;
+		return undefined;
+	},
+
+	set_dash_cdr_bang_ : function(lst, newListVal){
+		checkList(lst, "set-cdr!", 1);
+		checkList(newListVal, "set-cdr!", 2);
+		lst.r = newListVal;
+		return undefined;
+	},
 	
 	length : function(lst){
 	    checkList(lst, "length", 1);
