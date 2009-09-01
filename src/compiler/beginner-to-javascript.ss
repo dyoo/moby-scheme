@@ -24,12 +24,15 @@
 ;; compiled-program-main: compiled-program ->string
 ;; Produces the main output source, given the compiled program.
 (define (compiled-program-main a-compiled-program)
-  (string-append (compiled-program-defns a-compiled-program)
+  (string-append "(function() { "
+		 (compiled-program-defns a-compiled-program)
                  "\n"
-                 "(function() { \n"
-                 "("(compiled-program-toplevel-exprs a-compiled-program) ")"
-                 "(plt.Kernel.identity)"
-                 "\n})();"))
+                 "return (function() { \n"
+                 "  (" 
+		 (compiled-program-toplevel-exprs a-compiled-program)
+		 "  )(arguments[0] || plt.Kernel.identity);\n"
+                 "}); })()"))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
