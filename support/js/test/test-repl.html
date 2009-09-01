@@ -78,7 +78,7 @@ function runPrompt() {
 
 function runSource(aSource) {
     try {
-        var program = readSchemeExpressions(aSource);
+        var program = plt.reader.readSchemeExpressions(aSource);
         var compiledProgram = 
             program_dash__greaterthan_compiled_dash_program_slash_pinfo(
                 program, _pinfo);

@@ -1898,11 +1898,12 @@ var plt = plt || {};
     };
 
 
-    BaseImage.prototype.toDomNode = function() {
-	var that = this;
+    // makeCanvas: number number -> canvas
+    // Constructs a canvas object of a particular width and height.
+    var makeCanvas = function(width, height) {
 	var canvas = document.createElement("canvas");
- 	canvas.width = plt.world.Kernel.imageWidth(this).toInteger();
- 	canvas.height = plt.world.Kernel.imageHeight(this).toInteger();
+ 	canvas.width = width;
+ 	canvas.height = height;
  	canvas.style.width = canvas.width + "px";
  	canvas.style.height = canvas.height + "px";
 	
@@ -1911,13 +1912,21 @@ var plt = plt || {};
 	if (typeof window.G_vmlCanvasManager != 'undefined') {
 	    canvas = window.G_vmlCanvasManager.initElement(canvas);
 	}
-	// KLUDGE: we render in a timeout because there's a bug in IE excanvas
-	// that requires the canvas element to be in the dom before drawing
-	// occurs.
-	setTimeout(function() {
+	return canvas;
+    };
+
+
+    BaseImage.prototype.toDomNode = function() {
+	var that = this;
+	// Hack: reuse the canvas element if we've already constructed
+	// it.
+	var width = plt.world.Kernel.imageWidth(that).toInteger();
+	var height = plt.world.Kernel.imageHeight(that).toInteger();
+	var canvas = makeCanvas(width, height);
+	canvas.afterAttach = function() {
  	    var ctx = canvas.getContext("2d");
-	    that.render(ctx, 0, 0) }, 
-		   0);
+	    that.render(ctx, 0, 0) 
+	};
 	return canvas;
     };
     BaseImage.prototype.toWrittenString = function() { return "<image>"; }

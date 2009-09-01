@@ -333,6 +333,16 @@ plt.Jsworld = {};
     }
 
 
+    function appendChild(parent, child) {
+	parent.appendChild(child);
+	// HACK!  If this node is aware of afterAttach, fire off that
+	// event handler.
+	if (child.afterAttach) {
+	    child.afterAttach();
+	}
+    }
+
+
     // update_dom(nodes(Node), relations(Node)) = void
     function update_dom(toplevelNode, nodes, relations) {
 
@@ -344,7 +354,7 @@ plt.Jsworld = {};
 		var parent = relations[i].parent, child = relations[i].child;
 			
 		if (child.parentNode !== parent) {
-		    parent.appendChild(child);
+		    appendChild(parent, child);
 		}
 	    }
 	
@@ -430,7 +440,7 @@ plt.Jsworld = {};
 		if (!found) {
 		    // reparent children, remove node
 		    while (node.firstChild != null)
-			node.parentNode.appendChild(node.firstChild);
+			appendChild(node.parentNode, node.firstChild);
 				
 		    next = node.nextSibling; // HACKY
 				
@@ -947,7 +957,7 @@ plt.Jsworld = {};
     function select(attribs, opts, f){
 	var n = document.createElement('select');
 	for(var i = 0; i < opts.length; i++)
-	    n.appendChild(option({value: opts[i]}));
+	    appendChild(n, option({value: opts[i]}));
 	add_ev(n, 'change', f);
 	return addFocusTracking(copy_attribs(n, attribs));
     }
