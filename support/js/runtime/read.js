@@ -42,7 +42,7 @@ plt.reader = {};
 	var line = 1;
 	var tokens = [];
 	var PATTERNS = [['whitespace' , /^(\s+)/],
-			['#;', /^#;/],
+			['#;', /^[#][;]/],
 			['comment' , // piped comments
 			 new RegExp("^[#][|]"+
 				    "(?:(?:\\|[^\\#])|[^\\|])*"+
@@ -84,6 +84,7 @@ plt.reader = {};
 		    line = line + countLines(result[0]);
 		    s = s.substring(result[0].length);
 		    shouldContinue = true;
+		    break;
 		}
 	    }
 	    if (! shouldContinue) {
