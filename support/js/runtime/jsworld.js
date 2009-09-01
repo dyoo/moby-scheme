@@ -167,7 +167,9 @@ plt.world.MobyJsworld = {};
 	    // rather than the more direct 'function wrappedRedraw(w) { ...}'.
 	    var wrappedRedraw = function(w) {
 		var result = [toplevelNode, 
-			      [plt.Kernel.toDomNode(config.lookup('onRedraw')([w]))]];
+			      _js.node_to_tree(
+				  plt.Kernel.toDomNode(
+				      config.lookup('onRedraw')([w])))]];
 		return result;
 	    }
 	    

@@ -1972,7 +1972,7 @@ var plt = plt || {};
 
     plt.Kernel.toWrittenString = function(x) {
 	if (x == undefined || x == null) {
-	    throw new MobyRuntimeError("value must not be null or undefined");
+	    return "<undefined>";
 	}
 	if (typeof(x) == 'string') {
 	    return x.toWrittenString();
@@ -1993,7 +1993,7 @@ var plt = plt || {};
 
     plt.Kernel.toDisplayedString = function(x) {
 	if (x == undefined || x == null) {
-	    throw new MobyRuntimeError("value must not be null or undefined");
+	    return "<undefined>";
 	}
 	if (typeof(x) == 'string') {
 	    return x.toDisplayedString();
@@ -2016,7 +2016,8 @@ var plt = plt || {};
     // toDomNode: scheme-value -> dom-node
     plt.Kernel.toDomNode = function(x) {
 	if (x == undefined || x == null) {
-	    throw new MobyRuntimeError("value must not be null or undefined");
+	    var node = document.createTextNode("<undefined>");
+	    return node;
 	}
 	if (typeof(x) == 'string') {
 	    var node = document.createTextNode(x.toWrittenString());
@@ -2025,6 +2026,9 @@ var plt = plt || {};
 	if (typeof(x) != 'object' && typeof(x) != 'function') {
 	    var node = document.createTextNode(x.toString());
 	    return node;
+	}
+	if (x.nodeType) {
+	    return x;
 	}
 	if ('toDomNode' in x) {
 	    return x.toDomNode();
