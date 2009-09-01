@@ -169,7 +169,7 @@ plt.world.MobyJsworld = {};
 		var result = [toplevelNode, 
 			      _js.node_to_tree(
 				  plt.Kernel.toDomNode(
-				      config.lookup('onRedraw')([w])))]];
+				      config.lookup('onRedraw')([w])))];
 		return result;
 	    }
 	    
