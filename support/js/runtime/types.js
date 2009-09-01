@@ -192,15 +192,20 @@ var plt = plt || {};
     };
 
 
+    function appendChild(parent, child) {
+	parent.appendChild(child);
+	if (child.afterAttach) { child.afterAttach(); }
+    }
+
     plt.types.Cons.prototype.toDomNode = function() {
 	var node = document.createElement("div");
 	node.appendChild(document.createTextNode("("));
 	var p = this;
 	while (! p.isEmpty()) {
-	    node.appendChild(plt.Kernel.toDomNode(p.first()));
+	    appendChild(node, plt.Kernel.toDomNode(p.first()));
 	    p = p.rest();
 	    if (! p.isEmpty()) {
-		node.appendChild(document.createTextNode(" "));
+		appendChild(node, document.createTextNode(" "));
 	    }
 	}
 	node.appendChild(document.createTextNode(")"));

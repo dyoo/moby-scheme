@@ -83,3 +83,35 @@ Runtime
 The Javascript program that's emitted depends on a runtime kernel
 that's currently implemented in Javascript.  See the files in
 support/js/runtime.
+
+
+
+
+
+----------------------------------------------------------------------
+
+Ugly Hacks
+
+
+The afterAttach() hack: one problem with excanvases in IE is that they
+can't render until they're attached to a parent node.  Unfortunately,
+this means that we can't render a canvas at a call to a value's
+pretty-printing routine, because that value isn't yet attached to the
+DOM.
+
+This affects the implementation of plt.Kernel.BaseImage.toDomNode() We
+currently add an DomNodeInserted listener to the dom node value, so it
+knows when it's time to render.  However, this doesn't work under IE
+(again), so we also add an afterAttach method that all of our methods
+will call as soon as we add to a DOM node.  So you'll see code
+sprinkled around that says:
+
+    if (node.afterAttach) { node.afterAttach(); }
+
+in the following files:
+
+    support/js/runtime/jsworld.js
+    support/js/runtime/jsworld/jsworld.js
+    support/js/runtime/types.js
+    support/js/runtime/kernel.js
+

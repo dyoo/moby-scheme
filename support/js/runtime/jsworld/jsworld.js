@@ -830,7 +830,14 @@ plt.Jsworld = {};
 
 
 
+    function isTextNode(n) {
+	return (n.nodeType == Node.TEXT_NODE);
+    }
 
+
+    function isElementNode(n) {
+	return (n.nodeType == Node.ELEMENT_NODE);
+    }
 
 
     // checkDomSexp: X -> boolean
@@ -847,12 +854,12 @@ plt.Jsworld = {};
 	}
 
 	// Check that the first element is a Text or an element.
-	if (thing[0] instanceof Text) {
+	if (isTextNode(thing[0])) {
 	    if (thing.length > 1) {
 		throw new JsworldDomError("Text nodes can not have children",
 					  thing);
 	    }
-	} else if (thing[0] instanceof Element) {
+	} else if (isElementNode(thing[0])) {
 	    for (var i = 1; i < thing.length; i++) {
 		checkDomSexp(thing[i]);
 	    }
