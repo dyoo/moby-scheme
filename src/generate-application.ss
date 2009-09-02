@@ -213,10 +213,7 @@
 ;; get-permission-js-array: (listof permission) -> string
 (define (get-permission-js-array perms) 
   (string-append "["
-		 (string-join (map (lambda (p)
-                                     (symbol->string 
-                                      (identifier->munged-java-identifier
-                                       (permission-reference p))))
+		 (string-join (map permission->string
 				   perms)
 			      ", ")
 		 "]"))

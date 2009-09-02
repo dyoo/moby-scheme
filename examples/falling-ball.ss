@@ -27,8 +27,8 @@
   (>= w HEIGHT))
 
 ;; We have some simple test cases.
-(check-expect (hits-floor? 0) false)
-(check-expect (hits-floor? HEIGHT) true)
+#;(check-expect (hits-floor? 0) false)
+#;(check-expect (hits-floor? HEIGHT) true)
 
 ;; render: world -> scene
 ;; Produces a scene with the circle at a height described by the world.

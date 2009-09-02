@@ -8,6 +8,7 @@
          scheme/class
          "config.ss"
          "image-lift.ss"
+         "compiler/stx.ss"
          "compiler/pinfo.ss"
          "compiler/env.ss"
          "compiler/permission.ss")
@@ -42,7 +43,8 @@
         (match s-exp
           [(list 'module name lang body ...)
            ;; FIXME: check that the language is beginner level!
-           body])))))
+           ;; FIXME: preserve location information!
+           (map (lambda (x) (datum->stx x (make-Loc 0 0 0 ""))) body)])))))
 
 
 
