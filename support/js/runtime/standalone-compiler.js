@@ -3282,7 +3282,7 @@ plt.reader = {};
 	var line = 1;
 	var tokens = [];
 	var PATTERNS = [['whitespace' , /^(\s+)/],
-			['#;', /^#;/],
+			['#;', /^[#][;]/],
 			['comment' , // piped comments
 			 new RegExp("^[#][|]"+
 				    "(?:(?:\\|[^\\#])|[^\\|])*"+
@@ -3324,6 +3324,7 @@ plt.reader = {};
 		    line = line + countLines(result[0]);
 		    s = s.substring(result[0].length);
 		    shouldContinue = true;
+		    break;
 		}
 	    }
 	    if (! shouldContinue) {
@@ -3544,7 +3545,7 @@ plt.reader = {};
     plt.reader.tokenize = tokenize;
     plt.reader.readSchemeExpressions = readSchemeExpressions;
 }());
-
+(function() { 
 function stx_colon_atom(datum,loc) { plt.Kernel.Struct.call(this, "make-stx:atom", [datum,loc]);this.datum = datum;
 this.loc = loc; }
                     stx_colon_atom.prototype = new plt.Kernel.Struct();
@@ -4836,7 +4837,7 @@ function compiled_dash_program_dash_pinfo(obj) {
 
 function compiled_dash_program_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof compiled_dash_program; }
-function compiled_dash_program_dash_main(a_dash_compiled_dash_program) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_defns(a_dash_compiled_dash_program)),(plt.types.String.makeInstance("\n")),(plt.types.String.makeInstance("(function() { \n")),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_toplevel_dash_exprs(a_dash_compiled_dash_program)),(plt.types.String.makeInstance(")")),(plt.types.String.makeInstance("(plt.Kernel.identity)")),(plt.types.String.makeInstance("\n})();"))])); }
+function compiled_dash_program_dash_main(a_dash_compiled_dash_program) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(function() { ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_defns(a_dash_compiled_dash_program)),(plt.types.String.makeInstance("\n")),(plt.types.String.makeInstance("return (function() { \n")),(plt.types.String.makeInstance("  (")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_toplevel_dash_exprs(a_dash_compiled_dash_program)),(plt.types.String.makeInstance("  )(arguments[0] || plt.Kernel.identity);\n")),(plt.types.String.makeInstance("}); })()"))])); }
 function program_dash__greaterthan_compiled_dash_program(program) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && program_dash__greaterthan_compiled_dash_program_slash_pinfo(program,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && get_dash_base_dash_pinfo((plt.types.Symbol.makeInstance("base")))))); }
 function program_dash__greaterthan_compiled_dash_program_slash_pinfo(program, input_dash_pinfo) { return ((function() { 
 
@@ -5400,8 +5401,8 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.st
                      result.toDisplayedString = function() {return '<function:escape-char-code>';}
                      return result; })(), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
               })()); }
-(function() { 
-((function (toplevel_dash_expression_dash_show0) { 
+return (function() { 
+  ((function (toplevel_dash_expression_dash_show0) { 
 
 
 
@@ -5606,8 +5607,8 @@ empty_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   &&
 
 
 
- }))(plt.Kernel.identity)
-})();
+ })  )(arguments[0] || plt.Kernel.identity);
+}); })()
    function listToArray(aList) {
        var anArray = [];
        while (!aList.isEmpty()) {     
