@@ -33,6 +33,15 @@
 		 "  )(arguments[0] || plt.Kernel.identity);\n"
                  "}); })()"))
 
+;; Generates the main output source, exposing all of the definitions to the toplevel.
+(define (compiled-program-main/expose a-compiled-program)
+  (string-append (compiled-program-defns a-compiled-program)
+                 "\n"
+                 "(function() { \n"
+                 "  (" 
+		 (compiled-program-toplevel-exprs a-compiled-program)
+		 "  )(arguments[0] || plt.Kernel.identity);\n"
+                 "})();"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -810,9 +819,10 @@
                                             [toplevel-exprs 
                                              string?]
                                             [pinfo pinfo?])]
-                  
-                  
+
                   [compiled-program-main
+                   (compiled-program? . -> . string?)]
+                  [compiled-program-main/expose
                    (compiled-program? . -> . string?)]
                   
                   [program->compiled-program 

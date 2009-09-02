@@ -121,7 +121,7 @@
 
 ;; bootstrap-compile: path -> string
 (define (bootstrap-compile a-path)
-  (compiled-program-main
+  (compiled-program-main/expose
    (program->compiled-program (get-big-program a-path))))
 
 
