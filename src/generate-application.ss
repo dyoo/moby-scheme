@@ -213,7 +213,8 @@
 ;; get-permission-js-array: (listof permission) -> string
 (define (get-permission-js-array perms) 
   (string-append "["
-		 (string-join (map permission->string
+		 (string-join (map (lambda (x)
+				     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
 				   perms)
 			      ", ")
 		 "]"))
