@@ -36,29 +36,33 @@ plt.reader = {};
 	return c;
     }
 
+
+    var PATTERNS = [['whitespace' , /^(\s+)/],
+		    ['#;', /^[#][;]/],
+		    ['comment' , // piped comments
+		     new RegExp("^[#][|]"+
+				"(?:(?:\\|[^\\#])|[^\\|])*"+
+				"[|][#]")],
+		    ['comment' , /(^;[^\n]*)/],
+		    ['(' , /^(\(|\[|\{)/],
+		    [')' , /^(\)|\]|\})/],
+		    ['\'' , /^(\')/],
+		    ['`' , /^(`)/],
+		    [',' , /^(,)/],
+		    ['char', /^\#\\(newline|backspace)/],
+		    ['char', /^\#\\(.)/],
+		    ['number' , /^([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
+		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
+		    ['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
+		   ];
+
+
+
     var tokenize = function(s, source) {
 
 	var offset = 0;
 	var line = 1;
 	var tokens = [];
-	var PATTERNS = [['whitespace' , /^(\s+)/],
-			['#;', /^[#][;]/],
-			['comment' , // piped comments
-			 new RegExp("^[#][|]"+
-				    "(?:(?:\\|[^\\#])|[^\\|])*"+
-				    "[|][#]")],
-			['comment' , /(^;[^\n]*)/],
-			['(' , /^(\(|\[|\{)/],
-			[')' , /^(\)|\]|\})/],
-			['\'' , /^(\')/],
-			['`' , /^(`)/],
-			[',' , /^(,)/],
-			['char', /^\#\\(newline|backspace)/],
-			['char', /^\#\\(.)/],
-			['number' , /^([+\-]?(?:\d+\.\d+|\d+\.|\.\d+|\d+))/],
-			['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
-			['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
-		       ];
 
 	if (! source) { source = ""; }
 	
@@ -234,9 +238,14 @@ plt.reader = {};
 
 	    case 'number':
 		var t = eat('number');
+		var rationalMatch = t[1].match(/([+\-]?\d+)\/(\d+)/);
 		if (t[1].match(/\./)) {
 		    return makeAtom(plt.types.FloatPoint.makeInstance(parseFloat(t[1])), 
 				    t[2]);
+		} else if (rationalMatch) {
+		    // Rational
+		    return makeAtom(plt.types.Rational.makeInstance(parseInt(rationalMatch[1]),
+								    parseInt(rationalMatch[2])))
 		} else {
 		    return makeAtom(plt.types.Rational.makeInstance(parseInt(t[1]), 1), 
 				    t[2]);

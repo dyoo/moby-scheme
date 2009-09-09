@@ -96,6 +96,14 @@ function init() {
 				  ["string", "world"],
 				  [")", ")"]], ""]));
 	},
+
+	testTokenizeRational: function() {
+	    this.assert(isEqual(tokenize("1/2"),
+				[[["number", "1/2"]],
+				 ""]));
+	},
+
+
 	
 	testReadSymbol: function() {
 	    this.assert(schemeIsEqual(read("hello"),
@@ -107,6 +115,19 @@ function init() {
 	    this.assert(schemeIsEqual(read("1"),
 				      cons(number(1), empty)));
 	    
+	},
+
+	testReadRational2: function() {
+	    this.assert(schemeIsEqual(read("3/4"),
+				      cons(plt.types.Rational.makeInstance(3, 4),
+					   empty)));
+	    this.assert(schemeIsEqual(read("-5/17"),
+				      cons(plt.types.Rational.makeInstance(-5, 17),
+					   empty)));
+
+	    this.assert(schemeIsEqual(read("5/10"),
+				      cons(plt.types.Rational.makeInstance(1, 2),
+					   empty)));
 	},
 
 
