@@ -92,7 +92,9 @@ plt.world = plt.world || {};
 	var onKey = lookup('onKey');
 	var onKeyEffect = lookup('onKeyEffect');
 	doStimuli(function(w) { return onKeyEffect([w, keyname]); },
-		  function(w) { return onKey([w, keyname]); });
+		  function(w) {
+		      var w = onKey([w, keyname]);
+		      return w; });
     };
 
 

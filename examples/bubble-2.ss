@@ -50,16 +50,16 @@
 (define (update-vel-with-key v a-key)
   (cond [(key=? a-key "left")
          (make-vel (- (vel-x v) 10)
-                   (vel-y a-key))]
+                   (vel-y v))]
         [(key=? a-key "right")
          (make-vel (+ (vel-x v) 10)
-                   (vel-y a-key))]
+                   (vel-y v))]
         [(key=? a-key "up")
          (make-vel (vel-x v)
-                   (- (vel-y a-key) 10))]
+                   (- (vel-y v) 10))]
         [(key=? a-key "down")
          (make-vel (vel-x v)
-                   (+ (vel-y a-key) 10))]
+                   (+ (vel-y v) 10))]
         [else
          v]))
         
@@ -114,9 +114,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(big-bang WIDTH HEIGHT initial-w
-          (on-redraw render)
-          (on-key key)
-          (on-tick 1/20 tick)
-          (stop-when game-ends?)
-          (on-tilt tilt))
+(js-big-bang initial-w
+             (on-redraw render)
+             (on-key key)
+             (on-tick 1/10 tick)
+             (stop-when game-ends?)
+             (on-tilt tilt))
