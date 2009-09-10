@@ -36,6 +36,35 @@
               (world-r w)
               (make-vel roll (- pitch))))
 
+
+;; key: world key -> world
+;; Adjust velocity based on key presses.
+(define (key w a-key)
+  (make-world (world-posn w)
+              (world-r w)
+              (update-vel-with-key (world-vel w) a-key)))
+  
+
+;; update-vel-with-key: vel key -> vel
+;; Adjust the velocity based on which key the user presses.
+(define (update-vel-with-key v a-key)
+  (cond [(key=? a-key "left")
+         (make-vel (- (vel-x v) 10)
+                   (vel-y a-key))]
+        [(key=? a-key "right")
+         (make-vel (+ (vel-x v) 10)
+                   (vel-y a-key))]
+        [(key=? a-key "up")
+         (make-vel (vel-x v)
+                   (- (vel-y a-key) 10))]
+        [(key=? a-key "down")
+         (make-vel (vel-x v)
+                   (+ (vel-y a-key) 10))]
+        [else
+         v]))
+        
+
+  
 ;; render: world -> scene
 ;; Renders the world.
 (define (render w)
@@ -87,6 +116,7 @@
 
 (big-bang WIDTH HEIGHT initial-w
           (on-redraw render)
+          (on-key key)
           (on-tick 1/20 tick)
           (stop-when game-ends?)
           (on-tilt tilt))
