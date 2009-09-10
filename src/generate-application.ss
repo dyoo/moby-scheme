@@ -71,9 +71,11 @@
     (write-android-manifest (build-path dest "AndroidManifest.xml")
 			    #:name name
                             #:package package
-                            #:activity-class "com.phonegap.demo.DroidGap"
-                            #:permissions (apply append (map permission->android-permissions
-                                                             (pinfo-permissions (javascript:compiled-program-pinfo compiled-program)))))
+                            #:activity-class (string-append package "." classname)
+                            #:permissions (apply append 
+                                                 (map permission->android-permissions
+                                                      (pinfo-permissions 
+                                                       (javascript:compiled-program-pinfo compiled-program)))))
 
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
@@ -83,16 +85,18 @@
  
     ;; HACK!
     ;; Add an import statement to package.R in the class file, so we can compile things.
+    (make-directory* (build-path dest "src" "plt" "moby" classname))
     (let* ([middleware 
             (get-file-bytes (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java"))]
            [middleware 
-            (regexp-replace #rx"import" 
+            (regexp-replace #rx"DroidGap" 
                             middleware
-                            (string->bytes/utf-8 (string-append "import " package ".R" "; import")))])
-      (call-with-output-file (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java")
+                            (string->bytes/utf-8 classname))])
+      (call-with-output-file (build-path dest "src" "plt" "moby" classname (format "~a.java" classname))
         (lambda (op)
           (write-bytes middleware op))
-        #:exists 'replace))
+        #:exists 'replace)
+      (delete-file (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java")))
       
 
     ;; Write out the defaults.properties so that ant can build
