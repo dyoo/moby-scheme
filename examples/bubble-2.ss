@@ -7,6 +7,8 @@
 (define WIDTH 320)
 (define HEIGHT 480)
 
+(define TARGET-RADIUS 30)
+
 ;; A velocity has an x and y component.
 (define-struct vel (x y))
 
@@ -49,17 +51,17 @@
 ;; Adjust the velocity based on which key the user presses.
 (define (update-vel-with-key v a-key)
   (cond [(key=? a-key "left")
-         (make-vel (- (vel-x v) 10)
+         (make-vel (- (vel-x v) 3)
                    (vel-y v))]
         [(key=? a-key "right")
-         (make-vel (+ (vel-x v) 10)
+         (make-vel (+ (vel-x v) 3)
                    (vel-y v))]
         [(key=? a-key "up")
          (make-vel (vel-x v)
-                   (- (vel-y v) 10))]
+                   (- (vel-y v) 3))]
         [(key=? a-key "down")
          (make-vel (vel-x v)
-                   (+ (vel-y v) 10))]
+                   (+ (vel-y v) 3))]
         [else
          v]))
         
@@ -68,7 +70,7 @@
 ;; render: world -> scene
 ;; Renders the world.
 (define (render w)
-  (place-image/posn (circle 30 "solid" "red")
+  (place-image/posn (circle TARGET-RADIUS "solid" "red")
                     target
                     (place-image/posn (circle (world-r w) "solid" "blue")
                                       (world-posn w)
@@ -78,7 +80,7 @@
 ;; Produces true if the target and the ball have collided.
 (define (collide? w)
   (< (distance (world-posn w) target)
-     (world-r w)))
+     (+ TARGET-RADIUS (world-r w))))
 
 
 ;; game-ends?: world -> boolean
