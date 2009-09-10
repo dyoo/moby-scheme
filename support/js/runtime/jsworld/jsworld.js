@@ -639,8 +639,8 @@ plt.Jsworld = {};
 	    if (stopWhen.test(w)) {
 		stopWhen.receiver(world);		    
 		var currentRecord = runningBigBangs.pop();
-		currentRecord.pause();
-		if(runningBigBangs.length > 0) {
+		if (currentRecord) { currentRecord.pause(); }
+		if (runningBigBangs.length > 0) {
 		    var restartingBigBang = runningBigBangs.pop();
 		    restartingBigBang.restart();
 		}
