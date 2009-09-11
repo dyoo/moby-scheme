@@ -83,11 +83,24 @@
         (fprintf op "sdk-location=~a~n" (current-android-sdk-path)))
       #:exists 'replace)
  
-    ;; HACK!
-    ;; Add an import statement to package.R in the class file, so we can compile things.
+    ;; HACKS!
+    ;; Fix build.xml so it refers to our application.
+    (let* ([build-xml-bytes (get-file-bytes (build-path dest "build.xml"))]
+           [build-xml-bytes (regexp-replace #rx"DroidGap"
+                                            build-xml-bytes
+                                            (string->bytes/utf-8 classname))])
+      (call-with-output-file (build-path dest "build.xml")
+        (lambda (op) (write-bytes build-xml-bytes op))
+        #:exists 'replace))
+    
+    ;; Rename DroidGap to the application name.
     (make-directory* (build-path dest "src" "plt" "moby" classname))
     (let* ([middleware 
             (get-file-bytes (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java"))]
+           [middleware 
+            (regexp-replace #rx"package com.phonegap.demo;\n" 
+                            middleware
+                            (string->bytes/utf-8 (format "package plt.moby.~a;\nimport com.phonegap.demo.*;\n" classname)))]
            [middleware 
             (regexp-replace #rx"DroidGap" 
                             middleware
