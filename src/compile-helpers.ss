@@ -38,13 +38,39 @@
 ;; Given a text, returns a program as well.
 (define (parse-text-as-program a-text)
   (let* ([ip (open-input-text-editor a-text)])
+    (port-count-lines! ip)
     (parameterize ([read-accept-reader #t])
-      (let ([s-exp (read ip)])
-        (match s-exp
-          [(list 'module name lang body ...)
-           ;; FIXME: check that the language is beginner level!
-           ;; FIXME: preserve location information!
-           (map (lambda (x) (datum->stx x (make-Loc 0 0 0 ""))) body)])))))
+      (let ([stx (read-syntax #f ip)])
+        (syntax-case stx ()
+          [(module name lang body ...)
+           (map syntax->stx (syntax->list #'(body ...)))])))))
+
+
+;; syntax->stx: syntax -> stx
+;; Go from Scheme's syntax objects to our own.
+(define (syntax->stx a-syntax)
+  (cond
+    [(pair? (syntax-e a-syntax))
+     (let ([elts
+            (map syntax->stx (syntax->list a-syntax))])
+       (make-stx:list elts
+                      (make-Loc (syntax-position a-syntax)
+                                (syntax-line a-syntax)
+                                (syntax-span a-syntax)
+                                (format "~a" (syntax-source a-syntax)))))]
+    [else
+     (make-stx:atom (syntax-e a-syntax)
+                    (make-Loc (syntax-position a-syntax)
+                              (syntax-line a-syntax)
+                              (syntax-span a-syntax)
+                              (format "~a" (syntax-source a-syntax))))]))
+
+
+;(match s-exp
+;  [(list 'module name lang body ...)
+;   ;; FIXME: check that the language is beginner level!
+;   ;; FIXME: preserve location information!
+;   (map (lambda (x) (datum->stx x (make-Loc 0 0 0 ""))) body)])))))
 
 
 
