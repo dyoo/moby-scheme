@@ -36,13 +36,15 @@
 (define (update-location w lat long)
   (update-world-description 
    (make-world (make-loc lat long)
-	       (find-places ALL-PLACES w)
+	       (find-places ALL-PLACES (make-loc lat long))
 	       "")))
 
+
+;; update-world-description: world -> string
 (define (update-world-description w)
   (make-world (world-loc w)
 	      (world-nearby-places w)
-	      (compute-description (world-loc w))))
+	      (compute-description w)))
 	      
 
 
@@ -75,7 +77,7 @@
 ;; nearby-matching-items: world -> (listof item)
 ;; Returns all items that are nearby our current location.
 (define (nearby-matching-items w)
-  (places-matching-items (find-places ALL-PLACES w)))
+  (places-matching-items (world-nearby-places w)))
   
 
 ;; find-places: (listof place) loc -> (listof place)
@@ -100,10 +102,10 @@
 
 
 
-;; compute-description: pos -> string
+;; compute-description: world -> string
 ;; Produces a text description.
-(define (compute-description p)
-  (items->string (nearby-matching-items p)))
+(define (compute-description w)
+  (items->string (nearby-matching-items w)))
 
 
 ;; items->string: (listof item) -> string
@@ -286,5 +288,4 @@
 
 (js-big-bang initial-world
              ;(on-redraw render)
-	     (on-tick 1 (lambda (w) w))
              (on-location-change update-location))
