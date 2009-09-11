@@ -25,14 +25,25 @@
 
 ;; The world is current location.
 ;; The initial world is one for dyoo's My Saved Places.
+(define-struct world (loc nearby-places description))
+
 (define initial-world 
-  (make-loc 0 0))
+  (make-world (make-loc 0 0) empty ""))
 
 
 ;; update-location: world number number -> world
 ;; Updates the current location.
 (define (update-location w lat long)
-  (make-loc lat long))
+  (update-world-description 
+   (make-world (make-loc lat long)
+	       (find-places ALL-PLACES w)
+	       "")))
+
+(define (update-world-description w)
+  (make-world (world-loc w)
+	      (world-nearby-places w)
+	      (compute-description (world-loc w))))
+	      
 
 
 ;; filter-matching-items: place (listof item) -> (listof item)
@@ -89,10 +100,10 @@
 
 
 
-;; description: world -> string
+;; compute-description: pos -> string
 ;; Produces a text description.
-(define (description w)
-  (items->string (nearby-matching-items w)))
+(define (compute-description p)
+  (items->string (nearby-matching-items p)))
 
 
 ;; items->string: (listof item) -> string
@@ -119,7 +130,7 @@
 ;; render: world -> scene
 (define (render w)
   (place-image
-   (text (description w) 10 "black")
+   (text (world-description w) 10 "black")
    20 
    20
    (empty-scene WIDTH HEIGHT)))
@@ -274,5 +285,6 @@
 
 
 (js-big-bang initial-world
-             (on-redraw render)
+             ;(on-redraw render)
+	     (on-tick 1 (lambda (w) w))
              (on-location-change update-location))
