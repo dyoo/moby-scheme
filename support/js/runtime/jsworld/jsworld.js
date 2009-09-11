@@ -33,6 +33,16 @@ plt.Jsworld = {};
 
 
 
+    // Close all world computations.
+    Jsworld.shutdown = function() {
+	while(true) {
+	    var currentRecord = runningBigBangs.pop();
+	    if (currentRecord) { currentRecord.pause(); }
+	}
+	clear_running_state();
+    }
+
+
 
     function add_world_listener(listener) {
 	worldListeners.push(listener);

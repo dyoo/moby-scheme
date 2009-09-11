@@ -64,6 +64,11 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
 
+    plt.world.Kernel.shutdownWorld = function() {
+	stopped = true;
+    };
+
+
     // notifyWorldListeners: -> void
     // Tells all of the world listeners that the world has changed.
     function notifyWorldListeners() {
@@ -147,7 +152,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	for (i = 0; i < handlers.length; i++) {
 	    config = handlers[i](config);
 	}
-	config = config.updateAll({'changeWorld': plt.world.Kernel.updateWorld});
+	config = config.updateAll({'changeWorld': plt.world.Kernel.updateWorld,
+				   'shutdownWorld': plt.world.Kernel.shutdownWorld});
 	plt.world.config.CONFIG = config;
 
 	if (config.lookup('initialEffect')) {

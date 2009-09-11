@@ -66,6 +66,7 @@ plt.world = plt.world || {};
     };
 
 
+
     // Keystrokes
     stimuli.onKey = function(e) {
 	// getKeyCodeName: keyEvent -> String
@@ -125,18 +126,27 @@ plt.world = plt.world || {};
 
 
 
+    // The shutdown stimuli: special case that forces a world computation to quit.
+    stimuli.onShutdown = function() {	
+	var onShutdown = lookup('onShutdown');
+	if (onShutdown) {
+	    onShutdown();
+	}
+    }
+
+
 
 
     //////////////////////////////////////////////////////////////////////
     // Helpers
     var flt = plt.types.FloatPoint.makeInstance;
     
-    function change(f) {
-	plt.world.config.CONFIG.lookup('changeWorld')(f);
-    }
-
     function lookup(k) {
 	return plt.world.config.CONFIG.lookup(k);
+    }
+
+    function change(f) {
+	lookup('changeWorld')(f);
     }
 
     function applyEffect(e) {

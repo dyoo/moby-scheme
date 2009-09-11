@@ -37,6 +37,8 @@ plt.world.config = plt.world.config || {};
 	this.vals = {
 	    changeWorld: false,
 
+	    shutdownWorld: false,
+
 
 	    initialEffect: false,
 

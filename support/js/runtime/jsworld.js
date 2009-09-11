@@ -143,7 +143,8 @@ plt.world.MobyJsworld = {};
 		config = handlers[i](config);
 	    }
 	}
-	config = config.updateAll({'changeWorld': Jsworld.updateWorld});
+	config = config.updateAll({'changeWorld': Jsworld.updateWorld,
+				   'shutdownWorld': Jsworld.shutdownWorld});
 	plt.world.config.CONFIG = config;
 	
 	var wrappedHandlers = [];
@@ -257,6 +258,14 @@ plt.world.MobyJsworld = {};
 
     // updateWorld: (world -> world) -> void
     Jsworld.updateWorld = _js.change_world;
+    
+
+
+    // shutdownWorld: -> void
+    // Shut down all world computations.
+    Jsworld.shutdownWorld = function() {
+	_js.shutdown();
+    };
 
 
     function getAttribs(args) {
