@@ -1801,26 +1801,28 @@ var plt = plt || {};
 	var xmlDoc;
 	try {
 	    //Internet Explorer
-	    var xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+	    xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
 	    xmlDoc.async="false";
 	    xmlDoc.loadXML(s);
 	}
 	catch(e) {
 	    var parser=new DOMParser();
-	    var xmlDoc=parser.parseFromString(s, "text/xml");
+	    xmlDoc=parser.parseFromString(s, "text/xml");
 	}
 
 	var parseAttributes = function(attrs) {
 	    var result = plt.types.Empty.EMPTY;
 	    for (var i = 0; i < attrs.length; i++) {
 		var keyValue= plt.types.Cons.makeInstance(
-		    attrs.item(i).nodeName,
+		    plt.types.Symbol.makeInstance(attrs.item(i).nodeName),
 		    plt.types.Cons.makeInstance(
 			attrs.item(i).nodeValue,
 			plt.types.Empty.EMPTY));
 		result = plt.types.Cons.makeInstance(keyValue, result);
 	    }
-	    return plt.Kernel.reverse(result);
+	    return plt.types.Cons.makeInstance(
+		plt.types.Symbol.makeInstance("@"),
+		plt.Kernel.reverse(result));
 	};
 
 	var parse = function(node) {
@@ -1843,15 +1845,20 @@ var plt = plt || {};
 		result = plt.types.Cons.makeInstance(
 		    parseAttributes(node.attributes),
 		    result);
-		result = plt.types.Cons.makeInstance(node.nodeName, result);
+		result = plt.types.Cons.makeInstance(
+		    plt.types.Symbol.makeInstance(node.nodeName),
+		    result);
 		return result;
 	    } else if (node.nodeType == Node.TEXT_NODE) {
 		return node.textContent;
+	    } else if (node.nodeType == Node.CDATA_NODE) {
+		return node.data;
 	    } else {
 		return plt.types.Empty.EMPTY;
 	    }
 	};
-	return parse(xmlDoc.firstChild);
+	var result = parse(xmlDoc.firstChild);
+	return result;
     };
 
    

@@ -516,7 +516,7 @@ plt.platform = {};
 
     function PhonegapNetworkService() {}
     PhonegapNetworkService.prototype.getUrl = function(aUrl) {
-	// FIXME!
+	return Device.getUrl(aUrl);
     };
 
 

@@ -71,7 +71,15 @@ var main = {};
 
 
     main.runToplevel = function() {
-	(<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(plt.Kernel.identity);
+        try {
+   	    (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(plt.Kernel.identity);
+        } catch (e) {
+	    alert(e);
+	    if (plt.Kernel.lastLoc) {
+	        alert("Error was raised around " + plt.Kernel.lastLoc);
+            }
+            throw e;
+        }
     };
 
 	<<PROGRAM-DEFINITIONS>>

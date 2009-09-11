@@ -268,5 +268,5 @@
 
 
 (js-big-bang initial-world
-             (on-redraw render)
+             ;(on-redraw render)
              (on-location-change update-location))
