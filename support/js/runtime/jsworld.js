@@ -162,13 +162,13 @@ plt.world.MobyJsworld = {};
 	    }
 	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
 	} else if (config.lookup('onRedraw')) {
-	    // WARNING: under Safari, it's not safe to define inner functions with the same
-	    // name as other ones.  That's why we're doing 'var wrappedRedraw = function(w) { ... }'
-	    // rather than the more direct 'function wrappedRedraw(w) { ...}'.
 	    var reusableCanvas = undefined;
 	    var reusableCanvasNode = undefined;
 	    var wrappedRedraw = function(w) {
 		var aScene = config.lookup('onRedraw')([w]);
+		// Performance hack: if we're using onRedraw, we know
+		// we've got a scene, so we optimize away the repeated
+		// construction of a canvas object.
 		if (aScene != null && aScene != undefined && 
 		    aScene instanceof plt.Kernel.BaseImage) {
 		    var width = 
@@ -182,8 +182,8 @@ plt.world.MobyJsworld = {};
 		    }
  		    reusableCanvas.width = width;
  		    reusableCanvas.height = height;
- 		    reusableCanvas.style.width = canvas.width + "px";
- 		    reusableCanvas.style.height = canvas.height + "px";
+ 		    reusableCanvas.style.width = reusableCanvas.width + "px";
+ 		    reusableCanvas.style.height = reusableCanvas.height + "px";
 		    reusableCanvas.style.display = "none";
  		    var ctx = reusableCanvas.getContext("2d");
 		    aScene.render(ctx, 0, 0);
