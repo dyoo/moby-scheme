@@ -167,10 +167,16 @@
 
 ;; parse-item: xexpr -> place
 (define (parse-item xexpr)
-  (make-place (get-text (first (find-children 'title (children xexpr))))              
-              (parse-georss:point (first (find-children 'georss:point (children xexpr))))
-              ;; At the moment, we default to a radius of 100 meters.
-              100))
+  (cond [(empty? (find-children 'georss:point (children xexpr)))
+	 (make-place (get-text (first (find-children 'title (children xexpr))))      
+		     (make-loc 0 0)
+		     100)]
+	[else
+	 (make-place (get-text (first (find-children 'title (children xexpr))))
+		     (parse-georss:point 
+		      (first (find-children 'georss:point (children xexpr))))
+		     ;; At the moment, we default to a radius of 100 meters.
+		     100)]))
 
 
 ;; parse-georss:point: xexpr -> loc
@@ -268,5 +274,5 @@
 
 
 (js-big-bang initial-world
-             ;(on-redraw render)
+             (on-redraw render)
              (on-location-change update-location))
