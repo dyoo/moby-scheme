@@ -1795,13 +1795,66 @@ var plt = plt || {};
     };
     
 
-    
 
 
+    plt.Kernel.parse_dash_xml = function(s) {
+	var xmlDoc;
+	try {
+	    //Internet Explorer
+	    var xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+	    xmlDoc.async="false";
+	    xmlDoc.loadXML(s);
+	}
+	catch(e) {
+	    var parser=new DOMParser();
+	    var xmlDoc=parser.parseFromString(s, "text/xml");
+	}
 
+	var parseAttributes = function(attrs) {
+	    var result = plt.types.Empty.EMPTY;
+	    for (var i = 0; i < attrs.length; i++) {
+		var keyValue= plt.types.Cons.makeInstance(
+		    attrs.item(i).nodeName,
+		    plt.types.Cons.makeInstance(
+			attrs.item(i).nodeValue,
+			plt.types.Empty.EMPTY));
+		result = plt.types.Cons.makeInstance(keyValue, result);
+	    }
+	    return plt.Kernel.reverse(result);
+	};
 
+	var parse = function(node) {
+	    if (node.nodeType == Node.ELEMENT_NODE) {
+		var result = plt.types.Empty.EMPTY;
+		var child = node.firstChild;
+		while (child != null) {
+		    var nextResult = parse(child);
+		    if (isString(nextResult) && 
+			!result.isEmpty() &&
+			isString(result.first())) {
+			result = plt.types.Cons.makeInstance(result.first() + nextResult,
+							     result.rest());
+		    } else {
+			result = plt.types.Cons.makeInstance(nextResult, result);
+		    }
+		    child = child.nextSibling;
+		}
+		result = plt.Kernel.reverse(result);
+		result = plt.types.Cons.makeInstance(
+		    parseAttributes(node.attributes),
+		    result);
+		result = plt.types.Cons.makeInstance(node.nodeName, result);
+		return result;
+	    } else if (node.nodeType == Node.TEXT_NODE) {
+		return node.textContent;
+	    } else {
+		return plt.types.Empty.EMPTY;
+	    }
+	};
+	return parse(xmlDoc.firstChild);
+    };
 
-
+   
 
     // Boxes
     
@@ -2107,6 +2160,9 @@ var plt = plt || {};
 	}
 	return true;
     };
+
+
+
 
 
 

@@ -293,6 +293,10 @@
                      ;; Images
                      (image? 1)
                      (image=? 2)
+
+
+		     ;; XML Parsing
+		     (parse-xml 1)
                      )))
           
           
