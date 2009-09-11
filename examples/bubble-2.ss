@@ -116,9 +116,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(js-big-bang initial-w
-             (on-redraw render)
-             (on-key key)
-             (on-tick 1/10 tick)
-             (stop-when game-ends?)
-             (on-tilt tilt))
+(big-bang WIDTH HEIGHT initial-w
+          (on-redraw render)
+          (on-key key)
+          (on-tick 1/10 tick)
+          (stop-when game-ends?)
+          (on-tilt tilt))

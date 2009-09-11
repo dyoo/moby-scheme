@@ -165,12 +165,35 @@ plt.world.MobyJsworld = {};
 	    // WARNING: under Safari, it's not safe to define inner functions with the same
 	    // name as other ones.  That's why we're doing 'var wrappedRedraw = function(w) { ... }'
 	    // rather than the more direct 'function wrappedRedraw(w) { ...}'.
+	    var reusableCanvas = undefined;
+	    var reusableCanvasNode = undefined;
 	    var wrappedRedraw = function(w) {
-		var result = [toplevelNode, 
-			      _js.node_to_tree(
-				  plt.Kernel.toDomNode(
-				      config.lookup('onRedraw')([w])))];
-		return result;
+		var aScene = config.lookup('onRedraw')([w]);
+		if (aScene != null && aScene != undefined && 
+		    aScene instanceof plt.Kernel.BaseImage) {
+		    var width = 
+			plt.world.Kernel.imageWidth(aScene).toInteger();
+		    var height = 
+			plt.world.Kernel.imageHeight(aScene).toInteger();
+
+		    if (! reusableCanvas) {
+			reusableCanvas = plt.Kernel._makeCanvas(width, height);
+			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
+		    }
+ 		    reusableCanvas.width = width;
+ 		    reusableCanvas.height = height;
+ 		    reusableCanvas.style.width = canvas.width + "px";
+ 		    reusableCanvas.style.height = canvas.height + "px";
+		    reusableCanvas.style.display = "none";
+ 		    var ctx = reusableCanvas.getContext("2d");
+		    aScene.render(ctx, 0, 0);
+		    return [toplevelNode, reusableCanvasNode];
+		} else {
+		    return [toplevelNode, 
+			    _js.node_to_tree(
+				plt.Kernel.toDomNode(
+				    aScene))];
+		}
 	    }
 	    
 	    var wrappedRedrawCss = function(w) {
@@ -179,7 +202,9 @@ plt.world.MobyJsworld = {};
 	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
 	} else {
 	    wrappedHandlers.push(_js.on_world_change
-				 (function(w) { Jsworld.printWorldHook(w, toplevelNode); }));
+				 (function(w) { 
+				     Jsworld.printWorldHook(w, toplevelNode); 
+				 }));
 	}
 
 

@@ -1910,7 +1910,7 @@ var plt = plt || {};
 
     // makeCanvas: number number -> canvas
     // Constructs a canvas object of a particular width and height.
-    var makeCanvas = function(width, height) {
+    plt.Kernel._makeCanvas = function(width, height) {
 	var canvas = document.createElement("canvas");
  	canvas.width = width;
  	canvas.height = height;
@@ -1930,7 +1930,7 @@ var plt = plt || {};
 	var that = this;
 	var width = plt.world.Kernel.imageWidth(that).toInteger();
 	var height = plt.world.Kernel.imageHeight(that).toInteger();
-	var canvas = makeCanvas(width, height);
+	var canvas = plt.Kernel._makeCanvas(width, height);
 	var rendered = false;
 	var doRender = function() {
 	    if (! rendered)  {
