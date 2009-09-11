@@ -42,10 +42,10 @@ plt.platform = {};
 
     // Dynamically choose which location service we grab
     function chooseLocationService() {
-	if (isGoogleGearsAvailable()) {
-	    return new GoogleGearsLocationService();
-	} else if (isPhonegapAvailable()) {
+	if (isPhonegapAvailable()) {
     	    return new PhonegapLocationService();
+	} else if (isGoogleGearsAvailable()) {
+	    return new GoogleGearsLocationService();
 	} else if (isW3CLocationAvailable()) {
    	    return new W3CLocationService();
 	} else {

@@ -226,7 +226,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     plt.world.Kernel.isKeyEqual = function(key1, key2) {
-	return key1.toString() == key2.toString();
+	var result = (key1.toString() == key2.toString());
+	return result;
     };
 
 

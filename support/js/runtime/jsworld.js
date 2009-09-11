@@ -192,12 +192,26 @@ plt.world.MobyJsworld = {};
 	    wrappedHandlers.push(_js.on_tick(wrappedDelay, wrappedTick));
 	}
 
+	if (config.lookup('stopWhen')) {
+	    wrappedHandlers.push(_js.stop_when(function(w) { 
+			return config.lookup('stopWhen')([w]);
+		    }));
+	}
+	
+
+	if (config.lookup('onKey')) {
+	    window.onkeypress = function(e) {
+		plt.world.stimuli.onKey(e);
+	    }
+	}
+
+
 
 	if (config.lookup('initialEffect')) {
 	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
 	}
 	
-	// Fixme: handle stopwhen.
+
 	
 	return _js.big_bang(toplevelNode,
 			    initWorld,

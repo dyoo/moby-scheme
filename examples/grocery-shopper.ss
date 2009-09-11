@@ -7,10 +7,6 @@
 (define WIDTH 320)
 (define HEIGHT 480)
 
-(require "moby/net")
-(require "moby/parser")
-(require "moby/geolocation")
-
 
 ;; A location is the latitude/longitude pair.
 (define-struct loc (lat long))
@@ -128,6 +124,26 @@
    20
    (empty-scene WIDTH HEIGHT)))
 
+
+
+;; location-distance: num num num num -> number
+;; Given two places on a globe, return the shortest distance between them in meters (uses spherical geometry)
+(define (location-distance latA lonA latB lonB)
+  (* 6378000
+     (* 2
+        (asin (min 1
+                   (sqrt (+ (expt (sin (/ (- (deg->rad latA) (deg->rad latB)) 2)) 2)
+                            (* (cos (deg->rad latA))
+                               (cos (deg->rad latB))
+                               (expt (sin (/ (- (deg->rad lonA) (deg->rad lonB)) 2)) 2)))))))))
+
+
+;; deg->rad: number -> number
+;; Converts degrees to radians.
+(define (deg->rad a-deg)
+  (/ (* a-deg pi) 180))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RSS Parser Helpers.
 
@@ -161,6 +177,27 @@
 (define (parse-georss:point xexpr)
   (make-loc (string->number (first (split-whitespace (get-text xexpr))))
             (string->number (second (split-whitespace (get-text xexpr))))))
+
+  
+;; split-words: (listof string) (listof string) -> (listof string)
+(define (split-words letters word-letters-so-far)
+  (cond
+    [(empty? letters)
+     (list (implode (reverse word-letters-so-far)))]
+    [(string-whitespace? (first letters))
+     (cond [(empty? word-letters-so-far)
+            (split-words (rest letters) empty)]
+           [else
+            (cons (implode (reverse word-letters-so-far))
+                  (split-words (rest letters) empty))])]
+    [else
+     (split-words (rest letters) 
+                  (cons (first letters)
+                        word-letters-so-far))]))
+
+;; split-whitespace: string -> (listof string)
+(define (split-whitespace s)
+  (split-words (explode s) empty))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,8 +267,6 @@
   (parse-places (parse-xml (get-url mymaps-url))))
 
 
-;; Update every ten seconds.
-(define tick-delay 10)
-(big-bang WIDTH HEIGHT tick-delay initial-world
-          (on-redraw render)
-          (on-location-change update-location))
+(js-big-bang initial-world
+             (on-redraw render)
+             (on-location-change update-location))
