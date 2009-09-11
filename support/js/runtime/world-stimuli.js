@@ -15,14 +15,15 @@ plt.world = plt.world || {};
     //
     // Processes a stimuli by compute the effect and applying it, and
     // computing a new world to replace the old.
-    function doStimuli(computeEffectF, computeWorldF) {
+    function doStimuli(computeEffectF, computeWorldF, restArgs) {
 	change(function(w) {
+	    var args = [w].concat(restArgs);
 	    if (computeEffectF) {
-		var effect = computeEffectF(w);
+		var effect = computeEffectF(args);
 		applyEffect(effect);
 	    }    
 	    if (computeWorldF) {
-		return computeWorldF(w);
+		return computeWorldF(args);
 	    } else {
 		return w;
 	    }
@@ -31,11 +32,12 @@ plt.world = plt.world || {};
 
 
     // Orientation change
-    stimuli.onOrientation = function(azimuth, pitch, roll) {
+    stimuli.onTilt = function(azimuth, pitch, roll) {
 	var onTilt = lookup("onTilt");
 	var onTiltEffect = lookup("onTiltEffect");
-	doStimuli(function(w) { return onTiltEffect([w, flt(azimuth), flt(pitch), flt(roll)]); },
-		  function(w) { return onTilt([w, flt(azimuth), flt(pitch), flt(roll)]); });
+	doStimuli(onTiltEffect, 
+		  onTilt,
+		  [flt(azimuth), flt(pitch), flt(roll)]);
     };
 
 
@@ -43,8 +45,7 @@ plt.world = plt.world || {};
     stimuli.onAcceleration = function(x, y, z) {
 	var onAcceleration = lookup('onAcceleration');
 	var onAccelerationEffect = lookup('onAccelerationEffect');
-	doStimuli(function(w) { return onAccelerationEffect([w, flt(x), flt(y), flt(z)]); },
-		  function(w) { return onAcceleration([w, flt(x), flt(y), flt(z)]); });
+	doStimuli(onAccelerationEffect, onAcceleration, [flt(x), flt(y), flt(z)]);
     };
 
 
@@ -52,8 +53,7 @@ plt.world = plt.world || {};
     stimuli.onShake = function() {
 	var onShake = lookup('onShake');
 	var onShakeEffect = lookup('onShakeEffect');
-	doStimuli(function(w) { return onShakeEffect([w]); },
-		  function(w) { return onShake([w]); });
+	doStimuli(onShakeEffect, onShake, []);
     };
 
 
@@ -62,8 +62,7 @@ plt.world = plt.world || {};
     stimuli.onLocation = function(lat, lng) {
 	var onLocationChange = lookup('onLocationChange');
 	var onLocationChangeEffect = lookup('onLocationChangeEffect');
-	doStimuli(function(w) { return onLocationChangeEffect([w, flt(lat), flt(lng)]); },
-		  function(w) { return onLocationChange([w, flt(lat), flt(lng)]); });
+	doStimuli(onLocationChangeEffect, onLocationChange, [flt(lat), flt(lng)]);
     };
 
 
@@ -88,11 +87,9 @@ plt.world = plt.world || {};
 	    return keyname;
 	}
 	var keyname = getKeyCodeName(e);
-	
 	var onKey = lookup('onKey');
 	var onKeyEffect = lookup('onKeyEffect');
-	doStimuli(function(w) { return onKeyEffect([w, keyname]); },
-		  function(w) { return onKey([w, keyname]); });
+	doStimuli(onKeyEffect, onKey, [keyname]);
     };
 
 
@@ -101,8 +98,7 @@ plt.world = plt.world || {};
     stimuli.onShake = function() {
 	var onShake = lookup('onShake');
 	var onShakeEffect = lookup('onShakeEffect');
-	doStimuli(function(w) { return onShakeEffect([w]); },
-		  function(w) { return onShake([w]); });
+	doStimuli(onShakeEffect, onShake, []);
     };
 
 
@@ -110,8 +106,7 @@ plt.world = plt.world || {};
     stimuli.onTick = function() {
 	var onTick = lookup('onTick');
 	var onTickEffect = lookup('onTickEffect');
-	doStimuli(function(w) { return onTickEffect([w]); },
-		  function(w) { return onTick([w]); });
+	doStimuli(onTickEffect, onTick, []);
     };
 
 
@@ -125,8 +120,7 @@ plt.world = plt.world || {};
 
 	var onAnnounce = lookup('onAnnounce');
 	var onAnnounceEffect = lookup('onAnnounceEffect');	
-	doStimuli(function(w) { return onTickEffect([w, eventName, valsList]); },
-		  function(w) { return onTick([w, eventName, valsList]); });
+	doStimuli(onAnnounce, onAnnounceEffect, [eventName, valsList]);
     };
 
 

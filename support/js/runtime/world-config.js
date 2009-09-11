@@ -25,6 +25,7 @@ plt.world.config = plt.world.config || {};
     }
 
 
+
     function WorldConfig() {
 	// The following handler values are initially false until they're updated
 	// by configuration.
