@@ -8,11 +8,6 @@
 (define HEIGHT 480)
 
 
-(require (lib "net.ss" "moby" "stub"))
-(require (lib "parser.ss" "moby" "stub"))
-(require (lib "location.ss" "moby" "stub"))
-(require (lib "world.ss" "moby" "stub"))
-
 
 ;; A location is the latitude/longitude pair.
 (define-struct loc (lat long))

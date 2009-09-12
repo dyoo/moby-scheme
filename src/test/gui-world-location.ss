@@ -3,7 +3,7 @@
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname gui-world-location) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
 (require (lib "gui-world.ss" "gui-world"))
 ;; Location, using the on-location-changed hook.
-(require (lib "location.ss" "moby" "stub"))
+
 
 (define-struct world (latitude longitude))
 (define initial-world (make-world 0 0))
