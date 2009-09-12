@@ -1,10 +1,10 @@
 #lang s-exp "lang.ss"
 
 ;; Syntax objects
-(define-struct stx:atom (datum loc))
-(define-struct stx:list (elts loc))
+(define-struct stx:atom (datum loc) #:prefab)
+(define-struct stx:list (elts loc) #:prefab)
 
-(define-struct Loc (offset line span id))
+(define-struct Loc (offset line span id) #:prefab)
 
 (define (Loc->string a-loc)
   (format "offset=~a line=~a span=~a id=~s" 
@@ -62,6 +62,12 @@
                     a-loc)]
     [else
      (make-stx:atom a-datum a-loc)]))
+
+
+
+
+
+
 
 
 ;; stx->datum: stx -> any

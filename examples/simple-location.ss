@@ -41,6 +41,3 @@
              '()
              (on-draw draw draw-css)
              (on-location-change update))
-1
-2
-3

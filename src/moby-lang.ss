@@ -3,9 +3,7 @@
          "stub/parser.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
-         (for-syntax scheme/base 
-                     scheme/stxparam)
-         scheme/stxparam)
+         (for-syntax scheme/base))
 
 
 (define-for-syntax source-code #'not-initialized-yet)
@@ -26,13 +24,11 @@
   (syntax-case stx ()
     [(_ form ...)
      (begin
+       (printf "In module begin, where the syntax is ~s~n" #'(form ...))
        (set! source-code #'(form ...))
        (syntax/loc stx 
          (#%module-begin
           form ...)))]))
-
-
-
 
 
 (provide (except-out (all-from-out "compiler/lang.ss") #%module-begin)

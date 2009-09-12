@@ -1,4 +1,6 @@
 #lang scheme/base
+(require "../compiler/stx.ss"
+         "../compile-helpers.ss")
 
 
 ;; js-big-bang/source: stx world0 . (listof handler) -> void
