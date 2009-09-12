@@ -3,7 +3,8 @@
          "stub/parser.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
-         (for-syntax scheme/base))
+         (for-syntax scheme/base
+                     "stx-helpers.ss"))
 
 
 (define-for-syntax source-code #'not-initialized-yet)
@@ -15,7 +16,7 @@
      (with-syntax ([source-code source-code])
        (syntax/loc stx
          (begin 
-           (js-big-bang/source (quote-syntax #'source-code)
+           (js-big-bang/source 'source-code
                                world0
                                handlers ...))))]))
 
@@ -24,8 +25,7 @@
   (syntax-case stx ()
     [(_ form ...)
      (begin
-       (printf "In module begin, where the syntax is ~s~n" #'(form ...))
-       (set! source-code #'(form ...))
+       (set! source-code (map syntax->stx (syntax->list #'(form ...))))
        (syntax/loc stx 
          (#%module-begin
           form ...)))]))

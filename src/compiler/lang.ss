@@ -23,7 +23,7 @@
   (syntax-case stx ()
     [(_ id (fields ...))
      (syntax/loc stx 
-       (base:define-struct id (fields ...) #:transparent))]))
+       (base:define-struct id (fields ...) #:prefab))]))
     
 
 (define (syntax-error msg stx)
