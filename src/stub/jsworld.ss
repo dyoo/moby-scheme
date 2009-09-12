@@ -7,6 +7,7 @@
          scheme/local
          scheme/runtime-path
          scheme/string
+         scheme/tcp
          web-server/servlet
          web-server/servlet-env
          web-server/dispatch)
@@ -67,6 +68,8 @@
   (local [(define main.js 
             (compiled-program->main.js (do-compilation source-code)))
 
+          (define MAX-ATTEMPTS-TO-CONNECT 10)
+          
           (define-values (dispatcher url)
             (dispatch-rules
              [("main.js") main-js]
@@ -79,12 +82,26 @@
           (define (network-proxy req)
             (list #"text/plain"
                   (get-url (extract-binding/single 'url (request-bindings req)))))]
-    (serve/servlet dispatcher
-                   #:listen-ip #f
-                   #:servlet-path "/"
-                   #:servlet-regexp #rx"(^/main.js$)|(^/networkProxy)"
-                   #:extra-files-paths (list javascript-support))))
-
+    (let ([portno
+           (let loop ([portno 8000]
+                      [attempts 0])
+             (with-handlers ((exn:fail:network? (lambda (exn)
+                                                  (cond [(< attempts MAX-ATTEMPTS-TO-CONNECT)
+                                                         (loop (add1 portno)
+                                                               (add1 attempts))]
+                                                        [else
+                                                         (raise exn)]))))
+               ;; There's still a race condition here... Not sure how to do this right.
+               (let ([port (tcp-listen portno 4 #t #f)])
+                 (tcp-close port)
+                 portno)))])
+        (serve/servlet dispatcher
+                       #:port portno
+                       #:listen-ip #f
+                       #:servlet-path "/"
+                       #:servlet-regexp #rx"(^/main.js$)|(^/networkProxy)"
+                       #:extra-files-paths (list javascript-support)))))
+    
 
 ;;; FIXME: A lot of this is just copy-and-pasted from generate-application.  FIXME!
 
