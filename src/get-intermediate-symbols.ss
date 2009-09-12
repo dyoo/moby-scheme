@@ -22,7 +22,7 @@
 
 
 (define implemented-ids
-  (env-keys toplevel-env))
+  (env-keys (get-toplevel-env)))
 
 
 (define (union s1 s2)
