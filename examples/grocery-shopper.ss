@@ -283,6 +283,6 @@
    (parse-xml (get-url mymaps-url))))
 
 
-(js-big-bang (parse-xml (get-url mymaps-url))#;initial-world
+(js-big-bang initial-world
              ;(on-redraw render)
-             #;(on-location-change update-location))
+             (on-location-change update-location))

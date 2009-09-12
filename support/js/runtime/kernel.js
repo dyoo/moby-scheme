@@ -1861,7 +1861,9 @@ var plt = plt || {};
 	return result;
     };
 
-    var split_dash_whitespace = function(s) {
+    plt.Kernel.split_dash_whitespace = function(s) {
+	s = s.replace(/^\s+/, "");
+	s = s.replace(/\s+$/, "");
 	return plt.Kernel.list(s.split(/\s+/));
     };
    

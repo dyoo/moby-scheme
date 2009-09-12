@@ -3,11 +3,13 @@
          "../compiler/pinfo.ss"
          "../template.ss"
          "../compiler/permission.ss"
+         "net.ss"
          scheme/local
          scheme/runtime-path
          scheme/string
          web-server/servlet
-         web-server/servlet-env)
+         web-server/servlet-env
+         web-server/dispatch)
 
 
 (define-runtime-path javascript-support "../../support/js")
@@ -64,13 +66,23 @@
 (define (js-big-bang/source source-code initWorld . handlers)
   (local [(define main.js 
             (compiled-program->main.js (do-compilation source-code)))
-          (define (on-request req)
+
+          (define-values (dispatcher url)
+            (dispatch-rules
+             [("main.js") main-js]
+             [("networkProxy") network-proxy]))
+            
+          (define (main-js req)
             (list #"text/javascript"
-                  main.js))]
-    (serve/servlet on-request
+                  main.js))
+          
+          (define (network-proxy req)
+            (list #"text/plain"
+                  (get-url (extract-binding/single 'url (request-bindings req)))))]
+    (serve/servlet dispatcher
                    #:listen-ip #f
                    #:servlet-path "/"
-                   #:servlet-regexp #rx"^/main.js$"
+                   #:servlet-regexp #rx"(^/main.js$)|(^/networkProxy)"
                    #:extra-files-paths (list javascript-support))))
 
 
