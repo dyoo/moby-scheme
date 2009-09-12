@@ -3,21 +3,41 @@
          "stub/parser.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
-         (for-syntax scheme/base))
+         (for-syntax scheme/base 
+                     scheme/stxparam)
+         scheme/stxparam)
+
+
+(define-for-syntax source-code #'not-initialized-yet)
 
 
 (define-syntax (-js-big-bang stx)
   (syntax-case stx ()
     [(_ world0 handlers ...)
-     (syntax/loc stx
-       (js-big-bang world0 handlers ...))]))
+     (with-syntax ([source-code source-code])
+       (syntax/loc stx
+         (begin 
+           (js-big-bang/source (quote-syntax #'source-code)
+                               world0
+                               handlers ...))))]))
+
+
+(define-syntax (-#%module-begin stx)
+  (syntax-case stx ()
+    [(_ form ...)
+     (begin
+       (set! source-code #'(form ...))
+       (syntax/loc stx 
+         (#%module-begin
+          form ...)))]))
 
 
 
 
-(provide (except-out (all-from-out "compiler/lang.ss"))
+
+(provide (except-out (all-from-out "compiler/lang.ss") #%module-begin)
          (all-from-out "stub/parser.ss")
-         
+         (rename-out (-#%module-begin #%module-begin))
 
          ;; Configuration handlers
          on-key on-key*
@@ -31,7 +51,7 @@
          
          
          ;; jsworld
-         js-big-bang
+         (rename-out (-js-big-bang js-big-bang))
          js-div
          js-p
          js-button

@@ -1,3 +1,5 @@
+#lang s-exp "../moby-lang.ss"
+
 ;; The world is a latitude and longitude.
 (define-struct world (lat long))
 
@@ -39,3 +41,6 @@
              '()
              (on-draw draw draw-css)
              (on-location-change update))
+1
+2
+3

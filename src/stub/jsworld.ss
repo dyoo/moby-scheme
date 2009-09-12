@@ -1,8 +1,12 @@
 #lang scheme/base
 
-(define (js-big-bang initWorld . handlers)
+
+;; js-big-bang/source: stx world0 . (listof handler) -> void
+(define (js-big-bang/source source-code initWorld . handlers)
+  (printf "I see the source code is ~s" source-code)
   ;; FIXME
   (void))
+
 
 (define-struct jsworld-widget (attrs) #:prefab)
 (define-struct (jsworld-widget:div jsworld-widget) () #:prefab)
