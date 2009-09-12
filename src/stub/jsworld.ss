@@ -1,13 +1,19 @@
 #lang scheme/base
-(require "../compiler/stx.ss"
-         "../compile-helpers.ss")
+(require "../compiler/beginner-to-javascript.ss"
+         "../compiler/pinfo.ss"
+         "../template.ss"
+         "../compiler/permission.ss"
+         scheme/local
+         scheme/runtime-path
+         scheme/string
+         web-server/servlet
+         web-server/servlet-env)
 
 
-;; js-big-bang/source: stx world0 . (listof handler) -> void
-(define (js-big-bang/source source-code initWorld . handlers)
-  (printf "I see the source code is ~s" source-code)
-  ;; FIXME
-  (void))
+(define-runtime-path javascript-support "../../support/js")
+(define-runtime-path javascript-main-template "../../support/js/main.js.template")
+
+
 
 
 (define-struct jsworld-widget (attrs) #:prefab)
@@ -49,4 +55,71 @@
   (make-jsworld-widget:node attrs raw-node))
   
 
-(provide (all-defined-out))
+
+
+
+
+;; js-big-bang/source: (listof stx) world0 . (listof handler) -> void
+;; Generate a web site that compiles and evaluates the program.
+(define (js-big-bang/source source-code initWorld . handlers)
+  (local [(define main.js 
+            (compiled-program->main.js (do-compilation source-code)))
+          (define (on-request req)
+            (list #"text/javascript"
+                  main.js))]
+    (serve/servlet on-request
+                   #:port 9999
+                   #:listen-ip #f
+                   #:servlet-path "/"
+                   #:servlet-regexp #rx"^/main.js$"
+                   #:extra-files-paths (list javascript-support))))
+
+
+;;; FIXME: A lot of this is just copy-and-pasted from generate-application.  FIXME!
+
+(define (do-compilation program)
+  (program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+
+;; compiled-program->main.js: compiled-program -> string
+(define (compiled-program->main.js compiled-program)
+  (let*-values ([(defns pinfo)
+                (values (compiled-program-defns compiled-program)
+                        (compiled-program-pinfo compiled-program))]
+               [(output-port) (open-output-string)]
+               [(mappings) 
+                (build-mappings 
+                 (PROGRAM-DEFINITIONS defns)
+                 (IMAGES (string-append "[" "]"))
+                 (PROGRAM-TOPLEVEL-EXPRESSIONS
+                  (compiled-program-toplevel-exprs
+                   compiled-program))
+		 (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+    (fill-template-port (open-input-file javascript-main-template)
+                        output-port
+                        mappings)
+    (get-output-string output-port)))
+
+;; get-permission-js-array: (listof permission) -> string
+(define (get-permission-js-array perms) 
+  (string-append "["
+		 (string-join (map (lambda (x)
+				     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
+				   perms)
+			      ", ")
+		 "]"))
+
+
+
+
+
+;; FIXME: contracts!
+(provide js-big-bang/source
+         js-div
+         js-p
+         js-button
+         js-button*
+         js-input
+         js-bidirectional-input
+         js-img
+         js-text
+         js-node)
