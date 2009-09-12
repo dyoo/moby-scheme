@@ -35,7 +35,7 @@ plt.Jsworld = {};
 
     // Close all world computations.
     Jsworld.shutdown = function() {
-	while(true) {
+	while(runningBigBangs.length > 0) {
 	    var currentRecord = runningBigBangs.pop();
 	    if (currentRecord) { currentRecord.pause(); }
 	}
