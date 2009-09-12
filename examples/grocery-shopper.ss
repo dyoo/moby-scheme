@@ -35,8 +35,8 @@
 (define (update-location w lat long)
   (update-world-description 
    (make-world (make-loc lat long)
-	       (find-places ALL-PLACES (make-loc lat long))
-	       "")))
+               (find-places ALL-PLACES (make-loc lat long))
+               (world-description w))))
 
 
 ;; update-world-description: world -> string
