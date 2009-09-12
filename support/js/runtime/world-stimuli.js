@@ -128,9 +128,9 @@ plt.world = plt.world || {};
 
     // The shutdown stimuli: special case that forces a world computation to quit.
     stimuli.onShutdown = function() {	
-	var onShutdown = lookup('onShutdown');
-	if (onShutdown) {
-	    onShutdown();
+	var shutdownWorld = lookup('shutdownWorld');
+	if (shutdownWorld) {
+	    shutdownWorld();
 	}
     }
 

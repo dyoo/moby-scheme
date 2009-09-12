@@ -68,7 +68,6 @@
             (list #"text/javascript"
                   main.js))]
     (serve/servlet on-request
-                   #:port 9999
                    #:listen-ip #f
                    #:servlet-path "/"
                    #:servlet-regexp #rx"^/main.js$"

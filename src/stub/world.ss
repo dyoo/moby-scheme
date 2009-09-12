@@ -18,10 +18,10 @@
          "private/world-effects.ss")
 
 #;(provide (all-from-out "private/world-effects.ss"))
-(provide-primitive effect?)
-(provide-primitive make-effect:none)
-(provide-primitive make-effect:beep)
-(provide-primitive make-effect:play-dtmf-tone)
+;(provide-primitive effect?)
+;(provide-primitive make-effect:none)
+;(provide-primitive make-effect:beep)
+;(provide-primitive make-effect:play-dtmf-tone)
 
 
 
@@ -1091,67 +1091,66 @@
 
 
 
-
-
-(provide-higher-order-primitive
- on-tick (_ tock) ;; Number (World -> World) -> true
- )
-
-(provide-higher-order-primitive
- on-tick* (_ tock event-tock) ;; Number (World -> World) (World->Event) -> true
- )
-
-
-(provide-higher-order-primitive
- on-redraw (world-to-image) ;; (World -> Image) -> true
- )
-
-(provide-higher-order-primitive
- on-key (control) ;; (World KeyEvent -> World) -> true
- )
-
-(provide-higher-order-primitive
- on-key* (control key-effect) ;; (World KeyEvent -> World) -> true
- )
-
-
-
-(provide-higher-order-primitive
- on-mouse (clack)  ;; (World Number Number MouseEvent -> World) -> true
- )
-
-(provide-higher-order-primitive
- on-mouse* (clack mouse-effect)  ;; (World Number Number MouseEvent -> World) -> true
- )
-
-(provide-higher-order-primitive
- stop-when (last-world)  ;; (World -> Boolean) -> true
- )
-
-
-;; handler: World number number -> world
-(provide-higher-order-primitive on-location-change (handler))
-
-;; handler: World number number -> world
-;; effect-handler: World number number -> Effect
-(provide-higher-order-primitive on-location-change* (handler effect-handler))
-
-;; handler: World number number number -> World
-(provide-higher-order-primitive on-tilt (handler))
-
-;; handler: World number number number -> World
-;; effect-handler: World number number number -> Effect
-(provide-higher-order-primitive on-tilt* (handler effect-handler))
-
-;; handler: World number number number -> World
-(provide-higher-order-primitive on-acceleration (handler))
-
-;; handler: World number number number -> World
-;; effect-handler: World number number number -> Effect
-(provide-higher-order-primitive on-acceleration* (handler effect-handler))
-
-(provide-higher-order-primitive on-shake (handler))
-(provide-higher-order-primitive on-shake* (handler effect-handler))
+;
+;
+;(provide-higher-order-primitive
+; on-tick (_ tock) ;; Number (World -> World) -> true
+; )
+;
+;(provide-higher-order-primitive
+; on-tick* (_ tock event-tock) ;; Number (World -> World) (World->Event) -> true
+; )
+;
+;
+;(provide-higher-order-primitive
+; on-redraw (world-to-image) ;; (World -> Image) -> true
+; )
+;
+;(provide-higher-order-primitive
+; on-key (control) ;; (World KeyEvent -> World) -> true
+; )
+;
+;(provide-higher-order-primitive
+; on-key* (control key-effect) ;; (World KeyEvent -> World) -> true
+; )
+;
+;
+;(provide-higher-order-primitive
+; on-mouse (clack)  ;; (World Number Number MouseEvent -> World) -> true
+; )
+;
+;(provide-higher-order-primitive
+; on-mouse* (clack mouse-effect)  ;; (World Number Number MouseEvent -> World) -> true
+; )
+;
+;(provide-higher-order-primitive
+; stop-when (last-world)  ;; (World -> Boolean) -> true
+; )
+;
+;
+;;; handler: World number number -> world
+;(provide-higher-order-primitive on-location-change (handler))
+;
+;;; handler: World number number -> world
+;;; effect-handler: World number number -> Effect
+;(provide-higher-order-primitive on-location-change* (handler effect-handler))
+;
+;;; handler: World number number number -> World
+;(provide-higher-order-primitive on-tilt (handler))
+;
+;;; handler: World number number number -> World
+;;; effect-handler: World number number number -> Effect
+;(provide-higher-order-primitive on-tilt* (handler effect-handler))
+;
+;;; handler: World number number number -> World
+;(provide-higher-order-primitive on-acceleration (handler))
+;
+;;; handler: World number number number -> World
+;;; effect-handler: World number number number -> Effect
+;(provide-higher-order-primitive on-acceleration* (handler effect-handler))
+;
+;(provide-higher-order-primitive on-shake (handler))
+;(provide-higher-order-primitive on-shake* (handler effect-handler))
 
 
 ;; FIXME: changes to location or tilt should reflect on the world.

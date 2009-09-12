@@ -3,6 +3,7 @@
          "stub/parser.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
+         "stub/world.ss"
          (for-syntax scheme/base
                      "stx-helpers.ss"))
 
@@ -33,6 +34,7 @@
 
 (provide (except-out (all-from-out "compiler/lang.ss") #%module-begin)
          (all-from-out "stub/parser.ss")
+         (all-from-out "stub/world.ss")
          (rename-out (-#%module-begin #%module-begin))
 
          ;; Configuration handlers
