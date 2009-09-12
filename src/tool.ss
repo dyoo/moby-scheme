@@ -22,7 +22,8 @@
       (drscheme:language:simple-module-based-language<%>)
       
       (define (get-language-numbers)
-          '(-400 0))
+          '(-500 500))
+
       (define (get-language-position)
         (list (string-constant teaching-languages)
               "Moby"))
