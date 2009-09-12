@@ -1,6 +1,5 @@
-;; The first three lines of this file were inserted by DrScheme. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname grocery-shopper) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#lang s-exp "../moby-lang.ss"
+
 ;; Grocery store shopper
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
@@ -214,9 +213,6 @@
                   (cons (first letters)
                         word-letters-so-far))]))
 
-;; split-whitespace: string -> (listof string)
-(define (split-whitespace s)
-  (split-words (explode s) empty))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -283,9 +279,10 @@
                  "106933521686950086948.00046579f4b482756abc5"))
 
 (define ALL-PLACES
-  (parse-places (parse-xml (get-url mymaps-url))))
+  (parse-places 
+   (parse-xml (get-url mymaps-url))))
 
 
-(js-big-bang initial-world
+(js-big-bang (parse-xml (get-url mymaps-url))#;initial-world
              ;(on-redraw render)
-             (on-location-change update-location))
+             #;(on-location-change update-location))

@@ -1,6 +1,4 @@
-;; The first three lines of this file were inserted by DrScheme. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname location-announcer) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+#lang s-exp "../moby-lang.ss"
 ;; Kathi finder: A program to report where Kathi is.
 
 (define WIDTH 320)
@@ -60,10 +58,6 @@
 (define (change-location w lat long)
   (make-loc lat long))
 
-;; identity: world -> world
-;; Doesn't change the world.
-(define (identity w)
-  w)
 
 ;; current-place: world -> place
 ;; Returns the closest place.

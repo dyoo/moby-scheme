@@ -295,8 +295,9 @@
                      (image=? 2)
 
 
-		     ;; XML Parsing
+		     ;; Parsing
 		     (parse-xml 1)
+                     (split-whitespace 1)
                      )))
           
           

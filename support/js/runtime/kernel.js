@@ -1861,6 +1861,9 @@ var plt = plt || {};
 	return result;
     };
 
+    var split_dash_whitespace = function(s) {
+	return plt.Kernel.list(s.split(/\s+/));
+    };
    
 
     // Boxes

@@ -4,6 +4,8 @@
          "stub/world-config.ss"
          "stub/jsworld.ss"
          "stub/world.ss"
+         "stub/net.ss"
+         "stub/private/world-effects.ss"
          (for-syntax scheme/base
                      "stx-helpers.ss"))
 
@@ -35,6 +37,8 @@
 (provide (except-out (all-from-out "compiler/lang.ss") #%module-begin)
          (all-from-out "stub/parser.ss")
          (all-from-out "stub/world.ss")
+         (all-from-out "stub/net.ss")
+         (all-from-out "stub/private/world-effects.ss")
          (rename-out (-#%module-begin #%module-begin))
 
          ;; Configuration handlers

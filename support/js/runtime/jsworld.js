@@ -226,7 +226,7 @@ plt.world.MobyJsworld = {};
 	
 
 	if (config.lookup('onKey')) {
-	    window.onkeypress = function(e) {
+	    window.onkeydown = function(e) {
 		plt.world.stimuli.onKey(e);
 	    }
 	}
