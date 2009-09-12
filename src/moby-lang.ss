@@ -1,9 +1,21 @@
 #lang scheme/base
-(require "compiler/lang.ss"
+(require (except-in "compiler/lang.ss" require provide)
          "stub/parser.ss"
-         "stub/world-config.ss")
+         "stub/world-config.ss"
+         "stub/jsworld.ss"
+         (for-syntax scheme/base))
 
-(provide (all-from-out "compiler/lang.ss")
+
+(define-syntax (-js-big-bang stx)
+  (syntax-case stx ()
+    [(_ world0 handlers ...)
+     (syntax/loc stx
+       (js-big-bang world0 handlers ...))]))
+
+
+
+
+(provide (except-out (all-from-out "compiler/lang.ss"))
          (all-from-out "stub/parser.ss")
          
 
@@ -16,4 +28,16 @@
          on-shake on-shake*
          on-redraw on-draw
          stop-when
-         )
+         
+         
+         ;; jsworld
+         js-big-bang
+         js-div
+         js-p
+         js-button
+         js-button*
+         js-input
+         js-bidirectional-input
+         js-img
+         js-text
+         js-node)
