@@ -166,25 +166,6 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    }
 	}
 
-	if (config.lookup('onShake')) {
-	    if (typeof(navigator) != 'undefined' &&
-		typeof(navigator.accelerometer) != 'undefined' &&
-		typeof(navigator.accelerometer.watchShake) != 'undefined') {
-		function success() {
-		  if (config.lookup('onShakeEffect')) {
-		        var effect = config.lookup('onShakeEffect')([world]);
-			plt.world.Kernel.applyEffect(effect);
-                    }
-		  var newWorld = config.lookup('onShake')([world]);
-		    changeWorld(newWorld);
-		}
-		function fail() {
-		}
-		navigator.accelerometer.watchShake(success, fail);
-	    }
-	}
-
-
        if (config.lookup('onRedraw')) {
 	   addWorldListener(function (w) {
 		var context = 
