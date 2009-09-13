@@ -51,7 +51,7 @@
                                (bf 'make-effect:js-exec-string module-path 1 false "plt.world.Kernel.make_dash_effect_colon_js_dash_exec_dash_string")
 
                                (make-binding:function 'make-effect:send-sms module-path 2 false 
-                                                      "plt.world.Kernel.make_dash_effect_colon_sms"
+                                                      "plt.world.Kernel.make_dash_effect_colon_send_dash_sms"
                                                       (list PERMISSION:SEND-SMS)
                                                       false)))))
 

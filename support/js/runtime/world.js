@@ -584,27 +584,6 @@ plt.world.Kernel = plt.world.Kernel || {};
     function effect_colon_beep_question_(obj) { 
 	return obj instanceof effect_colon_beep; }
     plt.world.Kernel.effect_colon_beep_question_ = effect_colon_beep_question_;
-    function effect_colon_send_dash_sms(address,msg) {
-	plt.Kernel.Struct.call(this, "make-effect:send-sms", [address, msg]);
-	this.address = address;
-	this.msg = msg; }
-    
-    effect_colon_send_dash_sms.prototype = heir(plt.Kernel.Struct.prototype);
-    effect_colon_send_dash_sms.prototype.isEqual = function(other) {
-	if (other instanceof effect_colon_send_dash_sms) {
-	    return ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_msg(this)),
-						    (effect_colon_send_dash_sms_dash_msg(other))))&&
-		    ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_address(this)),
-						     (effect_colon_send_dash_sms_dash_address(other))))&&
-		     plt.types.Logic.TRUE));
-	} else {
-	    return false;
-	}
-    } 
-    effect_colon_send_dash_sms.prototype.run = function() {
-	// FIXME: fill me in
-    };
-
 
     //////////////////////////////////////////////////////////////////////
     // dtmf tones
@@ -641,6 +620,29 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
 
+
+
+
+    function effect_colon_send_dash_sms(address,msg) {
+	plt.Kernel.Struct.call(this, "make-effect:send-sms", [address, msg]);
+	this.address = address;
+	this.msg = msg; }
+    
+    effect_colon_send_dash_sms.prototype = heir(plt.Kernel.Struct.prototype);
+    effect_colon_send_dash_sms.prototype.isEqual = function(other) {
+	if (other instanceof effect_colon_send_dash_sms) {
+	    return ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_msg(this)),
+						    (effect_colon_send_dash_sms_dash_msg(other))))&&
+		    ((plt.Kernel.equal_question_((effect_colon_send_dash_sms_dash_address(this)),
+						     (effect_colon_send_dash_sms_dash_address(other))))&&
+		     plt.types.Logic.TRUE));
+	} else {
+	    return false;
+	}
+    } 
+    effect_colon_send_dash_sms.prototype.run = function() {
+	// FIXME: fill me in
+    };
 
 
     function make_dash_effect_colon_send_dash_sms(id0,id1) {
@@ -783,7 +785,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     } 
 
     effect_colon_pause_dash_sound_dash_url.prototype.run = function() {
-	this.platform.Platform.getInstance().getSoundService().pauseSoundUrl(this.url);
+	plt.platform.Platform.getInstance().getSoundService().pauseSoundUrl(this.url);
     };
 
     function make_dash_effect_colon_pause_dash_sound_dash_url(id0, id1) {
