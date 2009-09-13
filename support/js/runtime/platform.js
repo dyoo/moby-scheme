@@ -22,6 +22,7 @@ plt.platform = {};
 	this.telephonyService = chooseTelephonyService();
 	this.networkService = chooseNetworkService();
 	this.soundService = chooseSoundService();
+	this.powerService = choosePowerService();
     };
     
     JavascriptPlatform.prototype.getTiltService = function() {
@@ -42,7 +43,13 @@ plt.platform = {};
 
     JavascriptPlatform.prototype.getSoundService = function() {
 	return this.soundService;
-    }
+    };
+    
+    JavascriptPlatform.prototype.getPowerService = function() {
+	return this.powerService;
+    };
+
+
 
 
     // Dynamically choose which location service we grab
@@ -568,11 +575,28 @@ plt.platform = {};
         setTimeout(function() { navigator.audio.stopDTMF() },
                    duration);
     };
+    PhonegapSoundService.prototype.stopSoundUrl = function(url) {
+    	navigator.audio.stopMusic(url);
+    };
+    PhonegapSoundService.prototype.pauseSoundUrl = function(url) {
+    	navigator.audio.pauseMusic(url);
+    };
+    PhonegapSoundService.prototype.setVolume = function(volume) {
+    	navigator.audio.setMusicVolume(volume);
+    }
+    PhonegapSoundService.prototype.raiseVolume = function() {
+    	navigator.audio.increaseMusicVolume();
+    };
+    PhonegapSoundService.prototype.lowerVolume = function() {
+    	navigator.audio.decreaseMusicVolume();
+    };
+
 
 
 
     function Html5SoundService() {
 	this.cachedUrls = {};
+	this.baseVolume = 100;
     }
     Html5SoundService.prototype.beep = function() {
 	alert("Beep");
@@ -590,6 +614,33 @@ plt.platform = {};
 	// Can't do anything here.
 	alert("dtmf tone");
     };
+    Html5SoundService.prototype.stopSoundUrl = function(url) {
+	if (this.cachedUrls[url]) {
+	    this.cachedUrls[url].pause();
+	}
+    };
+
+    Html5SoundService.prototype.pauseSoundUrl = function(url) {
+	if (this.cachedUrls[url]) {
+	    this.cachedUrls[url].pause();
+	}
+    };
+    
+    Html5SoundService.prototype.setVolume = function(volume) {
+	for (var i = 0 ; i < cachedUrls[url].length; i++) {
+	    cachedUrls[url].volume = volume;
+	}
+	this.baseVolume = volume;
+    };
+
+    Html5SoundService.prototype.raiseVolume = function() {
+	this.setVolume(Math.min(this.baseVolume + 5, 100));
+    };
+
+    Html5SoundService.prototype.lowerVolume = function() {
+	this.setVolume(Math.max(this.baseVolume - 5, 0));
+    };
+
 
 
 
@@ -611,6 +662,52 @@ plt.platform = {};
 	alert("dtmf tone");
     };
 
+    GenericSoundService.prototype.stopSoundUrl = function(url) {
+    };
+    GenericSoundService.prototype.pauseSoundUrl = function(url) {
+    };
+    GenericSoundService.prototype.setVolume = function(volume) {
+    };
+    GenericSoundService.prototype.raiseVolume = function() {
+    };
+    GenericSoundService.prototype.lowerVolume = function() {
+    };
 
+
+    //////////////////////////////////////////////////////////////////////
+    function choosePowerService() {
+	if (isPhonegapAvailable()) {
+	    return new PhonegapPowerService();
+	} else {
+	    return new GenericPowerService();
+	}
+    }
+
+    function PhonegapPowerService() {
+	this.currentLockFlags = -1;
+    }
+
+    PhonegapPowerService.prototype.setWakeLock = function(flags) {
+    	if (flags != this.currentLockFlags) {
+    	    navigator.power.setWakeLock(this.flags.toInteger());
+    	    this.currentLockFlags = flags;
+    	}
+    };
+
+    PhonegapPowerService.prototype.releaseWakeLock = function() {
+    	if (this.currentLockFlags != -1) {
+    	    navigator.power.releaseWakeLock();
+    	    this.currentLockFlags = -1;
+    	}
+    };
+
+
+
+    function GenericPowerService() {
+    }
+    GenericPowerService.prototype.setWakeLock = function(flags) {
+    };
+    GenericPowerService.prototype.releaseWakeLock = function() {
+    };
  
 })();

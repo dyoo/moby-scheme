@@ -736,7 +736,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     } 
 
     effect_colon_stop_dash_sound_dash_url.prototype.run = function() {
-    	navigator.audio.stopMusic(this.url);
+	plt.platform.Platform.getInstance().getSoundService().stopSoundUrl(this.url);
     };
 
     function make_dash_effect_colon_stop_dash_sound_dash_url(id0, id1) {
@@ -783,7 +783,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     } 
 
     effect_colon_pause_dash_sound_dash_url.prototype.run = function() {
-    	navigator.audio.pauseMusic(this.url);
+	this.platform.Platform.getInstance().getSoundService().pauseSoundUrl(this.url);
     };
 
     function make_dash_effect_colon_pause_dash_sound_dash_url(id0, id1) {
@@ -827,7 +827,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
     effect_colon_set_dash_sound_dash_volume.prototype.run = function() {
-    	navigator.audio.setMusicVolume(this.volume.toInteger());
+	plt.platform.Platform.getInstance().getSoundService().setVolume(this.volume.toInteger());
     }
 
     function make_dash_effect_colon_set_dash_sound_dash_volume(id0) {
@@ -852,7 +852,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_raise_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
-    	navigator.audio.increaseMusicVolume();
+	plt.platform.Platform.getInstance().getSoundService.raiseVolume();
     }
 
 
@@ -884,7 +884,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_lower_dash_sound_dash_volume.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_lower_dash_sound_dash_volume.prototype.run = function() {
-    	navigator.audio.decreaseMusicVolume();
+	plt.platform.Platform.getInstance().getSoundService.lowerVolume();
     }
 
 
@@ -979,7 +979,6 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 ///////////////////////////////////////////////////////////////////////////
 
-    var currentLockFlags = -1;
 
     // flags: (listof number)
     function effect_colon_set_dash_wake_dash_lock(flags) {
@@ -990,10 +989,8 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_set_dash_wake_dash_lock.prototype = heir(plt.Kernel.Struct.prototype);
 
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
-    	if (this.flags != currentLockFlags) {
-    	    navigator.power.setWakeLock(this.flags.toInteger());
-    	    currentLockFlags = this.flags;
-    	}
+	plt.platform.Platform.getInstance().getPowerService().setWakeLock(
+	    this.flags.toInteger());
     }
 
     effect_colon_set_dash_wake_dash_lock.prototype.isEqual = function(other) {
@@ -1036,10 +1033,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
     effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
-    	if (currentLockFlags != -1) {
-    	    navigator.power.releaseWakeLock();
-    	    currentLockFlags = -1;
-    	}
+	plt.platform.Platform.getInstance().getPowerService().releaseWakeLock();
     }
 
     function make_dash_effect_colon_release_dash_wake_dash_lock() {
