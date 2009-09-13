@@ -360,10 +360,9 @@ plt.world.MobyJsworld = {};
     };
 
 
-    // text: string assoc -> node
-    Jsworld.text = function(s, args) {
-	var attribs = getAttribs(args);
-	var node = _js.text(s, attribs);
+    // text: string -> node
+    Jsworld.text = function(s) {
+	var node = _js.text(s, []);
 	node.toWrittenString = function() { return "(js-img ...)"; }
 	node.toDisplayedString = node.toWrittenString;
 	node.toDomNode = function() { return node; }

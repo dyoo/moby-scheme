@@ -327,10 +327,18 @@
                                 "plt.world.MobyJsworld.bigBang"
                                 empty
                                 false)
-			       ;; Each of these functions can take an optional
-			       ;; (sexpof css-style) argument.
+                               (make-binding:function 'js-text 
+                                                      module-path 
+                                                      1 
+                                                      false 
+                                                      "plt.world.MobyJsworld.text"
+                                                      empty
+                                                      false)
+                               ;; Each of these functions can take an optional
+                               ;; (sexpof css-style) argument.
+
                                (bf 'js-div 0 "plt.world.MobyJsworld.div")
-			       (bf 'js-p 0 "plt.world.MobyJsworld.p")
+                               (bf 'js-p 0 "plt.world.MobyJsworld.p")
                                (bf 'js-button 1 "plt.world.MobyJsworld.button")
                                (bf 'js-button* 2 "plt.world.MobyJsworld.buttonStar")
                                ;(bf 'js-input 1 "plt.world.MobyJsworld.input")
@@ -338,8 +346,6 @@
 				   "plt.world.MobyJsworld.bidirectionalInput")
 			       (bf 'js-img 1
 				   "plt.world.MobyJsworld.img")
-
-                               (bf 'js-text 1 "plt.world.MobyJsworld.text")
                                (bf 'js-node 1 "plt.world.MobyJsworld.rawNode")))))
   
 

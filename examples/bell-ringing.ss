@@ -52,10 +52,10 @@
 
 
 
-(define button-up (js-button up))
-(define button-down (js-button down))
-(define button-ring (js-button ring))
-(define background-div (js-div '(("id" "background"))))
+(define button-up (js-button up '(("id" "button-up"))))
+(define button-down (js-button down '(("id" "button-down"))))
+(define button-ring (js-button ring '(("id" "button-ring"))))
+(define background-div (js-div '(("id" "background-div"))))
 
 
 
@@ -75,16 +75,29 @@
               (list (js-text (number->string (world-shaken w))))
               (list (js-text " "))
               (list (js-text "rings")))
-        (list (js-div)
-              (list (js-text "note is: "))
+        (list (js-div '(("id" "note-text")))
               (list (js-text (number->letter (world-tone w)))))
         (list button-up (list (js-text "Up")))
-        (list button-down (list (js-text "Down")))))
+        (list button-down (list (js-text "Down")))
+        (list button-ring (list (js-text "Play ring!")))))
 
 ;; render-css: world -> (sexpof css-style)
 (define (render-css w)
-  '(("background-div" 
-     ("background-color" "gray"))))
+  '(("background-div" ("background-color" "gray")
+                      ("border" "solid")
+                      ("text-align" "center")
+                      ("width" "100%"))
+    
+    ("note-text" ("font-size" "30px"))
+    
+    ("button-up" ("width" "80%")
+                 ("height" "50px")
+                 ("margin" "5px"))
+    ("button-down" ("width" "80%")
+                   ("height" "50px")
+                   ("margin" "5px"))
+    ("button-ring" ("width" "80%")
+                   ("height" "50px"))))
 
 
 
