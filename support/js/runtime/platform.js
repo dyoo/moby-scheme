@@ -705,7 +705,7 @@ plt.platform = {};
 
     PhonegapPowerService.prototype.setWakeLock = function(flags) {
     	if (flags != this.currentLockFlags) {
-    	    navigator.power.setWakeLock(flags.toInteger());
+    	    navigator.power.setWakeLock(flags);
     	    this.currentLockFlags = flags;
     	}
     };
