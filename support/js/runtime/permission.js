@@ -106,7 +106,7 @@ var plt = plt || {};
 	
 	else if (isShakeP(p)) {
 	    platform.getShakeService().startService();
-	    platform.getShakeService().addShakeListener(
+	    platform.getShakeService().addListener(
 		function() {
 		    stimuli.onShake();
 		});

@@ -29,6 +29,10 @@ plt.platform = {};
 	return this.tiltService;
     };
 
+    JavascriptPlatform.prototype.getShakeService = function() {
+	return this.shakeService;
+    };
+
     JavascriptPlatform.prototype.getLocationService = function() {
 	return this.locationService;
     };
@@ -381,7 +385,6 @@ plt.platform = {};
 
     var accelListeners = [];
     var orientListeners = [];
-    var shakeListeners = [];
     var accelId;
     var orientId;
     var shakeId;
@@ -398,11 +401,6 @@ plt.platform = {};
 	}
     };
 
-    var shakeSuccessCallback = function() {
-    	for ( var i = 0; i < shakeListeners.length; i++ ) {
-    		shakeListeners[i]();
-    	}
-    };
 
 
     var JavascriptTiltService = {
@@ -410,7 +408,6 @@ plt.platform = {};
     	    if (typeof Accelerometer != "undefined") {
     	    	accelId = navigator.accelerometer.watchAcceleration(accelSuccessCallback, function() {});
     	    	orientId = navigator.accelerometer.watchOrientation(orientSuccessCallback, function() {});
-    	    	shakeId = navigator.accelerometer.watchShake(shakeSuccessCallback, function() {});
     	    }
     	},
 
@@ -430,11 +427,6 @@ plt.platform = {};
     	addAccelerationChangeListener : function(listener) {
     	    // push a listener onto the acceleration listeners
     	    accelListeners.push(listener);
-    	},
-
-    	addShakeListener : function(listener) {
-    	    // push a listener onto the shake listeners
-    	    shakeListeners.push(listener);
     	}
     };
 
@@ -504,10 +496,11 @@ plt.platform = {};
 	    }
 	}
 	function fail() {}
-	navigator.accelerometer.watchShake(success, fail);
+	this.shakeId = navigator.accelerometer.watchShake(success, fail);
     };
 
     PhonegapShakeService.prototype.shutdownService = function() {
+	navigator.accelerometer.stopAllShakeWatches();
     };
 
     PhonegapShakeService.prototype.addListener = function(l) {
