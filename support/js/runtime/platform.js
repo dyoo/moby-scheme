@@ -647,8 +647,8 @@ plt.platform = {};
     };
     
     Html5SoundService.prototype.setVolume = function(volume) {
-	for (var i = 0 ; i < cachedUrls[url].length; i++) {
-	    cachedUrls[url].volume = volume;
+	for (var url in this.cachedUrls) {
+	    this.cachedUrls[url].volume = volume / 100.0;
 	}
 	this.baseVolume = volume;
     };
