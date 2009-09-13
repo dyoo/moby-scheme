@@ -121,13 +121,13 @@
                                (make-binding:function
                                 'on-shake module-path 1 false
                                 "plt.world.config.Kernel.onShake"
-                                (list PERMISSION:TILT)
+                                (list PERMISSION:SHAKE)
                                 false)
                                
                                (make-binding:function
                                 'on-shake* module-path 2 false
                                 "plt.world.config.Kernel.onShake_star_"
-                                (list PERMISSION:TILT)
+                                (list PERMISSION:SHAKE)
                                 false)
                                
                                ;; old style

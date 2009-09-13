@@ -197,11 +197,13 @@
                   
                   [PERMISSION:LOCATION permission?]
                   [PERMISSION:SEND-SMS permission?]
+                  [PERMISSION:RECEIVE-SMS permission?]
                   [PERMISSION:TILT permission?]
+                  [PERMISSION:SHAKE permission?]
                   [PERMISSION:INTERNET permission?]
                   [PERMISSION:TELEPHONY permission?]
                   [PERMISSION:WAKE-LOCK permission?]
-                  
+
 		  [permission->string
 		   (permission? . -> . string?)]
                   [string->permission
