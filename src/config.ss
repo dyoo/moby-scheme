@@ -21,7 +21,7 @@
                                     [(find-executable-path "android")
                                      => (lambda (a-path)
                                           (simplify-path
-                                           (build-path a-path "..")))]
+                                           (build-path a-path ".." "..")))]
                                     [else
                                      "/usr/local/android"])))
 
