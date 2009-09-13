@@ -2176,6 +2176,14 @@ var plt = plt || {};
 
 
 
+    plt.Kernel.reportError = function(e) {
+	alert(e);
+	if (plt.Kernel.lastLoc) {
+	    alert("Error was raised around " + plt.Kernel.lastLoc);
+	}
+    };
+
+
 
 
     // As a program runs, the lastLoc will be assigned to the last location

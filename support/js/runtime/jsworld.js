@@ -256,8 +256,26 @@ plt.world.MobyJsworld = {};
 	return result;
     }
 
+
+
+    // makeProtectedUpdater: (world -> world) -> void
+    function makeProtectedUpdater(updater) {
+	return function() {
+	    try {
+		return updater.call(arguments);
+	    } catch (e) {
+		plt.Kernel.reportError(e);
+		return arguments[0];
+	    }
+	}
+    }
+
+
+
     // updateWorld: (world -> world) -> void
-    Jsworld.updateWorld = _js.change_world;
+    Jsworld.updateWorld = function(updater) {
+	_js.change_world(makeProtectedUpdater(updater));
+    }
     
 
 
@@ -319,11 +337,18 @@ plt.world.MobyJsworld = {};
 	return node;
     };
 
+
     Jsworld.buttonStar = function(worldUpdateF, effectF, args) {
 	var attribs = getAttribs(args);
 	function wrappedF(world, evt) {
-	    plt.world.Kernel.applyEffect(effectF([world]));
-	    return worldUpdateF([world]);
+	    try {
+		plt.world.Kernel.applyEffect(effectF([world]));
+		var result = worldUpdateF([world]);
+		return result;
+	    } catch (e) {
+		plt.Kernel.reportError(e);
+		return world;
+	    }
 	}
 	var node = _js.button(wrappedF, attribs);
 	node.toWrittenString = function() { return "(js-button ...)"; }

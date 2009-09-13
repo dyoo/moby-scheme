@@ -21,6 +21,7 @@ plt.platform = {};
     	this.locationService = chooseLocationService();
 	this.telephonyService = chooseTelephonyService();
 	this.networkService = chooseNetworkService();
+	this.soundService = chooseSoundService();
     };
     
     JavascriptPlatform.prototype.getTiltService = function() {
@@ -38,6 +39,10 @@ plt.platform = {};
     JavascriptPlatform.prototype.getNetworkService = function() {
 	return this.networkService;
     };
+
+    JavascriptPlatform.prototype.getSoundService = function() {
+	return this.soundService;
+    }
 
 
     // Dynamically choose which location service we grab
@@ -531,6 +536,61 @@ plt.platform = {};
     };
 
     //////////////////////////////////////////////////////////////////////
+
+
+
+    function chooseSoundService() {
+	if (isPhonegapAvailable()) {
+	    return new PhonegapSoundService();
+	} else if (supportsHtml5()) {
+	    return new Html5SoundService();
+	} else {
+	    return new GenericSoundService();
+	}
+    }
+
+    function supportsHtml5() {
+	return !!(document.createElement('audio').canPlayType);
+
+    }
+
+
+    function PhonegapSoundService() {
+    };
+    PhonegapSoundService.prototype.beep = function() {
+	navigator.notification.beep(1);
+    };
+    PhonegapSoundService.prototype.playSoundUrl = function(url) {
+    	navigator.audio.playMusic(this.url);
+    };
+
+
+
+    function Html5SoundService() {
+	console.log("html5 sound");
+    }
+    Html5SoundService.prototype.beep = function() {
+	alert("Beep");
+    };
+
+    Html5SoundService.prototype.playSoundUrl = function(url) {
+	var audio = new Audio(url);
+	audio.play();
+    };
+
+
+
+
+    function GenericSoundService() {
+    }
+    GenericSoundService.prototype.beep = function() {
+	alert("Beep");
+    };
+
+    GenericSoundService.prototype.playSoundUrl = function(url) {
+	// Can't do anything here.
+    };
+
 
 
  

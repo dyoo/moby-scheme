@@ -572,12 +572,14 @@ plt.world.Kernel = plt.world.Kernel || {};
     } 
 
     effect_colon_beep.prototype.run = function() {
-	if (typeof navigator != "undefined" &&
-	    typeof navigator.notification != "undefined") {
-	    navigator.notification.beep(1);
-        } else {
-	    alert("Beep");  // FIXME: fill me in.
-        }
+	console.log("Beep running");
+	plt.platform.Platform.getInstance().getSoundService().beep();
+// 	if (typeof navigator != "undefined" &&
+// 	    typeof navigator.notification != "undefined") {
+// 	    navigator.notification.beep(1);
+//         } else {
+// 	    alert("Beep");  // FIXME: fill me in.
+//         }
     };
 
     function make_dash_effect_colon_beep() { return new effect_colon_beep(); }
@@ -701,7 +703,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     } 
 
     effect_colon_play_dash_sound_dash_url.prototype.run = function() {
-    	navigator.audio.playMusic(this.url);
+	plt.platform.Platform.getInstance().getSoundService().playSoundUrl(this.url);
     };
 
     function make_dash_effect_colon_play_dash_sound_dash_url(id0, id1) {

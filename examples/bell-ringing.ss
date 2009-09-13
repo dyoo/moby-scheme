@@ -54,7 +54,7 @@
 
 (define button-up (js-button up '(("id" "button-up"))))
 (define button-down (js-button down '(("id" "button-down"))))
-(define button-ring (js-button ring '(("id" "button-ring"))))
+(define button-ring (js-button* update ring '(("id" "button-ring"))))
 (define background-div (js-div '(("id" "background-div"))))
 
 
