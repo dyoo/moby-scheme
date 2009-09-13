@@ -138,23 +138,6 @@
 
 
 
-;; location-distance: num num num num -> number
-;; Given two places on a globe, return the shortest distance between them in meters (uses spherical geometry)
-(define (location-distance latA lonA latB lonB)
-  (local [;; deg->rad: number -> number
-          ;; Converts degrees to radians.
-          (define (deg->rad a-deg)
-            (/ (* a-deg pi) 180))]
-  (* 6378000
-     (* 2
-        (asin (min 1
-                   (sqrt (+ (expt (sin (/ (- (deg->rad latA) (deg->rad latB)) 2)) 2)
-                            (* (cos (deg->rad latA))
-                               (cos (deg->rad latB))
-                               (expt (sin (/ (- (deg->rad lonA) (deg->rad lonB)) 2)) 2))))))))))
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RSS Parser Helpers.

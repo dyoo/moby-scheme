@@ -1,7 +1,7 @@
 #lang scheme/base
 (require lang/prim)
 
-(require "../src/lat-lon-distance.ss")
+(require "lat-lon-distance.ss")
 
 ;; Mock module for the location service
 ;; 

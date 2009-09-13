@@ -91,6 +91,28 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
+    
+
+    // Given two places on a globe, return the shortest distance between them in meters (uses spherical geometry)
+    function roughDistanceBetween(lat1, long1, lat2, long2) {
+	var toRad = function(deg) {
+	    return deg * Math.PI / 180; 
+	}
+	var subExpr = function(x, y) {
+	    return Math.pow(Math.sin((toRad(x) - toRad(y))/ 2),
+			    2);
+	};
+	return 6378000 * 2 * Math.asin(
+	    Math.min(1,
+		     Math.sqrt(subExpr(lat1, lat2) +
+			       (Math.cos(toRad(lat1)) *
+				Math.cos(toRad(lat2)) *
+				subExpr(long1, long2)))));
+    }
+
+
+
+
     function GoogleGearsLocationService() {
 	this.geo = google.gears.factory.create("beta.geolocation");
 	this.listeners = [];
@@ -145,8 +167,12 @@ plt.platform = {};
     };
 
     GoogleGearsLocationService.prototype.getDistanceBetween = function (lat1, long1, lat2, long2) {
-	// FIXME: do something smarter here!
-	return plt.types.Rational.ZERO;
+
+	return plt.types.FloatPoint.makeInstance(
+	    roughDistanceBetween(lat1.toFloat(), 
+				 long1.toFloat(), 
+				 lat2.toFloat(),
+				 long2.toFloat()));
     };
 
 
@@ -190,8 +216,11 @@ plt.platform = {};
     };
 
     NoOpLocationService.prototype.getDistanceBetween = function (lat1, long1, lat2, long2) {
-	// FIXME: do something smarter here!
-	return plt.types.Rational.ZERO;
+	return plt.types.FloatPoint.makeInstance(
+	    roughDistanceBetween(lat1.toFloat(), 
+				 long1.toFloat(), 
+				 lat2.toFloat(),
+				 long2.toFloat()));
     };
 
 
@@ -348,8 +377,11 @@ plt.platform = {};
     };
 
     W3CLocationService.prototype.getDistanceBetween = function (lat1, long1, lat2, long2) {
-	return plt.types.Rational.ZERO;
-	// FIXME: do something smarter here!
+	return plt.types.FloatPoint.makeInstance(
+	    roughDistanceBetween(lat1.toFloat(), 
+				 long1.toFloat(), 
+				 lat2.toFloat(),
+				 long2.toFloat()));
     };
 
 

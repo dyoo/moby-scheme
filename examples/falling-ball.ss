@@ -10,7 +10,7 @@
 (define HEIGHT 480)
 
 ;; The radius of the red circle.
-(define RADIUS 5)
+(define RADIUS 15)
 
 ;; The world is the distance from the top of the screen.
 (define INITIAL-WORLD 0)

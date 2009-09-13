@@ -6,6 +6,7 @@
          "stub/world.ss"
          "stub/net.ss"
          "stub/private/world-effects.ss"
+	 "stub/location.ss"
          (for-syntax scheme/base
                      "stx-helpers.ss"))
 
@@ -39,6 +40,7 @@
          (all-from-out "stub/world.ss")
          (all-from-out "stub/net.ss")
          (all-from-out "stub/private/world-effects.ss")
+	 (all-from-out "stub/location.ss")
          (rename-out (-#%module-begin #%module-begin))
 
          ;; Configuration handlers
