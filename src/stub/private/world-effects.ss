@@ -49,6 +49,22 @@
                                   )
   #:prefab)
 
+(define-struct effect:pause-sound-url (url)
+  #:prefab) ;; number
+
+(define-struct effect:stop-sound-url (url)
+  #:prefab) ;; number
+
+(define-struct effect:set-sound-volume (volume)
+  #:prefab) ;; number
+
+(define-struct effect:set-wake-lock (locks)
+  #:prefab) ;; number
+
+(define-struct effect:release-wake-lock ()
+  #:prefab) ;; number
+
+
 
 ;; effect?: X -> boolean
 ;; Determines if thing is an effect.
@@ -144,6 +160,12 @@
                   [struct effect:send-sms ([address string?]
                                            [msg string?])]
                   [struct effect:play-sound-url ([url string?])]
+                  [struct effect:pause-sound-url ([url string?])]
+                  [struct effect:stop-sound-url ([url string?])]
+		  [struct effect:set-sound-volume ([volume number?])]
+
+		  [struct effect:set-wake-lock ([locks number?])]
+		  [struct effect:release-wake-lock ()]
                   
                   [effect? (any/c . -> . boolean?)]
                   [effect-apply! (effect? . -> . any)])

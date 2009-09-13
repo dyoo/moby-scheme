@@ -313,41 +313,29 @@ plt.platform = {};
     
     W3CLocationService.prototype.startService = function() {
 	var that = this;
-	function locSuccessCallback(pos) {
-
+	var monitor = function(pos) {
 	    that.currentPosition.latitude = pos.coords.latitude;
 	    that.currentPosition.longitude = pos.coords.longitude;
-
     	    for ( var i = 0; i < that.locationListeners.length; i++ ) {
     		var listener = that.locationListeners[i];
     		listener(pos.coords.latitude, pos.coords.longitude);
     	    }
 	};
 
-	function noOp() {
-	}
-
-	function onError() {
-	}
+	var onError = function() {};
  
 	if (typeof navigator.geolocation != 'undefined' &&
-	    typeof navigator.geolocation.watchPosition != 'undefined') {
-    	    this.watchId = navigator.geolocation.watchPosition(locSuccessCallback, 
-							       noOp, 
-							       {});
+	    typeof navigator.geolocation.getCurrentPosition != 'undefined') {
+	    navigator.geolocation.watchPosition(monitor);
 	}
 
-	if (typeof navigator.geolocation != 'undefined' &&
-	    typeof navigator.geolocation.getCurrentPosition != 'undefined') {
-	    navigator.geolocation.getCurrentPosition(locSuccessCallback, 
-						     onError,
-						     {maximumAge:600000});	    
-	}
+	setTimeout(function() {navigator.geolocation.getCurrentPosition(monitor)}, 10000);
     };
 
     W3CLocationService.prototype.shutdownService = function() {
 	if (this.watchId) {
     	    navigator.geolocation.clearWatch(this.watchId);
+	    this.watchId = false;
 	}
     };
     
