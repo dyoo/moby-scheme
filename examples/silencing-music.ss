@@ -5,7 +5,7 @@
 (define init-time 45)
 (define fade-time 30)
 (define init-volume 100)
-(define song "file:///android_asset/song.ogg")
+(define song "http://hashcollision.org/tones/tank.wav")
 
 ;; The world is a number counting the number of seconds until the music turns off
 (define initial-world (make-world init-time init-volume))
@@ -70,7 +70,7 @@
   (list (js-p '(("id" "aPara")))
         (list (js-text 
                (string-append 
-                "volume ="
+                "volume = "
                 (number->string (world-volume a-world)))))))
 
 ;; draw-css: world -> CSS-sexp

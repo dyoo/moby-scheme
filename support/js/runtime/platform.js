@@ -626,8 +626,10 @@ plt.platform = {};
 	if (! this.cachedUrls[url]) {
 	    this.cachedUrls[url] = new Audio(url);
 	}
-	
-	this.cachedUrls[url].play();
+	var audio = this.cachedUrls[url];
+	if (audio.ended || audio.paused) {
+	    this.cachedUrls[url].play();
+	}
     };
     
     Html5SoundService.prototype.playDtmfTone = function(tone, duration) {
@@ -637,6 +639,7 @@ plt.platform = {};
     Html5SoundService.prototype.stopSoundUrl = function(url) {
 	if (this.cachedUrls[url]) {
 	    this.cachedUrls[url].pause();
+	    this.cachedUrls[url].currentTime = 0;
 	}
     };
 
