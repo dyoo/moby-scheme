@@ -23,8 +23,13 @@
                                    false "plt.world.Kernel.make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
                                    false "plt.world.Kernel.make_dash_effect_colon_beep")
-                               (bf 'make-effect:play-sound-url module-path 1
-                                   false "plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url")
+                               (make-binding:function 'make-effect:play-sound-url
+						      module-path
+						      1
+						      false 
+						      "plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url"
+						      (list PERMISSION:INTERNET)
+						      false)
                                (bf 'make-effect:stop-sound-url module-path 1
                                    false "plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url")
                                (bf 'make-effect:pause-sound-url module-path 1

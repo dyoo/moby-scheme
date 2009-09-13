@@ -588,7 +588,7 @@ plt.platform = {};
 	navigator.notification.beep(1);
     };
     PhonegapSoundService.prototype.playSoundUrl = function(url) {
-    	navigator.audio.playMusic(this.url);
+    	navigator.audio.playMusic(url);
     };
     PhonegapSoundService.prototype.playDtmfTone = function(tone, duration) {
 	navigator.audio.playDTMF(tone);
@@ -712,7 +712,7 @@ plt.platform = {};
 
     PhonegapPowerService.prototype.setWakeLock = function(flags) {
     	if (flags != this.currentLockFlags) {
-    	    navigator.power.setWakeLock(this.flags.toInteger());
+    	    navigator.power.setWakeLock(flags.toInteger());
     	    this.currentLockFlags = flags;
     	}
     };
