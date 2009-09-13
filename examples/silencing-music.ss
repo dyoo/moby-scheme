@@ -5,7 +5,7 @@
 (define init-time 45)
 (define fade-time 30)
 (define init-volume 100)
-(define song "http://hashcollision.org/tones/tank.wav")
+(define song "http://hashcollision.org/tones/tank.ogg")
 
 ;; The world is a number counting the number of seconds until the music turns off
 (define initial-world (make-world init-time init-volume))
