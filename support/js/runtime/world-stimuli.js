@@ -94,14 +94,6 @@ plt.world = plt.world || {};
     };
 
 
-   
-    // Shaking
-    stimuli.onShake = function() {
-	var onShake = lookup('onShake');
-	var onShakeEffect = lookup('onShakeEffect');
-	doStimuli(onShakeEffect, onShake, []);
-    };
-
 
     // Time ticks
     stimuli.onTick = function() {
