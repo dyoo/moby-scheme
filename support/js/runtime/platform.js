@@ -563,19 +563,32 @@ plt.platform = {};
     PhonegapSoundService.prototype.playSoundUrl = function(url) {
     	navigator.audio.playMusic(this.url);
     };
+    PhonegapSoundService.prototype.playDtmfTone = function(tone, duration) {
+	navigator.audio.playDTMF(tone);
+        setTimeout(function() { navigator.audio.stopDTMF() },
+                   duration);
+    };
 
 
 
     function Html5SoundService() {
-	console.log("html5 sound");
+	this.cachedUrls = {};
     }
     Html5SoundService.prototype.beep = function() {
 	alert("Beep");
     };
 
     Html5SoundService.prototype.playSoundUrl = function(url) {
-	var audio = new Audio(url);
-	audio.play();
+	if (! this.cachedUrls[url]) {
+	    this.cachedUrls[url] = new Audio(url);
+	}
+	
+	this.cachedUrls[url].play();
+    };
+    
+    Html5SoundService.prototype.playDtmfTone = function(tone, duration) {
+	// Can't do anything here.
+	alert("dtmf tone");
     };
 
 
@@ -589,8 +602,14 @@ plt.platform = {};
 
     GenericSoundService.prototype.playSoundUrl = function(url) {
 	// Can't do anything here.
+	alert("sound url " + url);
     };
 
+
+    GenericSoundService.prototype.playDtmfTone = function(tone, duration) {
+	// Can't do anything here.
+	alert("dtmf tone");
+    };
 
 
  
