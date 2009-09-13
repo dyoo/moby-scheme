@@ -60,34 +60,62 @@ you'll also need:
 ----------------------------------------------------------------------
 
 
-To install Moby:
+To install Moby from the development sources:
 
     1.  Grab the Moby source, currently hosted on github at:
 
         http://github.com/dyoo/moby-scheme/tree/devel
 
-    For example:
+    and place them in your PLT Scheme collects directory.
 
+
+    For example, 
+
+        $ cd ~/.plt-scheme/4.2.1/collects
         $ git clone git://github.com/dyoo/moby-scheme.git moby
 
-    2.  Switch to the development branch.
+    Also, do a 'setup-plt -l moby' so that PLT Scheme compiles the
+    Moby source code.
 
-        $ git checkout devel
 
 
-    3.  Pull the other dependency packages.  Moby depends on two
-    additional libraries that we are developing: (1) jsworld (2)
-    phonegap.  The following command will bring both of those
-    dependencies into the source tree.
+    2.  If you're going to do Android development, make sure that
+        'ant' and the 'android' binary are in your path; Moby will use
+        your PATH variable to find Apache Ant and the Android SDK.
+    
+        Pull the other dependency packages.  Moby depends on two
+        additional libraries that we are developing: (1) jsworld (2)
+        phonegap.  The following command will bring both of those
+        dependencies into the source tree.
 
         $ git submodule init
         $ git submodule update
 
 
-    4.  If you're going to do Android development, edit
-        moby/src/config.ss.  The system hardcodes paths to Apache Ant
-        and Android SDK embedded as parameters within src/config.ss.
-        You should change those paths to the ones on your system.
+
+----------------------------------------------------------------------
+
+Running Moby from DrScheme
+
+
+
+To use Moby from DrScheme, create a file in the Module language, and
+at the top of your program, include the following language line:
+
+    #lang moby
+
+followed by the program.  For example:
+
+    #lang moby
+
+    (define initial-world 0)
+
+    (js-big-bang initial-world (on-tick 1 add1))
+
+
+When this program is run, a web browser should fire off with the
+program running from the web page.
+
 
 
 
@@ -96,14 +124,15 @@ To install Moby:
 Running Moby from the command line
 
 
-At this point, you can run the Moby command line utility
-(moby/src/moby.ss) on a BSL program.  Moby supports two backends, both
-which rely on Javascript:
+You can run the Moby command line utility (moby/src/moby.ss) on a Moby
+program to produce a compiled version of your application.  Moby
+supports two output backends, both which rely on Javascript:
 
-    * js: compiles to web application 
+    * js: compiles to a web page application, which can be deployed on
+      any web server.
 
-    * js+android-phonegap: compiles to Android application; can also
-      use features of the mobile platform.
+    * js+android-phonegap: compiles to an Android .apk application
+      package; can also use features of the mobile platform.
 
 
 By default, the command line utility will use the js backend.
@@ -161,4 +190,3 @@ have the FallingBall application installed.
 
 
 ----------------------------------------------------------------------
-

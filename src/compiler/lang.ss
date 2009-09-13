@@ -41,6 +41,7 @@
          ;; javascript bootstrapping time.
          provide/contract -> any/c listof list/c or/c false/c natural-number/c hash?
 
+         begin
          
          ;; The rest of these primitives will be implemented for the kernel.
          ;; Hash stuff
