@@ -258,23 +258,20 @@ plt.world.MobyJsworld = {};
 
 
 
-    // makeProtectedUpdater: (world -> world) -> void
-    function makeProtectedUpdater(updater) {
-	return function() {
-	    try {
-		return updater.call(arguments);
-	    } catch (e) {
-		plt.Kernel.reportError(e);
-		return arguments[0];
-	    }
-	}
-    }
-
 
 
     // updateWorld: (world -> world) -> void
     Jsworld.updateWorld = function(updater) {
-	_js.change_world(makeProtectedUpdater(updater));
+	function wrappedUpdater(world) {
+	    try {
+		return updater(world);
+	    } catch (e) {
+		plt.Kernel.reportError(e);
+		return world;
+	    }
+	}
+
+	_js.change_world(wrappedUpdater);
     }
     
 
