@@ -12,26 +12,23 @@
                      "stx-helpers.ss"))
 
 
-(define-for-syntax source-code 'not-initialized-yet)
+(define-for-syntax source-code #'not-initialized-yet)
 
 
 (define-syntax (-js-big-bang stx)
   (syntax-case stx ()
     [(_ world0 handlers ...)
      (cond
-       [(eq? source-code 'not-initialized-yet)
-        (syntax/loc stx
-          (begin
-            (js-big-bang/source (list (datum->stx `(js-big-bang world0 handlers ...)
-                                                  (make-Loc 0 0 0 "")))
-                                world0 handlers ...)))]
+       [(eq? 'module-begin (syntax-local-context))
+        (with-syntax ([stx stx])
+          (syntax/loc #'stx
+            (-#%module-begin stx)))]
        [else
         (with-syntax ([source-code source-code])
           (syntax/loc stx
-            (begin 
-              (js-big-bang/source 'source-code
-                                  world0
-                                  handlers ...))))])]))
+            (js-big-bang/source 'source-code
+                                world0
+                                handlers ...)))])]))
 
 
 (define-syntax (-#%module-begin stx)
