@@ -1489,17 +1489,7 @@ var plt = plt || {};
     };
 
 
-    plt.Kernel._resolveModulePath = function(path) {
-	return path;
-    };
 
-    plt.Kernel._normalizePath = function(path) {
-        return path;
-    };
-
-    plt.Kernel._pathToString = function(path) {
-        return path.toString();
-    };
 
 
     plt.Kernel.apply = function(f, secondArg, restArgs) {

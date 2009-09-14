@@ -313,13 +313,7 @@
                      (hash-remove 2 "plt.Kernel._kernelHashRemove")
                      (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
                      (hash-map 2 "plt.Kernel._kernelHashMap")
-                     (hash? 1 "plt.Kernel._isHash")
-                     (path->string 1 "plt.Kernel._pathToString")
-                     (normalize-path 1 "plt.Kernel._normalizePath")
-                     (resolve-module-path 2 "plt.Kernel._resolveModulePath")
-                     (build-path 2 "plt.Kernel._buildPath")
-
-                     )))]
+                     (hash? 1 "plt.Kernel._isHash"))))]
     top-env-3))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
