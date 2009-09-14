@@ -295,6 +295,8 @@
                      (image=? 2)
 
 
+		     (void 0 true)
+
 		     ;; Parsing
 		     (parse-xml 1)
                      (split-whitespace 1)

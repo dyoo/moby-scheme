@@ -18,17 +18,11 @@
 (define-syntax (-js-big-bang stx)
   (syntax-case stx ()
     [(_ world0 handlers ...)
-     (cond
-       [(eq? 'module-begin (syntax-local-context))
-        (with-syntax ([stx stx])
-          (syntax/loc #'stx
-            (-#%module-begin stx)))]
-       [else
-        (with-syntax ([source-code source-code])
-          (syntax/loc stx
-            (js-big-bang/source 'source-code
-                                world0
-                                handlers ...)))])]))
+     (with-syntax ([source-code source-code])
+       (syntax/loc stx
+         (js-big-bang/source 'source-code
+                             world0
+                             handlers ...)))]))
 
 
 (define-syntax (-#%module-begin stx)
@@ -49,7 +43,9 @@
          (all-from-out "stub/net.ss")
          (all-from-out "stub/private/world-effects.ss")
 	 (all-from-out "stub/location.ss")
-
+         
+         void
+         
          ;; Configuration handlers
          on-key on-key*
          on-tick on-tick*

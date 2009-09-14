@@ -641,7 +641,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	}
     } 
     effect_colon_send_dash_sms.prototype.run = function() {
-	// FIXME: fill me in
+	plt.platform.Platform.getInstance().getSmsService().send(
+	    this.address, this.msg);
     };
 
 

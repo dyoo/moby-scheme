@@ -2190,6 +2190,10 @@ var plt = plt || {};
 
 
 
+    plt.Kernel._void_ = function(args) {
+	return undefined;
+    };
+
 
     // As a program runs, the lastLoc will be assigned to the last location
     // we've evaluated in the program.

@@ -23,6 +23,7 @@ plt.platform = {};
 	this.networkService = chooseNetworkService();
 	this.soundService = chooseSoundService();
 	this.powerService = choosePowerService();
+	this.smsService = chooseSmsService();
     };
     
     JavascriptPlatform.prototype.getTiltService = function() {
@@ -51,6 +52,10 @@ plt.platform = {};
     
     JavascriptPlatform.prototype.getPowerService = function() {
 	return this.powerService;
+    };
+
+    JavascriptPlatform.prototype.getSmsService = function() {
+	return this.smsService;
     };
 
 
@@ -718,7 +723,6 @@ plt.platform = {};
     };
 
 
-
     function GenericPowerService() {
     }
     GenericPowerService.prototype.setWakeLock = function(flags) {
@@ -726,4 +730,26 @@ plt.platform = {};
     GenericPowerService.prototype.releaseWakeLock = function() {
     };
  
+
+    //////////////////////////////////////////////////////////////////////
+
+    function chooseSmsService() {
+	if (isPhonegapAvailable()) {
+	    return new PhonegapSmsService();
+	} else {
+	    return new GenericSmsService();
+	}
+    }
+    function PhonegapSmsService() {
+    }
+    PhonegapSmsService.prototype.send = function(address, msg) {
+	navigator.sms.send(number, msg);
+    };
+    function GenericSmsService() {
+    }
+    GenericSmsService.prototype.send = function(address, msg) {
+    };
+
+
+
 })();
