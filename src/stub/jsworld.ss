@@ -56,7 +56,7 @@
 
 (define (js-node raw-node . attrs)
   (make-jsworld-widget:node attrs raw-node))
-  
+
 
 
 
@@ -67,14 +67,12 @@
 (define (js-big-bang/source source-code initWorld . handlers)
   (local [(define main.js 
             (compiled-program->main.js (do-compilation source-code)))
-
-          (define MAX-ATTEMPTS-TO-CONNECT 10)
           
           (define-values (dispatcher url)
             (dispatch-rules
              [("main.js") main-js]
              [("networkProxy") network-proxy]))
-            
+          
           (define (main-js req)
             (list #"text/javascript"
                   main.js))
@@ -82,26 +80,28 @@
           (define (network-proxy req)
             (list #"text/plain"
                   (get-url (extract-binding/single 'url (request-bindings req)))))]
-    (let ([portno
-           (let loop ([portno 8000]
-                      [attempts 0])
-             (with-handlers ((exn:fail:network? (lambda (exn)
-                                                  (cond [(< attempts MAX-ATTEMPTS-TO-CONNECT)
-                                                         (loop (add1 portno)
-                                                               (add1 attempts))]
-                                                        [else
-                                                         (raise exn)]))))
-               ;; There's still a race condition here... Not sure how to do this right.
-               (let ([port (tcp-listen portno 4 #t #f)])
-                 (tcp-close port)
-                 portno)))])
-        (serve/servlet dispatcher
-                       #:port portno
-                       #:listen-ip #f
-                       #:servlet-path "/"
-                       #:servlet-regexp #rx"(^/main.js$)|(^/networkProxy)"
-                       #:extra-files-paths (list javascript-support)))))
-    
+    (let* ([T 84]
+           [portno
+            (let loop (;; Numerology at work  (P = 80, L = 76, T=84).
+                       [portno 8076]
+                       [attempts 0]) 
+              (with-handlers ((exn:fail:network? (lambda (exn)
+                                                   (cond [(< attempts T)
+                                                          (loop (add1 portno)
+                                                                (add1 attempts))]
+                                                         [else
+                                                          (raise exn)]))))
+                ;; There's still a race condition here... Not sure how to do this right.
+                (let ([port (tcp-listen portno 4 #t #f)])
+                  (tcp-close port)
+                  portno)))])
+      (serve/servlet dispatcher
+                     #:port portno
+                     #:listen-ip #f
+                     #:servlet-path "/"
+                     #:servlet-regexp #rx"(^/main.js$)|(^/networkProxy)"
+                     #:extra-files-paths (list javascript-support)))))
+
 
 ;;; FIXME: A lot of this is just copy-and-pasted from generate-application.  FIXME!
 
@@ -111,17 +111,17 @@
 ;; compiled-program->main.js: compiled-program -> string
 (define (compiled-program->main.js compiled-program)
   (let*-values ([(defns pinfo)
-                (values (compiled-program-defns compiled-program)
-                        (compiled-program-pinfo compiled-program))]
-               [(output-port) (open-output-string)]
-               [(mappings) 
-                (build-mappings 
-                 (PROGRAM-DEFINITIONS defns)
-                 (IMAGES (string-append "[" "]"))
-                 (PROGRAM-TOPLEVEL-EXPRESSIONS
-                  (compiled-program-toplevel-exprs
-                   compiled-program))
-		 (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+                 (values (compiled-program-defns compiled-program)
+                         (compiled-program-pinfo compiled-program))]
+                [(output-port) (open-output-string)]
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-DEFINITIONS defns)
+                  (IMAGES (string-append "[" "]"))
+                  (PROGRAM-TOPLEVEL-EXPRESSIONS
+                   (compiled-program-toplevel-exprs
+                    compiled-program))
+                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
     (fill-template-port (open-input-file javascript-main-template)
                         output-port
                         mappings)
@@ -130,11 +130,11 @@
 ;; get-permission-js-array: (listof permission) -> string
 (define (get-permission-js-array perms) 
   (string-append "["
-		 (string-join (map (lambda (x)
-				     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
-				   perms)
-			      ", ")
-		 "]"))
+                 (string-join (map (lambda (x)
+                                     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
+                                   perms)
+                              ", ")
+                 "]"))
 
 
 
