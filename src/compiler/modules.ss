@@ -20,45 +20,54 @@
     (make-module-binding 'world-effects
                          module-path
                          (list (bf 'make-effect:none module-path 0
-                                   false "plt.world.Kernel.make_dash_effect_colon_none")
+                                   false 
+                                   "make_dash_effect_colon_none")
                                (bf 'make-effect:beep module-path 0
-                                   false "plt.world.Kernel.make_dash_effect_colon_beep")
-                               (make-binding:function 'make-effect:play-sound-url
-						      module-path
-						      1
-						      false 
-						      "plt.world.Kernel.make_dash_effect_colon_play_dash_sound_dash_url"
-						      (list PERMISSION:INTERNET)
-						      false)
-                               (bf 'make-effect:stop-sound-url module-path 1
-                                   false "plt.world.Kernel.make_dash_effect_colon_stop_dash_sound_dash_url")
-                               (bf 'make-effect:pause-sound-url module-path 1
-                                   false "plt.world.Kernel.make_dash_effect_colon_pause_dash_sound_dash_url")
-                               (bf 'make-effect:set-sound-volume module-path 1
-                                   false "plt.world.Kernel.make_dash_effect_colon_set_dash_sound_dash_volume")
-                               (bf 'make-effect:raise-sound-volume module-path 0
-                                   false "plt.world.Kernel.make_dash_effect_colon_raise_dash_sound_dash_volume")
-                               (bf 'make-effect:lower-sound-volume module-path 0
-                                   false "plt.world.Kernel.make_dash_effect_colon_lower_dash_sound_dash_volume")
+                                   false 
+                                   "make_dash_effect_colon_beep")
                                (bf 'make-effect:play-dtmf-tone module-path 2
-                                   false "plt.world.Kernel.make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                                   false 
+                                   "make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                               (make-binding:function 
+                                'make-effect:send-sms module-path 2 false 
+                                "plt.world.Kernel.make_dash_effect_colon_send_dash_sms"
+                                (list PERMISSION:SEND-SMS)
+                                false)                               
+                               (make-binding:function
+                                'make-effect:play-sound-url
+                                module-path
+                                1
+                                false 
+                                "make_dash_effect_colon_play_dash_sound_dash_url"
+                                (list PERMISSION:INTERNET)
+                                false)
+                               (bf 'make-effect:stop-sound-url module-path 1
+                                   false 
+                                   "make_dash_effect_colon_stop_dash_sound_dash_url")
+                               (bf 'make-effect:pause-sound-url module-path 1
+                                   false
+                                   "make_dash_effect_colon_pause_dash_sound_dash_url")
+                               (bf 'make-effect:set-sound-volume module-path 1
+                                   false 
+                                   "make_dash_effect_colon_set_dash_sound_dash_volume")
+                               (bf 'make-effect:raise-sound-volume module-path 0
+                                   false
+                                   "make_dash_effect_colon_raise_dash_sound_dash_volume")
+                               (bf 'make-effect:lower-sound-volume module-path 0
+                                   false 
+                                   "make_dash_effect_colon_lower_dash_sound_dash_volume")
+                               
                                (make-binding:function 'make-effect:set-wake-lock module-path 1
-                                   false "plt.world.Kernel.make_dash_effect_colon_set_dash_wake_dash_lock" 
+                                   false "make_dash_effect_colon_set_dash_wake_dash_lock" 
                                    (list PERMISSION:WAKE-LOCK) 
                                    false)
-                               (make-binding:function 'make-effect:release-wake-lock
-                                                      module-path
-                                                      0
-                                                      false "plt.world.Kernel.make_dash_effect_colon_release_dash_wake_dash_lock"
-                                                      (list PERMISSION:WAKE-LOCK)
-                                                      false)
-                               (bf 'make-effect:js-load-script module-path 1 false "plt.world.Kernel.make_dash_effect_colon_js_dash_load_dash_script")
-                               (bf 'make-effect:js-exec-string module-path 1 false "plt.world.Kernel.make_dash_effect_colon_js_dash_exec_dash_string")
-
-                               (make-binding:function 'make-effect:send-sms module-path 2 false 
-                                                      "plt.world.Kernel.make_dash_effect_colon_send_dash_sms"
-                                                      (list PERMISSION:SEND-SMS)
-                                                      false)))))
+                               (make-binding:function
+                                'make-effect:release-wake-lock
+                                module-path
+                                0
+                                false "make_dash_effect_colon_release_dash_wake_dash_lock"
+                                (list PERMISSION:WAKE-LOCK)
+                                false)))))
 
 
 (define world-handlers-module 
