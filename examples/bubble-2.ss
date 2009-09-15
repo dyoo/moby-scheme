@@ -2,8 +2,8 @@
 ;; Running out of time: the bubble-chasing game.
 
 
-;; A world is a posn, a radius, and a vel.
-(define-struct world (posn r vel))
+;; A world is a posn, a radius, a vel, a target posn, and a score.
+(define-struct world (posn r vel target-posn score))
 
 
 
@@ -16,37 +16,92 @@
 ;; A velocity has an x and y component.
 (define-struct vel (x y))
 
-;; A target is at a random position.
-(define target (make-posn (random WIDTH) (random HEIGHT)))
-
 
 ;; The initial world starts at the center, with stillness.
 (define initial-world 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
-              (make-vel 0 0)))
+              (make-vel 0 0)              
+              (make-posn 0 0)
+              0))
+
 
 ;; tick: world -> world
 ;; Moves the ball by a velocity, and shrinks it.
 (define (tick w)
-  (make-world (posn+vel (world-posn w) (world-vel w))
-              (- (world-r w) 1/3)
-              (world-vel w)))
+  (cond
+    [(collide? w)
+     (make-world (posn+vel (world-posn w) (world-vel w))
+                 30
+                 (world-vel w)
+                 (world-target-posn w)
+                 (add1 (world-score w)))]
+    [else
+     (make-world (posn+vel (world-posn w) (world-vel w))
+                 (- (world-r w) 1/3)
+                 (world-vel w)
+                 (world-target-posn w)
+                 (world-score w))]))
+
+
+
+
+
+;; tick-effect: world -> effect
+;; If we do collide, re-randomize the target posn.
+(define (tick-effect w)
+  (cond
+    [(collide? w)
+     (randomize-world-target w)]
+    [else
+     empty]))
+    
+
+
 
 ;; tilt: world number number number -> world
 ;; Adjusts velocity based on the tilt.
 (define (tilt w azimuth pitch roll)
   (make-world (world-posn w)
               (world-r w)
-              (make-vel roll (- pitch))))
+              (make-vel roll (- pitch))
+              (world-target-posn w)
+              (world-score w)))
+
+  
+;; render: world -> scene
+;; Renders the world.
+(define (render w)
+  (place-image/posn (circle TARGET-RADIUS "solid" "red")
+                    (world-target-posn w)
+                    (place-image/posn (circle (world-r w) "solid" "blue")
+                                      (world-posn w)
+                                      (empty-scene WIDTH HEIGHT))))
+
+;; collide?: world -> boolean
+;; Produces true if the target and the ball have collided.
+(define (collide? w)
+  (< (distance (world-posn w) (world-target-posn w))
+     (+ TARGET-RADIUS (world-r w))))
 
 
+;; game-ends?: world -> boolean
+;; Produces true if the game should finish; we end when there's
+;; no more ball left.
+(define (game-ends? w)
+  (<= (world-r w) 1))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key: world key -> world
 ;; Adjust velocity based on key presses.
 (define (key w a-key)
   (make-world (world-posn w)
               (world-r w)
-              (update-vel-with-key (world-vel w) a-key)))
+              (update-vel-with-key (world-vel w) a-key)
+              (world-target-posn w)
+              (world-score w)))
   
 
 ;; update-vel-with-key: vel key -> vel
@@ -66,29 +121,6 @@
                    (+ (vel-y v) 3))]
         [else
          v]))
-        
-
-  
-;; render: world -> scene
-;; Renders the world.
-(define (render w)
-  (place-image/posn (circle TARGET-RADIUS "solid" "red")
-                    target
-                    (place-image/posn (circle (world-r w) "solid" "blue")
-                                      (world-posn w)
-                                      (empty-scene WIDTH HEIGHT))))
-
-;; collide?: world -> boolean
-;; Produces true if the target and the ball have collided.
-(define (collide? w)
-  (< (distance (world-posn w) target)
-     (+ TARGET-RADIUS (world-r w))))
-
-
-;; game-ends?: world -> boolean
-;; Produces true if the game should finish.
-(define (game-ends? w)
-  (or (<= (world-r w) 1) (collide? w)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -115,12 +147,46 @@
 ;; place-image/posn: image posn scene -> scene
 (define (place-image/posn an-image a-posn a-scene)
   (place-image an-image (posn-x a-posn) (posn-y a-posn) a-scene))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; randomize-world-target: world -> effect
+;; Constructs an effect that, when triggered, will randomize the world.
+(define (randomize-world-target w)
+  (list (make-effect:pick-random
+         WIDTH
+         (lambda (w n) 
+           (update-world-target-posn 
+            w 
+            (make-posn n (posn-y (world-posn w))))))
+        (make-effect:pick-random 
+         HEIGHT
+         (lambda (w n) 
+           (update-world-target-posn
+            w 
+            (make-posn (posn-x (world-posn w)) n))))))
+
+;; update-world-target-posn: world posn -> world
+;; Updates the target posn
+(define (update-world-target-posn w posn)
+  (make-world 
+   (world-posn w)
+   (world-r w)
+   (world-vel w)
+   posn
+   (world-score w)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
 (js-big-bang initial-world
+             (initial-effect (randomize-world-target initial-world))
+
+             (on-tick* 1/10 tick tick-effect)
+             (on-tilt tilt)
+
              (on-redraw render)
              (on-key key)
-             (on-tick 1/10 tick)
-             (stop-when game-ends?)
-             (on-tilt tilt))
+             (stop-when game-ends?))
