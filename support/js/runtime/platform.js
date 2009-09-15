@@ -24,6 +24,7 @@ plt.platform = {};
 	this.soundService = chooseSoundService();
 	this.powerService = choosePowerService();
 	this.smsService = chooseSmsService();
+	this.pickPlaylistService = choosePickPlaylistService();
     };
     
     JavascriptPlatform.prototype.getTiltService = function() {
@@ -58,6 +59,9 @@ plt.platform = {};
 	return this.smsService;
     };
 
+    JavascriptPlatform.prototype.getPickPlaylistService = function() {
+	return this.pickPlaylistService;
+    };
 
 
 
@@ -749,6 +753,33 @@ plt.platform = {};
     }
     GenericSmsService.prototype.send = function(address, msg) {
     };
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    function choosePickPlaylistService() {
+	if (isPhonegapAvailable()) {
+	    return new PhonegapPickPlaylistService();
+	} else {
+	    return new GenericPickPlaylistService();
+	}
+    }
+    function PhonegapPickPlaylistService() {
+    }
+    PhonegapPickPlaylistService.prototype.pickPlaylist = function() {
+	// FIXME
+	navigator.dialogPickers.pickPlaylist();
+    }
+    
+    function GenericPickPlaylistService() {
+    }
+
+    GenericPickPlaylistService.prototype.pickPlaylist = function() {
+	// FIXME
+	alert("pick playlist currently unavailable");
+    }
+
+    
 
 
 

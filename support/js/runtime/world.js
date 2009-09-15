@@ -585,10 +585,9 @@ plt.world.Kernel = plt.world.Kernel || {};
 	plt.platform.Platform.getInstance().getPowerService().releaseWakeLock();
     };
     effect_colon_pick_dash_playlist.prototype.run = function() {
-	// FIXME
+	plt.platform.Platform.getInstance().getPickPlaylistService().pickPlaylist();
     };
     effect_colon_pick_dash_random.prototype.run = function() {
-	// FIXME
 	var aRandomNumber =
 	    plt.types.Rational.makeInstance(
 		Math.floor(plt.types.NumberTower.toInteger(this._fields[0]) * 
