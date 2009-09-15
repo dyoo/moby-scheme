@@ -20,6 +20,7 @@
 (define-struct effect:lower-sound-volume ())
 (define-struct effect:set-wake-lock (locks))
 (define-struct effect:release-wake-lock ())
+(define-struct effect:pick-playlist (f))
 
 
 ;; effect: X -> boolean
@@ -36,7 +37,8 @@
       (effect:raise-sound-volume? thing)
       (effect:lower-sound-volume? thing)
       (effect:set-wake-lock? thing)
-      (effect:release-wake-lock? thing)))
+      (effect:release-wake-lock? thing)
+      (effect:pick-playlist? thing)))
 
 (provide/contract [struct effect:none ()]
                   [struct effect:beep ()]
@@ -52,4 +54,5 @@
                   [struct effect:raise-sound-volume ()]
                   [struct effect:set-wake-lock ([locks number?])]
                   [struct effect:release-wake-lock ()]
+                  [struct effect:pick-playlist ([f (any/c any/c . -> . any)])]
                   [effect? (any/c . -> . boolean?)])
