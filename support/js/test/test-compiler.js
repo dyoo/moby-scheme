@@ -215,6 +215,48 @@ function init() {
 					   				"(begin (set! a x) a)))" +
 	      			   			"(begin (f 21) a)")));
 		
+	},
+
+	testCaseSpecialForm: function(){
+		// normal behaviour
+		this.assert(isEqual(symbol("big"),
+							run("(case (+ 7 5)" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big])")));
+		// normal behaviour - 2
+		this.assert(isEqual(symbol("small"),
+							run("(case (- 7 5)" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big])")));
+
+		// else clause
+		this.assert(isEqual(symbol("dummy"),
+							run("(case (* 7 5)" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big]" +
+									"[else 'dummy])")));
+
+		// no else caluse - void output
+		this.assert(isEqual(number(3),
+							run("(case (* 7 5)" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big])" +
+									"3")));
+
+		// first occurance will be evaluated - like cond
+		this.assert(isEqual(symbol("big"),
+							run("(case 12" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big]" +
+									"[(12 13 14) 'bigger])")));
+
+		// no quoted expression
+		this.assertRaise("MobySyntaxError",
+						function(){
+							run("(case (* 7 5)" +
+									"[2 'small]" +
+									"[(10 11 12) 'big])" +
+									"3")});
 	}
 });
 
