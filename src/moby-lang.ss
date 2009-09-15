@@ -6,7 +6,7 @@
          "stub/jsworld.ss"
          "stub/world.ss"
          "stub/net.ss"
-         "stub/private/world-effects.ss"
+         "compiler/effect-struct.ss"
 	 "stub/location.ss"
          (for-syntax scheme/base
                      "stx-helpers.ss"))
@@ -41,7 +41,7 @@
          (all-from-out "stub/parser.ss")
          (all-from-out "stub/world.ss")
          (all-from-out "stub/net.ss")
-         (all-from-out "stub/private/world-effects.ss")
+         (all-from-out "compiler/effect-struct.ss")
 	 (all-from-out "stub/location.ss")
          
          void

@@ -133,7 +133,7 @@ plt.world.config = plt.world.config || {};
     //////////////////////////////////////////////////////////////////////
 
     function getNoneEffect() {
-	return plt.world.Kernel.make_dash_effect_colon_none();
+	return make_dash_effect_colon_none();
     }
 
 

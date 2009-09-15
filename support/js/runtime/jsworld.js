@@ -323,7 +323,7 @@ plt.world.MobyJsworld = {};
     // button: (world -> world) assoc -> node
     Jsworld.button = function(f, args) {
 	var noneF = function(world) {
-	    return plt.world.Kernel.make_dash_effect_colon_none();
+	    return make_dash_effect_colon_none();
 	};
 	var node = Jsworld.buttonStar(f, 
 				      noneF,
