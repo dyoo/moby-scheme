@@ -15,13 +15,10 @@
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
+         "../compiler/effect-struct.ss"
          "private/world-effects.ss")
 
-#;(provide (all-from-out "private/world-effects.ss"))
-;(provide-primitive effect?)
-;(provide-primitive make-effect:none)
-;(provide-primitive make-effect:beep)
-;(provide-primitive make-effect:play-dtmf-tone)
+
 
 
 

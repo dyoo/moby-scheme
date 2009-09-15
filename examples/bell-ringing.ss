@@ -1,6 +1,11 @@
 #lang s-exp "../moby-lang.ss"
-
 ;; Bell ringing program for Moby.
+
+
+;; The world is a number counting how many times we've been shaken, 
+;; and the current tone.
+(define-struct world (shaken tone))
+
 
 
 (define WIDTH 320)
@@ -9,9 +14,6 @@
 (define MIN-TONE 1)
 
 
-;; The world is a number counting how many times we've been shaken, 
-;; and the current tone.
-(define-struct world (shaken tone))
 
 (define initial-world (make-world 0 1))
 

@@ -2,6 +2,12 @@
 ;; Running out of time: the bubble-chasing game.
 
 
+;; A world is a posn, a radius, and a vel.
+(define-struct world (posn r vel))
+
+
+
+
 (define WIDTH 320)
 (define HEIGHT 480)
 
@@ -13,11 +19,9 @@
 ;; A target is at a random position.
 (define target (make-posn (random WIDTH) (random HEIGHT)))
 
-;; A world is a posn, a radius, and a vel.
-(define-struct world (posn r vel))
 
 ;; The initial world starts at the center, with stillness.
-(define initial-w 
+(define initial-world 
   (make-world (make-posn (quotient WIDTH 2) (quotient HEIGHT 2))
               30
               (make-vel 0 0)))
@@ -114,7 +118,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(js-big-bang initial-w
+(js-big-bang initial-world
              (on-redraw render)
              (on-key key)
              (on-tick 1/10 tick)

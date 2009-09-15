@@ -1,6 +1,7 @@
 #lang scheme/base
 
-(require scheme/contract
+(require "../../compiler/effect-struct.ss"
+         scheme/contract
          scheme/port
          scheme/file
          scheme/path
@@ -27,54 +28,6 @@
 ;                                                                        
 ;                                                                        
 ;                                                                        
-
-
-
-(define-struct effect:none () 
-  #:prefab)
-
-(define-struct effect:beep ()
-  #:prefab)
-
-(define-struct effect:play-dtmf-tone (tone duration)
-  #:prefab)
-
-
-(define-struct effect:send-sms (address  ;; string
-                                msg ;; string
-                                )
-  #:prefab)
-
-(define-struct effect:play-sound-url (url ;; string
-                                  )
-  #:prefab)
-
-(define-struct effect:pause-sound-url (url)
-  #:prefab) ;; number
-
-(define-struct effect:stop-sound-url (url)
-  #:prefab) ;; number
-
-(define-struct effect:set-sound-volume (volume)
-  #:prefab) ;; number
-
-(define-struct effect:set-wake-lock (locks)
-  #:prefab) ;; number
-
-(define-struct effect:release-wake-lock ()
-  #:prefab) ;; number
-
-
-
-;; effect?: X -> boolean
-;; Determines if thing is an effect.
-(define (effect? thing)
-  (or (effect:none? thing)
-      (effect:beep? thing)
-      (effect:play-dtmf-tone? thing)
-      (effect:send-sms? thing)
-      (effect:play-sound-url? thing)))
-
 
 
 ;; lookup-sound-url: string -> bytes
@@ -152,20 +105,4 @@
 
 
 
-(provide/contract [struct effect:none ()]
-                  [struct effect:beep ()]
-                  [struct effect:play-dtmf-tone ([tone number?]
-                                                 [duration number?])]
-
-                  [struct effect:send-sms ([address string?]
-                                           [msg string?])]
-                  [struct effect:play-sound-url ([url string?])]
-                  [struct effect:pause-sound-url ([url string?])]
-                  [struct effect:stop-sound-url ([url string?])]
-		  [struct effect:set-sound-volume ([volume number?])]
-
-		  [struct effect:set-wake-lock ([locks number?])]
-		  [struct effect:release-wake-lock ()]
-                  
-                  [effect? (any/c . -> . boolean?)]
-                  [effect-apply! (effect? . -> . any)])
+(provide/contract [effect-apply! (effect? . -> . any)])

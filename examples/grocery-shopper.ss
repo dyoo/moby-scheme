@@ -3,6 +3,13 @@
 ;; Grocery store shopper
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
+
+
+;; The world is current location, the places that are nearby that location, and a description
+;; of the items we've found at that place.
+(define-struct world (loc nearby-places description))
+
+
 (define WIDTH 320)
 (define HEIGHT 480)
 
@@ -21,10 +28,6 @@
   (list (make-item "Stop and Shop" "Soap")
         (make-item "Boynton" "Pizza")))
 
-
-;; The world is current location.
-;; The initial world is one for dyoo's My Saved Places.
-(define-struct world (loc nearby-places description))
 
 (define initial-world 
   (make-world (make-loc 0 0) empty ""))

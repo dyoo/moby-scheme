@@ -193,24 +193,35 @@ for documentation on these forms.
 
 ----------------------------------------------------------------------
 
+Restrictions from ISL
+---------------------
 
-Extensions
+The moby language currently doesn't support:
 
+    random
+    for-each
+
+Random numbers can be computed by using a js-big-bang in combination
+with the make-effect:random effect constructor.
+
+
+
+Extensions to ISL
+-----------------
 
 get-url: string -> string
 
-Do an HTTP GET to grab the string content from a URL.  If the second
-argument is non-empty, it is treated as a list of key-value pairs to
-be encoded in the query portion of the string.
+Do an HTTP GET to grab the string content from a URL.
 
-    Example: (get-url "http://plt-scheme.org/" '())
+    Example: (get-url "http://plt-scheme.org/")
 
 
 
 location-distance: number number number number -> number
 
 Given latitude-1, longitude-1, latitude-2, longitude-2, produces the
-distance in meters.
+distance between the locations in terms of meters.
+
 
 
 parse-xml: string -> sexpr
@@ -395,28 +406,34 @@ Stimulus Handlers
 Stimulus handlers are provided as additional arguments to a js-big-bang.
 
 Each stimulus has an unstarred and a starred version; the starred
-version allows you to provide a world -> effect function.  When the
-given stimulus is fired off, the old world is used to compute both the
-new world and the optional effect.  Afterwards, the effect is applied.
+version allows you to provide a world -> effect-group function.  When
+the given stimulus is fired off, the old world is used to compute both
+the new world and the optional effect.  Afterwards, each effect in the
+effect group is applied.
+
+An effect-group is either a:
+
+   effect, or a 
+   (listof effect)
 
 
 
 on-tick: number (world -> world) -> handler
-on-tick*: number (world -> world) (world -> effect) -> handler
+on-tick*: number (world -> world) (world -> effect-group) -> handler
 
 Delays by n seconds, and then fires the on-tick handlers.
 
 
 
 on-shake: (world -> world) -> handler
-on-shake*: (world -> world) (world -> effect) -> handler
+on-shake*: (world -> world) (world -> effect-group) -> handler
 
 Fires the shake handlers when the phone is physically jerked.
 
 
 
 on-location-change: (world number number -> world) -> handler
-on-location-change*: (world number number -> world) (world number number -> effect) -> handler
+on-location-change*: (world number number -> world) (world number number -> effect-group) -> handler
 
 Fires the location handlers when the latitude or longitude of the
 device has changed.
@@ -424,13 +441,13 @@ device has changed.
 
 
 on-tilt: (world number number number -> world) -> handler
-on-tilt*: (world number number number -> world) (world number number number -> effect) -> handler
+on-tilt*: (world number number number -> world) (world number number number -> effect-group) -> handler
 
 Fires the tile handlers when the phone has been tilted.
 
 
 on-acceleration: (world number number number -> world) -> handler
-on-acceleration*: (world number number number -> world) (world number number number -> effect) -> handler
+on-acceleration*: (world number number number -> world) (world number number number -> effect-group) -> handler
 
 
 Fires the acceleration handlers when the device feels change in acceleration.
@@ -443,7 +460,7 @@ Effects
 
 Effects allow world programs to apply side effects to the outside
 world.  These are used in conjunction with the starred version of the
-stimulus handlers.
+stimulus handlers described above.
 
 
 make-effect:none -> effect
@@ -465,10 +482,8 @@ make-effect:release-wake-lock: number -> effect
 make-effect:send-sms: string string -> effect
 
 
-An effect takes place 
-
+make-effect:generate-random: (world number -> world) -> effect
+make-effect:pick-playlist: (world playlist -> world) -> effect
 
 
 ----------------------------------------------------------------------
-
-

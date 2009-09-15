@@ -1,5 +1,11 @@
 #lang s-exp "../moby-lang.ss"
+
+;; A silencing music player.
+
+
+;; The world is the amount of time that's passed since the start, and the volume.
 (define-struct world (time volume))
+
 
 ;; timer and initial volume will be user-inputted parameters later
 (define init-time 45)
@@ -79,7 +85,6 @@
 
 
 (js-big-bang initial-world
-             '()
              (on-draw draw draw-css)
              (on-tick* 1 update get-effects)
              (on-shake* reset-world get-effects))
