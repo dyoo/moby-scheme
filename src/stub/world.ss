@@ -16,7 +16,7 @@
          lang/prim
          (for-syntax scheme/base)
          "../compiler/effect-struct.ss"
-         "private/world-effects.ss")
+         "world-effects.ss")
 
 
 
