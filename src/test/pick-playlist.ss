@@ -3,5 +3,21 @@
 (define (update-playlist w playlist)
   playlist)
 
+(define (draw w)
+  (list (js-div)
+	(list (js-text (format "Current playlist: ~s"
+			       w)))
+
+	(list (js-button*
+	       (lambda (w)
+		 w)
+	       (lambda (w)
+		 (make-effect:pick-playlist update-playlist)))
+	      (list (js-text "Pick playlist")))))
+
+(define (draw-css w)
+  '())
+		 
+     
 (js-big-bang false
-             (initial-effect (make-effect:pick-playlist update-playlist)))
+	     (on-draw draw draw-css))

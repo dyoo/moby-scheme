@@ -769,8 +769,6 @@ plt.platform = {};
     PhonegapPickPlaylistService.prototype.pickPlaylist = function(callback) {
 	// playlist: plt.playlist.PlaylistRecord
 	var wrappedCallback = function(playlist) {
-	    playlist.toWrittenString = function () { "<Playlist>"; }
-	    playlist.toDisplayedString = function () { "<Playlist>"; }
 	    callback(playlist);
 	}
 
