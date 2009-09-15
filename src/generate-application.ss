@@ -163,7 +163,12 @@
                        (action ((android:name "android.intent.action.MAIN")))
                        (category
                         ((android:name
-                          "android.intent.category.LAUNCHER")))))))])
+                          "android.intent.category.LAUNCHER")))))
+
+	    (activity ((android:name "plt.playlist.PickPlaylist")
+		       (android:label "PickPlaylist"))
+		      (action ((android:name "android.intent.action.PICK")))
+		      (category ((android:name "android.intent.category.DEFAULT"))))))])
     
     (xexpr->string AndroidManifest.xml)))
     

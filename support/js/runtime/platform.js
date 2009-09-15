@@ -766,15 +766,21 @@ plt.platform = {};
     }
     function PhonegapPickPlaylistService() {
     }
-    PhonegapPickPlaylistService.prototype.pickPlaylist = function() {
-	// FIXME
-	navigator.dialogPickers.pickPlaylist();
+    PhonegapPickPlaylistService.prototype.pickPlaylist = function(callback) {
+	// playlist: plt.playlist.PlaylistRecord
+	var wrappedCallback = function(playlist) {
+	    playlist.toWrittenString = function () { "<Playlist>"; }
+	    playlist.toDisplayedString = function () { "<Playlist>"; }
+	    callback(playlist);
+	}
+
+	navigator.dialogPickers.pickPlaylist(wrappedCallback);
     }
     
     function GenericPickPlaylistService() {
     }
 
-    GenericPickPlaylistService.prototype.pickPlaylist = function() {
+    GenericPickPlaylistService.prototype.pickPlaylist = function(callback) {
 	// FIXME
 	alert("pick playlist currently unavailable");
     }

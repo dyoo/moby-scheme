@@ -585,7 +585,16 @@ plt.world.Kernel = plt.world.Kernel || {};
 	plt.platform.Platform.getInstance().getPowerService().releaseWakeLock();
     };
     effect_colon_pick_dash_playlist.prototype.run = function() {
-	plt.platform.Platform.getInstance().getPickPlaylistService().pickPlaylist();
+	var updater = this._fields[0];
+	var callback = function(playlist) {
+	    setTimeout(function() {
+		var changeWorld = plt.world.config.CONFIG.lookup("changeWorld");
+		changeWorld(function(w) {
+		    return updater([w, playlist]);
+		});
+	    }, 0);
+	}
+	plt.platform.Platform.getInstance().getPickPlaylistService().pickPlaylist(callback);
     };
     effect_colon_pick_dash_random.prototype.run = function() {
 	var aRandomNumber =
