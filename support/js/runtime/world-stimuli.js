@@ -16,11 +16,12 @@ plt.world = plt.world || {};
     // Processes a stimuli by compute the effect and applying it, and
     // computing a new world to replace the old.
     function doStimuli(computeEffectF, computeWorldF, restArgs) {
+	var effectUpdaters = [];
 	change(function(w) {
 	    var args = [w].concat(restArgs);
 	    if (computeEffectF) {
 		var effect = computeEffectF(args);
-		applyEffect(effect);
+		effectUpdaters = applyEffect(effect);
 	    }    
 	    if (computeWorldF) {
 		return computeWorldF(args);
@@ -28,6 +29,10 @@ plt.world = plt.world || {};
 		return w;
 	    }
 	});
+	
+	for (var i = 0; i < effectUpdaters.length; i++) {
+	    change(effectUpdaters[i]);
+	}
     }
 
 
@@ -141,8 +146,9 @@ plt.world = plt.world || {};
 	lookup('changeWorld')(f);
     }
 
+    // applyEffect: compound-effect: (arrayof (world -> world))
     function applyEffect(e) {
-	plt.world.Kernel.applyEffect(e);
+	return plt.world.Kernel.applyEffect(e);
     }
 
     //////////////////////////////////////////////////////////////////////

@@ -8,7 +8,8 @@
            [r (syntax-case mod ()
                 [(module name lang* . body)
                  (cond
-                   [(not (null? (cdr (syntax-e #'body))))
+                   [(and (pair? (syntax-e #'body))
+                         (not (null? (cdr (syntax-e #'body)))))
                     (with-syntax ([lang (datum->syntax
                                          #'lang* lang #'lang*)])
                       (syntax/loc mod (module name lang . body)))]

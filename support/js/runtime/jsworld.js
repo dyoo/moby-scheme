@@ -234,7 +234,16 @@ plt.world.MobyJsworld = {};
 
 
 	if (config.lookup('initialEffect')) {
-	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
+	    var updaters =
+		plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
+	    for (var i = 0 ; i < updaters.length; i++) {
+		if (config.lookup('stopWhen') && 
+		    config.lookup('stopWhen')([initWorld])) {
+		    break;
+		} else {
+		    initWorld = updaters[i](initWorld);
+		}
+	    }
 	}
 	
 

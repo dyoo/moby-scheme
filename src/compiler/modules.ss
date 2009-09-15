@@ -67,7 +67,12 @@
                                 0
                                 false "make_dash_effect_colon_release_dash_wake_dash_lock"
                                 (list PERMISSION:WAKE-LOCK)
-                                false)))))
+                                false)
+                               (bf 'make-effect:pick-playlist module-path 1 false
+                                   "make_dash_effect_colon_pick_dash_playlist")
+                               (bf 'make-effect:pick-random module-path 2 false
+                                   "make_dash_effect_colon_pick_dash_random")
+                               ))))
 
 
 (define world-handlers-module 

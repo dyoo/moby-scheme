@@ -51,7 +51,6 @@
 
 
 
-
 ;; effect-apply!: effect -> void
 ;; Apply
 (define (effect-apply! e)
@@ -91,7 +90,25 @@
                      (lambda ()
                        (play-sound filename async?))
                      (lambda ()
-                       (delete-file filename))))]))
+                       (delete-file filename))))]
+    [(effect:pause-sound-url? e)
+     (void)]
+    [(effect:stop-sound-url? e)
+     (void)]
+    [(effect:set-sound-volume? e)
+     (void)]
+    [(effect:raise-sound-volume? e)
+     (void)]
+    [(effect:lower-sound-volume? e)
+     (void)]
+    [(effect:set-wake-lock? e)
+     (void)]
+    [(effect:release-wake-lock? e)
+     (void)]
+    [(effect:pick-playlist? e)
+     (void)]
+    [(effect:pick-random? e)
+     ((effect:pick-random-update-f e) (random (effect:pick-random-n e)))]))
      
 
 ;; file-name-from-url-string: string -> string

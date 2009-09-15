@@ -1,5 +1,5 @@
 
-// Depends on kernel.js, world-config.js
+// Depends on kernel.js, world-config.js, effect-struct.js
 var plt = plt || {};
 plt.world = plt.world || {};
 plt.world.Kernel = plt.world.Kernel || {};
@@ -156,9 +156,6 @@ plt.world.Kernel = plt.world.Kernel || {};
 				   'shutdownWorld': plt.world.Kernel.shutdownWorld});
 	plt.world.config.CONFIG = config;
 
-	if (config.lookup('initialEffect')) {
-	    plt.world.Kernel.applyEffect(config.lookup('initialEffect'));
-	}
 
 	if (config.lookup('onKey')) {
 	    newWindow.onkeypress = function(e) {
@@ -166,32 +163,44 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    }
 	}
 
-       if (config.lookup('onRedraw')) {
-	   addWorldListener(function (w) {
+	if (config.lookup('onRedraw')) {
+	    addWorldListener(function (w) {
 		var context = 
 		    canvas.getContext("2d");
 		var aScene = 
-		  config.lookup('onRedraw')([w]);
+		    config.lookup('onRedraw')([w]);
 		aScene.render(context,
 			      0,
 			      0);
-	   });
-       }
-
+	    });
+	}
 
 	addWorldListener(function (w) {
-	  if (config.lookup('stopWhen')) {
-	    if (config.lookup('stopWhen')([w])) {
+	    if (config.lookup('stopWhen')) {
+		if (config.lookup('stopWhen')([w])) {
 		    stopped = true;
+		}
 	    }
-	  }
 	});
 
- 	changeWorld(aWorld);
 
  	if(config.lookup('onTick')) {
 	  scheduleTimerTick(newWindow, config);
 	}
+
+
+ 	changeWorld(aWorld);
+
+	if (config.lookup('initialEffect')) {
+	    var updaters = plt.world.Kernel.applyEffect(
+		config.lookup('initialEffect'));
+	    for (var i = 0; i < updaters.length; i++) {
+		if (! stopped) {
+		    updateWorld(updaters);
+		}
+	    }
+	}
+
     };
 
     // scheduleTimerTick: -> void
@@ -505,20 +514,29 @@ plt.world.Kernel = plt.world.Kernel || {};
     // Effects
 
     /**
-     * applyEffect applies all of the effects
-     * @param aCompEffect a compound effect is either a scheme list of compound effects or a single primitive effect
-     */
+     * applyEffect: compound-effect -> (arrayof (world -> world))
+
+     applyEffect applies all of the effects
+
+     @param aCompEffect a compound effect is either a scheme list of
+     compound effects or a single primitive effect */
+
     plt.world.Kernel.applyEffect = function(aCompEffect) {
-    	if ( plt.Kernel.pair_question_(aCompEffect) ) {
-    	    plt.world.Kernel.applyEffect(aCompEffect.first());
-    	    plt.world.Kernel.applyEffect(aCompEffect.rest());
-    	}
-    	else if ( plt.Kernel.empty_question_(aCompEffect) ) {
+	var results = [];
+	if (plt.Kernel.empty_question_(aCompEffect)) {
     	    // Do Nothing
+    	} else if (plt.Kernel.pair_question_(aCompEffect)) {
+    	    results = results.concat(
+		plt.world.Kernel.applyEffect(aCompEffect.first()));
+    	    results = results.concat(
+		plt.world.Kernel.applyEffect(aCompEffect.rest()));
+    	} else {
+	    var newResult = aCompEffect.run();
+	    if (newResult) {
+		results = results.concat(newResult);
+	    }
     	}
-    	else {
-    	    aCompEffect.run();
-    	}
+	return results;
     }
 
 
@@ -566,6 +584,21 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
 	plt.platform.Platform.getInstance().getPowerService().releaseWakeLock();
     };
+    effect_colon_pick_dash_playlist.prototype.run = function() {
+	// FIXME
+    };
+    effect_colon_pick_dash_random.prototype.run = function() {
+	// FIXME
+	var aRandomNumber =
+	    plt.types.Rational.makeInstance(
+		Math.floor(plt.types.NumberTower.toInteger(this._fields[0]) * 
+			   Math.random()),
+		1);
+	var callback = this._fields[1];
+	return function(w) { return callback([w, aRandomNumber]) }
+    };
+
+    
 
 //////////////////////////////////////////////////////////////////////////
  

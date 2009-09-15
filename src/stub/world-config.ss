@@ -4,8 +4,7 @@
 
 (define-struct (world-config:on-key world-config) (f ef) #:prefab)
 (define-struct (world-config:on-tick world-config) (delay f ef) #:prefab)
-#;(define-struct (world-config:on-mouse world-config) (f ef) #:prefab)
-#;(define-struct (world-config:on-message world-config) (f ef) #:prefab)
+(define-struct (world-config:initial-effect world-config) (e) #:prefab)
 (define-struct (world-config:on-location-change world-config) (f ef) #:prefab)
 (define-struct (world-config:on-tilt world-config) (f ef) #:prefab)
 (define-struct (world-config:on-acceleration world-config) (f ef) #:prefab)
@@ -14,6 +13,8 @@
 (define-struct (world-config:on-draw world-config) (f css-f) #:prefab)
 (define-struct (world-config:stop-when world-config) (f) #:prefab)
 
+(define (initial-effect e)
+  (make-world-config:initial-effect e))
 
 (define (on-key f)
   (make-world-config:on-key f (lambda (w k) '())))

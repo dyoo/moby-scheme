@@ -55,6 +55,7 @@
          on-shake on-shake*
          on-redraw on-draw
          stop-when
+         initial-effect
          
          
          ;; jsworld

@@ -152,9 +152,48 @@ function make_dash_effect_colon_release_dash_wake_dash_lock() { return new effec
 
 function effect_colon_release_dash_wake_dash_lock_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_release_dash_wake_dash_lock; }
-function effect_question_(thing) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_none_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_beep_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_play_dash_dtmf_dash_tone_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_send_dash_sms_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_play_dash_sound_dash_url_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_pause_dash_sound_dash_url_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_stop_dash_sound_dash_url_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_set_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_raise_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_lower_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_set_dash_wake_dash_lock_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_release_dash_wake_dash_lock_question_(thing))); }
+function effect_colon_pick_dash_playlist(update_dash_f) { plt.Kernel.Struct.call(this, "make-effect:pick-playlist", [update_dash_f]);this.update_dash_f = update_dash_f; }
+                    effect_colon_pick_dash_playlist.prototype = new plt.Kernel.Struct();
+
+function make_dash_effect_colon_pick_dash_playlist(id0) { return new effect_colon_pick_dash_playlist(id0); }
+function effect_colon_pick_dash_playlist_dash_update_dash_f(obj) {
+     if (effect_colon_pick_dash_playlist_question_ (obj)) {
+        return obj.update_dash_f;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_playlist_dash_update_dash_f: not a effect:pick-playlist: ~s', [obj]));
+     }
+}
+
+function effect_colon_pick_dash_playlist_question_(obj) { 
+              return obj != null && obj != undefined && obj instanceof effect_colon_pick_dash_playlist; }
+function effect_colon_pick_dash_random(n,update_dash_f) { plt.Kernel.Struct.call(this, "make-effect:pick-random", [n,update_dash_f]);this.n = n;
+this.update_dash_f = update_dash_f; }
+                    effect_colon_pick_dash_random.prototype = new plt.Kernel.Struct();
+
+function make_dash_effect_colon_pick_dash_random(id0,id1) { return new effect_colon_pick_dash_random(id0,id1); }
+function effect_colon_pick_dash_random_dash_n(obj) {
+     if (effect_colon_pick_dash_random_question_ (obj)) {
+        return obj.n;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_random_dash_n: not a effect:pick-random: ~s', [obj]));
+     }
+}
+
+function effect_colon_pick_dash_random_dash_update_dash_f(obj) {
+     if (effect_colon_pick_dash_random_question_ (obj)) {
+        return obj.update_dash_f;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_random_dash_update_dash_f: not a effect:pick-random: ~s', [obj]));
+     }
+}
+
+function effect_colon_pick_dash_random_question_(obj) { 
+              return obj != null && obj != undefined && obj instanceof effect_colon_pick_dash_random; }
+function effect_question_(thing) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_none_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_beep_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_play_dash_dtmf_dash_tone_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_send_dash_sms_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_play_dash_sound_dash_url_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_pause_dash_sound_dash_url_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_stop_dash_sound_dash_url_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_set_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_raise_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_lower_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_set_dash_wake_dash_lock_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_release_dash_wake_dash_lock_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_pick_dash_playlist_question_(thing))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && effect_colon_pick_dash_random_question_(thing))); }
 (function() { 
   ((function (toplevel_dash_expression_dash_show0) { 
+
+
 
 
 
