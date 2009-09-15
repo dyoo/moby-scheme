@@ -72,12 +72,26 @@
 ;; render: world -> scene
 ;; Renders the world.
 (define (render w)
-  (place-image/posn (circle TARGET-RADIUS "solid" "red")
-                    (world-target-posn w)
-                    (place-image/posn (circle (world-r w) "solid" "blue")
-                                      (world-posn w)
-                                      (empty-scene WIDTH HEIGHT))))
-
+  (maybe-add-game-over-message 
+   w
+   (place-image/posn (text (format "Score: ~a" (world-score w)) 20 "black")
+                     (make-posn 20 20)
+                     (place-image/posn (circle TARGET-RADIUS "solid" "red")
+                                       (world-target-posn w)
+                                       (place-image/posn (circle (world-r w) "solid" "blue")
+                                                         (world-posn w)
+                                                         (empty-scene WIDTH HEIGHT))))))
+;; maybe-add-game-over-message: world scene -> scene
+(define (maybe-add-game-over-message w a-scene)
+  (cond
+    [(game-ends? w)
+     (place-image/posn (text "GAME OVER" 30 "red")
+                       (make-posn 20 100)
+                       a-scene)]
+    [else
+     a-scene]))
+     
+  
 ;; collide?: world -> boolean
 ;; Produces true if the target and the ball have collided.
 (define (collide? w)
@@ -184,7 +198,7 @@
 (js-big-bang initial-world
              (initial-effect (randomize-world-target initial-world))
 
-             (on-tick* 1/10 tick tick-effect)
+             (on-tick* 1/20 tick tick-effect)
              (on-tilt tilt)
 
              (on-redraw render)
