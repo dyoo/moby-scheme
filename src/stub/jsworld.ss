@@ -3,8 +3,10 @@
          "../compiler/pinfo.ss"
          "../template.ss"
          "../compiler/permission.ss"
+         "../compiler/stx.ss"
          "net.ss"
          scheme/local
+         scheme/contract
          scheme/runtime-path
          scheme/string
          scheme/tcp
@@ -30,31 +32,31 @@
 (define-struct (jsworld-widget:node jsworld-widget) (node) #:prefab)
 
 
-(define (js-div . attrs)
+(define (js-div (attrs '()))
   (make-jsworld-widget:div attrs))
 
-(define (js-p . attrs)
+(define (js-p (attrs '()))
   (make-jsworld-widget:p attrs))
 
-(define (js-button f . attrs)
+(define (js-button f (attrs '()))
   (make-jsworld-widget:button attrs f (lambda (w) '())))
 
-(define (js-button* f ef . attrs)
+(define (js-button* f ef (attrs '()))
   (make-jsworld-widget:button attrs f ef))
 
-(define (js-input type . attrs)
+(define (js-input type (attrs '()))
   (make-jsworld-widget:input attrs type))
 
-(define (js-bidirectional-input type val-f update-f . attrs)
+(define (js-bidirectional-input type val-f update-f (attrs '()))
   (make-jsworld-widget:bidirectional-input attrs type val-f update-f))
 
-(define (js-img src . attrs)
+(define (js-img src (attrs '()))
   (make-jsworld-widget:img attrs src))
 
-(define (js-text text . attrs)
+(define (js-text text (attrs '()))
   (make-jsworld-widget:text attrs text))
 
-(define (js-node raw-node . attrs)
+(define (js-node raw-node (attrs '()))
   (make-jsworld-widget:node attrs raw-node))
 
 
@@ -62,9 +64,9 @@
 
 
 
-;; js-big-bang/source: (listof stx) world0 . (listof handler) -> void
+;; js-big-bang/source: (listof stx) -> void
 ;; Generate a web site that compiles and evaluates the program.
-(define (js-big-bang/source source-code initWorld . handlers)
+(define (js-big-bang/source source-code)
   (local [(define main.js 
             (compiled-program->main.js (do-compilation source-code)))
           
@@ -138,16 +140,26 @@
 
 
 
-
+(define attrs/c (listof (list/c string? string?)))
 
 ;; FIXME: contracts!
-(provide js-big-bang/source
-         js-div
-         js-p
-         js-button
-         js-button*
-         js-input
-         js-bidirectional-input
-         js-img
-         js-text
-         js-node)
+(provide/contract [js-big-bang/source ((listof stx?) . -> . any)]
+                  [js-div (() (attrs/c) . ->* . jsworld-widget?)]
+                  [js-p (() (attrs/c) . ->* . jsworld-widget?)]
+                  [js-button (((any/c . -> . any/c)) 
+                              (attrs/c) 
+                              . ->* . jsworld-widget?)]
+                  [js-button* (((any/c . -> . any/c) 
+                                (any/c . -> . any/c))
+                               (attrs/c) 
+                               . ->* .
+                               jsworld-widget?)]
+                  [js-input ((string?) 
+                             (attrs/c) . ->* . jsworld-widget?)]
+                  [js-bidirectional-input ((string? 
+                                            (any/c . -> . any/c) 
+                                            (any/c . -> . any/c))
+                                           (attrs/c) . ->* . jsworld-widget?)]
+                  [js-img ((string?) (attrs/c) . ->* . jsworld-widget?)]
+                  [js-text (string? . -> . jsworld-widget?)]
+                  [js-node ((any/c) (attrs/c) . ->* . jsworld-widget?)])

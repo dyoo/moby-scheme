@@ -15,14 +15,16 @@
 (define-for-syntax source-code #'not-initialized-yet)
 
 
+;; Zero out js-big-bang in favor of the js-big-bang/source that'll fire off at the end.
 (define-syntax (-js-big-bang stx)
   (syntax-case stx ()
     [(_ world0 handlers ...)
      (with-syntax ([source-code source-code])
        (syntax/loc stx
-         (js-big-bang/source 'source-code
-                             world0
-                             handlers ...)))]))
+         (void world0 handlers ...)
+         #;(js-big-bang/source 'source-code
+                               world0
+                               handlers ...)))]))
 
 
 (define-syntax (-#%module-begin stx)
@@ -30,9 +32,11 @@
     [(_ form ...)
      (begin
        (set! source-code (map syntax->stx (syntax->list #'(form ...))))
-       (syntax/loc stx 
-         (#%module-begin
-          form ...)))]))
+       (with-syntax ([source-code source-code])
+         (syntax/loc stx 
+           (#%module-begin
+            form ...
+            (js-big-bang/source 'source-code)))))]))
 
 
 
