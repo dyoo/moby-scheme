@@ -11,8 +11,6 @@
 ;;
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
-
-
 ;; The world is current location, the places that are nearby that location, and a description
 ;; of the items we've found at that place.
 (define-struct world (loc nearby-places))
@@ -21,33 +19,25 @@
 (define-struct loc (lat long))
 
 ;; Our initial world will be in limbo; we'll be relocated as soon as we get a geolocation point.
-(define initial-world 
-  (make-world (make-loc 0 0) empty))
-
-
+(define initial-world (make-world (make-loc 0 0) empty))
 
 ;; A place is a name string, a location, a radius number, and an item string
 (define-struct place (name loc radius item))
 
-
 ;; update-location: world number number -> world
 ;; Updates the current location.
 (define (update-location w lat long)
-  (make-world (make-loc lat long)
-              (find-nearby-places ALL-PLACES (make-loc lat long))))
+  (make-world (make-loc lat long) (find-nearby-places ALL-PLACES (make-loc lat long))))
 	        
-
 ;; find-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
 (define (find-nearby-places places a-loc)
-  (cond
-    [(empty? places)
-     empty]
-    [(place-matches? (first places) a-loc)
-     (cons (first places) (find-nearby-places (rest places) a-loc))]
-    [else
-     (find-nearby-places (rest places) a-loc)]))
-
+  (cond [(empty? places)
+         empty]
+        [(place-matches? (first places) a-loc)
+         (cons (first places) (find-nearby-places (rest places) a-loc))]
+        [else
+         (find-nearby-places (rest places) a-loc)]))
 
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
@@ -58,8 +48,39 @@
                          (loc-long (place-loc a-place)))
       (place-radius a-place)))
 
+;; draw: world -> dom-sexpr
+(define (draw w)
+  (list (js-div '(("id" "main")))
+        (list (js-div '(("id" "title"))) 
+              (list (js-text "Minding the Store")))
+        (list (js-div) 
+              (list (js-text "Current location: "))
+              (list (js-text (loc->string (world-loc w)))))
+        (list* (js-div) 
+               (list (js-text "Nearby items by location: "))
+               (draw-items w))))
 
 
+;; draw-items: world -> (listof dom-sexpr)
+(define (draw-items w)
+  (map (lambda (p)
+         (list (js-div)
+               (list (js-text (place-name p)))
+               (list (js-text ": "))
+               (list (js-text (place-item p)))))
+       (filter (lambda (p) (not (string-whitespace? (place-item p))))
+               (world-nearby-places w))))
+
+
+;; draw-css: world -> css-sexpr
+(define (draw-css w)
+  '(("title" ("font-size" "20px"))
+    ("main" ("border-style" "solid"))))
+
+
+;; loc->string: loc -> string
+(define (loc->string a-loc)
+  (format "~a, ~a" (loc-lat a-loc) (loc-long a-loc)))
 
 
 
@@ -70,8 +91,8 @@
 ;; Parses out the places from the RSS we get from Google Maps.
 (define (parse-places xexpr)
   (parse-items
-   (find-children 'item 
-                  (children (first (find-children 'channel (children xexpr)))))))
+   (sxml-find-children 'item 
+                  (sxml-children (first (sxml-find-children 'channel (sxml-children xexpr)))))))
 
 
 ;; parse-items: (listof xexpr) -> (listof place)
@@ -92,107 +113,87 @@
               [(string=? x "")
                ""]
               [else
-               (get-text (parse-xml (string-append "<top>" x "</top>")))]))]
-    (make-place (get-text (first (find-children 'title (children xexpr))))
+               (sxml-text (parse-xml (string-append "<top>" x "</top>")))]))]
+    (make-place (sxml-text (first (sxml-find-children 'title (sxml-children xexpr))))
                 
                 (cond
-                  [(empty? (find-children 'georss:point (children xexpr)))
+                  [(empty? (sxml-find-children 'georss:point (sxml-children xexpr)))
                    (make-loc 0 0)]
                   [else
                    (parse-georss:point 
-                    (first (find-children 'georss:point (children xexpr))))])
+                    (first (sxml-find-children 'georss:point (sxml-children xexpr))))])
                 
                 ;; At the moment, we default to a radius of 100 meters.
                 100
                 
                 
                 (cond
-                  [(empty? (find-children 'description (children xexpr)))
+                  [(empty? (sxml-find-children 'description (sxml-children xexpr)))
                    ""]
                   [else
                    (apply string-append
                           (map get-description-text 
-                               (children (first (find-children 'description (children xexpr))))))]))))
+                               (sxml-children (first (sxml-find-children 'description (sxml-children xexpr))))))]))))
 
 
 ;; parse-georss:point: xexpr -> loc
 (define (parse-georss:point xexpr)
-  (make-loc (string->number (first (split-whitespace (get-text xexpr))))
-            (string->number (second (split-whitespace (get-text xexpr))))))
+  (make-loc (string->number (first (split-whitespace (sxml-text xexpr))))
+            (string->number (second (split-whitespace (sxml-text xexpr))))))
 
-  
-;; split-words: (listof string) (listof string) -> (listof string)
-(define (split-words letters word-letters-so-far)
-  (cond
-    [(empty? letters)
-     (list (implode (reverse word-letters-so-far)))]
-    [(string-whitespace? (first letters))
-     (cond [(empty? word-letters-so-far)
-            (split-words (rest letters) empty)]
-           [else
-            (cons (implode (reverse word-letters-so-far))
-                  (split-words (rest letters) empty))])]
-    [else
-     (split-words (rest letters) 
-                  (cons (first letters)
-                        word-letters-so-far))]))
-
+ 
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XML Parser Helpers.
+;;
+;; This code might be absorbed into the Moby library.
 
-;; children: xexpr -> (listof xexpr)
-(define (children an-xexpr)
+;; children: sxml -> (listof sxml)
+(define (sxml-children a-sxml)
   (cond
-    [(string? an-xexpr)
+    [(string? a-sxml)
      (error 'children "Can't have children of a string xexpr")]
     [else
-     (rest (rest an-xexpr))]))
+     (rest (rest a-sxml))]))
 
-;; attrs: xexpr -> (listof (list symbol string))
-(define (attrs an-xexpr)
-  (cond
-    [(string? an-xexpr)
-     (error 'attrs "Can't get attributes of a string xexpr")]
-    [else
-     (second an-xexpr)]))
 
-;; get-text: xexpr -> string
-(define (get-text an-xexpr)
-  (cond
-    [(string? an-xexpr)
-     an-xexpr]
-    [(pair? an-xexpr)
-     (get-text* (children an-xexpr))]
-    [(empty? an-xexpr)
-     ""]))
+;; get-text: sxml -> string
+(define (sxml-text a-sxml)
+  (local [;; get-text*: (listof xexpr) -> string
+          (define (get-text* xexprs)
+            (cond
+              [(empty? xexprs)
+               ""]
+              [else
+               (string-append (sxml-text (first xexprs))
+                              (get-text* (rest xexprs)))]))]
+    (cond
+      [(string? a-sxml)
+       a-sxml]
+      [(pair? a-sxml)
+       (get-text* (sxml-children a-sxml))]
+      [(empty? a-sxml)
+       ""])))
 
-;; get-text*: (listof xexpr) -> string
-(define (get-text* xexprs)
-  (cond
-    [(empty? xexprs)
-     ""]
-    [else
-     (string-append (get-text (first xexprs))
-                    (get-text* (rest xexprs)))]))
 
-;; find-children: symbol (listof xexpr) -> (listof xexpr)
-(define (find-children name children)
+;; sxml-find-children: symbol (listof sxml) -> (listof sxml)
+(define (sxml-find-children name children)
   (cond [(empty? children)
          empty]
         [else
          (cond [(string? (first children))
-                (find-children name (rest children))]
+                (sxml-find-children name (rest children))]
                [(pair? (first children))
                 (cond
                   [(symbol=? name (first (first children)))
                    (cons (first children)
-                         (find-children name (rest children)))]
+                         (sxml-find-children name (rest children)))]
                   [else
-                   (find-children name (rest children))])]
+                   (sxml-find-children name (rest children))])]
                [else
                 (error 'find-children children)])]))
+
 
 
 
@@ -209,6 +210,6 @@
    (parse-xml (get-url MYMAPS-URL))))
 
 
-(js-big-bang ALL-PLACES #;initial-world
-             #;(on-redraw render)
-             #;(on-location-change update-location))
+(js-big-bang initial-world
+             (on-draw draw draw-css)
+             (on-location-change update-location))
