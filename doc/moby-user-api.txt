@@ -392,10 +392,43 @@ js-button*: (world -> world) (world -> effect) (listof attrib)? -> DOM-element
 
 js-text: string -> DOM-element
 
+js-input: string (listof attrib)? -> DOM-element
+
 js-bidirectional-input: string (world -> string) (world string -> world) (listof attrib)?
 
 js-img: string -> DOM-element
 
+
+
+
+get-input-value: (or DOM-element string) -> string
+
+Get the value attribute of an input node.  If a string is provided,
+looks for the node with the given string id.
+
+Example:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#lang moby
+
+(define input-node
+  (js-input "text" '(("id" "myname"))))
+
+(define (refresh w)
+  (get-input-value "myname"))
+
+(define (draw w)
+  (list (js-div)
+        (list (js-div) (list (js-text (format "I see: ~s~n" w))))
+        (list (js-div) (list input-node))
+        (list (js-div) (list (js-button refresh) (list (js-text "Update!"))))))
+
+(define (draw-css w)
+  '())
+
+(js-big-bang "" 
+             (on-draw draw draw-css))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
