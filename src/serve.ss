@@ -14,7 +14,10 @@
          "compiler/pinfo.ss"
          "template.ss"
          "compiler/permission.ss"
-         "compiler/stx.ss")
+         "compiler/stx.ss"
+         (only-in "generate-application.ss" 
+                  generate-javascript-application
+                  generate-javascript+android-phonegap-application))
 
 
 (define-runtime-path javascript-support "../support/js")
@@ -52,13 +55,12 @@
                   "Run program")
                " "
                (a ((class "linkbutton")
-                   (href "index.html"))
+                   (href ,(url generate-js-tarball)))
                   "Get Javascript .zip")
                " "
                (a ((class "linkbutton")
                    (href ,(url generate-apk)))
                   "Get Android .apk"))))
-              
           
           (define (main-js req)
             (list #"text/javascript"
@@ -72,6 +74,7 @@
           
           (define (generate-js-tarball req)
             (list #"application/x-tar-gz"
+
                   "fill-me-in"))
           
           
@@ -140,4 +143,4 @@
 
 
 
-(provide/contract [compile-and-serve ((listof stx?) . -> . any)])
+(provide/contract [compile-and-serve (((listof stx?)) (string?) . ->* . any)])

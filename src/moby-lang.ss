@@ -26,14 +26,18 @@
 
 (define-syntax (-#%module-begin stx)
   (syntax-case stx ()
-    [(_ form ...)
+    [(mb form ...)
      (begin
-       (set! source-code (map syntax->stx (syntax->list #'(form ...))))
-       (with-syntax ([source-code source-code])
-         (syntax/loc stx 
-           (#%module-begin
-            form ...
-            (compile-and-serve 'source-code)))))]))
+       (let ([name (symbol->string (or (syntax-property stx 
+                                                        'enclosing-module-name)
+                                       'unknown))])
+         (set! source-code (map syntax->stx (syntax->list #'(form ...))))
+         (with-syntax ([source-code source-code]
+                       [module-name name])
+           (syntax/loc stx 
+             (#%module-begin
+              form ...
+              (compile-and-serve 'source-code module-name))))))]))
 
 
 
