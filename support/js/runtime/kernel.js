@@ -1841,7 +1841,7 @@ var plt = plt || {};
 		return result;
 	    } else if (node.nodeType == Node.TEXT_NODE) {
 		return node.textContent;
-	    } else if (node.nodeType == Node.CDATA_NODE) {
+	    } else if (node.nodeType == Node.CDATA_SECTION_NODE) {
 		return node.data;
 	    } else {
 		return plt.types.Empty.EMPTY;

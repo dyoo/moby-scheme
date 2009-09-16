@@ -7,91 +7,39 @@
 
 ;; The world is current location, the places that are nearby that location, and a description
 ;; of the items we've found at that place.
-(define-struct world (loc nearby-places description))
-
-
-(define WIDTH 320)
-(define HEIGHT 480)
-
+(define-struct world (loc nearby-places))
 
 ;; A location is the latitude/longitude pair.
 (define-struct loc (lat long))
 
-;; A place is a name string, a location, and a radius number.
-(define-struct place (name loc radius))
-
-;; A grocery item is a place-name and an identifier.
-(define-struct item (place-name identifier))
-
-;; Here are a list of the items we're interested in.
-(define ALL-ITEMS
-  (list (make-item "Stop and Shop" "Soap")
-        (make-item "Boynton" "Pizza")))
-
-
+;; Our initial world will be in limbo; we'll be relocated as soon as we get a geolocation point.
 (define initial-world 
-  (make-world (make-loc 0 0) empty ""))
+  (make-world (make-loc 0 0) empty))
+
+
+
+;; A place is a name string, a location, a radius number, and an item string
+(define-struct place (name loc radius item))
 
 
 ;; update-location: world number number -> world
 ;; Updates the current location.
 (define (update-location w lat long)
-  (update-world-description 
-   (make-world (make-loc lat long)
-               (find-places ALL-PLACES (make-loc lat long))
-               (world-description w))))
-
-
-;; update-world-description: world -> string
-(define (update-world-description w)
-  (make-world (world-loc w)
-	      (world-nearby-places w)
-	      (compute-description w)))
-	      
-
-
-;; filter-matching-items: place (listof item) -> (listof item)
-;; Given a place, lists out any of the items whose place-name matches.
-(define (filter-matching-items a-place items)
-  (cond
-    [(empty? items)
-     empty]
-    [(string=? (place-name a-place)
-               (item-place-name (first items)))
-     (cons (first items)
-           (filter-matching-items a-place (rest items)))]
-    [else
-     (filter-matching-items a-place (rest items))]))
-
-
-;; places-matching-items: (listof places) -> (listof item)
-;; Reports the list of nearby matching items for the given places.
-(define (places-matching-items places)
-  (cond
-    [(empty? places)
-     empty]
-    [else
-     (append (filter-matching-items (first places) ALL-ITEMS)
-             (places-matching-items (rest places)))]))
-
-
-
-;; nearby-matching-items: world -> (listof item)
-;; Returns all items that are nearby our current location.
-(define (nearby-matching-items w)
-  (places-matching-items (world-nearby-places w)))
-  
+  (make-world (make-loc lat long)
+              (find-nearby-places ALL-PLACES (make-loc lat long))))
+	        
 
 ;; find-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
-(define (find-places places a-loc)
+(define (find-nearby-places places a-loc)
   (cond
     [(empty? places)
      empty]
     [(place-matches? (first places) a-loc)
-     (cons (first places) (find-places (rest places) a-loc))]
+     (cons (first places) (find-nearby-places (rest places) a-loc))]
     [else
-     (find-places (rest places) a-loc)]))
+     (find-nearby-places (rest places) a-loc)]))
+
 
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
@@ -103,41 +51,6 @@
       (place-radius a-place)))
 
 
-
-;; compute-description: world -> string
-;; Produces a text description.
-(define (compute-description w)
-  (items->string (nearby-matching-items w)))
-
-
-;; items->string: (listof item) -> string
-(define (items->string items)
-  (cond
-    [(empty? items)
-     ""]
-    [else
-     (string-append
-      (item->string (first items))
-      (cond [(empty? (rest items)) ""] [else ", "])
-      (items->string (rest items)))]))
-
-
-;; item->string: item -> string
-(define (item->string an-item)
-  (string-append "[" 
-                 (item-place-name an-item)
-                 ": "
-                 (item-identifier an-item)
-                 "]"))
-
-
-;; render: world -> scene
-(define (render w)
-  (place-image
-   (text (world-description w) 10 "black")
-   20 
-   20
-   (empty-scene WIDTH HEIGHT)))
 
 
 
@@ -164,17 +77,26 @@
 
 
 ;; parse-item: xexpr -> place
+;; Parses an item from the RSS feed.
 (define (parse-item xexpr)
-  (cond [(empty? (find-children 'georss:point (children xexpr)))
-	 (make-place (get-text (first (find-children 'title (children xexpr))))      
-		     (make-loc 0 0)
-		     100)]
-	[else
-	 (make-place (get-text (first (find-children 'title (children xexpr))))
-		     (parse-georss:point 
-		      (first (find-children 'georss:point (children xexpr))))
-		     ;; At the moment, we default to a radius of 100 meters.
-		     100)]))
+  (make-place (get-text (first (find-children 'title (children xexpr))))
+              
+              (cond
+                [(empty? (find-children 'georss:point (children xexpr)))
+                 (make-loc 0 0)]
+                [else
+                 (parse-georss:point 
+                  (first (find-children 'georss:point (children xexpr))))])
+              
+              ;; At the moment, we default to a radius of 100 meters.
+              100
+              
+              
+              (cond
+                [(empty? (find-children 'description (children xexpr)))
+                 ""]
+                [else
+                 (first (find-children 'description (children xexpr)))])))
 
 
 ;; parse-georss:point: xexpr -> loc
@@ -226,7 +148,9 @@
     [(string? an-xexpr)
      an-xexpr]
     [(pair? an-xexpr)
-     (get-text* (children an-xexpr))]))
+     (get-text* (children an-xexpr))]
+    [(empty? an-xexpr)
+     ""]))
 
 ;; get-text*: (listof xexpr) -> string
 (define (get-text* xexprs)
@@ -269,6 +193,6 @@
    (parse-xml (get-url mymaps-url))))
 
 
-(js-big-bang initial-world
+(js-big-bang ALL-PLACES #;initial-world
              #;(on-redraw render)
-             (on-location-change update-location))
+             #;(on-location-change update-location))
