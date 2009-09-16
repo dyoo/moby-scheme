@@ -11,6 +11,12 @@
 ;;
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
+;; The url to the Google Maps "My Maps" RSS feed.
+(define MYMAPS-URL
+  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
+                 "106933521686950086948.00046579f4b482756abc5"))
+
+
 ;; The world is current location, the places that are nearby that location, and a description
 ;; of the items we've found at that place.
 (define-struct world (loc nearby-places))
@@ -28,7 +34,7 @@
 ;; Updates the current location.
 (define (update-location w lat long)
   (make-world (make-loc lat long) (find-nearby-places ALL-PLACES (make-loc lat long))))
-	        
+
 ;; find-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
 (define (find-nearby-places places a-loc)
@@ -92,7 +98,7 @@
 (define (parse-places xexpr)
   (parse-items
    (sxml-find-children 'item 
-                  (sxml-children (first (sxml-find-children 'channel (sxml-children xexpr)))))))
+                       (sxml-children (first (sxml-find-children 'channel (sxml-children xexpr)))))))
 
 
 ;; parse-items: (listof xexpr) -> (listof place)
@@ -141,7 +147,7 @@
   (make-loc (string->number (first (split-whitespace (sxml-text xexpr))))
             (string->number (second (split-whitespace (sxml-text xexpr))))))
 
- 
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -199,11 +205,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
-
-;; The url to the Google Maps "My Maps" RSS feed.
-(define MYMAPS-URL
-  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
-                 "106933521686950086948.00046579f4b482756abc5"))
 
 (define ALL-PLACES
   (parse-places 
