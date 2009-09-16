@@ -1,6 +1,14 @@
 #lang s-exp "../moby-lang.ss"
 
-;; Grocery store shopper
+;; Minding the store.
+;;
+;; Alerts the user whenever he or she gets close to a store with
+;; items on their shopping list.
+;;
+;; The user specifies stores by marking them on a Google Maps and
+;; telling the program the RSS feed URL.  The description field is
+;; used to grab the list of items at a store.
+;;
 ;; See: http://mapki.com/wiki/Google_Map_Parameters
 
 
@@ -184,13 +192,13 @@
 
 
 ;; The url to the Google Maps "My Maps" RSS feed.
-(define mymaps-url
+(define MYMAPS-URL
   (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
                  "106933521686950086948.00046579f4b482756abc5"))
 
 (define ALL-PLACES
   (parse-places 
-   (parse-xml (get-url mymaps-url))))
+   (parse-xml (get-url MYMAPS-URL))))
 
 
 (js-big-bang ALL-PLACES #;initial-world

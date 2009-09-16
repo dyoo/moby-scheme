@@ -1,5 +1,11 @@
 #lang s-exp "../moby-lang.ss"
-;; Kathi finder: A program to report where Kathi is.
+;; Homeward bound.
+;;
+;; A program to keep someone notified of your current location.
+;;
+;; Every time the position changes to and from a place, an SMS message
+;; is sent.
+
 
 (define WIDTH 320)
 (define HEIGHT 480)

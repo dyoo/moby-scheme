@@ -60,8 +60,8 @@
 (define test-bubble-2 (make-test "bubble-2.ss"))
 (define test-bubble-3 (make-test "bubble-3.ss"))
 (define test-sms (make-test "sms.ss"))
-(define test-kathi-finder (make-test "kathi-finder.ss"))
-(define test-kathi-finder-single (make-test "kathi-finder-single.ss"))
+(define test-homeward-bound (make-test "homeward-bound.ss"))
+(define test-homeward-bound-single (make-test "homeward-bound-single.ss"))
 (define test-net (make-test "net.ss"))
 (define test-get-ip-address (make-test "get-ip-address.ss"))
 (define test-parse-google-maps-places (make-test "parse-google-maps-places.ss"))
@@ -111,8 +111,8 @@
                     test-bubble-2
                     test-bubble-3
                     test-sms
-                    test-kathi-finder
-                    test-kathi-finder-single
+                    test-homeward-bound
+                    test-homeward-bound-single
                     
                     ;; Commented out: uses deprecated gui-world
                     #;test-net

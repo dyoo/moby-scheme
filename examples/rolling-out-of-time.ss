@@ -1,5 +1,8 @@
 #lang s-exp "../moby-lang.ss"
-;; Running out of time: the bubble-chasing game.
+;; Rolling out of time
+;;
+;; Roll the blue ball onto the red target: if the blue ball shrinks
+;; down to zero, then the game ends.
 
 
 ;; A world is a posn, a radius, a vel, a target posn, and a score.
