@@ -6,10 +6,13 @@
          scheme/tcp
          scheme/string
          scheme/contract
+         scheme/file
          web-server/servlet
          web-server/servlet-env
          web-server/dispatch 
+         file/zip
          "stub/net.ss"
+         "utils.ss"
          "compiler/beginner-to-javascript.ss"
          "compiler/pinfo.ss"
          "template.ss"
@@ -26,7 +29,7 @@
 
 ;; compile-and-serve: (listof stx) -> void
 ;; Generate a web site that compiles and evaluates the program.
-(define (compile-and-serve source-code [program-name ""])
+(define (compile-and-serve source-code [program-name "unknown"])
   (local [(define main.js 
             (compiled-program->main.js (do-compilation source-code)))
           
@@ -35,8 +38,8 @@
              [("choose") choose-option]
              [("main.js") main-js]
              [("networkProxy") network-proxy]
-             [("generate-js-tarball") generate-js-tarball]
-             [("generate-apk") generate-apk]))
+             [("generate-js-zip" (string-arg)) generate-js-zip]
+             [("generate-apk" (string-arg)) generate-apk]))
           
           
           (define (choose-option req)
@@ -55,12 +58,16 @@
                   "Run program")
                " "
                (a ((class "linkbutton")
-                   (href ,(url generate-js-tarball)))
+                   (href ,(url generate-js-zip
+                               (string-append program-name
+                                              ".zip"))))
                   "Get Javascript .zip")
                " "
                (a ((class "linkbutton")
-                   (href ,(url generate-apk)))
+                   (href ,(url generate-apk 
+                               (string-append program-name "-debug.apk")))) 
                   "Get Android .apk"))))
+          
           
           (define (main-js req)
             (list #"text/javascript"
@@ -72,15 +79,50 @@
                   (get-url (extract-binding/single 'url (request-bindings req)))))
           
           
-          (define (generate-js-tarball req)
-            (list #"application/x-tar-gz"
+          (define (generate-js-zip req filename)
+            (let ([dir #f])
+              (dynamic-wind (lambda ()
+                              (set! dir (make-temporary-file))
+                              (delete-file dir)
+                              (make-directory dir))
 
-                  "fill-me-in"))
-          
-          
-          (define (generate-apk req)
-            (list #"application/vnd.android.package-archive"
-                  "fill-me-in"))]
+                            (lambda ()
+                              (let ([dest (build-path dir program-name)])
+                                (generate-javascript-application program-name
+                                                                 source-code
+                                                                 dest)
+                                (parameterize ([current-directory dir])
+                                  (zip (build-path dir (string-append program-name ".zip"))
+                                       program-name))
+                                (list #"application/zip"
+                                      (get-file-bytes (build-path 
+                                                       dir 
+                                                       (string-append program-name
+                                                                      ".zip"))))))
+
+                            (lambda ()
+                              (delete-directory/files dir)))))
+    
+          (define (generate-apk req filename)
+            (let ([dir #f])
+              (dynamic-wind (lambda ()
+                              (set! dir (make-temporary-file))
+                              (delete-file dir)
+                              (make-directory dir))
+
+                            (lambda ()
+                              (let ([dest (build-path dir program-name)])
+                                (generate-javascript+android-phonegap-application program-name
+                                                                                  source-code
+                                                                                  dest)
+                                (list #"application/vnd.android.package-archive"
+                                      (get-file-bytes (build-path dest "bin" 
+                                                                  (string-append
+                                                                   (upper-camel-case program-name)
+                                                                   "-debug.apk"))))))
+
+                            (lambda ()
+                              (delete-directory/files dir)))))]
     
     
     (let* ([T 84]
@@ -103,7 +145,7 @@
                      #:listen-ip #f
                      #:servlet-path "/choose"
                      #:servlet-regexp
-                     #rx"(^/main.js$)|(^/networkProxy)|(^/choose)|(^/generate-apk)"
+                     #rx"(^/main.js$)|(^/networkProxy)|(^/choose)|(^/generate-apk)|(^/generate-js-zip)"
                      #:extra-files-paths (list javascript-support)))))
 
 

@@ -9,6 +9,7 @@
          "image-lift.ss"
          "compiler/permission.ss"
          "compiler/pinfo.ss"
+         (only-in "compiler/helpers.ss" program?)
          (prefix-in javascript: "compiler/beginner-to-javascript.ss")
          (only-in "compiler/helpers.ss" identifier->munged-java-identifier)
          "utils.ss"
@@ -16,10 +17,10 @@
          "config.ss")
 
 (provide/contract [generate-javascript-application
-                   (string? path-string? path-string? . -> . any)]
+                   (string? (or/c path-string? program?) path-string? . -> . any)]
                   
                   [generate-javascript+android-phonegap-application
-                   (string? path-string? path-string? . -> . any)]
+                   (string? (or/c path-string? program?) path-string? . -> . any)]
                   
                   [compiled-program->main.js
                    (javascript:compiled-program? (listof named-bitmap?) . -> . string?)])
@@ -48,17 +49,25 @@
 
 
 ;; generate-javascript-application: name file dest
-(define (generate-javascript-application name file dest)
+(define (generate-javascript-application name path-or-program dest)
   (void
-   (compile-program-to-javascript (open-beginner-program file) name dest)))
+   (compile-program-to-javascript (cond [(program? path-or-program)
+                                         path-or-program]
+                                        [else
+                                         (open-beginner-program path-or-program)])
+                                  name 
+                                  dest)))
 
 
 ;; generate-javascript+android-phonegap-application: name file dest
-(define (generate-javascript+android-phonegap-application name file dest)
+(define (generate-javascript+android-phonegap-application name path-or-program dest)
   (make-directory* dest)
   (copy-directory/files* phonegap-path dest)
   (let* ([compiled-program         
-          (compile-program-to-javascript (open-beginner-program file) 
+          (compile-program-to-javascript (cond [(program? path-or-program)
+                                                path-or-program]
+                                               [else
+                                                (open-beginner-program path-or-program)])
                                          name
                                          (build-path dest "assets"))]
          [classname (upper-camel-case name)]
@@ -182,18 +191,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; compile-program-to-javascript: platform text% string path-string -> compiled-program
+;; compile-program-to-javascript: platform (or program text%) string path-string -> compiled-program
 ;; Consumes a text, an application name, destination directory, and produces an application.
 ;; The text buffer is assumed to contain a beginner-level program that uses only the world
 ;; teachpack.  We need to consume a text because we must first lift up all the images
 ;; as resources.
-(define (compile-program-to-javascript text name dest-dir)
+(define (compile-program-to-javascript text-or-program name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
   (let*-values ([(named-bitmaps)
-                 (lift-images-to-directory text (build-path dest-dir))]
+                 (cond [(program? text-or-program)
+                        '()]
+                       [else
+                        (lift-images-to-directory text-or-program (build-path dest-dir))])]
                 [(program)
-                 (parse-text-as-program text)]
+                 (cond [(program? text-or-program)
+                        text-or-program]
+                       [else
+                        (parse-text-as-program text-or-program)])]
                 [(compiled-program)
                  (do-compilation program)])
     (call-with-output-file (build-path dest-dir "main.js")
