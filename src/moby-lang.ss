@@ -4,6 +4,7 @@
          "compiler/stx.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
+         "serve.ss"
          "stub/world.ss"
          "stub/net.ss"
          "compiler/effect-struct.ss"
@@ -19,12 +20,8 @@
 (define-syntax (-js-big-bang stx)
   (syntax-case stx ()
     [(_ world0 handlers ...)
-     (with-syntax ([source-code source-code])
-       (syntax/loc stx
-         (void world0 handlers ...)
-         #;(js-big-bang/source 'source-code
-                               world0
-                               handlers ...)))]))
+     (syntax/loc stx
+       (void world0 handlers ...))]))
 
 
 (define-syntax (-#%module-begin stx)
@@ -36,7 +33,7 @@
          (syntax/loc stx 
            (#%module-begin
             form ...
-            (js-big-bang/source 'source-code)))))]))
+            (compile-and-serve 'source-code)))))]))
 
 
 

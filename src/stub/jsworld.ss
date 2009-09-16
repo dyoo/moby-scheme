@@ -1,24 +1,5 @@
 #lang scheme/base
-(require "../compiler/beginner-to-javascript.ss"
-         "../compiler/pinfo.ss"
-         "../template.ss"
-         "../compiler/permission.ss"
-         "../compiler/stx.ss"
-         "net.ss"
-         scheme/local
-         scheme/contract
-         scheme/runtime-path
-         scheme/string
-         scheme/tcp
-         web-server/servlet
-         web-server/servlet-env
-         web-server/dispatch)
-
-
-(define-runtime-path javascript-support "../../support/js")
-(define-runtime-path javascript-main-template "../../support/js/main.js.template")
-
-
+(require scheme/contract)
 
 
 (define-struct jsworld-widget (attrs) #:prefab)
@@ -61,91 +42,10 @@
 
 
 
-
-
-
-;; js-big-bang/source: (listof stx) -> void
-;; Generate a web site that compiles and evaluates the program.
-(define (js-big-bang/source source-code)
-  (local [(define main.js 
-            (compiled-program->main.js (do-compilation source-code)))
-          
-          (define-values (dispatcher url)
-            (dispatch-rules
-             [("main.js") main-js]
-             [("networkProxy") network-proxy]))
-          
-          (define (main-js req)
-            (list #"text/javascript"
-                  main.js))
-          
-          (define (network-proxy req)
-            (list #"text/plain"
-                  (get-url (extract-binding/single 'url (request-bindings req)))))]
-    (let* ([T 84]
-           [portno
-            (let loop (;; Numerology at work  (P = 80, L = 76, T=84).
-                       [portno 8076]
-                       [attempts 0]) 
-              (with-handlers ((exn:fail:network? (lambda (exn)
-                                                   (cond [(< attempts T)
-                                                          (loop (add1 portno)
-                                                                (add1 attempts))]
-                                                         [else
-                                                          (raise exn)]))))
-                ;; There's still a race condition here... Not sure how to do this right.
-                (let ([port (tcp-listen portno 4 #t #f)])
-                  (tcp-close port)
-                  portno)))])
-      (serve/servlet dispatcher
-                     #:port portno
-                     #:listen-ip #f
-                     #:servlet-path "/"
-                     #:servlet-regexp #rx"(^/main.js$)|(^/networkProxy)"
-                     #:extra-files-paths (list javascript-support)))))
-
-
-;;; FIXME: A lot of this is just copy-and-pasted from generate-application.  FIXME!
-
-(define (do-compilation program)
-  (program->compiled-program/pinfo program (get-base-pinfo 'moby)))
-
-;; compiled-program->main.js: compiled-program -> string
-(define (compiled-program->main.js compiled-program)
-  (let*-values ([(defns pinfo)
-                 (values (compiled-program-defns compiled-program)
-                         (compiled-program-pinfo compiled-program))]
-                [(output-port) (open-output-string)]
-                [(mappings) 
-                 (build-mappings 
-                  (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "[" "]"))
-                  (PROGRAM-TOPLEVEL-EXPRESSIONS
-                   (compiled-program-toplevel-exprs
-                    compiled-program))
-                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
-    (fill-template-port (open-input-file javascript-main-template)
-                        output-port
-                        mappings)
-    (get-output-string output-port)))
-
-;; get-permission-js-array: (listof permission) -> string
-(define (get-permission-js-array perms) 
-  (string-append "["
-                 (string-join (map (lambda (x)
-                                     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
-                                   perms)
-                              ", ")
-                 "]"))
-
-
-
 (define attrs/c (listof (list/c string? string?)))
 
-;; FIXME: contracts!
-(provide/contract [js-big-bang/source ((listof stx?) . -> . any)]
+(provide/contract [js-p (() (attrs/c) . ->* . jsworld-widget?)]
                   [js-div (() (attrs/c) . ->* . jsworld-widget?)]
-                  [js-p (() (attrs/c) . ->* . jsworld-widget?)]
                   [js-button (((any/c . -> . any/c)) 
                               (attrs/c) 
                               . ->* . jsworld-widget?)]
