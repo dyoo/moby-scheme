@@ -364,6 +364,33 @@ plt.world.MobyJsworld = {};
     };
     
 
+    // input.
+    Jsworld.input = function(type, args) {
+	var attribs = getAttribs(args);
+	var node = _js.input(type, attribs);
+	node.toWrittenString = function() { return "(js-input ...)"; }
+	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function() { return node; }
+	return node;
+    };
+
+    Jsworld.get_dash_input_dash_value = function(node) {
+	console.log(node.nodeType);
+	plt.Kernel.check(node, 
+			 function(x) { return (plt.Kernel.isString(node) ||
+					       node.nodeType == 
+					       Node.ELEMENT_NODE) }, 
+			 "get-input-value",
+			 "dom-node",
+			 1);
+	if (plt.Kernel.isString(node)) {
+	    return plt.types.String.makeInstance(document.getElementById(node).value);
+	} else {
+	    return plt.types.String.makeInstance(node.value);
+	}
+
+    };
+
 
     // BidirectionalInput
     Jsworld.bidirectionalInput = function(type, valF, updateF, args) {

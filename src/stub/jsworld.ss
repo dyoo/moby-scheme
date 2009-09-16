@@ -40,6 +40,8 @@
 (define (js-node raw-node (attrs '()))
   (make-jsworld-widget:node attrs raw-node))
 
+(define (get-input-value an-input-node)
+  "")
 
 
 (define attrs/c (listof (list/c string? string?)))
@@ -62,4 +64,10 @@
                                            (attrs/c) . ->* . jsworld-widget?)]
                   [js-img ((string?) (attrs/c) . ->* . jsworld-widget?)]
                   [js-text (string? . -> . jsworld-widget?)]
-                  [js-node ((any/c) (attrs/c) . ->* . jsworld-widget?)])
+                  [js-node ((any/c) (attrs/c) . ->* . jsworld-widget?)]
+                  
+                  [get-input-value ((or/c jsworld-widget:input? 
+                                          jsworld-widget:bidirectional-input? 
+                                          string?)
+                                    . -> . string?)]
+                  )

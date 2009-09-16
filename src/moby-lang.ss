@@ -73,4 +73,6 @@
          js-bidirectional-input
          js-img
          js-text
-         js-node)
+         js-node
+         
+         get-input-value)
