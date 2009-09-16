@@ -375,7 +375,6 @@ plt.world.MobyJsworld = {};
     };
 
     Jsworld.get_dash_input_dash_value = function(node) {
-	console.log(node.nodeType);
 	plt.Kernel.check(node, 
 			 function(x) { return (plt.Kernel.isString(node) ||
 					       node.nodeType == 
@@ -384,9 +383,9 @@ plt.world.MobyJsworld = {};
 			 "dom-node",
 			 1);
 	if (plt.Kernel.isString(node)) {
-	    return plt.types.String.makeInstance(document.getElementById(node).value);
+	    return plt.types.String.makeInstance(document.getElementById(node).value || "");
 	} else {
-	    return plt.types.String.makeInstance(node.value);
+	    return plt.types.String.makeInstance(node.value || "");
 	}
 
     };
