@@ -87,24 +87,32 @@
 ;; parse-item: xexpr -> place
 ;; Parses an item from the RSS feed.
 (define (parse-item xexpr)
-  (make-place (get-text (first (find-children 'title (children xexpr))))
-              
-              (cond
-                [(empty? (find-children 'georss:point (children xexpr)))
-                 (make-loc 0 0)]
-                [else
-                 (parse-georss:point 
-                  (first (find-children 'georss:point (children xexpr))))])
-              
-              ;; At the moment, we default to a radius of 100 meters.
-              100
-              
-              
-              (cond
-                [(empty? (find-children 'description (children xexpr)))
-                 ""]
-                [else
-                 (first (find-children 'description (children xexpr)))])))
+  (local [(define (get-description-text x)
+            (cond
+              [(string=? x "")
+               ""]
+              [else
+               (get-text (parse-xml (string-append "<top>" x "</top>")))]))]
+    (make-place (get-text (first (find-children 'title (children xexpr))))
+                
+                (cond
+                  [(empty? (find-children 'georss:point (children xexpr)))
+                   (make-loc 0 0)]
+                  [else
+                   (parse-georss:point 
+                    (first (find-children 'georss:point (children xexpr))))])
+                
+                ;; At the moment, we default to a radius of 100 meters.
+                100
+                
+                
+                (cond
+                  [(empty? (find-children 'description (children xexpr)))
+                   ""]
+                  [else
+                   (apply string-append
+                          (map get-description-text 
+                               (children (first (find-children 'description (children xexpr))))))]))))
 
 
 ;; parse-georss:point: xexpr -> loc
