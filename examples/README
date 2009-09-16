@@ -1,19 +1,36 @@
-The following are example programs that demonstrate Moby features.
+The following are programs that demonstrate Moby's features.
 
 ----------------------------------------------------------------------
 
-falling-ball.ss: a simple World program that shows a falling ball.
 
-bubble-2.ss: a game that uses the tilt sensor to play a ball-rolling
-game.
+rolling-out-of-time.ss: a game that uses the tilt sensor to play a
+ball-rolling game.
 
-grocery-shopper.ss: an application that uses the GPS location 
+
+minding-the-store.ss: an application that uses the GPS location
 feature and Google Maps web-service to alert the user when we're close
 to an interesting grocery store.
 
-location-announcer.ss: another GPS application that also uses SMS to
-notify others of the place where a user is located.
+
+homeward-bound.ss: another GPS application that also uses SMS to
+notify another of the place where a user is located.
 
 
-bootstrap-game.ss: an example of a game that uses the simplified
-Boostrap teachpack.
+bell-ringing.ss: uses a shake handler to play a bell sound whenever the
+phone is jerked.  The user interface allows switching to different
+notes.
+
+
+silencing-music.ss: plays songs from the user's playlist; as time
+progresses, the volume of the music drops unless the phone is shaked.
+
+
+
+
+----------------------------------------------------------------------
+
+Other simple examples:
+
+falling-ball.ss: a World program that shows a falling ball.
+
+simple-location.ss: a World program that shows the user's geolocation.
