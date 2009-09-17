@@ -3,7 +3,8 @@
          scheme/gui/base 
          scheme/list
          mrlib/cache-image-snip
-         scheme/contract)
+         scheme/contract
+         "compiler/stx.ss")
 
 (define-struct named-bitmap (name bitmap))
 
@@ -14,7 +15,10 @@
                                         (bitmap (is-a?/c bitmap%))]]
                   [named-bitmap-save (named-bitmap? path-string? . -> . any)]
                   [lift-images! ((is-a?/c text%)
-                                 . -> . (listof named-bitmap?))])
+                                 . -> . (listof named-bitmap?))]
+                  
+                  [lift-images/stx (stx? . -> . (values stx? (listof named-bitmap?)))]
+                  [lift-images/stxs ((listof stx?) . -> . (values (listof stx?) (listof named-bitmap?)))])
 
 ;; lift-images!: text -> (listof named-bitmap)
 ;; Lifts up the image snips in the text.
@@ -41,6 +45,45 @@
                (loop (send replacement-snip next))))]
       [else
        (loop (send a-snip next))])))
+
+
+;; lift-images/stx: stx -> (values stx (listof named-bitmap))
+;; Lift out the image snips in an stx.
+(define (lift-images/stx a-stx)
+  (cond
+    [(stx:list? a-stx)
+     (let-values ([(lifted-elts named-bitmaps)
+                   (lift-images/stxs (stx-e a-stx))])
+       (values (make-stx:list lifted-elts (stx-loc a-stx))
+               named-bitmaps))]
+     
+    [(stx:atom? a-stx)
+     (cond [(image-snip? (stx-e a-stx))
+            (let* ([filename (make-image-name)]
+                   [bitmap (send (stx-e a-stx) get-bitmap)]
+                   [replacement-stx (make-stx:list (list (make-stx:atom 'open-image-url
+                                                                        (stx-loc a-stx))
+                                                         (make-stx:atom filename
+                                                                        (stx-loc a-stx)))
+                                                   (stx-loc a-stx))])
+              (values replacement-stx (list (make-named-bitmap filename bitmap))))]
+           [else
+            (values a-stx empty)])]))
+
+
+;; lift-images/stxs: (listof stx) -> (values (listof stx) (listof named-bitmap))
+(define (lift-images/stxs stxs)
+  (cond
+    [(empty? stxs)
+     (values empty empty)]
+    [else
+     (let-values ([(lifted-stx named-bitmaps)
+                   (lift-images/stx (first stxs))]
+                  [(rest-lifted-stxs rest-named-bitmaps)
+                   (lift-images/stxs (rest stxs))])
+       (values (cons lifted-stx rest-lifted-stxs)
+               (append named-bitmaps rest-named-bitmaps)))]))
+       
 
 
 ;; named-bitmap-save: named-bitmap path-string -> void

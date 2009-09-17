@@ -2,11 +2,12 @@
 
 
 (require scheme/local
+         scheme/class
          scheme/runtime-path
          scheme/tcp
-         scheme/string
          scheme/contract
          scheme/file
+         scheme/list
          web-server/servlet
          web-server/servlet-env
          web-server/dispatch 
@@ -15,13 +16,10 @@
          "utils.ss"
          "compiler/beginner-to-javascript.ss"
          "compiler/pinfo.ss"
-         "template.ss"
-         "compiler/permission.ss"
+         "image-lift.ss"
          "compiler/stx.ss"
-         (only-in "generate-application.ss" 
-                  generate-javascript-application
-                  generate-javascript+android-phonegap-application))
-
+         "generate-application.ss")
+         
 
 (define-runtime-path javascript-support "../support/js")
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
@@ -30,8 +28,11 @@
 ;; compile-and-serve: (listof stx) -> void
 ;; Generate a web site that compiles and evaluates the program.
 (define (compile-and-serve source-code [program-name "unknown"])
-  (local [(define main.js 
-            (compiled-program->main.js (do-compilation source-code)))
+  (local [(define-values (lifted-source-code named-bitmaps)
+            (lift-images/stxs source-code))
+          
+          (define main.js 
+            (compiled-program->main.js (do-compilation lifted-source-code) empty))
           
           (define-values (dispatcher url)
             (dispatch-rules
@@ -149,39 +150,12 @@
                      #:extra-files-paths (list javascript-support)))))
 
 
+
+
 ;;; FIXME: A lot of this is just copy-and-pasted from generate-application.  FIXME!
 
 (define (do-compilation program)
   (program->compiled-program/pinfo program (get-base-pinfo 'moby)))
-
-;; compiled-program->main.js: compiled-program -> string
-(define (compiled-program->main.js compiled-program)
-  (let*-values ([(defns pinfo)
-                 (values (compiled-program-defns compiled-program)
-                         (compiled-program-pinfo compiled-program))]
-                [(output-port) (open-output-string)]
-                [(mappings) 
-                 (build-mappings 
-                  (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "[" "]"))
-                  (PROGRAM-TOPLEVEL-EXPRESSIONS
-                   (compiled-program-toplevel-exprs
-                    compiled-program))
-                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
-    (fill-template-port (open-input-file javascript-main-template)
-                        output-port
-                        mappings)
-    (get-output-string output-port)))
-
-;; get-permission-js-array: (listof permission) -> string
-(define (get-permission-js-array perms) 
-  (string-append "["
-                 (string-join (map (lambda (x)
-                                     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
-                                   perms)
-                              ", ")
-                 "]"))
-
 
 
 
