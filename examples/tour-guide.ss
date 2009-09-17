@@ -11,14 +11,15 @@
 (define library-tour "A tour of libraries")
 (define food-tour "A tour of food")
 
-(define n7 (make-node (make-info "7" "seven") 7 (list library-tour food-tour) (make-location 41.825721 -71.414776 2)))
-(define n6 (make-node (make-info "6" "six") 6 (list food-tour) (make-location 41.830202 71.402459 2)))
-(define n5 (make-node (make-info "5" "five") 5 (list food-tour) (make-location 41.823910 -71.396210 2)))
-(define n4 (make-node (make-info "4" "four") 4 empty (make-location 41.823419 -71.399422 2)))
-(define n1 (make-node (make-info "1" "one") 1 empty (make-location 41.825227 -71.401168 2)))
-(define n2 (make-node (make-info "2" "two") 2 (list library-tour) (make-location 41.824158 -71.403591 2)))
-(define n3 (make-node (make-info "3" "three") 3 (list food-tour) (make-location 41.825941 -71.402083 2)))
-(define n0 (make-node (make-info "0" "zero") 0 (list library-tour) (make-location 41.823819 -71.399452 2)))
+
+(define n7 (make-node (make-info "7" "seven") 7 (list library-tour food-tour) (make-location 41.826220 -71.400976 2)))
+(define n6 (make-node (make-info "6" "six") 6 (list food-tour) (make-location 41.826422 -71.400995 2)))
+(define n5 (make-node (make-info "5" "five") 5 (list food-tour) (make-location 41.826392 -71.401279 2)))
+(define n4 (make-node (make-info "4" "four") 4 empty (make-location 41.826228 -71.401354 2)))
+(define n1 (make-node (make-info "1" "one") 1 empty (make-location 41.826192 -71.401874 2)))
+(define n2 (make-node (make-info "2" "two") 2 (list library-tour) (make-location 41.826366 -71.401896 2)))
+(define n3 (make-node (make-info "3" "three") 3 (list food-tour) (make-location 41.826382 -71.401673 2)))
+(define n0 (make-node (make-info "0" "zero") 0 (list library-tour) (make-location 41.826194 -71.401654 2)))
 (define treeGraph (list n0 n1 n2 n3 n4 n5 n6 n7))
 
 
