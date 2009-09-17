@@ -16,14 +16,14 @@
          "template.ss"
          "config.ss")
 
-(provide/contract [generate-javascript-application
-                   (string? (or/c path-string? program?) path-string? . -> . any)]
-                  
-                  [generate-javascript+android-phonegap-application
-                   (string? (or/c path-string? program?) path-string? . -> . any)]
-                  
-                  [compiled-program->main.js
-                   (javascript:compiled-program? (listof named-bitmap?) . -> . string?)])
+
+;; A program/resources consists of program source, and the set of named bitmaps
+;; associated to it.
+;; TODO: We may expand this definition to handle other resource types like music
+;; and other media.
+(define-struct program/resources (program named-bitmaps))
+  
+  
 
 
 
@@ -49,25 +49,25 @@
 
 
 ;; generate-javascript-application: name file dest
-(define (generate-javascript-application name path-or-program dest)
+(define (generate-javascript-application name path-or-program/resources dest)
   (void
-   (compile-program-to-javascript (cond [(program? path-or-program)
-                                         path-or-program]
+   (compile-program-to-javascript (cond [(program/resources? path-or-program/resources)
+                                         path-or-program/resources]
                                         [else
-                                         (open-beginner-program path-or-program)])
+                                         (open-beginner-program path-or-program/resources)])
                                   name 
                                   dest)))
 
 
 ;; generate-javascript+android-phonegap-application: name file dest
-(define (generate-javascript+android-phonegap-application name path-or-program dest)
+(define (generate-javascript+android-phonegap-application name path-or-program/resources dest)
   (make-directory* dest)
   (copy-directory/files* phonegap-path dest)
   (let* ([compiled-program         
-          (compile-program-to-javascript (cond [(program? path-or-program)
-                                                path-or-program]
+          (compile-program-to-javascript (cond [(program/resources? path-or-program/resources)
+                                                path-or-program/resources]
                                                [else
-                                                (open-beginner-program path-or-program)])
+                                                (open-beginner-program path-or-program/resources)])
                                          name
                                          (build-path dest "assets"))]
          [classname (upper-camel-case name)]
@@ -191,24 +191,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; compile-program-to-javascript: platform (or program text%) string path-string -> compiled-program
+;; compile-program-to-javascript: platform (or program/resources text%) string path-string -> compiled-program
 ;; Consumes a text, an application name, destination directory, and produces an application.
 ;; The text buffer is assumed to contain a beginner-level program that uses only the world
 ;; teachpack.  We need to consume a text because we must first lift up all the images
 ;; as resources.
-(define (compile-program-to-javascript text-or-program name dest-dir)
+(define (compile-program-to-javascript text-or-program/resources name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
   (let*-values ([(named-bitmaps)
-                 (cond [(program? text-or-program)
-                        '()]
+                 (cond [(program/resources? text-or-program/resources)
+                        (let ([named-bitmaps (program/resources-named-bitmaps text-or-program/resources)])
+                          (for ([bm named-bitmaps])
+                            (named-bitmap-save bm dest-dir))
+                          named-bitmaps)]
                        [else
-                        (lift-images-to-directory text-or-program (build-path dest-dir))])]
+                        (lift-images-to-directory text-or-program/resources (build-path dest-dir))])]
                 [(program)
-                 (cond [(program? text-or-program)
-                        text-or-program]
+                 (cond [(program/resources? text-or-program/resources)
+                        (program/resources-program text-or-program/resources)]
                        [else
-                        (parse-text-as-program text-or-program)])]
+                        (parse-text-as-program text-or-program/resources)])]
                 [(compiled-program)
                  (do-compilation program)])
     (call-with-output-file (build-path dest-dir "main.js")
@@ -268,3 +271,18 @@
   (make-directory* dest-dir)
   (copy-directory/files* javascript-support-path dest-dir)
   (copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld")))
+
+
+
+
+(provide/contract [generate-javascript-application
+                   (string? (or/c path-string? program/resources?) path-string? . -> . any)]
+                  
+                  [generate-javascript+android-phonegap-application
+                   (string? (or/c path-string? program/resources?) path-string? . -> . any)]
+                  
+                  [compiled-program->main.js
+                   (javascript:compiled-program? (listof named-bitmap?) . -> . string?)]
+
+                  [struct program/resources ([program program?]
+                                             [named-bitmaps (listof named-bitmap?)])])

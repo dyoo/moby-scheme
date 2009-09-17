@@ -63,7 +63,7 @@ var main = {};
 
 	var i;
 	for (i = 0; i < imagePaths.length; i++) {
-	    images.push(plt.world.Kernel._kernelCreateImage
+	    images.push(plt.world.Kernel.openImageUrl
 			(plt.types.String.makeInstance(imagePaths[i])));
 	}
 	wait(isAllLoaded, after);

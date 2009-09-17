@@ -222,7 +222,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     plt.world.Kernel.isKeyEqual = function(key1, key2) {
-	var result = (key1.toString() == key2.toString());
+	var result = (key1.toString().toLowerCase() == key2.toString().toLowerCase());
 	return result;
     };
 
@@ -354,6 +354,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.isLoaded = false;
 	if (rawImage && rawImage.complete) { 
 	    this.img = rawImage;
+	    this.isLoaded = true;
 	    this.pinholeX = self.img.width / 2;
 	    this.pinholeY = self.img.height / 2;
 	} else {
