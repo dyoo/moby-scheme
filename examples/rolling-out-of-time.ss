@@ -203,7 +203,7 @@
 
              (on-tick* 1/20 tick tick-effect)
              (on-tilt tilt)
-
+             
              (on-redraw render)
              (on-key key)
              (stop-when game-ends?))

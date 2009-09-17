@@ -11,7 +11,7 @@
                  "msid=106933521686950086948.000473bafba93dfb155a0"))
 
 ;; The world consists of the coordinates and the current closest place.
-(define-struct world (loc closest sms))
+(define-struct world (loc closest last-reported sms))
 
 
 ;; A loc is a lat/long pair representing a location.
@@ -29,6 +29,7 @@
 ;; The world is the current location.
 (define initial-world (make-world (make-loc 0 0)
                                   (make-place "Unknown" (make-loc 0 0) 0)
+                                  (make-place "Unknown" (make-loc 0 0) 0)
                                   ""))
 
 ;; loc->string: loc -> string
@@ -44,6 +45,7 @@
 (define (change-location w lat long)
   (make-world (make-loc lat long)
               (current-place (make-loc lat long))
+              (world-last-reported w)
               (world-sms w)))
 
 
@@ -57,19 +59,65 @@
           (find-places ALL-PLACES loc))]))
 
 
+
+;; record-reporting: world -> world
+;; If we're about to send a report, record that knowledge so we don't repeat
+;; a report several times.
+(define (record-reporting w)
+  (cond
+    [(should-send-report? w)
+     (make-world (world-loc w)
+                 (world-closest w)
+                 (world-closest w)
+                 (world-sms w))]
+    [else
+     w]))
+
 ;; send-report: world -> effect
 ;; Sends out a text message of the world description to the sms
 ;; address in the world.
 (define (send-report w)
-  (cond [(not (string-whitespace? (world-sms w)))
-         
-         (make-effect:send-sms 
-          (world-sms w)
-          (string-append (description w) 
-                         "\n" 
-                         (maps-url (place-loc (world-closest w)))))]
+  (cond [(should-send-report? w)
+         (list (make-effect:send-sms 
+                (world-sms w)
+                (string-append (description w) 
+                               "\n" 
+                               (maps-url (place-loc (world-closest w)))))
+               (make-effect:beep))]
         [else
          '()]))
+
+;; should-send-report?: world -> boolean
+;; We'll send an SMS notification out if the sms number is registered and
+;; we've moved from one place to another.
+(define (should-send-report? w)
+  (and (not (string-whitespace? (world-sms w)))
+       (place-has-transitioned? (world-closest w)
+                                (world-last-reported w))))
+         
+
+
+
+;; place-unknown?: place -> boolean
+;; Returns true if the place is unknown
+(define (place-unknown? a-place)
+  (string=? (place-name a-place) "Unknown"))
+
+
+;; place-has-transitioned?: place place -> boolean
+(define (place-has-transitioned? place-1 place-2)
+  (cond
+    [(and (place-unknown? place-1) (place-unknown? place-2))
+     false]
+    [(and (place-unknown? place-1) (not (place-unknown? place-2)))
+     true]
+    [(and (not (place-unknown? place-1)) (place-unknown? place-2))
+     true]
+    [(and (not (place-unknown? place-1)) 
+          (not (place-unknown? place-2)))
+     (not (string=? (place-name place-1)
+                    (place-name place-2)))]))
+
 
 ;; maps-url: loc -> string
 ;; Creates the Google maps url for a location.
@@ -125,9 +173,10 @@
 
 ;; update-world-sms: world -> world
 ;; Update the world with the value of the sms field.
-(define (update-world-sms a-world)
-  (make-world (world-loc a-world)
-              (world-closest a-world)
+(define (update-world-sms w)
+  (make-world (world-loc w)
+              (world-closest w)
+              (world-last-reported w)
               (get-input-value "sms-input")))
 
 
@@ -281,9 +330,9 @@
    (parse-xml (get-url MYMAPS-URL))))
 
 
-(define tick-delay 5 #;(* 5 60))  ;; wait every five minutes before updates.
+(define TICK-DELAY (* 5 60))  ;; wait every five minutes before updates.
 
 (js-big-bang initial-world
              (on-draw draw draw-css)
-             (on-tick* tick-delay identity send-report)
+             (on-tick* TICK-DELAY record-reporting send-report)
              (on-location-change change-location))

@@ -48,7 +48,7 @@
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
 (define (place-matches? a-place a-loc)
-  true #;(<= (location-distance (loc-lat a-loc)
+  (<= (location-distance (loc-lat a-loc)
                          (loc-long a-loc)
                          (loc-lat (place-loc a-place))
                          (loc-long (place-loc a-place)))

@@ -268,7 +268,9 @@
     [(empty? alon) 
      ""]
     [(cons? alon) 
-     (string-append (info-name (node-info (first alon))) 
+     (string-append (format "~a, ~a" 
+                            (exact->inexact (location-lat (node-loc (first alon))))
+                            (exact->inexact (location-lng (node-loc (first alon))))) #;(info-name (node-info (first alon))) 
                     " \n" 
                     (get-dir-string lat 
                                     long 
