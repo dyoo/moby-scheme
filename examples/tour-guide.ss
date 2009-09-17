@@ -265,10 +265,17 @@
 
 (define (path->string alon lat long)
   (cond
-    [(empty? alon) ""]
-    [(cons? alon) (string-append (info-name (node-info (first alon))) (path->string (rest alon) lat long);"\n" (get-dir-string lat long (location-lat (node-loc (first alon))) (location-lng (node-loc (first alon))))
-                                 )]))
+    [(empty? alon) 
+     ""]
+    [(cons? alon) 
+     (string-append (info-name (node-info (first alon))) 
+                    " \n" 
+                    (get-dir-string lat 
+                                    long 
+                                    (location-lat (node-loc (first alon))) 
+                                    (location-lng (node-loc (first alon)))))]))
 
+    
 (define (get-dir-string latA lonA latB lonB)
   (local
     [(define angle (direction latA lonA latB lonB))]
@@ -294,21 +301,33 @@
 ;; direction: num num num num -> number
 ;; Given two places on a globe, return the bearing of the shortest distance between them in meters (uses spherical geometry)
 (define (direction latA lonA latB lonB)
-  pi)
-;  (cond 
-;    [(= (cos (deg->rad latA)) 0) (if (latA > 0) pi (* 2 pi))]
-;    [(and (= latA latB) (= lonA lonB)) -1]
-;    [else (mod (+ pi
-;                  (atan (* (sin (- (deg->rad lonB)
-;                                   (deg->rad lonA)))
-;                           (cos (deg->rad latB)))
-;                        (- (* (cos (deg->rad latA))
-;                              (sin (deg->rad latB)))
-;                           (* (sin (deg->rad latA))
-;                              (cos (deg->rad latB))
-;                              (cos (- (deg->rad lonB)
-;                                      (deg->rad lonA)))))))
-;               (* 2 pi))]))
+  (cond
+    [(= (cos (deg->rad latA)) 0) (if (latA > 0) pi (* 2 pi))]
+    [(and (= latA latB) (= lonA lonB)) -1]
+    [else (mod
+           (atan2 (* (sin (- (deg->rad lonB)
+                             (deg->rad lonA)))
+                     (cos (deg->rad latB)))
+                  (- (* (cos (deg->rad latA))
+                        (sin (deg->rad latB)))
+                     (* (sin (deg->rad latA))
+                        (cos (deg->rad latB))
+                        (cos (- (deg->rad lonB)
+                                (deg->rad lonA))))))
+           (* 2 pi))]))
+
+
+
+(define (atan2 y x)
+  (if (= y 0)
+      (cond
+        [(= x 0) (error 'atan2 "undefined for arguments: 0 0")]
+        [(> x 0) 0]
+        [(< x 0) pi])
+      (cond
+        [(> x 0) (* (sgn y) (atan (abs (/ y x))))]
+        [(= x 0) (* (sgn y) pi 0.5)]
+        [(< x 0) (* (sgn y) (- pi (atan (abs (/ y x)))))])))
 
 
 (js-big-bang (location-change-handler init-world 41.825721 -71.41478)
