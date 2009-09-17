@@ -37,7 +37,7 @@
 
 (define-struct world (lat long tours visited visiting? path tovisit in-menu?))
 
-(define init-world (make-world 0 0 empty empty false empty empty false))
+(define init-world (make-world 0 0 empty empty false empty empty true))
 
 (define (reach-node lat long path acc) 
   (cond
