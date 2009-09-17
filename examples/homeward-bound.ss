@@ -10,6 +10,8 @@
   (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&msa=0&output=georss&"
                  "msid=106933521686950086948.000473bafba93dfb155a0"))
 
+;; The world consists of the coordinates and the current closest place.
+(define-struct world (loc closest sms))
 
 
 ;; A loc is a lat/long pair representing a location.
@@ -24,11 +26,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; The telephone number to send messages to.
-(define ADDRESS "5554")
-  
 ;; The world is the current location.
-(define initial-world (make-loc 0 0))
+(define initial-world (make-world (make-loc 0 0)
+                                  (make-place "Unknown" (make-loc 0 0) 0)
+                                  ""))
 
 ;; loc->string: loc -> string
 (define (loc->string w)
@@ -38,28 +39,37 @@
 		 (number->string (loc-long w))
 		 ")"))
 
+
 ;; change-location: world number number -> world
 (define (change-location w lat long)
-  (make-loc lat long))
+  (make-world (make-loc lat long)
+              (current-place (make-loc lat long))
+              (world-sms w)))
 
 
-;; current-place: world -> place
-;; Returns the closest place.
-(define (current-place w)
-  (cond [(empty? (find-places ALL-PLACES w))
-         (make-place "Unknown" w 0)]
+;; current-place: loc -> place
+;; Returns the closest place to the given location.
+(define (current-place loc)
+  (cond [(empty? (find-places ALL-PLACES loc))
+         (make-place "Unknown" loc 0)]
         [else
          (choose-smallest
-          (find-places ALL-PLACES w))]))
+          (find-places ALL-PLACES loc))]))
+
 
 ;; send-report: world -> effect
-;; Sends out a text message of the world description,
-;; and produces the world.
+;; Sends out a text message of the world description to the sms
+;; address in the world.
 (define (send-report w)
-  (make-effect:send-sms ADDRESS 
-                        (string-append (description w) 
-                                       "\n" 
-                                       (maps-url (place-loc (current-place w))))))
+  (cond [(not (string-whitespace? (world-sms w)))
+         
+         (make-effect:send-sms 
+          (world-sms w)
+          (string-append (description w) 
+                         "\n" 
+                         (maps-url (place-loc (world-closest w)))))]
+        [else
+         '()]))
 
 ;; maps-url: loc -> string
 ;; Creates the Google maps url for a location.
@@ -75,7 +85,7 @@
 ;; description: world -> string
 ;; Produces a text description of the current place.
 (define (description w)
-  (place-name (current-place w)))
+  (place-name (world-closest w)))
 
 
 ;; choose-smallest: (listof place) -> place
@@ -112,19 +122,46 @@
       (place-radius a-place)))
 
 
+
+;; update-world-sms: world -> world
+;; Update the world with the value of the sms field.
+(define (update-world-sms a-world)
+  (make-world (world-loc a-world)
+              (world-closest a-world)
+              (get-input-value "sms-input")))
+
+
+(define sms-input-dom
+  (js-input "text" '(("id" "sms-input"))))
+
+
 ;; draw: world -> DOM-sexp
 (define (draw w)
-  (list (js-div)
+  (list (js-div '(("id" "main")))
         (list (js-p '(("id" "aPara")))
-	      (list (js-text (description w)))
-	      (list (js-text " "))
-	      (list (js-text (loc->string w))))))
+              (list (js-text "Current place: "))
+              (list (js-text (place-name (world-closest w))))
+              (list (js-text " "))
+              (list (js-text (loc->string (place-loc (world-closest w))))))
+        (list (js-div) 
+              (list (js-text "Notify SMS #"))
+              (list sms-input-dom)
+              (list (js-button update-world-sms)
+                    (list (js-text "Use this number"))))
+        (list (js-p '(("id" "anotherPara")))
+              (list (js-text (cond [(not (string-whitespace? (world-sms w)))
+                                    (format "~a will be used for notification" (world-sms w))]
+                                   [else
+                                    "SMS Number has not been assigned"]))))))
+
         
 
 
 ;; draw-css: world -> CSS-sexp
 (define (draw-css w)
-  '(("aPara" ("font-size" "30px"))))
+  '(("aPara" ("font-size" "30px"))
+    ("anotherPara" ("font-size" "25px"))
+    ("main" ("border-style" "solid"))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 
 
@@ -247,6 +284,6 @@
 (define tick-delay (* 5 60))  ;; wait every five minutes before updates.
 
 (js-big-bang initial-world
-             #;(on-draw draw draw-css)
+             (on-draw draw draw-css)
              #;(on-tick* tick-delay identity send-report)
              (on-location-change change-location))
