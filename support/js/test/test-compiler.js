@@ -222,51 +222,51 @@ function init() {
 		// normal behaviour
 		this.assert(isEqual(symbol("big"),
 							run("(case (+ 7 5)" +
-									"['(1 2 3) 'small]" +
-									"['(10 11 12) 'big])")));
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big])")));
 
 		// normal behaviour - 2
 		this.assert(isEqual(symbol("small"),
 							run("(case (- 7 5)" +
-									"['(1 2 3) 'small]" +
-									"['(10 11 12) 'big])")));
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big])")));
 
 		// else clause
 		this.assert(isEqual(symbol("dummy"),
 							run("(case (* 7 5)" +
-									"['(1 2 3) 'small]" +
-									"['(10 11 12) 'big]" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big]" +
 									"[else 'dummy])")));
 
 		// clause with else should be the last one
 		this.assertRaise("MobySyntaxError",
 						function(){
 							run("(case (* 7 5)" +
-									"['(1 2 3) 'small]" +
-									"['(10 11 12) 'big]" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big]" +
 									"[else 'dummy]" +
-									"['(1 2 3) 'shouldBeError])")});
+									"[(1 2 3) 'shouldBeError])")});
 
 		// no else caluse - void output
 		this.assert(isEqual(number(3),
 							run("(case (* 7 5)" +
-									"['(1 2 3) 'small]" +
-									"['(10 11 12) 'big])" +
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big])" +
 									"3")));
 
 		// first occurance will be evaluated - like cond
 		this.assert(isEqual(symbol("big"),
 							run("(case 12" +
-									"['(1 2 3) 'small]" +
-									"['(10 11 12) 'big]" +
-									"['(12 13 14) 'bigger])")));
+									"[(1 2 3) 'small]" +
+									"[(10 11 12) 'big]" +
+									"[(12 13 14) 'bigger])")));
 
 		// no quoted expression
 		this.assertRaise("MobyTypeError",
 						function(){
 							run("(case (* 7 5)" +
 									"[2 'small]" +
-									"['(10 11 12) 'big])" +
+									"[(10 11 12) 'big])" +
 									"3")});
 	}
 });
