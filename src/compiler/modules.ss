@@ -30,7 +30,7 @@
                                    "make_dash_effect_colon_play_dash_dtmf_dash_tone")
                                (make-binding:function 
                                 'make-effect:send-sms module-path 2 false 
-                                "plt.world.Kernel.make_dash_effect_colon_send_dash_sms"
+                                "make_dash_effect_colon_send_dash_sms"
                                 (list PERMISSION:SEND-SMS)
                                 false)                               
                                (make-binding:function

@@ -281,9 +281,9 @@
    (parse-xml (get-url MYMAPS-URL))))
 
 
-(define tick-delay (* 5 60))  ;; wait every five minutes before updates.
+(define tick-delay 5 #;(* 5 60))  ;; wait every five minutes before updates.
 
 (js-big-bang initial-world
              (on-draw draw draw-css)
-             #;(on-tick* tick-delay identity send-report)
+             (on-tick* tick-delay identity send-report)
              (on-location-change change-location))
