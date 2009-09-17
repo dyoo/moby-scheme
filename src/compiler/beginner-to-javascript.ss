@@ -381,6 +381,10 @@
              (define alternative (fourth (stx-e expr)))]
        (if-expression->javascript-string test consequent alternative env a-pinfo))]
     
+    ;; (case val-expr [quoted-expr expr] ...)
+    [(stx-begins-with? expr 'case)
+     (expression->javascript-string (desugar-case expr) env a-pinfo)]
+    
     ;; (and exprs ...)
     [(stx-begins-with? expr 'and)
      (local [(define exprs (rest (stx-e expr)))]
@@ -517,8 +521,7 @@
     (list
      (string-append "(" s1 " ?\n " s2 " :\n " s3 ")")
      (second es+p))))
-
-
+    
 
 ;; quote-expression->javascript-string: expr -> string
 (define (quote-expression->javascript-string expr)
