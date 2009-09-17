@@ -148,13 +148,11 @@
                   (string-join translated-chunks "")))]
          translated-id)])))
 
-
-
 ;; desugar-cond: stx:list -> stx:list
 ;; Translates conds to ifs.
 (define (desugar-cond an-expr)
   (local
-    [;; loop: (listof stx) (listof stx) (listof stx) stx stx -> stx
+    [;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
@@ -178,10 +176,12 @@
      (define (process-clauses clauses questions/rev answers/rev)
        (cond
          [(stx-begins-with? (first clauses) 'else)
-          (loop (reverse questions/rev) 
-                (reverse answers/rev) 
-                (datum->stx 'true (stx-loc (first clauses)))
-                (second (stx-e (first clauses))))]
+          (if (not (empty? (rest clauses)))
+              (syntax-error (format "cond: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
+              (loop (reverse questions/rev) 
+                    (reverse answers/rev) 
+                    (datum->stx 'true (stx-loc (first clauses)))
+                    (second (stx-e (first clauses)))))]
          [(empty? (rest clauses))
           (loop (reverse questions/rev) 
                 (reverse answers/rev) 
@@ -198,6 +198,91 @@
        (syntax-error (format "Not a cond clause: ~s" (stx-e an-expr))
                      an-expr)])))
 
+;; desugar-case: stx:list -> stx:list
+;; translates case to if.
+(define (desugar-case an-expr)
+  (local
+    [
+     ;; predicate: stx -> stx
+     (define predicate
+       (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
+                            (make-stx:list (list (datum->stx 'check (stx-loc an-expr))) (stx-loc an-expr))
+                            (make-stx:list (list (datum->stx 'equal? (stx-loc an-expr))
+                                                 (datum->stx 'check (stx-loc an-expr))
+                                                 (second (stx-e an-expr))) (stx-loc an-expr)))
+                      (stx-loc an-expr)))
+     ;; loop: (listof stx) (listof stx) stx stx -> stx
+     (define (loop list-of-datum answers datum-last answer-last)
+       (cond
+         [(empty? list-of-datum)
+          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
+                               (make-stx:list (list (datum->stx 'ormap (stx-loc an-expr))
+                                                    (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
+                                                                         (make-stx:list (list (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr))
+                                                                         (make-stx:list (list predicate
+                                                                                              (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr)))
+                                                                   (stx-loc an-expr))
+                                                    datum-last)
+                                              (stx-loc an-expr))
+                               answer-last
+                               ;; FIXME: we should find a way to return nothing, (void)?
+                               ;; current solution : (local [(define dummy 1)] (set! dummy 2)))
+                               (make-stx:list (list (datum->stx 'local (stx-loc an-expr))
+                                                    (make-stx:list 
+                                                     (list
+                                                      (make-stx:list (list (datum->stx 'define (stx-loc an-expr))
+                                                                           (datum->stx 'dummy (stx-loc an-expr))
+                                                                           (datum->stx 1 (stx-loc an-expr)))
+                                                                     (stx-loc an-expr)))
+                                                     (stx-loc an-expr))
+                                                    (make-stx:list (list (datum->stx 'set! (stx-loc an-expr))
+                                                                         (datum->stx 'dummy (stx-loc an-expr))
+                                                                         (datum->stx '2 (stx-loc an-expr)))
+                                                                   (stx-loc an-expr)))
+                                              (stx-loc an-expr)))
+                         (stx-loc an-expr))]
+         [else
+          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
+                               (make-stx:list (list (datum->stx 'ormap (stx-loc an-expr))
+                                                    (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
+                                                                         (make-stx:list (list (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr))
+                                                                         (make-stx:list (list predicate
+                                                                                              (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr)))
+                                                                   (stx-loc an-expr))
+                                                    (first list-of-datum))
+                                              (stx-loc an-expr))
+                               (first answers)
+                               (loop (rest list-of-datum)
+                                     (rest answers)
+                                     datum-last
+                                     answer-last))
+                         (stx-loc an-expr))]))
+     ;; process-clauses: (listof stx) (listof stx) (listof stx) -> stx
+     (define (process-clauses clauses questions/rev answers/rev)
+       (cond
+         [(stx-begins-with? (first clauses) 'else)
+          (if (not (empty? (rest clauses)))
+              (syntax-error (format "case: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
+              (loop (reverse questions/rev) 
+                    (reverse answers/rev)
+                    (make-stx:list (list (datum->stx 'list (stx-loc an-expr)) (second (stx-e an-expr))) (stx-loc an-expr))
+                    ;;(datum->stx 'true (stx-loc (first clauses)))
+                    (second (stx-e (first clauses)))))]
+         [(empty? (rest clauses))
+          (loop (reverse questions/rev) 
+                (reverse answers/rev) 
+                (first (stx-e (first clauses)))
+                (second (stx-e (first clauses))))]
+         [else
+          (process-clauses (rest clauses)
+                           (cons (first (stx-e (first clauses))) questions/rev) 
+                           (cons (second (stx-e (first clauses))) answers/rev))]))]
+    (cond
+      [(stx-begins-with? an-expr 'case)
+       (process-clauses (rest (rest (stx-e an-expr))) empty empty)]
+      [else
+       (syntax-error (format "Not a case clause: ~s" (stx-e an-expr))
+                     an-expr)])))
 
 
 
@@ -314,6 +399,7 @@
                   [remove-leading-whitespace (string? . -> . string?)]
                   [identifier->munged-java-identifier (symbol? . -> . symbol?)]
                   [desugar-cond (stx? . -> . stx?)]
+                  [desugar-case (stx? . -> . stx?)]
                   [range (number? . -> . (listof number?))]
                   
                   [case-analyze-definition (any/c 
