@@ -6,9 +6,10 @@
 ;; Every time the position changes to and from a place, an SMS message
 ;; is sent.
 
-(define HOMEWARD-BOUND-URL
+(define MYMAPS-URL
   (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&msa=0&output=georss&"
                  "msid=106933521686950086948.000473bafba93dfb155a0"))
+
 
 
 ;; A loc is a lat/long pair representing a location.
@@ -18,31 +19,7 @@
 ;; to a radius measured in meters.
 (define-struct place (name loc radius))
 
-;; mile->meter: number -> number
-;; Converts miles to meters.
-(define (mile->meter miles)
-  (* miles 1609.344))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Here are a few places of interest.
-;; 100 Institute Rd, in a radius of 500 meters
-(define WPI-PLACE 
-  (make-place "WPI" (make-loc 42.272824 -71.808207) 500))
-;; Parking place.
-(define WPI-PARKING-PLACE 
-  (make-place "WPI Parking" (make-loc 42.2737222 -71.8058627) 50))
-;; Worcester, in a radius of 3 miles.
-(define WORCESTER-PLACE 
-  (make-place "Worcester" (make-loc 42.274514 -71.798744) (mile->meter 3)))
-(define NORTHEASTERN-PLACE
-  (make-place "NEU" (make-loc 42.340065 -71.088881) (mile->meter 3)))
-
-;; This is a list of the places.
-(define ALL-PLACES
-  (list WPI-PLACE
-        WPI-PARKING-PLACE
-        WORCESTER-PLACE
-        NORTHEASTERN-PLACE))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -262,10 +239,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define ALL-PLACES
+  (parse-places 
+   (parse-xml (get-url MYMAPS-URL))))
+
+
 (define tick-delay (* 5 60))  ;; wait every five minutes before updates.
 
 (js-big-bang initial-world
-             '()
-             (on-draw draw draw-css)
-             (on-tick* tick-delay identity send-report)
+             #;(on-draw draw draw-css)
+             #;(on-tick* tick-delay identity send-report)
              (on-location-change change-location))
