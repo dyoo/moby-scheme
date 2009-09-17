@@ -172,6 +172,7 @@
                      (list 0 true)
                      (list* 1 true)
                      (list-ref 2)
+		     (remove 2)
                      (member 2)
                      (memq 2)
                      (memv 2)

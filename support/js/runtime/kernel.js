@@ -1011,6 +1011,23 @@ var plt = plt || {};
 	    return lst.first();
 	},
 	
+	remove : function(item, lst){
+	    checkList(lst, "member", 2);
+	    var originalLst = lst;
+	    var result = plt.types.Empty.EMPTY;
+	    while (!lst.isEmpty()){
+		if (plt.Kernel.equal_question_(item, lst.first()).valueOf()) {
+		    return plt.Kernel.append(plt.Kernel.reverse(result),
+					     [lst.rest()]);
+		} else {
+		    result = plt.types.Cons.makeInstance(lst.first(),
+							 result);
+		    lst = lst.rest();
+		}
+	    }
+	    return originalLst;
+	},
+
 	member : function(item, lst){
 	    checkList(lst, "member", 2);
 	    while (!lst.isEmpty()){
@@ -1021,6 +1038,7 @@ var plt = plt || {};
 	    
 	    return plt.types.Logic.FALSE;
 	},
+
 	
 	memq : function(item, lst){
 	    checkList(lst, "memq", 2);

@@ -1537,6 +1537,27 @@ var getTests;
 	    testIsProcedure: function() {
 		this.assert(! Kernel.procedure_question_(42));
 		this.assert(Kernel.procedure_question_(function() {return 42;}));
+	    }, 
+
+	    testRemove: function() {
+		this.assert(Kernel.equal_question_(
+		    plt.Kernel.list(["one", "two", "four"]),
+		    Kernel.remove("three", 
+				  plt.Kernel.list(
+				      ["one", "two", "three", "four"]))));
+		
+		
+		this.assert(Kernel.equal_question_(
+		    plt.Kernel.list(["one", "two", "three", "four"]),
+		    Kernel.remove("zero", 
+				  plt.Kernel.list(
+				      ["one", "two", "three", "four"]))));
+		
+		this.assert(Kernel.equal_question_(
+		    plt.Kernel.list(["two", "three", "four"]),
+		    Kernel.remove("one", 
+				  plt.Kernel.list(
+				      ["one", "two", "three", "four"]))));
 	    }
 	    
 	    
