@@ -87,7 +87,7 @@
 (define (nth lst n)
   (if (= n 0)
       (first lst)
-      (nth (cdr lst) (- n 1))))
+      (nth (rest lst) (- n 1))))
 
 ;; distance: num num num num -> number
 ;; Given two places on a globe, return the shortest distance between them in meters (uses spherical geometry)
