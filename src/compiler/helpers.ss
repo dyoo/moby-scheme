@@ -222,7 +222,9 @@
                                                                          (make-stx:list (list predicate
                                                                                               (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr)))
                                                                    (stx-loc an-expr))
-                                                    datum-last)
+                                                    (make-stx:list (cons (datum->stx 'list (stx-loc an-expr)) 
+                                                                         (stx-e datum-last))
+                                                                   (stx-loc an-expr)))
                                               (stx-loc an-expr))
                                answer-last
                                ;; FIXME: we should find a way to return nothing, (void)?
@@ -249,7 +251,9 @@
                                                                          (make-stx:list (list predicate
                                                                                               (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr)))
                                                                    (stx-loc an-expr))
-                                                    (first list-of-datum))
+                                                    (make-stx:list (cons (datum->stx 'list (stx-loc an-expr)) 
+                                                                         (stx-e (first list-of-datum)))
+                                                                   (stx-loc an-expr)))
                                               (stx-loc an-expr))
                                (first answers)
                                (loop (rest list-of-datum)
@@ -265,8 +269,7 @@
               (syntax-error (format "case: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
               (loop (reverse questions/rev) 
                     (reverse answers/rev)
-                    (make-stx:list (list (datum->stx 'list (stx-loc an-expr)) (second (stx-e an-expr))) (stx-loc an-expr))
-                    ;;(datum->stx 'true (stx-loc (first clauses)))
+                    (make-stx:list (list (second (stx-e an-expr))) (stx-loc an-expr))
                     (second (stx-e (first clauses)))))]
          [(empty? (rest clauses))
           (loop (reverse questions/rev) 
