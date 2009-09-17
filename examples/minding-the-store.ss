@@ -48,7 +48,7 @@
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
 (define (place-matches? a-place a-loc)
-  (<= (location-distance (loc-lat a-loc)
+  true #;(<= (location-distance (loc-lat a-loc)
                          (loc-long a-loc)
                          (loc-lat (place-loc a-place))
                          (loc-long (place-loc a-place)))
@@ -74,9 +74,14 @@
                (list (js-text (place-name p)))
                (list (js-text ": "))
                (list (js-text (place-item p)))))
-       (filter (lambda (p) (not (string-whitespace? (place-item p))))
-               (world-nearby-places w))))
+       (keep-places-with-items (world-nearby-places w))))
 
+
+;; keep-places-with-items: (listof place) -> (listof place)
+;; Keep the places that have items associated to them.
+(define (keep-places-with-items places)
+  (filter (lambda (p) (not (string-whitespace? (place-item p))))
+          places))
 
 ;; draw-css: world -> css-sexpr
 (define (draw-css w)
@@ -89,6 +94,21 @@
   (format "~a, ~a" (loc-lat a-loc) (loc-long a-loc)))
 
 
+
+;; ignore: world -> world
+;; Ignore the world and just return it.
+(define (ignore w)
+  w)
+
+
+;; beep-if-near: world -> effect
+;; Beeps if we're near a place with items.
+(define (beep-if-near w)
+  (cond
+    [(empty? (keep-places-with-items (world-nearby-places w)))
+     empty]
+    [else
+     (make-effect:beep)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RSS Parser Helpers.
@@ -213,4 +233,5 @@
 
 (js-big-bang initial-world
              (on-draw draw draw-css)
-             (on-location-change update-location))
+             (on-location-change update-location)
+             (on-tick* 30 ignore beep-if-near))
