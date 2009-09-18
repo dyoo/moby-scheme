@@ -106,6 +106,16 @@
         (lambda (op) (write-bytes build-xml-bytes op))
         #:exists 'replace))
     
+    ;; Write out a customized strings.xml
+    (let* ([strings-xml-bytes (get-file-bytes (build-path dest "res" "values" "strings.xml"))]
+           [strings-xml-bytes (regexp-replace #rx"DroidGap"
+                                              strings-xml-bytes
+                                              (string->bytes/utf-8 name))])
+      ;; FIXME: don't use regular expressions here!
+      (call-with-output-file (build-path dest "res" "values" "strings.xml")
+        (lambda (op) (write-bytes strings-xml-bytes op))
+        #:exists 'replace))
+    
     ;; Rename DroidGap to the application name.
     (make-directory* (build-path dest "src" "plt" "moby" classname))
     (let* ([middleware 

@@ -42,24 +42,44 @@
 (define (reach-node lat long path acc) 
   (cond
     [(empty? path) acc]
-    [(< (distance lat long
-                  (location-lat (node-loc (first path))) (location-lng (node-loc (first path))))
+    [(< (distance lat
+                  long
+                  (location-lat (node-loc (first path)))
+                  (location-lng (node-loc (first path))))
         (location-radius (node-loc (first path))))
      (if (empty? (rest path)) 
          (first path)
          (rest path))]
-    [else (reach-node lat long (rest path) (append acc (list (first path))))]))
+    [else 
+     (reach-node lat 
+                 long
+                 (rest path) 
+                 (append acc (list (first path))))]))
 
 (define (location-change-handler world lat long)
   (local
     [(define new-path (reach-node lat long (world-path world) empty))]
     (cond
       [(or (cons? new-path) (empty? new-path))
-       (make-world lat long (world-tours world) (world-visited world) (world-visiting? world) new-path (world-tovisit world) (world-in-menu? world))]
+       (make-world lat 
+                   long 
+                   (world-tours world) 
+                   (world-visited world) 
+                   (world-visiting? world)
+                   new-path 
+                   (world-tovisit world) 
+                   (world-in-menu? world))]
       [(node? new-path)
        (local
          [(define new-tovisit (remove new-path (world-tovisit world)))]
-         (make-world lat long (world-tours world) (cons new-path (world-visited world)) true (gen-path new-path new-tovisit) new-tovisit (world-in-menu? world)))])))
+         (make-world lat 
+                     long 
+                     (world-tours world) 
+                     (cons new-path (world-visited world))
+                     true 
+                     (gen-path new-path new-tovisit) 
+                     new-tovisit 
+                     (world-in-menu? world)))])))
 
 ;
 
@@ -75,9 +95,20 @@
 (define (getShortestSigNode distances unvisited bestIndex bestTime acc)
   (cond
     [(empty? distances) (nth treeGraph bestIndex)]
-    [(and (cons? (first distances)) (member (nth treeGraph acc) unvisited) (or (= -1 bestIndex) (< (first (first distances)) bestTime)))
-     (getShortestSigNode (rest distances) unvisited acc (first (first distances)) (add1 acc))]
-    [else (getShortestSigNode (rest distances) unvisited bestIndex bestTime (add1 acc))]))
+    [(and (cons? (first distances)) 
+          (member (nth treeGraph acc) unvisited)
+          (or (= -1 bestIndex) (< (first (first distances)) bestTime)))
+     (getShortestSigNode (rest distances) 
+                         unvisited 
+                         acc 
+                         (first (first distances))
+                         (add1 acc))]
+    [else 
+     (getShortestSigNode (rest distances)
+                         unvisited 
+                         bestIndex
+                         bestTime 
+                         (add1 acc))]))
 
 (define (gen-path-helper end out ret)
   (if (false? (nth out (node-index end)))

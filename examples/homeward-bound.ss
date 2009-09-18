@@ -11,6 +11,7 @@
                  "msid=106933521686950086948.000473bafba93dfb155a0"))
 
 ;; The world consists of the coordinates and the current closest place.
+;; last-reported is either 'unreported or the last reported place.
 (define-struct world (loc closest last-reported sms))
 
 
@@ -29,7 +30,7 @@
 ;; The world is the current location.
 (define initial-world (make-world (make-loc 0 0)
                                   (make-place "Unknown" (make-loc 0 0) 0)
-                                  (make-place "Unknown" (make-loc 0 0) 0)
+                                  'unreported
                                   ""))
 
 ;; loc->string: loc -> string
@@ -92,11 +93,10 @@
 ;; we've moved from one place to another.
 (define (should-send-report? w)
   (and (not (string-whitespace? (world-sms w)))
-       (place-has-transitioned? (world-closest w)
-                                (world-last-reported w))))
+       (or (eq? (world-last-reported w) 'unreported)
+           (place-has-transitioned? (world-closest w)
+                                    (world-last-reported w)))))
          
-
-
 
 ;; place-unknown?: place -> boolean
 ;; Returns true if the place is unknown
@@ -105,6 +105,7 @@
 
 
 ;; place-has-transitioned?: place place -> boolean
+;; Returns true if the two places should be treated as distinct.
 (define (place-has-transitioned? place-1 place-2)
   (cond
     [(and (place-unknown? place-1) (place-unknown? place-2))
@@ -199,9 +200,18 @@
                     (list (js-text "Use this number"))))
         (list (js-p '(("id" "anotherPara")))
               (list (js-text (cond [(not (string-whitespace? (world-sms w)))
-                                    (format "~a will be used for notification" (world-sms w))]
+                                    (format "~a will be used for notification." (world-sms w))]
                                    [else
-                                    "SMS Number has not been assigned"]))))))
+                                    "SMS Number has not been assigned"]))))
+        
+        (list (js-p '(("id" "lastPara")))
+              (list (js-text (cond [(eq? (world-last-reported w) 'unreported)
+                                    "No notification has been sent yet."]
+                                   [else
+                                    (format "Notification was last sent at ~s ~a."
+                                            (place-name (world-last-reported w))
+                                            (loc->string (place-loc (world-last-reported w))))]))))))
+
 
         
 
@@ -330,7 +340,7 @@
    (parse-xml (get-url MYMAPS-URL))))
 
 
-(define TICK-DELAY (* 5 60))  ;; wait every five minutes before updates.
+(define TICK-DELAY (* 1 60))  ;; wait every minute before updates.
 
 (js-big-bang initial-world
              (on-draw draw draw-css)
