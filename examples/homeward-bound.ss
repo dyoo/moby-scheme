@@ -1,22 +1,35 @@
 #lang s-exp "../moby-lang.ss"
 ;; Homeward bound.
 ;;
-;; A program to keep someone notified of your current location.
+;; A program to keep someone notified of your current
+;; location.
 ;;
-;; Every time the position changes to and from a place, an SMS message
+;; Every time the position changes, an SMS message
 ;; is sent.
 
 (define MYMAPS-URL
-  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&msa=0&output=georss&"
-                 "msid=106933521686950086948.000473bafba93dfb155a0"))
+  (string-append "http://maps.google.com/maps/ms"
+                 "?ie=UTF8&hl=en&msa=0&output=georss&"
+                 "msid=106933521686950086948"
+                 ".000473bafba93dfb155a0"))
 
-;; The world consists of the coordinates and the current closest place.
-;; last-reported is either 'unreported or the last reported place.
+(define UNINITIALIZED 'uninitialized)
+
+
+;; The world consists of the coordinates and the
+;; current closest Place.
+;; last-reported is either UNINITIALIZED or the last
+;; reported place.
 (define-struct world (loc closest last-reported sms))
 
 
 ;; A loc is a lat/long pair representing a location.
 (define-struct loc (lat long))
+
+;; A Place is either:
+;;     UNINITIALIZED,
+;;     (make-place "Unknown" a-loc a-radius), or
+;;     (make-place name a-loc a-radius)
 
 ;; A place is centered on a location and extends 
 ;; to a radius measured in meters.
@@ -24,49 +37,40 @@
 
 
 
-;; place should be either 'unitiazlied, unknown, or named place
+;; uninitialized?: Place -> boolean
+(define (uninitialized? a-place)
+  (eq? a-place UNINITIALIZED))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; place-unknown?: Place -> boolean
+;; Returns true if the place is unknown
+(define (place-unknown? a-place)
+  (cond [(uninitialized? a-place)
+         false]
+        [else
+         (string=? (place-name a-place) "Unknown")]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; The world is the current location.
 (define initial-world (make-world (make-loc 0 0)
-                                  (make-place "Unknown" (make-loc 0 0) 0)
-                                  'unreported
+                                  UNINITIALIZED
+                                  UNINITIALIZED
                                   ""))
 
-;; loc->string: loc -> string
-(define (loc->string w)
-  (string-append "(" 
-		 (number->string (loc-lat w))
-		 ", "
-		 (number->string (loc-long w))
-		 ")"))
-
-
-;; change-location: world number number -> world
-(define (change-location w lat long)
+;; move: world number number -> world
+;; On movement, update to the closest place.
+(define (move w lat long)
   (make-world (make-loc lat long)
-              (current-place (make-loc lat long))
+              (closest-place (make-loc lat long))
               (world-last-reported w)
               (world-sms w)))
 
 
-;; current-place: loc -> place
-;; Returns the closest place to the given location.
-(define (current-place loc)
-  (cond [(empty? (find-places ALL-PLACES loc))
-         (make-place "Unknown" loc 0)]
-        [else
-         (choose-smallest
-          (find-places ALL-PLACES loc))]))
-
-
-
 ;; record-reporting: world -> world
-;; If we're about to send a report, record that knowledge so we don't repeat
-;; a report several times.
+;; If we're about to send a report, record that
+;; knowledge so we don't repeat a report several times.
 (define (record-reporting w)
   (cond
     [(should-send-report? w)
@@ -78,45 +82,72 @@
      w]))
 
 ;; send-report: world -> effect
-;; Sends out a text message of the world description to the sms
-;; address in the world.
+;; Sends out a text message of the world
+;; description to the sms address in the world.
 (define (send-report w)
   (cond [(should-send-report? w)
          (list (make-effect:send-sms 
                 (world-sms w)
                 (string-append (description w) 
                                "\n" 
-                               (maps-url (world-loc w)
-                                         #;(place-loc (world-closest w)))))
+                               (maps-url 
+                                (world-loc w))))
                (make-effect:beep))]
         [else
          '()]))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; loc->string: loc -> string
+(define (loc->string w)
+  (string-append "(" 
+		 (number->string (loc-lat w))
+		 ", "
+		 (number->string (loc-long w))
+		 ")"))
+
+
+;; closest-place: loc -> Place
+;; Returns the closest place to the given location.
+(define (closest-place loc)
+  (cond [(empty? (find-places ALL-PLACES loc))
+         (make-place "Unknown" loc 0)]
+        [else
+         (choose-smallest
+          (find-places ALL-PLACES loc))]))
+
 ;; should-send-report?: world -> boolean
-;; We'll send an SMS notification out if the sms number is registered and
-;; we've moved from one place to another.
+;; We'll send an SMS notification out if the 
+;; sms number is registered and we've moved from
+;; one place to another.
 (define (should-send-report? w)
   (and (not (string-whitespace? (world-sms w)))
-       (or (eq? (world-last-reported w) 'unreported)
-           (place-has-transitioned? (world-closest w)
-                                    (world-last-reported w)))))
+       (not (eq? (world-closest w) UNINITIALIZED))
+       (or (eq? (world-last-reported w) UNINITIALIZED)
+           (place-has-transitioned? 
+            (world-closest w)
+            (world-last-reported w)))))
          
 
-;; place-unknown?: place -> boolean
-;; Returns true if the place is unknown
-(define (place-unknown? a-place)
-  (string=? (place-name a-place) "Unknown"))
-
-
-;; place-has-transitioned?: place place -> boolean
+;; place-has-transitioned?: Place Place -> boolean
 ;; Returns true if the two places should be treated as distinct.
 (define (place-has-transitioned? place-1 place-2)
   (cond
-    [(and (place-unknown? place-1) (place-unknown? place-2))
+    [(and (uninitialized? place-1)
+          (uninitialized? place-2))
      false]
-    [(and (place-unknown? place-1) (not (place-unknown? place-2)))
+    [(or (uninitialized? place-1)
+         (uninitialized? place-2))
      true]
-    [(and (not (place-unknown? place-1)) (place-unknown? place-2))
+    [(and (place-unknown? place-1) 
+          (place-unknown? place-2))
+     false]
+    [(and (place-unknown? place-1)
+          (not (place-unknown? place-2)))
+     true]
+    [(and (not (place-unknown? place-1))
+          (place-unknown? place-2))
      true]
     [(and (not (place-unknown? place-1)) 
           (not (place-unknown? place-2)))
@@ -138,7 +169,10 @@
 ;; description: world -> string
 ;; Produces a text description of the current place.
 (define (description w)
-  (place-name (world-closest w)))
+  (cond [(uninitialized? (world-closest w))
+         "Uninitialized"]
+        [else
+         (place-name (world-closest w))]))
 
 
 ;; choose-smallest: (listof place) -> place
@@ -147,8 +181,10 @@
   (cond
     [(empty? (rest places))
      (first places)]
-    [(< (place-radius (first places)) (place-radius (second places)))
-     (choose-smallest (cons (first places) (rest (rest places))))]
+    [(< (place-radius (first places)) 
+        (place-radius (second places)))
+     (choose-smallest 
+      (cons (first places) (rest (rest places))))]
     [else
      (choose-smallest (rest places))]))
 
@@ -160,7 +196,8 @@
     [(empty? places)
      empty]
     [(place-matches? (first places) a-loc)
-     (cons (first places) (find-places (rest places) a-loc))]
+     (cons (first places) 
+           (find-places (rest places) a-loc))]
     [else
      (find-places (rest places) a-loc)]))
 
@@ -188,39 +225,49 @@
 (define sms-input-dom
   (js-input "text" '(("id" "sms-input"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; draw: world -> DOM-sexp
 (define (draw w)
   (list (js-div '(("id" "main")))
         (list (js-p '(("id" "aPara")))
-              (list (js-text "Current place: "))
-              (list (js-text (place-name (world-closest w))))
+              (list (js-text "Currently at: "))
+              (list (js-text 
+                     (description w)))
               (list (js-text " "))
-              (list (js-text (loc->string (place-loc (world-closest w))))))
+              (list (js-text 
+                     (loc->string (world-loc w)))))
         (list (js-div) 
               (list (js-text "Notify SMS #"))
               (list sms-input-dom)
               (list (js-button update-world-sms)
                     (list (js-text "Use this number"))))
         (list (js-p '(("id" "anotherPara")))
-              (list (js-text (cond [(not (string-whitespace? (world-sms w)))
-                                    (format "~a will be used for notification." (world-sms w))]
-                                   [else
-                                    "SMS Number has not been assigned"]))))
+              (list (js-text 
+                     (cond 
+                       [(not (string-whitespace? 
+                              (world-sms w)))
+                        (format 
+                         "~a will be used for notification." (world-sms w))]
+                       [else
+                        "SMS Number has not been assigned"]))))
         
         (list (js-p '(("id" "lastPara")))
-              (list (js-text (cond [(eq? (world-last-reported w) 'unreported)
-                                    "No notification has been sent yet."]
-                                   [(place-unknown? (world-last-reported w))
-                                    (format "Notification was last sent at ~s ~a."
-                                            (place-name (world-last-reported w))
-                                            (loc->string (place-loc (world-last-reported w))))]
-                                   [else
-                                    (format "Notification was last sent at ~s."
-                                            (place-name (world-last-reported w)))]))))))
+              (list (js-text 
+                     (cond [(uninitialized?
+                             (world-last-reported w))
+                            "No notification has been sent yet."]
+                           [(place-unknown? 
+                             (world-last-reported w))
+                            (format "Notification was last sent at ~s ~a."
+                                    (place-name (world-last-reported w))
+                                    (loc->string (place-loc (world-last-reported w))))]
+                           [else
+                            (format "Notification was last sent at ~s."
+                                    (place-name (world-last-reported w)))]))))))
 
 
-        
+
 
 
 ;; draw-css: world -> CSS-sexp
@@ -287,8 +334,6 @@
             (string->number (second (split-whitespace (sxml-text xexpr))))))
 
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XML Parser Helpers.
 ;;
@@ -350,6 +395,8 @@
 (define TICK-DELAY (* 5 60))  ;; wait every five minute before updates.
 
 (js-big-bang initial-world
-             (on-draw draw draw-css)
-             (on-tick* TICK-DELAY record-reporting send-report)
-             (on-location-change change-location))
+             (on-tick* TICK-DELAY
+                       record-reporting send-report)
+             (on-location-change move)
+             
+             (on-draw draw draw-css))

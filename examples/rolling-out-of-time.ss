@@ -111,39 +111,6 @@
   (make-posn (random WIDTH)
              (random HEIGHT)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; key: world key -> world
-;; Adjust velocity based on key presses.
-(define (key w a-key)
-  (make-world (world-posn w)
-              (world-r w)
-              (update-vel-with-key 
-               (world-vel w) a-key)
-              (world-target-posn w)
-              (world-score w)))
-  
-
-;; update-vel-with-key: vel key -> vel
-;; Adjust the velocity based on which key
-;; the user presses.
-(define (update-vel-with-key v a-key)
-  (cond [(key=? a-key "left")
-         (make-vel (- (vel-x v) 3)
-                   (vel-y v))]
-        [(key=? a-key "right")
-         (make-vel (+ (vel-x v) 3)
-                   (vel-y v))]
-        [(key=? a-key "up")
-         (make-vel (vel-x v)
-                   (- (vel-y v) 3))]
-        [(key=? a-key "down")
-         (make-vel (vel-x v)
-                   (+ (vel-y v) 3))]
-        [else
-         v]))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; posn+vel: posn velocity -> posn
 ;; Adds a position by a velocity.
@@ -191,5 +158,4 @@
              (on-tilt tilt)
              
              (on-redraw render)
-             (on-key key)
              (stop-when game-ends?))
