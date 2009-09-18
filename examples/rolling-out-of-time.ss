@@ -37,7 +37,7 @@
      (make-world (posn+vel (world-posn w) (world-vel w))
                  30
                  (world-vel w)
-                 (world-target-posn w)
+                 (make-random-posn)
                  (add1 (world-score w)))]
     [else
      (make-world (posn+vel (world-posn w) (world-vel w))
@@ -47,18 +47,11 @@
                  (world-score w))]))
 
 
+;; make-random-posn: -> posn
+(define (make-random-posn)
+  (make-posn (random WIDTH)
+             (random HEIGHT)))
 
-
-
-;; tick-effect: world -> effect
-;; If we do collide, re-randomize the target posn.
-(define (tick-effect w)
-  (cond
-    [(collide? w)
-     (randomize-world-target w)]
-    [else
-     empty]))
-    
 
 
 
@@ -168,40 +161,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; randomize-world-target: world -> effect
-;; Constructs an effect that, when triggered, will randomize the world.
-(define (randomize-world-target w)
-  (list (make-effect:pick-random
-         WIDTH
-         (lambda (w n) 
-           (update-world-target-posn 
-            w 
-            (make-posn n (posn-y (world-posn w))))))
-        (make-effect:pick-random 
-         HEIGHT
-         (lambda (w n) 
-           (update-world-target-posn
-            w 
-            (make-posn (posn-x (world-posn w)) n))))))
-
-;; update-world-target-posn: world posn -> world
-;; Updates the target posn
-(define (update-world-target-posn w posn)
-  (make-world 
-   (world-posn w)
-   (world-r w)
-   (world-vel w)
-   posn
-   (world-score w)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 
 (js-big-bang initial-world
-             (initial-effect (randomize-world-target initial-world))
-
-             (on-tick* 1/20 tick tick-effect)
+             (on-tick 1/20 tick)
              (on-tilt tilt)
              
              (on-redraw render)

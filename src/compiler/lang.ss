@@ -13,6 +13,7 @@
                      
 (provide (except-out (all-from-out lang/htdp-intermediate-lambda)
                      define-struct
+                     define
                      quote
                      let
                      letrec
@@ -34,7 +35,8 @@
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
                      (base:quote quote)
-                     (my-define-struct define-struct))
+                     (my-define-struct define-struct)
+                     (base:define define))
 
          
          ;; Contract-related stuff: the following will be erased on 

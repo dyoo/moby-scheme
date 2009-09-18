@@ -32,7 +32,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-runtime-path phonegap-path "../support/phonegap/android-1.5")
-(define-runtime-path jsworld-path"../support/jsworld")
+#;(define-runtime-path jsworld-path"../support/jsworld")
 (define-runtime-path icon-path "../support/icons/icon.png")
 
 (define-runtime-path javascript-support-path "../support/js")
@@ -280,7 +280,7 @@
 (define (make-javascript-directories dest-dir)
   (make-directory* dest-dir)
   (copy-directory/files* javascript-support-path dest-dir)
-  (copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld")))
+  #;(copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld")))
 
 
 

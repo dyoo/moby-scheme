@@ -24,6 +24,9 @@
 
 
 
+;; place should be either 'unitiazlied, unknown, or named place
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
