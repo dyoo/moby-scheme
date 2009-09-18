@@ -179,8 +179,11 @@
            (application 
             ((android:label "@string/app_name")
              (android:icon "@drawable/icon"))
+            
             (activity ((android:name ,activity-class)
-                       (android:label ,name))
+                       (android:label ,name)
+                       (android:configChanges
+                        "keyboardHidden|orientation"))
                       (intent-filter 
                        ()
                        (action ((android:name "android.intent.action.MAIN")))
@@ -189,7 +192,9 @@
                           "android.intent.category.LAUNCHER")))))
 
 	    (activity ((android:name "plt.playlist.PickPlaylist")
-		       (android:label "PickPlaylist"))
+		       (android:label "PickPlaylist")
+                       (android:configChanges
+                        "keyboardHidden|orientation"))
 		      (action ((android:name "android.intent.action.PICK")))
 		      (category ((android:name "android.intent.category.DEFAULT"))))))])
     

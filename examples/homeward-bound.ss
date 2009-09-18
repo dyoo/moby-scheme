@@ -285,9 +285,17 @@
 ;; parse-places: xexpr -> (listof place)
 ;; Parses out the places from the RSS we get from Google Maps.
 (define (parse-places xexpr)
-  (parse-items
-   (sxml-find-children 'item 
-                       (sxml-children (first (sxml-find-children 'channel (sxml-children xexpr)))))))
+  (cond
+    [(empty? xexpr)
+     empty]
+    [else
+     (parse-items
+      (sxml-find-children
+       'item 
+       (sxml-children 
+        (first (sxml-find-children
+                'channel 
+                (sxml-children xexpr))))))]))
 
 
 ;; parse-items: (listof xexpr) -> (listof place)

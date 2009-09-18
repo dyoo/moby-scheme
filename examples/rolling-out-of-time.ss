@@ -64,13 +64,16 @@
 (define (render w)
   (maybe-add-game-over 
    w
+   
    (place-image/posn 
     (text (format "Score: ~a" (world-score w))
           20 "black")
     (make-posn 20 20)
+    
     (place-image/posn 
      (circle TARGET-RADIUS "solid" "red")
      (world-target-posn w)
+     
      (place-image/posn 
       (circle (world-r w) "solid" "blue")
       (world-posn w)
