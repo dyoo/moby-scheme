@@ -340,7 +340,7 @@
    (parse-xml (get-url MYMAPS-URL))))
 
 
-(define TICK-DELAY (* 1 60))  ;; wait every minute before updates.
+(define TICK-DELAY (* 1 5))  ;; wait every minute before updates.
 
 (js-big-bang initial-world
              (on-draw draw draw-css)

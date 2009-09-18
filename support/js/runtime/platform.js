@@ -752,6 +752,7 @@ plt.platform = {};
     function GenericSmsService() {
     }
     GenericSmsService.prototype.send = function(address, msg) {
+	alert("SMS should be sent to " + address + " with the content: " + msg);
     };
 
 
