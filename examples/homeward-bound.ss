@@ -83,7 +83,8 @@
                 (world-sms w)
                 (string-append (description w) 
                                "\n" 
-                               (maps-url (place-loc (world-closest w)))))
+                               (maps-url (world-loc w)
+                                         #;(place-loc (world-closest w)))))
                (make-effect:beep))]
         [else
          '()]))
@@ -207,10 +208,13 @@
         (list (js-p '(("id" "lastPara")))
               (list (js-text (cond [(eq? (world-last-reported w) 'unreported)
                                     "No notification has been sent yet."]
-                                   [else
+                                   [(place-unknown? (world-last-reported w))
                                     (format "Notification was last sent at ~s ~a."
                                             (place-name (world-last-reported w))
-                                            (loc->string (place-loc (world-last-reported w))))]))))))
+                                            (loc->string (place-loc (world-last-reported w))))]
+                                   [else
+                                    (format "Notification was last sent at ~s."
+                                            (place-name (world-last-reported w)))]))))))
 
 
         
@@ -340,7 +344,7 @@
    (parse-xml (get-url MYMAPS-URL))))
 
 
-(define TICK-DELAY (* 1 60))  ;; wait every minute before updates.
+(define TICK-DELAY (* 5 60))  ;; wait every five minute before updates.
 
 (js-big-bang initial-world
              (on-draw draw draw-css)
