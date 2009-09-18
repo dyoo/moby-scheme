@@ -37,15 +37,15 @@
 
 
 
-;; uninitialized?: Place -> boolean
-(define (uninitialized? a-place)
+;; place-uninitialized?: Place -> boolean
+(define (place-uninitialized? a-place)
   (eq? a-place UNINITIALIZED))
 
 
 ;; place-unknown?: Place -> boolean
 ;; Returns true if the place is unknown
 (define (place-unknown? a-place)
-  (cond [(uninitialized? a-place)
+  (cond [(place-uninitialized? a-place)
          false]
         [else
          (string=? (place-name a-place) "Unknown")]))
@@ -99,15 +99,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; loc->string: loc -> string
-(define (loc->string w)
-  (string-append "(" 
-		 (number->string (loc-lat w))
-		 ", "
-		 (number->string (loc-long w))
-		 ")"))
-
-
 ;; closest-place: loc -> Place
 ;; Returns the closest place to the given location.
 (define (closest-place loc)
@@ -134,11 +125,11 @@
 ;; Returns true if the two places should be treated as distinct.
 (define (place-has-transitioned? place-1 place-2)
   (cond
-    [(and (uninitialized? place-1)
-          (uninitialized? place-2))
+    [(and (place-uninitialized? place-1)
+          (place-uninitialized? place-2))
      false]
-    [(or (uninitialized? place-1)
-         (uninitialized? place-2))
+    [(or (place-uninitialized? place-1)
+         (place-uninitialized? place-2))
      true]
     [(and (place-unknown? place-1) 
           (place-unknown? place-2))
@@ -169,7 +160,7 @@
 ;; description: world -> string
 ;; Produces a text description of the current place.
 (define (description w)
-  (cond [(uninitialized? (world-closest w))
+  (cond [(place-uninitialized? (world-closest w))
          "Uninitialized"]
         [else
          (place-name (world-closest w))]))
@@ -212,18 +203,15 @@
       (place-radius a-place)))
 
 
+;; loc->string: loc -> string
+(define (loc->string w)
+  (string-append "(" 
+		 (number->string (loc-lat w))
+		 ", "
+		 (number->string (loc-long w))
+		 ")"))
 
-;; update-world-sms: world -> world
-;; Update the world with the value of the sms field.
-(define (update-world-sms w)
-  (make-world (world-loc w)
-              (world-closest w)
-              (world-last-reported w)
-              (get-input-value "sms-input")))
 
-
-(define sms-input-dom
-  (js-input "text" '(("id" "sms-input"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -254,7 +242,7 @@
         
         (list (js-p '(("id" "lastPara")))
               (list (js-text 
-                     (cond [(uninitialized?
+                     (cond [(place-uninitialized?
                              (world-last-reported w))
                             "No notification has been sent yet."]
                            [(place-unknown? 
@@ -266,19 +254,31 @@
                             (format "Notification was last sent at ~s."
                                     (place-name (world-last-reported w)))]))))))
 
-
-
-
-
 ;; draw-css: world -> CSS-sexp
 (define (draw-css w)
   '(("aPara" ("font-size" "30px"))
     ("anotherPara" ("font-size" "25px"))
     ("main" ("border-style" "solid"))))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; update-world-sms: world -> world
+;; Update the world with the value of the sms field.
+(define (update-world-sms w)
+  (make-world (world-loc w)
+              (world-closest w)
+              (world-last-reported w)
+              (get-input-value "sms-input")))
+
+
+(define sms-input-dom
+  (js-input "text" '(("id" "sms-input"))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RSS Parser Helpers.
 
 ;; parse-places: xexpr -> (listof place)
