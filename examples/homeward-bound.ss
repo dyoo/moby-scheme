@@ -289,7 +289,9 @@
 ;; Parses out the places from the RSS we get from Google Maps.
 (define (parse-places xexpr)
   (cond
-    [(empty? xexpr)
+    [(or (empty? xexpr)
+         (and (string? xexpr)
+              (string=? xexpr "")))
      empty]
     [else
      (parse-items

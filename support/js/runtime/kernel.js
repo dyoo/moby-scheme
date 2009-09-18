@@ -1806,16 +1806,22 @@ var plt = plt || {};
 
 
     plt.Kernel.parse_dash_xml = function(s) {
+	check(s, isString, "parse-xml", "string", 1);
+	if (s.length == 0) { 
+	    return plt.types.String.makeInstance(""); 
+	}
 	var xmlDoc;
 	try {
 	    //Internet Explorer
 	    xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
 	    xmlDoc.async="false";
 	    xmlDoc.loadXML(s);
+	    // FIXME: check parse errors
 	}
 	catch(e) {
 	    var parser=new DOMParser();
 	    xmlDoc=parser.parseFromString(s, "text/xml");
+	    // FIXME: check parse errors
 	}
 
 	var parseAttributes = function(attrs) {

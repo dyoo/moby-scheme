@@ -550,7 +550,8 @@ plt.platform = {};
 
     function PhonegapNetworkService() {}
     PhonegapNetworkService.prototype.getUrl = function(aUrl) {
-	return Device.getUrl(aUrl);
+	var result = Device.getUrl(aUrl);
+	return plt.types.String.makeInstance("" + result);
     };
 
 
@@ -561,7 +562,7 @@ plt.platform = {};
 	var url = "/networkProxy?url=" + encodeURIComponent(aUrl);
 	req.open("GET", url, false);
 	req.send(null);
-	return req.responseText;
+	return plt.types.String.makeInstance(req.responseText);
     };
 
     //////////////////////////////////////////////////////////////////////
