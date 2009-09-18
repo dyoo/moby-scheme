@@ -120,7 +120,7 @@
            (place-has-transitioned? 
             (world-closest w)
             (world-last-reported w)))))
-         
+
 
 ;; place-has-transitioned?: Place Place -> boolean
 ;; Returns true if the two places should be treated as distinct.
@@ -157,7 +157,7 @@
                  (number->string 
                   (exact->inexact (loc-long a-loc)))
                  "&iwloc=A&hl=en"))
-  
+
 ;; description: world -> string
 ;; Produces a text description of the current place.
 (define (description w)
@@ -194,23 +194,26 @@
      (find-places (rest places) a-loc)]))
 
 
-;; place-matches?: place loc -> boolean
+;; place-matches?: Place loc -> boolean
 ;; Returns true if the place matches the location.
 (define (place-matches? a-place a-loc)
-  (<= (location-distance (loc-lat a-loc)
-                         (loc-long a-loc)
-                         (loc-lat (place-loc a-place))
-                         (loc-long (place-loc a-place)))
-      (place-radius a-place)))
+  (cond [(place-uninitialized? a-place)
+         false]
+        [else
+         (<= (location-distance (loc-lat a-loc)
+                                (loc-long a-loc)
+                                (loc-lat (place-loc a-place))
+                                (loc-long (place-loc a-place)))
+             (place-radius a-place))]))
 
 
 ;; loc->string: loc -> string
 (define (loc->string w)
   (string-append "(" 
-		 (number->string (loc-lat w))
-		 ", "
-		 (number->string (loc-long w))
-		 ")"))
+                 (number->string (loc-lat w))
+                 ", "
+                 (number->string (loc-long w))
+                 ")"))
 
 
 
@@ -317,7 +320,7 @@
                ""]
               [else
                (sxml-text (parse-xml (string-append "<top>" x "</top>")))]))]
-
+    
     (make-place (sxml-text (first (sxml-find-children 'title (sxml-children xexpr))))
                 
                 (cond
@@ -326,15 +329,27 @@
                   [else
                    (parse-georss:point 
                     (first (sxml-find-children 'georss:point (sxml-children xexpr))))])
-               
+                
                 (cond
                   [(empty? (sxml-find-children 'description (sxml-children xexpr)))
                    100]
                   [else
-                   (string->number 
+                   (loosely-parse-number
                     (apply string-append
                            (map get-description-text 
                                 (sxml-children (first (sxml-find-children 'description (sxml-children xexpr)))))))]))))
+
+
+;; loosely-parse-number: string -> number
+(define (loosely-parse-number an-str)
+  (cond [(empty? (split-whitespace an-str))
+         0]
+        [(number? (string->number (first (split-whitespace an-str))))
+         (string->number (first (split-whitespace an-str)))]
+        [else
+         0]))
+
+
 
 
 ;; parse-georss:point: xexpr -> loc
