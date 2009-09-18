@@ -20,6 +20,7 @@
          "compiler/stx.ss"
          "generate-application.ss")
 
+(require (for-syntax scheme/base))
 
 (define-runtime-path javascript-support "../support/js")
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
@@ -38,6 +39,20 @@
        (f dir))
      (lambda ()
        (delete-directory/files dir)))))
+
+(define-syntax (define/cached stx)
+  (syntax-case stx ()
+    [(_ (name args ...) body ...)
+     (syntax/loc stx
+       (define name 
+         (let ([cached-result #f])
+           (lambda (args ...)
+             (cond
+               [cached-result
+                (unbox cached-result)]
+               [else
+                (set! cached-result (box (begin body ...)))
+                (unbox cached-result)])))))]))
 
 
 
@@ -71,7 +86,8 @@
                   (h2 ((class "programTitle")) ,program-name)
                   
                   (a ((class "linkbutton")
-                      (href "index.html"))
+                      (href "index.html")
+                      (style "display:none"))
                      "Run program")
                   " "
                   (a ((class "linkbutton")
@@ -88,9 +104,9 @@
              (define (network-proxy req)
                (list #"text/plain"
                      (get-url (extract-binding/single 'url (request-bindings req)))))
+
              
-             
-             (define (generate-js-zip req filename)
+             (define/cached (generate-js-zip req filename)
                (with-temporary-directory
                 (lambda (dir)
                   (let ([dest (build-path dir program-name)])
@@ -106,7 +122,7 @@
                                            (string-append program-name
                                                           ".zip"))))))))
              
-             (define (generate-apk req filename)
+             (define/cached (generate-apk req filename)
                (with-temporary-directory
                 (lambda (dir)
                   (let ([dest (build-path dir program-name)])
