@@ -2,14 +2,17 @@
 
 ;; Minding the store.
 ;;
-;; Alerts the user whenever he or she gets close to a store with
-;; items on their shopping list.
+;; Alerts the user whenever he or she gets
+;; close to a store with items on their
+;; shopping list.
 ;;
-;; The user specifies stores by marking them on a Google Maps and
-;; telling the program the RSS feed URL.  The description field is
+;; The user specifies stores by marking them
+;; on a Google Maps and telling the program
+;; the RSS feed URL.  The description field is
 ;; used to grab the list of items at a store.
 ;;
-;; See: http://mapki.com/wiki/Google_Map_Parameters
+;; See:
+;; http://mapki.com/wiki/Google_Map_Parameters
 
 ;; The url to the Google Maps "My Maps" RSS feed.
 (define MYMAPS-URL
@@ -24,48 +27,78 @@
 ;; A location is the latitude/longitude pair.
 (define-struct loc (lat long))
 
-;; Our initial world will be in limbo; we'll be relocated as soon as we get a geolocation point.
+;; Our initial world will be in limbo; we'll be
+;; relocated as soon as we get a geolocation.
 (define initial-world (make-world (make-loc 0 0) empty))
 
-;; A place is a name string, a location, a radius number, and an item string
+;; A place is a name string, a location,
+;; a radius number, and an item string
 (define-struct place (name loc radius item))
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; update-location: world number number -> world
 ;; Updates the current location.
 (define (update-location w lat long)
   (make-world (make-loc lat long) 
-              (find-nearby-places ALL-PLACES (make-loc lat long))))
+              (find-nearby-places 
+               ALL-PLACES
+               (make-loc lat long))))
 
-;; find-places: (listof place) loc -> (listof place)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; find-nearby-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
 (define (find-nearby-places places a-loc)
   (cond [(empty? places)
          empty]
         [(place-matches? (first places) a-loc)
-         (cons (first places) (find-nearby-places (rest places) a-loc))]
+         (cons (first places) 
+               (find-nearby-places 
+                (rest places) a-loc))]
         [else
-         (find-nearby-places (rest places) a-loc)]))
+         (find-nearby-places 
+          (rest places) a-loc)]))
 
 ;; place-matches?: place loc -> boolean
 ;; Returns true if the place matches the location.
 (define (place-matches? a-place a-loc)
-  (<= (location-distance (loc-lat a-loc)
-                         (loc-long a-loc)
-                         (loc-lat (place-loc a-place))
-                         (loc-long (place-loc a-place)))
+  (<= (location-distance 
+       (loc-lat a-loc)
+       (loc-long a-loc)
+       (loc-lat (place-loc a-place))
+       (loc-long (place-loc a-place)))
       (place-radius a-place)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; beep-if-near: world -> effect
+;; Beeps if we're near a place with items.
+(define (beep-if-near w)
+  (cond
+    [(empty? (keep-places-with-items
+              (world-nearby-places w)))
+     empty]
+    [else
+     (make-effect:beep)]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; draw: world -> dom-sexpr
 (define (draw w)
-  (list (js-div '(("id" "main")))
-        (list (js-div '(("id" "title"))) 
-              (list (js-text "Minding the Store")))
-        (list (js-div) 
-              (list (js-text "Current location: "))
-              (list (js-text (loc->string (world-loc w)))))
-        (list* (js-div) 
-               (list (js-text "Nearby items by location: "))
-               (draw-items w))))
+  (list 
+   (js-div '(("id" "main")))
+   (list (js-div '(("id" "title"))) 
+         (list (js-text "Minding the Store")))
+   (list (js-div) 
+         (list (js-text "Current location: "))
+         (list (js-text 
+                (loc->string (world-loc w)))))
+   (list* (js-div) 
+          (list (js-text 
+                 "Nearby items by location: "))
+          (draw-items w))))
 
 
 ;; draw-items: world -> (listof dom-sexpr)
@@ -75,41 +108,35 @@
                (list (js-text (place-name p)))
                (list (js-text ": "))
                (list (js-text (place-item p)))))
-       (keep-places-with-items (world-nearby-places w))))
+       (keep-places-with-items
+        (world-nearby-places w))))
 
-
-;; keep-places-with-items: (listof place) -> (listof place)
-;; Keep the places that have items associated to them.
-(define (keep-places-with-items places)
-  (filter (lambda (p) (not (string-whitespace? (place-item p))))
-          places))
 
 ;; draw-css: world -> css-sexpr
 (define (draw-css w)
   '(("title" ("font-size" "20px"))
     ("main" ("border-style" "solid"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; keep-places-with-items: (listof place) -> (listof place)
+;; Keep the places that have items.
+(define (keep-places-with-items places)
+  (filter (lambda (p) 
+            (not (string-whitespace? 
+                  (place-item p))))
+          places))
 
 ;; loc->string: loc -> string
 (define (loc->string a-loc)
-  (format "~a, ~a" (loc-lat a-loc) (loc-long a-loc)))
-
-
+  (format "~a, ~a" 
+          (loc-lat a-loc) 
+          (loc-long a-loc)))
 
 ;; ignore: world -> world
 ;; Ignore the world and just return it.
 (define (ignore w)
   w)
-
-
-;; beep-if-near: world -> effect
-;; Beeps if we're near a place with items.
-(define (beep-if-near w)
-  (cond
-    [(empty? (keep-places-with-items (world-nearby-places w)))
-     empty]
-    [else
-     (make-effect:beep)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RSS Parser Helpers.
@@ -131,7 +158,6 @@
      (cons (parse-item (first xexprs))
            (parse-items (rest xexprs)))]))
 
-
 ;; parse-item: xexpr -> place
 ;; Parses an item from the RSS feed.
 (define (parse-item xexpr)
@@ -140,33 +166,59 @@
               [(string=? x "")
                ""]
               [else
-               (sxml-text (parse-xml (string-append "<top>" x "</top>")))]))]
-    (make-place (sxml-text (first (sxml-find-children 'title (sxml-children xexpr))))
+               (sxml-text 
+                (parse-xml 
+                 (string-append 
+                  "<top>" x "</top>")))]))]
+    (make-place (sxml-text 
+                 (first
+                  (sxml-find-children 
+                   'title 
+                   (sxml-children xexpr))))
                 
                 (cond
-                  [(empty? (sxml-find-children 'georss:point (sxml-children xexpr)))
+                  [(empty? 
+                    (sxml-find-children
+                     'georss:point 
+                     (sxml-children xexpr)))
                    (make-loc 0 0)]
                   [else
                    (parse-georss:point 
-                    (first (sxml-find-children 'georss:point (sxml-children xexpr))))])
+                    (first 
+                     (sxml-find-children
+                      'georss:point
+                      (sxml-children xexpr))))])
                 
                 ;; At the moment, we default to a radius of 100 meters.
                 100
-                
-                
+                              
                 (cond
-                  [(empty? (sxml-find-children 'description (sxml-children xexpr)))
+                  [(empty? 
+                    (sxml-find-children
+                     'description 
+                     (sxml-children xexpr)))
                    ""]
                   [else
-                   (apply string-append
-                          (map get-description-text 
-                               (sxml-children (first (sxml-find-children 'description (sxml-children xexpr))))))]))))
+                   (apply 
+                    string-append
+                    (map
+                     get-description-text 
+                     (sxml-children
+                      (first
+                       (sxml-find-children
+                        'description
+                        (sxml-children
+                         xexpr))))))]))))
 
 
 ;; parse-georss:point: xexpr -> loc
 (define (parse-georss:point xexpr)
-  (make-loc (string->number (first (split-whitespace (sxml-text xexpr))))
-            (string->number (second (split-whitespace (sxml-text xexpr))))))
+  (make-loc (string->number 
+             (first (split-whitespace 
+                     (sxml-text xexpr))))
+            (string->number 
+             (second (split-whitespace 
+                      (sxml-text xexpr))))))
 
 
 
@@ -180,7 +232,9 @@
 (define (sxml-children a-sxml)
   (cond
     [(string? a-sxml)
-     (error 'children "Can't have children of a string xexpr")]
+     (error 
+      'children 
+      "Can't have children of a string xexpr")]
     [else
      (rest (rest a-sxml))]))
 
@@ -193,8 +247,10 @@
               [(empty? xexprs)
                ""]
               [else
-               (string-append (sxml-text (first xexprs))
-                              (get-text* (rest xexprs)))]))]
+               (string-append (sxml-text
+                               (first xexprs))
+                              (get-text*
+                               (rest xexprs)))]))]
     (cond
       [(string? a-sxml)
        a-sxml]
@@ -210,21 +266,29 @@
          empty]
         [else
          (cond [(string? (first children))
-                (sxml-find-children name (rest children))]
+                (sxml-find-children 
+                 name 
+                 (rest children))]
                [(pair? (first children))
                 (cond
-                  [(symbol=? name (first (first children)))
-                   (cons (first children)
-                         (sxml-find-children name (rest children)))]
+                  [(symbol=?
+                    name 
+                    (first (first children)))
+                   (cons 
+                    (first children)
+                    (sxml-find-children
+                     name (rest children)))]
                   [else
-                   (sxml-find-children name (rest children))])]
+                   (sxml-find-children
+                    name (rest children))])]
                [else
-                (error 'find-children children)])]))
+                (error 'find-children
+                       children)])]))
 
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (define ALL-PLACES
