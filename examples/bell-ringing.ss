@@ -6,34 +6,31 @@
 ;; and the current tone.
 (define-struct world (shaken tone))
 
-
-
 (define WIDTH 320)
 (define HEIGHT 480)
 (define MAX-TONE 4)
 (define MIN-TONE 1)
 
-
-
 (define initial-world (make-world 0 1))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ignore: world -> world
-(define (ignore a-world)
-  a-world)
-
-;; update: world -> world
-(define (update a-world)
+;; shake: world -> world
+;; On a shake, first increment the world-shaken.
+(define (shake a-world)
   (make-world (add1 (world-shaken a-world))
               (world-tone a-world)))
 
-
 ;; ring: world -> effect
+;; Also, on a shake, produce a sound effect.
 (define (ring a-world)
-  (make-effect:play-sound-url (string-append "http://hashcollision.org/tones/"
-                                             (number->letter (world-tone a-world))
-                                             "-tone.wav")))
+  (make-effect:play-sound-url 
+   (string-append 
+    "http://hashcollision.org/tones/"
+    (number->letter (world-tone a-world))
+    "-tone.wav")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; up: world -> world
 (define (up a-world)
@@ -47,17 +44,16 @@
               (max (sub1 (world-tone a-world))
                    MIN-TONE)))
 
-;; toggle-sleep: world -> world
-(define (toggle-sleep a-world)
-  (make-world (world-shaken a-world)
-              (world-tone a-world)))
 
 
-
-(define button-up (js-button up '(("id" "button-up"))))
-(define button-down (js-button down '(("id" "button-down"))))
-(define button-ring (js-button* update ring '(("id" "button-ring"))))
-(define background-div (js-div '(("id" "background-div"))))
+(define button-up 
+  (js-button up '(("id" "button-up"))))
+(define button-down 
+  (js-button down '(("id" "button-down"))))
+(define button-ring 
+  (js-button* shake ring '(("id" "button-ring"))))
+(define background-div 
+  (js-div '(("id" "background-div"))))
 
 
 
@@ -74,11 +70,13 @@
 (define (render w)
   (list background-div
         (list (js-div)
-              (list (js-text (number->string (world-shaken w))))
+              (list (js-text (number->string 
+                              (world-shaken w))))
               (list (js-text " "))
               (list (js-text "rings")))
         (list (js-div '(("id" "note-text")))
-              (list (js-text (number->letter (world-tone w)))))
+              (list (js-text (number->letter
+                              (world-tone w)))))
         (list button-up (list (js-text "Up")))
         (list button-down (list (js-text "Down")))
         (list button-ring (list (js-text "Play ring!")))))
@@ -104,5 +102,5 @@
 
 
 (js-big-bang initial-world
-             (on-draw render render-css)
-             (on-shake* update ring))
+             (on-shake* shake ring)
+             (on-draw render render-css))

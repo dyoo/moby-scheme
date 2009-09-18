@@ -1,4 +1,4 @@
-#lang moby
+#lang s-exp "../moby-lang.ss"
 ;; a node is (make-node string string location integer (listof node) (listof number) boolean)
 ;(define-struct node (names info loc tours index neighbors distances heap-node))
 
@@ -7,6 +7,13 @@
 (define-struct location (lat lng radius))
 
 (define-struct node (info index tours loc))
+
+(define-struct world 
+  (lat long tours visited visiting? path tovisit in-menu?))
+
+(define init-world 
+  (make-world 0 0 empty empty false empty empty true))
+
 
 (define library-tour "A tour of libraries")
 (define food-tour "A tour of food")
@@ -27,9 +34,6 @@
     [(eq? node n2) (list (list 2 2) (list 3 3) false (list 1.5 2))]
     [(eq? node n3) (list (list 1.5 3) (list 1.5 3) (list 1.5 3) false)]))
 
-(define-struct world (lat long tours visited visiting? path tovisit in-menu?))
-
-(define init-world (make-world 0 0 empty empty false empty empty true))
 
 (define (reach-node lat long path acc)
   (cond
@@ -519,21 +523,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (js-big-bang (location-change-handler init-world 41.825721 -71.41478)
-             empty
-             (on-draw draw draw-css)
-             (on-location-change location-change-handler))
+
+             (on-location-change location-change-handler)
+
+             (on-draw draw draw-css))

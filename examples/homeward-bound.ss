@@ -59,6 +59,8 @@
                                   UNINITIALIZED
                                   ""))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; move: world number number -> world
 ;; On movement, update to the closest place.
 (define (move w lat long)
@@ -66,7 +68,6 @@
               (closest-place (make-loc lat long))
               (world-last-reported w)
               (world-sms w)))
-
 
 ;; record-reporting: world -> world
 ;; If we're about to send a report, record that
@@ -395,8 +396,9 @@
 (define TICK-DELAY (* 5 60))  ;; wait every five minute before updates.
 
 (js-big-bang initial-world
+             
+             (on-location-change move)
              (on-tick* TICK-DELAY
                        record-reporting send-report)
-             (on-location-change move)
              
              (on-draw draw draw-css))

@@ -48,6 +48,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; beep-if-near: world -> effect
+;; Beeps if we're near a place with items.
+(define (beep-if-near w)
+  (cond
+    [(empty? (keep-places-with-items
+              (world-nearby-places w)))
+     empty]
+    [else
+     (make-effect:beep)]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; find-nearby-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
 (define (find-nearby-places places a-loc)
@@ -70,18 +82,6 @@
        (loc-lat (place-loc a-place))
        (loc-long (place-loc a-place)))
       (place-radius a-place)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; beep-if-near: world -> effect
-;; Beeps if we're near a place with items.
-(define (beep-if-near w)
-  (cond
-    [(empty? (keep-places-with-items
-              (world-nearby-places w)))
-     empty]
-    [else
-     (make-effect:beep)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
