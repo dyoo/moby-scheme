@@ -747,7 +747,7 @@ plt.platform = {};
     function PhonegapSmsService() {
     }
     PhonegapSmsService.prototype.send = function(address, msg) {
-	navigator.sms.send(number, msg);
+	navigator.sms.send(address, msg);
     };
     function GenericSmsService() {
     }
