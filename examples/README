@@ -21,7 +21,7 @@ phone is jerked.  The user interface allows switching to different
 notes.
 
 
-silencing-music.ss: plays songs from the user's playlist; as time
+lullaby.ss: plays songs from the user's playlist; as time
 progresses, the volume of the music drops unless the phone is shaked.
 
 
