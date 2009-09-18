@@ -33,7 +33,8 @@
 ;; update-location: world number number -> world
 ;; Updates the current location.
 (define (update-location w lat long)
-  (make-world (make-loc lat long) (find-nearby-places ALL-PLACES (make-loc lat long))))
+  (make-world (make-loc lat long) 
+              (find-nearby-places ALL-PLACES (make-loc lat long))))
 
 ;; find-places: (listof place) loc -> (listof place)
 ;; Finds places that match the a-loc.
@@ -232,6 +233,7 @@
 
 
 (js-big-bang initial-world
-             (on-draw draw draw-css)
+             (on-tick* 30 ignore beep-if-near)
              (on-location-change update-location)
-             (on-tick* 30 ignore beep-if-near))
+
+             (on-draw draw draw-css))

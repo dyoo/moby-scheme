@@ -17,8 +17,8 @@
 (define initial-world (make-world init-time init-volume))
 
 ;; this is the update for every tick
-;; update: world -> world
-(define (update a-world)
+;; tick: world -> world
+(define (tick a-world)
   (local [(define t (sub1 (world-time a-world)))]
     (make-world t
                 (cond
@@ -32,7 +32,7 @@
 
 ;; this resets the world by just returning the initial world
 ;; reset-world: world -> world
-(define (reset-world a-world)
+(define (shake a-world)
   initial-world)
 
 ;; On a tick, we set the volume.
@@ -85,6 +85,7 @@
 
 
 (js-big-bang initial-world
-             (on-draw draw draw-css)
-             (on-tick* 1 update get-effects)
-             (on-shake* reset-world get-effects))
+             (on-tick* 1 tick get-effects)
+             (on-shake* shake get-effects)
+             
+             (on-draw draw draw-css))
