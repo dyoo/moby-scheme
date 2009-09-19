@@ -591,16 +591,16 @@ plt.platform = {};
 	navigator.notification.beep(1);
     };
 
-    PhonegapSoundService.prototype.playPlaylistSound = function(rawPlaylist) {
-	alert("I should be playing");
+    PhonegapSoundService.prototype.playPlaylist = function(rawPlaylist) {
+	Device.playPlaylistRecord(rawPlaylist);
     };
 
-    PhonegapSoundService.prototype.pausePlaylistSound = function(rawPlaylist) {
-	alert("I should be pausing");
+    PhonegapSoundService.prototype.pausePlaylist = function(rawPlaylist) {
+	Device.pausePlaylistRecord(rawPlaylist);
     };
 
-    PhonegapSoundService.prototype.stopPlaylistSound = function(rawPlaylist) {
-	alert("I should be stopping");
+    PhonegapSoundService.prototype.stopPlaylist = function(rawPlaylist) {
+	Device.stopPlaylistRecord(rawPlaylist);
     };
 
 
