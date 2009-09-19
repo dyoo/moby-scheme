@@ -32,7 +32,7 @@
 ;; ring: world -> effect
 (define (ring a-world)
   #;(make-effect:play-dtmf-tone (world-tone a-world) 500)
-  (make-effect:play-sound-url (string-append "file:///android_asset/tones/"
+  (make-effect:play-sound (string-append "file:///android_asset/tones/"
                                              (number->letter (world-tone a-world))
                                              "-tone.wav")))
 

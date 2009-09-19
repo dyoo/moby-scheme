@@ -68,9 +68,9 @@
 (define (play-music a-world)
   (cond
     [(> (world-volume a-world) 0)
-     (make-effect:play-sound-url song)]
+     (make-effect:play-sound song)]
     [(<= (world-volume a-world) 0) 
-     (make-effect:pause-sound-url song)]))
+     (make-effect:pause-sound song)]))
 
 
 ;; sleep-check: world -> effect

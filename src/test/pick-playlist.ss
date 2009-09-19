@@ -13,7 +13,37 @@
 		 w)
 	       (lambda (w)
 		 (make-effect:pick-playlist update-playlist)))
-	      (list (js-text "Pick playlist")))))
+	      (list (js-text "Pick playlist"))
+
+
+	      (list (js-button* identity play) (list js-text "Play"))
+	      (list (js-button* identity pause) (list js-text "Pause"))
+	      (list (js-button* identity stop) (list js-text "Stop")))))
+
+
+(define (play w)
+  (cond
+    [(boolean? w)
+     empty]
+    [else
+     (make-effect:play-sound w)]))
+
+
+(define (pause w)
+  (cond
+    [(boolean? w)
+     empty]
+    [else
+     (make-effect:pause-sound w)]))
+
+(define (stop w)
+  (cond
+    [(boolean? w)
+     empty]
+    [else
+     (make-effect:stop-sound w)]))
+
+
 
 (define (draw-css w)
   '())

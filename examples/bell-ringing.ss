@@ -24,7 +24,7 @@
 ;; ring: world -> effect
 ;; Also, on a shake, produce a sound effect.
 (define (ring a-world)
-  (make-effect:play-sound-url 
+  (make-effect:play-sound 
    (string-append 
     "http://hashcollision.org/tones/"
     (number->letter (world-tone a-world))

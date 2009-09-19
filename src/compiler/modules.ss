@@ -34,19 +34,19 @@
                                 (list PERMISSION:SEND-SMS)
                                 false)                               
                                (make-binding:function
-                                'make-effect:play-sound-url
+                                'make-effect:play-sound
                                 module-path
                                 1
                                 false 
-                                "make_dash_effect_colon_play_dash_sound_dash_url"
+                                "make_dash_effect_colon_play_dash_sound"
                                 (list PERMISSION:INTERNET)
                                 false)
-                               (bf 'make-effect:stop-sound-url module-path 1
+                               (bf 'make-effect:stop-sound module-path 1
                                    false 
-                                   "make_dash_effect_colon_stop_dash_sound_dash_url")
-                               (bf 'make-effect:pause-sound-url module-path 1
+                                   "make_dash_effect_colon_stop_dash_sound")
+                               (bf 'make-effect:pause-sound module-path 1
                                    false
-                                   "make_dash_effect_colon_pause_dash_sound_dash_url")
+                                   "make_dash_effect_colon_pause_dash_sound")
                                (bf 'make-effect:set-sound-volume module-path 1
                                    false 
                                    "make_dash_effect_colon_set_dash_sound_dash_volume")

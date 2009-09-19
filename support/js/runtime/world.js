@@ -556,17 +556,29 @@ plt.world.Kernel = plt.world.Kernel || {};
 	plt.platform.Platform.getInstance().getSmsService().send(
 	    this._fields[0], this._fields[1]);
     };
-    effect_colon_play_dash_sound_dash_url.prototype.run = function() {
-	plt.platform.Platform.getInstance().getSoundService().playSoundUrl(
-	    this._fields[0]);
+    effect_colon_play_dash_sound.prototype.run = function() {
+	if (plt.Kernel.isString(this._fields[0])) {
+	    plt.platform.Platform.getInstance().getSoundService().playSoundUrl(
+		this._fields[0]);
+	} else if (playlist_dash_sound_question_(this._fields[0]) {
+	    // Fill me in!
+	}
     };
-    effect_colon_pause_dash_sound_dash_url.prototype.run = function() {
-	plt.platform.Platform.getInstance().getSoundService().pauseSoundUrl(
-	    this._fields[0]);
+    effect_colon_pause_dash_sound.prototype.run = function() {
+	if (plt.Kernel.isString(this._fields[0])) {
+	    plt.platform.Platform.getInstance().getSoundService().pauseSoundUrl(
+		this._fields[0]);
+	} else if (playlist_dash_sound_question_(this._fields[0]) {
+	    // Fill me in!
+	}
     };
-    effect_colon_stop_dash_sound_dash_url.prototype.run = function() {
-	plt.platform.Platform.getInstance().getSoundService().stopSoundUrl(
-	    this._fields[0]);
+    effect_colon_stop_dash_sound.prototype.run = function() {
+	if (plt.Kernel.isString(this._fields[0])) {
+	    plt.platform.Platform.getInstance().getSoundService().stopSoundUrl(
+		this._fields[0]);
+	} else if (playlist_dash_sound_question_(this._fields[0]) {
+	    // Fill me in!
+	}
     };
     effect_colon_set_dash_sound_dash_volume.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService().setVolume(
@@ -588,10 +600,11 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_pick_dash_playlist.prototype.run = function() {
 	var updater = this._fields[0];
 	var callback = function(playlist) {
+	    var playlistSound = make_dash_playlist_dash_sound(playlist);
 	    setTimeout(function() {
 		var changeWorld = plt.world.config.CONFIG.lookup("changeWorld");
 		changeWorld(function(w) {
-		    return updater([w, playlist]);
+		    return updater([w, playlistSound]);
 		});
 	    }, 0);
 	}

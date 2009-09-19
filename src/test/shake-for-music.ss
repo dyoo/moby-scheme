@@ -14,8 +14,8 @@
 
 (define (play w)
   (if w
-      (make-effect:play-sound-url file-path)
-      (make-effect:pause-sound-url file-path)))
+      (make-effect:play-sound file-path)
+      (make-effect:pause-sound file-path)))
 
 (big-bang WIDTH HEIGHT initial-world
           (on-shake* swap play))
