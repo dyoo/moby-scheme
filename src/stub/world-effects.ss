@@ -69,12 +69,14 @@
      ;; fixme
      (void)]
     
-    [(effect:play-sound-url? e)
-     (unless (regexp-match #rx"\\.wav$" 
+    [(effect:play-sound? e)
+     (void)
+     
+     #;(unless (regexp-match #rx"\\.wav$" 
                            (string-downcase 
-                            (effect:play-sound-url-url e)))
+                            (effect:play-sound-sound e)))
        (error 'play-sound "Only supports .wav at the moment."))
-     (let* ([url-string (effect:play-sound-url-url e)]
+     #;(let* ([url-string (effect:play-sound-url-url e)]
             [sound-bytes (lookup-sound-url url-string)]
             
             [filename (make-temporary-file 
@@ -91,9 +93,9 @@
                        (play-sound filename async?))
                      (lambda ()
                        (delete-file filename))))]
-    [(effect:pause-sound-url? e)
+    [(effect:pause-sound? e)
      (void)]
-    [(effect:stop-sound-url? e)
+    [(effect:stop-sound? e)
      (void)]
     [(effect:set-sound-volume? e)
      (void)]
