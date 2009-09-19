@@ -560,24 +560,27 @@ plt.world.Kernel = plt.world.Kernel || {};
 	if (plt.Kernel.isString(this._fields[0])) {
 	    plt.platform.Platform.getInstance().getSoundService().playSoundUrl(
 		this._fields[0]);
-	} else if (playlist_dash_sound_question_(this._fields[0]) {
-	    // Fill me in!
+	} else if (playlist_dash_sound_question_(this._fields[0])) {
+	    plt.platform.Platform.getInstance().getSoundService().playPlaylist(
+		this._fields[0]._fields[0]);
 	}
     };
     effect_colon_pause_dash_sound.prototype.run = function() {
 	if (plt.Kernel.isString(this._fields[0])) {
 	    plt.platform.Platform.getInstance().getSoundService().pauseSoundUrl(
 		this._fields[0]);
-	} else if (playlist_dash_sound_question_(this._fields[0]) {
-	    // Fill me in!
+	} else if (playlist_dash_sound_question_(this._fields[0])) {
+	    plt.platform.Platform.getInstance().getSoundService().pausePlaylist(
+		this._fields[0]._fields[0]);
 	}
     };
     effect_colon_stop_dash_sound.prototype.run = function() {
 	if (plt.Kernel.isString(this._fields[0])) {
 	    plt.platform.Platform.getInstance().getSoundService().stopSoundUrl(
 		this._fields[0]);
-	} else if (playlist_dash_sound_question_(this._fields[0]) {
-	    // Fill me in!
+	} else if (playlist_dash_sound_question_(this._fields[0])) {
+	    plt.platform.Platform.getInstance().getSoundService().stopPlaylist(
+		this._fields[0]._fields[0]);
 	}
     };
     effect_colon_set_dash_sound_dash_volume.prototype.run = function() {

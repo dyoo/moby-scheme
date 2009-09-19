@@ -590,6 +590,22 @@ plt.platform = {};
     PhonegapSoundService.prototype.beep = function() {
 	navigator.notification.beep(1);
     };
+
+    PhonegapSoundService.prototype.playPlaylistSound = function(rawPlaylist) {
+	alert("I should be playing");
+    };
+
+    PhonegapSoundService.prototype.pausePlaylistSound = function(rawPlaylist) {
+	alert("I should be pausing");
+    };
+
+    PhonegapSoundService.prototype.stopPlaylistSound = function(rawPlaylist) {
+	alert("I should be stopping");
+    };
+
+
+
+
     PhonegapSoundService.prototype.playSoundUrl = function(url) {
     	navigator.audio.playMusic(url);
     };
@@ -623,6 +639,18 @@ plt.platform = {};
     }
     Html5SoundService.prototype.beep = function() {
 	alert("Beep");
+    };
+
+
+    Html5SoundService.prototype.playPlaylistSound = function(playlistSound) {
+
+    };
+
+    Html5SoundService.prototype.pausePlaylistSound = function(playlistSound) {
+
+    };
+    Html5SoundService.prototype.stopPlaylistSound = function(playlistSound) {
+
     };
 
     Html5SoundService.prototype.playSoundUrl = function(url) {
@@ -676,6 +704,20 @@ plt.platform = {};
     GenericSoundService.prototype.beep = function() {
 	alert("Beep");
     };
+
+    
+    GenericSoundService.prototype.playPlaylistSound = function(playlistSound) {
+
+    };
+
+    GenericSoundService.prototype.pausePlaylistSound = function(playlistSound) {
+
+    };
+
+    GenericSoundService.prototype.stopPlaylistSound = function(playlistSound) {
+
+    };
+
 
     GenericSoundService.prototype.playSoundUrl = function(url) {
 	// Can't do anything here.
