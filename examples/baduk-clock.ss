@@ -180,41 +180,50 @@
 
 ;; player-display: player string string -> dom-sexp
 (define (player-display p name)
-  (list (js-div)
-        (list (js-text name))
-        (list (js-text (format "Periods: ~a" 
-                               (player-periods p))))
-        (list (js-text (time-string (player-time p))))))
+  (list (js-div '(("class" "player-display")))
+        (list (js-div '(("class" "player-name"))) 
+              (list (js-text name)))
+        (list (js-div '(("class" "player-periods")))
+              (list (js-text (format "Periods: ~a" 
+                               (player-periods p)))))
+        (list (js-div '(("class" "player-time")))
+              (list (js-text (time-string 
+                              (player-time p)))))))
 
 
-(define THE-PLAY-BUTTON 
-  (js-button someone-plays 
+;; on-your-turn: symbol (world -> world) -> (world -> world)
+(define (on-your-turn turn updater)
+  (lambda (w)
+    (cond
+      [(symbol=? (world-turn w) turn)
+       (updater w)]
+      [else
+       w])))
+
+
+(define BLACK-BUTTON 
+  (js-button (on-your-turn 'black 
+                           someone-plays) 
              '(("id" "the-play-button"))))
 
+(define WHITE-BUTTON 
+  (js-button (on-your-turn 'white
+                           someone-plays)
+             '(("id" "the-play-button"))))
 
-;; maybe-wrap-button: dom-sexp boolean -> dom-sexp
-;; Conditionally adds a button around a-dom-sexp.
-(define (maybe-wrap-button a-dom-sexp yes?)
-  (cond
-    [yes?
-     (list THE-PLAY-BUTTON
-           a-dom-sexp)]
-    [else
-     a-dom-sexp]))
 
 ;; draw: world -> dom-sexp
 (define (draw w)
   (list (js-div '(("id" "main")))
          (list (js-div '(("id" "black-side")))
-               (maybe-wrap-button
-                (player-display (world-black w)
-                                "black")
-                (symbol=? (world-turn w) 'black)))
+               (list BLACK-BUTTON
+                     (player-display (world-black w)
+                                     "black")))
          (list (js-div '(("id" "white-side")))
-               (maybe-wrap-button
-                (player-display (world-white w) 
-                                "white")
-                (symbol=? (world-turn w) 'white)))))
+               (list WHITE-BUTTON
+                     (player-display (world-white w) 
+                                     "white")))))
+
 
 
 ;; draw-css: world -> css-sexp
@@ -222,14 +231,21 @@
   '(("main" ("border-style" "solid")
             ("width" "100%")
             ("height" "100%"))
+    (".player-display" ("text-align" "center"))
+    (".player-name" ("font-size" "20px"))
+    (".player-periods" ("font-size" "20px"))
+    (".player-time" ("font-size" "30px"))
     ("the-play-button" ("width" "100%")
                        ("height" "100%"))
+    
     ("black-side" ("border-style" "solid")
                   ("width" "100%")
                   ("height" "50%"))
     ("white-side" ("border-style" "solid")
                   ("width" "100%")
-                  ("height" "50%"))))
+                  ("height" "50%")
+                  ("-webkit-transform" "rotate(180deg)")
+                  ("-moz-transform" "rotate(180deg)"))))
 
 ;; key: world key -> world
 (define (key w k)
