@@ -87,6 +87,10 @@ plt.world = plt.world || {};
 		keyname = "right";
 	    } else if (code == 40) {
 		keyname = "down";
+	    } else if (code == 32) {
+		keyname = "space";
+	    } else if (code == 13) {
+		keyname = "enter";
 	    } else {
 		keyname = String.fromCharCode(code); 
 	    }
