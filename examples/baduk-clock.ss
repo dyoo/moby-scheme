@@ -116,7 +116,7 @@
   (cond
     [(player-in-byo-yomi? p)
      (update-player-time p
-                         (minutes->milliseconds 1))]
+                         BYO-YOMI-MILLISECONDS)]
     [else
      p]))
 
@@ -178,12 +178,13 @@
               [else
                s]))]
     (format "~a:~a"
-            (quotient (floor (milliseconds->seconds time))
+            (quotient (ceiling 
+                       (milliseconds->seconds time))
                       60)
             (pad
              (number->string
               (remainder 
-               (floor (milliseconds->seconds time))
+               (ceiling (milliseconds->seconds time))
                60))))))
 
 
@@ -198,7 +199,12 @@
                                (player-periods p)))))
         (list (js-div '(("class" "player-time")))
               (list (js-text (time-string 
-                              (player-time p)))))))
+                              (player-time p)))))
+        (cons (js-div '(("class" "player-time-up")))
+              (cond [(<= (player-time p) 0)
+                     (list (list (js-text "Time's up!")))]
+                    [else
+                     empty]))))
 
 
 ;; on-your-turn: symbol (world -> world) -> (world -> world)
@@ -243,13 +249,15 @@
 
 ;; draw-css: world -> css-sexp
 (define (draw-css w)
-  (list '("main" ("border-style" "solid")
+  (list '("main" #;("border-style" "solid")
                  ("width" "100%")
                  ("height" "100%"))
         '(".player-display" ("text-align" "center"))
         '(".player-name" ("font-size" "20px"))
         '(".player-periods" ("font-size" "20px"))
         '(".player-time" ("font-size" "30px"))
+        '(".player-time-up" ("font-size" "40px")
+                            ("color" "red"))
 
         '(".play-button" ("width" "100%")
                          ("height" "100%"))    
@@ -257,15 +265,17 @@
         (list "black-side" 
               '("border-style" "solid")
               '("width" "100%")
-              '("height" "50%")
+              '("height" "49%")
               (list "border-color"
-                    (pick-player-background w 'black)))
+                    (pick-player-background w 'black))
+              #;'("border-width" "20px"))
         (list "white-side"
               '("border-style" "solid")
               '("width" "100%")
-              '("height" "50%")
+              '("height" "49%")
               (list "border-color"
                     (pick-player-background w 'white))
+              #;'("border-width" "20px")
               '("-webkit-transform" "rotate(180deg)")
               '("-moz-transform" "rotate(180deg)"))))
 
