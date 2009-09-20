@@ -178,7 +178,7 @@
               [else
                s]))]
     (format "~a:~a"
-            (quotient (ceiling 
+            (quotient (floor 
                        (milliseconds->seconds time))
                       60)
             (pad
@@ -237,8 +237,10 @@
                                      "black")))
          (list (js-div '(("id" "white-side")))
                (list WHITE-BUTTON
-                     (player-display (world-white w) 
-                                     "white")))))
+                     (list (js-div 
+                            '((id "white-side-content")))
+                           (player-display (world-white w) 
+                                           "white"))))))
 
 (define (pick-player-background w turn)
   (cond
@@ -253,10 +255,10 @@
                  ("width" "100%")
                  ("height" "100%"))
         '(".player-display" ("text-align" "center"))
-        '(".player-name" ("font-size" "20px"))
-        '(".player-periods" ("font-size" "20px"))
-        '(".player-time" ("font-size" "30px"))
-        '(".player-time-up" ("font-size" "40px")
+        '(".player-name" ("font-size" "60px"))
+        '(".player-periods" ("font-size" "60px"))
+        '(".player-time" ("font-size" "150px"))
+        '(".player-time-up" ("font-size" "150px")
                             ("color" "red"))
 
         '(".play-button" ("width" "100%")
@@ -275,7 +277,8 @@
               '("height" "49%")
               (list "border-color"
                     (pick-player-background w 'white))
-              #;'("border-width" "20px")
+              #;'("border-width" "20px"))
+        (list "white-side-content"
               '("-webkit-transform" "rotate(180deg)")
               '("-moz-transform" "rotate(180deg)"))))
 
