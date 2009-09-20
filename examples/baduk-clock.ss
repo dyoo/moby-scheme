@@ -151,13 +151,85 @@
 (define (seconds->milliseconds s)
   (* s 1000))
 
+
+;; minutes->milliseconds: number -> number
 ;; converts minutes to milliseconds.
 (define (minutes->milliseconds m)
   (seconds->milliseconds (minutes->seconds m)))
 
+;; milliseconds->seconds: number -> number
+;; converts milliseconds to seconds.
+(define (milliseconds->seconds m)
+  (/ m 1000))
+
+;; BYO-YOMI-MILLISECONDS: number
+;; It's how much time is given per period.
 (define BYO-YOMI-MILLISECONDS 
   (seconds->milliseconds 10))
 
+
+;; time-string: number -> string
+;; Given time in milliseconds, produces a nice string.
+(define (time-string time)
+  (format "~a:~a"
+          (quotient (floor (milliseconds->seconds time))
+                    60)
+          (remainder (floor (milliseconds->seconds time))
+                     60)))
+          
+
+;; player-display: player string string -> dom-sexp
+(define (player-display p name)
+  (list (js-div)
+        (list (js-text name))
+        (list (js-text (format "Periods: ~a" 
+                               (player-periods p))))
+        (list (js-text (time-string (player-time p))))))
+
+
+(define THE-PLAY-BUTTON 
+  (js-button someone-plays 
+             '(("id" "the-play-button"))))
+
+
+;; maybe-wrap-button: dom-sexp boolean -> dom-sexp
+;; Conditionally adds a button around a-dom-sexp.
+(define (maybe-wrap-button a-dom-sexp yes?)
+  (cond
+    [yes?
+     (list THE-PLAY-BUTTON
+           a-dom-sexp)]
+    [else
+     a-dom-sexp]))
+
+;; draw: world -> dom-sexp
+(define (draw w)
+  (list (js-div '(("id" "main")))
+         (list (js-div '(("id" "black-side")))
+               (maybe-wrap-button
+                (player-display (world-black w)
+                                "black")
+                (symbol=? (world-turn w) 'black)))
+         (list (js-div '(("id" "white-side")))
+               (maybe-wrap-button
+                (player-display (world-white w) 
+                                "white")
+                (symbol=? (world-turn w) 'white)))))
+
+
+;; draw-css: world -> css-sexp
+(define (draw-css w)
+  '(("main" ("border-style" "solid")
+            ("width" "100%")
+            ("height" "100%"))
+    ("the-play-button" ("width" "100%")
+                       ("height" "100%"))
+    ("black-side" ("border-style" "solid")
+                  ("width" "100%")
+                  ("height" "50%"))
+    ("white-side" ("border-style" "solid")
+                  ("width" "100%")
+                  ("height" "50%"))))
 
 ;; key: world key -> world
 (define (key w k)
@@ -169,6 +241,9 @@
 
 
 (js-big-bang (make-initial-world)
+             
              (on-tick TIME-DELTA tick)
              (on-key key)
+             
+             (on-draw draw draw-css)
              (stop-when game-over?))
