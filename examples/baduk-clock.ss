@@ -171,12 +171,22 @@
 ;; time-string: number -> string
 ;; Given time in milliseconds, produces a nice string.
 (define (time-string time)
-  (format "~a:~a"
-          (quotient (floor (milliseconds->seconds time))
-                    60)
-          (remainder (floor (milliseconds->seconds time))
-                     60)))
-          
+  (local [(define (pad s)
+            (cond
+              [(= (string-length s) 1)
+               (string-append "0" s)]
+              [else
+               s]))]
+    (format "~a:~a"
+            (quotient (floor (milliseconds->seconds time))
+                      60)
+            (pad
+             (number->string
+              (remainder 
+               (floor (milliseconds->seconds time))
+               60))))))
+
+
 
 ;; player-display: player string string -> dom-sexp
 (define (player-display p name)
@@ -204,12 +214,12 @@
 (define BLACK-BUTTON 
   (js-button (on-your-turn 'black 
                            someone-plays) 
-             '(("id" "the-play-button"))))
+             '(("class" "play-button"))))
 
 (define WHITE-BUTTON 
   (js-button (on-your-turn 'white
                            someone-plays)
-             '(("id" "the-play-button"))))
+             '(("class" "play-button"))))
 
 
 ;; draw: world -> dom-sexp
@@ -224,28 +234,40 @@
                      (player-display (world-white w) 
                                      "white")))))
 
-
+(define (pick-player-background w turn)
+  (cond
+    [(symbol=? turn (world-turn w))
+     "red"]
+    [else
+     "gray"]))
 
 ;; draw-css: world -> css-sexp
 (define (draw-css w)
-  '(("main" ("border-style" "solid")
-            ("width" "100%")
-            ("height" "100%"))
-    (".player-display" ("text-align" "center"))
-    (".player-name" ("font-size" "20px"))
-    (".player-periods" ("font-size" "20px"))
-    (".player-time" ("font-size" "30px"))
-    ("the-play-button" ("width" "100%")
-                       ("height" "100%"))
-    
-    ("black-side" ("border-style" "solid")
-                  ("width" "100%")
-                  ("height" "50%"))
-    ("white-side" ("border-style" "solid")
-                  ("width" "100%")
-                  ("height" "50%")
-                  ("-webkit-transform" "rotate(180deg)")
-                  ("-moz-transform" "rotate(180deg)"))))
+  (list '("main" ("border-style" "solid")
+                 ("width" "100%")
+                 ("height" "100%"))
+        '(".player-display" ("text-align" "center"))
+        '(".player-name" ("font-size" "20px"))
+        '(".player-periods" ("font-size" "20px"))
+        '(".player-time" ("font-size" "30px"))
+
+        '(".play-button" ("width" "100%")
+                         ("height" "100%"))    
+
+        (list "black-side" 
+              '("border-style" "solid")
+              '("width" "100%")
+              '("height" "50%")
+              (list "border-color"
+                    (pick-player-background w 'black)))
+        (list "white-side"
+              '("border-style" "solid")
+              '("width" "100%")
+              '("height" "50%")
+              (list "border-color"
+                    (pick-player-background w 'white))
+              '("-webkit-transform" "rotate(180deg)")
+              '("-moz-transform" "rotate(180deg)"))))
 
 ;; key: world key -> world
 (define (key w k)
