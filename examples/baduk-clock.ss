@@ -15,7 +15,7 @@
 
 ;; TIME-DELTA is the amount of time between clock ticks
 ;; in seconds.
-(define TIME-DELTA (/ 1 10))
+(define TIME-DELTA (/ 1 5))
 
 
 ;; a world is a:
@@ -227,20 +227,29 @@
                            someone-plays)
              '(("class" "play-button"))))
 
+(define MAIN-DIV 
+  (js-div '(("id" "main"))))
+(define WHITE-SIDE-DIV 
+  (js-div '(("id" "white-side"))))
+(define WHITE-SIDE-CONTENT-DIV 
+  (js-div '(("id" "white-side-content"))))
+(define BLACK-SIDE-DIV
+  (js-div '(("id" "black-side"))))
+
 
 ;; draw: world -> dom-sexp
 (define (draw w)
-  (list (js-div '(("id" "main")))
-         (list (js-div '(("id" "black-side")))
+  (list MAIN-DIV
+         (list WHITE-SIDE-DIV
+               (list WHITE-BUTTON
+                     (list WHITE-SIDE-CONTENT-DIV
+                           (player-display (world-white w) 
+                                           "white"))))
+
+         (list BLACK-SIDE-DIV
                (list BLACK-BUTTON
                      (player-display (world-black w)
-                                     "black")))
-         (list (js-div '(("id" "white-side")))
-               (list WHITE-BUTTON
-                     (list (js-div 
-                            '((id "white-side-content")))
-                           (player-display (world-white w) 
-                                           "white"))))))
+                                     "black")))))
 
 (define (pick-player-background w turn)
   (cond
