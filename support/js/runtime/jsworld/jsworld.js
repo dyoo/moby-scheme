@@ -231,6 +231,15 @@ plt.Jsworld = {};
     Jsworld.memberq = memberq;
 
 
+    function member(a, x) {
+	for (var i = 0; i < a.length; i++)
+	    if (a[i] == x) return true;
+	return false;
+    }
+    Jsworld.member = member;
+
+
+
     function head(a){
 	return a[0];
     }
@@ -324,6 +333,16 @@ plt.Jsworld = {};
 	return ret;
     }
 
+    // nodeEq: node node -> boolean
+    // Returns true if the two nodes should be the same.
+    function nodeEq(node1, node2) {
+	return node1 === node2;
+    }
+
+    function nodeNotEq(node1, node2) {
+	return node1 !== node2;
+    }
+
 
 
     // relations(tree(N)) = relations(N)
@@ -363,7 +382,7 @@ plt.Jsworld = {};
 	    if (relations[i].relation == 'parent') {
 		var parent = relations[i].parent, child = relations[i].child;
 			
-		if (child.parentNode !== parent) {
+		if (nodeNotEq(child.parentNode, parent)) {
 		    appendChild(parent, child);
 		}
 	    }
@@ -377,7 +396,7 @@ plt.Jsworld = {};
 		if (relations[i].relation == 'neighbor') {
 		    var left = relations[i].left, right = relations[i].right;
 				
-		    if (left.nextSibling !== right) {
+		    if (nodeNotEq(left.nextSibling, right)) {
 			left.parentNode.insertBefore(left, right)
 			    unsorted = true;
 		    }
@@ -433,7 +452,7 @@ plt.Jsworld = {};
 		if (live_nodes != null)
 		    while (live_nodes.length > 0 && positionComparator(node, live_nodes[0]) >= 0) {
 			var other_node = live_nodes.shift();
-			if (other_node === node) {
+			if (nodeEq(other_node, node)) {
 			    found = true;
 			    break;
 			}
@@ -442,7 +461,7 @@ plt.Jsworld = {};
 		    }
 		else
 		    for (var i = 0; i < nodes.length; i++)
-			if (nodes[i] === node) {
+			if (nodeEq(nodes[i], node)) {
 			    found = true;
 			    break;
 			}
@@ -473,6 +492,20 @@ plt.Jsworld = {};
 		
     }
 
+
+    // isMatchingCssSelector: node css -> boolean
+    // Returns true if the CSS selector matches.
+    function isMatchingCssSelector(node, css) {
+	if (css.id.match(/^\./)) {
+	    // Check to see if we match the class
+	    return ('class' in node && member(node['class'].split(/\s+/),
+					      css.id.substring(1)));
+	} else {
+	    return ('id' in node && node.id == css.id);
+	}
+    }
+
+
     function update_css(nodes, css) {
 	// clear CSS
 	for (var i = 0; i < nodes.length; i++)
@@ -483,7 +516,7 @@ plt.Jsworld = {};
 	for (var i = 0; i < css.length; i++)
 	    if ('id' in css[i]) {
 		for (var j = 0; j < nodes.length; j++)
-		    if ('id' in nodes[j] && nodes[j].id == css[i].id){
+		    if (isMatchingCssSelector(nodes[j], css[i])) {
 			set_css_attribs(nodes[j], css[i].attribs);
 		    }
 	    }
