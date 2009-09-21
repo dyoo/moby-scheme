@@ -6,19 +6,19 @@
 
 ;; The world is the amount of time that's
 ;; passed since the start, and the volume.
-(define-struct world (time volume))
+(define-struct world (playlist time volume))
 
 
 (define init-time 45)
 (define fade-time 30)
 (define init-volume 100)
-(define song
-  "http://hashcollision.org/tones/tank.ogg")
+
+(define UNINITIALIZED 'uninitialized)
 
 ;; The world is a number counting the number
 ;; of seconds until the music turns off
 (define initial-world 
-  (make-world init-time init-volume))
+  (make-world UNINITIALIZED init-time init-volume))
 
 
 
@@ -27,23 +27,31 @@
 ;; tick: world -> world
 ;; Decrease the volume after a threshold.
 (define (tick a-world)
-  (local [(define t 
-            (sub1 (world-time a-world)))]
-    (make-world 
-     t
-     (cond
-       [(< t 0) 0]
-       [(< t fade-time)
-        (quotient (* t init-volume) 
-                  fade-time)]
-       [else init-volume]))))
+  (cond
+   [(eq? (world-playlist a-world) UNINITIALIZED)
+    a-world]
+   [else
+    (local [(define t 
+	      (sub1 (world-time a-world)))]
+	   (make-world 
+	    (world-playlist a-world)
+	    t
+	    (cond
+	     [(< t 0) 0]
+	     [(< t fade-time)
+	      (quotient (* t init-volume) 
+			fade-time)]
+	     [else init-volume])))]))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; shake: world -> world
 ;; On a shake, resets the world by returning
 ;; initial-world.
 (define (shake a-world)
-  initial-world)
+  (make-world (world-playlist a-world)
+	      init-time
+	      init-volume))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,13 +72,18 @@
   (make-effect:set-sound-volume 
    (world-volume a-world)))
 
+
 ;; play-music: world -> effect
 (define (play-music a-world)
   (cond
-    [(> (world-volume a-world) 0)
-     (make-effect:play-sound song)]
-    [(<= (world-volume a-world) 0) 
-     (make-effect:pause-sound song)]))
+   [(eq? (world-playlist a-world) UNINITIALIZED)
+    empty]
+   [else
+    (cond
+     [(> (world-volume a-world) 0)
+      (make-effect:play-sound (world-playlist a-world))]
+     [(<= (world-volume a-world) 0) 
+      (make-effect:pause-sound (world-playlist a-world))])]))
 
 
 ;; sleep-check: world -> effect
@@ -85,23 +98,37 @@
   (>= (sub1 (world-time a-world)) 0))
 
 
+(define (update-playlist a-world a-playlist)
+  (make-world a-playlist
+	      (world-time a-world)
+	      (world-volume a-world)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; draw: world -> DOM-sexp
 ;;
 ;; Produces an HTML page for the user interface.
 (define (draw a-world)
-  (list (js-p '(("id" "aPara")))
-        (list (js-text 
-               (string-append 
-                "volume = "
-                (number->string 
-                 (world-volume a-world)))))))
+  (list (js-div '(("id" "top")))
+	(list (js-button*
+	       identity
+	       (lambda (w)
+		 (make-effect:pick-playlist update-playlist)))
+	      (list (js-text "Pick playlist")))
+
+	(list (js-p '(("id" "aPara")))
+	      (list (js-text 
+		     (string-append 
+		      "volume = "
+		      (number->string 
+		       (world-volume a-world))))))))
 
 ;; draw-css: world -> CSS-sexp
 ;; Produces a stylesheet to decorate the user
 ;; interface.
 (define (draw-css a-world)
-  '(("aPara" ("font-size" "30px"))))
+  '(("top" ("border-style" "solid"))
+    ("aPara" ("font-size" "30px"))))
 
 
 (js-big-bang initial-world
