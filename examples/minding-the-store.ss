@@ -16,8 +16,14 @@
 
 ;; The url to the Google Maps "My Maps" RSS feed.
 (define MYMAPS-URL
-  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&vps=1&jsv=151e&msa=0&output=georss&msid="
-                 "106933521686950086948.00046579f4b482756abc5"))
+  
+  ;; Noodles in New York
+  (string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en"
+                 "&vps=5&jsv=176c&msa=0&output=georss&"
+                 "msid=106933521686950086948.00047418c161c636dd894")
+  #;(string-append "http://maps.google.com/maps/ms?ie=UTF8&hl=en&"
+                   "vps=1&jsv=151e&msa=0&output=georss&msid="
+                   "106933521686950086948.00046579f4b482756abc5"))
 
 
 ;; The world is current location, the places that are nearby that location, and a description
@@ -293,11 +299,12 @@
 
 (define ALL-PLACES
   (parse-places 
-   (parse-xml (get-url MYMAPS-URL))))
+    (parse-xml 
+      (get-url MYMAPS-URL))))
+
 
 
 (js-big-bang initial-world
              (on-tick* 30 ignore beep-if-near)
              (on-location-change update-location)
-
              (on-draw draw draw-css))
