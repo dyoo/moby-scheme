@@ -231,6 +231,15 @@ plt.Jsworld = {};
     Jsworld.memberq = memberq;
 
 
+    function member(a, x) {
+	for (var i = 0; i < a.length; i++)
+	    if (a[i] == x) return true;
+	return false;
+    }
+    Jsworld.member = member;
+
+
+
     function head(a){
 	return a[0];
     }
@@ -324,6 +333,16 @@ plt.Jsworld = {};
 	return ret;
     }
 
+    // nodeEq: node node -> boolean
+    // Returns true if the two nodes should be the same.
+    function nodeEq(node1, node2) {
+	return (node1 && node2 && node1 === node2);
+    }
+
+    function nodeNotEq(node1, node2) {
+	return ! nodeEq(node1, node2);
+    }
+
 
 
     // relations(tree(N)) = relations(N)
@@ -359,29 +378,31 @@ plt.Jsworld = {};
 	// TODO: rewrite this to move stuff all in one go... possible? necessary?
 	
 	// move all children to their proper parents
-	for (var i = 0; i < relations.length; i++)
+	for (var i = 0; i < relations.length; i++) {
 	    if (relations[i].relation == 'parent') {
 		var parent = relations[i].parent, child = relations[i].child;
-			
-		if (child.parentNode !== parent) {
+		if (nodeNotEq(child.parentNode, parent)) {
 		    appendChild(parent, child);
+		} else {
 		}
 	    }
+	}
 	
 	// arrange siblings in proper order
 	// truly terrible... BUBBLE SORT
 	for (;;) {
 	    var unsorted = false;
 		
-	    for (var i = 0; i < relations.length; i++)
+	    for (var i = 0; i < relations.length; i++) {
 		if (relations[i].relation == 'neighbor') {
 		    var left = relations[i].left, right = relations[i].right;
 				
-		    if (left.nextSibling !== right) {
+		    if (nodeNotEq(left.nextSibling, right)) {
 			left.parentNode.insertBefore(left, right)
-			    unsorted = true;
+			unsorted = true;
 		    }
 		}
+	    }
 		
 	    if (!unsorted) break;
 	}
@@ -429,12 +450,14 @@ plt.Jsworld = {};
 			
 		// process last
 		var found = false;
-			
+		var foundNode = undefined;
+
 		if (live_nodes != null)
 		    while (live_nodes.length > 0 && positionComparator(node, live_nodes[0]) >= 0) {
 			var other_node = live_nodes.shift();
-			if (other_node === node) {
+			if (nodeEq(other_node, node)) {
 			    found = true;
+			    foundNode = other_node;
 			    break;
 			}
 			// need to think about this
@@ -442,8 +465,9 @@ plt.Jsworld = {};
 		    }
 		else
 		    for (var i = 0; i < nodes.length; i++)
-			if (nodes[i] === node) {
+			if (nodeEq(nodes[i], node)) {
 			    found = true;
+			    foundNode = nodes[i];
 			    break;
 			}
 			
@@ -455,6 +479,8 @@ plt.Jsworld = {};
 		    next = node.nextSibling; // HACKY
 				
 		    node.parentNode.removeChild(node);
+		} else {
+		    mergeNodeValues(node, foundNode);
 		}
 			
 		// move sideways
@@ -466,12 +492,33 @@ plt.Jsworld = {};
 	refresh_node_values(nodes);
     }
 
+    function mergeNodeValues(node, foundNode) {
+//	for (attr in node) {
+//	    foundNode[attr] = node[attr];
+//	}
+    }
+
+
     function set_css_attribs(node, attribs) {
 	for (var j = 0; j < attribs.length; j++){
 	    node.style.setProperty(attribs[j].attrib, attribs[j].values.join(" "), "");
 	}
 		
     }
+
+
+    // isMatchingCssSelector: node css -> boolean
+    // Returns true if the CSS selector matches.
+    function isMatchingCssSelector(node, css) {
+	if (css.id.match(/^\./)) {
+	    // Check to see if we match the class
+	    return ('class' in node && member(node['class'].split(/\s+/),
+					      css.id.substring(1)));
+	} else {
+	    return ('id' in node && node.id == css.id);
+	}
+    }
+
 
     function update_css(nodes, css) {
 	// clear CSS
@@ -483,7 +530,7 @@ plt.Jsworld = {};
 	for (var i = 0; i < css.length; i++)
 	    if ('id' in css[i]) {
 		for (var j = 0; j < nodes.length; j++)
-		    if ('id' in nodes[j] && nodes[j].id == css[i].id){
+		    if (isMatchingCssSelector(nodes[j], css[i])) {
 			set_css_attribs(nodes[j], css[i].attribs);
 		    }
 	    }
@@ -526,11 +573,11 @@ plt.Jsworld = {};
 		    // Try to save the current selection and preserve it across
 		    // dom updates.
 
- 		    if(oldRedraw != newRedraw) {
+ 		    if(oldRedraw !== newRedraw) {
  			update_dom(toplevelNode, ns, relations(t));
  			update_css(ns, sexp2css(newRedrawCss));
  		    } else {
-			if(oldRedrawCss != newRedrawCss) {
+			if(oldRedrawCss !== newRedrawCss) {
  			    update_css(ns, sexp2css(newRedrawCss));
 			}
  		    }
