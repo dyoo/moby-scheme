@@ -297,10 +297,96 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;; maybe-use-hardcoded-values: string -> string
+;; In the event that the HTTP get fails miserably, 
+;; let's use a hardcoded list.  The following is a copy
+;; of the Noodling in New York data as of September 21, 2009.
+(define (maybe-use-hardcoded-values content)
+  (cond
+    [(string=? content "")
+     "<?xml version='1.0' encoding='UTF-8'?>
+<rss version='2.0' xmlns:georss='http://www.georss.org/georss' xmlns:gml='http://www.opengis.net/gml'>
+<channel>
+  <link>http://maps.google.com</link>
+  <title>Noodling in New York</title>
+  <description><![CDATA[]]></description>
+  <item>
+    <guid isPermaLink='false'>00047418c78087a80616d</guid>
+    <pubDate>Mon, 21 Sep 2009 16:14:41 +0000</pubDate>
+    <title>Ippudo Ny Inc</title>
+    <description><![CDATA[<div dir='ltr'>Ramen Noodles</div>]]></description>
+    <author>danny.yoo</author>
+    <georss:point>
+      40.730930 -73.990295
+    </georss:point>
+    <georss:elev>0.000000</georss:elev>
+  </item>
+  <item>
+    <guid isPermaLink='false'>00047418cb1d2855d8c62</guid>
+    <pubDate>Mon, 21 Sep 2009 16:15:42 +0000</pubDate>
+    <title>Gahm Mi Oak Restaurant</title>
+    <description><![CDATA[<div dir='ltr'>Korean Noodles</div>]]></description>
+    <author>danny.yoo</author>
+    <georss:point>
+      40.748207 -73.987442
+    </georss:point>
+    <georss:elev>0.000000</georss:elev>
+  </item>
+  <item>
+    <guid isPermaLink='false'>00047418cb1ec11c24999</guid>
+    <pubDate>Mon, 21 Sep 2009 16:15:42 +0000</pubDate>
+    <title>Matsugen</title>
+    <description><![CDATA[<div dir='ltr'>Soba Noodles</div>]]></description>
+    <author>danny.yoo</author>
+    <georss:point>
+      40.717632 -74.005806
+    </georss:point>
+    <georss:elev>0.000000</georss:elev>
+  </item>
+  <item>
+    <guid isPermaLink='false'>00047418cebf7067a783d</guid>
+    <pubDate>Mon, 21 Sep 2009 16:16:43 +0000</pubDate>
+    <title>Food Sing 88 Corporation</title>
+    <description><![CDATA[<div dir='ltr'>Chinese Noodles</div>]]></description>
+    <author>danny.yoo</author>
+    <georss:point>
+      40.713596 -73.997505
+    </georss:point>
+    <georss:elev>0.000000</georss:elev>
+  </item>
+  <item>
+    <guid isPermaLink='false'>00047418d266a1c75ec28</guid>
+    <pubDate>Mon, 21 Sep 2009 16:17:44 +0000</pubDate>
+    <title>Sui Ren Japanese Restaurant</title>
+    <description><![CDATA[<div dir='ltr'>Ramen Noodles</div>]]></description>
+    <author>danny.yoo</author>
+    <georss:point>
+      40.714516 -73.957718
+    </georss:point>
+    <georss:elev>0.000000</georss:elev>
+  </item>
+  <item>
+    <guid isPermaLink='false'>00047418d601872a7fbfb</guid>
+    <pubDate>Mon, 21 Sep 2009 16:18:45 +0000</pubDate>
+    <title>Cassinelli Pasta</title>
+    <description><![CDATA[<div dir='ltr'>Italian noodles</div>]]></description>
+    <author>danny.yoo</author>
+    <georss:point>
+      40.774300 -73.912804
+    </georss:point>
+    <georss:elev>0.000000</georss:elev>
+  </item>
+</channel>
+</rss>"]
+    [else
+     content]))
+
+
 (define ALL-PLACES
   (parse-places 
     (parse-xml 
-      (get-url MYMAPS-URL))))
+     (maybe-use-hardcoded-values
+      (get-url MYMAPS-URL)))))
 
 
 
