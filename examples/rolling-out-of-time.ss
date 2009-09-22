@@ -10,8 +10,8 @@
 (define-struct world 
   (posn r vel target-posn score))
 
-(define WIDTH 320)
-(define HEIGHT 480)
+(define WIDTH 300)
+(define HEIGHT 460)
 
 (define TARGET-RADIUS 30)
 
@@ -43,7 +43,7 @@
     [else
      (make-world (posn+vel (world-posn w)
                            (world-vel w))
-                 (- (world-r w) 1/3)
+                 (- (world-r w) 1/2)
                  (world-vel w)
                  (world-target-posn w)
                  (world-score w))]))
