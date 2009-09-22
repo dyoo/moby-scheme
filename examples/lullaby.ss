@@ -9,9 +9,9 @@
 (define-struct world (playlist time volume))
 
 
-(define init-time 45)
+(define init-time 40)
 (define fade-time 30)
-(define init-volume 100)
+(define init-volume 75)
 
 (define UNINITIALIZED 'uninitialized)
 
