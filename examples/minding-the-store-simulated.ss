@@ -137,8 +137,8 @@
 ;; loc->string: loc -> string
 (define (loc->string a-loc)
   (format "~a, ~a" 
-          (loc-lat a-loc) 
-          (loc-long a-loc)))
+          (exact->inexact (loc-lat a-loc))
+          (exact->inexact (loc-long a-loc))))
 
 ;; ignore: world -> world
 ;; Ignore the world and just return it.
@@ -407,6 +407,6 @@
 
 
 (js-big-bang initial-world
-             (on-tick* 10 simulate-movement beep-if-near)
+             (on-tick 10 simulate-movement)
              #;(on-location-change update-location)
              (on-draw draw draw-css))
