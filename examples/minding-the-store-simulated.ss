@@ -389,14 +389,14 @@
 ;; Artificially injects movement.
 (define (simulate-movement w)
   (cond
-    [(equal? (world-loc w) 0 0)
-     (on-location-change w 40.730930 -73.990295)]
-    [(equal? (world-loc w) 40.730930 -73.990295)
-     (on-location-change w 40.748207 -73.987442)]
-    [(equal? (world-loc w) 40.748207 -73.987442)
-     (on-location-change w 40.713596 -73.997505)]
+    [(equal? (world-loc w) (make-loc 0 0))
+     (update-location w 40.730930 -73.990295)]
+    [(equal? (world-loc w) (make-loc 40.730930 -73.990295))
+     (update-location w 40.748207 -73.987442)]
+    [(equal? (world-loc w) (make-loc 40.748207 -73.987442))
+     (update-location w 40.713596 -73.997505)]
     [else
-     (on-location-change w 0 0)]))
+     (update-location w 0 0)]))
   
 
 (define ALL-PLACES
@@ -407,6 +407,6 @@
 
 
 (js-big-bang initial-world
-             (on-tick* 30 simulate-movement beep-if-near)
+             (on-tick* 10 simulate-movement beep-if-near)
              #;(on-location-change update-location)
              (on-draw draw draw-css))
