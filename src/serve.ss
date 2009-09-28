@@ -94,12 +94,13 @@
                       (href ,(url generate-js-zip
                                   (string-append program-name
                                                  ".zip"))))
-                     "Get Javascript .zip")
+                     (div ((class "big"))
+                          "Get Javascript .zip"))
                   " "
                   (a ((class "linkbutton")
                       (href ,(url generate-apk 
                                   (string-append program-name "-debug.apk")))) 
-                     "Get Android .apk"))))
+                     (div ((class "big")) "Get Android .apk")))))
              
              (define (network-proxy req)
                (list #"text/plain"

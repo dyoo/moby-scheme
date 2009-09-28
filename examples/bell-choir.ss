@@ -6,12 +6,10 @@
 ;; and the current tone.
 (define-struct world (shaken tone))
 
-(define WIDTH 320)
-(define HEIGHT 480)
 (define MAX-TONE 4)
 (define MIN-TONE 1)
 
-(define initial-world (make-world 0 1))
+(define initial-world (make-world 0 MIN-TONE))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -102,5 +100,6 @@
 
 
 (js-big-bang initial-world
+             (initial-effect (make-effect:set-sound-volume 90))
              (on-shake* shake ring)
              (on-draw render render-css))

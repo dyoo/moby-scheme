@@ -402,8 +402,8 @@
 (define ALL-PLACES
   (parse-places 
     (parse-xml 
-     (maybe-use-hardcoded-values
-      (get-url MYMAPS-URL)))))
+     (maybe-use-hardcoded-values 
+      "" #;(get-url MYMAPS-URL)))))
 
 
 (js-big-bang initial-world

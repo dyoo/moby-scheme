@@ -51,6 +51,8 @@
          
          void
          
+	 remove
+
          ;; Configuration handlers
          on-key on-key*
          on-tick on-tick*

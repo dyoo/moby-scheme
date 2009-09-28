@@ -51,11 +51,15 @@ img{background: none;
 a{
 	display:	inline-block; 
 	width:		25%;
-	margin:		0px;
+	margin:		30px;
 	padding:	0px;
 	color:		white;
 	clear:		none;
 	text-decoration: none;
+}
+
+.big {
+     font-size: 30px;
 }
 
 .programName {
@@ -70,7 +74,7 @@ a:hover{
 }
 
 .linkbutton{
-	margin:		5px 0px;
+	margin:		50px 50px;
 	vertical-align: middle;
 	border:		solid 1px black;
 	background: lightsteelblue;
