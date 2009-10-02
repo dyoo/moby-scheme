@@ -318,21 +318,21 @@
             
             "\n"
 
-			;; mutators
+            ;; mutators
             (string-join 
              (map (lambda (a-field)
                     (string-append "function " (make-mutator-name (stx-e a-field)) "(obj,newVal) {\n"
-								   "	 if (" predicate-name" (obj)) {\n"
-								   "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
-								   "     } else {\n"
+                                   "	 if (" predicate-name" (obj)) {\n"
+                                   "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
+                                   "     } else {\n"
                                    "        throw new plt.Kernel.MobyRuntimeError("
                                    "            plt.Kernel.format('" (make-mutator-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
                                    "     }\n"
                                    "}\n"))
-                   fields)
-              "\n")
-             
-             "\n"
+                  fields)
+             "\n")
+            
+            "\n"
             
             ;; structure predicate
             (string-append "function " predicate-name "(obj) { 
@@ -363,12 +363,12 @@
      (local [(define exprs (rest (stx-e expr)))]
 	    (begin-sequence->javascript-string expr exprs env a-pinfo))]
 
-	;; (set! identifier value)
-	;; Attention: it's evaluation doesn't produce an Object
-	[(stx-begins-with? expr 'set!)
-	 (local [(define id (second (stx-e expr)))
-			 (define value (third (stx-e expr)))]
-		(set!-expression->javascript-string id value env a-pinfo))]
+    ;; (set! identifier value)
+    ;; Attention: it's evaluation doesn't produce an Object
+    [(stx-begins-with? expr 'set!)
+     (local [(define id (second (stx-e expr)))
+             (define value (third (stx-e expr)))]
+       (set!-expression->javascript-string id value env a-pinfo))]
     
     ;; (cond ...)
     [(stx-begins-with? expr 'cond)
@@ -380,6 +380,10 @@
              (define consequent (third (stx-e expr)))
              (define alternative (fourth (stx-e expr)))]
        (if-expression->javascript-string test consequent alternative env a-pinfo))]
+    
+    ;; (case val-expr [quoted-expr expr] ...)
+    [(stx-begins-with? expr 'case)
+     (expression->javascript-string (desugar-case expr) env a-pinfo)]
     
     ;; (and exprs ...)
     [(stx-begins-with? expr 'and)
@@ -458,19 +462,23 @@
 
 ;; set!-expression->javascript-string: expr-stx expr-stx env pinfo -> (list string pinfo)
 (define (set!-expression->javascript-string id-stx newVal-stx env a-pinfo)
-	(local [(define es+p
-				(expressions->javascript-strings (list id-stx newVal-stx)
-                                             env 
-                                             a-pinfo))
-
-			(define idExprString (first (first es+p)))
-			(define valExprString (second (first es+p)))]
-		(list (string-append "(function(){ \n"
-							 idExprString
-							 " = "
-							 valExprString
-							 ";})()")
-			  (second es+p))))
+  (cond
+    [(not (symbol? (stx-e id-stx))) 
+     (syntax-error "expected an identifier in the first argument of 'set!', got: " id-stx)]
+    [else
+     (local [(define es+p
+               (expressions->javascript-strings (list id-stx newVal-stx)
+                                                env 
+                                                a-pinfo))
+             
+             (define idExprString (first (first es+p)))
+             (define valExprString (second (first es+p)))]
+       (list (string-append "(function(){ \n"
+                            idExprString
+                            " = "
+                            valExprString
+                            ";})()")
+             (second es+p)))]))
 
 
 ;; begin-sequence->javascript-string: expr-stx (listof expr-stx) env pinfo -> (list string pinfo)
@@ -513,8 +521,7 @@
     (list
      (string-append "(" s1 " ?\n " s2 " :\n " s3 ")")
      (second es+p))))
-
-
+    
 
 ;; quote-expression->javascript-string: expr -> string
 (define (quote-expression->javascript-string expr)

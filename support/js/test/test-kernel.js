@@ -1537,10 +1537,45 @@ var getTests;
 	    testIsProcedure: function() {
 		this.assert(! Kernel.procedure_question_(42));
 		this.assert(Kernel.procedure_question_(function() {return 42;}));
-	    }
-	    
+	    },
+
+		testSetCar: function() {
+			var lst = Kernel.list([Rational.makeInstance(1),
+								   Rational.makeInstance(2),
+								   Rational.makeInstance(3)]);
+
+			Kernel.set_dash_car_bang_(lst,Char.makeInstance("x"));
+
+			this.assert(Kernel.equal_question_(Char.makeInstance("x"), lst.first()));
+
+			this.assertRaise("MobyTypeError",
+							function() {
+								Kernel.set_dash_car_bang_(Rational.makeInstance(10),lst);});
+		},
+
+		testSetCdr: function() {
+			var lst = Kernel.list([Rational.makeInstance(1),
+								   Rational.makeInstance(2),
+								   Rational.makeInstance(3)]);
+
+			var lst2 = Kernel.list([Rational.makeInstance(4),
+									Rational.makeInstance(5)]);
+
+			Kernel.set_dash_cdr_bang_(lst,lst2);
+
+			this.assert(Kernel.equal_question_(lst2, lst.rest()));
+
+			this.assertRaise("MobyTypeError",
+							function() {
+								Kernel.set_dash_cdr_bang_(Rational.makeInstance(10),lst);});
+
+			this.assertRaise("MobyTypeError",
+							function() {
+								Kernel.set_dash_cdr_bang_(lst,Rational.makeInstance(10));});
+		}
 	    
 	    
 	})
-    }
+}
+
 })();
