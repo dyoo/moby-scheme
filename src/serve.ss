@@ -87,8 +87,9 @@
                   
                   (a ((class "linkbutton")
                       (href "index.html")
-                      (style "display:none"))
-                     "Run program")
+                      #;(style "display:none"))
+                     (div ((class "big"))
+                          "Run program"))
                   " "
                   (a ((class "linkbutton")
                       (href ,(url generate-js-zip
