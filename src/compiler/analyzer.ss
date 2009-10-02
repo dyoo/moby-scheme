@@ -132,11 +132,20 @@
                    (bf sel-id false 1 false 
                        (symbol->string
                         (identifier->munged-java-identifier sel-id))))
-                 selector-ids))]
+                 selector-ids))
+          (define mutator-ids
+            (map (lambda (f)
+                   (string->symbol (string-append "set-" (symbol->string id) "-" (symbol->string f) "!")))
+                 fields))
+          (define mutator-bindings
+            (map (lambda (mut-id)
+                   (bf mut-id false 2 false
+                       (symbol->string (identifier->munged-java-identifier mut-id))))
+                 mutator-ids))]
     (foldl (lambda (a-binding an-env)
              (env-extend an-env a-binding))
            an-env
-           (list* constructor-binding predicate-binding selector-bindings))))
+           (append (list constructor-binding) (list predicate-binding) selector-bindings mutator-bindings))))
 
 
 

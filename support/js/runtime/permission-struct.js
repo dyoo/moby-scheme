@@ -6,12 +6,14 @@ function permission_colon_location() { plt.Kernel.Struct.call(this, "make-permis
 
 function make_dash_permission_colon_location() { return new permission_colon_location(); }
 
+
 function permission_colon_location_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_location; }
 function permission_colon_send_dash_sms() { plt.Kernel.Struct.call(this, "make-permission:send-sms", []); }
                     permission_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
 
 function make_dash_permission_colon_send_dash_sms() { return new permission_colon_send_dash_sms(); }
+
 
 function permission_colon_send_dash_sms_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_send_dash_sms; }
@@ -20,12 +22,14 @@ function permission_colon_receive_dash_sms() { plt.Kernel.Struct.call(this, "mak
 
 function make_dash_permission_colon_receive_dash_sms() { return new permission_colon_receive_dash_sms(); }
 
+
 function permission_colon_receive_dash_sms_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_receive_dash_sms; }
 function permission_colon_tilt() { plt.Kernel.Struct.call(this, "make-permission:tilt", []); }
                     permission_colon_tilt.prototype = new plt.Kernel.Struct();
 
 function make_dash_permission_colon_tilt() { return new permission_colon_tilt(); }
+
 
 function permission_colon_tilt_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_tilt; }
@@ -34,12 +38,14 @@ function permission_colon_shake() { plt.Kernel.Struct.call(this, "make-permissio
 
 function make_dash_permission_colon_shake() { return new permission_colon_shake(); }
 
+
 function permission_colon_shake_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_shake; }
 function permission_colon_internet() { plt.Kernel.Struct.call(this, "make-permission:internet", []); }
                     permission_colon_internet.prototype = new plt.Kernel.Struct();
 
 function make_dash_permission_colon_internet() { return new permission_colon_internet(); }
+
 
 function permission_colon_internet_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_internet; }
@@ -48,12 +54,14 @@ function permission_colon_telephony() { plt.Kernel.Struct.call(this, "make-permi
 
 function make_dash_permission_colon_telephony() { return new permission_colon_telephony(); }
 
+
 function permission_colon_telephony_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_telephony; }
 function permission_colon_wake_dash_lock() { plt.Kernel.Struct.call(this, "make-permission:wake-lock", []); }
                     permission_colon_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
 function make_dash_permission_colon_wake_dash_lock() { return new permission_colon_wake_dash_lock(); }
+
 
 function permission_colon_wake_dash_lock_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof permission_colon_wake_dash_lock; }
@@ -66,6 +74,14 @@ function permission_colon_open_dash_image_dash_url_dash_url(obj) {
         return obj.url;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('permission_colon_open_dash_image_dash_url_dash_url: not a permission:open-image-url: ~s', [obj]));
+     }
+}
+
+function set_dash_permission_colon_open_dash_image_dash_url_dash_url_bang_(obj,newVal) {
+	 if (permission_colon_open_dash_image_dash_url_question_ (obj)) {
+		obj.url = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_permission_colon_open_dash_image_dash_url_dash_url_bang_: not a permission:open-image-url: ~s', [obj]));
      }
 }
 

@@ -37,7 +37,7 @@ var getTests;
 		this.assert(n1.isEqual(n2));
 		this.assert(! n2.isEqual(n3));
 	    },
-	
+	    
 	    testEqual: function(){
 		var n1 = Rational.makeInstance(2,1);
 		var n2 = FloatPoint.makeInstance(2.0);
@@ -241,7 +241,7 @@ var getTests;
 				     Kernel._lessthan__equal_("2", "3", [])});
 	    },
 
-	
+	    
 	    testComparison2 : function () {
 		var num = Rational.makeInstance(0, 1);
 		var upper = Rational.makeInstance(480, 1);
@@ -293,7 +293,7 @@ var getTests;
 						  FloatPoint.makeInstance(0.0001)));
 	    },
 	    
-		    
+	    
 	    testExpt : function(){
 		//var i = plt.types.Complex.makeInstance(0, 1);
 		//this.assert(Kernel.equal_question_(Kernel.expt(i, i), Kernel.exp(PI.half().minus())));
@@ -616,7 +616,7 @@ var getTests;
 		this.assertEqual(n2, Kernel.modulo(n2, n1));
 	    },
 
-	
+	    
 	    testReal_question_ : function(){
 		this.assert(Kernel.real_question_(PI));
 		this.assert(Kernel.real_question_(Rational.ONE));
@@ -662,7 +662,7 @@ var getTests;
 				 function() {
 				     Kernel.boolean_equal__question_("true", Logic.TRUE);
 				 });
-				
+		
 	    },
 	    
 	    testBoolean_question_ : function(){
@@ -737,15 +737,15 @@ var getTests;
 		this.assert(Kernel.eq_question_(a,a));
 		this.assert(!Kernel.eq_question_(a, c));
 	    },
-		
-    
+	    
+	    
 	    testAssq : function(){
 		var lst = Cons.makeInstance(Cons.makeInstance(Rational.ONE, EMPTY), Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(2), EMPTY), Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY), EMPTY)));
 		
 		this.assert(Kernel.false_question_(Kernel.assq(FloatPoint.makeInstance(4), lst)));
 		this.assert(!Kernel.assq(Rational.ONE, lst).isEmpty());
 	    },
-		    
+	    
 	    testCaaar : function(){
 		var lst = Cons.makeInstance(Cons.makeInstance(Cons.makeInstance(Rational.ONE, EMPTY), EMPTY), EMPTY);
 		this.assert(Kernel.equal_question_(Kernel.caaar(lst), FloatPoint.makeInstance(1)));
@@ -770,7 +770,7 @@ var getTests;
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), EMPTY))));
 		this.assert(Kernel.equal_question_(Kernel.cadddr(lst), FloatPoint.makeInstance(4)));
 	    },
-		    
+	    
 	    testCaddr : function(){
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY)));
 		this.assert(Kernel.equal_question_(Kernel.caddr(lst), FloatPoint.makeInstance(3)));
@@ -840,7 +840,7 @@ var getTests;
 		var lst = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), Cons.makeInstance(FloatPoint.makeInstance(4), Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), Cons.makeInstance(FloatPoint.makeInstance(7), Cons.makeInstance(FloatPoint.makeInstance(8), EMPTY))))))));
 		this.assert(Kernel.equal_question_(Kernel.eighth(lst), FloatPoint.makeInstance(8)));
 	    },
-		    
+	    
 	    testLength : function(){
 		var lst1 = Cons.makeInstance(FloatPoint.makeInstance(1), Cons.makeInstance(FloatPoint.makeInstance(2), Cons.makeInstance(FloatPoint.makeInstance(3), EMPTY)));
 		var lst2 = EMPTY;
@@ -937,8 +937,8 @@ var getTests;
 			   String.makeInstance("zhang")];
 		var str = Kernel.string_dash_append(arr);
 
-//		this.assert(Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang"), []));
-//		this.assert(!Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang1"), []));
+		//		this.assert(Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang"), []));
+		//		this.assert(!Kernel.string_equal__question_(str, String.makeInstance("hellozhezhang1"), []));
 	    },
 	    
 	    testString_dash_ci_equal__question_ : function(){
@@ -986,7 +986,7 @@ var getTests;
 		this.assertEqual('u', Kernel.string_dash_ith(s, Rational.makeInstance(3)));
 		this.assertEqual('h', Kernel.string_dash_ith(s, Rational.makeInstance(4)));
 		this.assertEqual('i', Kernel.string_dash_ith(s, Rational.makeInstance(5)));
-	
+		
 		this.assertRaise("MobyRuntimeError", 
 				 function() { Kernel.string_dash_ith
 					      (s, Rational.makeInstance(6)) });
@@ -1004,7 +1004,7 @@ var getTests;
 				 function() { Kernel.string_dash_ref
 					      (zhe, Rational.makeInstance(4)) });
 	    }, 
-	 
+	    
 
 	    testReplicate : function() {
 		this.assertEqual(String.makeInstance("hihihi"),
@@ -1049,7 +1049,7 @@ var getTests;
 	    },
 
 
-   
+	    
 	    testString_question_ : function(){
 		this.assert(! Kernel.string_question_(Rational.ONE));
 		this.assert(Kernel.string_question_(String.makeInstance("hi")));
@@ -1204,7 +1204,7 @@ var getTests;
 		this.assert(!Kernel.char_dash_lower_dash_case_question_(c2));
 		this.assert(!Kernel.char_dash_lower_dash_case_question_(c3));
 	    },
-		    
+	    
 	    testChar_dash_numeric_question_ : function(){
 		var c0 = Char.makeInstance("0");
 		var c1 = Char.makeInstance("1");
@@ -1250,7 +1250,7 @@ var getTests;
 		var str = Kernel.list_dash__greaterthan_string(lst);
 		this.assert(Kernel.equal_question_(str, String.makeInstance("zhe")));
 	    },
-	
+	    
 
 	    testFormat : function() {
 		this.assertEqual("hello danny",
@@ -1258,7 +1258,7 @@ var getTests;
 		this.assertEqual("hello ethan and \"jeff\"!",
 				 Kernel.format("hello ~a and ~s!", ["ethan", "jeff"]));
 	    },
-    
+	    
 
 	    testMake_dash_string : function(){
 		var str = String.makeInstance("zz");
@@ -1277,7 +1277,7 @@ var getTests;
 		Kernel.equal_question_(lst.first(), Char.makeInstance("e"));
 	    },
 	    
-	
+	    
 	    testToWrittenString : function() {
 		this.assertEqual(String.makeInstance('hello').toWrittenString(),
 				 '"hello"');
@@ -1424,7 +1424,7 @@ var getTests;
 	    },
 
 
-	
+	    
 
 	    testSort : function() {
 		this.assert(Kernel.equal_question_
@@ -1466,18 +1466,18 @@ var getTests;
 						   Kernel.ormap(function(args) { 
 						       var result = Kernel.even_question_(args[0]);
 						       return result; },
-								 [Kernel.list([Rational.makeInstance(1),
-									       Rational.makeInstance(2),
-									       Rational.makeInstance(3)])])));
+								[Kernel.list([Rational.makeInstance(1),
+									      Rational.makeInstance(2),
+									      Rational.makeInstance(3)])])));
 
  		this.assert(Kernel.equal_question_(plt.types.Logic.TRUE,
  						   Kernel.ormap(function(args) { 
  						       return Kernel.even_question_(args[0])},
- 								 [Kernel.list([Rational.makeInstance(2)])])));
+ 								[Kernel.list([Rational.makeInstance(2)])])));
  		this.assert(Kernel.equal_question_(plt.types.Logic.FALSE,
  						   Kernel.ormap(function(args) { 
  						       return Kernel.even_question_(args[0])},
- 								 [Kernel.list([])])));
+ 								[Kernel.list([])])));
 	    },
 
 
@@ -1558,10 +1558,46 @@ var getTests;
 		    Kernel.remove("one", 
 				  plt.Kernel.list(
 				      ["one", "two", "three", "four"]))));
-	    }
+	    },
 	    
+
+	    testSetCar: function() {
+		var lst = Kernel.list([Rational.makeInstance(1),
+				       Rational.makeInstance(2),
+				       Rational.makeInstance(3)]);
+
+		Kernel.set_dash_car_bang_(lst,Char.makeInstance("x"));
+
+		this.assert(Kernel.equal_question_(Char.makeInstance("x"), lst.first()));
+
+		this.assertRaise("MobyTypeError",
+				 function() {
+				     Kernel.set_dash_car_bang_(Rational.makeInstance(10),lst);});
+	    },
+
+	    testSetCdr: function() {
+		var lst = Kernel.list([Rational.makeInstance(1),
+				       Rational.makeInstance(2),
+				       Rational.makeInstance(3)]);
+
+		var lst2 = Kernel.list([Rational.makeInstance(4),
+					Rational.makeInstance(5)]);
+
+		Kernel.set_dash_cdr_bang_(lst,lst2);
+
+		this.assert(Kernel.equal_question_(lst2, lst.rest()));
+
+		this.assertRaise("MobyTypeError",
+				 function() {
+				     Kernel.set_dash_cdr_bang_(Rational.makeInstance(10),lst);});
+
+		this.assertRaise("MobyTypeError",
+				 function() {
+				     Kernel.set_dash_cdr_bang_(lst,Rational.makeInstance(10));});
+	    }
 	    
 	    
 	})
     }
+
 })();

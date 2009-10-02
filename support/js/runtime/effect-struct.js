@@ -6,12 +6,14 @@ function effect_colon_none() { plt.Kernel.Struct.call(this, "make-effect:none", 
 
 function make_dash_effect_colon_none() { return new effect_colon_none(); }
 
+
 function effect_colon_none_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_none; }
 function effect_colon_beep() { plt.Kernel.Struct.call(this, "make-effect:beep", []); }
                     effect_colon_beep.prototype = new plt.Kernel.Struct();
 
 function make_dash_effect_colon_beep() { return new effect_colon_beep(); }
+
 
 function effect_colon_beep_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_beep; }
@@ -33,6 +35,22 @@ function effect_colon_play_dash_dtmf_dash_tone_dash_duration(obj) {
         return obj.duration;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_play_dash_dtmf_dash_tone_dash_duration: not a effect:play-dtmf-tone: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_tone_bang_(obj,newVal) {
+	 if (effect_colon_play_dash_dtmf_dash_tone_question_ (obj)) {
+		obj.tone = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_tone_bang_: not a effect:play-dtmf-tone: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_duration_bang_(obj,newVal) {
+	 if (effect_colon_play_dash_dtmf_dash_tone_question_ (obj)) {
+		obj.duration = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_duration_bang_: not a effect:play-dtmf-tone: ~s', [obj]));
      }
 }
 
@@ -59,6 +77,22 @@ function effect_colon_send_dash_sms_dash_msg(obj) {
      }
 }
 
+function set_dash_effect_colon_send_dash_sms_dash_address_bang_(obj,newVal) {
+	 if (effect_colon_send_dash_sms_question_ (obj)) {
+		obj.address = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_send_dash_sms_dash_address_bang_: not a effect:send-sms: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_send_dash_sms_dash_msg_bang_(obj,newVal) {
+	 if (effect_colon_send_dash_sms_question_ (obj)) {
+		obj.msg = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_send_dash_sms_dash_msg_bang_: not a effect:send-sms: ~s', [obj]));
+     }
+}
+
 function effect_colon_send_dash_sms_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_send_dash_sms; }
 function playlist_dash_sound(playlist) { plt.Kernel.Struct.call(this, "make-playlist-sound", [playlist]);this.playlist = playlist; }
@@ -70,6 +104,14 @@ function playlist_dash_sound_dash_playlist(obj) {
         return obj.playlist;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('playlist_dash_sound_dash_playlist: not a playlist-sound: ~s', [obj]));
+     }
+}
+
+function set_dash_playlist_dash_sound_dash_playlist_bang_(obj,newVal) {
+	 if (playlist_dash_sound_question_ (obj)) {
+		obj.playlist = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_playlist_dash_sound_dash_playlist_bang_: not a playlist-sound: ~s', [obj]));
      }
 }
 
@@ -88,6 +130,14 @@ function effect_colon_play_dash_sound_dash_sound(obj) {
      }
 }
 
+function set_dash_effect_colon_play_dash_sound_dash_sound_bang_(obj,newVal) {
+	 if (effect_colon_play_dash_sound_question_ (obj)) {
+		obj.sound = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_play_dash_sound_dash_sound_bang_: not a effect:play-sound: ~s', [obj]));
+     }
+}
+
 function effect_colon_play_dash_sound_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_play_dash_sound; }
 function effect_colon_pause_dash_sound(sound) { plt.Kernel.Struct.call(this, "make-effect:pause-sound", [sound]);this.sound = sound; }
@@ -99,6 +149,14 @@ function effect_colon_pause_dash_sound_dash_sound(obj) {
         return obj.sound;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pause_dash_sound_dash_sound: not a effect:pause-sound: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_pause_dash_sound_dash_sound_bang_(obj,newVal) {
+	 if (effect_colon_pause_dash_sound_question_ (obj)) {
+		obj.sound = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_pause_dash_sound_dash_sound_bang_: not a effect:pause-sound: ~s', [obj]));
      }
 }
 
@@ -116,6 +174,14 @@ function effect_colon_stop_dash_sound_dash_sound(obj) {
      }
 }
 
+function set_dash_effect_colon_stop_dash_sound_dash_sound_bang_(obj,newVal) {
+	 if (effect_colon_stop_dash_sound_question_ (obj)) {
+		obj.sound = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_stop_dash_sound_dash_sound_bang_: not a effect:stop-sound: ~s', [obj]));
+     }
+}
+
 function effect_colon_stop_dash_sound_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_stop_dash_sound; }
 function effect_colon_set_dash_sound_dash_volume(volume) { plt.Kernel.Struct.call(this, "make-effect:set-sound-volume", [volume]);this.volume = volume; }
@@ -130,6 +196,14 @@ function effect_colon_set_dash_sound_dash_volume_dash_volume(obj) {
      }
 }
 
+function set_dash_effect_colon_set_dash_sound_dash_volume_dash_volume_bang_(obj,newVal) {
+	 if (effect_colon_set_dash_sound_dash_volume_question_ (obj)) {
+		obj.volume = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_set_dash_sound_dash_volume_dash_volume_bang_: not a effect:set-sound-volume: ~s', [obj]));
+     }
+}
+
 function effect_colon_set_dash_sound_dash_volume_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_set_dash_sound_dash_volume; }
 function effect_colon_raise_dash_sound_dash_volume() { plt.Kernel.Struct.call(this, "make-effect:raise-sound-volume", []); }
@@ -137,12 +211,14 @@ function effect_colon_raise_dash_sound_dash_volume() { plt.Kernel.Struct.call(th
 
 function make_dash_effect_colon_raise_dash_sound_dash_volume() { return new effect_colon_raise_dash_sound_dash_volume(); }
 
+
 function effect_colon_raise_dash_sound_dash_volume_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_raise_dash_sound_dash_volume; }
 function effect_colon_lower_dash_sound_dash_volume() { plt.Kernel.Struct.call(this, "make-effect:lower-sound-volume", []); }
                     effect_colon_lower_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
 function make_dash_effect_colon_lower_dash_sound_dash_volume() { return new effect_colon_lower_dash_sound_dash_volume(); }
+
 
 function effect_colon_lower_dash_sound_dash_volume_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_lower_dash_sound_dash_volume; }
@@ -158,12 +234,21 @@ function effect_colon_set_dash_wake_dash_lock_dash_locks(obj) {
      }
 }
 
+function set_dash_effect_colon_set_dash_wake_dash_lock_dash_locks_bang_(obj,newVal) {
+	 if (effect_colon_set_dash_wake_dash_lock_question_ (obj)) {
+		obj.locks = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_set_dash_wake_dash_lock_dash_locks_bang_: not a effect:set-wake-lock: ~s', [obj]));
+     }
+}
+
 function effect_colon_set_dash_wake_dash_lock_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_set_dash_wake_dash_lock; }
 function effect_colon_release_dash_wake_dash_lock() { plt.Kernel.Struct.call(this, "make-effect:release-wake-lock", []); }
                     effect_colon_release_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
 function make_dash_effect_colon_release_dash_wake_dash_lock() { return new effect_colon_release_dash_wake_dash_lock(); }
+
 
 function effect_colon_release_dash_wake_dash_lock_question_(obj) { 
               return obj != null && obj != undefined && obj instanceof effect_colon_release_dash_wake_dash_lock; }
@@ -176,6 +261,14 @@ function effect_colon_pick_dash_playlist_dash_update_dash_f(obj) {
         return obj.update_dash_f;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_playlist_dash_update_dash_f: not a effect:pick-playlist: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_pick_dash_playlist_dash_update_dash_f_bang_(obj,newVal) {
+	 if (effect_colon_pick_dash_playlist_question_ (obj)) {
+		obj.update_dash_f = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_pick_dash_playlist_dash_update_dash_f_bang_: not a effect:pick-playlist: ~s', [obj]));
      }
 }
 
@@ -199,6 +292,22 @@ function effect_colon_pick_dash_random_dash_update_dash_f(obj) {
         return obj.update_dash_f;
      } else {
         throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_random_dash_update_dash_f: not a effect:pick-random: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_pick_dash_random_dash_n_bang_(obj,newVal) {
+	 if (effect_colon_pick_dash_random_question_ (obj)) {
+		obj.n = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_pick_dash_random_dash_n_bang_: not a effect:pick-random: ~s', [obj]));
+     }
+}
+
+function set_dash_effect_colon_pick_dash_random_dash_update_dash_f_bang_(obj,newVal) {
+	 if (effect_colon_pick_dash_random_question_ (obj)) {
+		obj.update_dash_f = newVal;
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('set_dash_effect_colon_pick_dash_random_dash_update_dash_f_bang_: not a effect:pick-random: ~s', [obj]));
      }
 }
 
