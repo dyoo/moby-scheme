@@ -467,10 +467,94 @@
                                           (desugar-expression (third (stx-e a-test-case))))
                                     (stx-loc a-test-case))])))
           
-          (define (desugar-expression an-expr)
-            ;; fill me in
-            an-expr)]
-    
+          
+          (define (desugar-expression expr)
+            (cond
+              ;; (local ([define ...] ...) body)
+              [(stx-begins-with? expr 'local)
+               (local [(define defns (stx-e (second (stx-e expr))))
+                       (define body (third (stx-e expr)))]
+                 (make-stx:list (list (first (stx-e expr))
+                                      (make-stx:list (desugar-program defns)
+                                                     (stx-loc (second (stx-e expr))))
+                                      (desugar-expression body))
+                                (stx-loc expr)))]
+              
+              ;; (begin ...)
+              [(stx-begins-with? expr 'begin)
+               (local [(define exprs (rest (stx-e expr)))]
+                 (make-stx:list (cons (first (stx-e expr))
+                                      (map desugar-expression (rest (stx-e expr))))
+                                (stx-loc expr)))]
+              
+              ;; (set! identifier value)
+              ;; Attention: it's evaluation doesn't produce an Object
+              [(stx-begins-with? expr 'set!)
+               (local [(define id (second (stx-e expr)))
+                       (define value (third (stx-e expr)))]
+                 ...)]
+              
+              ;; (cond ...)
+              [(stx-begins-with? expr 'cond)
+               ...]
+              
+              ;; (if test consequent alternative)
+              [(stx-begins-with? expr 'if)
+               (local [(define test (second (stx-e expr)))
+                       (define consequent (third (stx-e expr)))
+                       (define alternative (fourth (stx-e expr)))]
+                 ...)]
+              
+              ;; (case val-expr [quoted-expr expr] ...)
+              [(stx-begins-with? expr 'case)
+               ...]
+              
+              ;; (and exprs ...)
+              [(stx-begins-with? expr 'and)
+               (local [(define exprs (rest (stx-e expr)))]
+                 ...)]
+              
+              ;; (or exprs ...)
+              [(stx-begins-with? expr 'or)
+               (local [(define exprs (rest (stx-e expr)))]
+                 ...)]
+              
+              ;; (lambda (args ...) body)
+              [(stx-begins-with? expr 'lambda)
+               (local [(define args (stx-e (second (stx-e expr))))
+                       (define body (third (stx-e expr)))]
+                 ...)]
+              
+              ;; Numbers
+              [(number? (stx-e expr))
+               ...]
+              
+              ;; Strings
+              [(string? (stx-e expr))
+               ...]
+              
+              ;; Literal booleans
+              [(boolean? (stx-e expr))
+               ...]
+              
+              ;; Characters
+              [(char? (stx-e expr))
+               ...]
+              
+              ;; Identifiers
+              [(symbol? (stx-e expr))
+               ...]
+              
+              ;; Quoted datums
+              [(stx-begins-with? expr 'quote)
+               ...]
+              
+              ;; Function call/primitive operation call
+              [(pair? (stx-e expr))
+               (local [(define operator (first (stx-e expr)))
+                       (define operands (rest (stx-e expr)))]
+                 ...)]))]
+
     (cond 
       [(empty? a-program)
        empty]
