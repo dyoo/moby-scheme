@@ -6,6 +6,7 @@
 (require "helpers.ss")
 (require "modules.ss")
 (require "permission.ss")
+(require "desugar.ss")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

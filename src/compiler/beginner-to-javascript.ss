@@ -11,6 +11,7 @@
 (require "pinfo.ss")
 (require "analyzer.ss")
 (require "helpers.ss")
+(require "desugar.ss")
 
 
 ;; A compiled program is a:

@@ -2,8 +2,6 @@
 
 (require "env.ss")
 (require "toplevel.ss")
-(require "stx.ss")
-(require "helpers.ss")
 (require "permission.ss")
 (require "modules.ss")
 
