@@ -188,8 +188,11 @@
                      (sixth 1)
                      (seventh 1)
                      (eighth 1)
-                     (set-car! 2)
-                     (set-cdr! 2)
+
+                     ;; We're commenting out the mutation operation on pairs
+                     ;; because they're not supported in ISL/ASL anymore.
+                     #;(set-car! 2)
+                     #;(set-cdr! 2)
                      
                      ;; Box
                      (box 1)

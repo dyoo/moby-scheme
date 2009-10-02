@@ -20,7 +20,7 @@ function init() {
 
     // run: string -> scheme-value
     // Evaluates the string and produces the evaluated scheme value.
-    function run(aSource) {
+    var run = function(aSource) {
 	var namespace = new Namespace();
 	var program = plt.reader.readSchemeExpressions(aSource);
 	var compiledProgram = (program_dash__greaterthan_compiled_dash_program_slash_pinfo
@@ -33,6 +33,10 @@ function init() {
 	runToplevel(function(val) { result = val;  });
 	return result;
     }
+
+
+
+
 
     return new Test.Unit.Runner({
 	setup: function() {},
@@ -240,14 +244,14 @@ function init() {
 				    "[(10 11 12) 'big]" +
 				    "[else 'dummy])")));
 
-	    // clause with else should be the last one
-	    this.assertRaise("MobySyntaxError",
-			     function(){
-				 run("(case (* 7 5)" +
-				     "[(1 2 3) 'small]" +
-				     "[(10 11 12) 'big]" +
-				     "[else 'dummy]" +
-				     "[(1 2 3) 'shouldBeError])")});
+ 	    // clause with else should be the last one
+ 	    this.assertRaise("MobySyntaxError",
+ 			     function(){
+ 				 run("(case (* 7 5)" +
+ 				     "[(1 2 3) 'small]" +
+ 				     "[(10 11 12) 'big]" +
+ 				     "[else 'dummy]" +
+ 				     "[(1 2 3) 'shouldBeError])")});
 
 	    // no else caluse - void output
 	    this.assert(isEqual(number(3),
@@ -264,11 +268,11 @@ function init() {
 				    "[(12 13 14) 'bigger])")));
 
 	    // no quoted expression
-	    this.assertRaise("MobyTypeError",
-			     function(){
-				 run("(case (* 7 5)" +
-				     "[2 'small]" +
-				     "[(10 11 12) 'big])" +
+ 	    this.assertRaise("MobyTypeError",
+ 			     function(){
+ 				 run("(case (* 7 5)" +
+ 				     "[2 'small]" +
+ 				     "[(10 11 12) 'big])" +
 				     "3")});
 	}
     });

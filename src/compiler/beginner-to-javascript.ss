@@ -187,12 +187,12 @@
           (define body-string (first body-string+pinfo))
           (define updated-pinfo (second body-string+pinfo))]
     (list 
-     (string-append "function " (symbol->string munged-fun-id) "("
+     (string-append "var " (symbol->string munged-fun-id) " = function("
                     (string-join (map (lambda (arg-id)
                                         (symbol->string arg-id))
                                       munged-arg-ids)
                                  ", ")
-                    ") { return " body-string "; }"
+                    ") { return " body-string "; };"
                     )
      ""
      updated-pinfo)))
@@ -259,9 +259,8 @@
     (list  (string-append
             
             ;; default constructor
-            (string-append "function "
-                           (symbol->string (identifier->munged-java-identifier (stx-e id)))
-                           "("
+            (string-append "var "(symbol->string (identifier->munged-java-identifier (stx-e id)))
+                           " = function ("
                            (string-join (map (lambda (i) (symbol->string
                                                           (identifier->munged-java-identifier 
                                                            (stx-e i))))
@@ -285,8 +284,8 @@
                                              fields) 
                                         "\n")
                            
-                           " }
-                    "
+                           " };\n"
+                           
                            (symbol->string (identifier->munged-java-identifier (stx-e id)))
                            ".prototype = new plt.Kernel.Struct();\n"
                            
@@ -295,10 +294,10 @@
             "\n"
             
             ;; make-id
-            (string-append "function "
-                           (local [(define make-id (string->symbol 
-                                                    (string-append "make-" (symbol->string (stx-e id)))))]
-                             (symbol->string (identifier->munged-java-identifier make-id)))
+            (string-append "var " (local [(define make-id (string->symbol 
+                                                           (string-append "make-" (symbol->string (stx-e id)))))]
+                                    (symbol->string (identifier->munged-java-identifier make-id)))
+                           " = function "
                            "(" (string-join (build-list (length fields) (lambda (i) 
                                                                           (string-append "id" (number->string i))))
                                             ",")
@@ -308,21 +307,21 @@
                            (string-join (build-list (length fields) (lambda (i) 
                                                                       (string-append "id" (number->string i))))
                                         ",")
-                           "); }")
+                           "); };")
             
             "\n"
             
             ;; accessors
             (string-join 
              (map (lambda (a-field)
-                    (string-append "function " (make-accessor-name (stx-e a-field)) "(obj) {\n"
+                    (string-append "var " (make-accessor-name (stx-e a-field)) " = function(obj) {\n"
                                    "     if (" predicate-name" (obj)) {\n"
                                    "        return obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) ";\n"
                                    "     } else {\n"
                                    "        throw new plt.Kernel.MobyRuntimeError("
                                    "            plt.Kernel.format('" (make-accessor-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
                                    "     }\n"
-                                   "}\n"))
+                                   "};\n"))
                   fields)
              "\n")
             
@@ -331,24 +330,24 @@
             ;; mutators
             (string-join 
              (map (lambda (a-field)
-                    (string-append "function " (make-mutator-name (stx-e a-field)) "(obj,newVal) {\n"
+                    (string-append "var " (make-mutator-name (stx-e a-field)) " = function(obj,newVal) {\n"
                                    "	 if (" predicate-name" (obj)) {\n"
                                    "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
                                    "     } else {\n"
                                    "        throw new plt.Kernel.MobyRuntimeError("
                                    "            plt.Kernel.format('" (make-mutator-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
                                    "     }\n"
-                                   "}\n"))
+                                   "};\n"))
                   fields)
              "\n")
             
             "\n"
             
             ;; structure predicate
-            (string-append "function " predicate-name "(obj) { 
+            (string-append "var " predicate-name " = function(obj) { 
               return obj != null && obj != undefined && obj instanceof "
                            (symbol->string (identifier->munged-java-identifier (stx-e id)))
-                           "; }"))
+                           "; };\n"))
            
            "" ;; no introduced toplevel expressions
            updated-pinfo)))

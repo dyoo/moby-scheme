@@ -227,20 +227,7 @@
                                                                    (stx-loc an-expr)))
                                               (stx-loc an-expr))
                                answer-last
-                               ;; FIXME: we should find a way to return nothing, (void)?
-                               ;; current solution : (local [(define dummy 1)] (set! dummy 2)))
-                               (make-stx:list (list (datum->stx 'local (stx-loc an-expr))
-                                                    (make-stx:list 
-                                                     (list
-                                                      (make-stx:list (list (datum->stx 'define (stx-loc an-expr))
-                                                                           (datum->stx 'dummy (stx-loc an-expr))
-                                                                           (datum->stx 1 (stx-loc an-expr)))
-                                                                     (stx-loc an-expr)))
-                                                     (stx-loc an-expr))
-                                                    (make-stx:list (list (datum->stx 'set! (stx-loc an-expr))
-                                                                         (datum->stx 'dummy (stx-loc an-expr))
-                                                                         (datum->stx '2 (stx-loc an-expr)))
-                                                                   (stx-loc an-expr)))
+                               (make-stx:list (list (datum->stx 'void (stx-loc an-expr)))
                                               (stx-loc an-expr)))
                          (stx-loc an-expr))]
          [else
