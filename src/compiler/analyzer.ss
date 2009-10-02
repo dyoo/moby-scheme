@@ -6,9 +6,12 @@
 (require "helpers.ss")
 (require "modules.ss")
 (require "permission.ss")
-(require "desugar.ss")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Assumption: the functions here assume that the input program has already been
+;; desugared.
+
 
 
 ;; program-analyze: program [program-info] -> program-info
@@ -204,11 +207,6 @@
     
     [(stx-begins-with? an-expression 'begin)
      (begin-expression-analyze-uses an-expression pinfo env)]
-    
-    [(stx-begins-with? an-expression 'cond)
-     (expression-analyze-uses (desugar-cond an-expression)
-                              pinfo
-                              env)]
     
     [(stx-begins-with? an-expression 'if)
      (if-expression-analyze-uses an-expression pinfo env)]

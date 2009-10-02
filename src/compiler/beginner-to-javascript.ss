@@ -61,11 +61,12 @@
 ;; program->compiled-program/pinfo: program pinfo -> compiled-program
 (define (program->compiled-program/pinfo program input-pinfo)
   (local [(define pinfo-1+gensym (pinfo-gensym input-pinfo 'toplevel-expression-show))
-          
-          (define desugared-program (desugar-program program))
-          
           (define toplevel-expression-show (second pinfo-1+gensym))
-          (define a-pinfo (program-analyze/pinfo desugared-program (first pinfo-1+gensym)))
+          
+          (define desugared-program+pinfo (desugar-program program (first pinfo-1+gensym)))
+
+          (define a-pinfo (program-analyze/pinfo (first desugared-program+pinfo)
+                                                 (second desugared-program+pinfo)))
           (define toplevel-env (pinfo-env a-pinfo))
           
           (define (loop program defns tops a-pinfo)
@@ -138,7 +139,7 @@
                                                  ");")
                                   (second expression-string+pinfo)))])]))]
     
-    (loop desugared-program "" "" a-pinfo)))
+    (loop (first desugared-program+pinfo) "" "" a-pinfo)))
 
 
 
@@ -381,9 +382,6 @@
              (define value (third (stx-e expr)))]
        (set!-expression->javascript-string id value env a-pinfo))]
     
-    ;; (cond ...)
-    [(stx-begins-with? expr 'cond)
-     (expression->javascript-string (desugar-cond expr) env a-pinfo)]    
     
     ;; (if test consequent alternative)
     [(stx-begins-with? expr 'if)
@@ -392,9 +390,6 @@
              (define alternative (fourth (stx-e expr)))]
        (if-expression->javascript-string test consequent alternative env a-pinfo))]
     
-    ;; (case val-expr [quoted-expr expr] ...)
-    [(stx-begins-with? expr 'case)
-     (expression->javascript-string (desugar-case expr) env a-pinfo)]
     
     ;; (and exprs ...)
     [(stx-begins-with? expr 'and)
