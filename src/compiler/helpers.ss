@@ -277,6 +277,32 @@
 
 
 
+;; desugar-let: expr-stx -> expr-stx
+;; Given a let expression, translates it to the equivalent use of
+;; a lambda application.
+(define (desugar-let a-stx)
+  (local [(define clauses-stx (second (stx-e a-stx)))
+          (define body-stx (third (stx-e a-stx)))
+          (define ids (map (lambda (clause)
+                             (first (stx-e clause)))
+                           (stx-e clauses-stx)))
+          (define vals (map (lambda (clause)
+                              (second (stx-e clause)))
+                            (stx-e clauses-stx)))
+          
+          (define new-lambda-stx
+            (make-stx:list (list 
+                            (datum->stx 'lambda (stx-loc a-stx))
+                            (make-stx:list ids (stx-loc a-stx))
+                            body-stx)
+                           (stx-loc a-stx)))]    
+    (make-stx:list (cons new-lambda-stx vals)
+                   (stx-loc a-stx))))
+
+
+
+
+
 ;; remove-leading-whitespace: string -> string
 ;; Removes the whitespace from the front of a string.
 (define (remove-leading-whitespace a-str)
@@ -391,6 +417,70 @@
        (symbol? (stx-e x))))
 
 
+;; desugar-program: program -> program
+(define (desugar-program a-program)
+  (local [(define (desugar-program-element an-element)
+            (cond
+              [(defn? an-element)
+               (desugar-defn an-element)]
+              [(test-case? an-element)
+               (desugar-test-case an-element)]
+              [(library-require? an-element)
+               an-element]
+              [(expression? an-element)
+               (desugar-expression an-element)]))
+          
+          (define (desugar-defn a-defn)
+            (local [(define define-stx (first (stx-e a-defn)))]
+              (case-analyze-definition a-defn
+                                       (lambda (id args body) 
+                                         (make-stx:list (list define-stx
+                                                              (make-stx:list (cons id args)
+                                                                             (stx-loc a-defn))
+                                                              (desugar-expression body))
+                                                        (stx-loc a-defn)))
+                                       (lambda (id body) 
+                                         (make-stx:list (list define-stx
+                                                              id
+                                                              (desugar-expression body))
+                                                        (stx-loc a-defn)))
+                                       (lambda (id fields) 
+                                         a-defn))))
+
+          
+          (define (desugar-test-case a-test-case)
+            (local [(define test-symbol-stx (first (stx-e a-test-case)))]
+              (cond [(stx-begins-with? a-test-case 'check-expect)
+                     (make-stx:list (list test-symbol-stx
+                                          (desugar-expression (second (stx-e a-test-case)))
+                                          (desugar-expression (third (stx-e a-test-case))))
+                                    (stx-loc a-test-case))]
+                    [(stx-begins-with? a-test-case 'check-within)
+                     (make-stx:list (list test-symbol-stx
+                                          (desugar-expression (second (stx-e a-test-case)))
+                                          (desugar-expression (third (stx-e a-test-case)))
+                                          (desugar-expression (fourth (stx-e a-test-case))))
+                                    (stx-loc a-test-case))]
+                    [(stx-begins-with? a-test-case 'check-error)
+                     (make-stx:list (list test-symbol-stx
+                                          (desugar-expression (second (stx-e a-test-case)))
+                                          (desugar-expression (third (stx-e a-test-case))))
+                                    (stx-loc a-test-case))])))
+          
+          (define (desugar-expression an-expr)
+            ;; fill me in
+            an-expr)]
+    
+    (cond 
+      [(empty? a-program)
+       empty]
+      [else
+       (cons (desugar-program-element (first a-program))
+             (desugar-program (rest a-program)))])))
+
+
+
+
 
 (provide/contract [program? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
@@ -401,13 +491,15 @@
                   [list-tail ((listof any/c) number? . -> . (listof any/c))]
                   [remove-leading-whitespace (string? . -> . string?)]
                   [identifier->munged-java-identifier (symbol? . -> . symbol?)]
+                  [desugar-program (program? . -> . program?)]
                   [desugar-cond (stx? . -> . stx?)]
                   [desugar-case (stx? . -> . stx?)]
+                  [desugar-let (stx? . -> . stx?)]
                   [range (number? . -> . (listof number?))]
                   
-                  [case-analyze-definition (any/c 
-                                            (stx? (listof symbol-stx?) stx? . -> . any)
-                                            (stx? any/c . -> . any)
-                                            (stx? (listof symbol-stx?) . -> . any)
+                  [case-analyze-definition (stx? 
+                                            (symbol-stx? (listof symbol-stx?) stx? . -> . any)
+                                            (symbol-stx? any/c . -> . any)
+                                            (symbol-stx? (listof symbol-stx?) . -> . any)
                                             . -> . any)]
                   [string-join ((listof string?) string? . -> . string?)])

@@ -274,6 +274,26 @@ function init() {
  				     "[2 'small]" +
  				     "[(10 11 12) 'big])" +
 				     "3")});
+	},
+
+	testLet: function() {
+	    this.assert(isEqual(number(42),
+				run("(let ((x 42)) x)")));
+
+	    this.assert(isEqual(number(129),
+				run("(let ((x 42) (y 43) (z 44)) (+ x y z))")));
+
+
+
+	    this.assert(isEqual(number(43),
+				run("(let ((x 42)) "+
+				    "  (let ((x (+ x 1)))"+
+                                    "    x))")));
+
+	    // Check for binding symbol more than once.
+	    this.assertRaise("MobySyntaxError",
+			     function() { run("(let ((x 42)(x 43)) x)") });
+                                                 
 	}
     });
 

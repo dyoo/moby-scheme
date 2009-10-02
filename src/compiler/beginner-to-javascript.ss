@@ -61,9 +61,10 @@
 (define (program->compiled-program/pinfo program input-pinfo)
   (local [(define pinfo-1+gensym (pinfo-gensym input-pinfo 'toplevel-expression-show))
           
+          (define desugared-program (desugar-program program))
           
           (define toplevel-expression-show (second pinfo-1+gensym))
-          (define a-pinfo (program-analyze/pinfo program (first pinfo-1+gensym)))
+          (define a-pinfo (program-analyze/pinfo desugared-program (first pinfo-1+gensym)))
           (define toplevel-env (pinfo-env a-pinfo))
           
           (define (loop program defns tops a-pinfo)
@@ -136,7 +137,7 @@
                                                  ");")
                                   (second expression-string+pinfo)))])]))]
     
-    (loop program "" "" a-pinfo)))
+    (loop desugared-program "" "" a-pinfo)))
 
 
 
