@@ -41,8 +41,8 @@
                                                                 (stx-loc a-defn))
                                                  (second subexpr+pinfo))))
                                        (lambda (id fields) 
-                                         ;; FIXME: extend the environment with the identifiers
-                                         ;; here!
+                                         ;; FIXME: extend the environment with the
+                                         ;; structure identifiers here!
                                          (list a-defn a-pinfo)))))
           
           
@@ -111,13 +111,14 @@
                        (define desugared-value+pinfo (desugar-expression value pinfo))]
                  (list (make-stx:list (list set-symbol-stx
                                             id
-                                            (first desugared-value+pinfo)))
+                                            (first desugared-value+pinfo))
+                                      (stx-loc expr))
                        (second desugared-value+pinfo)))]
               
               ;; (cond ...)
               [(stx-begins-with? expr 'cond)
-               (list (desugar-cond expr)
-                     pinfo)]
+               (desugar-expression (desugar-cond expr) pinfo)]
+              
               
               ;; (if test consequent alternative)
               [(stx-begins-with? expr 'if)
@@ -131,8 +132,8 @@
               
               ;; (case val-expr [quoted-expr expr] ...)
               [(stx-begins-with? expr 'case)
-               (list (desugar-case expr)
-                     pinfo)]
+               (desugar-expression (desugar-case expr) pinfo)]
+
               
               ;; (and exprs ...)
               [(stx-begins-with? expr 'and)
@@ -250,9 +251,11 @@
           (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
                                (make-stx:list (list (datum->stx 'ormap (stx-loc an-expr))
                                                     (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
-                                                                         (make-stx:list (list (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr))
+                                                                         (make-stx:list (list (datum->stx 'val (stx-loc an-expr)))
+                                                                                        (stx-loc an-expr))
                                                                          (make-stx:list (list predicate
-                                                                                              (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr)))
+                                                                                              (datum->stx 'val (stx-loc an-expr)))
+                                                                                        (stx-loc an-expr)))
                                                                    (stx-loc an-expr))
                                                     (make-stx:list (cons (datum->stx 'list (stx-loc an-expr)) 
                                                                          (stx-e (first list-of-datum)))
@@ -360,10 +363,9 @@
                             (stx-e clauses-stx)))
           
           (define new-lambda-stx
-            (make-stx:list (list 
-                            (datum->stx 'lambda (stx-loc a-stx))
-                            (make-stx:list ids (stx-loc a-stx))
-                            body-stx)
+            (make-stx:list (list (datum->stx 'lambda (stx-loc a-stx))
+                                 (make-stx:list ids (stx-loc a-stx))
+                                 body-stx)
                            (stx-loc a-stx)))]    
     (make-stx:list (cons new-lambda-stx vals)
                    (stx-loc a-stx))))

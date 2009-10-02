@@ -38,6 +38,7 @@
                      (my-define-struct define-struct)
                      (base:define define))
 
+         printf
          
          ;; Contract-related stuff: the following will be erased on 
          ;; javascript bootstrapping time.
