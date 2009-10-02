@@ -148,6 +148,7 @@
                   (string-join translated-chunks "")))]
          translated-id)])))
 
+
 ;; desugar-cond: stx:list -> stx:list
 ;; Translates conds to ifs.
 (define (desugar-cond an-expr)
@@ -276,6 +277,8 @@
 
 
 
+;; remove-leading-whitespace: string -> string
+;; Removes the whitespace from the front of a string.
 (define (remove-leading-whitespace a-str)
   (local [(define (remove-leading-whitespace/list chars)
             (cond
@@ -288,6 +291,8 @@
     (remove-leading-whitespace/list (string->list a-str))))
 
 
+;; take: (listof X) number -> (listof X)
+;; Produces a list of the first n elmeents of a-list.
 (define (take a-list n)
   (cond
     [(= n 0)
@@ -296,6 +301,9 @@
      (cons (first a-list)
            (take (rest a-list) (sub1 n)))]))
 
+
+;; list-tail: (listof X) number -> (listof X)
+;; Produces a list of the last n elmeents in a-list.
 (define (list-tail a-list n)
   (cond
     [(= n 0)
@@ -304,6 +312,9 @@
      (list-tail (rest a-list)
                 (sub1 n))]))
 
+
+;; range: number -> number
+;; Produces a list of the numbers [0, ..., n).
 (define (range n)
   (cond
     [(= n 0)
@@ -373,6 +384,8 @@
 
 
 
+;; symbol-stx?: any -> boolean
+;; Produces true when x is a symbol syntax object.
 (define (symbol-stx? x)
   (and (stx? x)
        (symbol? (stx-e x))))
