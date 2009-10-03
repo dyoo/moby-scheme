@@ -104,17 +104,16 @@
    
    ;; For structure definitions
    (lambda (id fields)
-     (pinfo-update-env pinfo (extend-env/struct-defns (pinfo-env pinfo) 
-                                                      (stx-e id) 
-                                                      (map stx-e fields))))))
+     (pinfo-accumulate-bindings (struct-definition-bindings (stx-e id) 
+                                                            (map stx-e fields))
+                                pinfo))))
 
 
 
 
-;; extend-env/struct-defns: env symbol (listof symbol) -> env
-;; Extends the environment by adding bindings for those identifiers introduced
-;; by a structure definition.
-(define (extend-env/struct-defns an-env id fields)
+;; struct-definition-bindings: (listof symbol) -> (listof binding)
+;; Makes the bindings for the identifiers introduced by a structure definition.
+(define (struct-definition-bindings id fields)
   (local [(define constructor-id 
             (string->symbol (string-append "make-" (symbol->string id))))
           (define constructor-binding 
@@ -146,10 +145,7 @@
                    (bf mut-id false 2 false
                        (symbol->string (identifier->munged-java-identifier mut-id))))
                  mutator-ids))]
-    (foldl (lambda (a-binding an-env)
-             (env-extend an-env a-binding))
-           an-env
-           (append (list constructor-binding) (list predicate-binding) selector-bindings mutator-bindings))))
+    (append (list constructor-binding) (list predicate-binding) selector-bindings mutator-bindings)))
 
 
 

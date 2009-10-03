@@ -20,7 +20,10 @@
 ;; empty-pinfo: pinfo
 ;; An empty pinfo that doesn't know any toplevel environment bindings.
 (define empty-pinfo
-  (make-pinfo empty-env empty (make-immutable-hasheq empty) 0))
+  (make-pinfo empty-env
+              empty 
+              (make-immutable-hasheq empty)
+              0))
 
 
 
