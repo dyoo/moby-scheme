@@ -273,7 +273,7 @@
      (pinfo-env pinfo))))
   
 
-;; begin-expressoin-analyze-uses: expr-stx pinf env -> pinfo
+;; begin-expression-analyze-uses: expr-stx pinfo env -> pinfo
 (define (begin-expression-analyze-uses an-expression pinfo env)
   (foldl (lambda (e p)
            (expression-analyze-uses e p env))

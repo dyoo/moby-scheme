@@ -14,6 +14,9 @@
                       modules                ; (listof module-binding) 
                       used-bindings-hash     ; (hashof symbol binding)
                       gensym-counter         ; number
+                      
+                      ;; names that aren't allowed to be re-extended.
+                      enduring-names   ; (listof symbol)
                       ))
 
 
@@ -23,7 +26,8 @@
   (make-pinfo empty-env
               empty 
               (make-immutable-hasheq empty)
-              0))
+              0
+              empty))
 
 
 
@@ -35,6 +39,14 @@
             (lambda (k v) v)))
 
 
+(define (pinfo-clear-enduring-names a-pinfo)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              empty))
+
+
 ;; pinfo-update-env: pinfo env -> pinfo
 ;; Updates the env of a pinfo.
 (define (pinfo-update-env a-pinfo an-env)
@@ -42,7 +54,8 @@
    an-env
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
-   (pinfo-gensym-counter a-pinfo)))
+   (pinfo-gensym-counter a-pinfo)
+   (pinfo-enduring-names a-pinfo)))
 
 
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
@@ -52,7 +65,8 @@
    (env-extend (pinfo-env a-pinfo) a-binding)
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
-   (pinfo-gensym-counter a-pinfo)))
+   (pinfo-gensym-counter a-pinfo)
+   (pinfo-enduring-names a-pinfo)))
 
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
@@ -69,7 +83,8 @@
   (make-pinfo (pinfo-env a-pinfo)
               (cons a-module (pinfo-modules a-pinfo))
               (pinfo-used-bindings-hash a-pinfo)
-              (pinfo-gensym-counter a-pinfo)))
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-enduring-names a-pinfo)))
 
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
@@ -80,7 +95,8 @@
               (hash-set (pinfo-used-bindings-hash a-pinfo)
                         (binding-id a-binding)
                         a-binding)
-              (pinfo-gensym-counter a-pinfo)))
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-enduring-names a-pinfo)))
 
 
 ;; pinfo-gensym: pinfo symbol -> (list pinfo symbol)
@@ -89,7 +105,8 @@
   (list (make-pinfo (pinfo-env a-pinfo)
                     (pinfo-modules a-pinfo)
                     (pinfo-used-bindings-hash a-pinfo)
-                    (add1 (pinfo-gensym-counter a-pinfo)))
+                    (add1 (pinfo-gensym-counter a-pinfo))
+                    (pinfo-enduring-names a-pinfo))
 
         (string->symbol
          (string-append (symbol->string a-label)
@@ -139,25 +156,22 @@
 ;; 'base
 ;; 'moby
 (define (get-base-pinfo language)
-  ;; FIXME: currently ignores the language.  We should change this to
-  ;; support different language levels.
   (cond
     [(symbol=? language 'moby)
-     (make-pinfo (extend-env/module-binding (get-toplevel-env language)
-                                            moby-module-binding)
-                 empty 
-                 (make-immutable-hasheq empty) 
-                 0)]
+     (pinfo-update-env empty-pinfo
+                       (extend-env/module-binding (get-toplevel-env language)
+                                                  moby-module-binding))]
     [(symbol=? language 'base)
-     (make-pinfo (get-toplevel-env language) empty (make-immutable-hasheq empty) 0)]))
-
+     (pinfo-update-env empty-pinfo
+                       (get-toplevel-env language))]))
 
 
 
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash hash?]
-                                 [gensym-counter number?])]
+                                 [gensym-counter number?]
+                                 [enduring-names (listof symbol?)])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
