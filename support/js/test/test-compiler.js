@@ -277,6 +277,7 @@ function init() {
 	},
 
 	testLet: function() {
+	    this.assert(isEqual(number(1979), run("(let () 1979)")));
 	    this.assert(isEqual(number(42),
 				run("(let ((x 42)) x)")));
 
@@ -294,7 +295,14 @@ function init() {
 	    this.assertRaise("MobySyntaxError",
 			     function() { run("(let ((x 42)(x 43)) x)") });
                                                  
-	}
+	},
+
+	    testLetStar: function() {
+		this.assert(isEqual(number(10), run("(let* ((x 9) (x (+ x 1))) x)")))
+		this.assert(isEqual(number(16), run("(let* () 16)")))
+	    }  
+
+
     });
 
 }

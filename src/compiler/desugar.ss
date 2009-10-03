@@ -73,21 +73,32 @@
                     (second desugared-exprs+pinfo))))
           
           
+          ;; desugar-expression/expr+pinfo: (list expr pinfo) -> (list expr pinfo)
+          (define (desugar-expression/expr+pinfo expr+pinfo)
+            (desugar-expression (first expr+pinfo)
+                                (second expr+pinfo)))
+          
+          
           ;; desugar-expression: expr pinfo -> (list expr pinfo)
           (define (desugar-expression expr pinfo)
             (cond
 
               ;; (cond ...)
               [(stx-begins-with? expr 'cond)
-               (desugar-expression (desugar-cond expr) pinfo)]
+               (desugar-expression/expr+pinfo (desugar-cond expr pinfo))]
               
               ;; (case val-expr [quoted-expr expr] ...)
               [(stx-begins-with? expr 'case)
-               (desugar-expression (desugar-case expr) pinfo)]
+               (desugar-expression/expr+pinfo (desugar-case expr pinfo))]
 
               ;; (let ([id val] ...) ...)
               [(stx-begins-with? expr 'let)
-               (desugar-expression (desugar-let expr) pinfo)]
+               (desugar-expression/expr+pinfo (desugar-let expr pinfo))]
+              
+              ;; (let* ([id val] ...) ...)
+              [(stx-begins-with? expr 'let*)
+               (desugar-expression/expr+pinfo (desugar-let* expr pinfo))]
+              
               
               ;; (local ([define ...] ...) body)
               [(stx-begins-with? expr 'local)
@@ -219,49 +230,50 @@
 
 
 
-;; desugar-case: stx:list -> stx:list
+;; desugar-case: stx:list -> (list stx:list pinfo)
 ;; translates case to if.
-(define (desugar-case an-expr)
+(define (desugar-case an-expr pinfo)
   (local
     [
      ;; predicate: stx -> stx
      (define predicate
-       (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
-                            (make-stx:list (list (datum->stx 'check (stx-loc an-expr))) (stx-loc an-expr))
-                            (make-stx:list (list (datum->stx 'equal? (stx-loc an-expr))
-                                                 (datum->stx 'check (stx-loc an-expr))
-                                                 (second (stx-e an-expr))) (stx-loc an-expr)))
+       (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
+                            (make-stx:list (list (make-stx:atom 'check (stx-loc an-expr))) (stx-loc an-expr))
+                            (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
+                                                 (make-stx:atom 'check (stx-loc an-expr))
+                                                 (second (stx-e an-expr))) 
+                                           (stx-loc an-expr)))
                       (stx-loc an-expr)))
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop list-of-datum answers datum-last answer-last)
        (cond
          [(empty? list-of-datum)
-          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
-                               (make-stx:list (list (datum->stx 'ormap (stx-loc an-expr))
-                                                    (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
-                                                                         (make-stx:list (list (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr))
+          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
+                               (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
+                                                    (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
+                                                                         (make-stx:list (list (make-stx:atom 'val (stx-loc an-expr))) (stx-loc an-expr))
                                                                          (make-stx:list (list predicate
-                                                                                              (datum->stx 'val (stx-loc an-expr))) (stx-loc an-expr)))
+                                                                                              (make-stx:atom 'val (stx-loc an-expr))) (stx-loc an-expr)))
                                                                    (stx-loc an-expr))
-                                                    (make-stx:list (cons (datum->stx 'list (stx-loc an-expr)) 
+                                                    (make-stx:list (cons (make-stx:atom 'list (stx-loc an-expr)) 
                                                                          (stx-e datum-last))
                                                                    (stx-loc an-expr)))
                                               (stx-loc an-expr))
                                answer-last
-                               (make-stx:list (list (datum->stx 'void (stx-loc an-expr)))
+                               (make-stx:list (list (make-stx:atom 'void (stx-loc an-expr)))
                                               (stx-loc an-expr)))
                          (stx-loc an-expr))]
          [else
-          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
-                               (make-stx:list (list (datum->stx 'ormap (stx-loc an-expr))
-                                                    (make-stx:list (list (datum->stx 'lambda (stx-loc an-expr))
-                                                                         (make-stx:list (list (datum->stx 'val (stx-loc an-expr)))
+          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
+                               (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
+                                                    (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
+                                                                         (make-stx:list (list (make-stx:atom 'val (stx-loc an-expr)))
                                                                                         (stx-loc an-expr))
                                                                          (make-stx:list (list predicate
-                                                                                              (datum->stx 'val (stx-loc an-expr)))
+                                                                                              (make-stx:atom 'val (stx-loc an-expr)))
                                                                                         (stx-loc an-expr)))
                                                                    (stx-loc an-expr))
-                                                    (make-stx:list (cons (datum->stx 'list (stx-loc an-expr)) 
+                                                    (make-stx:list (cons (make-stx:atom 'list (stx-loc an-expr)) 
                                                                          (stx-e (first list-of-datum)))
                                                                    (stx-loc an-expr)))
                                               (stx-loc an-expr))
@@ -277,15 +289,17 @@
          [(stx-begins-with? (first clauses) 'else)
           (if (not (empty? (rest clauses)))
               (syntax-error (format "case: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
-              (loop (reverse questions/rev) 
-                    (reverse answers/rev)
-                    (make-stx:list (list (second (stx-e an-expr))) (stx-loc an-expr))
-                    (second (stx-e (first clauses)))))]
+              (list (loop (reverse questions/rev) 
+                          (reverse answers/rev)
+                          (make-stx:list (list (second (stx-e an-expr))) (stx-loc an-expr))
+                          (second (stx-e (first clauses))))
+                    pinfo))]
          [(empty? (rest clauses))
-          (loop (reverse questions/rev) 
-                (reverse answers/rev) 
-                (first (stx-e (first clauses)))
-                (second (stx-e (first clauses))))]
+          (list (loop (reverse questions/rev) 
+                      (reverse answers/rev) 
+                      (first (stx-e (first clauses)))
+                      (second (stx-e (first clauses))))
+                pinfo)]
          [else
           (process-clauses (rest clauses)
                            (cons (first (stx-e (first clauses))) questions/rev) 
@@ -299,15 +313,15 @@
 
 
 
-;; desugar-cond: stx:list -> stx:list
+;; desugar-cond: stx:list -> (list stx:list pinfo)
 ;; Translates conds to ifs.
-(define (desugar-cond an-expr)
+(define (desugar-cond an-expr pinfo)
   (local
     [;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
+          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
                                question-last
                                answer-last 
                                (datum->stx '(error 'cond "Fell out of cond")
@@ -315,7 +329,7 @@
                          (stx-loc an-expr))]
 
          [else
-          (make-stx:list (list (datum->stx 'if (stx-loc an-expr))
+          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
                                (first questions)
                                (first answers)
                                (loop (rest questions)
@@ -329,15 +343,17 @@
          [(stx-begins-with? (first clauses) 'else)
           (if (not (empty? (rest clauses)))
               (syntax-error (format "cond: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
-              (loop (reverse questions/rev) 
-                    (reverse answers/rev) 
-                    (datum->stx 'true (stx-loc (first clauses)))
-                    (second (stx-e (first clauses)))))]
+              (list (loop (reverse questions/rev) 
+                          (reverse answers/rev) 
+                          (make-stx:atom 'true (stx-loc (first clauses)))
+                          (second (stx-e (first clauses))))
+                    pinfo))]
          [(empty? (rest clauses))
-          (loop (reverse questions/rev) 
-                (reverse answers/rev) 
-                (first (stx-e (first clauses)))
-                (second (stx-e (first clauses))))]
+          (list (loop (reverse questions/rev) 
+                      (reverse answers/rev) 
+                      (first (stx-e (first clauses)))
+                      (second (stx-e (first clauses))))
+                pinfo)]
          [else
           (process-clauses (rest clauses)
                            (cons (first (stx-e (first clauses))) questions/rev) 
@@ -353,10 +369,10 @@
 
 
 
-;; desugar-let: expr-stx -> expr-stx
+;; desugar-let: expr-stx -> (list expr-stx pinfo)
 ;; Given a let expression, translates it to the equivalent use of
 ;; a lambda application.
-(define (desugar-let a-stx)
+(define (desugar-let a-stx pinfo)
   (local [(define clauses-stx (second (stx-e a-stx)))
           (define body-stx (third (stx-e a-stx)))
           (define ids (map (lambda (clause)
@@ -367,14 +383,34 @@
                             (stx-e clauses-stx)))
           
           (define new-lambda-stx
-            (make-stx:list (list (datum->stx 'lambda (stx-loc a-stx))
+            (make-stx:list (list (make-stx:atom 'lambda (stx-loc a-stx))
                                  (make-stx:list ids (stx-loc a-stx))
                                  body-stx)
                            (stx-loc a-stx)))]    
-    (make-stx:list (cons new-lambda-stx vals)
-                   (stx-loc a-stx))))
+    (list (make-stx:list (cons new-lambda-stx vals)
+                         (stx-loc a-stx))
+          pinfo)))
 
-  
+
+;; desugar-let*: expr-stx -> expr-stx
+;; Desugars let* into a nested bunch of let expressions.
+(define (desugar-let* a-stx pinfo)
+  (local [(define clauses-stx (second (stx-e a-stx)))
+          (define body-stx (third (stx-e a-stx)))
+          
+          ;; loop: (listof stx) -> stx
+          (define (loop clauses)
+            (cond
+              [(empty? clauses)
+               body-stx]
+              [else
+               (make-stx:list (list (make-stx:atom 'let (stx-loc (first clauses)))
+                                    (make-stx:list (list (first clauses))
+                                                   (stx-loc (first clauses)))
+                                    (loop (rest clauses)))
+                              (stx-loc (first clauses)))]))]    
+    (list (loop (stx-e clauses-stx))
+          pinfo)))
 
 
 
