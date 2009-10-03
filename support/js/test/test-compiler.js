@@ -276,6 +276,15 @@ function init() {
 				     "3")});
 	},
 
+	testCaseHygiene: function() {
+		this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
+				    run("((lambda (check val) " +
+					"    (case val " +
+					"      [(val) (list check val)] " +
+					"      [else (list 1 2)]))" +
+					" 1024 2048)")));
+	    },
+
 	testLet: function() {
 	    this.assert(isEqual(number(1979), run("(let () 1979)")));
 	    this.assert(isEqual(number(42),
