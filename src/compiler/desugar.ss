@@ -234,13 +234,19 @@
 ;; translates case to if.
 (define (desugar-case an-expr pinfo)
   (local
-    [
+    [(define check-stx
+       (make-stx:atom 'check (stx-loc an-expr)))
+     
+     (define val-stx
+       (make-stx:atom 'val (stx-loc an-expr)))
+     
+     
      ;; predicate: stx -> stx
      (define predicate
        (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                            (make-stx:list (list (make-stx:atom 'check (stx-loc an-expr))) (stx-loc an-expr))
+                            (make-stx:list (list check-stx) (stx-loc an-expr))
                             (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
-                                                 (make-stx:atom 'check (stx-loc an-expr))
+                                                 check-stx
                                                  (second (stx-e an-expr))) 
                                            (stx-loc an-expr)))
                       (stx-loc an-expr)))
@@ -250,11 +256,13 @@
          [(empty? list-of-datum)
           (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
                                (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
-                                                    (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                                                                         (make-stx:list (list (make-stx:atom 'val (stx-loc an-expr))) (stx-loc an-expr))
-                                                                         (make-stx:list (list predicate
-                                                                                              (make-stx:atom 'val (stx-loc an-expr))) (stx-loc an-expr)))
-                                                                   (stx-loc an-expr))
+                                                    (make-stx:list 
+                                                     (list (make-stx:atom 'lambda (stx-loc an-expr))
+                                                           (make-stx:list (list val-stx) 
+                                                                          (stx-loc an-expr))
+                                                           (make-stx:list (list predicate
+                                                                                val-stx) (stx-loc an-expr)))
+                                                     (stx-loc an-expr))
                                                     (make-stx:list (cons (make-stx:atom 'list (stx-loc an-expr)) 
                                                                          (stx-e datum-last))
                                                                    (stx-loc an-expr)))
@@ -267,10 +275,10 @@
           (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
                                (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
                                                     (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                                                                         (make-stx:list (list (make-stx:atom 'val (stx-loc an-expr)))
+                                                                         (make-stx:list (list val-stx)
                                                                                         (stx-loc an-expr))
                                                                          (make-stx:list (list predicate
-                                                                                              (make-stx:atom 'val (stx-loc an-expr)))
+                                                                                              val-stx)
                                                                                         (stx-loc an-expr)))
                                                                    (stx-loc an-expr))
                                                     (make-stx:list (cons (make-stx:atom 'list (stx-loc an-expr)) 
