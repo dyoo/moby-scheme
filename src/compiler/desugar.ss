@@ -76,7 +76,19 @@
           ;; desugar-expression: expr pinfo -> (list expr pinfo)
           (define (desugar-expression expr pinfo)
             (cond
-          
+
+              ;; (cond ...)
+              [(stx-begins-with? expr 'cond)
+               (desugar-expression (desugar-cond expr) pinfo)]
+              
+              ;; (case val-expr [quoted-expr expr] ...)
+              [(stx-begins-with? expr 'case)
+               (desugar-expression (desugar-case expr) pinfo)]
+
+              ;; (let ([id val] ...) ...)
+              [(stx-begins-with? expr 'let)
+               (desugar-expression (desugar-let expr) pinfo)]
+              
               ;; (local ([define ...] ...) body)
               [(stx-begins-with? expr 'local)
                (local [(define local-symbol-stx (first (stx-e expr)))
@@ -115,10 +127,6 @@
                                       (stx-loc expr))
                        (second desugared-value+pinfo)))]
               
-              ;; (cond ...)
-              [(stx-begins-with? expr 'cond)
-               (desugar-expression (desugar-cond expr) pinfo)]
-              
               
               ;; (if test consequent alternative)
               [(stx-begins-with? expr 'if)
@@ -130,10 +138,6 @@
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               
-              ;; (case val-expr [quoted-expr expr] ...)
-              [(stx-begins-with? expr 'case)
-               (desugar-expression (desugar-case expr) pinfo)]
-
               
               ;; (and exprs ...)
               [(stx-begins-with? expr 'and)
@@ -370,6 +374,7 @@
     (make-stx:list (cons new-lambda-stx vals)
                    (stx-loc a-stx))))
 
+  
 
 
 

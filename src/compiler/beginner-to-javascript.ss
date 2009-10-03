@@ -746,6 +746,24 @@
                                (loop (add1 i) (rest elts)))]))]
               (loop 0 elts)))
           
+          ;; duplicate-identifiers: (listof stx) -> (listof stx)
+          ;; Return a list of the identifiers that are duplicated.
+          (define (duplicate-identifiers ids)
+            (local [(define (loop ids known-ids)
+                      (cond
+                        [(empty? ids)
+                         empty]
+                        [else
+                         (cond [(member (stx-e (first ids)) known-ids)
+                                (cons (first ids)
+                                      (loop (rest ids)
+                                            (cons (stx-e (first ids)) 
+                                                  known-ids)))]
+                               [else
+                                (loop (rest ids) 
+                                      (cons (stx-e (first ids)) 
+                                            known-ids))])]))]
+              (loop ids empty)))
           
           (define munged-arg-ids
             (map (lambda (id) (identifier->munged-java-identifier (stx-e id)))
@@ -772,29 +790,34 @@
             (expression->javascript-string body new-env a-pinfo-2))
           (define body-string (first body-string+p))
           (define updated-pinfo (second body-string+p))]
-    (list
-     (string-append "((function() {\n"
-                    "   plt.Kernel.setLastLoc(" (format "~s" (Loc->string (stx-loc original-stx))) ");\n"
-                    "   var result = (function(" (symbol->string args-sym) ") {\n"
-                    (string-join (mapi (lambda (arg-id i)
-                                         (string-append "var "
-                                                        (symbol->string arg-id)
-                                                        " = "
-                                                        (symbol->string args-sym)
-                                                        "[" (number->string i) "];"))
-                                       munged-arg-ids)
-                                 "\n")
-                    "
+    (cond
+      [(not (empty? (duplicate-identifiers args)))
+       (syntax-error "found a name that's used more than once" 
+                     (first (duplicate-identifiers args)))]
+      [else
+       (list
+        (string-append "((function() {\n"
+                       "   plt.Kernel.setLastLoc(" (format "~s" (Loc->string (stx-loc original-stx))) ");\n"
+                       "   var result = (function(" (symbol->string args-sym) ") {\n"
+                       (string-join (mapi (lambda (arg-id i)
+                                            (string-append "var "
+                                                           (symbol->string arg-id)
+                                                           " = "
+                                                           (symbol->string args-sym)
+                                                           "[" (number->string i) "];"))
+                                          munged-arg-ids)
+                                    "\n")
+                       "
                              return "
-                    body-string
-                    "; });
+                       body-string
+                       "; });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
                       return result;
                    })())")
-     updated-pinfo)))
+        updated-pinfo)])))
 
 
 
