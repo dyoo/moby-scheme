@@ -237,52 +237,39 @@
     [(define check-stx
        (make-stx:atom 'check (stx-loc an-expr)))
      
-     (define val-stx
-       (make-stx:atom 'val (stx-loc an-expr)))
-     
-     
      ;; predicate: stx -> stx
      (define predicate
        (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
                             (make-stx:list (list check-stx) (stx-loc an-expr))
                             (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
                                                  check-stx
-                                                 (second (stx-e an-expr))) 
+                                                 (second (stx-e an-expr)))
                                            (stx-loc an-expr)))
                       (stx-loc an-expr)))
+     
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop list-of-datum answers datum-last answer-last)
        (cond
          [(empty? list-of-datum)
-          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
-                               (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
-                                                    (make-stx:list 
-                                                     (list (make-stx:atom 'lambda (stx-loc an-expr))
-                                                           (make-stx:list (list val-stx) 
-                                                                          (stx-loc an-expr))
-                                                           (make-stx:list (list predicate
-                                                                                val-stx) (stx-loc an-expr)))
-                                                     (stx-loc an-expr))
-                                                    (make-stx:list (cons (make-stx:atom 'list (stx-loc an-expr)) 
-                                                                         (stx-e datum-last))
-                                                                   (stx-loc an-expr)))
-                                              (stx-loc an-expr))
-                               answer-last
-                               (make-stx:list (list (make-stx:atom 'void (stx-loc an-expr)))
-                                              (stx-loc an-expr)))
-                         (stx-loc an-expr))]
+          (if (and (symbol? (stx-e datum-last)) (symbol=? 'else (stx-e datum-last)))
+              answer-last
+              (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
+                                   (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
+                                                        predicate
+                                                        (make-stx:list (list (make-stx:atom 'quote (stx-loc an-expr))
+                                                                             datum-last)
+                                                                       (stx-loc an-expr)))
+                                                  (stx-loc an-expr))
+                                   answer-last
+                                   (make-stx:list (list (make-stx:atom 'void (stx-loc an-expr)))
+                                                  (stx-loc an-expr)))
+                             (stx-loc an-expr)))]
          [else
           (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
                                (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
-                                                    (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                                                                         (make-stx:list (list val-stx)
-                                                                                        (stx-loc an-expr))
-                                                                         (make-stx:list (list predicate
-                                                                                              val-stx)
-                                                                                        (stx-loc an-expr)))
-                                                                   (stx-loc an-expr))
-                                                    (make-stx:list (cons (make-stx:atom 'list (stx-loc an-expr)) 
-                                                                         (stx-e (first list-of-datum)))
+                                                    predicate
+                                                    (make-stx:list (list (make-stx:atom 'quote (stx-loc an-expr))
+                                                                         (first list-of-datum))
                                                                    (stx-loc an-expr)))
                                               (stx-loc an-expr))
                                (first answers)
@@ -291,7 +278,7 @@
                                      datum-last
                                      answer-last))
                          (stx-loc an-expr))]))
-     ;; process-clauses: (listof stx) (listof stx) (listof stx) -> stx
+     ;; process-clauses: (listof stx) (listof stx) (listof stx) -> (list stx:list pinfo)
      (define (process-clauses clauses questions/rev answers/rev)
        (cond
          [(stx-begins-with? (first clauses) 'else)
@@ -299,7 +286,7 @@
               (syntax-error (format "case: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
               (list (loop (reverse questions/rev) 
                           (reverse answers/rev)
-                          (make-stx:list (list (second (stx-e an-expr))) (stx-loc an-expr))
+                          (make-stx:atom 'else (stx-loc an-expr))
                           (second (stx-e (first clauses))))
                     pinfo))]
          [(empty? (rest clauses))
