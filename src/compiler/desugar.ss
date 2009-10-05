@@ -237,15 +237,27 @@
     [(define check-stx
        (make-stx:atom 'check (stx-loc an-expr)))
      
+     (define check-stx:backup
+       (make-stx:atom 'check-backup (stx-loc an-expr)))
+     
      ;; predicate: stx -> stx
      (define predicate
-       (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                            (make-stx:list (list check-stx) (stx-loc an-expr))
+       (if (and (symbol? (stx-e (second (stx-e an-expr))))
+                (symbol=? 'check (stx-e (second (stx-e an-expr)))))
+           (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
+                            (make-stx:list (list check-stx:backup) (stx-loc an-expr))
                             (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
-                                                 check-stx
+                                                 check-stx:backup
                                                  (second (stx-e an-expr)))
                                            (stx-loc an-expr)))
-                      (stx-loc an-expr)))
+                      (stx-loc an-expr))
+           (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
+                                (make-stx:list (list check-stx) (stx-loc an-expr))
+                                (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
+                                                     check-stx
+                                                     (second (stx-e an-expr)))
+                                               (stx-loc an-expr)))
+                          (stx-loc an-expr))))
      
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop list-of-datum answers datum-last answer-last)
