@@ -274,6 +274,13 @@ function init() {
  				     "[2 'small]" +
  				     "[(10 11 12) 'big])" +
 				     "3")});
+
+		// symbols
+ 	    this.assert(isEqual(symbol("big"),
+ 				run("(case 'x" +
+ 					"[(1 2) 'small]" +
+ 					"[(b x c) 'big])")));
+
 	},
 
 	testCaseHygiene: function() {
@@ -283,7 +290,21 @@ function init() {
 					"      [(val) (list check val)] " +
 					"      [else (list 1 2)]))" +
 					" 1024 2048)")));
-	    },
+
+		this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
+				    run("((lambda (check val) " +
+					"    (case check " +
+					"      [(check) (list check val)] " +
+					"      [else (list 1 2)]))" +
+					" 1024 2048)")));
+
+		this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
+				    run("((lambda (check val) " +
+					"    (case check " +
+					"      [(val) (list check val)] " +
+					"      [else (list 1 2)]))" +
+					" 1024 2048)")));
+	},
 
 	testLet: function() {
 	    this.assert(isEqual(number(1979), run("(let () 1979)")));
