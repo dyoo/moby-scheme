@@ -5418,25 +5418,38 @@ var loop = function(list_dash_of_dash_datum, answers, datum_dash_last, answer_da
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("if")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("ormap")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),predicate,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("quote")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(list_dash_of_dash_datum))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(answers)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(list_dash_of_dash_datum)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(answers)),datum_dash_last,answer_dash_last))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-var process_dash_clauses = function(clauses, questions_slash_rev, answers_slash_rev) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)),(plt.types.Symbol.makeInstance("else")))) ?
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.not((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(clauses)))))) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("case: else clause should be the last one: ~s")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr))])),an_dash_expr)) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(questions_slash_rev)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(answers_slash_rev)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("else")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))))),pinfo]))) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(clauses)))) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(questions_slash_rev)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(answers_slash_rev)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))))),pinfo])) :
- (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && process_dash_clauses((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(clauses)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),questions_slash_rev)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),answers_slash_rev)))) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); };
 (function (toplevel_dash_expression_dash_show80) { 
 check_dash_stx = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("check")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr))));
 check_dash_stx_colon_backup = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("check-backup")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr))));
 predicate = (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr))))))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_equal__question_((plt.types.Symbol.makeInstance("check")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr))))))))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("lambda")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([check_dash_stx_colon_backup])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("equal?")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),check_dash_stx_colon_backup,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("lambda")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([check_dash_stx])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("equal?")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),check_dash_stx,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))));
-
  })(plt.Kernel.identity)
 return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(an_dash_expr,(plt.types.Symbol.makeInstance("case")))) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && process_dash_clauses((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr)))))),plt.types.Empty.EMPTY,plt.types.Empty.EMPTY)) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && deconstruct_dash_clauses_dash_with_dash_else((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr)))))),((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args81) {
+var else_dash_stx = args81[0];
+                             return else_dash_stx; });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()),((function() {
+   plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
+   var result = (function(args82) {
+var questions = args82[0];
+var answers = args82[1];
+var question_dash_last = args82[2];
+var answer_dash_last = args82[3];
+                             return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(questions,answers,question_dash_last,answer_dash_last)),pinfo])); });
+                      result.toWrittenString = function () {
+                          return '<function:lambda>';
+                      };
+                      result.toDisplayedString = result.toWrittenString;
+                      return result;
+                   })()))) :
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("Not a case clause: ~s")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr))])),an_dash_expr)) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))));
@@ -5448,13 +5461,13 @@ var loop = function(questions, answers, question_dash_last, answer_dash_last) { 
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("if")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(questions)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(answers)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(questions)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(answers)),question_dash_last,answer_dash_last))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(an_dash_expr)))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-(function (toplevel_dash_expression_dash_show81) { 
+(function (toplevel_dash_expression_dash_show83) { 
  })(plt.Kernel.identity)
 return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_begins_dash_with_question_(an_dash_expr,(plt.types.Symbol.makeInstance("cond")))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && deconstruct_dash_clauses_dash_with_dash_else((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_expr)))),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args82) {
-var else_dash_stx = args82[0];
+   var result = (function(args84) {
+var else_dash_stx = args84[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("true")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(else_dash_stx)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5463,11 +5476,11 @@ var else_dash_stx = args82[0];
                       return result;
                    })()),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args83) {
-var questions = args83[0];
-var answers = args83[1];
-var question_dash_last = args83[2];
-var answer_dash_last = args83[3];
+   var result = (function(args85) {
+var questions = args85[0];
+var answers = args85[1];
+var question_dash_last = args85[2];
+var answer_dash_last = args85[3];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(questions,answers,question_dash_last,answer_dash_last)),pinfo])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5490,7 +5503,7 @@ var process_dash_clauses = function(clauses, questions_slash_rev, answers_slash_
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && process_dash_clauses((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(clauses)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),questions_slash_rev)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),answers_slash_rev)))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); };
-(function (toplevel_dash_expression_dash_show84) { 
+(function (toplevel_dash_expression_dash_show86) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && process_dash_clauses(clauses,plt.types.Empty.EMPTY,plt.types.Empty.EMPTY));
               })()); };
@@ -5501,13 +5514,13 @@ var body_dash_stx;
 var ids; 
 var vals; 
 var new_dash_lambda_dash_stx; 
-(function (toplevel_dash_expression_dash_show85) { 
+(function (toplevel_dash_expression_dash_show87) { 
 clauses_dash_stx = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_stx))));
 body_dash_stx = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_stx))));
 ids = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args86) {
-var clause = args86[0];
+   var result = (function(args88) {
+var clause = args88[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(clause)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5517,8 +5530,8 @@ var clause = args86[0];
                    })()), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(clauses_dash_stx))]));
 vals = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args87) {
-var clause = args87[0];
+   var result = (function(args89) {
+var clause = args89[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(clause)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5538,7 +5551,7 @@ var loop = function(clauses) { return ((plt.Kernel.setLastLoc("offset=0 line=0 s
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom((plt.types.Symbol.makeInstance("let")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(clauses))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(clauses)))))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-(function (toplevel_dash_expression_dash_show88) { 
+(function (toplevel_dash_expression_dash_show90) { 
 clauses_dash_stx = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_stx))));
 body_dash_stx = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_stx))));
  })(plt.Kernel.identity)
@@ -5618,7 +5631,7 @@ var loop = function(program, defns, tops, a_dash_pinfo) { return ((plt.Kernel.se
  ((function() { 
 
 var defn_dash_string_plus_expr_dash_string_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show90) { 
+(function (toplevel_dash_expression_dash_show92) { 
 defn_dash_string_plus_expr_dash_string_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && definition_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(program)),toplevel_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([defns,(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(defn_dash_string_plus_expr_dash_string_plus_pinfo))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([tops,(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(defn_dash_string_plus_expr_dash_string_plus_pinfo))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third(defn_dash_string_plus_expr_dash_string_plus_pinfo))));
               })()) :
@@ -5630,13 +5643,13 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.K
  ((function() { 
 
 var expression_dash_string_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show91) { 
+(function (toplevel_dash_expression_dash_show93) { 
 expression_dash_string_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(program)),toplevel_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(program)),defns,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([tops,(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier(toplevel_dash_expression_dash_show)))),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(expression_dash_string_plus_pinfo)),(plt.types.String.makeInstance(");"))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(expression_dash_string_plus_pinfo))));
               })()) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-(function (toplevel_dash_expression_dash_show89) { 
+(function (toplevel_dash_expression_dash_show91) { 
 pinfo_dash_1_plus_gensym = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_gensym(input_dash_pinfo,(plt.types.Symbol.makeInstance("toplevel-expression-show"))));
 toplevel_dash_expression_dash_show = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(pinfo_dash_1_plus_gensym));
 desugared_dash_program_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_program(program,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(pinfo_dash_1_plus_gensym))));
@@ -5647,10 +5660,10 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.K
               })()); };
 var definition_dash__greaterthan_javascript_dash_strings = function(defn, env, a_dash_pinfo) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && case_dash_analyze_dash_definition(defn,((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args92) {
-var fun = args92[0];
-var args = args92[1];
-var body = args92[2];
+   var result = (function(args94) {
+var fun = args94[0];
+var args = args94[1];
+var body = args94[2];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && function_dash_definition_dash__greaterthan_java_dash_string(fun,args,body,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5659,9 +5672,9 @@ var body = args92[2];
                       return result;
                    })()),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args93) {
-var id = args93[0];
-var body = args93[1];
+   var result = (function(args95) {
+var id = args95[0];
+var body = args95[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && variable_dash_definition_dash__greaterthan_javascript_dash_strings(id,body,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5670,9 +5683,9 @@ var body = args93[1];
                       return result;
                    })()),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args94) {
-var id = args94[0];
-var fields = args94[1];
+   var result = (function(args96) {
+var id = args96[0];
+var fields = args96[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && struct_dash_definition_dash__greaterthan_javascript_dash_string(id,fields,env,a_dash_pinfo)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5689,12 +5702,12 @@ var env_dash_with_dash_arg_dash_bindings;
 var body_dash_string_plus_pinfo; 
 var body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show95) { 
+(function (toplevel_dash_expression_dash_show97) { 
 munged_dash_fun_dash_id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(fun))));
 munged_dash_arg_dash_ids = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args96) {
-var id = args96[0];
+   var result = (function(args98) {
+var id = args98[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5705,9 +5718,9 @@ var id = args96[0];
 new_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend_dash_function(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(fun)),plt.types.Logic.FALSE,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(args)),plt.types.Logic.FALSE,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id))));
 env_dash_with_dash_arg_dash_bindings = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args97) {
-var arg_dash_id = args97[0];
-var env = args97[1];
+   var result = (function(args99) {
+var arg_dash_id = args99[0];
+var env = args99[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_constant((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)))))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5721,8 +5734,8 @@ updated_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   
 return (function(){(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && check_dash_duplicate_dash_identifiers_bang_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons(fun,args))));
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(munged_dash_fun_dash_id)),(plt.types.String.makeInstance(" = function(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args98) {
-var arg_dash_id = args98[0];
+   var result = (function(args100) {
+var arg_dash_id = args100[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5736,7 +5749,7 @@ var variable_dash_definition_dash__greaterthan_javascript_dash_strings = functio
 var munged_dash_id; 
 var new_dash_env; 
 var str_plus_p; 
-(function (toplevel_dash_expression_dash_show99) { 
+(function (toplevel_dash_expression_dash_show101) { 
 munged_dash_id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))));
 new_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_constant((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(munged_dash_id)),plt.types.Empty.EMPTY))));
 str_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string(body,new_dash_env,a_dash_pinfo)); })(plt.Kernel.identity)
@@ -5749,7 +5762,7 @@ var updated_dash_pinfo;
 var predicate_dash_name; 
 var make_dash_accessor_dash_name = function(a_dash_field) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance("-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(a_dash_field))])))))))); };
 var make_dash_mutator_dash_name = function(a_dash_field) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("set_dash_")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_accessor_dash_name(a_dash_field)),(plt.types.String.makeInstance("_bang_"))])); };
-(function (toplevel_dash_expression_dash_show100) { 
+(function (toplevel_dash_expression_dash_show102) { 
 
 updated_dash_pinfo = a_dash_pinfo;
 predicate_dash_name = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance("?"))]))))))));
@@ -5758,8 +5771,8 @@ predicate_dash_name = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")  
 return (function(){(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && check_dash_duplicate_dash_identifiers_bang_(fields));
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance(" = function (")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args101) {
-var i = args101[0];
+   var result = (function(args103) {
+var i = args103[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5768,8 +5781,8 @@ var i = args101[0];
                       return result;
                    })()), [fields])),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("plt.Kernel.Struct.call(this, ~s, [~a]);")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args102) {
-var i = args102[0];
+   var result = (function(args104) {
+var i = args104[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5778,8 +5791,8 @@ var i = args102[0];
                       return result;
                    })()), [fields])),(plt.types.String.makeInstance(","))))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args103) {
-var i = args103[0];
+   var result = (function(args105) {
+var i = args105[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("this.")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))),(plt.types.String.makeInstance(" = ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(i)))))),(plt.types.String.makeInstance(";"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5789,13 +5802,13 @@ var i = args103[0];
                    })()), [fields])),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance(" };\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance(".prototype = new plt.Kernel.Struct();\n"))])),(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),((function() { 
 
 var make_dash_id; 
-(function (toplevel_dash_expression_dash_show104) { 
+(function (toplevel_dash_expression_dash_show106) { 
 make_dash_id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash__greaterthan_symbol((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("make-")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id))))])))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier(make_dash_id))));
               })()),(plt.types.String.makeInstance(" = function ")),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.build_dash_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(fields)),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args105) {
-var i = args105[0];
+   var result = (function(args107) {
+var i = args107[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("id")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5804,8 +5817,8 @@ var i = args105[0];
                       return result;
                    })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance(") { return new ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))))),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.build_dash_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.length(fields)),((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args106) {
-var i = args106[0];
+   var result = (function(args108) {
+var i = args108[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("id")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5814,8 +5827,8 @@ var i = args106[0];
                       return result;
                    })()))),(plt.types.String.makeInstance(",")))),(plt.types.String.makeInstance("); };"))])),(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args107) {
-var a_dash_field = args107[0];
+   var result = (function(args109) {
+var a_dash_field = args109[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_accessor_dash_name((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance(" = function(obj) {\n")),(plt.types.String.makeInstance("     if (")),predicate_dash_name,(plt.types.String.makeInstance(" (obj)) {\n")),(plt.types.String.makeInstance("        return obj.")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))))),(plt.types.String.makeInstance(";\n")),(plt.types.String.makeInstance("     } else {\n")),(plt.types.String.makeInstance("        throw new plt.Kernel.MobyRuntimeError(")),(plt.types.String.makeInstance("            plt.Kernel.format('")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_accessor_dash_name((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance(": not a ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance(": ~s', [obj]));\n")),(plt.types.String.makeInstance("     }\n")),(plt.types.String.makeInstance("};\n"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5824,8 +5837,8 @@ var a_dash_field = args107[0];
                       return result;
                    })()), [fields])),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance("\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args108) {
-var a_dash_field = args108[0];
+   var result = (function(args110) {
+var a_dash_field = args110[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_mutator_dash_name((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance(" = function(obj,newVal) {\n")),(plt.types.String.makeInstance("	 if (")),predicate_dash_name,(plt.types.String.makeInstance(" (obj)) {\n")),(plt.types.String.makeInstance("		obj.")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))))),(plt.types.String.makeInstance(" = newVal;\n")),(plt.types.String.makeInstance("     } else {\n")),(plt.types.String.makeInstance("        throw new plt.Kernel.MobyRuntimeError(")),(plt.types.String.makeInstance("            plt.Kernel.format('")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_mutator_dash_name((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_field)))),(plt.types.String.makeInstance(": not a ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))),(plt.types.String.makeInstance(": ~s', [obj]));\n")),(plt.types.String.makeInstance("     }\n")),(plt.types.String.makeInstance("};\n"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -5839,7 +5852,7 @@ var expression_dash__greaterthan_javascript_dash_string = function(expr, env, a_
 
 var defns; 
 var body; 
-(function (toplevel_dash_expression_dash_show109) { 
+(function (toplevel_dash_expression_dash_show111) { 
 defns = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))));
 body = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && local_dash_expression_dash__greaterthan_javascript_dash_string(defns,body,env,a_dash_pinfo));
@@ -5848,7 +5861,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && local_dash_
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show110) { 
+(function (toplevel_dash_expression_dash_show112) { 
 exprs = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && begin_dash_sequence_dash__greaterthan_javascript_dash_string(expr,exprs,env,a_dash_pinfo));
               })()) :
@@ -5857,7 +5870,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && begin_dash_
 
 var id; 
 var value; 
-(function (toplevel_dash_expression_dash_show111) { 
+(function (toplevel_dash_expression_dash_show113) { 
 id = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 value = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && set_bang__dash_expression_dash__greaterthan_javascript_dash_string(id,value,env,a_dash_pinfo));
@@ -5868,7 +5881,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && set_bang__d
 var test; 
 var consequent; 
 var alternative; 
-(function (toplevel_dash_expression_dash_show112) { 
+(function (toplevel_dash_expression_dash_show114) { 
 test = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 consequent = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 alternative = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.fourth((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
@@ -5878,7 +5891,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && if_dash_exp
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show113) { 
+(function (toplevel_dash_expression_dash_show115) { 
 exprs = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_dash_chain_dash__greaterthan_javascript_dash_string((plt.types.String.makeInstance("&&")),exprs,env,a_dash_pinfo));
               })()) :
@@ -5886,7 +5899,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_das
  ((function() { 
 
 var exprs; 
-(function (toplevel_dash_expression_dash_show114) { 
+(function (toplevel_dash_expression_dash_show116) { 
 exprs = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_dash_chain_dash__greaterthan_javascript_dash_string((plt.types.String.makeInstance("||")),exprs,env,a_dash_pinfo));
               })()) :
@@ -5895,7 +5908,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && boolean_das
 
 var args; 
 var body; 
-(function (toplevel_dash_expression_dash_show115) { 
+(function (toplevel_dash_expression_dash_show117) { 
 args = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))))));
 body = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.third((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && lambda_dash_expression_dash__greaterthan_javascript_dash_string(expr,args,body,env,a_dash_pinfo));
@@ -5919,7 +5932,7 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && lambda_dash
 
 var operator; 
 var operands; 
-(function (toplevel_dash_expression_dash_show116) { 
+(function (toplevel_dash_expression_dash_show118) { 
 operator = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr))));
 operands = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(expr)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && application_dash_expression_dash__greaterthan_javascript_dash_string(expr,operator,operands,env,a_dash_pinfo));
@@ -5928,16 +5941,16 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && application
 var expressions_dash__greaterthan_javascript_dash_strings = function(expressions, env, a_dash_pinfo) { return ((function() { 
 
 var strings_slash_rev_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show117) { 
+(function (toplevel_dash_expression_dash_show119) { 
 strings_slash_rev_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args118) {
-var e = args118[0];
-var ss_plus_p = args118[1];
+   var result = (function(args120) {
+var e = args120[0];
+var ss_plus_p = args120[1];
                              return ((function() { 
 
 var new_dash_string_plus_p; 
-(function (toplevel_dash_expression_dash_show119) { 
+(function (toplevel_dash_expression_dash_show121) { 
 new_dash_string_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string(e,env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(ss_plus_p)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(new_dash_string_plus_p)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(ss_plus_p)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(new_dash_string_plus_p))]));
               })()); });
@@ -5957,7 +5970,7 @@ var set_bang__dash_expression_dash__greaterthan_javascript_dash_string = functio
 var es_plus_p; 
 var idExprString; 
 var valExprString; 
-(function (toplevel_dash_expression_dash_show120) { 
+(function (toplevel_dash_expression_dash_show122) { 
 es_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([id_dash_stx,newVal_dash_stx])),env,a_dash_pinfo));
 idExprString = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(es_plus_p))));
 valExprString = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(es_plus_p)))); })(plt.Kernel.identity)
@@ -5972,7 +5985,7 @@ var begin_dash_sequence_dash__greaterthan_javascript_dash_string = function(orig
 var split_dash_last_dash_element = function(ls) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(ls)))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(ls))))])); };
 var strings_plus_pinfo; 
 var exprs_plus_last_dash_expr; 
-(function (toplevel_dash_expression_dash_show121) { 
+(function (toplevel_dash_expression_dash_show123) { 
 
 strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings(exprs,env,a_dash_pinfo));
 exprs_plus_last_dash_expr = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && split_dash_last_dash_element((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(strings_plus_pinfo)))); })(plt.Kernel.identity)
@@ -5985,7 +5998,7 @@ var es_plus_p;
 var s1; 
 var s2; 
 var s3; 
-(function (toplevel_dash_expression_dash_show122) { 
+(function (toplevel_dash_expression_dash_show124) { 
 es_plus_p = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([test,consequent,alternative])),env,a_dash_pinfo));
 s1 = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(es_plus_p))));
 s2 = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(es_plus_p))));
@@ -6014,7 +6027,7 @@ var quote_dash_expression_dash__greaterthan_javascript_dash_string = function(ex
 var boolean_dash_chain_dash__greaterthan_javascript_dash_string = function(joiner, exprs, env, a_dash_pinfo) { return ((function() { 
 
 var strings_plus_pinfo; 
-(function (toplevel_dash_expression_dash_show123) { 
+(function (toplevel_dash_expression_dash_show125) { 
 strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings(exprs,env,a_dash_pinfo)); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(strings_plus_pinfo)),joiner)),(plt.types.String.makeInstance(")"))])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(strings_plus_pinfo))]));
               })()); };
@@ -6024,7 +6037,7 @@ var inner_dash_compiled_dash_program;
 var inner_dash_body_dash_string_plus_pinfo; 
 var inner_dash_body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show124) { 
+(function (toplevel_dash_expression_dash_show126) { 
 inner_dash_compiled_dash_program = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && program_dash__greaterthan_compiled_dash_program_slash_pinfo(defns,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_update_dash_env(a_dash_pinfo,env))));
 inner_dash_body_dash_string_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expression_dash__greaterthan_javascript_dash_string(body,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && pinfo_dash_env((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_pinfo(inner_dash_compiled_dash_program)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && compiled_dash_program_dash_pinfo(inner_dash_compiled_dash_program))));
 inner_dash_body_dash_string = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(inner_dash_body_dash_string_plus_pinfo));
@@ -6040,7 +6053,7 @@ var operator_dash_binding;
 var operand_dash_strings_plus_pinfo; 
 var operand_dash_strings; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show125) { 
+(function (toplevel_dash_expression_dash_show127) { 
 operator_dash_binding = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(operator))));
 operand_dash_strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings(operands,env,a_dash_pinfo));
 operand_dash_strings = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(operand_dash_strings_plus_pinfo));
@@ -6072,7 +6085,7 @@ var expression_dash_strings_plus_pinfo;
 var operator_dash_string; 
 var operand_dash_strings; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show126) { 
+(function (toplevel_dash_expression_dash_show128) { 
 expression_dash_strings_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && expressions_dash__greaterthan_javascript_dash_strings((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons(operator,operands)),env,a_dash_pinfo));
 operator_dash_string = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(expression_dash_strings_plus_pinfo))));
 operand_dash_strings = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(expression_dash_strings_plus_pinfo))));
@@ -6086,7 +6099,7 @@ var identifier_dash_expression_dash__greaterthan_javascript_dash_string = functi
  ((function() { 
 
 var binding; 
-(function (toplevel_dash_expression_dash_show127) { 
+(function (toplevel_dash_expression_dash_show129) { 
 binding = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_lookup(an_dash_env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(an_dash_id)))); })(plt.Kernel.identity)
 return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_constant_question_(binding)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_constant_dash_java_dash_string(binding)) :
@@ -6096,8 +6109,8 @@ return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_co
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(function() { var result = (function(args) {\n                    return ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && binding_colon_function_dash_java_dash_string(binding)),(plt.types.String.makeInstance("(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args128) {
-var i = args128[0];
+   var result = (function(args130) {
+var i = args130[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("args[")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i)),(plt.types.String.makeInstance("]"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -6120,7 +6133,7 @@ var loop = function(ids, known_dash_ids) { return ((plt.Kernel.setLastLoc("offse
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(ids)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(ids)))),known_dash_ids)))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-(function (toplevel_dash_expression_dash_show129) { 
+(function (toplevel_dash_expression_dash_show131) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(ids,plt.types.Empty.EMPTY));
               })()); };
@@ -6133,7 +6146,7 @@ var loop = function(i, elts) { return ((plt.Kernel.setLastLoc("offset=0 line=0 s
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")  && f.apply(null, [[(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(elts)), i]])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.add1(i)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(elts)))))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-(function (toplevel_dash_expression_dash_show131) { 
+(function (toplevel_dash_expression_dash_show133) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop((plt.types.Rational.makeInstance(0, 1)),elts));
               })()); };
@@ -6145,12 +6158,12 @@ var args_dash_sym;
 var body_dash_string_plus_p; 
 var body_dash_string; 
 var updated_dash_pinfo; 
-(function (toplevel_dash_expression_dash_show130) { 
+(function (toplevel_dash_expression_dash_show132) { 
 
 munged_dash_arg_dash_ids = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args132) {
-var id = args132[0];
+   var result = (function(args134) {
+var id = args134[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(id)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -6160,9 +6173,9 @@ var id = args132[0];
                    })()), [args]));
 new_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.foldl(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args133) {
-var arg_dash_id = args133[0];
-var env = args133[1];
+   var result = (function(args135) {
+var arg_dash_id = args135[0];
+var env = args135[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && env_dash_extend(env,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_binding_colon_constant((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && identifier_dash__greaterthan_munged_dash_java_dash_identifier((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(arg_dash_id)))))),plt.types.Empty.EMPTY)))); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -6179,9 +6192,9 @@ updated_dash_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   
 return (function(){(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && check_dash_duplicate_dash_identifiers_bang_(args));
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("((function() {\n")),(plt.types.String.makeInstance("   plt.Kernel.setLastLoc(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("~s")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(original_dash_stx))))])),(plt.types.String.makeInstance(");\n")),(plt.types.String.makeInstance("   var result = (function(")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(args_dash_sym)),(plt.types.String.makeInstance(") {\n")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && mapi(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args134) {
-var arg_dash_id = args134[0];
-var i = args134[1];
+   var result = (function(args136) {
+var arg_dash_id = args136[0];
+var i = args136[1];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("var ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(arg_dash_id)),(plt.types.String.makeInstance(" = ")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_dash__greaterthan_string(args_dash_sym)),(plt.types.String.makeInstance("[")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.number_dash__greaterthan_string(i)),(plt.types.String.makeInstance("];"))])); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
@@ -6213,7 +6226,7 @@ var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.set
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string([a_dash_char])) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))))); };
-(function (toplevel_dash_expression_dash_show135) { 
+(function (toplevel_dash_expression_dash_show137) { 
  })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);

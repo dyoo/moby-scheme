@@ -232,6 +232,12 @@
 
 ;; desugar-case: stx:list -> (list stx:list pinfo)
 ;; translates case to if.
+;;
+;; KNOWN BUG: this doesn't do a let binding of the value that's being
+;; analyzed, so the value is going to be evaluated again and again.
+;; Before we fix this bug, I'd like us to have something like syntax-case and
+;; helpers for building syntax objects, because it's really painful
+;; to build syntax expanders without linguistic support.
 (define (desugar-case an-expr pinfo)
   (local
     [(define check-stx
@@ -289,31 +295,15 @@
                                      (rest answers)
                                      datum-last
                                      answer-last))
-                         (stx-loc an-expr))]))
-     ;; process-clauses: (listof stx) (listof stx) (listof stx) -> (list stx:list pinfo)
-     (define (process-clauses clauses questions/rev answers/rev)
-       (cond
-         [(stx-begins-with? (first clauses) 'else)
-          (if (not (empty? (rest clauses)))
-              (syntax-error (format "case: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
-              (list (loop (reverse questions/rev) 
-                          (reverse answers/rev)
-                          (make-stx:atom 'else (stx-loc an-expr))
-                          (second (stx-e (first clauses))))
-                    pinfo))]
-         [(empty? (rest clauses))
-          (list (loop (reverse questions/rev) 
-                      (reverse answers/rev) 
-                      (first (stx-e (first clauses)))
-                      (second (stx-e (first clauses))))
-                pinfo)]
-         [else
-          (process-clauses (rest clauses)
-                           (cons (first (stx-e (first clauses))) questions/rev) 
-                           (cons (second (stx-e (first clauses))) answers/rev))]))]
+                         (stx-loc an-expr))]))]
     (cond
       [(stx-begins-with? an-expr 'case)
-       (process-clauses (rest (rest (stx-e an-expr))) empty empty)]
+       (deconstruct-clauses-with-else (rest (rest (stx-e an-expr)))
+                                      (lambda (else-stx)
+                                        else-stx)
+                                      (lambda (questions answers question-last answer-last)
+                                        (list (loop questions answers question-last answer-last)
+                                              pinfo)))]
       [else
        (syntax-error (format "Not a case clause: ~s" (stx-e an-expr))
                      an-expr)])))
