@@ -18,7 +18,7 @@
                      (eof "plt.types.EofObject.EOF")
                      (pi "plt.Kernel.pi")
                      (e "plt.Kernel.e"))))
-    
+          
           ;; Registers a new toplevel function, munging the name
           (define (r env a-name arity vararity?)
             (env-extend-function env
@@ -29,8 +29,8 @@
                                  (string-append 
                                   "plt.Kernel."
                                   (symbol->string (identifier->munged-java-identifier 
-                                   a-name)))))
-
+                                                   a-name)))))
+          
           
           ;; A special registration function that doesn't munge the kernel function name.
           (define (r* env a-name arity java-string)
@@ -63,7 +63,7 @@
                      (= 2 true)
                      (> 2 true)
                      (>= 2 true)
-
+                     
                      (=~ 3)
                      (number->string 1)
                      (even? 1)
@@ -172,7 +172,7 @@
                      (list 0 true)
                      (list* 1 true)
                      (list-ref 2)
-		     (remove 2)
+                     (remove 2)
                      (member 2)
                      (memq 2)
                      (memv 2)
@@ -188,7 +188,7 @@
                      (sixth 1)
                      (seventh 1)
                      (eighth 1)
-
+                     
                      ;; We're commenting out the mutation operation on pairs
                      ;; because they're not supported in ISL/ASL anymore.
                      #;(set-car! 2)
@@ -280,7 +280,7 @@
                      
                      ;; Higher-Order Functions
                      (andmap 1 true)
-		     (apply 2 true)           ;; *
+                     (apply 2 true)           ;; *
                      (argmax 2)               ;; *
                      (argmin 2)               ;; *
                      (build-list 2)
@@ -295,17 +295,30 @@
                      (procedure? 1)           ;; *
                      (quicksort 2)            ;; *
                      (sort 2)                 ;; *
-
+                     
                      ;; Images
                      (image? 1)
                      (image=? 2)
-
-
-		     (void 0 true)
-
-		     ;; Parsing
-		     (parse-xml 1)
+                     
+                     
+                     (void 0 true)
+                     
+                     ;; Parsing
+                     (parse-xml 1)
                      (split-whitespace 1)
+                     
+                     
+                     ;; Vectors
+                     
+                     (build-vector 2)
+                     (make-vector 1)
+                     (vector 0 true)
+                     (vector-length 1)
+                     (vector-ref 2)
+                     (vector-set! 3)
+                     (vector? 1)
+                     
+                     
                      )))
           
           

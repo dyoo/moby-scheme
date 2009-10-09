@@ -194,6 +194,13 @@ var plt = plt || {};
 
 
 
+    // Returns true if x is a vector
+    function isVector(x) {
+	return x != null && x != undefined && (x instanceof plt.types.Vector);
+    }
+
+
+
     // arrayEach: (arrayof X) (X -> void) -> void
     // Apply some function on each element of the array.
     function arrayEach(arr, f) {
@@ -236,6 +243,9 @@ var plt = plt || {};
     function isList(x) {
 	return x != null && x != undefined && ((x instanceof plt.types.Cons) || (x instanceof plt.types.Empty));
     }
+
+
+
 
 
 
@@ -2222,6 +2232,54 @@ var plt = plt || {};
     };
 
 
+
+
+
+    plt.Kernel.build_dash_vector = function(n, f) {
+	check(n, isNatural, "build-vector", 1);
+	check(n, isFunction, "build-vector", 2);
+	var elts = [];
+	for(var i = 0; i < n.toInteger(); i++) {
+	    elts[i] = f([plt.types.Rational.makeInstance(i, 1)])
+	}
+	return plt.types.Vector.makeInstance(n.toInteger(),
+					     elts);
+    };
+
+    plt.Kernel.make_dash_vector = function(n) {
+	check(n, isNatural, "make-vector", 1);
+	return plt.types.Vector.makeInstance(n);
+    };
+
+    plt.Kernel.vector = function(args) {
+	return plt.types.Vector.makeInstance(args.length, args);
+    };
+
+    plt.Kernel.vector_dash_length = function(vec) {
+	check(vec, isVector, "vector-length", 1);
+	return plt.types.Rational.makeInstance(vec.length());
+    };
+
+    plt.Kernel.vector_dash_ref = function(vec, k) {
+	check(vec, isVector, "vector-ref", 1);
+	check(k, isNatural, "vector-ref", 2);
+	return vec.ref(k);
+    };
+
+    plt.Kernel.vector_dash_set_bang_ = function(vec, k, v) {
+	check(vec, isVector, "vector-set!", 1);
+	check(k, isNatural, "vector-set!", 2);
+	return vec.set(k, v);
+    };
+
+    plt.Kernel.vector_question_ = function(x) {
+	return isVector(x) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+    }
+
+
+
+
+
     // As a program runs, the lastLoc will be assigned to the last location
     // we've evaluated in the program.
     plt.Kernel.lastLoc = undefined;
@@ -2249,6 +2307,7 @@ var plt = plt || {};
     plt.Kernel.isWhitespaceString = isWhitespaceString;
     plt.Kernel.isImage = isImage;
     plt.Kernel.isList = isList;
+    plt.Kernel.isVector = isVector;
     plt.Kernel.isFunction = isFunction;
     
 
