@@ -40,19 +40,13 @@
      (lambda ()
        (delete-directory/files dir)))))
 
-(define-syntax (define/cached stx)
-  (syntax-case stx ()
-    [(_ (name args ...) body ...)
-     (syntax/loc stx
-       (define name 
-         (let ([cached-result #f])
-           (lambda (args ...)
-             (cond
-               [cached-result
-                (unbox cached-result)]
-               [else
-                (set! cached-result (box (begin body ...)))
-                (unbox cached-result)])))))]))
+
+(define (cache f)
+  (let ([cached-result #f])
+    (lambda args
+      (when (not cached-result)
+        (set! cached-result (box (apply f args))))
+      (unbox cached-result))))
 
 
 
@@ -108,34 +102,36 @@
                      (get-url (extract-binding/single 'url (request-bindings req)))))
 
              
-             (define/cached (generate-js-zip req filename)
-               (with-temporary-directory
-                (lambda (dir)
-                  (let ([dest (build-path dir program-name)])
-                    (generate-javascript-application program-name
-                                                     program+resources
-                                                     dest)
-                    (parameterize ([current-directory dir])
-                      (zip (build-path dir (string-append program-name ".zip"))
-                           program-name))
-                    (list #"application/zip"
-                          (get-file-bytes (build-path 
-                                           dir 
-                                           (string-append program-name
-                                                          ".zip"))))))))
+             (define generate-js-zip 
+               (cache (lambda (req filename)
+                        (with-temporary-directory
+                         (lambda (dir)
+                           (let ([dest (build-path dir program-name)])
+                             (generate-javascript-application program-name
+                                                              program+resources
+                                                              dest)
+                             (parameterize ([current-directory dir])
+                               (zip (build-path dir (string-append program-name ".zip"))
+                                    program-name))
+                             (list #"application/zip"
+                                   (get-file-bytes (build-path 
+                                                    dir 
+                                                    (string-append program-name
+                                                                   ".zip"))))))))))
              
-             (define/cached (generate-apk req filename)
-               (with-temporary-directory
-                (lambda (dir)
-                  (let ([dest (build-path dir program-name)])
-                    (generate-javascript+android-phonegap-application program-name
-                                                                      program+resources
-                                                                      dest)
-                    (list #"application/vnd.android.package-archive"
-                          (get-file-bytes (build-path dest "bin" 
-                                                      (string-append
-                                                       (upper-camel-case program-name)
-                                                       "-debug.apk"))))))))]
+             (define generate-apk 
+               (cache (lambda (req filename)
+                        (with-temporary-directory
+                         (lambda (dir)
+                           (let ([dest (build-path dir program-name)])
+                             (generate-javascript+android-phonegap-application program-name
+                                                                               program+resources
+                                                                               dest)
+                             (list #"application/vnd.android.package-archive"
+                                   (get-file-bytes (build-path dest "bin" 
+                                                               (string-append
+                                                                (upper-camel-case program-name)
+                                                                "-debug.apk"))))))))))]
        
        
        (generate-javascript-application program-name

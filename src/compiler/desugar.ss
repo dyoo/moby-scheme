@@ -98,7 +98,11 @@
               ;; (let* ([id val] ...) ...)
               [(stx-begins-with? expr 'let*)
                (desugar-expression/expr+pinfo (desugar-let* expr pinfo))]
-              
+
+              ;; (let* ([id val] ...) ...)
+              [(stx-begins-with? expr 'letrec)
+               (desugar-expression/expr+pinfo (desugar-letrec expr pinfo))]
+
               
               ;; (local ([define ...] ...) body)
               [(stx-begins-with? expr 'local)
@@ -408,6 +412,24 @@
                               (stx-loc (first clauses)))]))]    
     (list (loop (stx-e clauses-stx))
           pinfo)))
+
+
+;; desugar-letrec: stx pinfo -> (list stx pinfo)
+;; Letrec will be desugared into local.
+(define (desugar-letrec a-stx pinfo)
+  (local [(define clauses-stx (second (stx-e a-stx)))
+          (define body-stx (third (stx-e a-stx)))
+          (define define-clauses
+            (map (lambda (a-clause)
+                   (local [(define name (first (stx-e a-clause)))
+                           (define val (second (stx-e a-clause)))]
+                   (make-stx:list (list 'define name val)
+                                  (stx-loc a-clause))))
+                 (stx-e clauses-stx)))]
+    (list (datum->stx (list 'local define-clauses body-stx)
+                      (stx-loc a-stx))
+          pinfo)))
+
 
 
 

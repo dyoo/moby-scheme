@@ -61,6 +61,13 @@
 
 ;; generate-javascript+android-phonegap-application: name file dest
 (define (generate-javascript+android-phonegap-application name path-or-program/resources dest)
+  (unless (file-exists? (current-ant-bin-path))
+    (error 'generate-javascript+android-phonegap-application
+           "The Apache ant binary appears to be missing from the current PATH."))
+  (unless (directory-exists? (current-android-sdk-path))
+    (error 'generate-javascript+android-phonegap-application
+           "The Android SDK could not be found."))
+
   (make-directory* dest)
   (copy-directory/files* phonegap-path dest)
   (let* ([compiled-program         
@@ -93,7 +100,7 @@
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
       (lambda (op)
-        (fprintf op "sdk-location=~a~n" (current-android-sdk-path)))
+        (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
       #:exists 'replace)
  
     ;; HACKS!

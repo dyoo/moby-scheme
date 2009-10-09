@@ -726,21 +726,7 @@
                      return result; })()")])]))]))
 
 
-;; check-duplicate-identifiers!: (listof stx) -> void
-;; Return a list of the identifiers that are duplicated.
-(define (check-duplicate-identifiers! ids)
-  (local [(define (loop ids known-ids)
-            (cond
-              [(empty? ids)
-               (void)]
-              [else
-               (cond [(member (stx-e (first ids)) known-ids)
-                      (syntax-error "found a name that's used more than once" (first ids))]
-                     [else
-                      (loop (rest ids) 
-                            (cons (stx-e (first ids)) 
-                                  known-ids))])]))]
-    (loop ids empty)))
+
 
 
 ;; lambda-expression->javascript-string stx (listof symbol-stx) expression env pinfo -> string

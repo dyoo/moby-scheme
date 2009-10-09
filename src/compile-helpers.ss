@@ -3,13 +3,12 @@
 (provide (all-defined-out))
 
 (require scheme/gui/base
-         scheme/match
          scheme/file
          scheme/class
+         scheme/port
          "config.ss"
          "stx-helpers.ss"
          "image-lift.ss"
-         "compiler/stx.ss"
          "compiler/pinfo.ss"
          "compiler/env.ss"
          "compiler/permission.ss")
@@ -17,22 +16,7 @@
 ;; Common helper functions used in the compiler.
 
 
-(define WORLD-PATH-1 "moby/world")
 
-
-
-;; A platform is one of PLATFORM:ANDROID, PLATFORM:J2ME.
-(define PLATFORM:ANDROID 'android)
-(define PLATFORM:J2ME 'j2me)
-
-
-;; A stub is one of the following
-(define STUB:WORLD 'stub:world)
-(define STUB:GUI-WORLD 'stub:gui-world)
-
-;; stub=?: stub stub -> boolean
-(define (stub=? stub-1 stub-2)
-  (eq? stub-1 stub-2))
 
 
 ;; parse-text-as-program: text -> program
@@ -46,33 +30,6 @@
           [(module name lang body ...)
            (map syntax->stx (syntax->list #'(body ...)))])))))
 
-
-
-
-;(match s-exp
-;  [(list 'module name lang body ...)
-;   ;; FIXME: check that the language is beginner level!
-;   ;; FIXME: preserve location information!
-;   (map (lambda (x) (datum->stx x (make-Loc 0 0 0 ""))) body)])))))
-
-
-
-;; choose-program-stub: pinfo -> stub
-;; Returns the stub necessary to compile this program.
-(define (choose-program-stub a-pinfo)
-  (let/ec return
-    (for ([b (pinfo-used-bindings a-pinfo)])
-      (cond
-        [(and (binding:function? b)
-              (binding:function-module-source b))
-         (cond
-           [(string=? (binding:function-module-source b)
-                        WORLD-PATH-1)
-            (return STUB:WORLD)]
-           #;[(path=? (binding:function-module-path b)
-                    GUI-WORLD-PATH)
-            (return STUB:GUI-WORLD)])]))
-      (error 'choose-program-stub "Couldn't identify stub to use for this program.")))
 
 
 
@@ -154,15 +111,20 @@
 ;; Assumes the build file is called "build.xml" at the top of the directory.
 (define (run-ant-build.xml dest-dir target)
   (parameterize ([current-directory dest-dir])
-    (let*-values ([(a-subprocess inp outp errp)
+    (let*-values ([(string-error-port) (open-output-string "")]
+                  [(a-subprocess inp outp errp)
                    (subprocess #f #f #f (current-ant-bin-path) target)]
                   [(t1 t2) 
                    (values (thread (lambda () 
                                      (copy-port-to-debug-log inp)))
                            (thread (lambda ()
-                                     (copy-port-to-error-log errp))))])
+                                     (copy-port-to-error-log (peeking-input-port errp))
+                                     (copy-port errp string-error-port))))])
       (close-output-port outp)
       (subprocess-wait a-subprocess)
       (sync t1)
       (sync t2)
+      (unless (= 0 (subprocess-status a-subprocess))
+        (error 'ant "Internal error while running ant: ~a"
+               (get-output-string string-error-port)))
       (void))))
