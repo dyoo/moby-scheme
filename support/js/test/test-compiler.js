@@ -275,35 +275,35 @@ function init() {
  				     "[(10 11 12) 'big])" +
 				     "3")});
 
-		// symbols
+	    // symbols
  	    this.assert(isEqual(symbol("big"),
  				run("(case 'x" +
- 					"[(1 2) 'small]" +
- 					"[(b x c) 'big])")));
+ 				    "[(1 2) 'small]" +
+ 				    "[(b x c) 'big])")));
 
 	},
 
 	testCaseHygiene: function() {
-		this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
-				    run("((lambda (check val) " +
-					"    (case val " +
-					"      [(val) (list check val)] " +
-					"      [else (list 1 2)]))" +
-					" 1024 2048)")));
+	    this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
+				run("((lambda (check val) " +
+				    "    (case val " +
+				    "      [(val) (list check val)] " +
+				    "      [else (list 1 2)]))" +
+				    " 1024 2048)")));
 
-		this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
-				    run("((lambda (check val) " +
-					"    (case check " +
-					"      [(check) (list check val)] " +
-					"      [else (list 1 2)]))" +
-					" 1024 2048)")));
+	    this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
+				run("((lambda (check val) " +
+				    "    (case check " +
+				    "      [(check) (list check val)] " +
+				    "      [else (list 1 2)]))" +
+				    " 1024 2048)")));
 
-		this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
-				    run("((lambda (check val) " +
-					"    (case check " +
-					"      [(val) (list check val)] " +
-					"      [else (list 1 2)]))" +
-					" 1024 2048)")));
+	    this.assert(isEqual(plt.Kernel.list([number(1), number(2)]),
+				run("((lambda (check val) " +
+				    "    (case check " +
+				    "      [(val) (list check val)] " +
+				    "      [else (list 1 2)]))" +
+				    " 1024 2048)")));
 	},
 
 	testLet: function() {
@@ -324,13 +324,13 @@ function init() {
 	    // Check for binding symbol more than once.
 	    this.assertRaise("MobySyntaxError",
 			     function() { run("(let ((x 42)(x 43)) x)") });
-                                                 
+            
 	},
 
-	    testLetStar: function() {
-		this.assert(isEqual(number(10), run("(let* ((x 9) (x (+ x 1))) x)")))
-		this.assert(isEqual(number(16), run("(let* () 16)")))
-	    }  
+	testLetStar: function() {
+	    this.assert(isEqual(number(10), run("(let* ((x 9) (x (+ x 1))) x)")))
+	    this.assert(isEqual(number(16), run("(let* () 16)")))
+	}  
 
 
     });

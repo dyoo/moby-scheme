@@ -2,12 +2,10 @@
 
 
 (require scheme/local
-         scheme/class
          scheme/runtime-path
          scheme/tcp
          scheme/contract
          scheme/file
-         scheme/list
          web-server/servlet
          web-server/servlet-env
          web-server/dispatch 
@@ -20,7 +18,6 @@
          "compiler/stx.ss"
          "generate-application.ss")
 
-(require (for-syntax scheme/base))
 
 (define-runtime-path javascript-support "../support/js")
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
