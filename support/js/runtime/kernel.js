@@ -971,16 +971,16 @@ var plt = plt || {};
 	},
 
 	set_dash_car_bang_ : function(lst, newVal){
-		checkList(lst, "set-car!", 1);
-		lst.f = newVal;
-		return undefined;
+	    checkList(lst, "set-car!", 1);
+	    lst.f = newVal;
+	    return undefined;
 	},
 
 	set_dash_cdr_bang_ : function(lst, newListVal){
-		checkList(lst, "set-cdr!", 1);
-		checkList(newListVal, "set-cdr!", 2);
-		lst.r = newListVal;
-		return undefined;
+	    checkList(lst, "set-cdr!", 1);
+	    checkList(newListVal, "set-cdr!", 2);
+	    lst.r = newListVal;
+	    return undefined;
 	},
 	
 	length : function(lst){
@@ -1757,7 +1757,7 @@ var plt = plt || {};
 	var chars = [];
 	for(var i = 0; i < n.toInteger(); i++) {
 	    var ch = f([plt.types.Rational.makeInstance(i, 1)]);
-//	    check(ch, isChar, "char");
+	    //	    check(ch, isChar, "char");
 	    chars.push(ch.val);
 	}
 	return plt.types.String.makeInstance(chars.join(""));
@@ -1893,7 +1893,7 @@ var plt = plt || {};
 	s = s.replace(/\s+$/, "");
 	return plt.Kernel.list(s.split(/\s+/));
     };
-   
+    
 
     // Boxes
     
@@ -1903,7 +1903,7 @@ var plt = plt || {};
 
     Box.prototype = heir(plt.Kernel.Struct.prototype);
     
-        
+    
     plt.Kernel.box = function(any) {
 	return new Box(any);
     };
