@@ -35,8 +35,7 @@ function init() {
     }
 
 
-
-
+    
 
     return new Test.Unit.Runner({
 	setup: function() {},
@@ -330,7 +329,21 @@ function init() {
 	testLetStar: function() {
 	    this.assert(isEqual(number(10), run("(let* ((x 9) (x (+ x 1))) x)")))
 	    this.assert(isEqual(number(16), run("(let* () 16)")))
-	}  
+	},
+
+	testLetrec: function() {
+	    this.assert(isEqual(number(12), run("(letrec () (* 3 4))")));
+	    this.assert(isEqual(plt.types.Logic.TRUE, 
+				run("(letrec ([myeven? (lambda (x) (if (= x 0) true (myodd? (sub1 x))))] [myodd? (lambda (x) (if (= x 0) false (myeven? (sub1 x))))]) (even? 8))")));
+	    this.assert(isEqual(plt.types.Logic.FALSE, 
+				run("(letrec ([myeven? (lambda (x) (if (= x 0) true (myodd? (sub1 x))))] [myodd? (lambda (x) (if (= x 0) false (myeven? (sub1 x))))]) (even? 7))")));
+
+	    this.assertRaise("MobySyntaxError",
+			     function() { run("(letrec ((x 42)(x 43)) x)") });
+
+
+	}
+
 
 
     });

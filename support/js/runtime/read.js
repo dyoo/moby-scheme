@@ -180,6 +180,7 @@ plt.reader = {};
 	    case '(': return ')';
 	    case '[' : return ']';
 	    case '{' : return '}';
+	    default: throw new Error();
 	    }
 	}
 

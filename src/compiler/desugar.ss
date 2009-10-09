@@ -423,8 +423,8 @@
             (map (lambda (a-clause)
                    (local [(define name (first (stx-e a-clause)))
                            (define val (second (stx-e a-clause)))]
-                   (make-stx:list (list 'define name val)
-                                  (stx-loc a-clause))))
+                   (datum->stx (list 'define name val)
+                               (stx-loc a-clause))))
                  (stx-e clauses-stx)))]
     (list (datum->stx (list 'local define-clauses body-stx)
                       (stx-loc a-stx))

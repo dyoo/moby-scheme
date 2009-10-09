@@ -3532,6 +3532,7 @@ plt.reader = {};
 	    case '(': return ')';
 	    case '[' : return ']';
 	    case '{' : return '}';
+	    default: throw new Error();
 	    }
 	}
 
@@ -5601,7 +5602,7 @@ var val;
 (function (toplevel_dash_expression_dash_show94) { 
 name = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_clause))));
 val = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e(a_dash_clause)))); })(plt.Kernel.identity)
-return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.Symbol.makeInstance("define")),name,val])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(a_dash_clause))));
+return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && datum_dash__greaterthan_stx((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.Symbol.makeInstance("define")),name,val])),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(a_dash_clause))));
               })()); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';
