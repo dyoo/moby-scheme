@@ -388,9 +388,13 @@
                                  (make-stx:list ids (stx-loc a-stx))
                                  body-stx)
                            (stx-loc a-stx)))]    
-    (list (make-stx:list (cons new-lambda-stx vals)
-                         (stx-loc a-stx))
-          pinfo)))
+    (begin
+      (check-duplicate-identifiers! (map (lambda (a-clause)
+                                           (first (stx-e a-clause)))
+                                         (stx-e clauses-stx)))      
+      (list (make-stx:list (cons new-lambda-stx vals)
+                           (stx-loc a-stx))
+            pinfo))))
 
 
 ;; desugar-let*: expr-stx -> expr-stx
@@ -426,11 +430,12 @@
                    (datum->stx (list 'define name val)
                                (stx-loc a-clause))))
                  (stx-e clauses-stx)))]
-    (list (datum->stx (list 'local define-clauses body-stx)
-                      (stx-loc a-stx))
-          pinfo)))
-
-
+    (begin
+      (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
+                                         (stx-e clauses-stx)))
+      (list (datum->stx (list 'local define-clauses body-stx)
+                        (stx-loc a-stx))
+            pinfo))))
 
 
 
