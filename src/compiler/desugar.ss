@@ -343,37 +343,46 @@
                                      (rest answers)
                                      question-last
                                      answer-last))
-                         (stx-loc an-expr))]))
-     ;; process-clauses: (listof stx) (listof stx) (listof stx) -> stx
-     (define (process-clauses clauses questions/rev answers/rev)
-       (cond
-         [(stx-begins-with? (first clauses) 'else)
-          (if (not (empty? (rest clauses)))
-              (syntax-error (format "cond: else clause should be the last one: ~s" (stx-e an-expr)) an-expr)
-              (list (loop (reverse questions/rev) 
-                          (reverse answers/rev) 
-                          (make-stx:atom 'true (stx-loc (first clauses)))
-                          (second (stx-e (first clauses))))
-                    pinfo))]
-         [(empty? (rest clauses))
-          (list (loop (reverse questions/rev) 
-                      (reverse answers/rev) 
-                      (first (stx-e (first clauses)))
-                      (second (stx-e (first clauses))))
-                pinfo)]
-         [else
-          (process-clauses (rest clauses)
-                           (cons (first (stx-e (first clauses))) questions/rev) 
-                           (cons (second (stx-e (first clauses))) answers/rev))]))]
+                         (stx-loc an-expr))]))]
     (cond
       [(stx-begins-with? an-expr 'cond)
-       (process-clauses (rest (stx-e an-expr)) empty empty)]
+       (deconstruct-clauses-with-else (rest (stx-e an-expr))
+                                      (lambda (else-stx)
+                                        (make-stx:atom 'true (stx-loc else-stx)))
+                                      (lambda (questions answers question-last answer-last)
+                                        (list (loop questions answers question-last answer-last)
+                                              pinfo)))]
       [else
        (syntax-error (format "Not a cond clause: ~s" (stx-e an-expr))
                      an-expr)])))
 
 
+;; deconstruct-clauses-with-else: (listof stx) (stx -> stx) ((listof stx) (listof stx) stx stx -> X) -> X
+;; Helper for functions that need to destruct a list of 
+;; clauses of the form ([question answer] ... [else answer-last]).
+(define (deconstruct-clauses-with-else clauses else-replacement-f f)
+  (local 
+    [;; process-clauses: (listof stx) (listof stx) (listof stx) -> X
+     (define (process-clauses clauses questions/rev answers/rev)
+       (cond
+         [(stx-begins-with? (first clauses) 'else)
+          (if (not (empty? (rest clauses)))
+              (syntax-error "else clause should be the last, but there's another clause after it" (first clauses))
+              (f (reverse questions/rev) 
+                 (reverse answers/rev) 
+                 (else-replacement-f (first (stx-e (first clauses))))
+                 (second (stx-e (first clauses)))))]
 
+         [(empty? (rest clauses))
+          (f (reverse questions/rev)
+             (reverse answers/rev) 
+             (first (stx-e (first clauses)))
+             (second (stx-e (first clauses))))]
+         [else
+          (process-clauses (rest clauses)
+                           (cons (first (stx-e (first clauses))) questions/rev) 
+                           (cons (second (stx-e (first clauses))) answers/rev))]))]
+    (process-clauses clauses empty empty)))
 
 
 ;; desugar-let: expr-stx -> (list expr-stx pinfo)
