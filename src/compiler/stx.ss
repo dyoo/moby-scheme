@@ -54,9 +54,12 @@
 
 ;; datum->stx: any loc -> stx
 ;; Converts a datum into a syntax object deeply.  Every stx will
-;; share the same loc value.
+;; share the same loc value.  Pre-existing datum objects will
+;; be left alone.
 (define (datum->stx a-datum a-loc)
   (cond
+    [(stx? a-datum)
+     a-datum]
     [(or (pair? a-datum) (empty? a-datum))
      (make-stx:list (map (lambda (x) (datum->stx x a-loc)) a-datum)
                     a-loc)]

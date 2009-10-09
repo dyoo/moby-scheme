@@ -229,7 +229,6 @@
 
 
 
-
 ;; desugar-case: stx:list -> (list stx:list pinfo)
 ;; translates case to if.
 ;;
@@ -240,30 +239,20 @@
 ;; to build syntax expanders without linguistic support.
 (define (desugar-case an-expr pinfo)
   (local
-    [(define check-stx
-       (make-stx:atom 'check (stx-loc an-expr)))
+    [(define pinfo+val-sym (pinfo-gensym pinfo 'val))
+     (define updated-pinfo-1 (first pinfo+val-sym))
+     (define val-stx (make-stx:atom (second pinfo+val-sym) (stx-loc an-expr)))
      
-     (define check-stx:backup
-       (make-stx:atom 'check-backup (stx-loc an-expr)))
+     (define pinfo+x-sym (pinfo-gensym updated-pinfo-1 'x))
+     (define updated-pinfo-2 (first pinfo+x-sym))
+     (define x-stx (make-stx:atom (second pinfo+x-sym) (stx-loc an-expr)))     
      
-     ;; predicate: stx -> stx
+     ;; predicate: stx
      (define predicate
-       (if (and (symbol? (stx-e (second (stx-e an-expr))))
-                (symbol=? 'check (stx-e (second (stx-e an-expr)))))
-           (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                            (make-stx:list (list check-stx:backup) (stx-loc an-expr))
-                            (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
-                                                 check-stx:backup
-                                                 (second (stx-e an-expr)))
-                                           (stx-loc an-expr)))
-                      (stx-loc an-expr))
-           (make-stx:list (list (make-stx:atom 'lambda (stx-loc an-expr))
-                                (make-stx:list (list check-stx) (stx-loc an-expr))
-                                (make-stx:list (list (make-stx:atom 'equal? (stx-loc an-expr))
-                                                     check-stx
-                                                     (second (stx-e an-expr)))
-                                               (stx-loc an-expr)))
-                          (stx-loc an-expr))))
+       (datum->stx (list 'lambda (list x-stx)
+                         (list 'equal? x-stx val-stx))
+                   (stx-loc an-expr)))
+
      
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop list-of-datum answers datum-last answer-last)
@@ -302,8 +291,10 @@
                                       (lambda (else-stx)
                                         else-stx)
                                       (lambda (questions answers question-last answer-last)
-                                        (list (loop questions answers question-last answer-last)
-                                              pinfo)))]
+                                        (list (datum->stx (list 'let (list (list val-stx (second (stx-e an-expr))))
+                                                                (loop questions answers question-last answer-last))
+                                                          (stx-loc an-expr))
+                                              updated-pinfo-2)))]
       [else
        (syntax-error (format "Not a case clause: ~s" (stx-e an-expr))
                      an-expr)])))

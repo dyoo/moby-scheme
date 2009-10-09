@@ -172,7 +172,9 @@ var stx_dash_begins_dash_with_question_ = function(a_dash_stx, a_dash_sym) { ret
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_question_(a_dash_stx)) ?
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.not((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_dash_elts(a_dash_stx))))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_dash_elts(a_dash_stx))))))))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.symbol_equal__question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_dash_elts(a_dash_stx)))))),a_dash_sym))) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
-var datum_dash__greaterthan_stx = function(a_dash_datum, a_dash_loc) { return (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.pair_question_(a_dash_datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_datum))) ?
+var datum_dash__greaterthan_stx = function(a_dash_datum, a_dash_loc) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_question_(a_dash_datum)) ?
+ a_dash_datum :
+ (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.pair_question_(a_dash_datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_datum))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
    var result = (function(args1) {
@@ -186,7 +188,7 @@ var x = args1[0];
                    })()), [a_dash_datum])),a_dash_loc)) :
  (plt.types.Logic.TRUE ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_atom(a_dash_datum,a_dash_loc)) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); };
 var stx_dash__greaterthan_datum = function(a_dash_stx) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_question_(a_dash_stx)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_dash_datum(a_dash_stx)) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_question_(a_dash_stx)) ?
