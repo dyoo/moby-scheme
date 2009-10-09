@@ -212,6 +212,61 @@ var plt = plt || {};
 	return node;
     };
 
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    plt.types.Vector = function(n, initialElements) {
+	this.elts = new Array(n);
+	if (initialElements) {
+	    for (var i = 0; i < initialElements.length; i++) {
+		this.elts[i] = initialElements[i];
+	    }
+	}
+    };
+    plt.types.Vector.makeInstance = function(n) {
+	return new plt.types.Vector(n);
+    }
+    plt.types.Vector.prototype.length = function() {
+	return this.elts.length;
+    };
+    plt.types.Vector.prototype.ref = function(k) {
+	return this.elts[k];
+    };
+    plt.types.Vector.prototype.set = function(k, v) {
+	this.elts[k] = v;
+    };
+
+    plt.types.Vector.prototype.toWrittenString = function() {
+	var texts = [];
+	for (var i = 0; i < this.length(); i++) {
+	    texts.push(plt.Kernel.toWrittenString(this.ref(i)));
+	}
+	return "#(" + texts.join(" ") + ")";
+    };
+    plt.types.Vector.prototype.toDisplayedString = function() {
+	var texts = [];
+	for (var i = 0; i < this.length(); i++) {
+	    texts.push(plt.Kernel.toDisplayedStringString(this.ref(i)));
+	}
+	return "#(" + texts.join(" ") + ")";
+    };
+
+    plt.types.Vector.prototype.toDomNode = function() {
+	var node = document.createElement("div");
+	node.appendChild(document.createTextNode("#("));
+	for (var i = 0; i < this.length(); i++) {
+	    appendChild(node,
+			plt.Kernel.toDomNode(this.ref(i)));
+	}
+	node.appendChild(document.createTextNode(")"));
+	return node;
+    };
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
     
     // Rationals
     
