@@ -2236,8 +2236,8 @@ var plt = plt || {};
 
 
     plt.Kernel.build_dash_vector = function(n, f) {
-	check(n, isNatural, "build-vector", 1);
-	check(n, isFunction, "build-vector", 2);
+	check(n, isNatural, "build-vector", "natural", 1);
+	check(n, isFunction, "build-vector", "function", 2);
 	var elts = [];
 	for(var i = 0; i < n.toInteger(); i++) {
 	    elts[i] = f([plt.types.Rational.makeInstance(i, 1)])
@@ -2247,8 +2247,8 @@ var plt = plt || {};
     };
 
     plt.Kernel.make_dash_vector = function(n) {
-	check(n, isNatural, "make-vector", 1);
-	return plt.types.Vector.makeInstance(n);
+	check(n, isNatural, "make-vector", "natural", 1);
+	return plt.types.Vector.makeInstance(n.toInteger());
     };
 
     plt.Kernel.vector = function(args) {
@@ -2256,20 +2256,20 @@ var plt = plt || {};
     };
 
     plt.Kernel.vector_dash_length = function(vec) {
-	check(vec, isVector, "vector-length", 1);
+	check(vec, isVector, "vector-length", "vector", 1);
 	return plt.types.Rational.makeInstance(vec.length());
     };
 
     plt.Kernel.vector_dash_ref = function(vec, k) {
-	check(vec, isVector, "vector-ref", 1);
-	check(k, isNatural, "vector-ref", 2);
-	return vec.ref(k);
+	check(vec, isVector, "vector-ref", "vector", 1);
+	check(k, isNatural, "vector-ref", "natural", 2);
+	return vec.ref(k.toInteger());
     };
 
     plt.Kernel.vector_dash_set_bang_ = function(vec, k, v) {
-	check(vec, isVector, "vector-set!", 1);
-	check(k, isNatural, "vector-set!", 2);
-	return vec.set(k, v);
+	check(vec, isVector, "vector-set!", "vector", 1);
+	check(k, isNatural, "vector-set!", "natural", 2);
+	return vec.set(k.toInteger(), v);
     };
 
     plt.Kernel.vector_question_ = function(x) {

@@ -219,13 +219,17 @@ var plt = plt || {};
     plt.types.Vector = function(n, initialElements) {
 	this.elts = new Array(n);
 	if (initialElements) {
-	    for (var i = 0; i < initialElements.length; i++) {
+	    for (var i = 0; i < n; i++) {
 		this.elts[i] = initialElements[i];
+	    }
+	} else {
+	    for (var i = 0; i < n; i++) {
+		this.elts[i] = undefined;
 	    }
 	}
     };
-    plt.types.Vector.makeInstance = function(n) {
-	return new plt.types.Vector(n);
+    plt.types.Vector.makeInstance = function(n, elts) {
+	return new plt.types.Vector(n, elts);
     }
     plt.types.Vector.prototype.length = function() {
 	return this.elts.length;
