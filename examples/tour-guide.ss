@@ -333,194 +333,197 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;
-;;;;; DIJKSTRA'S ALGORITHM
-;
-;;dijkstra: (listof node) , node -> (vectorof (listpair int node))
-;;Takes a graph as a list of nodes and one of those nodes to start from.
-;;Produces a vector of pairs (represented as lists) of total shortest-path distance and previous node. The ith vector entry has the information for the node with index i.
-;(define (dijkstra graph source)
-;    (dijkstra-rec 
-;     (make-heap-rep graph source)
-;     (make-vector (length graph) (list 'unreachable 'unreachable))))
-;
-;
-;;make-heap-rep: (listof node) node -> heap
-;;Takes a graph and a node in it to be the source
-;;Returns a heap ready to be passed to dijkstra
-;(define (make-heap-rep graph source)
-;  (make-heap-node-pointers
-;   (foldl insert (make-heap-node (list 0 source) 0 false false false)
-;          (map
-;           (lambda (x) (make-heap-node (list +inf.0 x) 0 false false false))
-;           (without source graph)))))
-;
-;;make-heap-node-pointers: heap -> heap
-;; sets all the heap-node pointers in the graph representation to the appropriate heap node
-;(define (make-heap-node-pointers heap)
-;  (if (equal? false heap) 'nothing
-;      (begin
+
+;;;; DIJKSTRA'S ALGORITHM
+
+
+;a node in a heap.
+(define-struct heap-node (value size left right parent))
+
+
+;dijkstra: (listof node) , node -> (vectorof (listpair int node))
+;Takes a graph as a list of nodes and one of those nodes to start from.
+;Produces a vector of pairs (represented as lists) of total shortest-path distance and previous node. The ith vector entry has the information for the node with index i.
+(define (dijkstra graph source)
+  (dijkstra-rec 
+   (make-heap-rep graph source)
+   (make-vector (length graph) (list 'unreachable 'unreachable))))
+
+
+;make-heap-rep: (listof node) node -> heap
+;Takes a graph and a node in it to be the source
+;Returns a heap ready to be passed to dijkstra
+(define (make-heap-rep graph source)
+  (make-heap-node-pointers
+   (foldl insert (make-heap-node (list 0 source) 0 false false false)
+          (map
+           (lambda (x) (make-heap-node (list +inf.0 x) 0 false false false))
+           (without source graph)))))
+
+;make-heap-node-pointers: heap -> heap
+; sets all the heap-node pointers in the graph representation to the appropriate heap node
+(define (make-heap-node-pointers heap)
+  (if (equal? false heap) 'nothing
+      (begin
 ;        (set-node-heap-node! (second (heap-node-value heap)) heap)
-;        (make-heap-node-pointers (heap-node-left heap))
-;        (make-heap-node-pointers (heap-node-right heap))
-;        heap)))
-;
-;;dijkstra-rec: heap , (vectorof (listpair int node))
-;;recursive helper for dijkstra.
-;;Takes a heap representation of a graph and a vector of
-;(define (dijkstra-rec graph prev)
-;  (if (= (size graph) 0)
-;      prev
-;      (let* ([u (find-min graph)]
-;             [dist (first u)]
-;             [node (second u)])
-;        (if (= dist +inf.0)
-;            prev
-;            (dijkstra-rec (begin
-;                            (map (lambda (x y)
-;                                 (if (< (+ dist y) (first (heap-node-value x)))
-;                                     (set-key x (+ dist y))
-;                                     'nothing))
-;                               (map node-heap-node (node-neighbors node))
-;                               (node-distances node))
-;                            (delete-min graph))                        
-;                          (begin
-;                            (map (lambda (x)
-;                                   (vector-set! prev
-;                                                (node-index (second (heap-node-value x)))
-;                                                (heap-node-value x)))
-;                                 (map node-heap-node (node-neighbors node)))
-;                            prev))))))
-;                         
-;            
-;;a node in a heap.
-;(define-struct heap-node (value size left right parent))
-;
-;(define (empty-heap? heap)
-; (zero? (heap-node-size heap)))
-;
-;;find-min: heap -> (listpair int node)
-;;returns the value of the minimum element in the heap
-;;as a pair of its key (priority, distance) and the object it represents
-;(define (find-min heap)
-;  (heap-node-value heap))
-;
-;;delete-min: heap -> heap
-;;removes the minimum element of a heap
-;(define (delete-min heap)
-;  (merge (heap-node-left heap) (heap-node-right heap)))
-;
-;;insert: heapnode , heap -> heap
-;; returns the heap created by inserting node into heap
-;(define (insert node heap)
-;  (begin
-;    (set-heap-node-size! node 1)
-;    (set-heap-node-left! node false)
-;    (set-heap-node-right! node false)
-;    (set-heap-node-parent! node false)
-;    (merge node heap)))
-;
-;;merge: heap heap -> heap
-;;performs a maxiphobic heap merge
-;(define (merge h1 h2)
-;  (cond
-;    [(false? h1) h2]
-;    [(false? h2) h1]
-;    [else  (let*
-;             ([newsize (+ (size h1) (size h2))]
-;              [smaller (if (less-than (heap-node-value h1) (heap-node-value h2)) h1 h2)]
-;              [larger (if (eq? smaller h1) h2 h1)]
-;              [A (heap-node-left smaller)]
-;              [B (heap-node-right smaller)]
-;              [left (if (and (> (size A) (size B))
-;                             (> (size A) (size larger)))
-;                        A
-;                        (if (> (size B) (size larger))
-;                            B
-;                            larger))])
-;           (begin
-;             (set-heap-node-parent! smaller false)
-;             (set-heap-node-size! smaller newsize)
-;             (set-heap-node-left! smaller left)
-;             (set-heap-node-parent! left smaller)
-;             (set-heap-node-right! smaller
-;                                   (let* ([halves (without left (list A B larger))]
-;                                          [right (merge (first halves) (second halves))])
-;                                     (begin
-;                                       (if (not (false? right)) (set-heap-node-parent! right smaller) false)
-;                                       right)))
-;             smaller))]))
-;
-;;set-key: heapnode , int -> heap
-;;Takes a heapnode and modifies its key
-;;Returns the heap of which that heapnode is a part, with the heap invariant maintained
-;(define (set-key node value)
-;  (begin
-;    (set-heap-node-value! node (list value (second (heap-node-value node))))
-;    (cut (heap-node-right node))
-;    (cut (heap-node-left node))
-;    (if (not (false? (heap-node-parent node)))
-;        (insert node
-;                (merge
-;                 (merge (heap-node-left node) (heap-node-right node))                 
-;                 (begin
-;                   ((if (eq? (heap-node-right (heap-node-parent node)) node)
-;                        set-heap-node-right!
-;                        set-heap-node-left!) (heap-node-parent node) false)
-;                   (find-root (heap-node-parent node)))))
-;        node)))
-;
-;;deprecated
-;(define (delete node)
-;  (begin
-;    (cut (heap-node-right node))
-;    (cut (heap-node-left node))
-;    ((if (eq? (heap-node-right (heap-node-parent node)) node)
-;              set-heap-node-right!
-;              set-heap-node-left!)
-;          (heap-node-parent node)
-;          (begin
-;            (set-heap-node-parent!
-;             (merge (heap-node-left node)
-;                    (heap-node-right node))
-;             (heap-node-parent node)))
-;         (find-root node))))
-;
-;;cut: node -> void
-;;makes this node the root (min) of its own heap
-;(define (cut node)
-;  (if (false? node) false
-;      (set-heap-node-parent! node false)))
-;
-;;find-root: heapnode ->  heap
-;;follows parent pointers upward until the root is reached
-;(define (find-root node)
-;  (if (false? (heap-node-parent node))
-;      node
-;      (find-root (heap-node-parent node))))
-;                
-;;size: heap -> int
-;;takes a heap and returns the number of heapnodes in it
-;(define (size heap)
-;  (cond
-;    [(false? heap) 0]
-;    [else (heap-node-size heap)]))
-;
-;;less-than: (listpair int value) , (listpair int values) -> bool
-;;takes two heapnode values (whose firsts should always be their priorities)
-;;returns true if the first node's priority is less than the second's and false otherwise.
-;(define (less-than a b)
-;  (let ([aval (first a)]
-;        [bval (first b)])
-;    (< aval bval)))
-;
-;;without: 'a (listof 'a) -> (listof 'a)
-;;takes an element and list and returns the list without the first occurence of that element.
-;(define (without item list)
-;  (if (equal? item (car list))
-;      (cdr list)
-;      (cons (car list) (without item (cdr list)))))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        (make-heap-node-pointers (heap-node-left heap))
+        (make-heap-node-pointers (heap-node-right heap))
+        heap)))
+
+;dijkstra-rec: heap , (vectorof (listpair int node))
+;recursive helper for dijkstra.
+;Takes a heap representation of a graph and a vector of
+(define (dijkstra-rec graph prev)
+  (if (= (size graph) 0)
+      prev
+      (let* ([u (find-min graph)]
+             [dist (first u)]
+             [node (second u)])
+        (if (= dist +inf.0)
+            prev
+            (dijkstra-rec (begin
+                            (map (lambda (x y)
+                                 (if (< (+ dist y) (first (heap-node-value x)))
+                                     (set-key x (+ dist y))
+                                     'nothing))
+                               (map node-heap-node (node-neighbors node))
+                               (node-distances node))
+                            (delete-min graph))                        
+                          (begin
+                            (map (lambda (x)
+                                   (vector-set! prev
+                                                (node-index (second (heap-node-value x)))
+                                                (heap-node-value x)))
+                                 (map node-heap-node (node-neighbors node)))
+                            prev))))))
+                         
+            
+
+(define (empty-heap? heap)
+ (zero? (heap-node-size heap)))
+
+;find-min: heap -> (listpair int node)
+;returns the value of the minimum element in the heap
+;as a pair of its key (priority, distance) and the object it represents
+(define (find-min heap)
+  (heap-node-value heap))
+
+;delete-min: heap -> heap
+;removes the minimum element of a heap
+(define (delete-min heap)
+  (merge (heap-node-left heap) (heap-node-right heap)))
+
+;insert: heapnode , heap -> heap
+; returns the heap created by inserting node into heap
+(define (insert node heap)
+  (begin
+    (set-heap-node-size! node 1)
+    (set-heap-node-left! node false)
+    (set-heap-node-right! node false)
+    (set-heap-node-parent! node false)
+    (merge node heap)))
+
+;merge: heap heap -> heap
+;performs a maxiphobic heap merge
+(define (merge h1 h2)
+  (cond
+    [(false? h1) h2]
+    [(false? h2) h1]
+    [else  (let*
+             ([newsize (+ (size h1) (size h2))]
+              [smaller (if (less-than (heap-node-value h1) (heap-node-value h2)) h1 h2)]
+              [larger (if (eq? smaller h1) h2 h1)]
+              [A (heap-node-left smaller)]
+              [B (heap-node-right smaller)]
+              [left (if (and (> (size A) (size B))
+                             (> (size A) (size larger)))
+                        A
+                        (if (> (size B) (size larger))
+                            B
+                            larger))])
+           (begin
+             (set-heap-node-parent! smaller false)
+             (set-heap-node-size! smaller newsize)
+             (set-heap-node-left! smaller left)
+             (set-heap-node-parent! left smaller)
+             (set-heap-node-right! smaller
+                                   (let* ([halves (without left (list A B larger))]
+                                          [right (merge (first halves) (second halves))])
+                                     (begin
+                                       (if (not (false? right)) (set-heap-node-parent! right smaller) false)
+                                       right)))
+             smaller))]))
+
+;set-key: heapnode , int -> heap
+;Takes a heapnode and modifies its key
+;Returns the heap of which that heapnode is a part, with the heap invariant maintained
+(define (set-key node value)
+  (begin
+    (set-heap-node-value! node (list value (second (heap-node-value node))))
+    (cut (heap-node-right node))
+    (cut (heap-node-left node))
+    (if (not (false? (heap-node-parent node)))
+        (insert node
+                (merge
+                 (merge (heap-node-left node) (heap-node-right node))                 
+                 (begin
+                   ((if (eq? (heap-node-right (heap-node-parent node)) node)
+                        set-heap-node-right!
+                        set-heap-node-left!) (heap-node-parent node) false)
+                   (find-root (heap-node-parent node)))))
+        node)))
+
+;deprecated
+(define (delete node)
+  (begin
+    (cut (heap-node-right node))
+    (cut (heap-node-left node))
+    ((if (eq? (heap-node-right (heap-node-parent node)) node)
+              set-heap-node-right!
+              set-heap-node-left!)
+          (heap-node-parent node)
+          (begin
+            (set-heap-node-parent!
+             (merge (heap-node-left node)
+                    (heap-node-right node))
+             (heap-node-parent node)))
+         (find-root node))))
+
+;cut: node -> void
+;makes this node the root (min) of its own heap
+(define (cut node)
+  (if (false? node) false
+      (set-heap-node-parent! node false)))
+
+;find-root: heapnode ->  heap
+;follows parent pointers upward until the root is reached
+(define (find-root node)
+  (if (false? (heap-node-parent node))
+      node
+      (find-root (heap-node-parent node))))
+                
+;size: heap -> int
+;takes a heap and returns the number of heapnodes in it
+(define (size heap)
+  (cond
+    [(false? heap) 0]
+    [else (heap-node-size heap)]))
+
+;less-than: (listpair int value) , (listpair int values) -> bool
+;takes two heapnode values (whose firsts should always be their priorities)
+;returns true if the first node's priority is less than the second's and false otherwise.
+(define (less-than a b)
+  (let ([aval (first a)]
+        [bval (first b)])
+    (< aval bval)))
+
+;without: 'a (listof 'a) -> (listof 'a)
+;takes an element and list and returns the list without the first occurence of that element.
+(define (without item list)
+  (if (equal? item (car list))
+      (cdr list)
+      (cons (car list) (without item (cdr list)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (js-big-bang (location-change-handler init-world 41.825721 -71.41478)

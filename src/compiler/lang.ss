@@ -48,6 +48,18 @@
          begin
          void
          
+         build-vector
+         make-vector
+         vector
+         vector-length
+         vector-ref
+         vector-set!
+         vector?
+         
+         case
+         
+         let let* letrec
+         
          ;; The rest of these primitives will be implemented for the kernel.
          ;; Hash stuff
          ;; FIXME: the hash in javascript only accepts strings as keys.
