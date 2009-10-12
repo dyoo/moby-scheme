@@ -255,7 +255,7 @@ plt.reader = {};
 	    case 'string':
 		var t = eat('string');
 		return makeAtom(plt.types.String.makeInstance(t[1]),
-				t.loc);
+				t[2]);
 	    case 'char':
 		var t = eat('char');
 		if (t[1] == 'newline') {

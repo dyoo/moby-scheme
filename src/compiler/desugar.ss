@@ -119,12 +119,10 @@
                       [else
                        (void)])
                 
-                (cond
-                  [else
-                   (list (make-stx:list (cons test-symbol-stx
-                                              (first desugared-exprs+pinfo))
-                                        (stx-loc a-test-case))
-                         (second desugared-exprs+pinfo))]))))
+                (list (make-stx:list (cons test-symbol-stx
+                                           (first desugared-exprs+pinfo))
+                                     (stx-loc a-test-case))
+                      (second desugared-exprs+pinfo)))))
           
           
           ;; desugar-expression/expr+pinfo: (list expr pinfo) -> (list expr pinfo)
