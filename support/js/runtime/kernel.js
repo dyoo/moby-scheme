@@ -79,7 +79,6 @@ var plt = plt || {};
     
     var MobyTestingError = function(msg) {
 	MobyError.call(this, msg);
-	this.loc = loc;
     }
     MobyTestingError.prototype = heir(MobyRuntimeError.prototype);
     MobyTestingError.prototype.name= 'MobyTestingError';
@@ -2287,7 +2286,7 @@ var plt = plt || {};
 	var expectedVal = expectedThunk([]);
 	if (! plt.Kernel.equal_question_(val, expectedVal)) {
 	    throw new MobyTestingError(
-		plt.Kernel.format("~s doesn't match the expected value ~s"
+		plt.Kernel.format("~s doesn't match the expected value ~s",
 				  [val, expectedVal]));
 	}
     };
@@ -2296,9 +2295,9 @@ var plt = plt || {};
 	var val = testThunk([]);
 	var expectedVal = expectedThunk([]);
 	var boundsVal = boundsThunk([]);
-	if (! plt.Kernel.equal__tilde_(val, expectedVal, boundsVal)) {
+	if (! plt.Kernel._equal__tilde_(val, expectedVal, boundsVal)) {
 	    throw new MobyTestingError(
-		plt.Kernel.format("~s doesn't match the expected value ~s within ~s"
+		plt.Kernel.format("~s doesn't match the expected value ~s within ~s",
 				  [val, expectedVal, boundsVal]));
 	}
     };
@@ -2311,7 +2310,7 @@ var plt = plt || {};
 	} catch (e) {
 	    if (! plt.Kernel.equal_question_(e.msg, msg)) {
 		throw new MobyTestingError(
-		    plt.Kernel.format("check-error encountered the error ~s instead of the expected error ~s."
+		    plt.Kernel.format("check-error encountered the error ~s instead of the expected error ~s.",
 				      [e.msg, msg]));
 	    } else {
 		return;

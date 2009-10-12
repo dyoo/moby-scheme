@@ -321,8 +321,8 @@
                      
                      ;; Testing functions.
                      (check-expect 2)
-                     (check-within 2)
-                     (check-error 3)
+                     (check-within 3)
+                     (check-error 2)
                      )))
           
           

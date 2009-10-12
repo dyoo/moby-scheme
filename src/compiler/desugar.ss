@@ -91,11 +91,10 @@
           
           ;; check-length!: stx -> void
           (define (check-length! stx n error-msg)
-            (begin
-              (cond [(not (= n (length (stx-e stx))))
-                     (syntax-error error-msg stx)]
-                    [else
-                     (void)])))
+            (cond [(not (= n (length (stx-e stx))))
+                   (syntax-error error-msg stx)]
+                  [else
+                   (void)]))
 
               
           ;; desugar-test-case: test-case-stx pinfo -> (list test-case-stx pinfo)
@@ -116,7 +115,9 @@
                                       "check-within requires three expressions.  Try (check-within test expected range).")]
                       [(stx-begins-with? a-test-case 'check-error)
                        (check-length! a-test-case 3
-                                      "check-error requires two expressions.  Try (check-error test message).")])
+                                      "check-error requires two expressions.  Try (check-error test message).")]
+                      [else
+                       (void)])
                 
                 (cond
                   [else
