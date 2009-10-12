@@ -42,7 +42,7 @@ var plt = plt || {};
 	this.msg = msg;
     }
     MobyError.prototype.name= 'MobyError';
-    MobyError.prototype.toString = function () { return "MobyError: " + this.msg }
+    MobyError.prototype.toString = function () { return this.name + ": " + this.msg }
 
 
     function MobyParserError(msg, loc) {
@@ -51,7 +51,6 @@ var plt = plt || {};
     }
     MobyParserError.prototype = heir(MobyError.prototype);
     MobyParserError.prototype.name= 'MobyParserError';
-    MobyParserError.prototype.toString = function () { return "MobyParserError: " + this.msg }
 
     
     function MobySyntaxError(msg, stx) {
@@ -60,7 +59,6 @@ var plt = plt || {};
     }
     MobySyntaxError.prototype = heir(MobyError.prototype);
     MobySyntaxError.prototype.name= 'MobySyntaxError';
-    MobySyntaxError.prototype.toString = function () { return "MobySyntaxError: " + this.msg }
 
 
     function MobyTypeError(msg) {
@@ -68,7 +66,6 @@ var plt = plt || {};
     }
     MobyTypeError.prototype = heir(MobyError.prototype);
     MobyTypeError.prototype.name= 'MobyTypeError';
-    MobyTypeError.prototype.toString = function () { return "MobyTypeError: " + this.msg }
 
 
 
@@ -77,8 +74,18 @@ var plt = plt || {};
     }
     MobyRuntimeError.prototype = heir(MobyError.prototype);
     MobyRuntimeError.prototype.name= 'MobyRuntimeError';
-    MobyRuntimeError.prototype.toString = function () { return "MobyRuntimeError: " + this.msg }
 
+
+    
+    function MobyTestingError(msg) {
+	MobyError.call(this, msg);
+	this.loc = loc;
+    }
+    MobyTestingError.prototype = heir(MobyRuntimeError.prototype);
+    MobyTestingError.prototype.name= 'MobyTestingError';
+
+
+    
     //////////////////////////////////////////////////////////////////////
 
 
@@ -2275,6 +2282,52 @@ var plt = plt || {};
     plt.Kernel.vector_question_ = function(x) {
 	return isVector(x) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
     }
+
+
+
+    plt.Kernel.check_dash_expect = function(testThunk, expectedThunk) {
+	var val = testThunk([]);
+	var expectedVal = expectedThunk([]);
+	if (! plt.Kernel.equal_question_(val, expectedVal)) {
+	    throw new MobyTestingError(
+		plt.Kernel.format("~s doesn't match the expected value ~s"
+				  [val, expectedVal]));
+	}
+    };
+
+    plt.Kernel.check_dash_within = function(testThunk, expectedThunk, boundsThunk) {
+	var val = testThunk([]);
+	var expectedVal = expectedThunk([]);
+	var boundsVal = boundsThunk([]);
+	if (! plt.Kernel.equal__tilde_(val, expectedVal, boundsVal)) {
+	    throw new MobyTestingError(
+		plt.Kernel.format("~s doesn't match the expected value ~s within ~s"
+				  [val, expectedVal, boundsVal]));
+	}
+    };
+
+    plt.Kernel.check_error = function(testThunk, msgThunk) {
+	var msg = msgThunk([]);
+	var val;
+	try {
+	    val = testThunk([]);
+	} catch (e) {
+	    if (! plt.Kernel.equal_question_(e.msg, msg)) {
+		throw new MobyTestingError(
+		    plt.Kernel.format("check-error encountered the error ~s instead of the expected error ~s."
+				      [e.msg, msg]));
+	    } else {
+		return;
+	    }
+	}
+	throw new MobyTestingError(
+	    plt.Kernel.format("check-error expected the error ~s, but instead received the value ~s"
+			      [msg, val]))
+    };
+
+
+
+
 
 
 

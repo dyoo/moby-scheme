@@ -7,6 +7,8 @@
 
 
 ;; desugar-program: program pinfo -> (list program pinfo)
+;;
+;; FIX BUG: user must not be allowed to rebind any of the primitive keyword names
 (define (desugar-program a-program a-pinfo)
   (local [
     
@@ -78,16 +80,50 @@
                              (first rest-desugared+pinfo))
                        (second rest-desugared+pinfo)))]))
                  
+    
+          ;; thunkify-stx: stx -> stx
+          ;; Wraps a thunk around a syntax.
+          (define (thunkify-stx an-stx)
+            (datum->stx (list 'lambda (list)
+                              an-stx)
+                        (stx-loc an-stx)))
           
+          
+          ;; check-length!: stx -> void
+          (define (check-length! stx length error-msg)
+            (begin
+              (cond [(not (= length (length (stx-e stx))))
+                     (syntax-error error-msg stx)]
+                    [else
+                     (void)])))
+
+              
           ;; desugar-test-case: test-case-stx pinfo -> (list test-case-stx pinfo)
+          ;; Translates use of a test case form to use of the test case toplevel functions.
+          ;; We transform each expression to a thunk, and provide the test case function
+          ;; the locations of all expressions as another argument.
           (define (desugar-test-case a-test-case a-pinfo)
             (local [(define test-symbol-stx (first (stx-e a-test-case)))
-                    (define test-exprs (rest (stx-e a-test-case)))
+                    (define test-exprs (map thunkify-stx (rest (stx-e a-test-case))))
+                    
                     (define desugared-exprs+pinfo (desugar-expressions test-exprs a-pinfo))]
-              (list (make-stx:list (cons test-symbol-stx
-                                         (first desugared-exprs+pinfo))
-                                   (stx-loc a-test-case))
-                    (second desugared-exprs+pinfo))))
+              (begin
+                (cond [(stx-begins-with? a-test-case 'check-expect)
+                       (check-length! a-test-case 3
+                                      "check-expect requires two expressions.  Try (check-expect test expected).")]
+                      [(stx-begins-with? a-test-case 'check-within)
+                       (check-length! a-test-case 4
+                                      "check-within requires three expressions.  Try (check-within test expected range).")]
+                      [(stx-begins-with? a-test-case 'check-error)
+                       (check-length! a-test-case 3
+                                      "check-error requires two expressions.  Try (check-error test message).")])
+                
+                (cond
+                  [else
+                   (list (make-stx:list (cons test-symbol-stx
+                                              (first desugared-exprs+pinfo))
+                                        (stx-loc a-test-case))
+                         (second desugared-exprs+pinfo))]))))
           
           
           ;; desugar-expression/expr+pinfo: (list expr pinfo) -> (list expr pinfo)
