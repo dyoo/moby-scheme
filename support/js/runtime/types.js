@@ -73,6 +73,7 @@ var plt = plt || {};
 	// To ensure that we can eq? symbols with equal values.
 	if (!(val in symbolCache)) {
 	    symbolCache[val] = new plt.types.Symbol(val);
+	} else {
 	}
 	return symbolCache[val];
     };

@@ -71,99 +71,98 @@
   (stx-begins-with? an-sexp 'require))
 
 
+(define java-identifiers
+  '(abstract  continue  	for  	new  	switch
+              assert 	default 	goto 	package 	synchronized
+              boolean 	do 	if 	private 	#; this
+              break 	double 	implements 	protected 	throw
+              byte 	else 	import 	public 	throws
+              case 	enum 	instanceof 	return 	transient
+              catch 	extends 	int 	short 	try
+              char 	final 	interface 	static 	void
+              class 	finally 	long 	strictfp 	volatile
+              const 	float 	native 	super 	while null))
+          
+
+;; translate-special-character: char -> string
+;; Special character mappings for identifiers.
+(define (translate-special-character ch)
+  (cond
+    [(char=? ch #\-)
+     "_dash_"]
+    [(char=? ch #\_)
+     "_underline_"]
+    [(char=? ch #\?)
+     "_question_"]
+    [(char=? ch #\!)
+     "_bang_"]
+    [(char=? ch #\.)
+     "_dot_"]
+    [(char=? ch #\:)
+     "_colon_"]
+    [(char=? ch #\=)
+     "_equal_"]
+    [(char=? ch #\#)
+     "_pound_"]
+    [(char=? ch #\$)
+     "_dollar_"]
+    [(char=? ch #\%)
+     "_percent_"]
+    [(char=? ch #\^)
+     "_tilde_"]
+    [(char=? ch #\&)
+     "_and_"]
+    [(char=? ch #\*)
+     "_star_"]
+    [(char=? ch #\+)
+     "_plus_"]
+    [(char=? ch #\*)
+     "_star_"]
+    [(char=? ch #\/)
+     "_slash_"]
+    [(char=? ch #\<)
+     "_lessthan_"]
+    [(char=? ch #\>)
+     "_greaterthan_"]
+    [(char=? ch #\~)
+     "_tilde_"]
+    [else
+     (string ch)]))
+
+
 ;; identifier->munged-java-identifier: symbol -> symbol
 (define (identifier->munged-java-identifier an-id)
-  (local [(define (member? an-id elts)
-            (cond
-              [(empty? elts)
-               false]
-              [(equal? (first elts) an-id)
-               true]
-              [else
-               (member? an-id (rest elts))]))
-          
-          (define java-identifiers
-            '(abstract  continue  	for  	new  	switch
-                        assert 	default 	goto 	package 	synchronized
-                        boolean 	do 	if 	private 	#; this
-                        break 	double 	implements 	protected 	throw
-                        byte 	else 	import 	public 	throws
-                        case 	enum 	instanceof 	return 	transient
-                        catch 	extends 	int 	short 	try
-                        char 	final 	interface 	static 	void
-                        class 	finally 	long 	strictfp 	volatile
-                        const 	float 	native 	super 	while null))
-          ;; Special character mappings for identifiers
-          (define (trans ch)
-            (cond
-              [(char=? ch #\-)
-               "_dash_"]
-              [(char=? ch #\_)
-               "_underline_"]
-              [(char=? ch #\?)
-               "_question_"]
-              [(char=? ch #\!)
-               "_bang_"]
-              [(char=? ch #\.)
-               "_dot_"]
-              [(char=? ch #\:)
-               "_colon_"]
-              [(char=? ch #\=)
-               "_equal_"]
-              [(char=? ch #\#)
-               "_pound_"]
-              [(char=? ch #\$)
-               "_dollar_"]
-              [(char=? ch #\%)
-               "_percent_"]
-              [(char=? ch #\^)
-               "_tilde_"]
-              [(char=? ch #\&)
-               "_and_"]
-              [(char=? ch #\*)
-               "_star_"]
-              [(char=? ch #\+)
-               "_plus_"]
-              [(char=? ch #\*)
-               "_star_"]
-              [(char=? ch #\/)
-               "_slash_"]
-              [(char=? ch #\<)
-               "_lessthan_"]
-              [(char=? ch #\>)
-               "_greaterthan_"]
-              [(char=? ch #\~)
-               "_tilde_"]
-              [else
-               (string ch)]))]
-    (cond
-      [(member? an-id java-identifiers)
-       (string->symbol (string-append "_" (symbol->string an-id) "_"))]
-      [else
-       (local [(define chars (string->list (symbol->string an-id)))
-               (define translated-chunks 
-                 (map trans chars))
-               (define translated-id
-                 (string->symbol
-                  (string-join translated-chunks "")))]
-         translated-id)])))
+  (cond
+    [(member an-id java-identifiers)
+     (string->symbol (string-append "_" (symbol->string an-id) "_"))]
+    [else
+     (local [(define chars (string->list (symbol->string an-id)))
+             (define translated-chunks 
+               (map translate-special-character chars))
+             (define translated-id
+               (string->symbol
+                (string-join translated-chunks "")))]
+       translated-id)]))
 
 
 
+
+;; remove-leading-whitespace/list: (listof char) -> string
+;; Removes leading whitespace from a list of characters.
+(define (remove-leading-whitespace/list chars)
+  (cond
+    [(empty? chars)
+     ""]
+    [(char-whitespace? (first chars))
+     (remove-leading-whitespace/list (rest chars))]
+    [else
+     (list->string chars)]))
 
 
 ;; remove-leading-whitespace: string -> string
 ;; Removes the whitespace from the front of a string.
 (define (remove-leading-whitespace a-str)
-  (local [(define (remove-leading-whitespace/list chars)
-            (cond
-              [(empty? chars)
-               empty]
-              [(char-whitespace? (first chars))
-               (remove-leading-whitespace/list (rest chars))]
-              [else
-               (list->string chars)]))]
-    (remove-leading-whitespace/list (string->list a-str))))
+  (remove-leading-whitespace/list (string->list a-str)))
 
 
 ;; take: (listof X) number -> (listof X)
