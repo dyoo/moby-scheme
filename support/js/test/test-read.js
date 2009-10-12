@@ -255,6 +255,15 @@ function init() {
 
 	},
 
+	testReadWithRationals: function() {
+	    this.assert(schemeIsEqual(read("(check-within 22/7 pi 0.01)"),
+				      (cons(cons(symbol("check-within"),
+						 cons(plt.types.Rational.makeInstance(22, 7),
+						      cons(symbol("pi"),
+							   cons(makeFloat(0.01), empty)))),
+					    empty))));
+	}
+
 
     }); 
 }

@@ -246,7 +246,8 @@ plt.reader = {};
 		} else if (rationalMatch) {
 		    // Rational
 		    return makeAtom(plt.types.Rational.makeInstance(parseInt(rationalMatch[1]),
-								    parseInt(rationalMatch[2])))
+								    parseInt(rationalMatch[2])),
+				   t[2])
 		} else {
 		    return makeAtom(plt.types.Rational.makeInstance(parseInt(t[1]), 1), 
 				    t[2]);
