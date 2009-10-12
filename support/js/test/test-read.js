@@ -262,7 +262,19 @@ function init() {
 						      cons(symbol("pi"),
 							   cons(makeFloat(0.01), empty)))),
 					    empty))));
+	},
+
+	testInfinities: function() {
+	    this.assert(schemeIsEqual(read("+inf.0"),
+				      cons(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY),
+					   empty)));
+	    this.assert(schemeIsEqual(read("-inf.0"),
+				      cons(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY),
+					   empty)));
+
 	}
+
+	
 
 
     }); 

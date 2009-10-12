@@ -51,6 +51,7 @@ plt.reader = {};
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
+		    ['number' , /^([+-]inf.0)/],
 		    ['number' , /^([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
 		    ['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
@@ -240,7 +241,13 @@ plt.reader = {};
 	    case 'number':
 		var t = eat('number');
 		var rationalMatch = t[1].match(/([+\-]?\d+)\/(\d+)/);
-		if (t[1].match(/\./)) {
+		if (t[1] == '+inf.0') {
+		    return makeAtom(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY), 
+				    t[2]);
+		} else if (t[1] == '-inf.0') {
+		    return makeAtom(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY), 
+				    t[2]);
+		} else if (t[1].match(/\./)) {
 		    return makeAtom(plt.types.FloatPoint.makeInstance(parseFloat(t[1])), 
 				    t[2]);
 		} else if (rationalMatch) {
