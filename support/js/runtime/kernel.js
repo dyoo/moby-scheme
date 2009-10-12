@@ -16,7 +16,7 @@ var plt = plt || {};
     
 
     // Compatibility for attaching events to nodes.
-    function attachEvent(node, eventName, fn) {
+    var attachEvent = function(node, eventName, fn) {
 	if (node.addEventListener) {
 	    // Mozilla
 	    node.addEventListener(eventName, fn, false);
@@ -24,12 +24,12 @@ var plt = plt || {};
 	    // IE
 	    node.attachevent('on' + event, fn, false);
 	}
-    }
+    };
 
 
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
-    function heir(p) {
+    var heir = function(p) {
 	function f() {}
 	f.prototype = p;
 	return new f();
@@ -38,14 +38,14 @@ var plt = plt || {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function MobyError(msg) {
+    var MobyError = function(msg) {
 	this.msg = msg;
     }
     MobyError.prototype.name= 'MobyError';
     MobyError.prototype.toString = function () { return this.name + ": " + this.msg }
 
 
-    function MobyParserError(msg, loc) {
+    var MobyParserError = function(msg, loc) {
 	MobyError.call(this, msg);
 	this.loc = loc;
     }
@@ -53,7 +53,7 @@ var plt = plt || {};
     MobyParserError.prototype.name= 'MobyParserError';
 
     
-    function MobySyntaxError(msg, stx) {
+    var MobySyntaxError = function(msg, stx) {
 	MobyError.call(this, msg);
 	this.stx = stx;
     }
@@ -61,7 +61,7 @@ var plt = plt || {};
     MobySyntaxError.prototype.name= 'MobySyntaxError';
 
 
-    function MobyTypeError(msg) {
+    var MobyTypeError = function(msg) {
 	MobyError.call(this, msg);
     }
     MobyTypeError.prototype = heir(MobyError.prototype);
@@ -69,7 +69,7 @@ var plt = plt || {};
 
 
 
-    function MobyRuntimeError(msg) {
+    var MobyRuntimeError = function(msg) {
 	MobyError.call(this, msg);
     }
     MobyRuntimeError.prototype = heir(MobyError.prototype);
@@ -77,7 +77,7 @@ var plt = plt || {};
 
 
     
-    function MobyTestingError(msg) {
+    var MobyTestingError = function(msg) {
 	MobyError.call(this, msg);
 	this.loc = loc;
     }
@@ -90,7 +90,7 @@ var plt = plt || {};
 
 
     // _gcd: integer integer -> integer
-    function _gcd(a, b) {
+    var _gcd = function(a, b) {
 	while (b != 0) {
 	    var t = a;
 	    a = b;
@@ -100,74 +100,74 @@ var plt = plt || {};
     }
 
     // _lcm: integer integer -> integer
-    function _lcm(a, b) {
+    var _lcm = function(a, b) {
 	return a * b / _gcd(a, b);
     }
 
 
     // Returns true if x is a number.
-    function isNumber(x) {
+    var isNumber = function(x) {
 	return (x != null && x != undefined && (x instanceof plt.types.Rational || 
 						x instanceof plt.types.FloatPoint ||
 						x instanceof plt.types.Complex));
     }
 
-    function isSymbol(x) {
+    var isSymbol = function(x) {
 	return (x != null && x != undefined && x instanceof plt.types.Symbol);
     }
 
-    function isChar(x) {
+    var isChar = function(x) {
 	return x != null && x != undefined && x instanceof plt.types.Char;
     }
 
-    function isStx(x) {
+    var isStx = function(x) {
 	return stx_question_(x);
     }
 
-    function isString(x) {
+    var isString = function(x) {
 	return typeof(x) == 'string';
 	//return x != null && x != undefined && x instanceof plt.types.String;
     }
 
-    function isBoolean(x) {
+    var isBoolean = function(x) {
 	return (x == plt.types.Logic.TRUE || x == plt.types.Logic.FALSE);
     }
 
-    function isPair(x) {
+    var isPair = function(x) {
 	return x != null && x != undefined && x instanceof plt.types.Cons;
     }
 
-    function isEmpty(x) {
+    var isEmpty = function(x) {
 	return x != null && x != undefined && x instanceof plt.types.Empty;
     }
 
-    function isReal(x) {
+    var isReal = function(x) {
 	return (isNumber(x) && x.isReal());
 
     }
 
-    function isRational(x) {
+    var isRational = function(x) {
 	return x != null && x != undefined && x instanceof plt.types.Rational;
     }
 
 
-    function isComplex(x) {
+    var isComplex = function(x) {
 	return x != null && x != undefined && (x instanceof plt.types.Complex || 
 					       x instanceof plt.types.Rational ||
 					       x instanceof plt.types.FloatPoint);
     }
 
-    function isFunction(x) {
+    var isFunction = function(x) {
 	return typeof(x) == 'function';
     }
 
 
     // Returns true if x is an integer.
-    function isInteger(x) {
+    var isInteger = function(x) {
 	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
     }
 
-    function isNatural(x) {
+    var isNatural = function(x) {
 	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor()) && x.toInteger() >= 0;
     }
 
@@ -175,7 +175,7 @@ var plt = plt || {};
 
 
     // isAlphabeticString: string -> boolean
-    function isAlphabeticString(s) {
+    var isAlphabeticString = function(s) {
 	for(var i = 0; i < s.length; i++) {
 	    if (! ((s[i] >= "a" && s[i] <= "z") ||
 		   (s[i] >= "A" && s[i] <= "Z"))) {
@@ -195,14 +195,14 @@ var plt = plt || {};
 
 
 
-    function isImage(thing) {
+    var isImage = function(thing) {
 	return (thing != null && thing != undefined && thing instanceof BaseImage);
     }
 
 
 
     // Returns true if x is a vector
-    function isVector(x) {
+    var isVector = function(x) {
 	return x != null && x != undefined && (x instanceof plt.types.Vector);
     }
 
@@ -210,7 +210,7 @@ var plt = plt || {};
 
     // arrayEach: (arrayof X) (X -> void) -> void
     // Apply some function on each element of the array.
-    function arrayEach(arr, f) {
+    var arrayEach = function(arr, f) {
 	for (var i = 0; i < arr.length; i++) {
 	    f.apply(arr[i], [arr[i], i]);
 	}
@@ -218,7 +218,7 @@ var plt = plt || {};
 
 
     // Apply a chaining test on pairs of elements of the list [first, second, rest ...].
-    function chainTest(test, first, second, rest) {
+    var chainTest = function(test, first, second, rest) {
 	if (! test(first, second).valueOf())
 	    return false;
 	if (rest.length == 0)
@@ -234,7 +234,7 @@ var plt = plt || {};
     
 
     // Apply a search on pairs of elements of the list [first, rest ...].
-    function chainFind(comparator, first, rest) {
+    var chainFind = function(comparator, first, rest) {
 	var i;
 	var best = first;
 	for(i = 0; i < rest.length; i++) {
@@ -247,16 +247,13 @@ var plt = plt || {};
     
 
     // Returns true if x is a list.
-    function isList(x) {
+    var isList = function(x) {
 	return x != null && x != undefined && ((x instanceof plt.types.Cons) || (x instanceof plt.types.Empty));
     }
 
 
 
-
-
-
-    function makeTypeErrorMessage(functionName, typeName, position, value) {
+    var makeTypeErrorMessage = function(functionName, typeName, position, value) {
 	// This is not right: we really need to turn the position into English
 	// first.  This is just a hack for now.
 	var suffixes = ["th", "st", "nd", "rd", "th", "th", "th", "th"];
@@ -270,7 +267,7 @@ var plt = plt || {};
 
 
     // Checks if x satisfies f.  If not, a MobyTypeError of msg is thrown.
-    function check(x, f, functionName, typeName, position) {
+    var check = function(x, f, functionName, typeName, position) {
 	if (! f(x)) {
 	    throw new MobyTypeError(
 		makeTypeErrorMessage(functionName, typeName, position, x));
@@ -278,7 +275,7 @@ var plt = plt || {};
     }
 
     // Throws exception if x is not a list.
-    function checkList(x, functionName, position) {
+    var checkList = function(x, functionName, position) {
 	if (! isList(x)) {
 	    throw new MobyTypeError(
 		makeTypeErrorMessage(functionName, "list", position, x));
@@ -286,7 +283,7 @@ var plt = plt || {};
     }
 
     // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
-    function checkListof(x, f, functionName, typeName, position) {
+    var checkListof = function(x, f, functionName, typeName, position) {
 	if (! isList(x)) {
 	    throw new MobyTypeError(
 		makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
@@ -301,7 +298,7 @@ var plt = plt || {};
 
 
     // makeChainingComparator: (X -> boolean) string (X X (arrayof X) -> boolean) -> (X X (arrayof X) -> boolean) 
-    function makeChainingComparator(typeCheckF, typeName, comparisonF, comparatorName) {
+    var makeChainingComparator = function(typeCheckF, typeName, comparisonF, comparatorName) {
 	return function(first, second, rest) {
 	    check(first, typeCheckF, comparatorName, typeName, 1);
 	    check(second, typeCheckF, comparatorName, typeName, 2);
@@ -313,7 +310,7 @@ var plt = plt || {};
 
 
 
-    function makeNumericChainingComparator(test, comparatorName) {
+    var makeNumericChainingComparator = function(test, comparatorName) {
 	return makeChainingComparator(isNumber, "number",
 				      function(first, second, rest) {
 					  return chainTest(test, first, second, rest);
@@ -321,7 +318,7 @@ var plt = plt || {};
 				      comparatorName);
     }
 
-    function makeCharChainingComparator(test, comparatorName) {
+    var makeCharChainingComparator = function(test, comparatorName) {
 	return makeChainingComparator(isChar, "char",
 				      function(first, second, rest) {
 					  return chainTest(test, first, second, rest);
@@ -330,7 +327,7 @@ var plt = plt || {};
     }
 
 
-    function makeStringChainingComparator(test, comparatorName) {
+    var makeStringChainingComparator = function(test, comparatorName) {
 	return makeChainingComparator(isString, "string",
 				      function(first, second, rest) {
 					  return chainTest(test, first, second, rest);
@@ -2173,7 +2170,7 @@ var plt = plt || {};
     plt.Kernel.Struct.prototype.toDisplayedString = plt.Kernel.Struct.prototype.toWrittenString;
 
 
-    function appendChild(parent, child) {
+    var appendChild = function(parent, child) {
 	parent.appendChild(child);
 	if (child.afterAttach) { child.afterAttach(); }
     }

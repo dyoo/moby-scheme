@@ -342,8 +342,21 @@ function init() {
 			     function() { run("(letrec ((x 42)(x 43)) x)") });
 
 
-	}
+	},
 
+
+	testCheckExpect: function() {
+	    this.assertRaise("MobyTestingError",
+			     function() { run("(check-expect 3 4)"); })
+	    run("(check-expect 3 3)");
+	},
+
+	testCheckWithin: function() {
+	    run("(check-within 22/7 pi 0.01)");
+	    this.assertRaise("MobyTestingError",
+			     function() { run("(check-within 22/7 pi 0.00001)"); })
+
+	}
 
 
     });

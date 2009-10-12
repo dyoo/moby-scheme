@@ -319,6 +319,10 @@
                      (vector? 1)
                      
                      
+                     ;; Testing functions.
+                     (check-expect 2)
+                     (check-within 2)
+                     (check-error 3)
                      )))
           
           
