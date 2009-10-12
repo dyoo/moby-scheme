@@ -224,13 +224,17 @@ var plt = plt || {};
     plt.types.Vector = function(n, initialElements) {
 	this.elts = new Array(n);
 	if (initialElements) {
-	    for (var i = 0; i < initialElements.length; i++) {
+	    for (var i = 0; i < n; i++) {
 		this.elts[i] = initialElements[i];
+	    }
+	} else {
+	    for (var i = 0; i < n; i++) {
+		this.elts[i] = undefined;
 	    }
 	}
     };
-    plt.types.Vector.makeInstance = function(n) {
-	return new plt.types.Vector(n);
+    plt.types.Vector.makeInstance = function(n, elts) {
+	return new plt.types.Vector(n, elts);
     }
     plt.types.Vector.prototype.length = function() {
 	return this.elts.length;
@@ -3373,8 +3377,8 @@ var plt = plt || {};
 
 
     plt.Kernel.build_dash_vector = function(n, f) {
-	check(n, isNatural, "build-vector", 1);
-	check(n, isFunction, "build-vector", 2);
+	check(n, isNatural, "build-vector", "natural", 1);
+	check(n, isFunction, "build-vector", "function", 2);
 	var elts = [];
 	for(var i = 0; i < n.toInteger(); i++) {
 	    elts[i] = f([plt.types.Rational.makeInstance(i, 1)])
@@ -3384,8 +3388,8 @@ var plt = plt || {};
     };
 
     plt.Kernel.make_dash_vector = function(n) {
-	check(n, isNatural, "make-vector", 1);
-	return plt.types.Vector.makeInstance(n);
+	check(n, isNatural, "make-vector", "natural", 1);
+	return plt.types.Vector.makeInstance(n.toInteger());
     };
 
     plt.Kernel.vector = function(args) {
@@ -3393,20 +3397,20 @@ var plt = plt || {};
     };
 
     plt.Kernel.vector_dash_length = function(vec) {
-	check(vec, isVector, "vector-length", 1);
+	check(vec, isVector, "vector-length", "vector", 1);
 	return plt.types.Rational.makeInstance(vec.length());
     };
 
     plt.Kernel.vector_dash_ref = function(vec, k) {
-	check(vec, isVector, "vector-ref", 1);
-	check(k, isNatural, "vector-ref", 2);
-	return vec.ref(k);
+	check(vec, isVector, "vector-ref", "vector", 1);
+	check(k, isNatural, "vector-ref", "natural", 2);
+	return vec.ref(k.toInteger());
     };
 
     plt.Kernel.vector_dash_set_bang_ = function(vec, k, v) {
-	check(vec, isVector, "vector-set!", 1);
-	check(k, isNatural, "vector-set!", 2);
-	return vec.set(k, v);
+	check(vec, isVector, "vector-set!", "vector", 1);
+	check(k, isNatural, "vector-set!", "natural", 2);
+	return vec.set(k.toInteger(), v);
     };
 
     plt.Kernel.vector_question_ = function(x) {
@@ -5307,6 +5311,13 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(known_
               })()); };
 var desugar_dash_program = function(a_dash_program, a_dash_pinfo) { return ((function() { 
 
+var reorder_dash_tests_dash_to_dash_end = function(a_dash_program, program_slash_rev, tests_slash_rev) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_program)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.append((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(program_slash_rev)), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(tests_slash_rev))])) :
+ ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && test_dash_case_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)))) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && reorder_dash_tests_dash_to_dash_end((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),program_slash_rev,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)),tests_slash_rev)))) :
+ (plt.types.Logic.TRUE ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && reorder_dash_tests_dash_to_dash_end((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)),program_slash_rev)),tests_slash_rev)) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); };
 var desugar_dash_program_dash_element = function(an_dash_element, a_dash_pinfo) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && defn_question_(an_dash_element)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_defn(an_dash_element,a_dash_pinfo)) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && test_dash_case_question_(an_dash_element)) ?
@@ -5519,14 +5530,7 @@ desugared_dash_exprs_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(desugared_dash_exprs_plus_pinfo)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_exprs_plus_pinfo))]));
               })()) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))))))))))))); };
-(function (toplevel_dash_expression_dash_show63) { 
-
-
-
-
-
- })(plt.Kernel.identity)
-return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_program)) ?
+var processing_dash_loop = function(a_dash_program, a_dash_pinfo) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_program)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([plt.types.Empty.EMPTY,a_dash_pinfo])) :
  (plt.types.Logic.TRUE ?
  ((function() { 
@@ -5535,10 +5539,20 @@ var desugared_dash_elt_plus_pinfo;
 var desugared_dash_rest_plus_pinfo; 
 (function (toplevel_dash_expression_dash_show80) { 
 desugared_dash_elt_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_program_dash_element((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)),a_dash_pinfo));
-desugared_dash_rest_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_program((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_elt_plus_pinfo)))); })(plt.Kernel.identity)
+desugared_dash_rest_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && processing_dash_loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_elt_plus_pinfo)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(desugared_dash_elt_plus_pinfo)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(desugared_dash_rest_plus_pinfo)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_rest_plus_pinfo))]));
               })()) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))));
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
+(function (toplevel_dash_expression_dash_show63) { 
+
+
+
+
+
+
+
+ })(plt.Kernel.identity)
+return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && processing_dash_loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && reorder_dash_tests_dash_to_dash_end(a_dash_program,plt.types.Empty.EMPTY,plt.types.Empty.EMPTY)),a_dash_pinfo));
               })()); };
 var desugar_dash_case = function(an_dash_expr, pinfo) { return ((function() { 
 

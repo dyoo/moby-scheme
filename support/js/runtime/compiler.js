@@ -1526,6 +1526,13 @@ return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && loop(known_
               })()); };
 var desugar_dash_program = function(a_dash_program, a_dash_pinfo) { return ((function() { 
 
+var reorder_dash_tests_dash_to_dash_end = function(a_dash_program, program_slash_rev, tests_slash_rev) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_program)) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.append((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(program_slash_rev)), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.reverse(tests_slash_rev))])) :
+ ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && test_dash_case_question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)))) ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && reorder_dash_tests_dash_to_dash_end((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),program_slash_rev,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)),tests_slash_rev)))) :
+ (plt.types.Logic.TRUE ?
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && reorder_dash_tests_dash_to_dash_end((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)),program_slash_rev)),tests_slash_rev)) :
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))); };
 var desugar_dash_program_dash_element = function(an_dash_element, a_dash_pinfo) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && defn_question_(an_dash_element)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_defn(an_dash_element,a_dash_pinfo)) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && test_dash_case_question_(an_dash_element)) ?
@@ -1738,14 +1745,7 @@ desugared_dash_exprs_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(desugared_dash_exprs_plus_pinfo)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_dash_loc(expr)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_exprs_plus_pinfo))]));
               })()) :
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))))))))))))); };
-(function (toplevel_dash_expression_dash_show63) { 
-
-
-
-
-
- })(plt.Kernel.identity)
-return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_program)) ?
+var processing_dash_loop = function(a_dash_program, a_dash_pinfo) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_program)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([plt.types.Empty.EMPTY,a_dash_pinfo])) :
  (plt.types.Logic.TRUE ?
  ((function() { 
@@ -1754,10 +1754,20 @@ var desugared_dash_elt_plus_pinfo;
 var desugared_dash_rest_plus_pinfo; 
 (function (toplevel_dash_expression_dash_show80) { 
 desugared_dash_elt_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_program_dash_element((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(a_dash_program)),a_dash_pinfo));
-desugared_dash_rest_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && desugar_dash_program((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_elt_plus_pinfo)))); })(plt.Kernel.identity)
+desugared_dash_rest_plus_pinfo = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && processing_dash_loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.rest(a_dash_program)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_elt_plus_pinfo)))); })(plt.Kernel.identity)
 return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.cons((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(desugared_dash_elt_plus_pinfo)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.first(desugared_dash_rest_plus_pinfo)))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.second(desugared_dash_rest_plus_pinfo))]));
               })()) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))));
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond")))))); };
+(function (toplevel_dash_expression_dash_show63) { 
+
+
+
+
+
+
+
+ })(plt.Kernel.identity)
+return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && processing_dash_loop((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && reorder_dash_tests_dash_to_dash_end(a_dash_program,plt.types.Empty.EMPTY,plt.types.Empty.EMPTY)),a_dash_pinfo));
               })()); };
 var desugar_dash_case = function(an_dash_expr, pinfo) { return ((function() { 
 
