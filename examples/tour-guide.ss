@@ -1,12 +1,12 @@
 #lang s-exp "../moby-lang.ss"
 ;; a node is (make-node string string location integer (listof node) (listof number) boolean)
-;(define-struct node (names info loc tours index neighbors distances heap-node))
+(define-struct node (names info loc tours index neighbors distances heap-node))
 
 (define-struct info (name description))
 
 (define-struct location (lat lng radius))
 
-(define-struct node (info index tours loc))
+;(define-struct node (info index tours loc heap-node))
 
 (define-struct world 
   (lat long tours visited visiting? path tovisit in-menu?))
@@ -365,7 +365,7 @@
 (define (make-heap-node-pointers heap)
   (if (equal? false heap) 'nothing
       (begin
-;        (set-node-heap-node! (second (heap-node-value heap)) heap)
+        (set-node-heap-node! (second (heap-node-value heap)) heap)
         (make-heap-node-pointers (heap-node-left heap))
         (make-heap-node-pointers (heap-node-right heap))
         heap)))

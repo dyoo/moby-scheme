@@ -26,7 +26,9 @@
   (syntax-case stx ()
     [(_ id (fields ...))
      (syntax/loc stx 
-       (base:define-struct id (fields ...) #:prefab))]))
+       (base:define-struct id (fields ...)
+                           #:prefab 
+                           #:mutable))]))
     
 
 (define (syntax-error msg stx)
