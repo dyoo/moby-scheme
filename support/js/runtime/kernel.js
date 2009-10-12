@@ -2302,23 +2302,25 @@ var plt = plt || {};
 	}
     };
 
-    plt.Kernel.check_error = function(testThunk, msgThunk) {
+    plt.Kernel.check_dash_error = function(testThunk, msgThunk) {
 	var msg = msgThunk([]);
-// 	var val;
-// 	try {
-// 	    val = testThunk([]);
-// 	} catch (e) {
-// 	    if (! plt.Kernel.equal_question_(e.msg, msg)) {
-// 		throw new MobyTestingError(
-// 		    plt.Kernel.format("check-error encountered the error ~s instead of the expected error ~s.",
-// 				      [e.msg, msg]));
-// 	    } else {
-// 		return;
-// 	    }
-// 	}
-// 	throw new MobyTestingError(
-// 	    plt.Kernel.format("check-error expected the error ~s, but instead received the value ~s."
-// 			      [msg, val]))
+	var val;
+	try {
+	    val = testThunk([]);
+	} catch (e) {
+	    if (! plt.Kernel.equal_question_(e.msg, msg)) {
+		throw new MobyTestingError(
+		    plt.Kernel.format(
+			"check-error encountered the error ~s instead of the expected error ~s.",
+			[e.msg, msg]));
+	    } else {
+		return;
+	    }
+	}
+	throw new MobyTestingError(
+	    plt.Kernel.format(
+		"check-error expected the error ~s, but instead received the value ~s.",
+		[msg, val]))
     };
 
 
