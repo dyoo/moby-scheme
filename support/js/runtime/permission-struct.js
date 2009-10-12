@@ -123,7 +123,7 @@ var permission_dash__greaterthan_string = function(a_dash_permission) { return (
  (plt.types.String.makeInstance("PERMISSION:WAKE-LOCK")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL ~a")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_dash_url(a_dash_permission))])) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
 var string_dash__greaterthan_permission = function(a_dash_ref) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:LOCATION")), [])) ?
  PERMISSION_colon_LOCATION :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:SEND-SMS")), [])) ?
@@ -142,7 +142,7 @@ var string_dash__greaterthan_permission = function(a_dash_ref) { return ((plt.Ke
  PERMISSION_colon_WAKE_dash_LOCK :
  (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel._greaterthan_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length(a_dash_ref)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))), []))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.substring(a_dash_ref,(plt.types.Rational.makeInstance(0, 1)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))))),(plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")), []))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_open_dash_image_dash_url((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.substring(a_dash_ref,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.add1((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length(a_dash_ref)))))) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
 var permission_dash__greaterthan_android_dash_permissions = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.ACCESS_COARSE_LOCATION")),(plt.types.String.makeInstance("android.permission.ACCESS_FINE_LOCATION"))])) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
@@ -161,7 +161,7 @@ var permission_dash__greaterthan_android_dash_permissions = function(a_dash_perm
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.WAKE_LOCK"))])) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([])) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
 var permission_dash__greaterthan_on_dash_start_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getLocationService().startService();\n      plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
@@ -180,7 +180,7 @@ var permission_dash__greaterthan_on_dash_start_dash_code = function(a_dash_permi
  (plt.types.String.makeInstance("")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
 var permission_dash__greaterthan_on_dash_pause_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getLocationService().shutdownService();")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
@@ -199,7 +199,7 @@ var permission_dash__greaterthan_on_dash_pause_dash_code = function(a_dash_permi
  (plt.types.String.makeInstance("")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
 var permission_dash__greaterthan_on_dash_destroy_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getLocationService().shutdownService();")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
@@ -218,7 +218,7 @@ var permission_dash__greaterthan_on_dash_destroy_dash_code = function(a_dash_per
  (plt.types.String.makeInstance("")) :
  ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("Fell out of cond"))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
 (function() { 
   ((function (toplevel_dash_expression_dash_show0) { 
 

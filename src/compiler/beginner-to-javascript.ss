@@ -96,9 +96,6 @@
                                                  (second defn-string+expr-string+pinfo))
                                   (third defn-string+expr-string+pinfo)))]
                          
-                         [(test-case? (first program))
-                          (syntax-error "Test case support (check-*) is unimplemented at the moment."
-                                        (first program))]
                          
                          [(library-require? (first program))
                           (loop (rest program)
@@ -108,7 +105,8 @@
                                 tops
                                 a-pinfo)] 
                          
-                         [(expression? (first program))
+                         [(or (test-case? (first program))
+                              (expression? (first program)))
                           (local [(define expression-string+pinfo
                                     (expression->javascript-string 
                                      (first program) 

@@ -90,9 +90,9 @@
           
           
           ;; check-length!: stx -> void
-          (define (check-length! stx length error-msg)
+          (define (check-length! stx n error-msg)
             (begin
-              (cond [(not (= length (length (stx-e stx))))
+              (cond [(not (= n (length (stx-e stx))))
                      (syntax-error error-msg stx)]
                     [else
                      (void)])))
@@ -372,12 +372,11 @@
      (define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
-                               question-last
-                               answer-last 
-                               (datum->stx '(error 'cond "Fell out of cond")
-                                           (stx-loc an-expr)))
-                         (stx-loc an-expr))]
+          (datum->stx (list 'if question-last 
+                            answer-last
+                            (list 'error ''cond
+                                  (format "cond: fell out of cond around ~s" (Loc->string (stx-loc an-expr)))))
+                      (stx-loc an-expr))]
 
          [else
           (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
