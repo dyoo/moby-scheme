@@ -17,7 +17,9 @@
                      quote
                      let
                      letrec
-                     let*))
+                     let*
+                     image?
+                     image=?))
 
 
 (define-syntax (my-define-struct stx)

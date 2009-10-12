@@ -10,8 +10,7 @@
          scheme/bool
          mred
          (prefix-in error: htdp/error)
-         (prefix-in image: htdp/image)
-         ;(only-in lang/htdp-beginner image?)
+         htdp/image
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
@@ -116,7 +115,7 @@
   (check-pos 'rectangle height "second")
   (check-mode 'rectangle mode "third")
   (check-color 'rectangle color "fourth")
-  (image:put-pinhole (image:rectangle width height mode color) 0 0))
+  (put-pinhole (rectangle width height mode color) 0 0))
 
 (define (place-image image x y scene)
   (check-image 'place-image image "first")
@@ -130,9 +129,9 @@
 (define (empty-scene width height)
   (check-pos 'empty-scene width "first")
   (check-pos 'empty-scene height "second")    
-  (image:put-pinhole 
-   (image:overlay (image:rectangle width height 'solid 'white)
-                  (image:rectangle width height 'outline 'black))
+  (put-pinhole 
+   (overlay (rectangle width height 'solid 'white)
+                  (rectangle width height 'outline 'black))
    0 0))
 
 (define (scene+line img x0 y0 x1 y1 c)
@@ -239,8 +238,8 @@
               (check-image 'run-movie cand "first" "list of images"))
             movie)
   (let* ([fst (car movie)]
-         [wdt (image:image-width fst)]
-         [hgt (image:image-height fst)])
+         [wdt (image-width fst)]
+         [hgt (image-height fst)])
     (big-bang wdt hgt (/ 1 27) movie)
     (let run-movie ([movie movie])
       (cond
@@ -303,18 +302,18 @@
 ;; Symbol Any String String *-> Void
 (define (check-image tag i rank . other-message)
   (if (and (pair? other-message) (string? (car other-message)))
-      (error:check-arg tag (image:image? i) (car other-message) rank i)
-      (error:check-arg tag (image:image? i) "image" rank i)))
+      (error:check-arg tag (image? i) (car other-message) rank i)
+      (error:check-arg tag (image? i) "image" rank i)))
 
 ;; Symbol Any String -> Void
 (define (check-scene tag i rank)
-  (if (image:image? i)
+  (if (image? i)
       (unless (scene? i)
         (error tag "scene expected, given image whose pinhole is at (~s,~s) instead of (0,0)"
-               (image:pinhole-x i) (image:pinhole-y i)))
+               (pinhole-x i) (pinhole-y i)))
       (error:check-arg tag #f "image" rank i)))
 
-(define (scene? i) (and (= 0 (image:pinhole-x i)) (= 0 (image:pinhole-y i))))
+(define (scene? i) (and (= 0 (pinhole-x i)) (= 0 (pinhole-y i))))
 
 ;; Symbol Any String -> Void
 (define (check-color tag width rank)
@@ -354,29 +353,29 @@
   (if (and (= sw nw) (= sh nh)) ns (shrink ns 0 0 sw sh)))
 
 (define (place-image0 image x y scene)
-  (define sw (image:image-width scene))
-  (define sh (image:image-height scene))
-  (define ns (image:overlay/xy scene x y image))
-  (define nw (image:image-width ns))
-  (define nh (image:image-height ns))
-  (if (and (= sw nw) (= sh nh)) ns (image:shrink ns 0 0 (- sw 1) (- sh 1)))) 
+  (define sw (image-width scene))
+  (define sh (image-height scene))
+  (define ns (overlay/xy scene x y image))
+  (define nw (image-width ns))
+  (define nh (image-height ns))
+  (if (and (= sw nw) (= sh nh)) ns (shrink ns 0 0 (- sw 1) (- sh 1)))) 
 
 ;; Image Number Number Number Number Color -> Image
 (define (add-line-to-scene0 img x0 y0 x1 y1 c)
-  (define w (image:image-width img))  
-  (define h (image:image-height img))
+  (define w (image-width img))  
+  (define h (image-height img))
   (cond
     [(and (<= 0 x0 w) (<= 0 x1 w) (<= 0 y0 w) (<= 0 y1 w))
-     (image:shrink (image:add-line img x0 y0 x1 y1 c) 0 0 (- w 1) (- h 1))]
+     (shrink (add-line img x0 y0 x1 y1 c) 0 0 (- w 1) (- h 1))]
     [(= x0 x1) ;; vertical that leaves bounds 
-     (if (<= 0 x0 w) (image:add-line img x0 (app y0 h) x0 (app y1 h) c) img)]
+     (if (<= 0 x0 w) (add-line img x0 (app y0 h) x0 (app y1 h) c) img)]
     [(= y0 y1) ;; horizontal that leaves bounds 
-     (if (<= 0 y0 h) (image:add-line img (app x0 w) y0 (app x1 w) y0 c) img)]
+     (if (<= 0 y0 h) (add-line img (app x0 w) y0 (app x1 w) y0 c) img)]
     [else 
      (local ((define lin (points->line x0 y0 x1 y1))
              (define dir (direction x0 y0 x1 y1))
              (define-values (upp low lft rgt) (intersections lin w h))
-             (define (add x y) (image:add-line img x0 y0 x y c)))
+             (define (add x y) (add-line img x0 y0 x y c)))
        (cond
          [(and (< 0 x0 w) (< 0 y0 h)) ;; (x0,y0) is in the interior
           (case dir
@@ -389,12 +388,12 @@
           (add-line-to-scene0 img x1 y1 x0 y0 c)]
          [else 
           (cond
-            [(and (number? upp) (number? low)) (image:add-line img upp 0 low h c)]
-            [(and (number? upp) (number? lft)) (image:add-line img upp 0 0 lft c)]
-            [(and (number? upp) (number? rgt)) (image:add-line img upp 0 w rgt c)]
-            [(and (number? low) (number? lft)) (image:add-line img low h 0 lft c)]
-            [(and (number? low) (number? rgt)) (image:add-line img low h w rgt c)]
-            [(and (number? lft) (number? rgt)) (image:add-line img 0 lft w rgt c)]
+            [(and (number? upp) (number? low)) (add-line img upp 0 low h c)]
+            [(and (number? upp) (number? lft)) (add-line img upp 0 0 lft c)]
+            [(and (number? upp) (number? rgt)) (add-line img upp 0 w rgt c)]
+            [(and (number? low) (number? lft)) (add-line img low h 0 lft c)]
+            [(and (number? low) (number? rgt)) (add-line img low h w rgt c)]
+            [(and (number? lft) (number? rgt)) (add-line img 0 lft w rgt c)]
             [else img])]))]))
 ;; Nat Nat -> Nat 
 ;; y if in [0,h], otherwise the closest boundary
@@ -694,11 +693,11 @@
   (parameterize ([current-directory target:dir])
     (let replay ([ev (reverse event-history)][world the-world0])
       (define img (redraw-callback0 world))
-      (update-frame (image:text (format "~a/~a created" image-count total) 18 'red))
+      (update-frame (text (format "~a/~a created" image-count total) 18 'red))
       (save-image img)
       (cond
         [(null? ev)
-         (update-frame (image:text (format "creating ~a" ANIMATED-GIF-FILE) 18 'red))
+         (update-frame (text (format "creating ~a" ANIMATED-GIF-FILE) 18 'red))
          (create-animated-gif (reverse bitmap-list))
          (update-frame img)]
         [else
@@ -798,11 +797,11 @@
     (define result (f the-world))
     (define fname (object-name f))
     (define tname (if fname fname 'your-redraw-function))
-    (if (image:image? result)
+    (if (image? result)
         (error:check-result tname scene? "scene" result
                             (format "image with pinhole at (~s,~s)"
-                                    (image:pinhole-x result) (image:pinhole-y result)))
-        (error:check-result tname (lambda (x) (image:image? x)) "scene" result))
+                                    (pinhole-x result) (pinhole-y result)))
+        (error:check-result tname (lambda (x) (image? x)) "scene" result))
     (update-frame result)
     ;; if this world is the last one, stop the world
     (when (stop-when-callback)
