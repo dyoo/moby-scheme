@@ -2240,7 +2240,7 @@ var plt = plt || {};
 
     plt.Kernel.build_dash_vector = function(n, f) {
 	check(n, isNatural, "build-vector", "natural", 1);
-	check(n, isFunction, "build-vector", "function", 2);
+	check(f, isFunction, "build-vector", "function", 2);
 	var elts = [];
 	for(var i = 0; i < n.toInteger(); i++) {
 	    elts[i] = f([plt.types.Rational.makeInstance(i, 1)])
@@ -2265,13 +2265,13 @@ var plt = plt || {};
 
     plt.Kernel.vector_dash_ref = function(vec, k) {
 	check(vec, isVector, "vector-ref", "vector", 1);
-	check(k, isNatural, "vector-ref", "natural", 2);
+	check(k, function(x) { return isNatural(x) && x.toInteger() < vec.length()}, "vector-ref", "natural < vector length", 2);
 	return vec.ref(k.toInteger());
     };
 
     plt.Kernel.vector_dash_set_bang_ = function(vec, k, v) {
 	check(vec, isVector, "vector-set!", "vector", 1);
-	check(k, isNatural, "vector-set!", "natural", 2);
+	check(k, function(x) { return isNatural(x) && x.toInteger() < vec.length()}, "vector-set!", "natural < vector length", 2);
 	return vec.set(k.toInteger(), v);
     };
 

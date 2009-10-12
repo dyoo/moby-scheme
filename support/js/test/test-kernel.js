@@ -1594,6 +1594,45 @@ var getTests;
 		this.assertRaise("MobyTypeError",
 				 function() {
 				     Kernel.set_dash_cdr_bang_(lst,Rational.makeInstance(10));});
+		},
+
+	    testVectors: function() {
+		    this.assert(Kernel.equal_question_(Kernel.vector_dash_length(Kernel.vector([])),
+						       Rational.makeInstance(0)));
+
+		    this.assert(Kernel.equal_question_(Kernel.vector_dash_length(Kernel.vector(["foo", "bar"])),
+						       Rational.makeInstance(2)));
+
+		    this.assert(Kernel.equal_question_(Kernel.vector_dash_ref(Kernel.vector(["foo", "bar"]), Rational.makeInstance(0)),
+						       "foo"));
+
+		    this.assert(Kernel.equal_question_(Kernel.vector_dash_ref(Kernel.vector(["foo", "bar"]), Rational.makeInstance(1)),
+						       "bar"));
+		    this.assertRaise("MobyTypeError",
+				     function() {
+					 Kernel.vector_dash_ref
+					     (Kernel.vector(["foo", "bar"]), Rational.makeInstance(2));});
+
+		    this.assertEqual(5, Kernel.vector_dash_length(Kernel.make_dash_vector(Rational.makeInstance(5))).toInteger());
+
+		    var aVector = Kernel.make_dash_vector(Rational.makeInstance(5));
+		    Kernel.vector_dash_set_bang_(aVector, Rational.ZERO, "blah");
+		    this.assertEqual("blah", Kernel.vector_dash_ref(aVector, Rational.ZERO));
+		    Kernel.vector_dash_set_bang_(aVector, Rational.ZERO, "boing");
+		    this.assertEqual("boing", Kernel.vector_dash_ref(aVector, Rational.ZERO));
+
+
+		    var zeroonetwo = Kernel.build_dash_vector(Rational.makeInstance(3),
+							      function(args) {
+								  return args[0];
+							      });
+		    for (var i = 0; i < 3; i++) {
+			this.assertEqual(i,
+					 Kernel.vector_dash_ref(zeroonetwo, Rational.makeInstance(i)).toInteger());
+		    }
+
+		    this.assert(Kernel.vector_question_(Kernel.vector([])));
+		    this.assert(! Kernel.vector_question_(Kernel.list([])));
 	    }
 	    
 	    
