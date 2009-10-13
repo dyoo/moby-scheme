@@ -295,6 +295,8 @@
     (copy-directory/files* (build-path javascript-support-path subpath) 
                            (build-path dest-dir subpath)))
   (for ([file (list "index.html" "main.js.template")])
+    (when (file-exists? (build-path dest-dir file))
+      (delete-file (build-path dest-dir file)))
     (copy-file (build-path javascript-support-path file)
                (build-path dest-dir file))))
 

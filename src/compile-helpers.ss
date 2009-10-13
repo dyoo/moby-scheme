@@ -28,7 +28,11 @@
       (let ([stx (read-syntax #f ip)])
         (syntax-case stx ()
           [(module name lang body ...)
-           (map syntax->stx (syntax->list #'(body ...)))])))))
+           (map syntax->stx (syntax->list #'(body ...)))]
+          [else
+           (error 'moby
+                  (string-append "The input does not appear to be a Moby module; "
+                                 "I don't see a \"#lang moby\" at the top of the file."))])))))
 
 
 
