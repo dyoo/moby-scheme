@@ -8,7 +8,8 @@
 (require (prefix-in base: scheme/base)
          scheme/contract
          lang/htdp-intermediate-lambda
-         (for-syntax scheme/base))
+         (for-syntax scheme/base)
+         "error-struct.ss")
 
                      
 (provide (except-out (all-from-out lang/htdp-intermediate-lambda)
@@ -31,8 +32,8 @@
                            #:mutable))]))
     
 
-(define (syntax-error msg stx)
-  (raise-syntax-error 'syntax-error msg stx)) 
+(base:define (syntax-error msg #:rest stx)
+  (raise (make-exn:fail:moby-syntax-error msg (current-continuation-marks) stx)))
 
 
 ;; The following primitives will need support in the runtime,

@@ -5,6 +5,8 @@
 
 (require "generate-application.ss"
          "utils.ss"
+         "compiler/stx.ss"
+         "compiler/error-struct.ss"
          scheme/cmdline
          scheme/path)
 
@@ -64,4 +66,10 @@
 (let ([compiler (app-compiler)]
       [name (get-name)]
       [output-path (get-output-path)])
-  (compiler name file-to-compile output-path))
+  (with-handlers ([exn:fail:moby-syntax-error? 
+                   (lambda (exn)
+                     (error 'moby "Syntax error: ~a\nAt:~s"
+                            (exn-message exn)
+                            (for/list ([stx (exn:fail:moby-syntax-error-stxs)])
+                              (Loc->string (stx-loc stx)))))])
+  (compiler name file-to-compile output-path)))

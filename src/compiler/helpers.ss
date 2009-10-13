@@ -248,13 +248,13 @@
     ;; FIXME: add more error productions as necessary to get
     ;; reasonable error messages.
     [(stx-begins-with? a-definition 'define)
-     (error 
-      'define 
-      "define expects an identifier and a body.  i.e. (define answer 42)")]
+     (syntax-error 
+      "define expects an identifier and a body.  e.g. (define answer 42)"
+      a-definition)]
     [(stx-begins-with? a-definition 'define-struct)
-     (error 
-      'define-struct 
-      "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")]))
+     (syntax-error
+      "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))"
+      a-definition)]))
 
 
 
