@@ -5,6 +5,7 @@
 
 (define number-of-tests 0)
 
+
 (define (test expect fun args)
   (begin
     (set! number-of-tests (add1 number-of-tests))
@@ -26,7 +27,6 @@
 
 (define disjoint-type-functions
   (list boolean? char? null? number? pair? procedure? string? symbol? vector?))
-
 
 
 
@@ -127,10 +127,17 @@
 (test #f eqv? (list 2 (exact->inexact 2.0)))
 (test #t eqv? (list '() '()))
 (test #t eqv? (list '10000 '10000))
-(test #t eqv? (list 10000000000000000000 10000000000000000000))
-(test #f eqv? (list 10000000000000000000 10000000000000000001))
-(test #f eqv? (list 10000000000000000000 20000000000000000000))
-(test #f eqv? (list (cons 1 2) (cons 1 2)))
+
+;; These tests are commented out because Moby doesn't have bignums
+;; yet.
+;(test #t eqv? (list 10000000000000000000 10000000000000000000))
+;(test #f eqv? (list 10000000000000000000 10000000000000000001))
+;(test #f eqv? (list 10000000000000000000 20000000000000000000))
+
+;; This test is commented out because cons only allows lists as a
+;; second argument.
+;(test #f eqv? (list (cons 1 2) (cons 1 2)))
+
 (test #f eqv? (list (lambda () 1) (lambda () 2)))
 (test #f eqv? (list #f 'nil))
 (let ((p (lambda (x) x)))
@@ -144,3 +151,7 @@
 (letrec ((f (lambda () (if (eqv? f g) 'f 'both)))
 	 (g (lambda () (if (eqv? f g) 'g 'both))))
   (test #f eqv? (list f g)))
+
+
+
+(js-big-bang number-of-tests)
