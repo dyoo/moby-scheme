@@ -28,6 +28,84 @@
   (list boolean? char? null? number? pair? procedure? string? symbol? vector?))
 
 
+
+
+
+
+;; Let tests, from syntax.ss
+;;
+;; FIXME:
+;; The tests involving internal defines have been commented out
+;; for now.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(test 6 'let (list (let ((x 2) (y 3)) (* x y))))
+(test 'second 'let (list (let ((x 2) (y 3)) (begin (* x y) 'second))))
+(test 35 'let (list (let ((x 2) (y 3)) (let ((x 7) (z (+ x y))) (* z x)))))
+(test 70 'let* (list (let ((x 2) (y 3)) (let* ((x 7) (z (+ x y))) (* z x)))))
+
+(test #t 'letrec (list (letrec ((-even?
+                           (lambda (n) (if (zero? n) #t (-odd? (- n 1)))))
+                          (-odd?
+                           (lambda (n) (if (zero? n) #f (-even? (- n 1))))))
+                   (-even? 88))))
+(define x 34)
+;(test 5 'let (let ((x 3)) (define x 5) x))
+;(test 5 'let (let ((x 3)) (define-values (x w) (values 5 8)) x))
+(test 34 'let (list x))
+;(test 6 'let (let () (define x 6) x))
+(test 34 'let (list x))
+;(test 7 'let* (let* ((x 3)) (define x 7) x))
+(test 34 'let* (list x))
+;(test 8 'let* (let* () (define x 8) x))
+(test 34 'let* (list x))
+;(test 9 'letrec (letrec () (define x 9) x))
+(test 34 'letrec (list x))
+;(test 10 'letrec (letrec ((x 3)) (define x 10) x))
+(test 34 'letrec (list x))
+(test 3 'let (list (let ((y 'apple) (x 3) (z 'banana)) x)))
+(test 3 'let* (list (let* ((y 'apple) (x 3) (z 'banana)) x)))
+(test 3 'letrec (list (letrec ((y 'apple) (x 3) (z 'banana)) x)))
+(test 3 'let* (list (let* ((x 7) (y 'apple) (z (set! x 3))) x)))
+(test 3 'let* (list (let* ((x 7) (y 'apple) (z (if (not #f) (set! x 3) #f))) x)))
+(test 3 'let* (list (let* ((x 7) (y 'apple) (z (if (not #t) #t (set! x 3)))) x)))
+
+(let ([val 0])
+  (begin
+    (let ([g (lambda ()
+	       (letrec ([f (lambda (z x)
+			     (if (let ([w (even? 81)])
+				   (if w
+				       w
+				       (let ([y x])
+					 (begin
+					   (set! x 7)
+					   (set! val (+ y 5))))))
+				 'yes
+				 'no))])
+		 (f 0 11)))])
+      (g))
+    (test 16 identity (list val))))
+
+
+(let ([val 0])
+  (begin
+    (let ([g (lambda ()
+	       (letrec ([f (lambda (z x)
+			     (if (let ([w (even? 81)])
+				   (if w
+				       w
+				       (let ([y x])
+					 (set! val (+ y 5)))))
+				 'yes
+				 'no))])
+		 (f 0 11)))])
+      (g))
+    (test 16 identity (list val))))
+
+
+
+
+
 (test #f not (list #t))
 (test #f not (list 3))
 (test #f not (list (list 3)))

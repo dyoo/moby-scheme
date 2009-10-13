@@ -50,6 +50,7 @@
 
          begin
          void
+	 set!
          
          build-vector
          make-vector

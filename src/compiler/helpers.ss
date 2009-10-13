@@ -212,7 +212,9 @@
      (local [(define id (first (stx-e (second (stx-e a-definition)))))
              (define args (rest (stx-e (second (stx-e a-definition)))))
              (define body (third (stx-e a-definition)))]
-       (f-function id args body))]
+       (begin
+	 (check-single-body-stx! (rest (rest (stx-e a-definition))) a-definition)
+	 (f-function id args body)))]
 
 
     ;; (define id (lambda (args ...) body))
@@ -223,7 +225,9 @@
      (local [(define id (second (stx-e a-definition)))
              (define args (stx-e (second (stx-e (third (stx-e a-definition))))))
              (define body (third (stx-e (third (stx-e a-definition)))))]
-       (f-function id args body))]
+       (begin
+	 (check-single-body-stx! (rest (rest (stx-e (third (stx-e a-definition))))) a-definition)
+	 (f-function id args body)))]
     
     ;; (define id body)
     [(and (stx-begins-with? a-definition 'define)
@@ -285,6 +289,20 @@
 
 
 
+;; check-single-body-stx!: (listof stx) stx -> void
+(define (check-single-body-stx! stxs original-stx)
+  (cond
+    [(empty? stxs)
+     (syntax-error "There must be a single body expression"
+		   original-stx)]
+    [(not (empty? (rest stxs)))
+     (syntax-error "There must be a single body expression"
+		   original-stx)]
+    [else
+     (void)]))
+
+
+
 
 (provide/contract [program? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
@@ -299,7 +317,8 @@
                   
                   
                   [check-duplicate-identifiers! ((listof stx?)  . -> . any)]
-                  
+
+                  [check-single-body-stx! ((listof stx?) stx? . -> . any)]
                   [case-analyze-definition (stx? 
                                             (symbol-stx? (listof symbol-stx?) stx? . -> . any)
                                             (symbol-stx? any/c . -> . any)

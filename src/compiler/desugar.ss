@@ -427,6 +427,8 @@
     (process-clauses clauses empty empty)))
 
 
+
+
 ;; desugar-let: expr-stx -> (list expr-stx pinfo)
 ;; Given a let expression, translates it to the equivalent use of
 ;; a lambda application.
@@ -446,6 +448,7 @@
                                  body-stx)
                            (stx-loc a-stx)))]    
     (begin
+      (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (check-duplicate-identifiers! (map (lambda (a-clause)
                                            (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))      
@@ -471,8 +474,10 @@
                                                    (stx-loc (first clauses)))
                                     (loop (rest clauses)))
                               (stx-loc (first clauses)))]))]    
-    (list (loop (stx-e clauses-stx))
-          pinfo)))
+    (begin
+      (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+      (list (loop (stx-e clauses-stx))
+	    pinfo))))
 
 
 ;; desugar-letrec: stx pinfo -> (list stx pinfo)
@@ -488,6 +493,7 @@
                                (stx-loc a-clause))))
                  (stx-e clauses-stx)))]
     (begin
+      (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))
       (list (datum->stx (list 'local define-clauses body-stx)
