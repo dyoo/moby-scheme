@@ -1,10 +1,6 @@
 #lang scheme/base
 
 
-
-
-
-
 (require scheme/class
          scheme/local
          scheme/bool
@@ -14,11 +10,15 @@
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
+	 "../version-case.ss"
          "../compiler/effect-struct.ss"
          "world-effects.ss")
 
-
-
+(version-case 
+ [(version<= (version) "4.2.1")
+  (require (only-in lang/htdp-beginner image?))]
+ [else
+  (void)])
 
 
 (require mrlib/gif)
