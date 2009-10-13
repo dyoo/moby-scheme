@@ -234,7 +234,7 @@
                  (cond [(program/resources? text-or-program/resources)
                         (program/resources-program text-or-program/resources)]
                        [else
-                        (parse-text-as-program text-or-program/resources)])]
+                        (parse-text-as-program text-or-program/resources name)])]
                 [(compiled-program)
                  (do-compilation program)])
     (call-with-output-file (build-path dest-dir "main.js")

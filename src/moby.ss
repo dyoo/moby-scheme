@@ -7,6 +7,7 @@
          "utils.ss"
          "compiler/stx.ss"
          "compiler/error-struct.ss"
+         scheme/string
          scheme/cmdline
          scheme/path)
 
@@ -68,8 +69,9 @@
       [output-path (get-output-path)])
   (with-handlers ([exn:fail:moby-syntax-error? 
                    (lambda (exn)
-                     (error 'moby "Syntax error: ~a\nAt:~s"
+                     (error 'moby "Syntax error: ~a\nAt:\n~a"
                             (exn-message exn)
-                            (for/list ([stx (exn:fail:moby-syntax-error-stxs)])
-                              (Loc->string (stx-loc stx)))))])
+                            (string-join (for/list ([stx (exn:fail:moby-syntax-error-stxs exn)])
+                                           (Loc->string (stx-loc stx)))
+                                         "\n")))])
   (compiler name file-to-compile output-path)))

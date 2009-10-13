@@ -32,7 +32,7 @@
                            #:mutable))]))
     
 
-(base:define (syntax-error msg #:rest stx)
+(base:define (syntax-error msg . stx)
   (raise (make-exn:fail:moby-syntax-error msg (current-continuation-marks) stx)))
 
 

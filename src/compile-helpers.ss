@@ -21,11 +21,11 @@
 
 ;; parse-text-as-program: text -> program
 ;; Given a text, returns a program as well.
-(define (parse-text-as-program a-text)
+(define (parse-text-as-program a-text [source-name #f])
   (let* ([ip (open-input-text-editor a-text)])
     (port-count-lines! ip)
     (parameterize ([read-accept-reader #t])
-      (let ([stx (read-syntax #f ip)])
+      (let ([stx (read-syntax source-name ip)])
         (syntax-case stx ()
           [(module name lang body ...)
            (map syntax->stx (syntax->list #'(body ...)))]
