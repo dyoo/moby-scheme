@@ -237,6 +237,50 @@ delimiter.
 
 
 
+Additional special forms:
+=========================
+
+    begin
+    set!
+    let, let*, letrec
+    case
+
+
+Structures
+==========
+define-struct will also define structure mutators.  e.g.
+
+   (define-struct foo (a b))
+
+will define the following:
+
+    make-foo: X Y -> foo
+    foo-a: foo -> X
+    foo-b: foo -> Y
+    foo?: any -> boolean
+    set-foo-a!: foo X -> void
+    set-foo-b!: foo Y -> void
+
+
+Vectors
+=======
+
+build-vector: number (number -> X) -> (vectorof X)
+
+make-vector: number -> (vectorof X)
+
+vector: X ... -> (vectorof X)
+
+vector-length: (vectorof X) -> number
+
+vector-ref: (vectorof X) number -> X
+
+vector-set!: (vectorof X) number X -> void
+
+vector?: X -> boolean
+
+
+
 
 
 World API and its Extensions
