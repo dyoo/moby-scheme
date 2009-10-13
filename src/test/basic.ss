@@ -54,20 +54,20 @@
 (define x 34)
 
 ;; FIXME:
-;; The tests involving internal defines have been commented out
+;; The tests involving internal defines have been changed to use local
 ;; for now.
-;(skip (lambda () (test 5 'let (let ((x 3)) (begin (define x 5) x)))))
-;(skip (lambda () (test 5 'let (let ((x 3)) (begin (define-values (x w) (values 5 8)) x)))))
+(test 5 'let (list (let ((x 3)) (local [(define x 5)] x))))
+(test 5 'let (list (let ((x 3)) (local [(define x 5) (define w 8)] x))))
 (test 34 'let (list x))
-;(skip (lambda () (test 6 'let (let () (begin (define x 6) x)))))
+(test 6 'let (list (let () (local [(define x 6)] x))))
 (test 34 'let (list x))
-;(skip (lambda () (test 7 'let* (let* ((x 3)) (begin (define x 7) x)))))
+(test 7 'let* (list (let* ((x 3)) (local [(define x 7)] x))))
 (test 34 'let* (list x))
-;(skip (lambda () (test 8 'let* (let* () (begin (define x 8) x)))))
+(test 8 'let* (list (let* () (local [(define x 8)] x))))
 (test 34 'let* (list x))
-;(skip (lambda () (test 9 'letrec (letrec () (begin (define x 9) x)))))
+(test 9 'letrec (list (letrec () (local [(define x 9)] x))))
 (test 34 'letrec (list x))
-;(skip (lambda () (test 10 'letrec (letrec ((x 3)) (begin (define x 10) x)))))
+(test 10 'letrec (list (letrec ((x 3)) (local [(define x 10)] x))))
 
 (test 34 'letrec (list x))
 (test 3 'let (list (let ((y 'apple) (x 3) (z 'banana)) x)))
