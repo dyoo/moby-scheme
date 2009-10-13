@@ -825,8 +825,14 @@ var plt = plt || {};
 	},
 	
 	not : function(x){
-	    check(x, isBoolean, "not", "boolean", 1);
-	    return (!(x.valueOf())) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+	    // Restriction on x being a boolean has been weakened.
+	    //check(x, isBoolean, "not", "boolean", 1);
+
+	    if (!x || x === plt.types.Logic.FALSE)
+		return plt.types.Logic.TRUE;
+	    return plt.types.Logic.FALSE;
+
+	    //return (!( x && x.valueOf() )) ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
 	},
 	
 	symbol_dash__greaterthan_string : function(x){
