@@ -399,10 +399,12 @@ var plt = plt || {};
 	
 
 	eqv_question_ : function(x, y){
-	    if (isNumber(x) && isNumber(y)) {
+	    if (isNumber(x) && isNumber(y) && x.level() == y.level()) {
 		return plt.types.NumberTower.equal(x, y);
+	    } else if (isChar(x) && isChar(y)) {
+		return x.getValue() == y.getValue();
 	    }
-	    return x == y;
+	    return x === y;
 	},
 	
 

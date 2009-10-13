@@ -124,7 +124,7 @@
 (test #t eqv? (list 'a 'a))
 (test #f eqv? (list 'a 'b))
 (test #t eqv? (list 2 2))
-(test #f eqv? (list 2 2.0))
+(test #f eqv? (list 2 (exact->inexact 2.0)))
 (test #t eqv? (list '() '()))
 (test #t eqv? (list '10000 '10000))
 (test #t eqv? (list 10000000000000000000 10000000000000000000))
