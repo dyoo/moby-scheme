@@ -1,4 +1,4 @@
-#lang scheme/gui
+#lang scheme/base
 
 (require "generate-application.ss" 
          "config.ss"
@@ -138,12 +138,15 @@
 (define (run-all-tests #:android (with-android? #f)
                        #:js (with-js? #t))
 
+  (define should-run-android?
+    (and (directory-exists? (current-android-sdk-path)) with-android?))
+
   ;; Compile with javascript backend.
   (when with-js?
     (test-all generate-javascript-application test-app-js-path))
   
   ;; If you do not have the Android SDK, change the value in config.ss.
-  (when (and (current-has-android-sdk?) with-android?)
+  (when should-run-android?
     (test-all generate-javascript+android-phonegap-application test-app-android-path)))
 
 
@@ -151,9 +154,12 @@
 (define (run-single-test a-test 
                          #:android (with-android? #f)
                          #:js (with-js? #t))
+  (define should-run-android?
+    (and (directory-exists? (current-android-sdk-path)) with-android?))
+
   (when with-js?
     (a-test generate-javascript-application test-app-js-path))
-  (when (and (current-has-android-sdk?) with-android?)
+  (when should-run-android?
     (a-test generate-javascript+android-phonegap-application test-app-android-path)))
 
 
