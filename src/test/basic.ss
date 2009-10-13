@@ -4,6 +4,7 @@
 
 
 (define number-of-tests 0)
+(define number-of-skipped-tests 0)
 
 
 (define (test expect fun args)
@@ -18,6 +19,10 @@
 	      [else
 	       ok?])))))
 
+
+(define (skip f)
+  (begin
+    (set! number-of-skipped-tests (add1 number-of-skipped-tests))))
 
 
 
@@ -49,18 +54,18 @@
                            (lambda (n) (if (zero? n) #f (-even? (- n 1))))))
                    (-even? 88))))
 (define x 34)
-;(test 5 'let (let ((x 3)) (define x 5) x))
-;(test 5 'let (let ((x 3)) (define-values (x w) (values 5 8)) x))
+;(skip (lambda () (test 5 'let (let ((x 3)) (begin (define x 5) x)))))
+;(skip (lambda () (test 5 'let (let ((x 3)) (begin (define-values (x w) (values 5 8)) x)))))
 (test 34 'let (list x))
-;(test 6 'let (let () (define x 6) x))
+;(skip (lambda () (test 6 'let (let () (begin (define x 6) x)))))
 (test 34 'let (list x))
-;(test 7 'let* (let* ((x 3)) (define x 7) x))
+;(skip (lambda () (test 7 'let* (let* ((x 3)) (begin (define x 7) x)))))
 (test 34 'let* (list x))
-;(test 8 'let* (let* () (define x 8) x))
+;(skip (lambda () (test 8 'let* (let* () (begin (define x 8) x)))))
 (test 34 'let* (list x))
-;(test 9 'letrec (letrec () (define x 9) x))
+;(skip (lambda () (test 9 'letrec (letrec () (begin (define x 9) x)))))
 (test 34 'letrec (list x))
-;(test 10 'letrec (letrec ((x 3)) (define x 10) x))
+;(skip (lambda () (test 10 'letrec (letrec ((x 3)) (begin (define x 10) x)))))
 (test 34 'letrec (list x))
 (test 3 'let (list (let ((y 'apple) (x 3) (z 'banana)) x)))
 (test 3 'let* (list (let* ((y 'apple) (x 3) (z 'banana)) x)))
@@ -130,13 +135,13 @@
 
 ;; These tests are commented out because Moby doesn't have bignums
 ;; yet.
-;(test #t eqv? (list 10000000000000000000 10000000000000000000))
-;(test #f eqv? (list 10000000000000000000 10000000000000000001))
-;(test #f eqv? (list 10000000000000000000 20000000000000000000))
+(skip (lambda () (test #t eqv? (list 10000000000000000000 10000000000000000000))))
+(skip (lambda () (test #f eqv? (list 10000000000000000000 10000000000000000001))))
+(skip (lambda () (test #f eqv? (list 10000000000000000000 20000000000000000000))))
 
 ;; This test is commented out because cons only allows lists as a
 ;; second argument.
-;(test #f eqv? (list (cons 1 2) (cons 1 2)))
+(skip (lambda () (test #f eqv? (list (cons 1 2) (cons 1 2)))))
 
 (test #f eqv? (list (lambda () 1) (lambda () 2)))
 (test #f eqv? (list #f 'nil))
@@ -154,4 +159,13 @@
 
 
 
-(js-big-bang number-of-tests)
+
+(js-big-bang #f
+	     (on-draw 
+	      (lambda (w)
+		(list (js-text 
+		       (format "~a tests run.  ~a tests skipped"
+			       number-of-tests
+			       number-of-skipped-tests))))
+	      (lambda (w)
+		'())))
