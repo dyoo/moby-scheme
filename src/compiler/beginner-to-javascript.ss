@@ -231,7 +231,10 @@
                             (symbol->string field-name))))
           
           
-          (define updated-pinfo a-pinfo)
+	  (define pinfo-1+gensym (pinfo-gensym a-pinfo 'fresh-struct-name))
+          (define fresh-struct-name (second pinfo-1+gensym))
+          
+          (define updated-pinfo (first pinfo-1+gensym))
           
           ;; predicate-name: string
           (define predicate-name 
@@ -288,6 +291,16 @@
                             )
              
              "\n"
+
+	     ;; Keep an extra copy of the structure name.
+	     (string-append "var " (symbol->string (identifier->munged-java-identifier fresh-struct-name))
+			    " = " 
+			    (symbol->string 
+			     (identifier->munged-java-identifier (stx-e id)))
+			    ";")
+
+	     "\n"
+
              
              ;; make-id
              (string-append "var " (local [(define make-id (string->symbol 
@@ -342,7 +355,7 @@
              ;; structure predicate
              (string-append "var " predicate-name " = function(obj) { 
               return obj != null && obj != undefined && obj instanceof "
-                            (symbol->string (identifier->munged-java-identifier (stx-e id)))
+                            (symbol->string (identifier->munged-java-identifier fresh-struct-name))
                             "; };\n"))
             
             "" ;; no introduced toplevel expressions

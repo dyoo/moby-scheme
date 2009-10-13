@@ -20,6 +20,7 @@
 	       ok?])))))
 
 
+;; Just a note to myself about which tests need to be fixed.
 (define (skip f)
   (begin
     (set! number-of-skipped-tests (add1 number-of-skipped-tests))))
@@ -39,9 +40,6 @@
 
 ;; Let tests, from syntax.ss
 ;;
-;; FIXME:
-;; The tests involving internal defines have been commented out
-;; for now.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test 6 'let (list (let ((x 2) (y 3)) (* x y))))
 (test 'second 'let (list (let ((x 2) (y 3)) (begin (* x y) 'second))))
@@ -54,6 +52,10 @@
                            (lambda (n) (if (zero? n) #f (-even? (- n 1))))))
                    (-even? 88))))
 (define x 34)
+
+;; FIXME:
+;; The tests involving internal defines have been commented out
+;; for now.
 ;(skip (lambda () (test 5 'let (let ((x 3)) (begin (define x 5) x)))))
 ;(skip (lambda () (test 5 'let (let ((x 3)) (begin (define-values (x w) (values 5 8)) x)))))
 (test 34 'let (list x))
@@ -66,6 +68,7 @@
 ;(skip (lambda () (test 9 'letrec (letrec () (begin (define x 9) x)))))
 (test 34 'letrec (list x))
 ;(skip (lambda () (test 10 'letrec (letrec ((x 3)) (begin (define x 10) x)))))
+
 (test 34 'letrec (list x))
 (test 3 'let (list (let ((y 'apple) (x 3) (z 'banana)) x)))
 (test 3 'let* (list (let* ((y 'apple) (x 3) (z 'banana)) x)))
@@ -169,3 +172,35 @@
 			       number-of-skipped-tests))))
 	      (lambda (w)
 		'())))
+
+
+
+
+
+;; Some tests with structures, from struct.ss
+
+(define-struct a (b c))
+(define-struct aa ())
+(define ai (make-a 1 2))
+(define aai (make-aa))
+;;(test #t struct-type? struct:a)
+;;(test #f struct-type? 5)
+(test #t procedure? (list a?))
+(test #t a? (list ai))
+(test #f a? (list 1))
+(test #f aa? (list ai))
+;; We don't have struct inspectors, so this test should fail.
+;;(test #f struct? (list ai))
+(test 1 a-b (list ai))
+(test 2 a-c (list ai))
+(define ai2 (make-a 1 2))
+(set-a-b! ai2 3)
+(set-a-c! ai2 4)
+(test 1 a-b (list ai))
+(test 2 a-c (list ai))
+(test 3 a-b (list ai2))
+(test 4 a-c (list ai2))
+(define-struct a (b c))
+;; Commented out: we don't yet properly support redefinition of structures.
+#;(test #f a? (list ai))
+
