@@ -6,16 +6,16 @@
 (define number-of-tests 0)
 
 (define (test expect fun args)
-  (set! number-of-tests (add1 number-of-tests))
-  (printf "~s ==> " (cons fun args))
-  (let ([res (if (procedure? fun)
-		 (apply fun args)
-		 (car args))])
-    (let ([ok? (equal? expect res)])
-      (unless ok?
-	      (error (format "~s" (list res expect (cons fun args)))))
-      ok?)))
-
+  (begin
+    (set! number-of-tests (add1 number-of-tests))
+    (let ([res (if (procedure? fun)
+		   (apply fun args)
+		   (car args))])
+      (let ([ok? (equal? expect res)])
+	(cond [(not ok?)
+	       (error 'test (format "~s" (list res expect (cons fun args))))]
+	      [else
+	       ok?])))))
 
 
 
