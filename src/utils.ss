@@ -20,7 +20,7 @@
   (copy-file src-path dest-path))
 
 
-;; copy-directory/files*: directory-path path -> void
+;; copy-directory/files*: directory-path directory-path -> void
 ;; Like copy-directory/files, but overwrites rather than raises exn:fail:filesystem.
 (define (copy-directory/files* from-path dest-path)
   (for ([entry (directory-list from-path)])    
@@ -28,6 +28,7 @@
            ;; Plain file
            (when (file-exists? (build-path dest-path entry))
              (delete-file (build-path dest-path entry)))
+           (make-directory* dest-path)
            (copy-file (build-path from-path entry)
                       (build-path dest-path entry))]
           [else

@@ -291,8 +291,13 @@
 ;; make-javascript-directories: path -> void
 (define (make-javascript-directories dest-dir)
   (make-directory* dest-dir)
-  (copy-directory/files* javascript-support-path dest-dir)
-  #;(copy-directory/files* jsworld-path (build-path dest-dir "runtime" "jsworld")))
+  (for ([subpath (list "css" "runtime")])
+    (copy-directory/files* (build-path javascript-support-path subpath) 
+                           (build-path dest-dir subpath)))
+  (for ([file (list "index.html" "main.js.template")])
+    (copy-file (build-path javascript-support-path file)
+               (build-path dest-dir file))))
+
 
 
 
