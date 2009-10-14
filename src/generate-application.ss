@@ -32,8 +32,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-runtime-path phonegap-path "../support/phonegap/android-1.5")
-#;(define-runtime-path jsworld-path"../support/jsworld")
+(define-runtime-path phonegap-path "../support/phonegap-fork/android-1.5")
 (define-runtime-path icon-path "../support/icons/icon.png")
 
 (define-runtime-path javascript-support-path "../support/js")
