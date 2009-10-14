@@ -82,14 +82,17 @@ To install Moby from the development sources:
     2.  If you're going to do Android development, make sure that
         'ant' and the 'android' binary are in your path; Moby will use
         your PATH variable to find Apache Ant and the Android SDK.
-    
-        Pull the other dependency packages.  Moby depends on two
-        additional libraries that we are developing: (1) jsworld (2)
-        phonegap.  The following command will bring both of those
-        dependencies into the source tree.
 
-        $ git submodule init
-        $ git submodule update
+    You can verify that android and ant can be found with the following:
+
+        $ which android
+        /usr/local/android/tools/android
+
+        $ which ant
+        /usr/bin/ant
+
+    The path values you get back may differ according to your
+    system's configuration.
 
 
 
