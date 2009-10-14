@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../jsworld.js"></script>    
+    <script type="text/javascript">
+      // The world consists of a single string.
+      // 
+      // The dom contains a text field and a text div.
+      // Every time the user updates the text field, the world should update
+      // to synchronize.
+
+
+      var jsworld = plt.Jsworld;
+
+      function getFieldValue(w) {
+         return w.toString();
+      }
+
+      function updateFieldValue(w, v) {
+         return parseInt(v);
+      }
+
+      var field = jsworld.bidirectional_input("text",
+                                              getFieldValue,
+                                              updateFieldValue);
+      var init_world = 0;
+
+      var button = jsworld.button(function(w) { return w+1;});
+
+      function redraw(w) {
+        return [document.body,
+                [field],
+                [jsworld.text(w)],
+                [button, [jsworld.text("press me")]]];
+      }
+      
+      function redraw_css(world) {
+        return [];
+      }
+      </script>
+  </head>
+  
+  <body onload="jsworld.big_bang(window.document.body, 
+                                 init_world, 
+		                 [jsworld.on_draw(redraw, redraw_css)])">
+  </body>
+</html>

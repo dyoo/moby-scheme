@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../jsworld.js"></script>
+    
+    <script type="text/javascript">
+      var jsworld = plt.Jsworld;
+
+      function cons(array, value) {
+        return array.concat([value]);
+      }
+      
+      function removeq(array, value) {
+        for (var i = 0; i < array.length; i++)
+          if (array[i] === value)
+            return array.slice(0, i).concat(array.slice(i+1));
+        return array;
+      }
+      
+      var init_world = {
+        trees: [], // list of trees
+        boxes: [], // list of nodes
+        entries: [], // list of nodes
+        headers: [], // list of nodes
+        answer: jsworld.text(""),
+        counter: 1,
+      };
+      
+      function add_event(world) {
+        var box = jsworld.div({ className: "box" });
+        var header = jsworld.p({ className: "header"});
+        var header_text = jsworld.text("Box #" + world.counter + ": " + name_entry.value);
+        var entry = jsworld.input("text");
+        var tree_node;
+        
+        var remove = jsworld.button(function (world) {
+          return jsworld.augment(world, {
+            trees: jsworld.removeq(world.trees, tree_node),
+            entries: jsworld.removeq(world.entries, entry),
+            headers: jsworld.removeq(world.headers, header),
+            boxes: jsworld.removeq(world.boxes, box),
+          });
+        });
+        var remove_text = jsworld.text("X");
+        
+        tree_node =
+          [box,
+            [header, [header_text], [remove, [remove_text]]],
+            [entry]];
+        
+        return jsworld.augment(world, {
+          counter: world.counter + 1,
+          trees: cons(world.trees, tree_node),
+          entries: cons(world.entries, entry),
+          headers: cons(world.headers, header),
+          boxes: cons(world.boxes, box),
+        });
+      }
+      
+      function compute_event(world) {
+        var r = 0;
+        
+        for (var i = 0; i < world.entries.length; i++)
+          r += parseFloat(world.entries[i].value);
+        
+        return jsworld.augment(world, { answer: jsworld.text("" + r) });
+      }
+      
+      var name_entry = jsworld.input("text");
+      
+      var add_button = jsworld.button(add_event);
+      var add_button_text = jsworld.text("Add more!");
+      
+      var compute_button = jsworld.button(compute_event);
+      var compute_button_text = jsworld.text("Compute!");
+      
+      var answer_text = jsworld.text("Answer:");
+      
+      var the_div = jsworld.div();
+      
+      function redraw(world) {
+        return [document.body,
+          [name_entry],
+          [add_button, [add_button_text]],
+          [compute_button, [compute_button_text]],
+          [answer_text],
+          [world.answer],
+          [the_div].concat(world.trees)];
+      }
+      
+      function redraw_css(world) {
+        return [
+          [compute_button, ["font-weight", "bold"]],
+          [world.headers, ["background-color", "grey"]],
+          ["box", ["border", "thin", "solid", "black"],
+                  ["width", "200px"],
+                  ["margin", "10px"]]
+        ];
+      }
+      
+      function tick(world) {
+        return world;
+      }
+    </script>
+  </head>
+  
+  <body onload="jsworld.big_bang(window.document.body, init_world,
+                                 [jsworld.on_draw(redraw, redraw_css),
+                                  jsworld.on_tick(100, tick)])">
+  </body>
+</html>

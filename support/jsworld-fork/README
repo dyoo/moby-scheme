@@ -1,0 +1,240 @@
+JSWorld API
+
+Summary
+=======
+
+Reactive World-style programming in Javascript.
+
+
+
+Example
+========
+
+Here's a simple program that displays a clickable button.  When the
+run() function is called, a button and a red number will be written to
+the document; clicking the button will cause the displayed number to
+be incremented.  (examples/simple-button.html)
+
+      var jsworld = plt.Jsworld;
+
+      var init_world = 0;
+
+      // press: world -> world
+      function press(w) {
+          return w + 1;
+      }
+
+      function draw(w) {
+          return [document.body,
+                  [jsworld.p({id: "myPara"}), [jsworld.text(w)]],
+                  [jsworld.button(press),
+                   [jsworld.text("Press me to increment " + w)]]];
+      }
+      
+      function draw_css(world) {
+        return [["myPara", ["color", "red"],
+                           ["font-size", "50px"]]];
+      }
+
+      function run() {
+          jsworld.big_bang(window.document.body, 
+                           init_world, 
+		           [jsworld.on_draw(draw, draw_css)]);
+      }
+
+
+
+
+Types
+=====
+
+The main functions passed to an on_draw expect the following types:
+
+
+dom-sexp: [node, dom-sexp...]
+
+css-sexp: [[string-or-node [string string]...]...]
+          
+
+
+The node-producing functions are described later in this document.
+Examples of nodes are:
+
+    var n1 = plt.jsworld.div();
+    var n2 = plt.jsworld.p();
+    var n3 = plt.jsworld.text("I am a text");
+
+Examples of dom-exps are:
+
+    var dom1 = [n1];
+    var dom2 = [n1, [n2, [n3]]]
+    var dom3 = [n1, [n2, [n3],
+                         [n3]]]
+
+
+Examples of css-sexps are
+
+    var emptyStyle = [];
+    var style1 = [["someNodeId", ["width", "30px"],
+                                 ["height", "30px"]]];
+
+
+big-bang
+========
+
+plt.Jsworld.big_bang: node world (listof handler) (listof css-style) -> world
+
+Starts a reactive computation.  If a big_bang is already in effect,
+temporarily pauses that computation and begins a new nested one.
+
+
+
+
+Helpers
+=======
+
+plt.Jsworld.node_to_tree: node -> dom-sexp
+
+Given a node, produces an dom-sexp of that node.  Useful when you
+want to use the existing dom tree in a static HTML file in a big-bang.
+See examples/static-with-jsworld for an example of this.
+
+
+
+
+
+Handler functions
+==================
+plt.Jsworld.on_draw: (world -> dom-sexp) (world -> (sexpof css-style)) -> handler
+
+Called whenever the world changes; the first argument produces a new
+dom, and the second produces the new styles applied to that dom.
+
+Example:
+
+    function draw(w) {
+        return [plt.Jsworld.p([["id" "my-para"]]),
+                [plt.Jsworld.text("hello world")]
+                [plt.Jsworld.text("This is a test")]];
+    }
+
+    function draw_css(w) {
+        return [["my-para", ["font-size" "large"]]];
+    }
+
+    plt.Jsworld.big_bang(...,
+                         [... 
+                          plt.Jsworld.on_draw(draw, draw_css),
+                          ...])
+
+
+----------------------------------------------------------------------
+
+
+plt.on_tick: number (world -> world) -> handler
+
+Called after n milliseconds to go from one world to the next.
+
+
+----------------------------------------------------------------------
+
+plt.stop_when: (world -> boolean) (world -> void) -> handler
+
+Registers a stop-when handler that consumes a world judger.  If the
+judge says that th world is stopped, then the reactive computation
+completes and the final world value is sent to the second function.
+
+
+----------------------------------------------------------------------
+
+plt.on_world_change: (world -> void) -> handler
+
+Registers an on-world-chnage handler that listens whenever the world
+changes.  The listener must not have an effect on the world.
+
+
+----------------------------------------------------------------------
+
+
+
+Node types
+==========
+
+----------------------------------------------------------------------
+
+
+plt.Jsworld.p: assoc -> node
+
+Creates a P paragraph element.
+
+
+----------------------------------------------------------------------
+
+plt.Jsworld.div: assoc -> node
+
+Creates a DIV element.
+
+
+----------------------------------------------------------------------
+
+
+plt.Jsworld.button: (world -> world) assoc -> node
+
+Creates a BUTTON element; the callback consumes a world and produces
+an updated world.
+
+
+Example:
+
+     plt.Jsworld.button(function(w) { return w + 1; })
+
+produces a button that, when pressed, increments the world by one.
+
+----------------------------------------------------------------------
+
+
+
+plt.Jsworld.bidirectional_input: string (world -> string) (world string -> world) assoc -> node
+
+Consumes the types of an element, a function for getting the input's
+value from the world, and an updating function that takes the content
+of the form to update the world.
+
+Example:
+
+    var node = plt.Jsworld.input("text",
+                                 function(w) { return "I see: " + w }
+		                 function(w, str) { return w; })
+
+produces an input text field that shows a string representation of the
+world, and resists when the user tries to edit the element.
+
+
+----------------------------------------------------------------------
+
+plt.Jsworld.text: string assoc -> node
+
+Example:
+
+    var node = plt.Jsworld.text("Hello World!")
+
+----------------------------------------------------------------------
+
+plt.Jsworld.h1: string assoc -> node
+
+H1 header.
+
+Example:
+
+    var node = plt.Jsworld.h1("I am a header!")
+
+
+----------------------------------------------------------------------
+
+plt.Jsworld.img: string assoc -> node
+
+Image.  Consumes the source and produces an image node.
+
+Example:
+
+    var node = plt.Jsworld.img("http://plt-scheme.org/logo.png");

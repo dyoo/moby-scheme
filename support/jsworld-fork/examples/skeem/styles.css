@@ -1,0 +1,109 @@
+ul.env		{list-style-type:	none; margin-left: 10px;}
+ul.env li	{margin-bottom:		40px; clear: both; list-style-type: none;}
+div#definitions{margin-left:	100px;}
+div.binding div{float;left;}
+label{display:block;}
+
+.image		{ background:		#fff;}
+.number		{ background:		#aaf;}
+.string		{ background:		#afa;}
+.boolean	{ background:		#faa;}
+.error		{ background:		red;}
+div#debug input{position: absolute; left: 200px; top:200px; border: solid red 3px; z-index: 999}
+div#toolbar input{margin:2px; padding:0px}
+div#toolbar{
+	width:			150px;
+	height:			100%;
+	background:		gray;
+	position:		absolute;
+	top:			0px;
+	left:			0px;
+	margin:			0px;
+	border:			2px black solid; 
+}
+
+div.binding,div.function,div.big-bang{
+	display:		none; 
+	background:		gray; 
+	color:			white;
+	padding-left:	10px;
+	float:			left;
+	font-size:		9px;
+	clear:			both;
+}
+
+div.Expression{
+	display:		table-cell;
+	margin:			5px;
+	clear:			none;
+	float:			left;
+	border:			3px solid black;
+	display:		block;
+	text-align:		center;
+	-moz-border-radius: 10px; 
+	-webkit-border-radius:10px; 
+}
+
+input, canvas, select, textarea, button{
+	margin:			5px;
+	clear:			none;
+	display:		inline;
+	padding:		3px;
+	font-size:		10px;
+	height:			22px;
+}
+textarea{text-align: center; float: left;}
+div.operator{
+	float:			top;
+	height:			20px;
+	background:		black;
+	color:			white;
+	text-align:		center;
+	cursor:			move;
+	-moz-user-select:	none;
+    -khtml-user-select: none;
+    user-select:		none;
+}
+
+h1{
+	font-size:		16px; 
+	background:		black;
+	text-align:		center;
+	padding-top:	3px;
+	padding-bottom:	3px;
+	margin:			0px;
+	color:			white;
+	width:			150px;
+}
+
+div#modalBackground{
+    position:			fixed;
+    left:				150px;
+    top:				0;
+    height:				100%;
+	z-index:			100;
+	background-color:	#333333;
+	text-align:			center;
+	display:			none;
+	opacity:			0.40;
+    width:				100%;
+	filter:				alpha(opacity=40)
+}
+div#modalWindow{
+    position:			fixed;
+	left:				175px;
+	top:				50px;
+	z-index:			101;
+	display:			none;
+    width:				700px;
+	height:				auto;
+}
+div#modalWindow fieldset{background: black; width: 100%; padding: 10px;}
+form.modal{
+	background:			white; 
+	border:				solid 1px black;
+	width:				100%; 
+	padding:			10px; 
+	display:			none;
+	margin:				0px;
+}

@@ -1,0 +1,38 @@
+<html>
+	<head>
+	<title>DOM Experiment</title>
+	<link rel="stylesheet" type="text/css" href="styles.css"/>		
+	<script type="text/javascript" src="../../jsworld.js"></script>
+	<script type="text/javascript" src="skeem.js"></script>
+	<script>
+	  var jsworld = plt.Jsworld;
+
+		var toolbar		= jsworld.div({id: "toolbar"});
+		var functions	= ['+','-','*','/','sqrt','expt','string-length','string-append','image-width','image-height','rotate','circle','rectangle','place-image','>','<','=','or','and','not','string=?'];
+		var variable	= jsworld.button(addValue);
+		var variable_text=jsworld.text("Add a Value");
+		var heading		= jsworld.h1();
+		var heading_text=jsworld.text("Tools");
+		var heading2	= jsworld.h1();
+		var heading2_text=jsworld.text("Built-in Functions");
+		var heading3	= jsworld.h1();
+		var heading3_text=jsworld.text("Your Functions");
+		var compute		= jsworld.button(compute_event);
+		var compute_text= jsworld.text("Evaluate");
+		var answer_text = jsworld.text("Answer:");
+		var buttons		= [[compute, [compute_text]]];
+		var all			= jsworld.map(functions, function (f){ return [jsworld.button(makeEvaluator(f)), [jsworld.text(f)]]});
+		var all			= jsworld.append(all, [[heading3, [heading3_text]]]);
+
+		var the_div = jsworld.div();
+	</script>
+	</head>
+	<body onload="jsworld.big_bang(document.body,
+                                       init_world, 
+                                       [jsworld.on_draw(redraw, redraw_css),
+                                        jsworld.on_tick(10000000000, tick)],
+				       { mousemove:continue_drag,
+					 mouseup:	complete_drag,
+					 keypress: stop_drag });">
+	</body>
+</html>

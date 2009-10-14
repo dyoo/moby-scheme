@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta name="viewport" content="width=320; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>PhoneGap</title>
+	  <link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+	  <script type="text/javascript" charset="utf-8">
+
+    var deviceInfo = function(){
+      document.getElementById("platform").innerHTML = Device.getPlatform();
+      document.getElementById("version").innerHTML = Device.getVersion();
+      document.getElementById("uuid").innerHTML = Device.getUuid();
+    }
+    
+    var stopShakeWatch = null;
+
+    var shakeAndRing = function() {
+    	if (stopShakeWatch == null) {
+    	    Console.println("Starting shake listener.");
+   	    var suc = function() {diskStart();};
+	    var fail = function() {Console.println("Shake watching failed.");};
+	    var ops = {"changeMagnitude" : 8.5, "shakeDelay" : 2000};
+
+//    	    Console.println("typeof shakeWatchId = " + (typeof shakeWatchId));
+//    	    Console.println("typeof navigator.accelerometer = " + (typeof navigator.accelerometer));
+//    	    Console.println("typeof watchShake = " + (typeof navigator.accelerometer.watchShake));
+
+            stopShakeWatch = navigator.accelerometer.watchShake(suc, fail, ops);
+    	}
+    	else {
+    	    Console.println("Stopping shake listener.");
+    	    stopShakeWatch();
+    	    stopShakeWatch = null;
+    	}
+    }
+
+    var stopVibrateWatch = null;
+
+    var shakeAndVibrate = function() {
+    	if (stopVibrateWatch == null) {
+   	    var suc = function() {navigator.notification.vibrate(0);};
+	    var fail = function() {Console.println("Shake watching failed.");};
+	    var ops = {"changeMagnitude" : 6.25, "shakeDelay" : 500};
+
+            stopVibrateWatch = navigator.accelerometer.watchShake(suc, fail, ops);
+    	}
+    	else {
+    	    stopVibrateWatch();
+    	    stopVibrateWatch = null;
+    	}
+    }
+
+    var getLocation = function() {
+      var suc = function(p){
+		alert(p.latitude + " " + p.longitude);
+      };
+      var fail = function() {Console.println("getLocation failed.");};
+      navigator.geolocation.getCurrentPosition(suc,fail);
+    }
+
+    var locWatchId = null;
+
+    var watchLocation = function() {
+	if (locWatchId == null) {
+//	    Console.println("Starting location watch");
+  	    var suc = function(p){
+  		document.getElementById('lat').innerHTML = roundNumber(p.latitude);
+ 		document.getElementById('lng').innerHTML = roundNumber(p.longitude);
+ 	    };
+ 	    var fail = function(){Console.println("Location watching failed.");};
+ 	    var opt = {};
+ 	    opt.frequency = 1000;
+ 	    locWatchId = navigator.geolocation.watchPosition(suc, fail, opt);
+	}
+	else {
+//	    Console.println("Stopping location watch");
+	    navigator.geolocation.clearWatch(locWatchId);
+	    locWatchId = null;
+	}
+     }
+    
+    var beep = function(){
+	    navigator.notification.beep(2);
+    }
+
+    var isDiskPlaying = false;
+    var isOtPlaying = false;
+    var diskFile = "file:///android_asset/tones/C-tone.wav";
+    var webFile = "http://www.cs.brown.edu/people/jon/music/A.F.I%20-%20Midnight%20Sun.mp3";
+
+    var diskStart = function() {
+    	if (isDiskPlaying) {
+//	    Console.println("Pausing disk file.");
+    	    navigator.audio.pauseMusic(diskFile);
+    	    isDiskPlaying = false;
+    	}
+    	else {
+//	    Console.println("Starting disk file.");
+    	    navigator.audio.playMusic(diskFile, function() {isDiskPlaying = false;});
+    	    isDiskPlaying = true;
+//    	    isOtPlaying = false;
+    	}
+    }
+
+    var webStart = function() {
+    	if (isOtPlaying) {
+    	    navigator.audio.pauseMusic(webFile);
+    	    isOtPlaying = false;
+    	}
+    	else {
+    	    navigator.audio.playMusic(webFile);
+//    	    isDiskPlaying = false;
+    	    isOtPlaying = true;
+    	}
+    }
+
+    var diskStop = function() {
+//	    Console.println("Trying to stop audio.");
+	    navigator.audio.stopMusic(diskFile);
+	    isDiskPlaying = false;
+    }
+
+    var stopAllAudio = function() {
+//    	Console.println("Stopping all audio (index.html)");
+	navigator.audio.stopAllMusic();
+    }
+	
+    var increaseAudioVol = function() {
+		navigator.audio.increaseMusicVolume();
+    }
+
+    var decreaseAudioVol = function() {
+		navigator.audio.decreaseMusicVolume();
+    }
+    
+    var setAudioVol = function() {
+		navigator.audio.setMusicVolume(window.document.getElementById('vol').value);
+    }
+	
+	var webStop = function() {
+		navigator.audio.stop(webFile);
+		isOtPlaying = false;
+	}
+	
+  	var vibrate = function(){
+  	  navigator.notification.vibrate(0);
+  	}
+	
+  	var getContact = function(){
+  	  var suc = function(c){ alert("Contact 4: " + c.contacts[3].name); };
+  		var fail = function(){};
+  		navigator.ContactManager.get(suc, fail);
+  	}
+  	
+	var stopAccelWatch = null;
+
+  	var watchAccel = function() {
+	    if (stopAccelWatch == null) {
+//		Console.println("Starting accel watch");
+  		var suc = function(a){
+  			document.getElementById('azimuth').innerHTML = roundNumber(a.azimuth);
+  			document.getElementById('pitch').innerHTML = roundNumber(a.pitch);
+  			document.getElementById('roll').innerHTML = roundNumber(a.roll);
+  		};
+  		var fail = function(){};
+  		var opt = {};
+  		opt.frequency = 100;
+  		stopAccelWatch = navigator.accelerometer.watchOrientation(suc,fail);
+	    }
+	    else {
+//		Console.println("Stopping accel watch");
+		stopAccelWatch();
+		stopAccelWatch = null;
+	    }
+  	}
+
+	var playDTMF = function(tone) {
+		navigator.audio.playDTMF(tone);
+    	    	setTimeout(navigator.audio.stopDTMF, 3000);
+	}
+
+	var stopDTMF = function() {
+		navigator.audio.stopDTMF();
+	}
+
+	var sendSms = function() {
+		var number = window.document.getElementById('number').value;
+		var msg = window.document.getElementById('message').value;
+		navigator.sms.send(number, msg);
+	}
+    	
+    function roundNumber(num) {
+      var dec = 3;
+      var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+      return result;
+    }
+    
+	  var preventBehavior = function(e) { 
+      e.preventDefault(); 
+    };
+
+    function preventSleep() {
+    	navigator.power.setWakeLock();
+    };
+
+    function allowSleep() {
+    	navigator.power.releaseWakeLock();
+    };
+		
+		function init(){
+		  document.addEventListener("touchmove", preventBehavior, false);
+		  deviceInfo();
+//		  navigator.power.keepAwake();
+		}
+		
+	  </script>
+  </head>
+  <body onload="init();" id="stage" class="theme">
+    <h1>Welcome to PhoneGap!</h1>
+    <h2>this file is located at assets/index.html</h2>
+    <h2><a href="file:///android_asset/Bubble3/world.html">Bubble</a></h2>
+    <h2><a href="file:///android_asset/ShakeToDtmf/world.html">DMTF Shake</a></h2>
+    <h2><a href="file:///android_asset/SilencingMusic/world.html">Sleep Timer</a></h2>
+    <h2><a href="file:///android_asset/cpu-test.html">CPU Test</a></h2>
+    <div id="info">
+      <h4>Platform: <span id="platform">&nbsp;</span></h4>
+      <h4>Version: <span id="version">&nbsp;</span></h4>
+      <h4>UUID:   <span id="uuid">&nbsp;</span></h4>
+    </div>
+    <dl id="accel-data">
+      <dt>Azimuth:</dt><dd id="azimuth">&nbsp;</dd>
+      <dt>Pitch:</dt><dd id="pitch">&nbsp;</dd>
+      <dt>Roll:</dt><dd id="roll">&nbsp;</dd>
+    </dl>
+    <dl id="gps-data">
+      <dt>Lat:</dt><dd id="lat">&nbsp;</dd>
+      <dt>Lng:</dt><dd id="lng">&nbsp;</dd>
+    </dl>
+    <a href="#" class="btn large" onclick="navigator.audio.startMusicPlayer();">Start Music Player</a>
+    <a name="volControls" href="#volControls" class="btn" onclick="increaseAudioVol();">Vol up</a>
+    <a href="#volControls" class="btn" onclick="decreaseAudioVol();">Vol down</a>
+    <form method="post" action="#volControls">
+	    <input type="text" id="vol" />
+        <input type="submit" value="Change Volume" class="btn large" onclick="setAudioVol()" />
+    </form>
+    <a href="#volControls" class="btn large" onclick="shakeAndRing();">Shake and Ring</a>
+    <a href="#volControls" class="btn large" onclick="shakeAndVibrate();">Shake and Vibrate</a>
+    <a href="#volControls" class="btn large" onclick="watchAccel();">Watch Accelerometer</a>
+    <a href="#volControls" class="btn large" onclick="watchLocation();">Watch Location</a>
+    <a href="#volControls" class="btn large" onclick="getLocation();">Get Location</a>
+    <a href="#volControls" class="btn" onclick="preventSleep();">Keep Awake</a>
+    <a href="#volControls" class="btn" onclick="allowSleep();">Allow Sleep</a>
+    <a href="#volControls" class="btn large" onclick="navigator.power.finish();">Finish</a>
+    <a name="keypad" href="#keypad" class="btn small" onclick="playDTMF(0)">0</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(1)">1</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(2)">2</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(3)">3</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(4)">4</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(5)">5</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(6)">6</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(7)">7</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(8)">8</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(9)">9</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(10)">10</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(11)">11</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(12)">12</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(13)">13</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(14)">14</a>
+    <a href="#keypad" class="btn small" onclick="playDTMF(15)">15</a>
+    <a href="#keypad" class="btn large" onclick="stopDTMF()">Stop DTMF</a>
+    <a name="music" href="#music" class="btn" onclick="diskStart();">> / || (File)</a>
+    <a href="#music" class="btn" onclick="webStart();">> / || (Web)</a>
+    <a href="#music" class="btn" onclick="diskStop();">[] (File)</a>
+    <a href="#music" class="btn" onclick="webStop();">[] (Web)</a>
+    <a href="#music" class="btn large" onclick="stopAllAudio();">Stop All Audio</a>
+    <a href="tel://411" class="btn large">Call 411</a>
+    <a href="#music" class="btn" onclick="beep();">Beep</a>
+    <a href="#music" class="btn" onclick="vibrate();">Vibrate</a>
+    <form method="post" action="#music">
+    	<p>Number:</p>
+    	<input type="text" id="number" />
+    	<p>Message:</p>
+    	<input type="text" id="message" />
+        <input type="submit" value="Send Sms" class="btn large" onclick="sendSms()" />
+    </form>
+    <!-- 
+    	<a href="#" class="btn large" onclick="getContact();">Get Fourth Contact</a>
+     -->
+  </body>
+</html>

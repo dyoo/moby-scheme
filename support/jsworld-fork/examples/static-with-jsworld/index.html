@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../jsworld.js"></script>
+
+
+<script lang="javascript">
+
+function init() {
+  var Jsworld = plt.Jsworld;
+
+  function draw(w) {
+     var result = Jsworld.node_to_tree(document.body);
+     return result;
+  }
+
+  function draw_css(w) {
+     return [["para" , ["color", "rgb(" + Math.floor(Math.abs(Math.sin(w)* 256)) +
+                                      ", 0, 0)"]]];
+  }
+
+  function update(w) {
+      return w + 0.1;
+  }
+
+  var initial_world = 0;
+
+  Jsworld.big_bang(document.body, 
+                   initial_world,
+                   [Jsworld.on_draw(draw, draw_css),
+                    Jsworld.on_tick(100, update)]);
+}
+
+</script>
+</head>
+<body onload="init()">
+<p id="para">
+This is a test of the emergency broadcast system.  This is only
+a test.
+</p>
+</body>
+</html>

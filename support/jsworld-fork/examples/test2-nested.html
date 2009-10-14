@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="../jsworld.js"></script>
+    
+    <script type="text/javascript">
+      var jsworld = plt.Jsworld;
+
+      var the_div = jsworld.div();
+      
+      var init_world = { counter: 1, nodes: [], phase: 0, stopped: false };
+      
+      function add(world) {
+        var the_p = jsworld.p();
+        var the_text = jsworld.text("Box #" + world.counter + ": " + name_entry.value);
+        
+        return jsworld.augment(world, {
+          counter: world.counter + 1,
+          nodes: world.nodes.concat([[the_p, [the_text]]]),
+        });
+      }
+      
+      function rotate(world) {
+        if (world.nodes.length < 1) return world;
+        else return jsworld.augment(world, { nodes: world.nodes.slice(1).concat([world.nodes[0]]) });
+      }
+      
+      function eat(world) {
+        if (world.nodes.length < 1) return world;
+        else return jsworld.augment(world, { nodes: world.nodes.slice(1) });
+      }
+
+      function stop(world) {
+          return jsworld.augment(world, {stopped : true});
+      }
+
+      function isStopped(world) {
+          return world.stopped;
+      }
+
+      function start_big_bang(world, key) {
+          jsworld.big_bang(window.document.body, 
+                           init_world, 
+		           [jsworld.on_draw(redraw, redraw_css),
+		            jsworld.on_tick(100, tick),
+                            jsworld.stop_when(isStopped)
+                           ]);
+	  return init_world;
+      }
+      
+      var name_entry = jsworld.input("text");
+      
+      var add_button = jsworld.button(add);
+      var add_button_text = jsworld.text("Add more!");
+      
+      var rotate_button = jsworld.button(rotate);
+      var rotate_button_text = jsworld.text("Rotate!");
+      
+      var eat_button = jsworld.button(eat);
+      var eat_button_text = jsworld.text("Eat!");
+
+      var stop_button = jsworld.button(stop);
+      var stop_button_text = jsworld.text("Stop!");
+
+
+      var subbig_button = jsworld.button(start_big_bang);
+      var subbig_button_text = jsworld.text("Start sub-big-bang!");
+
+      
+      function redraw(world) {
+        return [document.body,
+          [name_entry],
+          [add_button, [add_button_text]],
+          [rotate_button, [rotate_button_text]],
+          [eat_button, [eat_button_text]],
+          [stop_button, [stop_button_text]],
+          [subbig_button, [subbig_button_text]],
+          [the_div].concat(world.nodes)];
+      }
+      
+      function redraw_css(world) {
+        return [
+          [add_button, ["font-size", "larger"]],
+          [rotate_button, ["color", "red"]],
+          [the_div, ["border", "thin", "solid", "black"]]
+        ].concat(
+          jsworld.mapi(world.nodes, function (node, i) {
+            return [node[0], ["position", "relative"],
+                             ["left", (100 + 100 * Math.sin(world.phase + 2 * Math.PI * i / world.nodes.length)) + "px"]];
+          })
+        );
+      }
+      
+      function tick(world) {
+        return jsworld.augment(world, { phase: world.phase + 0.1 });
+      }
+    </script>
+  </head>
+  
+  <body onload="start_big_bang()">
+  </body>
+</html>
