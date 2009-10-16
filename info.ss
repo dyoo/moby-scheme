@@ -11,3 +11,5 @@
                                  "sandbox"
                                  "stub"
                                  "support"))
+
+(define scribblings '(("manual.scrbl")))
