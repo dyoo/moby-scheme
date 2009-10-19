@@ -52,53 +52,6 @@ of the compiled program.
   
 
 
-@subsection{API Extensions}
-
-
-
-@defproc[(get-url [url string?]) string?]{
-
-Does an HTTP GET to download the string content from a URL.
-
-As an example, if @scheme[get-url] is called on the URL to the PLT Scheme homepage,
-@schemeblock[
-(get-url "http://plt-scheme.org/")
-]
-it produces the textual content of the @filepath{index.html} on the homepage.
-}
-
-@defproc[(location-distance (lat-1 number?) (long-1 number?) (lat-2 number?) (long-2 number?)) number?]{
-Given latitude-1, longitude-1, latitude-2, longitude-2, produces the
-distance between the locations in terms of meters.
-}
-
-
-
-@defproc[(xml->s-exp (xml-string string?)) s-expression?]{
-Parses a string containing XML to s-expressions.
-}
-
-
-
-
-@defform[(define-struct name (id ...))]{
-
-@scheme[define-struct] will define structure constructors, selectors, mutators, and a predicate.  e.g.
-
-@schemeblock[(define-struct foo (a b))]
-defines the following forms:
-@itemlist[
-          @item{make-foo: X Y -> foo}
-           @item{foo-a: foo -> X}
-           @item{foo-b: foo -> Y}
-           @item{foo?: any -> boolean}
-           @item{set-foo-a!: foo X -> void}
-           @item{set-foo-b!: foo Y -> void}
-]
-}
-
-
-
 @subsection{World}
 
 The Moby language supports reactive World-style
@@ -190,7 +143,7 @@ that change.
 
 @defproc[(stop-when [stop? (world -> boolean)]) handler?]{
 When the world should be stopped --- when @scheme[stop?] applied to the world
-produces @scheme[true], then the @scheme[js-big-bang] terminates.
+produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
 }
                                                           
                                                         
@@ -241,7 +194,7 @@ The following program shows a ball falling down a scene.
 (js-big-bang INITIAL-WORLD
              (on-tick 1/15 tick)
              (on-redraw render)
-             (stop-when hits-floor?))))
+             (stop-when hits-floor?)))
 
 }
 
@@ -456,6 +409,49 @@ A @scheme[sound] is a:
 
 
 
+
+@subsection{API Extensions}
+
+
+The following helper functions and forms are provided by Moby.
+
+@defproc[(get-url [url string?]) string?]{
+
+Does an HTTP GET to download the string content from a URL.
+
+As an example, if @scheme[get-url] is called on the URL to the PLT Scheme homepage,
+@schemeblock[
+(get-url "http://plt-scheme.org/")
+]
+it produces the textual content of the @filepath{index.html} on the homepage.
+}
+
+@defproc[(location-distance (lat-1 number?) (long-1 number?) (lat-2 number?) (long-2 number?)) number?]{
+Given latitude-1, longitude-1, latitude-2, longitude-2, produces the
+distance between the locations in terms of meters.
+}
+
+@defproc[(xml->s-exp (xml-string string?)) s-expression?]{
+Parses a string containing XML to s-expressions.
+}
+
+
+
+@defform[(define-struct name (id ...))]{
+
+@scheme[define-struct] will define structure constructors, selectors, mutators, and a predicate.  e.g.
+
+@schemeblock[(define-struct foo (a b))]
+defines the following forms:
+@itemlist[
+          @item{make-foo: X Y -> foo}
+           @item{foo-a: foo -> X}
+           @item{foo-b: foo -> Y}
+           @item{foo?: any -> boolean}
+           @item{set-foo-a!: foo X -> void}
+           @item{set-foo-b!: foo Y -> void}
+]
+}
 
 
 
