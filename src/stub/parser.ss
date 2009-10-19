@@ -5,8 +5,8 @@
          scheme/list
          xml)
 
-;; parse-xml: string -> xexpr
-(define (parse-xml a-str)  
+;; xml->s-exp: string -> xexpr
+(define (xml->s-exp a-str)  
   (let ([result 
          (convert-cdata&normalize
           (xml->xexpr (document-element
@@ -49,5 +49,5 @@
           (regexp-split #rx"[ \n\t]+" a-str)))
 
 
-(provide-primitives parse-xml
+(provide-primitives xml->s-exp
                     split-whitespace)

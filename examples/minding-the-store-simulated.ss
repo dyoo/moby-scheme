@@ -174,7 +174,7 @@
                ""]
               [else
                (sxml-text 
-                (parse-xml 
+                (xml->s-exp 
                  (string-append 
                   "<top>" x "</top>")))]))]
     (make-place (sxml-text 
@@ -401,7 +401,7 @@
 
 (define ALL-PLACES
   (parse-places 
-    (parse-xml 
+    (xml->s-exp 
      (maybe-use-hardcoded-values 
       "" #;(get-url MYMAPS-URL)))))
 

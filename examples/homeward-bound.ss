@@ -321,7 +321,7 @@
               [(string=? x "")
                ""]
               [else
-               (sxml-text (parse-xml (string-append "<top>" x "</top>")))]))]
+               (sxml-text (xml->s-exp (string-append "<top>" x "</top>")))]))]
     
     (make-place (sxml-text (first (sxml-find-children 'title (sxml-children xexpr))))
                 
@@ -415,7 +415,7 @@
 
 (define ALL-PLACES
   (parse-places 
-   (parse-xml (get-url MYMAPS-URL))))
+   (xml->s-exp (get-url MYMAPS-URL))))
 
 
 (define TICK-DELAY (* 5 60))  ;; wait every five minute before updates.

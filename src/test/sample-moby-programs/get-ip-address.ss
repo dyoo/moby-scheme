@@ -19,7 +19,7 @@
 ;; refresh: world -> world
 (define (refresh w)
   (extract-ip-address
-   (parse-xml
+   (xml->s-exp
     (get-url "http://ip.hashcollision.org/"))))
 
 

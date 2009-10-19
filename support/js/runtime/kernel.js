@@ -1839,8 +1839,8 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.parse_dash_xml = function(s) {
-	check(s, isString, "parse-xml", "string", 1);
+    plt.Kernel.xml__dash__greaterthan_s_dash_exp  = function(s) {
+	check(s, isString, "xml->s-exp", "string", 1);
 	if (s.length == 0) { 
 	    return plt.types.String.makeInstance(""); 
 	}

@@ -315,7 +315,7 @@
 
     (make-module-binding 'parser
                          module-path
-                         (list (make-binding:function 'parse-xml
+                         (list (make-binding:function 'xml->s-exp
                                                       module-path 
                                                       1 
                                                       false 

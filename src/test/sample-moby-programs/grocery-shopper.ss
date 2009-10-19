@@ -220,7 +220,7 @@
                  "106933521686950086948.00046579f4b482756abc5"))
 
 (define ALL-PLACES
-  (parse-places (parse-xml (get-url mymaps-url))))
+  (parse-places (xml->s-exp (get-url mymaps-url))))
 
 
 ;; Update every ten seconds.

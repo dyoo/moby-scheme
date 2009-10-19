@@ -153,7 +153,7 @@
 ;; Reparses the places.
 (define (reparse a-world)
   (make-world (world-url a-world)
-              (parse-places (parse-xml (get-url (world-url a-world))))
+              (parse-places (xml->s-exp (get-url (world-url a-world))))
               false))
 
 (define view 

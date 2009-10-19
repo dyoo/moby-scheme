@@ -304,7 +304,7 @@
                      (void 0 true)
                      
                      ;; Parsing
-                     (parse-xml 1)
+                     (xml->s-exp 1)
                      (split-whitespace 1)
                      
                      

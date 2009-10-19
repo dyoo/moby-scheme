@@ -7,6 +7,8 @@
          mred
          (prefix-in error: htdp/error)
          htdp/image
+
+	 (only-in htdp/world nw:rectangle place-image empty-scene scene+line)
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
@@ -93,59 +95,6 @@
  run-movie ;; [Listof Image] -> true 
  )
 
-;; ---------------------------------------------------------------------------
-
-;                                                                             
-;                                                                             
-;   ;;;;;                                                  ;;;;;               
-;   ;                                    ;                  ;                 
-;   ;                                    ;                  ;                 
-;   ;      ;  ;   ; ;;    ;;;   ; ;;;  ;;;;;   ;            ;   ;;; ;    ;;;; 
-;   ;;;;;  ;  ;   ;;  ;  ;   ;  ;;  ;    ;     ;            ;   ; ;;;   ;   ; 
-;   ;       ;;    ;   ;  ;   ;  ;        ;                  ;   ; ; ;   ;   ; 
-;   ;       ;;    ;   ;  ;   ;  ;        ;                  ;   ; ; ;   ;   ; 
-;   ;      ;  ;   ;   ;  ;   ;  ;        ;     ;            ;   ; ; ;   ;  ;; 
-;   ;;;;;  ;  ;   ;;;;    ;;;   ;         ;;   ;          ;;;;; ; ; ;    ;; ; 
-;                 ;                                                         ; 
-;                 ;                                                      ;;;; 
-;                                                                              
-
-(define (nw:rectangle width height mode color)
-  (check-pos 'rectangle width "first")
-  (check-pos 'rectangle height "second")
-  (check-mode 'rectangle mode "third")
-  (check-color 'rectangle color "fourth")
-  (put-pinhole (rectangle width height mode color) 0 0))
-
-(define (place-image image x y scene)
-  (check-image 'place-image image "first")
-  (error:check-arg 'place-image (number? x) 'integer "second" x)
-  (error:check-arg 'place-image (number? y) 'integer "third" y)
-  (check-scene 'place-image scene "fourth")
-  (let ([x (number->integer x)]
-        [y (number->integer y)])
-    (place-image0 image x y scene)))
-
-(define (empty-scene width height)
-  (check-pos 'empty-scene width "first")
-  (check-pos 'empty-scene height "second")    
-  (put-pinhole 
-   (overlay (rectangle width height 'solid 'white)
-                  (rectangle width height 'outline 'black))
-   0 0))
-
-(define (scene+line img x0 y0 x1 y1 c)
-  ;; img and c are checked via calls to add-line from image.ss
-  (error:check-arg 'scene+line (scene? img) "scene" "first" "plain image")
-  (error:check-arg 'scene+line (number? x0) "number" "second" x0)
-  (error:check-arg 'scene+line (number? y0) "number" "third" y0)
-  (error:check-arg 'scene+line (number? x1) "number" "fourth" x1)
-  (error:check-arg 'scene+line (number? y1) "number" "fifth" y1)
-  (let ([x0 (number->integer x0)]
-        [x1 (number->integer x1)]
-        [y0 (number->integer y0)]
-        [y1 (number->integer y1)])
-    (add-line-to-scene0 img x0 y0 x1 y1 c)))
 
 ;                                                                        
 ;                                                                        
