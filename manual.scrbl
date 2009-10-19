@@ -79,16 +79,11 @@ Parses a string containing XML to s-expressions.
 }
 
 
-@defproc[(split-whitespace (a-str string?)) (listof string?)]{
-Helper function: splits a string into chunks, using whitespace as the
-delimiter.
-}
-
 
 
 @defform[(define-struct name (id ...))]{
 
-@scheme[define-struct] will also define structure mutators.  e.g.
+@scheme[define-struct] will define structure constructors, selectors, mutators, and a predicate.  e.g.
 
 @schemeblock[(define-struct foo (a b))]
 defines the following forms:
@@ -957,8 +952,8 @@ same meaning as in @hyperlink["http://docs.plt-scheme.org/htdp-langs/advanced-pr
 
 
 
-@subsection{Missing functionality}
-We are currently missing the following forms from ASL:
+@subsection{Unimplemented forms}
+The following ASL forms are currently unimplemented:
 @itemlist[@item{@scheme[begin0]}
            @item{@scheme[delay]}
            @item{@scheme[shared]}
