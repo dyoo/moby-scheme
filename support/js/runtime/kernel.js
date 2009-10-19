@@ -1839,7 +1839,7 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.xml__dash__greaterthan_s_dash_exp  = function(s) {
+    plt.Kernel.xml_dash__greaterthan_s_dash_exp  = function(s) {
 	check(s, isString, "xml->s-exp", "string", 1);
 	if (s.length == 0) { 
 	    return plt.types.String.makeInstance(""); 
