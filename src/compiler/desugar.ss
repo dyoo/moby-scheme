@@ -517,7 +517,7 @@
                         (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
                         (cond
                           [(> depth 0)
-                           (datum->stx (list (first (stx-e a-stx))
+                           (datum->stx (list 'list (list 'quote (first (stx-e a-stx)))
                                              (handle-quoted (second (stx-e a-stx))
                                                             (add1 depth)))
                                        (stx-loc a-stx))]
@@ -531,19 +531,19 @@
                         (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
                         (cond
                           [(> depth 1)
-                           (datum->stx (list (first (stx-e a-stx))
+                           (datum->stx (list 'list (list 'quote (first (stx-e a-stx)))
                                              (handle-quoted (second (stx-e a-stx)) 
                                                             (sub1 depth)))
                                        (stx-loc a-stx))]
                           [(= depth 1)
-                           (handle-quoted (second (stx-e a-stx)) (sub1 depth))]
+                           (second (stx-e a-stx))]
                           [else
                            (syntax-error "misuse of a comma or 'unquote, not under a quasiquoting backquote" a-stx)]))]
                      
                      [(stx-begins-with? a-stx 'unquote-splicing)
                       (cond
                         [(> depth 1)
-                         (datum->stx (list (first (stx-e a-stx))
+                         (datum->stx (list 'list (list 'quote (first (stx-e a-stx)))
                                            (handle-quoted (second (stx-e a-stx)) 
                                                           (sub1 depth)))
                                      (stx-loc a-stx))]
@@ -583,7 +583,7 @@
                                   (stx-loc a-stx))])]
               [else
                (cond
-                 [(= depth 1)
+                 [(> depth 0)
                   (datum->stx (list 'quote a-stx) (stx-loc a-stx))]
                  [else
                   a-stx])]))]
