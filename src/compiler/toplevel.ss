@@ -305,8 +305,6 @@
                      
                      ;; Parsing
                      (xml->s-exp 1)
-                     (split-whitespace 1)
-                     
                      
                      ;; Vectors
                      

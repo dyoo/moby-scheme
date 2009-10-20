@@ -50,4 +50,4 @@
 
 
 (provide-primitives xml->s-exp
-                    split-whitespace)
+                    #;split-whitespace)

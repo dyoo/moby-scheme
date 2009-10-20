@@ -322,15 +322,15 @@
                                                       "plt.lib.Parser.parseXml"
                                                       empty
                                                       false)
-                               (make-binding:function 'split-whitespace
-                                                      module-path
-                                                      1
-                                                      false
-                                                      "plt.lib.Parser.splitWhitespace"
-                                                      empty
-                                                      false)))))
+                               #;(make-binding:function 'split-whitespace
+	                                                      module-path
+        	                                              1
+                	                                      false
+                        	                              "plt.lib.Parser.splitWhitespace"
+                                	                      empty
+                                        	              false)))))
 
-(define jsworld-module 
+(define jsworld-module
   (local [(define module-path
             "moby/jsworld")
 

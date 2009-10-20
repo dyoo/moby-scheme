@@ -293,7 +293,28 @@
                        children)])]))
 
 
+;; split-whitespace: string -> (listof string)
+(define (split-whitespace str)
+  (local [(define (splitter letters-so-far source)
+            (cond
+              [(empty? source)
+               (cond [(empty? letters-so-far)
+                      empty]
+                     [else
+                      (list (list->string (reverse letters-so-far)))])]
 
+              [(char-whitespace? (first source))
+               (cond
+                 [(empty? letters-so-far)
+                  (splitter empty (rest source))]
+                 [else
+                  (cons (list->string (reverse letters-so-far))
+                        (splitter empty (rest source)))])]
+
+              [else
+               (splitter (cons (first source) letters-so-far)
+                         (rest source))]))]
+    (splitter empty (string->list str))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
