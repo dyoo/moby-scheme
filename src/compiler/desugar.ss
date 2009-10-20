@@ -532,7 +532,8 @@
               [else
                (datum->stx (list 'quote a-stx) (stx-loc a-stx))]))]
     (begin (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
-           (list (handle-quoted (second (stx-e a-stx))) pinfo))))
+           (list (handle-quoted (second (stx-e a-stx))) 
+                 pinfo))))
    
    
 
