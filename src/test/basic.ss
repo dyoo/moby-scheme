@@ -204,3 +204,37 @@
 ;; Commented out: we don't yet properly support redefinition of structures.
 #;(test #f a? (list ai))
 
+
+
+
+
+
+
+
+
+;; Quasiquotation tests from syntax.ss.
+(test '(list 3 4) 'quasiquote (list `(list ,(+ 1 2) 4)))
+(test '(list a (quote a)) 'quasiquote (list (let ((name 'a)) `(list ,name ',name))))
+(test '(a 3 4 5 6 b) 'quasiquote (list `(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b)))
+
+;; Test commented out: we shouldn't support dotted pairs.
+;(test '((foo 7) . cons)
+;	'quasiquote
+;	`((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons))))
+
+(test '#(10 5 2 4 3 8) 'quasiquote (list `#(10 5 ,(sqrt 4) ,@(map sqrt '(16 9)) 8)))
+(test 5 'quasiquote (list `,(+ 2 3)))
+(test '(a `(b ,(+ 1 2) ,(foo 4 d) e) f)
+      'quasiquote (list `(a `(b ,(+ 1 2) ,(foo ,(+ 1 3) d) e) f)))
+(test '(a `(b ,x ,'y d) e) 'quasiquote
+	(list (let ((name1 'x) (name2 'y)) `(a `(b ,,name1 ,',name2 d) e))))
+(test '(list 3 4) 'quasiquote (list (quasiquote (list (unquote (+ 1 2)) 4))))
+(test '`(list ,(+ 1 2) 4) 'quasiquote (list '(quasiquote (list (unquote (+ 1 2)) 4))))
+(test '(()) 'qq (list `((,@'()))))
+(define x 5)
+(test '(quasiquote (unquote x)) 'qq (list ``,x))
+(test '(quasiquote (unquote 5)) 'qq (list ``,,x))
+(test '(quasiquote (unquote-splicing x)) 'qq (list ``,@x))
+(test '(quasiquote (unquote-splicing 5)) 'qq (list ``,@,x))
+(test '(quasiquote (quasiquote (quasiquote (unquote (unquote (unquote x)))))) 'qq (list ````,,,x))
+(test '(quasiquote (quasiquote (quasiquote (unquote (unquote (unquote 5)))))) 'qq (list ````,,,,x))
