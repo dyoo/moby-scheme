@@ -244,6 +244,15 @@ function init() {
 	    }
 	}, 
 
+	testReadDotError: function() {
+	    this.assertRaise("MobyParserError",
+			     function() { read(".") });
+
+	    this.assertRaise("MobyParserError",
+			     function() { read("(define f (lambda (x . y) y))"); });
+	},
+
+
 	testReadHashCommentError: function() {
 	    this.assertRaise("MobyParserError",
 			     function() { read("(hello #;") });

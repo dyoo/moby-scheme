@@ -283,6 +283,10 @@ plt.reader = {};
 
 	    case 'symbol':
 		var t = eat('symbol');
+		if (t[1] == '.') {
+		    throw new plt.Kernel.MobyParserError
+		    ("Dotted pairs are not currently accepted by Moby", t[2]);
+		}
 		return makeAtom(plt.types.Symbol.makeInstance(t[1]), t[2]);
 
 	    default:
