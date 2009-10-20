@@ -399,7 +399,8 @@ A @scheme[sound] is a:
 
 @defproc[(make-effect:send-sms (phone-number string) (message string)) effect]{Sends an SMS message.}
 
-@defproc[(make-effect:generate-random: (world-update-f (world number -> world))) effect]{When interpreted, generates a random number on the fly and uses @scheme[world-update-f] to update the world.}
+@; Commenting out the generate-random documentation
+@;{@defproc[(make-effect:generate-random: (world-update-f (world number -> world))) effect]{When interpreted, generates a random number on the fly and uses @scheme[world-update-f] to update the world.}}
 
 @defproc[(make-effect:pick-playlist (world-update-f (world playlist -> world))) effect]{Brings up a playlist picker; when a playlist is selected, the world is updated using @scheme[world-update-f] with the selected @scheme[playlist] sound.}
 
