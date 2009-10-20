@@ -166,16 +166,6 @@
 
 
 
-(js-big-bang #f
-	     (on-draw 
-	      (lambda (w)
-		(list (js-text 
-		       (format "~a tests run.  ~a tests skipped"
-			       number-of-tests
-			       number-of-skipped-tests))))
-	      (lambda (w)
-		'())))
-
 
 
 
@@ -237,13 +227,37 @@
 
 (test '(a `(b ,x ,'y d) e) 'quasiquote
 	(list (let ((name1 'x) (name2 'y)) `(a `(b ,,name1 ,',name2 d) e))))
-;(test '(list 3 4) 'quasiquote (list (quasiquote (list (unquote (+ 1 2)) 4))))
-;(test '`(list ,(+ 1 2) 4) 'quasiquote (list '(quasiquote (list (unquote (+ 1 2)) 4))))
-;(test '(()) 'qq (list `((,@'()))))
-;(define x 5)
-;(test '(quasiquote (unquote x)) 'qq (list ``,x))
-;(test '(quasiquote (unquote 5)) 'qq (list ``,,x))
-;(test '(quasiquote (unquote-splicing x)) 'qq (list ``,@x))
-;(test '(quasiquote (unquote-splicing 5)) 'qq (list ``,@,x))
-;(test '(quasiquote (quasiquote (quasiquote (unquote (unquote (unquote x)))))) 'qq (list ````,,,x))
-;(test '(quasiquote (quasiquote (quasiquote (unquote (unquote (unquote 5)))))) 'qq (list ````,,,,x))
+(test '(list 3 4) 'quasiquote (list (quasiquote (list (unquote (+ 1 2)) 4))))
+(test '`(list ,(+ 1 2) 4) 'quasiquote (list '(quasiquote (list (unquote (+ 1 2)) 4))))
+(test '(()) 'qq (list `((,@'()))))
+(define x 5)
+(test '(quasiquote (unquote x)) 'qq (list ``,x))
+(test '(quasiquote (unquote 5)) 'qq (list ``,,x))
+(test '(quasiquote (unquote-splicing x)) 'qq (list ``,@x))
+(test '(quasiquote (unquote-splicing 5)) 'qq (list ``,@,x))
+(test '(quasiquote (quasiquote (quasiquote (unquote (unquote (unquote x)))))) 'qq (list ````,,,x))
+(test '(quasiquote (quasiquote (quasiquote (unquote (unquote (unquote 5)))))) 'qq (list ````,,,,x))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(js-big-bang #f
+	     (on-draw 
+	      (lambda (w)
+		(list (js-text 
+		       (format "~a tests run.  ~a tests skipped"
+			       number-of-tests
+			       number-of-skipped-tests))))
+	      (lambda (w)
+		'())))
+
