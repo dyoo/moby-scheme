@@ -11,7 +11,7 @@
 ;; FIX BUG: user must not be allowed to rebind any of the primitive keyword names
 (define (desugar-program a-program a-pinfo)
   (local [
-    
+          
           ;; reorder-tests-to-end: program (listof program-element) (listof program-element) -> program
           ;; Helper to reorder the test case special forms to the end of the program.
           (define (reorder-tests-to-end a-program program/rev tests/rev)
@@ -79,8 +79,8 @@
                  (list (cons (first first-desugared+pinfo)
                              (first rest-desugared+pinfo))
                        (second rest-desugared+pinfo)))]))
-                 
-    
+          
+          
           ;; thunkify-stx: stx -> stx
           ;; Wraps a thunk around a syntax.
           (define (thunkify-stx an-stx)
@@ -95,8 +95,8 @@
                    (syntax-error error-msg stx)]
                   [else
                    (void)]))
-
-              
+          
+          
           ;; desugar-test-case: test-case-stx pinfo -> (list test-case-stx pinfo)
           ;; Translates use of a test case form to use of the test case toplevel functions.
           ;; We transform each expression to a thunk, and provide the test case function
@@ -134,7 +134,7 @@
           ;; desugar-expression: expr pinfo -> (list expr pinfo)
           (define (desugar-expression expr pinfo)
             (cond
-
+              
               ;; (cond ...)
               [(stx-begins-with? expr 'cond)
                (desugar-expression/expr+pinfo (desugar-cond expr pinfo))]
@@ -142,7 +142,7 @@
               ;; (case val-expr [quoted-expr expr] ...)
               [(stx-begins-with? expr 'case)
                (desugar-expression/expr+pinfo (desugar-case expr pinfo))]
-
+              
               ;; (let ([id val] ...) ...)
               [(stx-begins-with? expr 'let)
                (desugar-expression/expr+pinfo (desugar-let expr pinfo))]
@@ -150,13 +150,15 @@
               ;; (let* ([id val] ...) ...)
               [(stx-begins-with? expr 'let*)
                (desugar-expression/expr+pinfo (desugar-let* expr pinfo))]
-
+              
               ;; (let* ([id val] ...) ...)
               [(stx-begins-with? expr 'letrec)
                (desugar-expression/expr+pinfo (desugar-letrec expr pinfo))]
-
+              
               ;; (quasiquote x)
-              [(stx-begins-with? expr 'quasiquote)
+              [(or (stx-begins-with? expr 'quasiquote)
+                   (stx-begins-with? expr 'unquote)
+                   (stx-begins-with? expr 'quasiquote))
                (desugar-expression/expr+pinfo (desugar-quasiquote expr pinfo))]
               
               ;; (local ([define ...] ...) body)
@@ -184,7 +186,7 @@
                                             (first desugared-exprs+pinfo))
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
-
+              
               ;; (set! identifier value)
               [(stx-begins-with? expr 'set!)
                (local [(define set-symbol-stx (first (stx-e expr)))
@@ -218,7 +220,7 @@
                                             (first desugared-exprs+pinfo))
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
-
+              
               ;; (or exprs ...)
               [(stx-begins-with? expr 'or)
                (local [(define or-symbol-stx (first (stx-e expr)))
@@ -274,7 +276,7 @@
                  (list (make-stx:list (first desugared-exprs+pinfo)
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]))
-
+          
           ;; processing-loop: program pinfo -> program
           (define (processing-loop a-program a-pinfo)
             (cond 
@@ -286,7 +288,7 @@
                  (list (cons (first desugared-elt+pinfo)
                              (first desugared-rest+pinfo))
                        (second desugared-rest+pinfo)))]))]
-
+    
     (processing-loop (reorder-tests-to-end a-program empty empty)
                      a-pinfo)))
 
@@ -317,7 +319,7 @@
        (datum->stx (list 'lambda (list x-stx)
                          (list 'equal? x-stx val-stx))
                    (stx-loc an-expr)))
-
+     
      
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop list-of-datum answers datum-last answer-last)
@@ -379,7 +381,7 @@
                             (list 'error ''cond
                                   (format "cond: fell out of cond around ~s" (Loc->string (stx-loc an-expr)))))
                       (stx-loc an-expr))]
-
+         
          [else
           (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
                                (first questions)
@@ -417,7 +419,7 @@
                  (reverse answers/rev) 
                  (else-replacement-f (first (stx-e (first clauses))))
                  (second (stx-e (first clauses)))))]
-
+         
          [(empty? (rest clauses))
           (f (reverse questions/rev)
              (reverse answers/rev) 
@@ -480,7 +482,7 @@
     (begin
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (list (loop (stx-e clauses-stx))
-	    pinfo))))
+            pinfo))))
 
 
 ;; desugar-letrec: stx pinfo -> (list stx pinfo)
@@ -492,8 +494,8 @@
             (map (lambda (a-clause)
                    (local [(define name (first (stx-e a-clause)))
                            (define val (second (stx-e a-clause)))]
-                   (datum->stx (list 'define name val)
-                               (stx-loc a-clause))))
+                     (datum->stx (list 'define name val)
+                                 (stx-loc a-clause))))
                  (stx-e clauses-stx)))]
     (begin
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
@@ -523,7 +525,7 @@
                            (datum->stx (handle-quoted (second (stx-e a-stx))
                                                       (add1 depth))
                                        (stx-loc a-stx))]))]
-
+                     
                      [(stx-begins-with? a-stx 'unquote)
                       (begin
                         (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
@@ -533,11 +535,11 @@
                                              (handle-quoted (second (stx-e a-stx)) 
                                                             (sub1 depth)))
                                        (stx-loc a-stx))]
-                          [(= depth 0)
-                           (second (stx-e a-stx))]
+                          [(= depth 1)
+                           (handle-quoted (second (stx-e a-stx)) (sub1 depth))]
                           [else
                            (syntax-error "misuse of a comma or 'unquote, not under a quasiquoting backquote" a-stx)]))]
-
+                     
                      [(stx-begins-with? a-stx 'unquote-splicing)
                       (cond
                         [(> depth 1)
@@ -545,10 +547,11 @@
                                            (handle-quoted (second (stx-e a-stx)) 
                                                           (sub1 depth)))
                                      (stx-loc a-stx))]
-                        [(= depth 0)
-                         (syntax-error "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote" a-stx)]
+                        [(= depth 1)
+                         (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)]
+                        
                         [else
-                         (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)])]
+                         (syntax-error "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote" a-stx)])]
                      
                      [else
                       (datum->stx (cons 'append 
@@ -561,7 +564,7 @@
                                              
                                              [(stx-begins-with? s 'unquote)
                                               (list 'list (handle-quoted s depth))]
-
+                                             
                                              [(stx-begins-with? s 'unquote-splicing)
                                               (cond
                                                 [(> depth 1)
@@ -571,19 +574,24 @@
                                                    (check-single-body-stx! (rest (stx-e s)) s)
                                                    (second (stx-e s)))]
                                                 [else
-                                                 (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)])]
-
+                                                 (syntax-error 
+                                                  "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)])]
+                                             
                                              [else
                                               (list 'list (handle-quoted s depth))]))
                                          (stx-e a-stx)))
                                   (stx-loc a-stx))])]
               [else
-               (datum->stx (list 'quote a-stx) (stx-loc a-stx))]))]
-    (begin (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
-           (list (handle-quoted a-stx 0) 
-                 pinfo))))
-   
-   
+               (cond
+                 [(= depth 1)
+                  (datum->stx (list 'quote a-stx) (stx-loc a-stx))]
+                 [else
+                  a-stx])]))]
+    
+    (list (handle-quoted a-stx 0) 
+          pinfo)))
+
+
 
 
 (provide/contract
