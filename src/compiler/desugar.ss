@@ -506,33 +506,81 @@
 
 ;; desugar-quasiquote: stx pinfo -> (list stx pinfo)
 (define (desugar-quasiquote a-stx pinfo)
-  (local [;; handle-quoted: stx -> stx
-          (define (handle-quoted a-stx)
+  (local [;; handle-quoted: stx depth -> stx
+          (define (handle-quoted a-stx depth)
             (cond
               [(stx:list? a-stx)
-               (cond [(stx-begins-with? a-stx 'unquote)
-                      (begin (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
-                             (second (stx-e a-stx)))]
+               (cond [(stx-begins-with? a-stx 'quasiquote)
+                      (begin 
+                        (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
+                        (cond
+                          [(> depth 0)
+                           (datum->stx (list (first (stx-e a-stx))
+                                             (handle-quoted (second (stx-e a-stx))
+                                                            (add1 depth)))
+                                       (stx-loc a-stx))]
+                          [else
+                           (datum->stx (handle-quoted (second (stx-e a-stx))
+                                                      (add1 depth))
+                                       (stx-loc a-stx))]))]
+
+                     [(stx-begins-with? a-stx 'unquote)
+                      (begin
+                        (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
+                        (cond
+                          [(> depth 1)
+                           (datum->stx (list (first (stx-e a-stx))
+                                             (handle-quoted (second (stx-e a-stx)) 
+                                                            (sub1 depth)))
+                                       (stx-loc a-stx))]
+                          [(= depth 0)
+                           (second (stx-e a-stx))]
+                          [else
+                           (syntax-error "misuse of a comma or 'unquote, not under a quasiquoting backquote" a-stx)]))]
+
                      [(stx-begins-with? a-stx 'unquote-splicing)
-                      (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)]
+                      (cond
+                        [(> depth 1)
+                         (datum->stx (list (first (stx-e a-stx))
+                                           (handle-quoted (second (stx-e a-stx)) 
+                                                          (sub1 depth)))
+                                     (stx-loc a-stx))]
+                        [(= depth 0)
+                         (syntax-error "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote" a-stx)]
+                        [else
+                         (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)])]
+                     
                      [else
                       (datum->stx (cons 'append 
                                         (map 
                                          ;; (stx -> (listof stx))
                                          (lambda (s) 
                                            (cond
+                                             [(stx-begins-with? s 'quasiquote)
+                                              (list 'list (handle-quoted s depth))]
+                                             
+                                             [(stx-begins-with? s 'unquote)
+                                              (list 'list (handle-quoted s depth))]
+
                                              [(stx-begins-with? s 'unquote-splicing)
-                                              (begin
-                                                (check-single-body-stx! (rest (stx-e s)) s)
-                                                (second (stx-e s)))]
+                                              (cond
+                                                [(> depth 1)
+                                                 (list 'list (handle-quoted s depth))]
+                                                [(= depth 1)
+                                                 (begin
+                                                   (check-single-body-stx! (rest (stx-e s)) s)
+                                                   (second (stx-e s)))]
+                                                [else
+                                                 (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)])]
+
                                              [else
-                                              (list 'list (handle-quoted s))]))
+                                              (list 'list (handle-quoted s depth))]))
                                          (stx-e a-stx)))
                                   (stx-loc a-stx))])]
               [else
                (datum->stx (list 'quote a-stx) (stx-loc a-stx))]))]
     (begin (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
-           (list (handle-quoted (second (stx-e a-stx))) 
+           (list (handle-quoted a-stx 0) 
                  pinfo))))
    
    
