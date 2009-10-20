@@ -382,6 +382,45 @@ function init() {
 	    this.assertRaise("MobyTestingError",
 			     function() { run("(check-error 42 \"blah\")")})
 	    run("(check-error (/ 1 0) \"division by zero\")");
+	},
+	
+
+	testQuasiquotation: function() {
+	    this.assert(isEqual(run("'(unquote x)"),
+				run("',x")));
+
+	    this.assert(isEqual(run("'(unquote-splicing x)"),
+				run("',@x")));
+
+	    this.assert(isEqual(run("'foo"),
+				run("`foo")));
+	    this.assert(isEqual(run("'bar"),
+				run("(let ((foo 'bar)) `,foo)")));
+
+	    this.assert(isEqual(run("'(hello world)"),
+	    			run("`(hello world)")));
+
+	    this.assert(isEqual(run("'(x world)"),
+				run("(local ((define x 'goodbye)) `(x world))")));
+
+	    this.assert(isEqual(run("'(goodbye world)"),
+				run("(local ((define x 'goodbye)) `(,x world))")));
+
+	    this.assert(isEqual(run("'(x world)"),
+				run("(local ((define x 'goodbye)) `(,'x world))")));
+
+	    this.assert(isEqual(run("'(x world)"),
+				run("(local ((define x 'goodbye)) `(,`x world))")));
+
+	    this.assert(isEqual(run("'(goodbye world)"),
+				run("(local ((define x 'goodbye)) `(,`,x world))")));
+
+
+	    this.assert(isEqual(run("'(1 2 3)"),
+				run("(let ((numbers '(1 2 3))) `(,@numbers))")));
+
+	    this.assert(isEqual(run("'(a b c d)"),
+				run("(let ((x '(a b)) (y 'c)) `(,@x ,y d))")));
 	}
 
 

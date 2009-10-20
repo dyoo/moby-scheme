@@ -48,6 +48,7 @@ plt.reader = {};
 		    [')' , /^(\)|\]|\})/],
 		    ['\'' , /^(\')/],
 		    ['`' , /^(`)/],
+		    [',@' , /^(,@)/],
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
@@ -124,6 +125,7 @@ plt.reader = {};
 	var quoteSymbol = plt.types.Symbol.makeInstance("quote");
 	var quasiquoteSymbol = plt.types.Symbol.makeInstance("quasiquote");
 	var unquoteSymbol = plt.types.Symbol.makeInstance("unquote");
+	var unquoteSplicingSymbol = plt.types.Symbol.makeInstance("unquote-splicing");
 	var empty = plt.types.Empty.EMPTY;
 
 	function isType(type) {
@@ -237,6 +239,10 @@ plt.reader = {};
 
 	    case ',':
 		return readQuoted(",", unquoteSymbol);
+
+	    case ',@':
+		return readQuoted(",@", unquoteSplicingSymbol);
+
 
 	    case 'number':
 		var t = eat('number');

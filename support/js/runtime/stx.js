@@ -5,6 +5,7 @@ var stx_colon_atom = function (datum,loc) { plt.Kernel.Struct.call(this, "make-s
 this.loc = loc; };
 stx_colon_atom.prototype = new plt.Kernel.Struct();
 
+var fresh_dash_struct_dash_name1 = stx_colon_atom;
 var make_dash_stx_colon_atom = function (id0,id1) { return new stx_colon_atom(id0,id1); };
 var stx_colon_atom_dash_datum = function(obj) {
      if (stx_colon_atom_question_ (obj)) {
@@ -39,12 +40,13 @@ var set_dash_stx_colon_atom_dash_loc_bang_ = function(obj,newVal) {
 };
 
 var stx_colon_atom_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof stx_colon_atom; };
+              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name1; };
 
 var stx_colon_list = function (elts,loc) { plt.Kernel.Struct.call(this, "make-stx:list", [elts,loc]);this.elts = elts;
 this.loc = loc; };
 stx_colon_list.prototype = new plt.Kernel.Struct();
 
+var fresh_dash_struct_dash_name2 = stx_colon_list;
 var make_dash_stx_colon_list = function (id0,id1) { return new stx_colon_list(id0,id1); };
 var stx_colon_list_dash_elts = function(obj) {
      if (stx_colon_list_question_ (obj)) {
@@ -79,7 +81,7 @@ var set_dash_stx_colon_list_dash_loc_bang_ = function(obj,newVal) {
 };
 
 var stx_colon_list_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof stx_colon_list; };
+              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name2; };
 
 var Loc = function (offset,line,span,id) { plt.Kernel.Struct.call(this, "make-Loc", [offset,line,span,id]);this.offset = offset;
 this.line = line;
@@ -87,6 +89,7 @@ this.span = span;
 this.id = id; };
 Loc.prototype = new plt.Kernel.Struct();
 
+var fresh_dash_struct_dash_name3 = Loc;
 var make_dash_Loc = function (id0,id1,id2,id3) { return new Loc(id0,id1,id2,id3); };
 var Loc_dash_offset = function(obj) {
      if (Loc_question_ (obj)) {
@@ -153,7 +156,7 @@ var set_dash_Loc_dash_id_bang_ = function(obj,newVal) {
 };
 
 var Loc_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof Loc; };
+              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name3; };
 
 var Loc_dash__greaterthan_string = function(a_dash_loc) { return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("offset=~a line=~a span=~a id=~s")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash_offset(a_dash_loc)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash_line(a_dash_loc)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash_span(a_dash_loc)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && Loc_dash_id(a_dash_loc))])); };
 var stx_question_ = function(x) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_atom_question_(x))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && stx_colon_list_question_(x))); };
@@ -177,8 +180,8 @@ var datum_dash__greaterthan_stx = function(a_dash_datum, a_dash_loc) { return ((
  (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.pair_question_(a_dash_datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.empty_question_(a_dash_datum))) ?
  (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_stx_colon_list((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.map(((function() {
    plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"");
-   var result = (function(args1) {
-var x = args1[0];
+   var result = (function(args4) {
+var x = args4[0];
                              return (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && datum_dash__greaterthan_stx(x,a_dash_loc)); });
                       result.toWrittenString = function () {
                           return '<function:lambda>';

@@ -155,6 +155,9 @@
               [(stx-begins-with? expr 'letrec)
                (desugar-expression/expr+pinfo (desugar-letrec expr pinfo))]
 
+              ;; (quasiquote x)
+              [(stx-begins-with? expr 'quasiquote)
+               (desugar-expression/expr+pinfo (desugar-quasiquote expr pinfo))]
               
               ;; (local ([define ...] ...) body)
               [(stx-begins-with? expr 'local)
@@ -501,6 +504,38 @@
             pinfo))))
 
 
+;; desugar-quasiquote: stx pinfo -> (list stx pinfo)
+(define (desugar-quasiquote a-stx pinfo)
+  (local [;; handle-quoted: stx -> stx
+          (define (handle-quoted a-stx)
+            (cond
+              [(stx:list? a-stx)
+               (cond [(stx-begins-with? a-stx 'unquote)
+                      (begin (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
+                             (second (stx-e a-stx)))]
+                     [(stx-begins-with? a-stx 'unquote-splicing)
+                      (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)]
+                     [else
+                      (datum->stx (cons 'append 
+                                        (map 
+                                         ;; (stx -> (listof stx))
+                                         (lambda (s) 
+                                           (cond
+                                             [(stx-begins-with? s 'unquote-splicing)
+                                              (begin
+                                                (check-single-body-stx! (rest (stx-e s)) s)
+                                                (second (stx-e s)))]
+                                             [else
+                                              (list 'list (handle-quoted s))]))
+                                         (stx-e a-stx)))
+                                  (stx-loc a-stx))])]
+              [else
+               (datum->stx (list 'quote a-stx) (stx-loc a-stx))]))]
+    (begin (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
+           (list (handle-quoted (second (stx-e a-stx))) pinfo))))
+   
+   
+
 
 (provide/contract
- [desugar-program (program? pinfo? . -> . (list/c program? pinfo?))])
+ [desugar-program (program? pinfo? . -> . (list/c program? pinfo?))]) 
