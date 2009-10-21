@@ -999,7 +999,7 @@ plt.Jsworld = {};
 	    return updateF(w, n.value);
 	}
 	// This established the widget->world direction
-	//add_ev_after(n, 'keypress', onKey);
+	add_ev_after(n, 'keypress', onKey);
 
 	// Every second, do a manual polling of the object, just in case.
 	var delay = 1000;

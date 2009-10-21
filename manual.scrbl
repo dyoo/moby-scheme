@@ -161,7 +161,7 @@ that change.
         (list (js-p '(("id" "aPara")))
               (list (js-text (format "~a" w))))))
 
-(define (draw-css)
+(define (draw-css w)
   '(("aPara" ("font-size" "50px"))))
 
 (js-big-bang 0
