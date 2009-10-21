@@ -67,16 +67,20 @@ followed by the program.  For example, running the program:
 ]
 
 will invoke a web browser, which should show the
-running program on a web page.  The page should also provide links to download packages
+running program on a web page.  Because @scheme[on-tick] is used, 
+as every second passes, a tick stimulus is sent to the program.
+
+The page should also provide links to download packages
 of the compiled program.
+
+
 
 Because these programs run on the user's web browser, we also allow programs to dynamically
 generate DOM trees and style them with CSS, as in the examples below.
 
-
 The following will render the world as a paragraph of text, styled
-with a font-size of 30.  Whenever the world is changed due to a
-stimulus, @scheme[on-draw] is called to re-draw the world.
+with a font-size of 30.  @scheme[draw-html] and @scheme[draw-css]
+will be called to draw the web page.
 
 @(mobyblock
 (define initial-world 0)
@@ -93,10 +97,10 @@ stimulus, @scheme[on-draw] is called to re-draw the world.
              (on-draw draw-html draw-css)))
 
 
-
-The following will show a logo and an input text field.
-Whenever the number in the text is changed, the world will reflect
-that change.
+The following will show a logo and an input text field.  As with the
+previous example, @scheme[draw-html] and @scheme[draw-css] are used to
+construct the web page; every time the world changes, these functions
+are called to re-draw the web page.
 
 @mobyblock[
 (define (form-value w)
@@ -108,7 +112,7 @@ that change.
 (define elt
   (js-input "text" update-form-value))
 
-(define (draw w)
+(define (draw-html w)
   (list (js-div)
         (list (js-img "http://plt-scheme.org/logo.png"))
         (list elt)
@@ -119,7 +123,7 @@ that change.
   '(("aPara" ("font-size" "50px"))))
 
 (js-big-bang 0
-             (on-draw draw draw-css))]
+             (on-draw draw-html draw-css))]
 
 
 
@@ -188,7 +192,8 @@ The following program shows a ball falling down a scene.
 }
 
 
-@subsubsection{Types}
+
+@subsection{Types}
 
 A @scheme[dom-sexp] describes the structure of a web page:
 
@@ -198,7 +203,7 @@ A @scheme[dom-sexp] describes the structure of a web page:
 a @scheme[css-sexp] describes the structure of a page's styling:
 
 @schemegrammar[css-sexp (listof (cons (or dom-element string)
-                                      (listof (list string string))))]
+                                      (listof attrib)))]
 
 An @scheme[attrib] is a:
 @schemegrammar[attrib (list string string)]
@@ -217,6 +222,9 @@ Here are examples  of a dom-expr and a css-sexp.
                                (list "background" "white")
                                (list "font-size" "40px"))))
              ]
+
+
+@subsection{@scheme[dom-element] constructors}
 
 Here are the dom-element constructors.
 
@@ -271,7 +279,6 @@ to the button.
 
 (js-big-bang "" 
              (on-draw draw draw-css)))
-
 }
 
 
@@ -283,7 +290,7 @@ to the button.
     
              
              
-@subsubsection{Stimulus Handlers}
+@subsection{Stimulus Handlers}
 
 Stimulus handlers are provided as additional arguments to a js-big-bang.
 
@@ -344,7 +351,7 @@ Calls the acceleration handlers when the device feels change in acceleration.
 
 
 
-@subsubsection{Effects}
+@subsection{Effects}
 
 Effects allow world programs to apply side effects to the outside
 world.  These are used in conjunction with the starred version of the

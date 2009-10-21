@@ -11,7 +11,8 @@
                                  "examples"
                                  "sandbox"
                                  "stub"
-                                 "support"))
+                                 "support"
+	                         "tmp"))
 
 (define categories '(devtools))
 (define repositories '("4.x"))
