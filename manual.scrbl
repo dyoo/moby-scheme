@@ -2,7 +2,7 @@
 
 @(require (for-label "src/moby-lang.ss"))
 
-@title{Moby}
+@title{Moby: the Moby Scheme Compiler}
 
 @section{What is Moby?}
 
@@ -28,13 +28,13 @@ at the top of your program, include the following language line:
 
 @#reader scribble/comment-reader
 (schememod
-moby
+planet dyoo/moby:1
 )
 
 followed by the program.  For example, running the program:
 
 @schememod[
-moby
+planet dyoo/moby:1
 (define initial-world 0)
 (js-big-bang initial-world (on-tick 1 add1))
 ]
@@ -47,7 +47,7 @@ of the compiled program.
 
 @section{API}
 
-@defmodule[moby/src/moby-lang]
+@defmodule[(planet dyoo/moby:1/src/moby-lang)]
   
   
 

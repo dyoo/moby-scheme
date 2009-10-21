@@ -1,5 +1,5 @@
 #lang setup/infotab
-(define name "moby")
+(define name "The Moby Scheme Compiler")
 (define mred-launcher-libraries (list "src/moby.ss"))
 (define mred-launcher-names (list "moby"))
 (define requires (list (list "mred")))
@@ -12,4 +12,10 @@
                                  "stub"
                                  "support"))
 
-(define scribblings '(("manual.scrbl")))
+(define categories '(devtools))
+
+(define scribblings 
+  '(("manual.scrbl" ())))
+
+(define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
+                "for both web browsers and mobile smartphones."))
