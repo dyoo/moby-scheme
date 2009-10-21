@@ -70,53 +70,10 @@ will invoke a web browser, which should show the
 running program on a web page.  The page should also provide links to download packages
 of the compiled program.
 
+Because these programs run on the user's web browser, we also allow programs to dynamically
+generate DOM trees and style them with CSS, as in the examples below.
 
 
-@section{API}
-
-@declare-exporting[(planet dyoo/moby:1/src/moby-lang)]
-  
-  
-
-
-@subsection{World}
-
-The Moby language supports reactive World-style
-programming; the reactive
-libraries allow one to write interactive web sites that work with the
-DOM as well as CSS stylesheets.
-
-As an example,
-@mobyblock[
-(js-big-bang 0   
-             (on-tick 1 add1))]
-uses @scheme[0] as an initial world, and establishes an @scheme[on-tick] handler that
-increments the world after every second.
-             
-             
-@defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
-A Moby program may start a reactive computation with @scheme[js-big-bang].
-The rest of the arguments hook into the reactive computation.  One
-instance of a handler is @scheme[on-tick], which registers a function to update
-the world on a clock tick.
-
-In the absence of an @scheme[on-draw] or @scheme[on-redraw] handler, @scheme[js-big-bang] will
-show the current state of the world; on transitions, the world is
-re-drawn to screen.}
-
-
-
-@defproc[(on-draw [to-dom (world -> (DOM-sexp))]
-                  [to-css (world -> (CSS-sexp))]) scene]{
-One of the main handlers to @scheme[js-big-bang] is @scheme[on-draw], which controls how
-the world is rendered on screen.  The first argument computes a
-rendering of the world as a DOM tree, and the second argument computes
-that tree's styling.
-
-
-
-@subsection{World Examples}
-Example 1:
 
 The following will render the world as a paragraph of text, styled
 with a font-size of 30.  Whenever the world is changed due to a
@@ -138,12 +95,9 @@ stimulus, @scheme[on-draw] is called to re-draw the world.
 
 
 
-Example 2:
-
 The following will show a logo and an input text field.
 Whenever the number in the text is changed, the world will reflect
 that change.
-
 @mobyblock[
 (define (form-value w)
   (format "~a" w))
@@ -166,6 +120,37 @@ that change.
 
 (js-big-bang 0
              (on-draw draw draw-css))]
+
+
+
+
+
+@section{The Moby World API}
+
+@declare-exporting[(planet dyoo/moby:1/src/moby-lang)]
+  
+The Moby language supports @link["http://world.cs.brown.edu/"]{World-style}
+programming.
+
+
+@defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
+A Moby program starts a reactive computation with @scheme[js-big-bang].
+The rest of the arguments hook into the reactive computation.  One
+instance of a handler is @scheme[on-tick], which registers a function to update
+the world on a clock tick.
+
+In the absence of an @scheme[on-draw] or @scheme[on-redraw] handler, @scheme[js-big-bang] will
+show the current state of the world; on transitions, the world is
+re-drawn to screen.}
+
+
+
+@defproc[(on-draw [to-dom (world -> (DOM-sexp))]
+                  [to-css (world -> (CSS-sexp))]) scene]{
+One of the main handlers to @scheme[js-big-bang] is @scheme[on-draw], which controls how
+the world is rendered on screen.  The first argument computes a
+rendering of the world as a DOM tree, and the second argument computes
+that tree's styling.
 }
 
 
@@ -175,16 +160,10 @@ produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
 }
                                                           
                                                         
-
 @defproc[(on-redraw [hook (world -> scene)]) handler?]{
-For simple applications, on-redraw is sufficient to draw something graphical.
-
-Example:
+For simple applications, on-redraw is sufficient to draw a scene onto the display.
 
 The following program shows a ball falling down a scene.
-
-@; @#reader scribble/comment-reader
-
 @(mobyblock
 (define WIDTH 320)
 (define HEIGHT 480)
