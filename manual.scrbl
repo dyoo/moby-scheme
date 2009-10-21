@@ -269,31 +269,14 @@ and the original world is used to construct an effect.
 
 @defproc[(js-text (text string?)) dom-element]{Constructs regular text.}
 
-@defproc[(js-input (type string) (attribs (listof attrib) '())) dom-element]{Creates an input form element.}
+@defproc[(js-input (type string) (world-update-f (world string -> world)) (attribs (listof attrib) '())) dom-element]{
+Creates an input form element.  When the user changes the content of the form element,
+the runtime uses @scheme[world-update-f] to update the world with the string value of the element.
 
-@defproc[(js-bidirectional-input (type string)
-                                 (val-f (world -> string))
-                                 (world-update-f (world string -> world))
-                                 (attribs (listof attrib) '())) dom-element]{Creates an input form element
-that synchronizes with the world.  @scheme[val-f] defines what the value of the form element should be
-when the world changes, and @scheme[world-update-f] defines what the value of the world should be updated to
-when the form element changes.}
-
-
-@defproc[(get-input-value (elt (or input-dom-element string))) string]{
-Get the value attribute of an input node.  If a string is provided,
-looks for the node with the given string id.  Meant to be used with the @scheme[dom-element] constructed by @scheme[js-input].}
-
-
-
-@defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.}
-
-
-
-
-Here is an example of a user interface.
+The example below has asingle text input form element, which allows the user to enter
+some value.  That value is read from the interface by the @scheme[refresh] function that's associated
+to the button.
 @(mobyblock
-
 (define input-node
   (js-input "text" '(("id" "myname"))))
 
@@ -312,9 +295,13 @@ Here is an example of a user interface.
 (js-big-bang "" 
              (on-draw draw draw-css)))
 
-A single text input form element allows the user to enter
-some value.  That value is read from the interface by the @scheme[refresh] function that's associated
-to the button.
+}
+
+
+@defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.
+}
+
+
 
     
              
