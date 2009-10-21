@@ -1,5 +1,34 @@
 #lang scribble/manual
 
+
+@(require (for-syntax scheme/base))
+@(define-syntax (mobyblock stx)
+   (syntax-case stx ()
+     [(header body ...)
+      (let* ([source-name (syntax-source #'header)]
+             [line (syntax-line #'header)]
+             [column 0]
+             [position (syntax-position #'header)]
+             [planet-symbol 'planet]
+             [moby-symbol 'dyoo/moby:1]
+             [planet-symbol-length (string-length (symbol->string planet-symbol))]
+             [moby-symbol-length (string-length (symbol->string moby-symbol))])
+        (with-syntax ([planet-mod (datum->syntax #f 'planet (list source-name
+                                                                  line 
+                                                                  column 
+                                                                  position 
+                                                                  (string-length
+                                                                   (symbol->string planet-symbol))))]
+                      [lang (datum->syntax #f 'dyoo/moby:1 (list source-name 
+                                                                 line 
+                                                                 (+ column planet-symbol-length 1)
+                                                                 (+ position planet-symbol-length 1) 
+                                                                 moby-symbol-length))])
+          (syntax/loc stx
+            (schememod planet-mod lang
+                       body ...))))]))
+
+
 @(require (for-label "src/moby-lang.ss"))
 
 @title{Moby: the Moby Scheme Compiler}
@@ -26,14 +55,13 @@ his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]
 To use Moby from DrScheme, create a file in the Module language, and
 at the top of your program, include the following language line:
 
-@(schememod
-planet dyoo/moby:1
-)
+@mobyblock[
+]
+
 
 followed by the program.  For example, running the program:
 
-@schememod[
-planet dyoo/moby:1
+@mobyblock[
 (define initial-world 0)
 (js-big-bang initial-world (on-tick 1 add1))
 ]
@@ -59,9 +87,9 @@ libraries allow one to write interactive web sites that work with the
 DOM as well as CSS stylesheets.
 
 As an example,
-@(schemeblock
+@mobyblock[
 (js-big-bang 0   
-             (on-tick 1 add1)))
+             (on-tick 1 add1))]
 uses @scheme[0] as an initial world, and establishes an @scheme[on-tick] handler that
 increments the world after every second.
              
@@ -94,7 +122,7 @@ The following will render the world as a paragraph of text, styled
 with a font-size of 30.  Whenever the world is changed due to a
 stimulus, @scheme[on-draw] is called to re-draw the world.
 
-@(schemeblock
+@(mobyblock
 (define initial-world 0)
   
 (define (draw-html w)
@@ -116,7 +144,7 @@ The following will show a logo and an input text field.
 Whenever the number in the text is changed, the world will reflect
 that change.
 
-@schemeblock[
+@mobyblock[
 (define (form-value w)
   (format "~a" w))
 
@@ -124,7 +152,7 @@ that change.
   (string->number v))
 
 (define elt
-  (js-bidirectional-input "text" form-value update-form-value))
+  (js-input "text" update-form-value))
 
 (define (draw w)
   (list (js-div)
@@ -157,46 +185,30 @@ The following program shows a ball falling down a scene.
 
 @; @#reader scribble/comment-reader
 
-@(schemeblock
-;; Simple falling ball example.  A red ball falls down the screen
-;; until hitting the bottom.
-
-;; The dimensions of the screen:
+@(mobyblock
 (define WIDTH 320)
 (define HEIGHT 480)
-
-;; The radius of the red circle.
 (define RADIUS 15)
 
-;; The world is the distance from the top of the screen.
 (define INITIAL-WORLD 0)
 
-;; tick: world -> world
-;; Moves the ball down.
 (define (tick w)
   (+ w 5))
 
-;; hits-floor?: world -> boolean
-;; Returns true when the distance reaches the screen height.
 (define (hits-floor? w)
   (>= w HEIGHT))
 
-;; We have some simple test cases.
 (check-expect (hits-floor? 0) false)
 (check-expect (hits-floor? HEIGHT) true)
 
-;; render: world -> scene
-;; Produces a scene with the circle at a height described by the world.
 (define (render w)
   (place-image (circle RADIUS "solid" "red") (/ WIDTH 2) w
                (empty-scene WIDTH HEIGHT)))
 
-;; Start up a big bang, 15 frames a second.
 (js-big-bang INITIAL-WORLD
              (on-tick 1/15 tick)
              (on-redraw render)
              (stop-when hits-floor?)))
-
 }
 
 
@@ -280,7 +292,7 @@ looks for the node with the given string id.  Meant to be used with the @scheme[
 
 
 Here is an example of a user interface.
-@(schemeblock
+@(mobyblock
 
 (define input-node
   (js-input "text" '(("id" "myname"))))
