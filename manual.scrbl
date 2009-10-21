@@ -74,7 +74,6 @@ Because these programs run on the user's web browser, we also allow programs to 
 generate DOM trees and style them with CSS, as in the examples below.
 
 
-
 The following will render the world as a paragraph of text, styled
 with a font-size of 30.  Whenever the world is changed due to a
 stimulus, @scheme[on-draw] is called to re-draw the world.
@@ -98,6 +97,7 @@ stimulus, @scheme[on-draw] is called to re-draw the world.
 The following will show a logo and an input text field.
 Whenever the number in the text is changed, the world will reflect
 that change.
+
 @mobyblock[
 (define (form-value w)
   (format "~a" w))
@@ -126,12 +126,8 @@ that change.
 
 
 @section{The Moby World API}
-
 @declare-exporting[(planet dyoo/moby:1/src/moby-lang)]
   
-The Moby language supports @link["http://world.cs.brown.edu/"]{World-style}
-programming.
-
 
 @defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
 A Moby program starts a reactive computation with @scheme[js-big-bang].
@@ -164,6 +160,7 @@ produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
 For simple applications, on-redraw is sufficient to draw a scene onto the display.
 
 The following program shows a ball falling down a scene.
+
 @(mobyblock
 (define WIDTH 320)
 (define HEIGHT 480)
@@ -255,6 +252,7 @@ the runtime uses @scheme[world-update-f] to update the world with the string val
 The example below has asingle text input form element, which allows the user to enter
 some value.  That value is read from the interface by the @scheme[refresh] function that's associated
 to the button.
+
 @(mobyblock
 (define input-node
   (js-input "text" '(("id" "myname"))))
