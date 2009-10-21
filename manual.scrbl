@@ -257,7 +257,7 @@ and the original world is used to construct an effect.
 Creates an input form element.  When the user changes the content of the form element,
 the runtime uses @scheme[world-update-f] to update the world with the string value of the element.
 
-The example below has asingle text input form element, which allows the user to enter
+The example below has a single text input form element, which allows the user to enter
 some value.  That value is read from the interface by the @scheme[refresh] function that's associated
 to the button.
 
