@@ -98,8 +98,10 @@ stimulus, @scheme[on-draw] is called to re-draw the world.
 
 @#reader scribble/comment-reader
 (schemeblock
-(js-big-bang 0                ;; initial world
-             (on-draw ;; the dom tree renderer
+(js-big-bang 0 ;; initial world
+              
+              ;; the dom tree renderer
+              (on-draw
               (lambda (w)
                 (list (js-p '(("id" "myPara")))
                       (list (js-text "hello world"))))
@@ -131,7 +133,8 @@ that change.
   (list (js-div)
         (list (js-img "http://plt-scheme.org/logo.png"))
         (list elt)
-        (list (js-p '(("id" "aPara"))) (list (js-text (format "~a" w))))))
+        (list (js-p '(("id" "aPara")))
+              (list (js-text (format "~a" w))))))
 
 (define (draw-css)
   '(("aPara" ("font-size" "50px"))))
