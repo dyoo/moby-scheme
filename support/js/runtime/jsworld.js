@@ -183,11 +183,16 @@ plt.world.MobyJsworld = {};
 		    }
  		    reusableCanvas.width = width;
  		    reusableCanvas.height = height;
- 		    reusableCanvas.style.width = reusableCanvas.width + "px";
- 		    reusableCanvas.style.height = reusableCanvas.height + "px";
-		    reusableCanvas.style.display = "none";
+ 		    reusableCanvas.style.setProperty("width",
+						     reusableCanvas.width + "px", "");
+ 		    reusableCanvas.style.setProperty("height", reusableCanvas.height + "px", "");
  		    var ctx = reusableCanvas.getContext("2d");
+
+		    reusableCanvas.style.setProperty("display", "none", "");
+		    document.body.appendChild(reusableCanvas);
 		    aScene.render(ctx, 0, 0);
+		    document.body.removeChild(reusableCanvas);
+		    reusableCanvas.style.removeProperty("display");
 		    return [toplevelNode, reusableCanvasNode];
 		} else {
 		    return [toplevelNode, 
