@@ -9,7 +9,7 @@
 Moby is a project from the PLT Scheme team.  The Moby compiler
 consumes Advanced Student Language (ASL) programs that use World
 primitives, and produces applications for mobile platforms.  The
-current prototype supports desktop browsers and the Android mobile environment.
+current prototype supports desktop browsers and smartphones.
 Our long-term goal is to make Scheme the premiere reactive scripting
 language for mobile phones.
 
@@ -47,7 +47,7 @@ of the compiled program.
 
 @section{API}
 
-@defmodule[(planet dyoo/moby:1/src/moby-lang)]
+@declare-exporting[(planet dyoo/moby:1/src/moby-lang)]
   
   
 
@@ -392,10 +392,10 @@ A @scheme[sound] is a:
 @defproc[(make-effect:raise-sound-volume) effect]{Raises the sound volume.  If the volume's already at 100, has no effect.}
 @defproc[(make-effect:lower-sound-volume) effect]{Lowers the sound volume.  If the volume's set to 0, has no effect.}
 
-@defproc[(make-effect:play-dtmf-tone (tone number)) effect]{On an Android phone, plays a DTMF tone, where @scheme[tone] is between 0 and 15 inclusive.}
+@defproc[(make-effect:play-dtmf-tone (tone number)) effect]{On a smartphone, plays a DTMF tone, where @scheme[tone] is between 0 and 15 inclusive.}
 
-@defproc[(make-effect:set-wake-lock (flag number)) effect]{On an Android phone, sets the wake-lock flag to prevent the phone from sleeping.  Low-level call.}
-@defproc[(make-effect:release-wake-lock) effect]{On an Android phone, releases a wake-lock to allow the phone to go to sleep again.}
+@defproc[(make-effect:set-wake-lock (flag number)) effect]{On a smartphone, sets the wake-lock flag to prevent the phone from sleeping.  Low-level call.}
+@defproc[(make-effect:release-wake-lock) effect]{On a smartphone, releases a wake-lock to allow the phone to go to sleep again.}
 
 @defproc[(make-effect:send-sms (phone-number string) (message string)) effect]{Sends an SMS message.}
 
@@ -467,7 +467,7 @@ Moby reimplements the ASL primitives in a Javascript runtime library
 that's included with the compiled application.  (See
 doc/moby-developer-api.txt for more details.)
 
-To support Android, Moby uses a bridge library called Phonegap, which
+To support smartphones, Moby uses a bridge library called Phonegap, which
 provides access to the native facilities of several cell phones.  In
 this way, Moby should be able to support multiple platforms with a lot
 of code reuse.  Moby handles the other libraries (tilt, location, sms,
@@ -817,6 +817,11 @@ same meaning as in @hyperlink["http://docs.plt-scheme.org/htdp-langs/advanced-pr
                         char>=?
                         char>?
                         char?
+                        
+                        check-expect
+                        check-within
+                        check-error
+                        
                         complex?
                         conjugate
                         cons
