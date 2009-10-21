@@ -14,7 +14,7 @@ Our long-term goal is to make Scheme the premiere reactive scripting
 language for mobile phones.
 
 Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
-his talk @hyperlink["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]{The Moby Scheme Compiler for Smartphones}.
+his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]{The Moby Scheme Compiler for Smartphones}.
 
     
 
@@ -26,8 +26,7 @@ his talk @hyperlink["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstr
 To use Moby from DrScheme, create a file in the Module language, and
 at the top of your program, include the following language line:
 
-@#reader scribble/comment-reader
-(schememod
+@(schememod
 planet dyoo/moby:1
 )
 
@@ -60,8 +59,7 @@ libraries allow one to write interactive web sites that work with the
 DOM as well as CSS stylesheets.
 
 As an example,
-@#reader scribble/comment-reader
-(schemeblock
+@(schemeblock
 (js-big-bang 0   
              (on-tick 1 add1)))
 uses @scheme[0] as an initial world, and establishes an @scheme[on-tick] handler that
@@ -96,20 +94,19 @@ The following will render the world as a paragraph of text, styled
 with a font-size of 30.  Whenever the world is changed due to a
 stimulus, @scheme[on-draw] is called to re-draw the world.
 
-@#reader scribble/comment-reader
-(schemeblock
-(js-big-bang 0 ;; initial world
-              
-              ;; the dom tree renderer
-              (on-draw
-              (lambda (w)
-                (list (js-p '(("id" "myPara")))
-                      (list (js-text "hello world"))))
-              
-              ;; the css renderer
-              (lambda (w)
-                '(("myPara" ("font-size" "30")))))))
-                                                   
+@(schemeblock
+(define initial-world 0)
+  
+(define (draw-html w)
+  (list (js-p '(("id" "myPara")))
+        (list (js-text "hello world"))))
+
+(define (draw-css w)
+  '(("myPara" ("font-size" "30"))))
+
+  
+(js-big-bang initial-world
+             (on-draw draw-html draw-css)))
 
 
 
@@ -158,8 +155,9 @@ Example:
 
 The following program shows a ball falling down a scene.
 
-@#reader scribble/comment-reader
-(schemeblock
+@; @#reader scribble/comment-reader
+
+@(schemeblock
 ;; Simple falling ball example.  A red ball falls down the screen
 ;; until hitting the bottom.
 
@@ -282,8 +280,7 @@ looks for the node with the given string id.  Meant to be used with the @scheme[
 
 
 Here is an example of a user interface.
-@#reader scribble/comment-reader
-(schemeblock
+@(schemeblock
 
 (define input-node
   (js-input "text" '(("id" "myname"))))
@@ -447,7 +444,7 @@ Parses a string containing XML to s-expressions.
 
 @schemeblock[(define-struct foo (a b))]
 defines the following forms:
-@itemlist[
+@itemize[
           @item{make-foo: X Y -> foo}
            @item{foo-a: foo -> X}
            @item{foo-b: foo -> Y}
@@ -484,15 +481,15 @@ Moby is mostly written in PLT Scheme, and the project sources are
 hosted by github.com.  To develop with Moby, you will need the
 following:
 
-@itemlist[
-  @item{PLT Scheme >=4.2.2 (@url["http://plt-scheme.org/"])}
-   @item{git (@url["http://git-scm.com"])}
+@itemize[
+  @item{@link["http://plt-scheme.org"]{PLT Scheme} >=4.2}
+   @item{@link["http://git-scm.com"]{git}}
   ]
 
 
 If you wish to generate programs for the Android+Phonegap backend,
 you'll also need:
-@itemlist[
+@itemize[
           @item{Java >=1.6 (@url{http://java.sun.com/})}
            @item{Apache Ant >=1.7.1 (@url{http://ant.apache.org/})}
            @item{Google Android SDK >= 1.5r3 (@url{http://developer.android.com/})}
@@ -504,7 +501,7 @@ you'll also need:
 
 
 To install Moby from the development sources:
-@itemlist[
+@itemize[
     #:style 'ordered
 
     @item{Download the Moby source, currently hosted on 
@@ -553,7 +550,7 @@ To install Moby from the development sources:
 You can run the Moby command line utility (@filepath{moby/src/moby.ss}) on a Moby
 program to produce a compiled version of your application.  Moby
 supports two output backends, both which rely on Javascript:
-@itemlist[
+@itemize[
           @item{js: compiles to a web page application, which can be deployed on
       any web server.}
 
@@ -629,7 +626,7 @@ have the @filepath{FallingBall} application installed.
 @subsection{Compiler}
 
 Moby consists of the following core files for the compiler:
-@itemlist[
+@itemize[
           @item{@filepath{src/compiler/beginner-to-javascript.ss}: translates Scheme programs to
     javascript programs.}
 
@@ -660,7 +657,7 @@ The compiler is intentionally written in a small superset of the language
 advantage of this to produce a running compiler on the browser.
 (@filepath{support/js/test/test-repl.html})
 
-@itemlist[
+@itemize[
           @item{@filepath{src/compiler/bootstrap-js-compiler.ss}: compiles @filepath{beginner-to-javascript.ss}
                 against itself to produce @filepath{support/js/compiler.js}.}]
 
@@ -746,7 +743,7 @@ sprinkled around that says:
     if (node.afterAttach) { node.afterAttach(); }
 }
 in the following files:
-@itemlist[
+@itemize[
           @item{@filepath{support/js/runtime/jsworld.js}}
            @item{@filepath{support/js/runtime/jsworld/jsworld.js}}
            @item{@filepath{support/js/runtime/types.js}}
@@ -763,7 +760,7 @@ in the following files:
 The following toplevel bindings are available from Moby, and have the
 same meaning as in @hyperlink["http://docs.plt-scheme.org/htdp-langs/advanced-prim-ops.html"]{Advanced Student Language}.
 
-@(apply itemlist (map (lambda (x) (item (scheme #,x)))
+@(apply itemize (map (lambda (x) (item (scheme #,x)))
                       '(*
                         +
                         -
@@ -959,7 +956,7 @@ same meaning as in @hyperlink["http://docs.plt-scheme.org/htdp-langs/advanced-pr
 
 @subsection{Unimplemented forms}
 The following ASL forms are currently unimplemented:
-@itemlist[@item{@scheme[begin0]}
+@itemize[@item{@scheme[begin0]}
            @item{@scheme[delay]}
            @item{@scheme[shared]}
            @item{@scheme[recur]}
