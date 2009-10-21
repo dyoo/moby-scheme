@@ -365,14 +365,21 @@ plt.world.MobyJsworld = {};
     
 
     // input.
-    Jsworld.input = function(type, args) {
+    Jsworld.input = function(type, updateF, args) {
+	plt.Kernel.check(type, plt.Kernel.isString, "js-input", "string", 1);
+	plt.Kernel.check(updateF, plt.Kernel.isFunction, "js-input", "(world string -> world)", 1);
 	var attribs = getAttribs(args);
-	var node = _js.input(type, attribs);
+	var node = _js.input(type,
+			     function(w, v) { 
+				 return updateF([w, v])
+			     },
+			     attribs);
 	node.toWrittenString = function() { return "(js-input ...)"; }
 	node.toDisplayedString = node.toWrittenString;
 	node.toDomNode = function() { return node; }
 	return node;
     };
+
 
     Jsworld.get_dash_input_dash_value = function(node) {
 	plt.Kernel.check(node, 
@@ -391,20 +398,20 @@ plt.world.MobyJsworld = {};
     };
 
 
-    // BidirectionalInput
-    Jsworld.bidirectionalInput = function(type, valF, updateF, args) {
-	var attribs = getAttribs(args);
-	var node = _js.bidirectional_input(type,
-				       function(w) { return valF([w]) },
-				       function(w, v) { 
-					   return updateF([w, v])
-				       },
-				       attribs);
-	node.toWrittenString = function() { return "(js-bidirectional-input ...)"; }
-	node.toDisplayedString = node.toWrittenString;
-	node.toDomNode = function() { return node; }
-	return node;
-    };
+//     // BidirectionalInput
+//     Jsworld.bidirectionalInput = function(type, valF, updateF, args) {
+// 	var attribs = getAttribs(args);
+// 	var node = _js.bidirectional_input(type,
+// 				       function(w) { return valF([w]) },
+// 				       function(w, v) { 
+// 					   return updateF([w, v])
+// 				       },
+// 				       attribs);
+// 	node.toWrittenString = function() { return "(js-bidirectional-input ...)"; }
+// 	node.toDisplayedString = node.toWrittenString;
+// 	node.toDomNode = function() { return node; }
+// 	return node;
+//     };
 
     // Images.
     Jsworld.img = function(src, args) {

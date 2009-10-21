@@ -72,9 +72,9 @@
          js-button
          js-button*
          js-input
-         js-bidirectional-input
+         #;js-bidirectional-input
          js-img
          js-text
          js-node
          
-         get-input-value)
+         #;get-input-value)
