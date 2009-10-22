@@ -482,7 +482,7 @@ hosted by github.com.  To develop with Moby, you will need the
 following:
 
 @itemize[
-  @item{@link["http://plt-scheme.org"]{PLT Scheme} >=4.2}
+  @item{@link["http://plt-scheme.org"]{PLT Scheme >=4.2}}
    @item{@link["http://git-scm.com"]{git}}
   ]
 
@@ -490,9 +490,9 @@ following:
 If you wish to generate programs for the Android+Phonegap backend,
 you'll also need:
 @itemize[
-          @item{Java >=1.6 (@url{http://java.sun.com/})}
-           @item{Apache Ant >=1.7.1 (@url{http://ant.apache.org/})}
-           @item{Google Android SDK >= 1.5r3 (@url{http://developer.android.com/})}
+          @item{@link["http://java.sun.com"]{Java >=1.6}}
+           @item{@link["http://ant.apache.org"]{Apache Ant >=1.7.1}}
+           @item{@link["http://developer.android.com"]{Google Android SDK >= 1.5r3}}
            ]
 
   
@@ -505,7 +505,7 @@ To install Moby from the development sources:
     #:style 'ordered
 
     @item{Download the Moby source, currently hosted on 
-        @hyperlink["http://github.com/dyoo/moby-scheme/tree/devel"]{github}
+        @link["http://github.com/dyoo/moby-scheme/tree/devel"]{github}
     and place them in your PLT Scheme collects directory.
 
 
@@ -758,7 +758,7 @@ in the following files:
 @subsection{Bindings from ASL}
 
 The following toplevel bindings are available from Moby, and have the
-same meaning as in @hyperlink["http://docs.plt-scheme.org/htdp-langs/advanced-prim-ops.html"]{Advanced Student Language}.
+same meaning as in @link["http://docs.plt-scheme.org/htdp-langs/advanced-prim-ops.html"]{Advanced Student Language}.
 
 @(apply itemize (map (lambda (x) (item (scheme #,x)))
                       '(*
