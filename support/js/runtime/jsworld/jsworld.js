@@ -977,27 +977,50 @@ plt.Jsworld = {};
     Jsworld.button = button;
 
 
-    function bidirectional_input(type, toVal, updateVal, attribs) {
+//     function bidirectional_input(type, toVal, updateVal, attribs) {
+// 	var n = document.createElement('input');
+// 	n.type = type;
+// 	function onKey(w, e) {
+// 	    return updateVal(w, n.value);
+// 	}
+// 	// This established the widget->world direction
+// 	add_ev_after(n, 'keypress', onKey);
+// 	// and this establishes the world->widget.
+// 	n.onWorldChange = function(w) {n.value = toVal(w)};
+// 	return addFocusTracking(copy_attribs(n, attribs));
+//     }
+//     Jsworld.bidirectional_input = bidirectional_input;
+    
+
+    function input(type, updateF, attribs) {
 	var n = document.createElement('input');
 	n.type = type;
 	function onKey(w, e) {
-	    return updateVal(w, n.value);
+	    return updateF(w, n.value);
 	}
 	// This established the widget->world direction
 	add_ev_after(n, 'keypress', onKey);
-	// and this establishes the world->widget.
-	n.onWorldChange = function(w) {n.value = toVal(w)};
-	return addFocusTracking(copy_attribs(n, attribs));
-    }
-    Jsworld.bidirectional_input = bidirectional_input;
-    
 
-    function input(type, attribs) {
-	var n = document.createElement('input');
-	n.type = type;
+	// Every second, do a manual polling of the object, just in case.
+	var delay = 1000;
+	var lastVal = n.value;
+	var intervalId = setInterval(function() {
+	    if (! n.parentNode) {
+		clearInterval(intervalId);
+		return;
+	    }
+	    if (lastVal != n.value) {
+		lastVal = n.value;
+		change_world(function (w) {
+		    return updateF(w, n.value)
+		});
+	    }
+	},
+		    delay);
 	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.input = input;
+
 
 
     // worldToValF: world -> string

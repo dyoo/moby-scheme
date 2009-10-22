@@ -20,7 +20,7 @@
 ;; current closest Place.
 ;; last-reported is either UNINITIALIZED or the last
 ;; reported place.
-(define-struct world (loc closest last-reported sms))
+(define-struct world (loc closest last-reported sms enabled?))
 
 
 ;; A loc is a lat/long pair representing a location.
@@ -57,7 +57,8 @@
 (define initial-world (make-world (make-loc 0 0)
                                   UNINITIALIZED
                                   UNINITIALIZED
-                                  ""))
+                                  ""
+                                  false))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -67,7 +68,8 @@
   (make-world (make-loc lat long)
               (closest-place (make-loc lat long))
               (world-last-reported w)
-              (world-sms w)))
+              (world-sms w)
+              (world-enabled? w)))
 
 ;; record-reporting: world -> world
 ;; If we're about to send a report, record that
@@ -78,7 +80,8 @@
      (make-world (world-loc w)
                  (world-closest w)
                  (world-closest w)
-                 (world-sms w))]
+                 (world-sms w)
+                 (world-enabled? w))]
     [else
      w]))
 
@@ -115,6 +118,7 @@
 ;; one place to another.
 (define (should-send-report? w)
   (and (not (string-whitespace? (world-sms w)))
+       (world-enabled? w)
        (not (eq? (world-closest w) UNINITIALIZED))
        (or (eq? (world-last-reported w) UNINITIALIZED)
            (place-has-transitioned? 
@@ -232,13 +236,12 @@
         (list (js-div) 
               (list (js-text "Notify SMS #"))
               (list sms-input-dom)
-              (list (js-button update-world-sms)
+              (list (js-button world-enable)
                     (list (js-text "Use this number"))))
         (list (js-p '(("id" "anotherPara")))
               (list (js-text 
                      (cond 
-                       [(not (string-whitespace? 
-                              (world-sms w)))
+                       [(world-enabled? w)
                         (format 
                          "~a will be used for notification." (world-sms w))]
                        [else
@@ -268,15 +271,27 @@
 
 ;; update-world-sms: world -> world
 ;; Update the world with the value of the sms field.
-(define (update-world-sms w)
+(define (update-world-sms w sms)
   (make-world (world-loc w)
               (world-closest w)
               (world-last-reported w)
-              (get-input-value "sms-input")))
+              sms
+              (world-enabled? w)))
 
 
 (define sms-input-dom
-  (js-input "text" '(("id" "sms-input"))))
+  (js-input "text" update-world-sms '(("id" "sms-input"))))
+
+
+
+;; world-enable: world -> world
+;; Allow the program to start sending sms messages.
+(define (world-enable w)
+  (make-world (world-loc w)
+              (world-closest w)
+              (world-last-reported w)
+              (world-sms w)
+              true))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

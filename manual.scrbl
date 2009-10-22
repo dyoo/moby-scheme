@@ -1,5 +1,34 @@
 #lang scribble/manual
 
+
+@(require (for-syntax scheme/base))
+@(define-syntax (mobyblock stx)
+   (syntax-case stx ()
+     [(header body ...)
+      (let* ([source-name (syntax-source #'header)]
+             [line (syntax-line #'header)]
+             [column 0]
+             [position (syntax-position #'header)]
+             [planet-symbol 'planet]
+             [moby-symbol 'dyoo/moby:1]
+             [planet-symbol-length (string-length (symbol->string planet-symbol))]
+             [moby-symbol-length (string-length (symbol->string moby-symbol))])
+        (with-syntax ([planet-mod (datum->syntax #f 'planet (list source-name
+                                                                  line 
+                                                                  column 
+                                                                  position 
+                                                                  (string-length
+                                                                   (symbol->string planet-symbol))))]
+                      [lang (datum->syntax #f 'dyoo/moby:1 (list source-name 
+                                                                 line 
+                                                                 (+ column planet-symbol-length 1)
+                                                                 (+ position planet-symbol-length 1) 
+                                                                 moby-symbol-length))])
+          (syntax/loc stx
+            (schememod planet-mod lang
+                       body ...))))]))
+
+
 @(require (for-label "src/moby-lang.ss"))
 
 @title{Moby: the Moby Scheme Compiler}
@@ -26,48 +55,86 @@ his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]
 To use Moby from DrScheme, create a file in the Module language, and
 at the top of your program, include the following language line:
 
-@(schememod
-planet dyoo/moby:1
-)
+@mobyblock[
+]
+
 
 followed by the program.  For example, running the program:
 
-@schememod[
-planet dyoo/moby:1
+@mobyblock[
 (define initial-world 0)
 (js-big-bang initial-world (on-tick 1 add1))
 ]
 
 will invoke a web browser, which should show the
-running program on a web page.  The page should also provide links to download packages
+running program on a web page.  Because @scheme[on-tick] is used, 
+as every second passes, a tick stimulus is sent to the program.
+
+The page should also provide links to download packages
 of the compiled program.
 
 
 
-@section{API}
+Because these programs run on the user's web browser, we also allow programs to dynamically
+generate DOM trees and style them with CSS, as in the examples below.
 
+The following will render the world as a paragraph of text, styled
+with a font-size of 30.  @scheme[draw-html] and @scheme[draw-css]
+will be called to draw the web page.
+
+@(mobyblock
+(define initial-world 0)
+  
+(define (draw-html w)
+  (list (js-p '(("id" "myPara")))
+        (list (js-text "hello world"))))
+
+(define (draw-css w)
+  '(("myPara" ("font-size" "30"))))
+
+  
+(js-big-bang initial-world
+             (on-draw draw-html draw-css)))
+
+
+The following will show a logo and an input text field.  As with the
+previous example, @scheme[draw-html] and @scheme[draw-css] are used to
+construct the web page; every time the world changes, these functions
+are called to re-draw the web page.
+
+@mobyblock[
+(define (form-value w)
+  (format "~a" w))
+
+(define (update-form-value w v)
+  (string->number v))
+
+(define elt
+  (js-input "text" update-form-value))
+
+(define (draw-html w)
+  (list (js-div)
+        (list (js-img "http://plt-scheme.org/logo.png"))
+        (list elt)
+        (list (js-p '(("id" "aPara")))
+              (list (js-text (format "~a" w))))))
+
+(define (draw-css w)
+  '(("aPara" ("font-size" "50px"))))
+
+(js-big-bang 0
+             (on-draw draw-html draw-css))]
+
+
+
+
+
+@section{The Moby World API}
 @declare-exporting[(planet dyoo/moby:1/src/moby-lang)]
   
-  
 
-
-@subsection{World}
-
-The Moby language supports reactive World-style
-programming; the reactive
-libraries allow one to write interactive web sites that work with the
-DOM as well as CSS stylesheets.
-
-As an example,
-@(schemeblock
-(js-big-bang 0   
-             (on-tick 1 add1)))
-uses @scheme[0] as an initial world, and establishes an @scheme[on-tick] handler that
-increments the world after every second.
-             
-             
 @defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
-A Moby program may start a reactive computation with @scheme[js-big-bang].
+A Moby program starts a reactive computation with @scheme[js-big-bang].
 The rest of the arguments hook into the reactive computation.  One
 instance of a handler is @scheme[on-tick], which registers a function to update
 the world on a clock tick.
@@ -84,60 +151,6 @@ One of the main handlers to @scheme[js-big-bang] is @scheme[on-draw], which cont
 the world is rendered on screen.  The first argument computes a
 rendering of the world as a DOM tree, and the second argument computes
 that tree's styling.
-
-
-
-@subsection{World Examples}
-Example 1:
-
-The following will render the world as a paragraph of text, styled
-with a font-size of 30.  Whenever the world is changed due to a
-stimulus, @scheme[on-draw] is called to re-draw the world.
-
-@(schemeblock
-(define initial-world 0)
-  
-(define (draw-html w)
-  (list (js-p '(("id" "myPara")))
-        (list (js-text "hello world"))))
-
-(define (draw-css w)
-  '(("myPara" ("font-size" "30"))))
-
-  
-(js-big-bang initial-world
-             (on-draw draw-html draw-css)))
-
-
-
-Example 2:
-
-The following will show a logo and an input text field.
-Whenever the number in the text is changed, the world will reflect
-that change.
-
-@schemeblock[
-(define (form-value w)
-  (format "~a" w))
-
-(define (update-form-value w v)
-  (string->number v))
-
-(define elt
-  (js-bidirectional-input "text" form-value update-form-value))
-
-(define (draw w)
-  (list (js-div)
-        (list (js-img "http://plt-scheme.org/logo.png"))
-        (list elt)
-        (list (js-p '(("id" "aPara")))
-              (list (js-text (format "~a" w))))))
-
-(define (draw-css)
-  '(("aPara" ("font-size" "50px"))))
-
-(js-big-bang 0
-             (on-draw draw draw-css))]
 }
 
 
@@ -147,60 +160,40 @@ produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
 }
                                                           
                                                         
-
 @defproc[(on-redraw [hook (world -> scene)]) handler?]{
-For simple applications, on-redraw is sufficient to draw something graphical.
-
-Example:
+For simple applications, on-redraw is sufficient to draw a scene onto the display.
 
 The following program shows a ball falling down a scene.
 
-@; @#reader scribble/comment-reader
-
-@(schemeblock
-;; Simple falling ball example.  A red ball falls down the screen
-;; until hitting the bottom.
-
-;; The dimensions of the screen:
+@(mobyblock
 (define WIDTH 320)
 (define HEIGHT 480)
-
-;; The radius of the red circle.
 (define RADIUS 15)
 
-;; The world is the distance from the top of the screen.
 (define INITIAL-WORLD 0)
 
-;; tick: world -> world
-;; Moves the ball down.
 (define (tick w)
   (+ w 5))
 
-;; hits-floor?: world -> boolean
-;; Returns true when the distance reaches the screen height.
 (define (hits-floor? w)
   (>= w HEIGHT))
 
-;; We have some simple test cases.
 (check-expect (hits-floor? 0) false)
 (check-expect (hits-floor? HEIGHT) true)
 
-;; render: world -> scene
-;; Produces a scene with the circle at a height described by the world.
 (define (render w)
   (place-image (circle RADIUS "solid" "red") (/ WIDTH 2) w
                (empty-scene WIDTH HEIGHT)))
 
-;; Start up a big bang, 15 frames a second.
 (js-big-bang INITIAL-WORLD
              (on-tick 1/15 tick)
              (on-redraw render)
              (stop-when hits-floor?)))
-
 }
 
 
-@subsubsection{Types}
+
+@subsection{Types}
 
 A @scheme[dom-sexp] describes the structure of a web page:
 
@@ -210,7 +203,7 @@ A @scheme[dom-sexp] describes the structure of a web page:
 a @scheme[css-sexp] describes the structure of a page's styling:
 
 @schemegrammar[css-sexp (listof (cons (or dom-element string)
-                                      (listof (list string string))))]
+                                      (listof attrib)))]
 
 An @scheme[attrib] is a:
 @schemegrammar[attrib (list string string)]
@@ -229,6 +222,9 @@ Here are examples  of a dom-expr and a css-sexp.
                                (list "background" "white")
                                (list "font-size" "40px"))))
              ]
+
+
+@subsection{@scheme[dom-element] constructors}
 
 Here are the dom-element constructors.
 
@@ -257,31 +253,15 @@ and the original world is used to construct an effect.
 
 @defproc[(js-text (text string?)) dom-element]{Constructs regular text.}
 
-@defproc[(js-input (type string) (attribs (listof attrib) '())) dom-element]{Creates an input form element.}
+@defproc[(js-input (type string) (world-update-f (world string -> world)) (attribs (listof attrib) '())) dom-element]{
+Creates an input form element.  When the user changes the content of the form element,
+the runtime uses @scheme[world-update-f] to update the world with the string value of the element.
 
-@defproc[(js-bidirectional-input (type string)
-                                 (val-f (world -> string))
-                                 (world-update-f (world string -> world))
-                                 (attribs (listof attrib) '())) dom-element]{Creates an input form element
-that synchronizes with the world.  @scheme[val-f] defines what the value of the form element should be
-when the world changes, and @scheme[world-update-f] defines what the value of the world should be updated to
-when the form element changes.}
+The example below has a single text input form element, which allows the user to enter
+some value.  That value is read from the interface by the @scheme[refresh] function that's associated
+to the button.
 
-
-@defproc[(get-input-value (elt (or input-dom-element string))) string]{
-Get the value attribute of an input node.  If a string is provided,
-looks for the node with the given string id.  Meant to be used with the @scheme[dom-element] constructed by @scheme[js-input].}
-
-
-
-@defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.}
-
-
-
-
-Here is an example of a user interface.
-@(schemeblock
-
+@(mobyblock
 (define input-node
   (js-input "text" '(("id" "myname"))))
 
@@ -299,15 +279,18 @@ Here is an example of a user interface.
 
 (js-big-bang "" 
              (on-draw draw draw-css)))
+}
 
-A single text input form element allows the user to enter
-some value.  That value is read from the interface by the @scheme[refresh] function that's associated
-to the button.
+
+@defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.
+}
+
+
 
     
              
              
-@subsubsection{Stimulus Handlers}
+@subsection{Stimulus Handlers}
 
 Stimulus handlers are provided as additional arguments to a js-big-bang.
 
@@ -368,7 +351,7 @@ Calls the acceleration handlers when the device feels change in acceleration.
 
 
 
-@subsubsection{Effects}
+@subsection{Effects}
 
 Effects allow world programs to apply side effects to the outside
 world.  These are used in conjunction with the starred version of the

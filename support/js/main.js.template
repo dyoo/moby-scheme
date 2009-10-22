@@ -71,8 +71,14 @@ var main = {};
 
 
     main.runToplevel = function() {
+	var showToplevelExpression = function(val) {
+	    if (val != undefined && val != null) {
+		document.body.appendChild(plt.Kernel.toDomNode(val));
+		document.body.appendChild(document.createElement("br"));
+	    }
+        };
         try {
-   	    (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(plt.Kernel.identity);
+   	    (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(showToplevelExpression);
         } catch (e) {
 	    alert(e);
 	    if (plt.Kernel.lastLoc) {
