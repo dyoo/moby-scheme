@@ -1,5 +1,7 @@
 #lang scribble/manual
 
+@(require (planet cce/scheme:6:0/scribble))
+@(require (for-syntax (planet cce/scheme:6:0/scribble)))
 
 @(require (for-syntax scheme/base))
 @(define-syntax (mobyblock stx)
@@ -10,7 +12,7 @@
              [column 0]
              [position (syntax-position #'header)]
              [planet-symbol 'planet]
-             [moby-symbol 'dyoo/moby:1]
+             [moby-symbol (this-package-version-symbol)]
              [planet-symbol-length (string-length (symbol->string planet-symbol))]
              [moby-symbol-length (string-length (symbol->string moby-symbol))])
         (with-syntax ([planet-mod (datum->syntax #f 'planet (list source-name
@@ -19,7 +21,7 @@
                                                                   position 
                                                                   (string-length
                                                                    (symbol->string planet-symbol))))]
-                      [lang (datum->syntax #f 'dyoo/moby:1 (list source-name 
+                      [lang (datum->syntax #f moby-symbol (list source-name 
                                                                  line 
                                                                  (+ column planet-symbol-length 1)
                                                                  (+ position planet-symbol-length 1) 
@@ -128,7 +130,7 @@ reacts by re-drawing the web page.
 
 
 @section{The Moby World API}
-@declare-exporting[(planet dyoo/moby:1/src/moby-lang)]
+@(declare-exporting/this-package [src/moby-lang] [])
   
 
 @defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
@@ -275,7 +277,8 @@ to the button.
   (list (js-div)
         (list (js-div) (list (js-text (format "I see: ~s~n" w))))
         (list (js-div) (list input-node))
-        (list (js-div) (list (js-button refresh) (list (js-text "Update!"))))))
+        (list (js-div) (list (js-button refresh)
+                             (list (js-text "Update!"))))))
 
 (define (draw-css w)
   '())
@@ -938,10 +941,10 @@ same meaning as in @link["http://docs.plt-scheme.org/htdp-langs/advanced-prim-op
 
 @subsection{Unimplemented forms}
 The following ASL forms are currently unimplemented:
-@itemize[@item{@scheme[begin0]}
-           @item{@scheme[delay]}
-           @item{@scheme[shared]}
-           @item{@scheme[recur]}
-           @item{@scheme[when]}
-           @item{@scheme[unless]}
+@itemize[@item{@schemeid[begin0]}
+           @item{@schemeid[delay]}
+           @item{@schemeid[shared]}
+           @item{@schemeid[recur]}
+           @item{@schemeid[when]}
+           @item{@schemeid[unless]}
            ]
