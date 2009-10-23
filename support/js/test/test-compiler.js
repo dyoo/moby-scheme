@@ -427,6 +427,8 @@ function init() {
 	testInf: function() {
 	    this.assert(isEqual(run("+inf.0"),
 				run("(add1 +inf.0)"))); 
+	    this.assert(isEqual(run("1"),
+				run("(length (list +inf.0))")));
 				    
 	}
 

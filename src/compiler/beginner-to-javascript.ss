@@ -821,7 +821,14 @@
                         "))")]
         [(real? a-num)
          (string-append "(plt.types.FloatPoint.makeInstance(" 
-                        (number->string a-num)"))")]
+                        (cond
+                          [(eqv? a-num +inf.0)
+                           "Number.POSITIVE_INFINITY"]
+                          [(eqv? a-num -inf.0)
+                           "Number.NEGATIVE_INFINITY"]
+                          [else
+                           (number->string a-num)])
+                        "))")]
         [(complex? a-num)
          (string-append "(plt.types.Complex.makeInstance("
                         (number->string (real-part a-num))

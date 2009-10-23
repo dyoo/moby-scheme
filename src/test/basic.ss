@@ -319,7 +319,6 @@
 ;(test #t inexact? (list -4.242154731064108f-5-6.865001427422244f-5i))
 
 
-
 (test #t number? (list +inf.0))
 (test #t complex? (list +inf.0))
 (test #t real? (list +inf.0))
@@ -331,6 +330,10 @@
 (test #t real? (list -inf.0))
 (test #f rational? (list -inf.0))
 (test #f integer? (list -inf.0))
+
+
+(test "+inf.0" number->string (list +inf.0))
+(test "-inf.0" number->string (list -inf.0))
 
 
 
