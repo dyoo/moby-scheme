@@ -768,8 +768,9 @@ var plt = plt || {};
 	},
 
 	integer_question_ : function(x){
-	    check(x, isNumber, "integer?", "number", 1);
-	    return (plt.types.NumberTower.isFinite(x) && 
+	    // check(x, isNumber, "integer?", "number", 1);
+	    return (isNumber(x) &&
+		    plt.types.NumberTower.isFinite(x) && 
 		    this.equal_question_(x, x.floor()));
 	},
 	

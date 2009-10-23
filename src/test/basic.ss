@@ -252,6 +252,90 @@
 
 
 
+;; Numbers.ss
+
+
+
+(test #f number? (list 'a))
+(test #f complex? (list 'a))
+(test #f real? (list 'a))
+(test #f rational? (list 'a))
+(test #f integer? (list 'a))
+
+(test #t number? (list 3))
+(test #t complex? (list 3))
+(test #t real? (list 3))
+(test #t rational? (list 3))
+(test #t integer? (list 3))
+
+(test #t number? (list 3.0))
+(test #t complex? (list 3.0))
+(test #t real? (list 3.0))
+(test #t rational? (list 3.0))
+(test #t integer? (list 3.0))
+
+(test #t number? (list 3.1))
+(test #t complex? (list 3.1))
+(test #t real? (list 3.1))
+(test #t rational? (list 3.1))
+(test #f integer? (list 3.1))
+
+(test #t number? (list 3/2))
+(test #t complex? (list 3/2))
+(test #t real? (list 3/2))
+(test #t rational? (list 3/2))
+(test #f integer? (list 3/2))
+
+;; Skipping the complex nubmers for now
+
+(test #t exact? (list 3))
+(test #t exact? (list 3/4))
+(test #f exact? (list (exact->inexact 3.0)))
+
+;; Breaking: we don't have bignums!
+;(test #t exact? (list (expt 2 100)))
+
+;(test #t exact? 3+4i)
+;(test #f exact? 3.0+4i)
+
+(test #f inexact? (list 3))
+(test #f inexact? (list 3/4))
+(test #t inexact? (list (exact->inexact 3.0)))
+
+;; Breaking: we don't have bignums!
+;(test #f inexact? (list (expt 2 100)))
+
+;(test #f inexact? 3+4i)
+;(test #t inexact? 3.0+4i)
+;(test #t inexact? 0+4.0i)
+;(test #t inexact? 4+0.i)
+
+;(test #t complex? (list -4.242154731064108e-5-6.865001427422244e-5i))
+;(test #f exact? (list -4.242154731064108e-5-6.865001427422244e-5i))
+;(test #t inexact? (list -4.242154731064108e-5-6.865001427422244e-5i))
+
+;(test #t complex? (list -4.242154731064108f-5-6.865001427422244f-5i))
+;(test #f exact? (list -4.242154731064108f-5-6.865001427422244f-5i))
+;(test #t inexact? (list -4.242154731064108f-5-6.865001427422244f-5i))
+
+
+
+(test #t number? (list +inf.0))
+(test #t complex? (list +inf.0))
+(test #t real? (list +inf.0))
+(test #f rational? (list +inf.0))
+(test #f integer? (list +inf.0))
+
+(test #t number? (list -inf.0))
+(test #t complex? (list -inf.0))
+(test #t real? (list -inf.0))
+(test #f rational? (list -inf.0))
+(test #f integer? (list -inf.0))
+
+
+
+
+
 
 
 

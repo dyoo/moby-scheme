@@ -436,7 +436,9 @@ var getTests;
 		this.assert(Kernel.exact_question_(Kernel.inexact_dash__greaterthan_exact(FloatPoint.makeInstance(3))));
 	    },
 
-
+	    testFloatsAreInexact: function() {
+		this.assert(! Kernel.exact_question_(FloatPoint.makeInstance(3.0)));
+	    },
 
 	    
 	    testOdd_question_ : function(){
