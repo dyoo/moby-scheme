@@ -563,7 +563,13 @@ var plt = plt || {};
     };
     
     plt.types.FloatPoint.prototype.toWrittenString = function() {
-	return this.n.toString();
+	if (this.n == Number.POSITIVE_INFINITY) {
+	    return "+inf.0";
+	} else if (this.n == Number.NEGATIVE_INFINITY) {
+	    return "-inf.0";
+	} else {
+	    return this.n.toString();
+	}
     };
     
     plt.types.FloatPoint.prototype.toDisplayedString = plt.types.FloatPoint.prototype.toWrittenString;

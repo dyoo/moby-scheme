@@ -335,6 +335,79 @@
 (test "+inf.0" number->string (list +inf.0))
 (test "-inf.0" number->string (list -inf.0))
 
+;; Currently broken: negative zero isn't properly supported yet.
+(skip (lambda () (test #t = (list 0.0 -0.0))))
+(skip (lambda () (test #f eqv? (list 0.0 -0.0))))
+(skip (lambda () (test #f equal? (list 0.0 -0.0))))
+(skip (lambda () (test #f eqv? (list -0.0 0.0))))
+(skip (lambda () (test #t eqv? (list 0.0 0.0))))
+(skip (lambda () (test #t eqv? (list -0.0 -0.0))))
+
+
+(test #t = (list 22 22 22))
+(test #t = (list 22 22))
+(test #f = (list 34 34 35))
+(test #f = (list 34  35))
+(test #t > (list 3 -6246))
+(test #f > (list 9 9 -2424))
+(test #t >= (list 3 -4  -6246))
+(test #t >= (list 9 9))
+(test #f >= (list 8 9))
+(test #t < (list -1 2 3 4 5 6 7 8))
+(test #f < (list -1 2 3 4 4 5 6 7))
+(test #t <= (list -1 2 3 4 5 6 7 8))
+(test #t <= (list -1 2 3 4 4 5 6 7))
+(test #f < (list 1 3 2))
+(test #f >= (list 1 3 2))
+
+
+(define (test-compare lo m hi) ; all positive!
+  (local [(define -lo (- lo))
+	  (define -m (- m))
+	  (define -hi (- hi))
+	  
+	  (define (test-lh l h)
+	    (begin
+	      (test #f > (list l h))
+	      (test #t < (list l h))
+	      (test #f = (list l h))
+	      (test #f >= (list l h))
+	      (test #t <= (list l h))))
+	  
+	  (define (test-hl h l)
+	    (begin
+	      (test #t > (list h l))
+	      (test #f < (list h l))
+	      (test #f = (list h l))
+	      (test #t >= (list h l))
+	      (test #f <= (list h l))))
+	  
+	  (define (test-zero z)
+	    (begin
+	      (test-hl m z)
+	      (test-lh -m z)
+	      (test-hl z -m)
+	      (test-lh z m)))]
+	  
+   (begin
+     (test-lh m hi)
+     (test-hl -m -hi)
+     
+     (test #f > (list m m))
+     (test #f < (list m m))
+     (test #t = (list m m))
+     (test #t >= (list m m))
+     (test #t <= (list m m))
+     
+     (test-hl m -m)
+     (test-lh -m m)
+     
+     (test-hl m lo)
+     (test-lh -m -lo)
+     
+     (test-zero 0)
+     (test-zero 0.0))))
+
 
 
 
