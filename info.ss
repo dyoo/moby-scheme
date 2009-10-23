@@ -22,3 +22,6 @@
 
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
+
+(define release-notes '("Changed names of handlers that have effects to use \"!\"."
+                        "Removed js-bidirectional-input; use js-input instead."))
