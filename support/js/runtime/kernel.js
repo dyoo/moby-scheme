@@ -732,12 +732,12 @@ var plt = plt || {};
 	
 	odd_question_ : function(x){
 	    check(x, isNumber, "odd?", "number", 1);
-	    return ((x.toInteger() % 2) == 1);
+	    return (Math.abs((x.toInteger() % 2)) == 1);
 	},
 	
 	even_question_ : function(x) {
 	    check(x, isNumber, "even?", "number", 1);
-	    return ((x.toInteger() % 2) == 0);
+	    return (Math.abs((x.toInteger() % 2)) == 0);
 	},
 	
 	positive_question_ : function(x){

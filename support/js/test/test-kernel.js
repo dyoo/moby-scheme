@@ -446,6 +446,7 @@ var getTests;
 		this.assert(! Kernel.odd_question_(Rational.ZERO));
 		this.assert(Kernel.odd_question_(FloatPoint.makeInstance(1)));
 		this.assert(Kernel.odd_question_(Complex.makeInstance(1, 0)));
+		this.assert(Kernel.odd_question_(Rational.makeInstance(-1, 1)));
 	    },
 	    
 	    testEven_question_ : function(){

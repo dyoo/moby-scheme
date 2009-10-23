@@ -406,7 +406,98 @@
      (test-lh -m -lo)
      
      (test-zero 0)
-     (test-zero 0.0))))
+     (test-zero 0.0)
+
+
+     (test-compare 0.5 1.2 2.3)
+     (test-compare 2/5 1/2 2/3)
+     (test-compare 1/4 1/3 1/2) ; same numerator
+     (test-compare 3/10 7/10 9/10) ; same denominator
+					;(test-compare 2/500000000000000000000000000 1/200000000000000000000000000 2/300000000000000000000000000) ; bignums
+     (test #t = (list 1/2 2/4))
+     (test #f = (list 2/3 2/5))
+					;(test #f = 2/3 2/500000000000000000000000000)
+
+     (test-compare 0.5 6/5 2.3)
+     (test-compare 1 11922615739/10210200 3000)
+     (test-compare 1.0 11922615739/10210200 3000.0)
+
+     (test #t < (list 0.5 2/3))
+     (test #f < (list 2/3 0.5))
+     (test #t = (list 0.5 1/2))
+     
+
+     )))
+
+
+
+
+
+
+
+
+
+(test #t zero? (list 0))
+(test #t zero? (list 0.0))
+(test #t zero? (list 0/1))
+(test #f zero? (list 1))
+(test #f zero? (list -1))
+(test #f zero? (list -100))
+(test #f zero? (list 1.0))
+(test #f zero? (list -1.0))
+(test #f zero? (list 1/2))
+(test #f zero? (list -1/2))
+(test #f zero? (list -1/2+2i))
+(test #f zero? (list +inf.0))
+(test #f zero? (list -inf.0))
+(test #f zero? (list (expt 2 37)))
+(test #f zero? (list (expt -2 37)))
+(test #t positive? (list 4))
+(test #f positive? (list -4))
+(test #f positive? (list 0))
+(test #t positive? (list 4.0))
+(test #f positive? (list -4.0))
+(test #f positive? (list 0.0))
+(test #t positive? (list 2/4))
+(test #f positive? (list -2/4))
+(test #f positive? (list 0/2))
+(test #t positive? (list +inf.0))
+(test #f positive? (list -inf.0))
+(test #t positive? (list (expt 2 37)))
+(test #f positive? (list (expt -2 37)))
+(test #f negative? (list 4))
+(test #t negative? (list -4))
+(test #f negative? (list 0))
+(test #f negative? (list 4.0))
+(test #t negative? (list -4.0))
+(test #f negative? (list 0.0))
+(test #f negative? (list 2/4))
+(test #t negative? (list -2/4))
+(test #f negative? (list 0/4))
+(test #f negative? (list (expt 2 37)))
+(test #t negative? (list (expt -2 37)))
+(test #f negative? (list +inf.0))
+(test #t negative? (list -inf.0))
+(test #t odd? (list 3))
+(test #f odd? (list 2))
+(test #f odd? (list -4))
+(test #t odd? (list -1))
+(test #f odd? (list (expt 2 37)))
+(test #f odd? (list (expt -2 37)))
+(test #t odd? (list (add1 (expt 2 37))))
+(test #t odd? (list (sub1 (expt -2 37))))
+(test #f even? (list 3))
+(test #t even? (list 2))
+(test #t even? (list -4))
+(test #f even? (list -1))
+(test #t even? (list (expt 2 37)))
+(test #t even? (list (expt -2 37)))
+(test #f even? (list (add1 (expt 2 37))))
+(test #f even? (list (sub1 (expt -2 37))))
+
+
+
+
 
 
 
