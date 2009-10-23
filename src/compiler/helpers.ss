@@ -77,11 +77,14 @@
               boolean 	do 	if 	private 	#; this
               break 	double 	implements 	protected 	throw
               byte 	delete  else 	import 	public 	throws
-              case 	enum 	instanceof 	return 	transient
+              case 	enum 	instanceof instanceOf 	return 	transient
               catch 	extends 	int 	short 	try
               char 	final 	interface 	static 	void
               class 	finally 	long 	strictfp 	volatile
-              const 	float 	native 	super 	while null))
+              const 	float 	native 	super 	while null
+              
+              comment export import in label typeof with false true
+              debugger))
           
 
 ;; translate-special-character: char -> string

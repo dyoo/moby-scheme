@@ -330,6 +330,10 @@ var plt = plt || {};
 	throw new plt.Kernel.MobyRuntimeError("invalid level of Number");
     };
     
+    plt.types.Rational.prototype.isFinite = function() {
+	return true;
+    };
+
     plt.types.Rational.prototype.isEqual = function(other) {
 	return other instanceof plt.types.Rational &&
 	    this.n == other.n &&
@@ -539,6 +543,13 @@ var plt = plt || {};
 	this.n = n;
     };
     
+
+
+    plt.types.FloatPoint.prototype.isFinite = function() {
+	return isFinite(this.n);
+    };
+
+
     plt.types.FloatPoint.prototype.toExact = function() {
 	return plt.types.Rational.makeInstance(Math.floor(this.n), 1);
     };
@@ -610,10 +621,16 @@ var plt = plt || {};
     };
     
     plt.types.FloatPoint.prototype.floor = function() {
+	if (! isFinite(this.n)) {
+	    return this;
+	}
 	return plt.types.Rational.makeInstance(Math.floor(this.n), 1);
     };
     
     plt.types.FloatPoint.prototype.ceiling = function() {
+	if (! isFinite(this.n)) {
+	    return this;
+	}
 	return plt.types.Rational.makeInstance(Math.ceil(this.n), 1);
     };
     
@@ -729,7 +746,7 @@ var plt = plt || {};
 	return plt.types.Complex.makeInstance(0, this.n);
     };
     
-    
+
     plt.types.Complex = function(r, i){
 	this.r = plt.types.FloatPoint.makeInstance(r);
 	this.i = plt.types.FloatPoint.makeInstance(i);
@@ -744,6 +761,12 @@ var plt = plt || {};
     };
 
     plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
+
+
+
+    plt.types.Complex.prototype.isFinite = function() {
+	return true;
+    }
 
 
     plt.types.Complex.prototype.isRational = function() {
@@ -1013,6 +1036,10 @@ var plt = plt || {};
 	return n.abs();
     };
     
+    plt.types.NumberTower.isFinite = function(n) {
+	return n.isFinite();
+    }
+
     plt.types.NumberTower.toExact = function(x) {
 	return x.toExact();
     };
@@ -1911,7 +1938,8 @@ var plt = plt || {};
 
 	integer_question_ : function(x){
 	    check(x, isNumber, "integer?", "number", 1);
-	    return this.equal_question_(x, x.floor());
+	    return (plt.types.NumberTower.isFinite(x) && 
+		    this.equal_question_(x, x.floor()));
 	},
 	
 	make_dash_rectangular : function(x, y){
@@ -2271,7 +2299,7 @@ var plt = plt || {};
 	    var aNum = str * 1;
 	    if (isNaN(aNum))
 		return plt.types.Logic.FALSE;
-	    if (Math.floor(aNum) == aNum) {
+	    if (Math.floor(aNum) == aNum && isFinite(aNum)) {
 		return plt.types.Rational.makeInstance(aNum);
 	    }
 	    return plt.types.FloatPoint.makeInstance(aNum);
@@ -6660,7 +6688,7 @@ empty_dash_env = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && m
 
 
 
-java_dash_identifiers = (plt.Kernel.list([(plt.types.Symbol.makeInstance("abstract")),(plt.types.Symbol.makeInstance("continue")),(plt.types.Symbol.makeInstance("for")),(plt.types.Symbol.makeInstance("new")),(plt.types.Symbol.makeInstance("switch")),(plt.types.Symbol.makeInstance("assert")),(plt.types.Symbol.makeInstance("default")),(plt.types.Symbol.makeInstance("goto")),(plt.types.Symbol.makeInstance("package")),(plt.types.Symbol.makeInstance("synchronized")),(plt.types.Symbol.makeInstance("boolean")),(plt.types.Symbol.makeInstance("do")),(plt.types.Symbol.makeInstance("if")),(plt.types.Symbol.makeInstance("private")),(plt.types.Symbol.makeInstance("break")),(plt.types.Symbol.makeInstance("double")),(plt.types.Symbol.makeInstance("implements")),(plt.types.Symbol.makeInstance("protected")),(plt.types.Symbol.makeInstance("throw")),(plt.types.Symbol.makeInstance("byte")),(plt.types.Symbol.makeInstance("else")),(plt.types.Symbol.makeInstance("import")),(plt.types.Symbol.makeInstance("public")),(plt.types.Symbol.makeInstance("throws")),(plt.types.Symbol.makeInstance("case")),(plt.types.Symbol.makeInstance("enum")),(plt.types.Symbol.makeInstance("instanceof")),(plt.types.Symbol.makeInstance("return")),(plt.types.Symbol.makeInstance("transient")),(plt.types.Symbol.makeInstance("catch")),(plt.types.Symbol.makeInstance("extends")),(plt.types.Symbol.makeInstance("int")),(plt.types.Symbol.makeInstance("short")),(plt.types.Symbol.makeInstance("try")),(plt.types.Symbol.makeInstance("char")),(plt.types.Symbol.makeInstance("final")),(plt.types.Symbol.makeInstance("interface")),(plt.types.Symbol.makeInstance("static")),(plt.types.Symbol.makeInstance("void")),(plt.types.Symbol.makeInstance("class")),(plt.types.Symbol.makeInstance("finally")),(plt.types.Symbol.makeInstance("long")),(plt.types.Symbol.makeInstance("strictfp")),(plt.types.Symbol.makeInstance("volatile")),(plt.types.Symbol.makeInstance("const")),(plt.types.Symbol.makeInstance("float")),(plt.types.Symbol.makeInstance("native")),(plt.types.Symbol.makeInstance("super")),(plt.types.Symbol.makeInstance("while")),(plt.types.Symbol.makeInstance("null"))]));
+java_dash_identifiers = (plt.Kernel.list([(plt.types.Symbol.makeInstance("abstract")),(plt.types.Symbol.makeInstance("continue")),(plt.types.Symbol.makeInstance("for")),(plt.types.Symbol.makeInstance("new")),(plt.types.Symbol.makeInstance("switch")),(plt.types.Symbol.makeInstance("assert")),(plt.types.Symbol.makeInstance("default")),(plt.types.Symbol.makeInstance("goto")),(plt.types.Symbol.makeInstance("package")),(plt.types.Symbol.makeInstance("synchronized")),(plt.types.Symbol.makeInstance("boolean")),(plt.types.Symbol.makeInstance("do")),(plt.types.Symbol.makeInstance("if")),(plt.types.Symbol.makeInstance("private")),(plt.types.Symbol.makeInstance("break")),(plt.types.Symbol.makeInstance("double")),(plt.types.Symbol.makeInstance("implements")),(plt.types.Symbol.makeInstance("protected")),(plt.types.Symbol.makeInstance("throw")),(plt.types.Symbol.makeInstance("byte")),(plt.types.Symbol.makeInstance("delete")),(plt.types.Symbol.makeInstance("else")),(plt.types.Symbol.makeInstance("import")),(plt.types.Symbol.makeInstance("public")),(plt.types.Symbol.makeInstance("throws")),(plt.types.Symbol.makeInstance("case")),(plt.types.Symbol.makeInstance("enum")),(plt.types.Symbol.makeInstance("instanceof")),(plt.types.Symbol.makeInstance("instanceOf")),(plt.types.Symbol.makeInstance("return")),(plt.types.Symbol.makeInstance("transient")),(plt.types.Symbol.makeInstance("catch")),(plt.types.Symbol.makeInstance("extends")),(plt.types.Symbol.makeInstance("int")),(plt.types.Symbol.makeInstance("short")),(plt.types.Symbol.makeInstance("try")),(plt.types.Symbol.makeInstance("char")),(plt.types.Symbol.makeInstance("final")),(plt.types.Symbol.makeInstance("interface")),(plt.types.Symbol.makeInstance("static")),(plt.types.Symbol.makeInstance("void")),(plt.types.Symbol.makeInstance("class")),(plt.types.Symbol.makeInstance("finally")),(plt.types.Symbol.makeInstance("long")),(plt.types.Symbol.makeInstance("strictfp")),(plt.types.Symbol.makeInstance("volatile")),(plt.types.Symbol.makeInstance("const")),(plt.types.Symbol.makeInstance("float")),(plt.types.Symbol.makeInstance("native")),(plt.types.Symbol.makeInstance("super")),(plt.types.Symbol.makeInstance("while")),(plt.types.Symbol.makeInstance("null")),(plt.types.Symbol.makeInstance("comment")),(plt.types.Symbol.makeInstance("export")),(plt.types.Symbol.makeInstance("import")),(plt.types.Symbol.makeInstance("in")),(plt.types.Symbol.makeInstance("label")),(plt.types.Symbol.makeInstance("typeof")),(plt.types.Symbol.makeInstance("with")),(plt.types.Symbol.makeInstance("false")),(plt.types.Symbol.makeInstance("true")),(plt.types.Symbol.makeInstance("debugger"))]));
 
 
 
