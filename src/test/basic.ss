@@ -1,4 +1,4 @@
-#lang moby
+#lang s-exp "../moby-lang.ss"
 ;; This is a set of basic tests.  A lot of this is copy-and-pasted from PLT-Scheme's
 ;; test suite.
 
@@ -90,7 +90,8 @@
 				       (let ([y x])
 					 (begin
 					   (set! x 7)
-					   (set! val (+ y 5))))))
+					   (set! val (+ y 5))
+                                           #t))))
 				 'yes
 				 'no))])
 		 (f 0 11)))])
@@ -106,7 +107,9 @@
 				   (if w
 				       w
 				       (let ([y x])
-					 (set! val (+ y 5)))))
+                                         (begin
+                                           (set! val (+ y 5))
+                                           #t))))
 				 'yes
 				 'no))])
 		 (f 0 11)))])
@@ -156,12 +159,13 @@
 (define gen-counter
  (lambda ()
    (let ((n 0))
-      (lambda () (set! n (+ n 1)) n))))
+      (lambda ()
+        (begin (set! n (+ n 1)) n)))))
 (let ((g (gen-counter))) (test #t eqv? (list g g)))
 (test #f eqv? (list (gen-counter) (gen-counter)))
 (letrec ((f (lambda () (if (eqv? f g) 'f 'both)))
-	 (g (lambda () (if (eqv? f g) 'g 'both))))
-  (test #f eqv? (list f g)))
+           (g (lambda () (if (eqv? f g) 'g 'both))))
+    (test #f eqv? (list f g)))
 
 
 
@@ -193,8 +197,8 @@
 (test 2 a-c (list ai))
 (test 3 a-b (list ai2))
 (test 4 a-c (list ai2))
-(define-struct a (b c))
 ;; Commented out: we don't yet properly support redefinition of structures.
+#;(define-struct a (b c))
 #;(test #f a? (list ai))
 
 
@@ -230,7 +234,7 @@
 (test '(list 3 4) 'quasiquote (list (quasiquote (list (unquote (+ 1 2)) 4))))
 (test '`(list ,(+ 1 2) 4) 'quasiquote (list '(quasiquote (list (unquote (+ 1 2)) 4))))
 (test '(()) 'qq (list `((,@'()))))
-(define x 5)
+(set! x 5)
 (test '(quasiquote (unquote x)) 'qq (list ``,x))
 (test '(quasiquote (unquote 5)) 'qq (list ``,,x))
 (test '(quasiquote (unquote-splicing x)) 'qq (list ``,@x))

@@ -7,20 +7,25 @@
 
 (require (prefix-in base: scheme/base)
          scheme/contract
-         lang/htdp-intermediate-lambda
+         lang/htdp-advanced
          (for-syntax scheme/base)
          "error-struct.ss")
 
                      
-(provide (except-out (all-from-out lang/htdp-intermediate-lambda)
+(provide (except-out (all-from-out lang/htdp-advanced)
                      define-struct
                      define
                      quote
+                     quasiquote
+                     unquote
+                     unquote-splicing
                      let
                      letrec
                      let*
                      image?
-                     image=?))
+                     image=?
+                     set!
+                     not))
 
 
 (define-syntax (my-define-struct stx)
@@ -40,8 +45,13 @@
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
                      (base:quote quote)
+                     (base:quasiquote quasiquote)
+                     (base:unquote unquote)
+                     (base:unquote-splicing unquote-splicing)
                      (my-define-struct define-struct)
-                     (base:define define))
+                     (base:define define)
+                     (base:set! set!)
+                     (base:not not))
 
          
          ;; Contract-related stuff: the following will be erased on 
@@ -50,7 +60,6 @@
 
          begin
          void
-	 set!
          
          build-vector
          make-vector
