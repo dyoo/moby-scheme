@@ -421,6 +421,12 @@ function init() {
 
 	    this.assert(isEqual(run("'(a b c d)"),
 				run("(let ((x '(a b)) (y 'c)) `(,@x ,y d))")));
+	},
+
+	testInf: function() {
+	    this.assert(isEqual(run("+inf.0"),
+				run("(add1 +inf.0)"))); 
+				    
 	}
 
 
