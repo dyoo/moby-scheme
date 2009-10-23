@@ -49,7 +49,7 @@
 (define button-down 
   (js-button down '(("id" "button-down"))))
 (define button-ring 
-  (js-button* shake ring '(("id" "button-ring"))))
+  (js-button! shake ring '(("id" "button-ring"))))
 (define background-div 
   (js-div '(("id" "background-div"))))
 
@@ -101,5 +101,5 @@
 
 (js-big-bang initial-world
              (initial-effect (make-effect:set-sound-volume 90))
-             (on-shake* shake ring)
+             (on-shake! shake ring)
              (on-draw render render-css))

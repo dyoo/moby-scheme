@@ -19,37 +19,37 @@
 (define (on-key f)
   (make-world-config:on-key f (lambda (w k) '())))
 
-(define (on-key* f ef)
+(define (on-key! f ef)
   (make-world-config:on-key f ef))
 
 (define (on-tick delay f)
   (make-world-config:on-tick delay f (lambda (w) '())))
 
-(define (on-tick* delay f ef)
+(define (on-tick! delay f ef)
   (make-world-config:on-tick delay f ef))
 
 (define (on-location-change f)
   (make-world-config:on-location-change f (lambda (w lat long) '())))
 
-(define (on-location-change* f ef)
+(define (on-location-change! f ef)
   (make-world-config:on-location-change f ef))
 
 (define (on-tilt f)
   (make-world-config:on-tilt f (lambda (w azimuth pitch roll) '())))
 
-(define (on-tilt* f ef)
+(define (on-tilt! f ef)
   (make-world-config:on-tilt f ef))
 
 (define (on-acceleration f)
   (make-world-config:on-acceleration f (lambda (w x y z) '())))
 
-(define (on-acceleration* f ef)
+(define (on-acceleration! f ef)
   (make-world-config:on-acceleration f ef))
 
 (define (on-shake f)
   (make-world-config:on-shake f (lambda (w) '())))
 
-(define (on-shake* f ef)
+(define (on-shake! f ef)
   (make-world-config:on-shake f ef))
 
 (define (on-redraw f)

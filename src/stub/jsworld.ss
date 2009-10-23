@@ -22,7 +22,7 @@
 (define (js-button f (attrs '()))
   (make-jsworld-widget:button attrs f (lambda (w) '())))
 
-(define (js-button* f ef (attrs '()))
+(define (js-button! f ef (attrs '()))
   (make-jsworld-widget:button attrs f ef))
 
 (define (js-input type update-f (attrs '()))
@@ -51,7 +51,7 @@
                   [js-button (((any/c . -> . any/c)) 
                               (attrs/c) 
                               . ->* . jsworld-widget?)]
-                  [js-button* (((any/c . -> . any/c) 
+                  [js-button! (((any/c . -> . any/c) 
                                 (any/c . -> . any/c))
                                (attrs/c) 
                                . ->* .

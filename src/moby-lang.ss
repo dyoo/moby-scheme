@@ -54,12 +54,12 @@
 	 remove
 
          ;; Configuration handlers
-         on-key on-key*
-         on-tick on-tick*
-         on-location-change on-location-change*
-         on-tilt on-tilt*
-         on-acceleration on-acceleration*
-         on-shake on-shake*
+         on-key on-key!
+         on-tick on-tick!
+         on-location-change on-location-change!
+         on-tilt on-tilt!
+         on-acceleration on-acceleration!
+         on-shake on-shake!
          on-redraw on-draw
          stop-when
          initial-effect
@@ -70,7 +70,7 @@
          js-div
          js-p
          js-button
-         js-button*
+         js-button!
          js-input
          #;js-bidirectional-input
          js-img

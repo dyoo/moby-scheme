@@ -85,18 +85,18 @@
     (make-module-binding 'world-config
                          module-path
                          (list (bf 'on-tick module-path 2 false "plt.world.config.Kernel.onTick")
-                               (bf 'on-tick* module-path 3 false "plt.world.config.Kernel.onTick_star_")
+                               (bf 'on-tick! module-path 3 false "plt.world.config.Kernel.onTick_star_")
                                (bf 'on-mouse module-path 1 false "plt.world.config.Kernel.onMouse")
-                               (bf 'on-mouse* module-path 2 false "plt.world.config.Kernel.onMouse_star_")
+                               (bf 'on-mouse! module-path 2 false "plt.world.config.Kernel.onMouse_star_")
                                
 
 			       (bf 'initial-effect module-path 1 false "plt.world.config.Kernel.initialEffect")
 
                                (bf 'on-key module-path 1 false "plt.world.config.Kernel.onKey")
-                               (bf 'on-key* module-path 2 false "plt.world.config.Kernel.onKey_star_")
+                               (bf 'on-key! module-path 2 false "plt.world.config.Kernel.onKey_star_")
 
                                (bf 'on-announce module-path 1 false "plt.world.config.Kernel.onAnnounce")
-                               (bf 'on-announce* module-path 2 false "plt.world.config.Kernel.onAnnounce_star_")
+                               (bf 'on-announce! module-path 2 false "plt.world.config.Kernel.onAnnounce_star_")
 
                                (make-binding:function
                                 'on-location-change module-path 1 false
@@ -104,7 +104,7 @@
                                 (list PERMISSION:LOCATION)
                                 false)
                                (make-binding:function
-                                'on-location-change* module-path 2 false
+                                'on-location-change! module-path 2 false
                                 "plt.world.config.Kernel.onLocationChange_star_"
                                 (list PERMISSION:LOCATION)
                                 false)
@@ -115,7 +115,7 @@
                                 (list PERMISSION:TILT)
                                 false)
                                (make-binding:function
-                                'on-tilt* module-path 2 false
+                                'on-tilt! module-path 2 false
                                 "plt.world.config.Kernel.onTilt_star_"
                                 (list PERMISSION:TILT)
                                 false)
@@ -127,7 +127,7 @@
                                 false)
                                
                                (make-binding:function
-                                'on-acceleration* module-path 2 false
+                                'on-acceleration! module-path 2 false
                                 "plt.world.config.Kernel.onAcceleration_star_"
                                 (list PERMISSION:TILT)
                                 false)
@@ -139,7 +139,7 @@
                                 false)
                                
                                (make-binding:function
-                                'on-shake* module-path 2 false
+                                'on-shake! module-path 2 false
                                 "plt.world.config.Kernel.onShake_star_"
                                 (list PERMISSION:SHAKE)
                                 false)
@@ -361,7 +361,7 @@
                                (bf 'js-div 0 "plt.world.MobyJsworld.div")
                                (bf 'js-p 0 "plt.world.MobyJsworld.p")
                                (bf 'js-button 1 "plt.world.MobyJsworld.button")
-                               (bf 'js-button* 2 "plt.world.MobyJsworld.buttonStar")
+                               (bf 'js-button! 2 "plt.world.MobyJsworld.buttonStar")
                                (bf 'js-input 2 "plt.world.MobyJsworld.input")
 			       (bf 'js-img 1
 				   "plt.world.MobyJsworld.img")

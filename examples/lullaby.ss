@@ -110,7 +110,7 @@
 ;; Produces an HTML page for the user interface.
 (define (draw a-world)
   (list (js-div '(("id" "top")))
-	(list (js-button*
+	(list (js-button!
 	       identity
 	       (lambda (w)
 		 (make-effect:pick-playlist update-playlist)))
@@ -132,7 +132,7 @@
 
 
 (js-big-bang initial-world
-             (on-tick* 1 tick get-effects)
-             (on-shake* shake get-effects)
+             (on-tick! 1 tick get-effects)
+             (on-shake! shake get-effects)
              
              (on-draw draw draw-css))

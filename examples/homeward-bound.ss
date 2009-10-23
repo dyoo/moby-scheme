@@ -463,7 +463,7 @@
 (js-big-bang initial-world
              
              (on-location-change move)
-             (on-tick* TICK-DELAY
+             (on-tick! TICK-DELAY
                        record-reporting send-report)
              
              (on-draw draw draw-css))

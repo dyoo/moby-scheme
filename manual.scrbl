@@ -246,7 +246,7 @@ Constructs a button.  When the button is pressed, the world is updated through @
                      
                      
 
-@defproc[(js-button* (world-update-f (world -> world))
+@defproc[(js-button! (world-update-f (world -> world))
                      (effect-f (world -> effect))
                      (attribs (listof attrib) '()))
          dom-element]{
@@ -294,8 +294,8 @@ to the button.
 
 Stimulus handlers are provided as additional arguments to a js-big-bang.
 
-Each stimulus has an unstarred and a starred version; the starred
-version allows you to provide an effect-generating function.  When
+Each stimulus has an effect-less and an effect-full version; the effect-full
+version allows you to provide an effect-generating function as well as a world-updater.  When
 the given stimulus emits, the old world is used to compute both
 the new world and the optional effect.  Afterwards, each effect in the
 effect group is applied.
@@ -353,7 +353,7 @@ Calls the acceleration handlers when the device feels change in acceleration.
 @subsection{Effects}
 
 Effects allow world programs to apply side effects to the outside
-world.  These are used in conjunction with the starred version of the
+world.  These are used in conjunction with the effect (@scheme[!]) version of the
 stimulus handlers described above.
 
 
