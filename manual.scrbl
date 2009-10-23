@@ -36,7 +36,7 @@
 @section{What is Moby?}
 
 Moby is a project from the PLT Scheme team.  The Moby compiler
-consumes Advanced Student Language (ASL) programs that use World
+consumes Advanced Student Language (ASL) programs that use @link["http://world.cs.brown.edu/"]{World}
 primitives, and produces applications for mobile platforms.  The
 current prototype supports desktop browsers and smartphones.
 Our long-term goal is to make Scheme the premiere reactive scripting
@@ -58,7 +58,6 @@ at the top of your program, include the following language line:
 @mobyblock[
 ]
 
-
 followed by the program.  For example, running the program:
 
 @mobyblock[
@@ -68,19 +67,18 @@ followed by the program.  For example, running the program:
 
 will invoke a web browser, which should show the
 running program on a web page.  Because @scheme[on-tick] is used, 
-as every second passes, a tick stimulus is sent to the program.
-
+as every second passes, the runtime sends a tick stimulus to the program.  
 The page should also provide links to download packages
 of the compiled program.
 
 
 
-Because these programs run on the user's web browser, we also allow programs to dynamically
+These programs run on the user's web browser; they can also dynamically
 generate DOM trees and style them with CSS, as in the examples below.
 
-The following will render the world as a paragraph of text, styled
-with a font-size of 30.  @scheme[draw-html] and @scheme[draw-css]
-will be called to draw the web page.
+The following example renders the world as a paragraph of text, styled
+with a font-size of 30.  It uses @scheme[draw-html] and @scheme[draw-css]
+to draw the web page.
 
 @(mobyblock
 (define initial-world 0)
@@ -97,10 +95,10 @@ will be called to draw the web page.
              (on-draw draw-html draw-css)))
 
 
-The following will show a logo and an input text field.  As with the
-previous example, @scheme[draw-html] and @scheme[draw-css] are used to
-construct the web page; every time the world changes, these functions
-are called to re-draw the web page.
+The next example shows an image and an input text field.  As with the
+previous example, it uses @scheme[draw-html] and @scheme[draw-css] to
+construct the web page, and every time the world changes, the runtime environment
+reacts by re-drawing the web page.
 
 @mobyblock[
 (define (form-value w)
@@ -135,13 +133,17 @@ are called to re-draw the web page.
 
 @defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
 A Moby program starts a reactive computation with @scheme[js-big-bang].
-The rest of the arguments hook into the reactive computation.  One
-instance of a handler is @scheme[on-tick], which registers a function to update
-the world on a clock tick.
+The rest of the arguments hook into the reactive computation.
 
-In the absence of an @scheme[on-draw] or @scheme[on-redraw] handler, @scheme[js-big-bang] will
-show the current state of the world; on transitions, the world is
-re-drawn to screen.}
+By default, the page that's displayed contains a rendering of the world value.
+In the presence of an @scheme[on-draw] or @scheme[on-redraw] handler, @scheme[js-big-bang] will
+show a customized view.
+
+The majority of the handlers register different stimuli that can trigger changes
+to the world.  One
+instance is @scheme[on-tick], which registers a function to update
+the world on a clock tick.
+}
 
 
 
@@ -154,15 +156,9 @@ that tree's styling.
 }
 
 
-@defproc[(stop-when [stop? (world -> boolean)]) handler?]{
-When the world should be stopped --- when @scheme[stop?] applied to the world
-produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
-}
-                                                          
-                                                        
+                                                                                                                 
 @defproc[(on-redraw [hook (world -> scene)]) handler?]{
-For simple applications, on-redraw is sufficient to draw a scene onto the display.
-
+For simple applications, @scheme[on-redraw] is sufficient to draw a scene onto the display.
 The following program shows a ball falling down a scene.
 
 @(mobyblock
@@ -190,6 +186,13 @@ The following program shows a ball falling down a scene.
              (on-redraw render)
              (stop-when hits-floor?)))
 }
+
+
+@defproc[(stop-when [stop? (world -> boolean)]) handler?]{
+When the world should be stopped --- when @scheme[stop?] applied to the world
+produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
+}
+
 
 
 
@@ -285,9 +288,6 @@ to the button.
 @defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.
 }
 
-
-
-    
              
              
 @subsection{Stimulus Handlers}
@@ -308,7 +308,7 @@ effect group is applied.
               @defproc[(on-tick (delay number)
                                (world-update-f (world -> world)))
                handler]
-               @defproc[(on-tick* (delay number) 
+               @defproc[(on-tick! (delay number) 
                                   (world-update-f (world -> world))
                                   (effect-f (world -> effect))) 
                         handler]
@@ -318,7 +318,7 @@ Delays by n seconds, and then calls the handlers.}
 
 @deftogether[(
               @defproc[(on-shake (world-update-f (world -> world))) handler]
-               @defproc[(on-shake* (world-update-f (world -> world))
+               @defproc[(on-shake! (world-update-f (world -> world))
                                    (effect-f (world -> effect)))
                         handler])]{
 Calls the shake handlers when the phone is physically jerked.}
@@ -327,23 +327,22 @@ Calls the shake handlers when the phone is physically jerked.}
 @deftogether[(
               @defproc[(on-location-change (world-update-f (world (lat number) (long number) -> world)))
                        handler]
-               @defproc[(on-location-change* (world-update-f (world (lat number) (long number) -> world))
+               @defproc[(on-location-change! (world-update-f (world (lat number) (long number) -> world))
                                              (effect-f (world number number -> effect))) handler])]{
 Calls the location handlers when the latitude or longitude of the
 device has changed.}
 
 
 @deftogether[(
-              @defproc[(on-tilt (world-update-f (world number number number -> world))) handler]
-               @defproc[(on-tilt* (world-update-f (world number number number -> world))
-                                  (effect-f (world number number number -> effect))) handler])]{
+              @defproc[(on-tilt! (world-update-f (world number number number -> world))
+                                 (effect-f (world number number number -> effect))) handler])]{
 Calls the tile handlers when the phone has been tilted.
 }
 
 @deftogether[(
               @defproc[(on-acceleration (world-update-f (world number number number -> world)))
                        handler]
-               @defproc[(on-acceleration* (world-update-f (world number number number -> world))
+               @defproc[(on-acceleration! (world-update-f (world number number number -> world))
                                           (effect-f (world number number number -> effect)))
                         handler])]{
 Calls the acceleration handlers when the device feels change in acceleration.
