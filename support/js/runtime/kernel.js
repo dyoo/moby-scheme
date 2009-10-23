@@ -769,7 +769,8 @@ var plt = plt || {};
 
 	integer_question_ : function(x){
 	    check(x, isNumber, "integer?", "number", 1);
-	    return this.equal_question_(x, x.floor());
+	    return (plt.types.NumberTower.isFinite(x) && 
+		    this.equal_question_(x, x.floor()));
 	},
 	
 	make_dash_rectangular : function(x, y){
@@ -1129,7 +1130,7 @@ var plt = plt || {};
 	    var aNum = str * 1;
 	    if (isNaN(aNum))
 		return plt.types.Logic.FALSE;
-	    if (Math.floor(aNum) == aNum) {
+	    if (Math.floor(aNum) == aNum && isFinite(aNum)) {
 		return plt.types.Rational.makeInstance(aNum);
 	    }
 	    return plt.types.FloatPoint.makeInstance(aNum);

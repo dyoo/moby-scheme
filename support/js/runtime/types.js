@@ -325,6 +325,10 @@ var plt = plt || {};
 	throw new plt.Kernel.MobyRuntimeError("invalid level of Number");
     };
     
+    plt.types.Rational.prototype.isFinite = function() {
+	return true;
+    };
+
     plt.types.Rational.prototype.isEqual = function(other) {
 	return other instanceof plt.types.Rational &&
 	    this.n == other.n &&
@@ -534,6 +538,13 @@ var plt = plt || {};
 	this.n = n;
     };
     
+
+
+    plt.types.FloatPoint.prototype.isFinite = function() {
+	return isFinite(this.n);
+    };
+
+
     plt.types.FloatPoint.prototype.toExact = function() {
 	return plt.types.Rational.makeInstance(Math.floor(this.n), 1);
     };
@@ -605,10 +616,16 @@ var plt = plt || {};
     };
     
     plt.types.FloatPoint.prototype.floor = function() {
+	if (! isFinite(this.n)) {
+	    return this;
+	}
 	return plt.types.Rational.makeInstance(Math.floor(this.n), 1);
     };
     
     plt.types.FloatPoint.prototype.ceiling = function() {
+	if (! isFinite(this.n)) {
+	    return this;
+	}
 	return plt.types.Rational.makeInstance(Math.ceil(this.n), 1);
     };
     
@@ -724,7 +741,7 @@ var plt = plt || {};
 	return plt.types.Complex.makeInstance(0, this.n);
     };
     
-    
+
     plt.types.Complex = function(r, i){
 	this.r = plt.types.FloatPoint.makeInstance(r);
 	this.i = plt.types.FloatPoint.makeInstance(i);
@@ -739,6 +756,12 @@ var plt = plt || {};
     };
 
     plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
+
+
+
+    plt.types.Complex.prototype.isFinite = function() {
+	return true;
+    }
 
 
     plt.types.Complex.prototype.isRational = function() {
@@ -1008,6 +1031,10 @@ var plt = plt || {};
 	return n.abs();
     };
     
+    plt.types.NumberTower.isFinite = function(n) {
+	return n.isFinite();
+    }
+
     plt.types.NumberTower.toExact = function(x) {
 	return x.toExact();
     };
