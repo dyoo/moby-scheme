@@ -598,6 +598,7 @@ var plt = plt || {};
     };
     
     plt.types.FloatPoint.prototype.multiply = function(other) {
+	if (this.n == 0 || other.n == 0) { return plt.types.Rational.ZERO; }
 	return plt.types.FloatPoint.makeInstance(this.n * other.n);
     };
     

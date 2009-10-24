@@ -573,10 +573,14 @@ var plt = plt || {};
 	    check(first, isNumber, "/", "number", 1);
 	    arrayEach(args, function(x, i) { check(x, isNumber, "/", "number", i+2) });
 	    var i, div = first;
-	    for(i = 0; i < args.length; i++) {
-		div = plt.types.NumberTower.divide(div, args[i]);
+	    if (args.length == 0) {
+		return plt.types.NumberTower.divide(plt.types.Rational.ONE, div);
+	    } else {
+		for(i = 0; i < args.length; i++) {
+		    div = plt.types.NumberTower.divide(div, args[i]);
+		}
+		return div;    
 	    }
-	    return div;    
 	},
 	
 

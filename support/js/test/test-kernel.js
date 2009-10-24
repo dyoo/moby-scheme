@@ -169,6 +169,9 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel._slash_(six, n2), Rational.ONE));
 		var n3 = [Complex.makeInstance(3, 4), Complex.makeInstance(3, -4)];
 		this.assert(Kernel.equal_question_(Kernel._slash_(FloatPoint.makeInstance(150), n3), six));
+
+		this.assert(Kernel.equal_question_(Kernel._slash_(six, []),
+						   Rational.makeInstance(1, 6)));
 	    },
 	    
 	    
@@ -449,6 +452,13 @@ var getTests;
 		this.assert(Kernel.odd_question_(Rational.makeInstance(-1, 1)));
 	    },
 	    
+	    testInfinityComputations : function() {
+		this.assert(Kernel._equal_(Rational.ZERO,
+					   Kernel._star_([Rational.ZERO, 
+							  FloatPoint.makeInstance(Number.POSITIVE_INFINITY)]),
+					   []));
+	    },
+
 	    testEven_question_ : function(){
 		this.assert(Kernel.even_question_(Rational.ZERO));
 		this.assert(! Kernel.even_question_(Rational.ONE));

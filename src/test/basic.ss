@@ -496,10 +496,240 @@
 (test #f even? (list (sub1 (expt -2 37))))
 
 
+(test 5 max (list 5))
+(test 5 min (list 5))
+(test 38 max (list 34 5 7 38 6))
+(test -24 min (list 3  5 5 330 4 -24))
+(test 38.0 max (list 34 5.0 7 38 6))
+(test -24.0 min (list 3  5 5 330 4 -24.0))
+(test 2/3 max (list 1/2 2/3))
+(test 2/3 max (list 2/3 1/2))
+(test 2/3 max (list 2/3 -4/5))
+(test 1/2 min (list 1/2 2/3))
+(test 1/2 min (list 2/3 1/2))
+(test -4/5 min (list 2/3 -4/5))
+(test +inf.0 max (list +inf.0 0 -inf.0))
+(test -inf.0 min (list +inf.0 0 -inf.0))
+
+
+
+(test (expt 5 27) max (list 9 (expt 5 27)))
+(test (expt 5 29) max (list (expt 5 29) (expt 5 27)))
+(test (expt 5 29) max (list (expt 5 27) (expt 5 29)))
+(test (expt 5 27) max (list (expt 5 27) 9))
+(test (expt 5 27) max (list (expt 5 27) (- (expt 5 29))))
+(test (expt 5 27) max (list (- (expt 5 29)) (expt 5 27)))
+(test (- (expt 5 27)) max (list (- (expt 5 27)) (- (expt 5 29))))
+(test (- (expt 5 27)) max (list (- (expt 5 29)) (- (expt 5 27))))
+(test 9 min (list 9 (expt 5 27)))
+(test (expt 5 27) min (list (expt 5 29) (expt 5 27)))
+(test (expt 5 27) min (list (expt 5 27) (expt 5 29)))
+(test 9 min (list (expt 5 27) 9))
+(test (- (expt 5 29)) min (list (expt 5 27) (- (expt 5 29))))
+(test (- (expt 5 29)) min (list (- (expt 5 29)) (expt 5 27)))
+(test (- (expt 5 29)) min (list (- (expt 5 27)) (- (expt 5 29))))
+(test (- (expt 5 29)) min (list (- (expt 5 29)) (- (expt 5 27))))
+
+
+(test 0 + (list))
+(test 7 + (list 3 4))
+(test 6 + (list 1 2 3))
+(test 7.0 + (list 3 4.0))
+(test 6.0 + (list 1 2.0 3))
+(test 19/12 + (list 1/4 1/3 1))
+;(test +i + (list +i))
+;(test 3/2+1i + (list 1 2+2i -i -3/2))
+(test 3 + (list 3))
+(test 0 + (list))
+(test 4 * (list 4))
+(test 16.0 * (list 4 4.0))
+(test 1 * (list))
+(test 6/25 * (list 3/5 1/5 2))
+;(test #i+6/25 * (list 3/5 1/5 2.0)
+;(test +6/25i * (list 3/5 1/5 2 +i))
+;(test (make-rectangular 0 #i+6/25) * (list 3/5 1/5 2.0 +i))
+;(test 1073741874 + (list (- (expt 2 30) 50) 100)) ; fixnum -> bignum for 32 bits
+;(test -1073741874 - (list (- 50 (expt 2 30)) 100)) ; fixnum -> bignum for 32 bits
+;(test 10.0+0.0i + (list 9.0+0.0i 1))
+;(test 10.0+0.0i + (list 9.0+0.0i 1-0.0i))
+;(test 9.0+0.0i * (list 9.0+0.0i 1))
+;(test 10.0-1.0i + (list 9.0+0.0i 1-1.0i))
+(test 0 * (list 0 10.0))
+(test 0 * (list 0 +inf.0))
+;(test 0 * (list 0 +nan.0))
+;(test 0 / (list 0 0.0))
+(test 0 / (list 0 +inf.0))
+(test 0 / (list 0 -inf.0))
+;(test 0 / (list 0 +nan.0))
+(test -0.0 + (list 0 -0.0))
+(test -0.0 + (list -0.0 0))
+(test -0.0 - (list -0.0 0))
+
+(test -0.0 - (list 0.0))
+(test 0.0 - (list -0.0))
+(test -0.0 - (list 0 0.0))
+(test 0.0 - (list 0 -0.0))
+
+
+(test 2 add1 (list 1))
+(test 0 add1 (list -1))
+(test 2.0 add1 (list 1.0))
+(test 0.0 add1 (list -1.0))
+(test 3/2 add1 (list 1/2))
+(test 1/2 add1 (list -1/2))
+
+
+(test 1 sub1 (list 2))
+(test -2 sub1 (list -1))
+(test 1.0 sub1 (list 2.0))
+(test -2.0 sub1 (list -1.0))
+(test -1/2 sub1 (list 1/2))
+(test -3/2 sub1 (list -1/2))
+
+
+(test 1024 expt (list 2 10))
+(test 1/1024 expt (list 2 -10))
+(test 1/1024 expt (list 1/2 10))
+(test (/ 1 (expt 2 10000)) expt (list 1/2 10000))
+(test 2 expt (list 4 1/2))
+(test 2.0 expt (list 4 0.5))
+(test (sqrt 5) expt (list 5 1/2))
+
+
+(test 31525197391593472 inexact->exact (list 31525197391593473.0))
+(test 31525197391593476 inexact->exact (list 31525197391593476.0))
+(test 31525197391593476 inexact->exact (list 31525197391593476.0))
+
+
+(test #t positive? (list (inexact->exact 0.1)))
+(test #t negative? (list (inexact->exact -0.1)))
+(test 0 + (list (inexact->exact -0.1) (inexact->exact 0.1)))
 
 
 
 
+
+
+
+
+(define (test-inf-plus-times v)
+  (local [(define (test+ +)
+	    (begin
+	      (test +inf.0 + (list v (+ +inf.0)))
+	      (test -inf.0 + (list v (+ -inf.0)))
+	      (test +inf.0 + (list (- v) (+ +inf.0)))
+	      (test -inf.0 + (list (- v) (+ -inf.0)))
+	      
+	      (test +inf.0 + (list +inf.0 v))
+	      (test -inf.0 + (list -inf.0 v))
+	      (test +inf.0 + (list +inf.0 (- v)))
+	      (test -inf.0 + (list -inf.0 (- v)))
+	      
+	      #;(test-nan.0 + +nan.0 v)
+	      #;(test-nan.0 + v +nan.0)))]
+  (begin
+    (test+ +)
+    (test+ -)
+    
+    (test +inf.0 * (list +inf.0 v))
+    (test -inf.0 * (list -inf.0 v))
+    (test -inf.0 * (list +inf.0 (- v)))
+    (test +inf.0 * (list -inf.0 (- v)))
+
+    (test +inf.0 * (list v +inf.0))
+    (test -inf.0 * (list v -inf.0))
+    (test -inf.0 * (list (- v) +inf.0))
+    (test +inf.0 * (list (- v) -inf.0)))))
+
+    ;(test-nan.0 * +nan.0 v)
+    ;(test-nan.0 * v +nan.0)
+
+(test-inf-plus-times 1)
+(test-inf-plus-times 1.0)
+(test-inf-plus-times (expt 2 100))
+
+
+(test -inf.0 - (list +inf.0))
+(test +inf.0 - (list -inf.0))
+(test +inf.0 + (list +inf.0 +inf.0))
+(test -inf.0 + (list -inf.0 -inf.0))
+(test +inf.0 * (list +inf.0 +inf.0))
+(test -inf.0 * (list +inf.0 -inf.0))
+(test 0 * (list +inf.0 0))
+
+
+
+
+
+
+(test 1/2 / (list 1 2))
+(test -1/3 / (list -1 3))
+(test -1/3 / (list 1 -3))
+(test 1/2 / (list 1/4 1/2))
+(test 0.5 / (list 1 2.0))
+(test 0.5 / (list 1.0 2))
+;(test 1/2+3/2i / 1+3i 2)
+;(test 1/5-3/5i / 2 1+3i)
+;(test 0.5+0.0i / 1+0.0i 2)
+;(test 0.25-0.0i / 1 4+0.0i)
+;(test 0.25+0.0i / 1+0.0i 4+0.0i)
+;(test 0 / 0 4+3i)
+;(test 0.25+0.0i / 1e300+1e300i (* 4 1e300+1e300i))
+;(test 0.25+0.0i / 1e-300+1e-300i (* 4 1e-300+1e-300i))
+;(test 1/2-1/2i / 1+1i)
+;(test 1/2+1/2i / 1-1i)
+;(test 1/5-2/5i / 1+2i)
+;(test 1/5+2/5i / 1-2i)
+;(test 2/5-1/5i / 2+1i)
+;(test 2/5+1/5i / 2-1i)
+;(test 0.5-0.5i / 1.0+1.0i)
+;(test 0.5+0.5i / 1.0-1.0i)
+;(test 0.2-0.4i / 1.0+2.0i)
+;(test 0.2+0.4i / 1.0-2.0i)
+;(test 0.4-0.2i / 2.0+1.0i)
+;(test 0.4+0.2i / 2.0-1.0i)
+
+
+(test 3 / (list 1 1/3))
+(test -3 / (list 1 -1/3))
+(test -3 / (list -1 1/3))
+(test 3 / (list -1 -1/3))
+(test 1/3 / (list 1 3))
+(test -1/3 / (list 1 -3))
+(test -1/3 / (list -1 3))
+(test 1/3 / (list -1 -3))
+(test 3/2 / (list 1 2/3))
+(test -3/2 / (list 1 -2/3))
+(test -3/2 / (list -1 2/3))
+(test 3/2 / (list -1 -2/3))
+
+
+
+
+(test (expt 3 50) / (list 1 (/ 1 (expt 3 50))))
+(test (- (expt 3 50)) / (list 1 (- (/ 1 (expt 3 50)))))
+(test (- (expt 3 50)) / (list -1 (/ 1 (expt 3 50))))
+(test (expt 3 50) / (list -1 (- (/ 1 (expt 3 50)))))
+(test (/ 1 (expt 3 50)) / (list 1 (expt 3 50)))
+(test (- (/ 1 (expt 3 50))) / (list 1 (- (expt 3 50))))
+(test (- (/ 1 (expt 3 50))) / (list -1 (expt 3 50)))
+(test (/ 1 (expt 3 50)) / (list -1 (- (expt 3 50))))
+(test (/ (expt 3 50) (expt 2 70)) / (list 1 (/ (expt 2 70) (expt 3 50))))
+(test (- (/ (expt 3 50) (expt 2 70))) / (list 1 (- (/ (expt 2 70) (expt 3 50)))))
+(test (- (/ (expt 3 50) (expt 2 70))) / (list -1 (/ (expt 2 70) (expt 3 50))))
+(test (/ (expt 3 50) (expt 2 70)) / (list -1 (/ (- (expt 2 70)) (expt 3 50))))
+
+
+
+(test (- (expt 2 30)) / (list (- (expt 2 30)) 1))
+(test (expt 2 30) / (list (- (expt 2 30)) -1))
+(test (expt 2 29) / (list (- (expt 2 30)) -2))
+(test -1/1073741824 / (list (- (expt 2 30))))
+
+(test +inf.0 / (list 1.0 0.0))
+(test -inf.0 / (list -1.0 0.0))
+(test +inf.0 / (list -1.0 -0.0))
+(test -inf.0 / (list 1.0 -0.0))
 
 
 
