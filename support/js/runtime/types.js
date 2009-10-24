@@ -1122,10 +1122,19 @@ var plt = plt || {};
 	var result = 
 	    plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
 					    1);
-	if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
-	    return plt.types.NumberTower.add(result, n);
+
+	if (plt.types.NumberTower.lessThan(n, plt.types.Rational.ZERO)) {
+	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
+		return plt.types.NumberTower.add(result, n);
+	    }
+	    return result;
+
+	} else {
+	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
+		return plt.types.NumberTower.add(result, n);
+	    }
+	    return result;
 	}
-	return result;
     };
     
     plt.types.NumberTower.sqr = function(x) {

@@ -785,8 +785,14 @@ var plt = plt || {};
 	quotient : function(x, y){
 	    check(x, isNumber, "quotient", "number", 1);
 	    check(y, isNumber, "quotient", "number", 2);
-	    return plt.types.Rational.makeInstance(plt.types.NumberTower.divide(x,y).floor().toInteger(),
-						   1);
+	    var div = plt.types.NumberTower.divide(x,y);
+	    if (plt.Kernel.positive_question_(div)) {
+		return plt.types.Rational.makeInstance(div.floor().toInteger(),
+						       1);
+	    } else {
+		return plt.types.Rational.makeInstance(div.ceiling().toInteger(),
+						       1);
+	    }
 	},
 	
 	remainder : function(x, y) {
