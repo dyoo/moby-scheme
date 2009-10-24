@@ -31,7 +31,7 @@
                        body ...))))]))
 
 
-@(require (for-label "src/moby-lang.ss"))
+@(require (for-label (this-package-in src/moby-lang)))
 
 @title{Moby: the Moby Scheme Compiler}
 

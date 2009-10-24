@@ -430,8 +430,16 @@ function init() {
 	    this.assert(isEqual(run("1"),
 				run("(length (list +inf.0))")));
 				    
-	}
+	    },
 
+	    testAtan: function() {
+		this.assert(isEqual(run("(atan +inf.0 -inf.0)"),
+				    run("2.356194490192345")));
+		this.assert(isEqual(run("(atan 0.5)"),
+				    run("0.4636476090008061")));
+		this.assert(isEqual(run("(atan 2 1)"),
+				    run("1.1071487177940904")));
+	    }
 
     });
 

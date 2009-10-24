@@ -679,9 +679,20 @@ var plt = plt || {};
 	    return x.angle();
 	},
 	
-	atan : function(x) {
-	    check(x, isNumber, "atan", "number", 1);
-	    return x.atan();
+	atan : function(x, args) {
+	    if (args.length == 0) {
+		check(x, isNumber, "atan", "number", 1);
+		return x.atan();
+	    } else if (args.length == 1) {
+		check(x, isReal, "atan", "number", 1);
+		check(args[0], isReal, "atan", "number", 2);
+		return plt.types.FloatPoint.makeInstance(
+		    Math.atan2(plt.types.NumberTower.toFloat(x),
+			       plt.types.NumberTower.toFloat(args[0])));
+	    } else {
+		// FIXME: this should really be an error at compile time.
+		throw new MobyRuntimeError(plt.Kernel.format("atan: expects 1 to 2 arguments, given ~a.", [Rational.makeInstance(args.length)]));
+	    }
 	},
 	
 	expt : function(x, y){

@@ -83,7 +83,7 @@
                      (add1 1)
                      (angle 1)
                      (asin 1)
-                     (atan 1)
+                     (atan 1 true)           ;; arity is either 1 or 2
                      (ceiling 1)
                      (complex? 1)
                      (conjugate 1)
