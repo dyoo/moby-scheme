@@ -691,7 +691,7 @@ var plt = plt || {};
 			       plt.types.NumberTower.toFloat(args[0])));
 	    } else {
 		// FIXME: this should really be an error at compile time.
-		throw new MobyRuntimeError(plt.Kernel.format("atan: expects 1 to 2 arguments, given ~a.", [Rational.makeInstance(args.length)]));
+		throw new MobyRuntimeError(plt.Kernel.format("atan: expects 1 to 2 arguments, given ~a.", [plt.types.Rational.makeInstance(args.length)]));
 	    }
 	},
 	

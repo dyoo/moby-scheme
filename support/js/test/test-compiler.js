@@ -439,6 +439,10 @@ function init() {
 				    run("0.4636476090008061")));
 		this.assert(isEqual(run("(atan 2 1)"),
 				    run("1.1071487177940904")));
+		// Current deficiency in binding expressions prevent us from
+		// catching the arity error at compile time.
+		this.assertRaise("MobyRuntimeError",
+				 function() { run("(atan 1 2 3)") });
 	    }
 
     });
