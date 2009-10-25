@@ -9,8 +9,9 @@
          "stub/net.ss"
          "compiler/effect-struct.ss"
 	 "stub/location.ss"
-         (for-syntax scheme/base
-                     "stx-helpers.ss"))
+         (for-syntax scheme/base "stx-helpers.ss")
+
+         (prefix-in base: scheme/base))
 
 
 (define-for-syntax source-code #'not-initialized-yet)
@@ -36,10 +37,29 @@
                        [module-name name])
            (syntax/loc stx 
              (#%module-begin
-              (provide (all-defined-out))
               form ...
               (compile-and-serve 'source-code module-name)
               )))))]))
+
+
+;; load: textually include content from another file.
+(define-syntax (my-load stx)
+  (syntax-case stx ()
+    [(_ path)
+     (with-syntax ([(body ...)
+                    (let* ([pathname (syntax-e #'path)]
+                           [ip (open-input-file pathname)])
+                      (let loop ()
+                        (let ([datum (read ip)])
+                          (cond
+                            [(eof-object? datum)
+                             '()]
+                            [else
+                             (cons (datum->syntax stx datum stx) 
+                                   (loop))]))))])
+       (syntax/loc stx
+         (base:begin body ...)))]))
+         
 
 
 
@@ -50,8 +70,8 @@
          (all-from-out "stub/net.ss")
          (all-from-out "compiler/effect-struct.ss")
 	 (all-from-out "stub/location.ss")
-         
-         load
+ 
+         (rename-out (my-load load))
          
          void
          
