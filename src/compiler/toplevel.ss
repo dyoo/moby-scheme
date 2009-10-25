@@ -334,7 +334,11 @@
                      (hash-remove 2 "plt.Kernel._kernelHashRemove")
                      (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
                      (hash-map 2 "plt.Kernel._kernelHashMap")
-                     (hash? 1 "plt.Kernel._isHash"))))]
+                     (hash? 1 "plt.Kernel._isHash")
+                     
+                     
+                     (open-input-stx 1 "plt.Kernel.openInputStx")
+                     )))]
     top-env-3))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

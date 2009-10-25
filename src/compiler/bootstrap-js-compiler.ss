@@ -46,7 +46,7 @@
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
   (boot-compile-to-file "beginner-to-javascript.ss" compiler-path)
-  (boot-compile-to-file "stx.ss" syntax-path)
+  ;(boot-compile-to-file "stx.ss" syntax-path)
   (boot-compile-to-file "permission.ss" permission-struct-path)
   (boot-compile-to-file "effect-struct.ss" effect-struct-path)
   

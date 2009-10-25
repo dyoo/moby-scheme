@@ -1,4 +1,7 @@
-#lang s-exp "lang.ss"
+#lang scheme/base
+(require scheme/list
+         scheme/bool
+         scheme/contract)
 
 ;; Syntax objects
 (define-struct stx:atom (datum loc))

@@ -6,7 +6,6 @@
 ;; http://docs.plt-scheme.org/htdp-langs/beginner.html
 
 
-(require "stx.ss")
 (require "env.ss")
 (require "pinfo.ss")
 (require "analyzer.ss")

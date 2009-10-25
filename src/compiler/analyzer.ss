@@ -2,7 +2,6 @@
 
 (require "env.ss")
 (require "pinfo.ss")
-(require "stx.ss")
 (require "helpers.ss")
 (require "modules.ss")
 (require "permission.ss")
