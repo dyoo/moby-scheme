@@ -1506,7 +1506,7 @@ var plt = plt || {};
 	this.hash = inputHash;
     }
 
-    ;; open-input-stx: string -> (listof stx)
+    // open-input-stx: string -> (listof stx)
     plt.Kernel.openInputStx = function(path) {
 	// Doesn't do anything here.
 	throw new MobyRuntimeError("open-input-stx currently unsupported");
