@@ -5,6 +5,12 @@
 
 (define number-of-tests 0)
 (define number-of-skipped-tests 0)
+(define number-of-errors 0)
+
+(define error-messages empty)
+
+(define (add-error-message! msg)
+  (set! error-messages (append error-messages (list msg))))
 
 
 (define (test expect fun args)
@@ -15,10 +21,13 @@
 		   (car args))])
       (let ([ok? (equal? expect res)])
 	(cond [(not ok?)
-	       (error 'test (format "expected ~s, got ~s, on ~s" 
-				    expect
-				    res
-				    (cons fun args)))]
+               (begin
+                 (add-error-message! (format "expected ~s, got ~s, on ~s" 
+                                             expect
+                                             res
+                                             (cons fun args)))
+                 (set! number-of-errors (add1 number-of-errors))
+                 false)]
 	      [else
 	       ok?])))))
 
@@ -827,10 +836,17 @@
 (js-big-bang #f
 	     (on-draw 
 	      (lambda (w)
-		(list (js-text 
-		       (format "~a tests run.  ~a tests skipped"
-			       number-of-tests
-			       number-of-skipped-tests))))
+                `(,(js-div)
+                  
+                  ,(list (js-text 
+                          (format "~a tests run.  ~a tests broke.  ~a tests skipped."
+                                  number-of-tests
+                                  number-of-errors
+                                  number-of-skipped-tests)))
+                  ,@(map (lambda (msg)
+                           (list (js-div)
+                                 (list (js-text (format "~a" msg)))))
+                         error-messages)))
 	      (lambda (w)
 		'())))
 
