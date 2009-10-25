@@ -3,7 +3,7 @@
 ;; test suite.
 
 
-(load "test-harness.ss")
+(include "test-harness.ss")
 
 ;; test that all symbol characters are supported.
 '(+ - ... !.. $.+ %.- &.! *.: /:. :+. <-. =. >. ?. ~. _. ^.)

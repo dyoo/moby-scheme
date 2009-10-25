@@ -36,14 +36,14 @@
          (with-syntax ([source-code source-code]
                        [module-name name])
            (syntax/loc stx 
-             (#%module-begin
+             (base:#%module-begin
               form ...
               (compile-and-serve 'source-code module-name)
               )))))]))
 
 
-;; load: textually include content from another file.
-(define-syntax (my-load stx)
+;; include: textually include content from another file.
+(define-syntax (include stx)
   (syntax-case stx ()
     [(_ path)
      (with-syntax ([(body ...)
@@ -71,7 +71,7 @@
          (all-from-out "compiler/effect-struct.ss")
 	 (all-from-out "stub/location.ss")
  
-         (rename-out (my-load load))
+         include
          
          void
          
