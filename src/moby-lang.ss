@@ -1,5 +1,5 @@
 #lang scheme/base
-(require (except-in "compiler/lang.ss" require provide)
+(require (except-in "compiler/lang.ss")
          "stub/parser.ss"
          "compiler/stx.ss"
          "stub/world-config.ss"
@@ -36,18 +36,22 @@
                        [module-name name])
            (syntax/loc stx 
              (#%module-begin
+              (provide (all-defined-out))
               form ...
-              (compile-and-serve 'source-code module-name))))))]))
+              (compile-and-serve 'source-code module-name)
+              )))))]))
 
 
 
-(provide (except-out (all-from-out "compiler/lang.ss") #%module-begin)
+(provide (except-out (all-from-out "compiler/lang.ss") #%module-begin provide require)
          (rename-out (-#%module-begin #%module-begin))
          (all-from-out "stub/parser.ss")
          (all-from-out "stub/world.ss")
          (all-from-out "stub/net.ss")
          (all-from-out "compiler/effect-struct.ss")
 	 (all-from-out "stub/location.ss")
+         
+         load
          
          void
          

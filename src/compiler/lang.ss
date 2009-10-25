@@ -14,7 +14,7 @@
          "stx.ss"
          "error-struct.ss")
 
-                     
+
 (provide (except-out (all-from-out lang/htdp-advanced)
                      define-struct
                      define
@@ -51,12 +51,13 @@
 
 
 ;; BIG HACK.
-(define (open-input-stx a-path)
+;; open-input-stx: string -> (listof stx)
+(define (open-input-stx a-path-string)
   (local [;; open-beginner-program: path-string -> text%
           ;; Opens up the beginner-level program.
           (define (open-beginner-program path)
             (local [(define text (new text%))]
-              (begin (send text insert-file (path->string path))
+              (begin (send text insert-file path)
                      text)))
           
           ;; syntax->stx: syntax -> stx
@@ -85,16 +86,14 @@
               (begin
               (port-count-lines! ip)
               (parameterize ([read-accept-reader #t])
-                (let ([stx (read-syntax source-name ip)])
-                  (syntax-case stx ()
-                    [(module name lang body ...)
-                     (map syntax->stx (syntax->list #'(body ...)))]
-                    [else
-                     (error 'moby
-                            (string-append "The input does not appear to be a Moby module; "
-                                           "I don't see a \"#lang moby\" at the top of the file."))]))))))]
-    (parse-text-as-program (open-beginner-program a-path)
-                           a-path)))
+                (let loop ()
+                  (let ([stx (read-syntax source-name ip)])
+                    (cond [(not (eof-object? stx))
+                           (cons (syntax->stx stx) (loop))]
+                          [else
+                           empty])))))))]
+    (parse-text-as-program (open-beginner-program a-path-string)
+                           a-path-string)))
 
 
 
@@ -111,6 +110,7 @@
                      (base:not not))
 
          (all-from-out "stx.ss")
+
          
          ;; Contract-related stuff: the following will be erased on 
          ;; javascript bootstrapping time.

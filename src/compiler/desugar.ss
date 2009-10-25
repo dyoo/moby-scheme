@@ -4,10 +4,6 @@
 (require "pinfo.ss")
 
 
-;; include-definition?: stx -> boolean
-(define (include-definition? an-element)
-  (stx-begins-with? an-element 'include))
-
 
 ;; desugar-program: program pinfo -> (list program pinfo)
 ;;
@@ -36,10 +32,10 @@
             (cond
               [(defn? an-element)
                (desugar-defn an-element a-pinfo)]
+              [(stx-begins-with? an-element 'load)
+               (desugar-load an-element a-pinfo)]
               [(test-case? an-element)
                (desugar-test-case an-element a-pinfo)]
-              [(library-require? an-element)
-               (list (list an-element) a-pinfo)]
               [(expression? an-element)
                (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
                  (list (list (first expr+pinfo))
@@ -299,19 +295,20 @@
     (processing-loop (reorder-tests-to-end a-program empty empty)
                      a-pinfo)))
 
-;; desugar-include: stx pinfo -> (list stx pinfo)
-(define (desugar-include include-expr pinfo)
+
+;; desugar-load: stx pinfo -> (list (listof stx) pinfo)
+(define (desugar-load load-expr pinfo)
   (cond
-    [(not (= (length (stx-e include-expr)) 2))
-     (syntax-error "Usage: (include file-path), where file-path is a string." 
-                   include-expr)]
-    [(not (string? (stx-e (second (stx-e include-expr)))))
-     (syntax-error "file-path must be a string" (second (stx-e include-expr)))]
+    [(not (= (length (stx-e load-expr)) 2))
+     (syntax-error "Usage: (load file-path), where file-path is a string." 
+                   load-expr)]
+    [(not (string? (stx-e (second (stx-e load-expr)))))
+     (syntax-error "file-path must be a string" (second (stx-e load-expr)))]
     [else
      
-     (local [(define file-path (second (stx-e include-expr)))
+     (local [(define file-path (stx-e (second (stx-e load-expr))))
              (define stxs (open-input-stx file-path))]
-       (list stxs pinfo))]))
+       (desugar-program stxs pinfo))]))
 
 
 

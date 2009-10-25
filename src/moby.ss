@@ -44,9 +44,10 @@
 
 ;; get-output-path: -> path
 (define (get-output-path)
- (or (dest-dir)
-     (build-path (current-directory)
-                 (upper-camel-case (get-name)))))
+  (normalize-path
+   (or (dest-dir)
+       (build-path (current-directory)
+                   (upper-camel-case (get-name))))))
 
 
 
@@ -74,4 +75,8 @@
                             (string-join (for/list ([stx (exn:fail:moby-syntax-error-stxs exn)])
                                            (Loc->string (stx-loc stx)))
                                          "\n")))])
-  (compiler name file-to-compile output-path)))
+    (parameterize ([current-directory
+                    (let-values ([(base name dir?)
+                                  (split-path (normalize-path file-to-compile))])
+                      base)])
+      (compiler name file-to-compile output-path))))
