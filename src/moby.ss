@@ -52,16 +52,17 @@
 
 
 (define file-to-compile
-  (command-line 
-   #:once-each
-   [("-n" "--name") n "Set the name of the output program."
-                    (name n)]
-   [("-d" "--dest") d "Set the destination path of the output."
-                    (dest-dir (build-path d))]
-   [("-t" "--type") t "Set the application type.  Options: [js, js+android-phonegap]"
-                    (app-compiler (lookup-app-type t))]
-   #:args (beginner-program-filename)
-   (build-path beginner-program-filename)))
+  (normalize-path
+   (command-line 
+    #:once-each
+    [("-n" "--name") n "Set the name of the output program."
+                     (name n)]
+    [("-d" "--dest") d "Set the destination path of the output."
+                     (dest-dir (build-path d))]
+    [("-t" "--type") t "Set the application type.  Options: [js, js+android-phonegap]"
+                     (app-compiler (lookup-app-type t))]
+    #:args (beginner-program-filename)
+    (build-path beginner-program-filename))))
 
 
 
