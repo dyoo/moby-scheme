@@ -23,4 +23,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Fixed atan so it can take two arguments."))
+(define release-notes '("Added include form."))
