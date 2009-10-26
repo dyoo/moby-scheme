@@ -405,7 +405,8 @@ The following helper functions and forms are provided by Moby.
 Textually includes content from another file.  The path @scheme[a-path] is resolved
 relative to the path of the program.  @scheme[include] can only be used at the top-level context.
 
-Note: this feature is experimental and may be replaced soon.
+@bold{Note: this feature is experimental and will be replaced in the near
+future.}
 }
 
 
