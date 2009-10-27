@@ -885,6 +885,90 @@
 
 
 
+
+
+(test 2 floor (list 5/2))
+(test 3 ceiling (list 5/2))
+(test 2 round (list 5/2))
+#;(test 2 truncate (list 5/2))
+(test -3 floor (list -5/2))
+(test -2 ceiling (list -5/2))
+(test -2 round (list -5/2))
+#;(test -2 truncate (list -5/2))
+
+(test 1 floor (list 4/3))
+(test 2 ceiling (list 4/3))
+(test 1 round (list 4/3))
+#;(test 1 truncate (list 4/3))
+(test -2 floor (list -4/3))
+(test -1 ceiling (list -4/3))
+(test -1 round (list -4/3))
+#;(test -1 truncate (list -4/3))
+
+(test 1 floor (list 5/3))
+(test 2 ceiling (list 5/3))
+(test 2 round (list 5/3))
+#;(test 1 truncate (list 5/3))
+(test -2 floor (list -5/3))
+(test -1 ceiling (list -5/3))
+(test -2 round (list -5/3))
+#;(test -1 truncate (list -5/3))
+
+(test 2 floor (list 11/4))
+(test 3 ceiling (list 11/4))
+(test 3 round (list 11/4))
+#;(test 2 truncate (list 11/4))
+(test -3 floor (list -11/4))
+(test -2 ceiling (list -11/4))
+(test -3 round (list -11/4))
+#;(test -2 truncate (list -11/4))
+
+(test 2 floor (list 9/4))
+(test 3 ceiling (list 9/4))
+(test 2 round (list 9/4))
+#;(test 2 truncate (list 9/4))
+(test -3 floor (list -9/4))
+(test -2 ceiling (list -9/4))
+(test -2 round (list -9/4))
+#;(test -2 truncate (list -9/4))
+
+(test 2.0 floor (list 2.4))
+(test 3.0 ceiling (list 2.4))
+(test 2.0 round (list 2.4))
+#;(test 2.0 truncate (list 2.4))
+(test -3.0 floor (list -2.4))
+(test -2.0 ceiling (list -2.4))
+(test -2.0 round (list -2.4))
+#;(test -2.0 truncate (list -2.4))
+
+(test 2.0 floor (list 2.6))
+(test 3.0 ceiling (list 2.6))
+(test 3.0 round (list 2.6))
+#;(test 2.0 truncate (list 2.6))
+(test -3.0 floor (list -2.6))
+(test -2.0 ceiling (list -2.6))
+(test -3.0 round (list -2.6))
+#;(test -2.0 truncate (list -2.6))
+
+(test 2.0 round (list 2.5))
+(test -2.0 round (list -2.5))
+(test 4.0 round (list 3.5))
+(test -4.0 round (list -3.5))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (js-big-bang #f
 	     (on-draw 
 	      (lambda (w)
