@@ -269,7 +269,7 @@ var getTests;
 
 	    
 	    testAtan : function(){
-		this.assert(Kernel.equal_question_(Kernel.atan(Rational.ONE), plt.Kernel.pi.half().half()));
+		this.assert(Kernel.equal_question_(Kernel.atan(Rational.ONE, []), plt.Kernel.pi.half().half()));
 	    },
 	    
 	    testLog : function(){
