@@ -130,12 +130,25 @@ function init() {
 					   empty)));
 	},
 
-
 	testReadFloat: function() {
 	    this.assert(schemeIsEqual(read("0.1"),
 				      cons(makeFloat(0.1), empty)));
-	    
 	},
+	
+
+	testReadExact: function() {
+	    this.assert(schemeIsEqual(read("#e0.1"),
+				      cons(plt.types.Rational.makeInstance(1, 10),
+					   empty)));
+	},
+
+	testReadInexact: function() {
+	    this.assert(schemeIsEqual(read("#i0.1"),
+				      cons(plt.types.FloatPoint.makeInstance(0.1),
+					   empty)));
+	},
+
+
 
 	testReadSymbolInList: function() {
 	    this.assert(schemeIsEqual(read("(hello again)"),
@@ -205,12 +218,12 @@ function init() {
 						empty))));
 
 	    this.assert(schemeIsEqual(read("(1.4) (2 3)"),
-				      cons(cons(number(1.4), empty),
+				      cons(cons(plt.types.Rational.makeInstance(14, 10), empty),
 					   cons(cons(number(2), cons(number(3), empty)),
 						empty))));
 
 	    this.assert(schemeIsEqual(read("(1.4) (2 3)"),
-				      cons(cons(number(1.4), empty),
+				      cons(cons(plt.types.Rational.makeInstance(14, 10), empty),
 					   cons(cons(number(2), cons(number(3), empty)),
 						empty))));
 	},
