@@ -1128,14 +1128,15 @@ var plt = plt || {};
 	    plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
 					    1);
 
+	// The sign of the result should match the sign of n.
 	if (plt.types.NumberTower.lessThan(n, plt.types.Rational.ZERO)) {
-	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
-		return plt.types.NumberTower.add(result, n);
+	    if (plt.types.NumberTower.lessThanOrEqual(result, plt.types.Rational.ZERO)) {
+		return result;
 	    }
-	    return result;
+	    return plt.types.NumberTower.add(result, n);
 
 	} else {
-	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
+	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO)) {
 		return plt.types.NumberTower.add(result, n);
 	    }
 	    return result;
@@ -1797,7 +1798,11 @@ var plt = plt || {};
 	    check(first, isInteger, "lcm", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
 	    var result = first.toInteger();
+	    if (result == 0) { return plt.types.Rational.ZERO; }
 	    for (var i = 0; i < rest.length; i++) {
+		if (rest[i].toInteger() == 0) {
+		    return plt.types.Rational.ZERO;
+		}
 		result = _lcm(result, rest[i].toInteger());
 	    }
 	    return plt.types.Rational.makeInstance(result);
@@ -3640,11 +3645,11 @@ plt.reader = {};
 
 
     var PATTERNS = [['whitespace' , /^(\s+)/],
-		    ['#;', /^[#][;]/],
+		    ['#;', /^([#][;])/],
 		    ['comment' , // piped comments
-		     new RegExp("^[#][|]"+
+		     new RegExp("^([#][|]"+
 				"(?:(?:\\|[^\\#])|[^\\|])*"+
-				"[|][#]")],
+				"[|][#])")],
 		    ['comment' , /(^;[^\n]*)/],
 		    ['(' , /^(\(|\[|\{)/],
 		    [')' , /^(\)|\]|\})/],
@@ -3654,8 +3659,12 @@ plt.reader = {};
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
-		    ['number' , /^([+-]inf.0)/],
-		    ['number' , /^([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
+
+		    ['complex' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?[+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)i)/],
+		    ['number' , /^((?:\#[ei])?[+-]inf.0)/],
+		    ['number' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
+
+
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
 		    ['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
 		   ];
@@ -3790,6 +3799,45 @@ plt.reader = {};
 	}
 
 
+
+	// parseBasicNumber: string -> plt.types.Number
+	// Reads a non-complex number.
+	var parseBasicNumber = function(text, isExact) {
+	    var rationalMatch = text.match(/([+\-]?\d+)\/(\d+)/);
+	    if (text == '+inf.0') {
+		return plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
+	    } else if (text == '-inf.0') {
+		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+	    } else if (text.match(/\./)) {
+		if (isExact) {
+		    var decimalMatch = text.match("^(.*)[.](.*)$");
+		    return plt.types.NumberTower.add(
+			plt.types.Rational.makeInstance(
+			    parseInt(decimalMatch[1])),
+			plt.types.Rational.makeInstance(
+			    parseInt(decimalMatch[2]), 
+			    Math.pow(10, decimalMatch[2].length)));
+		} else {
+		    return plt.types.FloatPoint.makeInstance(parseFloat(text));
+		}
+	    } else if (rationalMatch) {
+		if (isExact) {
+		    return plt.types.Rational.makeInstance(parseInt(rationalMatch[1]),
+							   parseInt(rationalMatch[2]));
+		} else {
+		    return plt.types.FloatPoint.makeInstance(parseInt(rationalMatch[1])/
+							     parseInt(rationalMatch[2]));
+		}
+	    } else {
+		if (isExact) {
+		    return plt.types.Rational.makeInstance(parseInt(text), 1);
+		} else {
+		    return plt.types.FloatPoint.makeInstance(parseInt(text));
+		}
+	    }
+	};
+
+
 	// readExpr: -> stx
 	readExpr = function() {
 	    if (tokens.length == 0) {
@@ -3848,25 +3896,33 @@ plt.reader = {};
 
 	    case 'number':
 		var t = eat('number');
-		var rationalMatch = t[1].match(/([+\-]?\d+)\/(\d+)/);
-		if (t[1] == '+inf.0') {
-		    return makeAtom(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY), 
-				    t[2]);
-		} else if (t[1] == '-inf.0') {
-		    return makeAtom(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY), 
-				    t[2]);
-		} else if (t[1].match(/\./)) {
-		    return makeAtom(plt.types.FloatPoint.makeInstance(parseFloat(t[1])), 
-				    t[2]);
-		} else if (rationalMatch) {
-		    // Rational
-		    return makeAtom(plt.types.Rational.makeInstance(parseInt(rationalMatch[1]),
-								    parseInt(rationalMatch[2])),
-				   t[2])
+		var exactnessMatch = t[1].match(/^(\#[ie])(.+)$/);
+		if (exactnessMatch) {
+		    if (exactnessMatch[1] == "#i") {
+			return makeAtom(parseBasicNumber(exactnessMatch[2], false),
+					t[2]);
+		    } else {
+			return makeAtom(parseBasicNumber(exactnessMatch[2], true),
+					t[2]);
+		    }
 		} else {
-		    return makeAtom(plt.types.Rational.makeInstance(parseInt(t[1]), 1), 
+		    return makeAtom(parseBasicNumber(t[1], true),
 				    t[2]);
 		}
+
+	    case 'complex':
+		var t = eat('complex');
+		var complexMatch = t[1].match(/^((?:\#[ei])?)([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?)([+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))i/);
+		var exactness = (complexMatch[1] == "#i" ? false : true);
+		var a = (complexMatch[2] != "" ?
+			 parseBasicNumber(complexMatch[2], exactness) :
+			 plt.types.Rational.ZERO);
+		var b = parseBasicNumber(complexMatch[3], exactness);
+		// FIXME: Complex needs to be changed so it takes in either
+		// exact or inexact basic values.
+		return makeAtom(plt.types.Complex.makeInstance(a.toFloat(), 
+							       b.toFloat()));
+
 	    case 'string':
 		var t = eat('string');
 		return makeAtom(plt.types.String.makeInstance(t[1]),
@@ -6459,42 +6515,43 @@ var i = args158[1];
                       return result;
                    })()),munged_dash_arg_dash_ids)),(plt.types.String.makeInstance("\n")))),(plt.types.String.makeInstance("\n                             return ")),body_dash_string,(plt.types.String.makeInstance("; });\n                      result.toWrittenString = function () {\n                          return '<function:lambda>';\n                      };\n                      result.toDisplayedString = result.toWrittenString;\n                      return result;\n                   })())"))])),updated_dash_pinfo]));})();
               })()); };
-var number_dash__greaterthan_javascript_dash_string = function(a_dash_num, original_dash_stx) { return ((plt.Kernel.setLastLoc("offset=36501 line=801 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.integer_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=36527 line=802 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=36602 line=803 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=36618 line=803 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.inexact_dash__greaterthan_exact(a_dash_num)))),(plt.types.String.makeInstance(", 1))"))])) :
- ((plt.Kernel.setLastLoc("offset=36685 line=805 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.rational_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=36712 line=806 span=229 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=36787 line=807 span=34 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=36803 line=807 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.numerator(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=36875 line=809 span=36 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=36891 line=809 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.denominator(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
- ((plt.Kernel.setLastLoc("offset=36952 line=811 span=13 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=36975 line=812 span=401 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(")),((plt.Kernel.setLastLoc("offset=37086 line=814 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.eqv_question_(a_dash_num,(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY)))) ?
+var floating_dash_number_dash__greaterthan_javascript_dash_string = function(a_dash_num) { return ((plt.Kernel.setLastLoc("offset=36516 line=802 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.eqv_question_(a_dash_num,(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY)))) ?
  (plt.types.String.makeInstance("Number.POSITIVE_INFINITY")) :
- ((plt.Kernel.setLastLoc("offset=37188 line=816 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.eqv_question_(a_dash_num,(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY)))) ?
+ ((plt.Kernel.setLastLoc("offset=36574 line=804 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.eqv_question_(a_dash_num,(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY)))) ?
  (plt.types.String.makeInstance("Number.NEGATIVE_INFINITY")) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=37322 line=819 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string(a_dash_num)) :
- (plt.Kernel.setLastLoc("offset=37053 line=813 span=293 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=37053 line=813 span=293 id=\\\"beginner-to-javascript.ss\\\"\""))))))),(plt.types.String.makeInstance("))"))])) :
- ((plt.Kernel.setLastLoc("offset=37387 line=821 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.complex_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=37413 line=822 span=201 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(")),(plt.Kernel.setLastLoc("offset=37487 line=823 span=34 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37503 line=823 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37575 line=825 span=34 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37591 line=825 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
+ (plt.Kernel.setLastLoc("offset=36642 line=807 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string(a_dash_num)) :
+ (plt.Kernel.setLastLoc("offset=36505 line=801 span=161 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36505 line=801 span=161 id=\\\"beginner-to-javascript.ss\\\"\""))))))); };
+var number_dash__greaterthan_javascript_dash_string = function(a_dash_num, original_dash_stx) { return ((plt.Kernel.setLastLoc("offset=36775 line=812 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.integer_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=36801 line=813 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=36876 line=814 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=36892 line=814 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.inexact_dash__greaterthan_exact(a_dash_num)))),(plt.types.String.makeInstance(", 1))"))])) :
+ ((plt.Kernel.setLastLoc("offset=36959 line=816 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.rational_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=36986 line=817 span=229 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=37061 line=818 span=34 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37077 line=818 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.numerator(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37149 line=820 span=36 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37165 line=820 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.denominator(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
+ ((plt.Kernel.setLastLoc("offset=37226 line=822 span=13 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=37249 line=823 span=150 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(")),(plt.Kernel.setLastLoc("offset=37327 line=824 span=42 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string(a_dash_num)),(plt.types.String.makeInstance("))"))])) :
+ ((plt.Kernel.setLastLoc("offset=37410 line=826 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.complex_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=37436 line=827 span=266 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(")),(plt.Kernel.setLastLoc("offset=37510 line=828 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37546 line=828 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37618 line=830 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37654 line=830 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=37648 line=828 span=99 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=37662 line=828 span=48 id=\"beginner-to-javascript.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("Don't know how to handle ~s yet")), [a_dash_num])),original_dash_stx)) :
- (plt.Kernel.setLastLoc("offset=36494 line=801 span=1255 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36494 line=801 span=1255 id=\\\"beginner-to-javascript.ss\\\"\""))))))))); };
-var char_dash__greaterthan_javascript_dash_string = function(a_dash_char) { return (plt.Kernel.setLastLoc("offset=37840 line=835 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Char.makeInstance(String.fromCharCode(")),(plt.Kernel.setLastLoc("offset=37924 line=836 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37940 line=836 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.char_dash__greaterthan_integer(a_dash_char)))),(plt.types.String.makeInstance(")))"))])); };
+ (plt.Kernel.setLastLoc("offset=37736 line=834 span=99 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=37750 line=834 span=48 id=\"beginner-to-javascript.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("Don't know how to handle ~s yet")), [a_dash_num])),original_dash_stx)) :
+ (plt.Kernel.setLastLoc("offset=36768 line=812 span=1069 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36768 line=812 span=1069 id=\\\"beginner-to-javascript.ss\\\"\""))))))))); };
+var char_dash__greaterthan_javascript_dash_string = function(a_dash_char) { return (plt.Kernel.setLastLoc("offset=37928 line=841 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Char.makeInstance(String.fromCharCode(")),(plt.Kernel.setLastLoc("offset=38012 line=842 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=38028 line=842 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.char_dash__greaterthan_integer(a_dash_char)))),(plt.types.String.makeInstance(")))"))])); };
 var string_dash__greaterthan_javascript_dash_string = function(a_dash_str) { return ((function() { 
 
-var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.setLastLoc("offset=38197 line=845 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(34))), [])) ?
- (plt.Kernel.setLastLoc("offset=38232 line=846 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(34)))])) :
- ((plt.Kernel.setLastLoc("offset=38265 line=847 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(92))), [])) ?
- (plt.Kernel.setLastLoc("offset=38300 line=848 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(92)))])) :
- ((plt.Kernel.setLastLoc("offset=38333 line=849 span=25 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(10))), [])) ?
- (plt.Kernel.setLastLoc("offset=38374 line=850 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(110)))])) :
+var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.setLastLoc("offset=38285 line=851 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(34))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38320 line=852 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(34)))])) :
+ ((plt.Kernel.setLastLoc("offset=38353 line=853 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(92))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38388 line=854 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(92)))])) :
+ ((plt.Kernel.setLastLoc("offset=38421 line=855 span=25 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(10))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38462 line=856 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(110)))])) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=38427 line=852 span=15 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([a_dash_char])) :
- (plt.Kernel.setLastLoc("offset=38176 line=844 span=268 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=38176 line=844 span=268 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
+ (plt.Kernel.setLastLoc("offset=38515 line=858 span=15 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([a_dash_char])) :
+ (plt.Kernel.setLastLoc("offset=38264 line=850 span=268 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=38264 line=850 span=268 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
 (function (toplevel_dash_expression_dash_show159) { 
  })(plt.Kernel.identity)
-return (plt.Kernel.setLastLoc("offset=38451 line=853 span=189 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=38521 line=854 span=92 id=\"beginner-to-javascript.ss\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=38534 line=854 span=43 id=\"beginner-to-javascript.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
+return (plt.Kernel.setLastLoc("offset=38539 line=859 span=189 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=38609 line=860 span=92 id=\"beginner-to-javascript.ss\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=38622 line=860 span=43 id=\"beginner-to-javascript.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);
                  }); result.toWrittenString = function() {return '<function:escape-char-code>'; }
                      result.toDisplayedString = function() {return '<function:escape-char-code>';}
-                     return result; })(), [(plt.Kernel.setLastLoc("offset=38556 line=854 span=20 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
+                     return result; })(), [(plt.Kernel.setLastLoc("offset=38644 line=860 span=20 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
               })()); };
 (function() { 
   ((function (toplevel_dash_expression_dash_show0) { 
@@ -6651,6 +6708,7 @@ moby_dash_module_dash_binding = (plt.Kernel.setLastLoc("offset=18428 line=376 sp
 known_dash_modules = (plt.Kernel.setLastLoc("offset=19404 line=402 span=397 id=\"modules.ss\"") && plt.Kernel.list([world_dash_module,world_dash_stub_dash_module,location_dash_module,tilt_dash_module,net_dash_module,parser_dash_module,bootstrap_dash_module,telephony_dash_module,moby_dash_module_dash_binding]));
 
 empty_dash_pinfo = (plt.Kernel.setLastLoc("offset=857 line=26 span=123 id=\"pinfo.ss\"")   && make_dash_pinfo(empty_dash_env,plt.types.Empty.EMPTY,(plt.Kernel.setLastLoc("offset=914 line=28 span=29 id=\"pinfo.ss\"")   && plt.Kernel._kernelMakeImmutableHashEq(plt.types.Empty.EMPTY)),(plt.types.Rational.makeInstance(0, 1)),plt.types.Empty.EMPTY));
+
 
 
 

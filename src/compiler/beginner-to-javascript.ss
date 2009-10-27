@@ -796,6 +796,17 @@
 
 
 
+;; floating-number->javascript-string: number -> string
+(define (floating-number->javascript-string a-num)
+  (cond
+    [(eqv? a-num +inf.0)
+     "Number.POSITIVE_INFINITY"]
+    [(eqv? a-num -inf.0)
+     "Number.NEGATIVE_INFINITY"]
+    [else
+     (number->string a-num)]))
+
+
 ;; number->java-string: number -> string
 (define (number->javascript-string a-num original-stx)
   (cond [(integer? a-num)
@@ -810,19 +821,14 @@
                         "))")]
         [(real? a-num)
          (string-append "(plt.types.FloatPoint.makeInstance(" 
-                        (cond
-                          [(eqv? a-num +inf.0)
-                           "Number.POSITIVE_INFINITY"]
-                          [(eqv? a-num -inf.0)
-                           "Number.NEGATIVE_INFINITY"]
-                          [else
-                           (number->string a-num)])
+                        (floating-number->javascript-string a-num)
                         "))")]
         [(complex? a-num)
          (string-append "(plt.types.Complex.makeInstance("
-                        (number->string (real-part a-num))
+                        (floating-number->javascript-string (real-part a-num))
                         ", "
-                        (number->string (imag-part a-num))"))")]
+                        (floating-number->javascript-string (imag-part a-num))
+                        "))")]
         
         [else
          (syntax-error (format "Don't know how to handle ~s yet" a-num)
