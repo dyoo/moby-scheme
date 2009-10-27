@@ -958,9 +958,95 @@
 
 
 
+(define (test-zero-ident f)
+  (begin
+    (test 0.0 f (list 0.0))
+    (test -0.0 f (list -0.0))))
+(test-zero-ident round)
+(test-zero-ident floor)
+(test-zero-ident ceiling)
+#;(test-zero-ident truncate)
 
 
 
+
+(test +inf.0 floor (list +inf.0))
+(test +inf.0 ceiling (list +inf.0))
+(test +inf.0 round (list +inf.0))
+#;(test +inf.0 truncate (list +inf.0))
+(test -inf.0 floor (list -inf.0))
+(test -inf.0 ceiling (list -inf.0))
+(test -inf.0 round (list -inf.0))
+#;(test -inf.0 truncate (list -inf.0))
+#;(test +nan.0 floor +nan.0)
+#;(test +nan.0 ceiling +nan.0)
+#;(test +nan.0 round +nan.0)
+#;(test +nan.0 truncate +nan.0)
+
+
+
+(define (test-fcrt-int v)
+  (begin
+    (test v floor (list v))
+    (test v ceiling (list v))
+    (test v round (list v))
+    #;(test v truncate (list v))))
+
+(test-fcrt-int 2)
+(test-fcrt-int 2.0)
+(test-fcrt-int (expt 2 100))
+
+
+
+
+(test 5 numerator (list 5))
+(test 5000000000000 numerator (list 5000000000000))
+(test 5.0 numerator (list 5.0))
+
+(test 1 denominator (list 5))
+(test 1 denominator (list 5000000000000))
+(test 1.0 denominator (list 5.0))
+
+(test 2 numerator (list 2/3))
+(test 3 denominator (list 2/3))
+(test 1000.0 round (list (* 10000.0 (/ (numerator 0.1) (denominator 0.1)))))
+
+
+
+
+(define (test-on-reals f filter)
+  (begin
+    (test (filter 5) f (list 5))
+    (test (filter 5.0) f (list 5.0))
+    (test (filter 1/5) f (list 1/5))
+    (test (filter (expt 2 100)) f (list (expt 2 100)))))
+
+(test 1+2i make-rectangular (list 1 2))
+(test 1.0+2.0i make-rectangular (list 1.0 2))
+#;(test-nan.0 real-part (make-rectangular +nan.0 1))
+#;(test 1.0 imag-part (list (make-rectangular +nan.0 1)))
+#;(test-nan.0 imag-part (make-rectangular 1 +nan.0))
+#;(test 1.0 real-part (make-rectangular 1 +nan.0))
+(test +inf.0 real-part (list (make-rectangular +inf.0 -inf.0)))
+(test -inf.0 imag-part (list (make-rectangular +inf.0 -inf.0)))
+
+(test (make-rectangular +inf.0 -inf.0) * (list 1. (make-rectangular +inf.0 -inf.0)))
+(test (make-rectangular +inf.0 +inf.0) * (list +1.0i (make-rectangular +inf.0 -inf.0)))
+(test (make-rectangular -inf.0 +inf.0) * (list -3. (make-rectangular +inf.0 -inf.0)))
+(test (make-rectangular +inf.0 -inf.0) * (list (make-rectangular +inf.0 -inf.0) 1.))
+(test (make-rectangular +inf.0 +inf.0) * (list (make-rectangular +inf.0 -inf.0) +1.0i))
+(test (make-rectangular -inf.0 +inf.0) * (list (make-rectangular +inf.0 -inf.0) -3.))
+(test (make-rectangular +inf.0 -inf.0) / (list (make-rectangular +inf.0 -inf.0) 1.))
+(test (make-rectangular -inf.0 -inf.0) / (list (make-rectangular +inf.0 -inf.0) +1.0i))
+(test (make-rectangular -inf.0 +inf.0) / (list (make-rectangular +inf.0 -inf.0) -3.))
+
+;; Test division with exact zeros in demoniator where
+;;  the exact zero gets polluted to an inexact zero unless
+;;  it's special-cased
+(test 0-0.0i / (list 0+1.0i -inf.0))
+(test -0.0-0.0i / (list 1.0+1.0i -inf.0))
+(test -0.0 / (list 0+1.0i 0-inf.0i))
+(test -0.0+0.0i / (list 1.0+1.0i 0-inf.0i))
 
 
 
