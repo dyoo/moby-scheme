@@ -329,16 +329,29 @@
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
-                   '((hash-set 3 "plt.Kernel._kernelHashSet")
-                     (hash-ref 3 "plt.Kernel._kernelHashRef")
-                     (hash-remove 2 "plt.Kernel._kernelHashRemove")
-                     (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
-                     (hash-map 2 "plt.Kernel._kernelHashMap")
-                     (hash? 1 "plt.Kernel._isHash")
-                     
-                     
-                     (open-input-stx 1 "plt.Kernel.openInputStx")
-                     )))]
+                   (append '((hash-set 3 "plt.Kernel._kernelHashSet")
+                             (hash-ref 3 "plt.Kernel._kernelHashRef")
+                             (hash-remove 2 "plt.Kernel._kernelHashRemove")
+                             (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
+                             (hash-map 2 "plt.Kernel._kernelHashMap")
+                             (hash? 1 "plt.Kernel._isHash")
+                             (open-input-stx 1 "plt.Kernel.openInputStx"))
+                   
+                           (map (lambda (id+arity)
+                                  (append id+arity 
+                                          (list 
+                                           (symbol->string
+                                            (identifier->munged-java-identifier (first id+arity))))))
+                                '((stx-begins-with? 2)
+                                  (stx-e 1)
+                                  (stx? 1)
+                                  (stx:list? 1)
+                                  (stx:atom? 1)
+                                  (make-stx:list 2)
+                                  (make-stx:atom 2)
+                                  (stx-loc 1)
+                                  (datum->stx 2)
+                                  (Loc->string 1))))))]
     top-env-3))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
