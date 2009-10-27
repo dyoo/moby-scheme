@@ -47,7 +47,7 @@
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
   (boot-compile-to-file "beginner-to-javascript.ss" compiler-path)
-  ;(boot-compile-to-file "stx.ss" syntax-path)
+  #;(boot-compile-to-file "stx.ss" syntax-path)
   (boot-compile-to-file "permission.ss" permission-struct-path)
   (boot-compile-to-file "effect-struct.ss" effect-struct-path)
   
@@ -172,6 +172,7 @@
 
 ;; make sure the line is a #lang s-exp "lang.ss" line.
 (define (check-special-lang-line! source a-line)
+  #;(void)
   (unless (regexp-match #rx"^#lang s-exp \"lang.ss\"$" a-line)
     (error 'check-special-line! "~s needs to be written in lang.ss language" source)))
 
