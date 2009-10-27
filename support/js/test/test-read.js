@@ -146,6 +146,11 @@ function init() {
 	    this.assert(schemeIsEqual(read("#i0.1"),
 				      cons(plt.types.FloatPoint.makeInstance(0.1),
 					   empty)));
+
+	    this.assert(schemeIsEqual(read("#i0"),
+				      cons(plt.types.FloatPoint.makeInstance(0),
+					   empty)));
+
 	},
 
 
