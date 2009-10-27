@@ -1125,7 +1125,7 @@ var plt = plt || {};
 
 	// The sign of the result should match the sign of n.
 	if (plt.types.NumberTower.lessThan(n, plt.types.Rational.ZERO)) {
-	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO)) {
+	    if (plt.types.NumberTower.lessThanOrEqual(result, plt.types.Rational.ZERO)) {
 		return result;
 	    }
 	    return plt.types.NumberTower.add(result, n);
