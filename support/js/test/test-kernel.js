@@ -667,6 +667,13 @@ var getTests;
 		    Rational.makeInstance(-1), 
 		    Kernel.modulo(Rational.makeInstance(-13),
 				  Rational.makeInstance(-4))));
+
+
+		this.assert(Kernel.equal_question_(
+		    Rational.makeInstance(0), 
+		    Kernel.modulo(Rational.makeInstance(4),
+				  Rational.makeInstance(-2))));
+
 	    },
 
 	    

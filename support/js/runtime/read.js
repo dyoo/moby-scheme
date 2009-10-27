@@ -38,11 +38,11 @@ plt.reader = {};
 
 
     var PATTERNS = [['whitespace' , /^(\s+)/],
-		    ['#;', /^[#][;]/],
+		    ['#;', /^([#][;])/],
 		    ['comment' , // piped comments
-		     new RegExp("^[#][|]"+
+		     new RegExp("^([#][|]"+
 				"(?:(?:\\|[^\\#])|[^\\|])*"+
-				"[|][#]")],
+				"[|][#])")],
 		    ['comment' , /(^;[^\n]*)/],
 		    ['(' , /^(\(|\[|\{)/],
 		    [')' , /^(\)|\]|\})/],
@@ -52,8 +52,12 @@ plt.reader = {};
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
+
+		    ['complex' , /^([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?[+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)i)/],
 		    ['number' , /^([+-]inf.0)/],
 		    ['number' , /^([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
+
+
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
 		    ['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
 		   ];
@@ -188,6 +192,26 @@ plt.reader = {};
 	}
 
 
+
+	// parseBasicNumber: string -> plt.types.Number
+	// Reads a non-complex number.
+	var parseBasicNumber = function(text) {
+	    var rationalMatch = text.match(/([+\-]?\d+)\/(\d+)/);
+	    if (text == '+inf.0') {
+		return plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
+	    } else if (text == '-inf.0') {
+		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+	    } else if (text.match(/\./)) {
+		return plt.types.FloatPoint.makeInstance(parseFloat(text));
+	    } else if (rationalMatch) {
+		return plt.types.Rational.makeInstance(parseInt(rationalMatch[1]),
+						       parseInt(rationalMatch[2]));
+	    } else {
+		return plt.types.Rational.makeInstance(parseInt(text), 1);
+	    }
+	};
+
+
 	// readExpr: -> stx
 	readExpr = function() {
 	    if (tokens.length == 0) {
@@ -246,25 +270,20 @@ plt.reader = {};
 
 	    case 'number':
 		var t = eat('number');
-		var rationalMatch = t[1].match(/([+\-]?\d+)\/(\d+)/);
-		if (t[1] == '+inf.0') {
-		    return makeAtom(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY), 
-				    t[2]);
-		} else if (t[1] == '-inf.0') {
-		    return makeAtom(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY), 
-				    t[2]);
-		} else if (t[1].match(/\./)) {
-		    return makeAtom(plt.types.FloatPoint.makeInstance(parseFloat(t[1])), 
-				    t[2]);
-		} else if (rationalMatch) {
-		    // Rational
-		    return makeAtom(plt.types.Rational.makeInstance(parseInt(rationalMatch[1]),
-								    parseInt(rationalMatch[2])),
-				   t[2])
-		} else {
-		    return makeAtom(plt.types.Rational.makeInstance(parseInt(t[1]), 1), 
-				    t[2]);
-		}
+		return makeAtom(parseBasicNumber(t[1]),
+				t[2]);
+
+	    case 'complex':
+		var t = eat('complex');
+		var complexMatch = t[1].match(/^([+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?)([+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))i/);
+		var a = (complexMatch[1] != "" ? parseBasicNumber(complexMatch[1]) :
+			 plt.types.Rational.ZERO);
+		var b = parseBasicNumber(complexMatch[2]);
+		// FIXME: Complex needs to be changed so it takes in either
+		// exact or inexact basic values.
+		return makeAtom(plt.types.Complex.makeInstance(a.toFloat(), 
+							       b.toFloat()));
+
 	    case 'string':
 		var t = eat('string');
 		return makeAtom(plt.types.String.makeInstance(t[1]),

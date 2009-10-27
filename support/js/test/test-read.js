@@ -281,8 +281,31 @@ function init() {
 				      cons(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY),
 					   empty)));
 
-	}
+	},
 
+
+	testComplex: function() {
+	    this.assert(schemeIsEqual(read("+1i"),
+				      cons(plt.types.Complex.makeInstance(0, 1), empty)));
+
+	    this.assert(schemeIsEqual(read("-1i"),
+				      cons(plt.types.Complex.makeInstance(0, -1), empty)));
+
+	    this.assert(schemeIsEqual(read("0+1i"),
+				      cons(plt.types.Complex.makeInstance(0, 1), empty)));
+
+	    this.assert(schemeIsEqual(read("-0+1i"),
+				      cons(plt.types.Complex.makeInstance(0, 1), empty)));
+
+	    this.assert(schemeIsEqual(read("-0-1i"),
+				      cons(plt.types.Complex.makeInstance(0, -1), empty)));
+
+	    this.assert(schemeIsEqual(read("5-1i"),
+				      cons(plt.types.Complex.makeInstance(5, -1), empty)));
+
+	    this.assert(schemeIsEqual(read("-5-1i"),
+				      cons(plt.types.Complex.makeInstance(-5, -1), empty)));
+	}
 	
 
 
