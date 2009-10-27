@@ -612,7 +612,11 @@ var plt = plt || {};
 	    check(first, isInteger, "lcm", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
 	    var result = first.toInteger();
+	    if (result == 0) { return plt.types.Rational.ZERO; }
 	    for (var i = 0; i < rest.length; i++) {
+		if (rest[i].toInteger() == 0) {
+		    return plt.types.Rational.ZERO;
+		}
 		result = _lcm(result, rest[i].toInteger());
 	    }
 	    return plt.types.Rational.makeInstance(result);

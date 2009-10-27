@@ -797,6 +797,92 @@
 
 
 
+(define (divtest n1 n2)
+  (= n1 (+ (* n2 (quotient n1 n2))
+	   (remainder n1 n2))))
+(test #t divtest (list 238 9))
+(test #t divtest (list -238 9))
+(test #t divtest (list 238 -9))
+(test #t divtest (list -238 -9))
+
+(test 13.0 quotient (list 1324.0 100))
+
+
+;; Check 0.0 combinations
+(test -0.0 quotient (list -0.0 2.0))
+(test 0.0 quotient (list -0.0 -2.0))
+(test 0.0 quotient (list 0.0 2.0))
+(test -0.0 quotient (list 0.0 -2.0))
+(test 0.0 modulo (list -0.0 2.0))
+(test 0.0 modulo (list -0.0 -2.0))
+(test 0.0 modulo (list 0.0 2.0))
+(test 0.0 modulo (list 0.0 -2.0))
+(test 0.0 remainder (list -0.0 2.0))
+(test 0.0 remainder (list -0.0 -2.0))
+(test 0.0 remainder (list 0.0 2.0))
+(test 0.0 remainder (list 0.0 -2.0))
+
+
+
+
+
+
+(test 4 gcd (list 0 4))
+(test 4 gcd (list -4 0))
+#;(test 4 gcd (list 4))
+#;(test 4 gcd (list -4))
+(test 4 gcd (list 32 -36))
+(test 2 gcd (list 6 10 14))
+#;(test 0 gcd (list))
+(test 5 gcd (list 5))
+(test 5.0 gcd (list 5.0 10))
+(test 5.0 gcd (list -5.0 10))
+(test 5.0 gcd (list 5.0 -10))
+(test 5.0 gcd (list 5.0))
+(test 5.0 gcd (list -5.0))
+(test 3 gcd (list 0 0 3 0))
+(test 3.0 gcd (list 0.0 0 3 0))
+(test 0 gcd (list 0 0 0))
+
+
+(test (expt 3 37) gcd (list (expt 9 35) (expt 6 37)))
+(test (expt 3 37) gcd (list (- (expt 9 35)) (expt 6 37)))
+(test (expt 3 37) gcd (list (expt 9 35) (- (expt 6 37))))
+(test (expt 3 75) gcd (list (expt 3 75)))
+(test (expt 3 75) gcd (list (- (expt 3 75))))
+
+(test 201 gcd (list (* 67 (expt 3 20)) (* 67 3)))
+(test 201 gcd (list (* 67 3) (* 67 (expt 3 20))))
+(test 6 gcd (list (* 3 (expt 2 100)) 66))
+(test 6 gcd (list 66 (* 3 (expt 2 100))))
+(test 201.0 gcd (list (* 67 (expt 3 20)) (* 67. 3)))
+(test 201.0 gcd (list (* 67. 3) (* 67 (expt 3 20))))
+(test (expt 9 35) gcd (list (expt 9 35) 0))
+(test (expt 9 35) gcd (list 0 (expt 9 35)))
+(test 288 lcm (list 32 -36))
+(test 12 lcm (list 2 3 4))
+
+#;(test 1 lcm (list))
+(test 5 lcm (list 5))
+(test 5 lcm (list -5))
+(test 0 lcm (list 123 0))
+
+(test 0 lcm (list 0 0))
+(test 0.0 lcm (list 0 0.0))
+(test 0.0 lcm (list 0.0 0))
+
+
+(test 30.0 lcm (list 5 6.0))
+(test 6.0 lcm (list 6.0))
+(test 6.0 lcm (list -6.0))
+(test 0.0 lcm (list 123 0.0))
+(test 0.0 lcm (list 123 -0.0))
+(test (* (expt 2 37) (expt 9 35)) lcm (list (expt 9 35) (expt 6 37)))
+(test (* (expt 2 37) (expt 9 35)) lcm (list (- (expt 9 35)) (expt 6 37)))
+(test (* (expt 2 37) (expt 9 35)) lcm (list (expt 9 35) (- (expt 6 37))))
+
+
+
 
 
 (js-big-bang #f
