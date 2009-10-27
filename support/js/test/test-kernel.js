@@ -630,9 +630,20 @@ var getTests;
 		var n3 = Rational.makeInstance(2);
 		this.assertEqual(n3, Kernel.modulo(n1, n2));
 		this.assertEqual(n2, Kernel.modulo(n2, n1));
-		this.assert(Kernel.equal_question_(Rational.makeInstance(-3), 
-						   Kernel.modulo(Rational.makeInstance(13),
-								 Rational.makeInstance(-4))));
+		this.assert(Kernel.equal_question_(
+		    Rational.makeInstance(-3), 
+		    Kernel.modulo(Rational.makeInstance(13),
+				  Rational.makeInstance(-4))));
+
+		this.assert(Kernel.equal_question_(
+		    Rational.makeInstance(3), 
+		    Kernel.modulo(Rational.makeInstance(-13),
+				  Rational.makeInstance(4))));
+
+		this.assert(Kernel.equal_question_(
+		    Rational.makeInstance(-1), 
+		    Kernel.modulo(Rational.makeInstance(-13),
+				  Rational.makeInstance(-4))));
 	    },
 
 	    

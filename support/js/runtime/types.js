@@ -1123,14 +1123,15 @@ var plt = plt || {};
 	    plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
 					    1);
 
+	// The sign of the result should match the sign of n.
 	if (plt.types.NumberTower.lessThan(n, plt.types.Rational.ZERO)) {
-	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
-		return plt.types.NumberTower.add(result, n);
+	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO)) {
+		return result;
 	    }
-	    return result;
+	    return plt.types.NumberTower.add(result, n);
 
 	} else {
-	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO).valueOf()) {
+	    if (plt.types.NumberTower.lessThan(result, plt.types.Rational.ZERO)) {
 		return plt.types.NumberTower.add(result, n);
 	    }
 	    return result;
