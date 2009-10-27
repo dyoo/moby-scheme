@@ -105,7 +105,7 @@ var set_dash_permission_colon_open_dash_image_dash_url_dash_url_bang_ = function
 var permission_colon_open_dash_image_dash_url_question_ = function(obj) { 
               return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name9; };
 
-var permission_question_ = function(datum) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_receive_dash_sms_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_tilt_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_shake_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_internet_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_telephony_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_wake_dash_lock_question_(datum))||(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(datum))); };
+var permission_question_ = function(datum) { return ((plt.Kernel.setLastLoc("offset=512 line=17 span=28 id=\"permission.ss\"")   && permission_colon_location_question_(datum))||(plt.Kernel.setLastLoc("offset=547 line=18 span=28 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(datum))||(plt.Kernel.setLastLoc("offset=582 line=19 span=31 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(datum))||(plt.Kernel.setLastLoc("offset=620 line=20 span=24 id=\"permission.ss\"")   && permission_colon_tilt_question_(datum))||(plt.Kernel.setLastLoc("offset=651 line=21 span=25 id=\"permission.ss\"")   && permission_colon_shake_question_(datum))||(plt.Kernel.setLastLoc("offset=683 line=22 span=28 id=\"permission.ss\"")   && permission_colon_internet_question_(datum))||(plt.Kernel.setLastLoc("offset=718 line=23 span=29 id=\"permission.ss\"")   && permission_colon_telephony_question_(datum))||(plt.Kernel.setLastLoc("offset=754 line=24 span=29 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(datum))||(plt.Kernel.setLastLoc("offset=790 line=25 span=34 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(datum))); };
 var PERMISSION_colon_LOCATION; 
 var PERMISSION_colon_SEND_dash_SMS; 
 var PERMISSION_colon_RECEIVE_dash_SMS; 
@@ -114,120 +114,120 @@ var PERMISSION_colon_SHAKE;
 var PERMISSION_colon_INTERNET; 
 var PERMISSION_colon_TELEPHONY; 
 var PERMISSION_colon_WAKE_dash_LOCK; 
-var permission_dash__greaterthan_string = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
+var permission_dash__greaterthan_string = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=1465 line=42 span=35 id=\"permission.ss\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:LOCATION")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1534 line=44 span=35 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:SEND-SMS")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1603 line=46 span=38 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:RECEIVE-SMS")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1678 line=48 span=31 id=\"permission.ss\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:TILT")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_shake_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1739 line=50 span=32 id=\"permission.ss\"")   && permission_colon_shake_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:SHAKE")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_internet_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1802 line=52 span=35 id=\"permission.ss\"")   && permission_colon_internet_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:INTERNET")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1871 line=54 span=36 id=\"permission.ss\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:TELEPHONY")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=1942 line=56 span=36 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("PERMISSION:WAKE-LOCK")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.format((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL ~a")), [(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_dash_url(a_dash_permission))])) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
-var string_dash__greaterthan_permission = function(a_dash_ref) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:LOCATION")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2013 line=58 span=41 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=2060 line=59 span=84 id=\"permission.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL ~a")), [(plt.Kernel.setLastLoc("offset=2099 line=59 span=44 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_dash_url(a_dash_permission))])) :
+ (plt.Kernel.setLastLoc("offset=1454 line=41 span=692 id=\"permission.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=1454 line=41 span=692 id=\\\"permission.ss\\\"\""))))))))))))); };
+var string_dash__greaterthan_permission = function(a_dash_ref) { return ((plt.Kernel.setLastLoc("offset=2242 line=65 span=38 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:LOCATION")), [])) ?
  PERMISSION_colon_LOCATION :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:SEND-SMS")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2312 line=67 span=38 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:SEND-SMS")), [])) ?
  PERMISSION_colon_SEND_dash_SMS :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:RECEIVE-SMS")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2387 line=69 span=41 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:RECEIVE-SMS")), [])) ?
  PERMISSION_colon_RECEIVE_dash_SMS :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:TILT")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2463 line=71 span=34 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:TILT")), [])) ?
  PERMISSION_colon_TILT :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:SHAKE")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2525 line=73 span=35 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:SHAKE")), [])) ?
  PERMISSION_colon_SHAKE :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:INTERNET")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2589 line=75 span=38 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:INTERNET")), [])) ?
  PERMISSION_colon_INTERNET :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:TELEPHONY")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2659 line=77 span=39 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:TELEPHONY")), [])) ?
  PERMISSION_colon_TELEPHONY :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:WAKE-LOCK")), [])) ?
+ ((plt.Kernel.setLastLoc("offset=2731 line=79 span=39 id=\"permission.ss\"") && plt.Kernel.string_equal__question_(a_dash_ref,(plt.types.String.makeInstance("PERMISSION:WAKE-LOCK")), [])) ?
  PERMISSION_colon_WAKE_dash_LOCK :
- (((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel._greaterthan_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length(a_dash_ref)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))), []))&&(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.string_equal__question_((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.substring(a_dash_ref,(plt.types.Rational.makeInstance(0, 1)),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))))),(plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")), []))) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_open_dash_image_dash_url((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.substring(a_dash_ref,(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.add1((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))))),(plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.string_dash_length(a_dash_ref)))))) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
-var permission_dash__greaterthan_android_dash_permissions = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.ACCESS_COARSE_LOCATION")),(plt.types.String.makeInstance("android.permission.ACCESS_FINE_LOCATION"))])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.SEND_SMS"))])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.RECEIVE_SMS"))])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_shake_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_internet_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.INTERNET"))])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.ACCESS_COARSE_UPDATES"))])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.WAKE_LOCK"))])) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"") && plt.Kernel.list([])) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
-var permission_dash__greaterthan_on_dash_start_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
+ (((plt.Kernel.setLastLoc("offset=2808 line=81 span=82 id=\"permission.ss\"") && plt.Kernel._greaterthan_((plt.Kernel.setLastLoc("offset=2811 line=81 span=21 id=\"permission.ss\"")   && plt.Kernel.string_dash_length(a_dash_ref)),(plt.Kernel.setLastLoc("offset=2846 line=82 span=43 id=\"permission.ss\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))), []))&&(plt.Kernel.setLastLoc("offset=2901 line=83 span=122 id=\"permission.ss\"") && plt.Kernel.string_equal__question_((plt.Kernel.setLastLoc("offset=2911 line=83 span=63 id=\"permission.ss\"")   && plt.Kernel.substring(a_dash_ref,(plt.types.Rational.makeInstance(0, 1)),(plt.Kernel.setLastLoc("offset=2930 line=83 span=43 id=\"permission.ss\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))))),(plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")), []))) ?
+ (plt.Kernel.setLastLoc("offset=3030 line=85 span=220 id=\"permission.ss\"")   && make_dash_permission_colon_open_dash_image_dash_url((plt.Kernel.setLastLoc("offset=3062 line=85 span=187 id=\"permission.ss\"")   && plt.Kernel.substring(a_dash_ref,(plt.Kernel.setLastLoc("offset=3128 line=86 span=50 id=\"permission.ss\"")   && plt.Kernel.add1((plt.Kernel.setLastLoc("offset=3134 line=86 span=43 id=\"permission.ss\"")   && plt.Kernel.string_dash_length((plt.types.String.makeInstance("PERMISSION:OPEN-IMAGE-URL")))))),(plt.Kernel.setLastLoc("offset=3227 line=87 span=21 id=\"permission.ss\"")   && plt.Kernel.string_dash_length(a_dash_ref)))))) :
+ (plt.Kernel.setLastLoc("offset=2231 line=64 span=1021 id=\"permission.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=2231 line=64 span=1021 id=\\\"permission.ss\\\"\""))))))))))))); };
+var permission_dash__greaterthan_android_dash_permissions = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=3392 line=95 span=35 id=\"permission.ss\"")   && permission_colon_location_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3433 line=96 span=103 id=\"permission.ss\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.ACCESS_COARSE_LOCATION")),(plt.types.String.makeInstance("android.permission.ACCESS_FINE_LOCATION"))])) :
+ ((plt.Kernel.setLastLoc("offset=3543 line=98 span=35 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3584 line=99 span=36 id=\"permission.ss\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.SEND_SMS"))])) :
+ ((plt.Kernel.setLastLoc("offset=3627 line=100 span=38 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3671 line=101 span=39 id=\"permission.ss\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.RECEIVE_SMS"))])) :
+ ((plt.Kernel.setLastLoc("offset=3717 line=102 span=31 id=\"permission.ss\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3754 line=103 span=6 id=\"permission.ss\"") && plt.Kernel.list([])) :
+ ((plt.Kernel.setLastLoc("offset=3767 line=104 span=32 id=\"permission.ss\"")   && permission_colon_shake_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3805 line=105 span=6 id=\"permission.ss\"") && plt.Kernel.list([])) :
+ ((plt.Kernel.setLastLoc("offset=3818 line=106 span=35 id=\"permission.ss\"")   && permission_colon_internet_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3859 line=107 span=36 id=\"permission.ss\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.INTERNET"))])) :
+ ((plt.Kernel.setLastLoc("offset=3902 line=108 span=36 id=\"permission.ss\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=3944 line=109 span=49 id=\"permission.ss\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.ACCESS_COARSE_UPDATES"))])) :
+ ((plt.Kernel.setLastLoc("offset=4000 line=110 span=36 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=4042 line=111 span=37 id=\"permission.ss\"") && plt.Kernel.list([(plt.types.String.makeInstance("android.permission.WAKE_LOCK"))])) :
+ ((plt.Kernel.setLastLoc("offset=4086 line=112 span=41 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=4133 line=113 span=6 id=\"permission.ss\"") && plt.Kernel.list([])) :
+ (plt.Kernel.setLastLoc("offset=3381 line=94 span=760 id=\"permission.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=3381 line=94 span=760 id=\\\"permission.ss\\\"\""))))))))))))); };
+var permission_dash__greaterthan_on_dash_start_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=4258 line=119 span=35 id=\"permission.ss\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getLocationService().startService();\n      plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=4480 line=122 span=35 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=4530 line=124 span=38 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=4583 line=126 span=31 id=\"permission.ss\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getTiltService().startService();\n      plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);\n      plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);\n      plt.platform.Platform.getInstance().getTiltService().addShakeListener(listener);")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_shake_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=4988 line=132 span=32 id=\"permission.ss\"")   && permission_colon_shake_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_internet_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5042 line=135 span=35 id=\"permission.ss\"")   && permission_colon_internet_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5092 line=137 span=36 id=\"permission.ss\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5143 line=139 span=36 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5194 line=141 span=41 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
-var permission_dash__greaterthan_on_dash_pause_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=4247 line=118 span=998 id=\"permission.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=4247 line=118 span=998 id=\\\"permission.ss\\\"\""))))))))))))); };
+var permission_dash__greaterthan_on_dash_pause_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=5362 line=148 span=35 id=\"permission.ss\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getLocationService().shutdownService();")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5487 line=150 span=35 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5537 line=152 span=38 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5590 line=154 span=31 id=\"permission.ss\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getTiltService().shutdownService();")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_shake_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5707 line=156 span=32 id=\"permission.ss\"")   && permission_colon_shake_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_internet_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5754 line=158 span=35 id=\"permission.ss\"")   && permission_colon_internet_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5804 line=160 span=36 id=\"permission.ss\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5855 line=162 span=36 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=5906 line=164 span=41 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
-var permission_dash__greaterthan_on_dash_destroy_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_location_question_(a_dash_permission)) ?
+ (plt.Kernel.setLastLoc("offset=5351 line=147 span=606 id=\"permission.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=5351 line=147 span=606 id=\\\"permission.ss\\\"\""))))))))))))); };
+var permission_dash__greaterthan_on_dash_destroy_dash_code = function(a_dash_permission) { return ((plt.Kernel.setLastLoc("offset=6078 line=171 span=35 id=\"permission.ss\"")   && permission_colon_location_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getLocationService().shutdownService();")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6203 line=173 span=35 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6253 line=175 span=38 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6306 line=177 span=31 id=\"permission.ss\"")   && permission_colon_tilt_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("plt.platform.Platform.getInstance().getTiltService().shutdownService();")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_shake_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6423 line=179 span=32 id=\"permission.ss\"")   && permission_colon_shake_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_internet_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6470 line=181 span=35 id=\"permission.ss\"")   && permission_colon_internet_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6520 line=183 span=36 id=\"permission.ss\"")   && permission_colon_telephony_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6571 line=185 span=36 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- ((plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
+ ((plt.Kernel.setLastLoc("offset=6622 line=187 span=41 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(a_dash_permission)) ?
  (plt.types.String.makeInstance("")) :
- (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=0 line=0 span=0 id=\\\"\\\"\""))))))))))))); };
+ (plt.Kernel.setLastLoc("offset=6067 line=170 span=606 id=\"permission.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=6067 line=170 span=606 id=\\\"permission.ss\\\"\""))))))))))))); };
 (function() { 
   ((function (toplevel_dash_expression_dash_show0) { 
 
@@ -240,14 +240,14 @@ var permission_dash__greaterthan_on_dash_destroy_dash_code = function(a_dash_per
 
 
 
-PERMISSION_colon_LOCATION = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_location());
-PERMISSION_colon_SEND_dash_SMS = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_send_dash_sms());
-PERMISSION_colon_RECEIVE_dash_SMS = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_send_dash_sms());
-PERMISSION_colon_TILT = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_tilt());
-PERMISSION_colon_SHAKE = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_shake());
-PERMISSION_colon_INTERNET = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_internet());
-PERMISSION_colon_TELEPHONY = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_telephony());
-PERMISSION_colon_WAKE_dash_LOCK = (plt.Kernel.setLastLoc("offset=0 line=0 span=0 id=\"\"")   && make_dash_permission_colon_wake_dash_lock());
+PERMISSION_colon_LOCATION = (plt.Kernel.setLastLoc("offset=857 line=28 span=26 id=\"permission.ss\"")   && make_dash_permission_colon_location());
+PERMISSION_colon_SEND_dash_SMS = (plt.Kernel.setLastLoc("offset=913 line=29 span=26 id=\"permission.ss\"")   && make_dash_permission_colon_send_dash_sms());
+PERMISSION_colon_RECEIVE_dash_SMS = (plt.Kernel.setLastLoc("offset=972 line=30 span=26 id=\"permission.ss\"")   && make_dash_permission_colon_send_dash_sms());
+PERMISSION_colon_TILT = (plt.Kernel.setLastLoc("offset=1024 line=31 span=22 id=\"permission.ss\"")   && make_dash_permission_colon_tilt());
+PERMISSION_colon_SHAKE = (plt.Kernel.setLastLoc("offset=1073 line=32 span=23 id=\"permission.ss\"")   && make_dash_permission_colon_shake());
+PERMISSION_colon_INTERNET = (plt.Kernel.setLastLoc("offset=1126 line=33 span=26 id=\"permission.ss\"")   && make_dash_permission_colon_internet());
+PERMISSION_colon_TELEPHONY = (plt.Kernel.setLastLoc("offset=1183 line=34 span=27 id=\"permission.ss\"")   && make_dash_permission_colon_telephony());
+PERMISSION_colon_WAKE_dash_LOCK = (plt.Kernel.setLastLoc("offset=1241 line=35 span=27 id=\"permission.ss\"")   && make_dash_permission_colon_wake_dash_lock());
 
 
 

@@ -3,6 +3,7 @@
          scheme/runtime-path
          scheme/port
          "stx.ss"
+         "../stx-helpers.ss"
          "beginner-to-javascript.ss"
          "helpers.ss")
 
@@ -158,17 +159,15 @@
 (define (read-program a-path)
   (call-with-input-file a-path
     (lambda (ip)
+      (port-count-lines! ip)
       (check-special-lang-line! a-path (read-line ip)) ;; skip the first language-level line
-      (stx-e
-       (datum->stx 
-        (let loop ([elt (read ip)])
-          (cond
-            [(eof-object? elt)
-             empty]
-            [else
-             (cons elt (loop (read ip)))]))
-        ;; FIXME: read the program and do the right thing with the lexer.
-        (make-Loc 0 0 0 ""))))))
+      (let loop ()
+        (let ([elt (read-syntax a-path ip)])
+        (cond
+          [(eof-object? elt)
+           empty]
+          [else
+           (cons (syntax->stx elt) (loop))]))))))
 
 
 ;; make sure the line is a #lang s-exp "lang.ss" line.
