@@ -5,8 +5,10 @@ var stx_colon_atom = function (datum,loc) { plt.Kernel.Struct.call(this, "make-s
 this.loc = loc; };
 stx_colon_atom.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name1 = stx_colon_atom;
-var make_dash_stx_colon_atom = function (id0,id1) { return new stx_colon_atom(id0,id1); };
+var make_dash_stx_colon_atom = function (id0,id1) {
+    var atom = new stx_colon_atom(id0,id1);
+    return atom;
+};
 var stx_colon_atom_dash_datum = function(obj) {
      if (stx_colon_atom_question_ (obj)) {
         return obj.datum;
@@ -40,13 +42,14 @@ var set_dash_stx_colon_atom_dash_loc_bang_ = function(obj,newVal) {
 };
 
 var stx_colon_atom_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name1; };
+    return (obj != null && obj != undefined &&
+	    obj instanceof stx_colon_atom);
+};
 
 var stx_colon_list = function (elts,loc) { plt.Kernel.Struct.call(this, "make-stx:list", [elts,loc]);this.elts = elts;
 this.loc = loc; };
 stx_colon_list.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name2 = stx_colon_list;
 var make_dash_stx_colon_list = function (id0,id1) { return new stx_colon_list(id0,id1); };
 var stx_colon_list_dash_elts = function(obj) {
      if (stx_colon_list_question_ (obj)) {
@@ -81,7 +84,7 @@ var set_dash_stx_colon_list_dash_loc_bang_ = function(obj,newVal) {
 };
 
 var stx_colon_list_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name2; };
+              return obj != null && obj != undefined && obj instanceof stx_colon_list; };
 
 var Loc = function (offset,line,span,id) { plt.Kernel.Struct.call(this, "make-Loc", [offset,line,span,id]);this.offset = offset;
 this.line = line;
@@ -89,7 +92,6 @@ this.span = span;
 this.id = id; };
 Loc.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name3 = Loc;
 var make_dash_Loc = function (id0,id1,id2,id3) { return new Loc(id0,id1,id2,id3); };
 var Loc_dash_offset = function(obj) {
      if (Loc_question_ (obj)) {
@@ -156,7 +158,7 @@ var set_dash_Loc_dash_id_bang_ = function(obj,newVal) {
 };
 
 var Loc_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name3; };
+              return obj != null && obj != undefined && obj instanceof Loc; };
 
 var Loc_dash__greaterthan_string = function(a_dash_loc) { return (plt.Kernel.setLastLoc("offset=284 line=14 span=154 id=\"stx.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("offset=~a line=~a span=~a id=~s")), [(plt.Kernel.setLastLoc("offset=337 line=15 span=18 id=\"stx.ss\"")   && Loc_dash_offset(a_dash_loc)),(plt.Kernel.setLastLoc("offset=367 line=16 span=16 id=\"stx.ss\"")   && Loc_dash_line(a_dash_loc)),(plt.Kernel.setLastLoc("offset=395 line=17 span=16 id=\"stx.ss\"")   && Loc_dash_span(a_dash_loc)),(plt.Kernel.setLastLoc("offset=423 line=18 span=14 id=\"stx.ss\"")   && Loc_dash_id(a_dash_loc))])); };
 var stx_question_ = function(x) { return ((plt.Kernel.setLastLoc("offset=489 line=23 span=13 id=\"stx.ss\"")   && stx_colon_atom_question_(x))||(plt.Kernel.setLastLoc("offset=509 line=24 span=13 id=\"stx.ss\"")   && stx_colon_list_question_(x))); };
@@ -170,7 +172,8 @@ var stx_dash_loc = function(a_dash_stx) { return ((plt.Kernel.setLastLoc("offset
  ((plt.Kernel.setLastLoc("offset=847 line=42 span=17 id=\"stx.ss\"")   && stx_colon_list_question_(a_dash_stx)) ?
  (plt.Kernel.setLastLoc("offset=870 line=43 span=20 id=\"stx.ss\"")   && stx_colon_list_dash_loc(a_dash_stx)) :
  (plt.Kernel.setLastLoc("offset=786 line=39 span=106 id=\"stx.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=786 line=39 span=106 id=\\\"stx.ss\\\"\"")))))); };
-var stx_dash_begins_dash_with_question_ = function(a_dash_stx, a_dash_sym) { return ((plt.Kernel.setLastLoc("offset=991 line=49 span=17 id=\"stx.ss\"")   && stx_colon_atom_question_(a_dash_stx)) ?
+var stx_dash_begins_dash_with_question_ = function(a_dash_stx, a_dash_sym) {
+ return ((plt.Kernel.setLastLoc("offset=991 line=49 span=17 id=\"stx.ss\"")   && stx_colon_atom_question_(a_dash_stx)) ?
  plt.types.Logic.FALSE :
  ((plt.Kernel.setLastLoc("offset=1023 line=51 span=17 id=\"stx.ss\"")   && stx_colon_list_question_(a_dash_stx)) ?
  ((plt.Kernel.setLastLoc("offset=1051 line=52 span=36 id=\"stx.ss\"")   && plt.Kernel.not((plt.Kernel.setLastLoc("offset=1056 line=52 span=30 id=\"stx.ss\"")   && plt.Kernel.empty_question_((plt.Kernel.setLastLoc("offset=1064 line=52 span=21 id=\"stx.ss\"")   && stx_colon_list_dash_elts(a_dash_stx))))))&&(plt.Kernel.setLastLoc("offset=1098 line=53 span=47 id=\"stx.ss\"")   && plt.Kernel.symbol_question_((plt.Kernel.setLastLoc("offset=1107 line=53 span=37 id=\"stx.ss\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=1114 line=53 span=29 id=\"stx.ss\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=1121 line=53 span=21 id=\"stx.ss\"")   && stx_colon_list_dash_elts(a_dash_stx))))))))&&(plt.Kernel.setLastLoc("offset=1156 line=54 span=74 id=\"stx.ss\"")   && plt.Kernel.symbol_equal__question_((plt.Kernel.setLastLoc("offset=1166 line=54 span=37 id=\"stx.ss\"")   && stx_dash_e((plt.Kernel.setLastLoc("offset=1173 line=54 span=29 id=\"stx.ss\"")   && plt.Kernel.first((plt.Kernel.setLastLoc("offset=1180 line=54 span=21 id=\"stx.ss\"")   && stx_colon_list_dash_elts(a_dash_stx)))))),a_dash_sym))) :

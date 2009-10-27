@@ -4,28 +4,25 @@
 var effect_colon_none = function () { plt.Kernel.Struct.call(this, "make-effect:none", []); };
 effect_colon_none.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name1 = effect_colon_none;
 var make_dash_effect_colon_none = function () { return new effect_colon_none(); };
 
 
 var effect_colon_none_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name1; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_none; };
 
 var effect_colon_beep = function () { plt.Kernel.Struct.call(this, "make-effect:beep", []); };
 effect_colon_beep.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name2 = effect_colon_beep;
 var make_dash_effect_colon_beep = function () { return new effect_colon_beep(); };
 
 
 var effect_colon_beep_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name2; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_beep; };
 
 var effect_colon_play_dash_dtmf_dash_tone = function (tone,duration) { plt.Kernel.Struct.call(this, "make-effect:play-dtmf-tone", [tone,duration]);this.tone = tone;
 this.duration = duration; };
 effect_colon_play_dash_dtmf_dash_tone.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name3 = effect_colon_play_dash_dtmf_dash_tone;
 var make_dash_effect_colon_play_dash_dtmf_dash_tone = function (id0,id1) { return new effect_colon_play_dash_dtmf_dash_tone(id0,id1); };
 var effect_colon_play_dash_dtmf_dash_tone_dash_tone = function(obj) {
      if (effect_colon_play_dash_dtmf_dash_tone_question_ (obj)) {
@@ -60,13 +57,12 @@ var set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_duration_bang_ = functio
 };
 
 var effect_colon_play_dash_dtmf_dash_tone_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name3; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_play_dash_dtmf_dash_tone; };
 
 var effect_colon_send_dash_sms = function (address,msg) { plt.Kernel.Struct.call(this, "make-effect:send-sms", [address,msg]);this.address = address;
 this.msg = msg; };
 effect_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name4 = effect_colon_send_dash_sms;
 var make_dash_effect_colon_send_dash_sms = function (id0,id1) { return new effect_colon_send_dash_sms(id0,id1); };
 var effect_colon_send_dash_sms_dash_address = function(obj) {
      if (effect_colon_send_dash_sms_question_ (obj)) {
@@ -101,12 +97,11 @@ var set_dash_effect_colon_send_dash_sms_dash_msg_bang_ = function(obj,newVal) {
 };
 
 var effect_colon_send_dash_sms_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name4; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_send_dash_sms; };
 
 var playlist_dash_sound = function (playlist) { plt.Kernel.Struct.call(this, "make-playlist-sound", [playlist]);this.playlist = playlist; };
 playlist_dash_sound.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name5 = playlist_dash_sound;
 var make_dash_playlist_dash_sound = function (id0) { return new playlist_dash_sound(id0); };
 var playlist_dash_sound_dash_playlist = function(obj) {
      if (playlist_dash_sound_question_ (obj)) {
@@ -125,13 +120,12 @@ var set_dash_playlist_dash_sound_dash_playlist_bang_ = function(obj,newVal) {
 };
 
 var playlist_dash_sound_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name5; };
+              return obj != null && obj != undefined && obj instanceof playlist_dash_sound; };
 
 var sound_question_ = function(x) { return ((plt.Kernel.setLastLoc("offset=417 line=19 span=11 id=\"effect-struct.ss\"")   && plt.Kernel.string_question_(x))||(plt.Kernel.setLastLoc("offset=435 line=20 span=19 id=\"effect-struct.ss\"")   && playlist_dash_sound_question_(x))); };
 var effect_colon_play_dash_sound = function (sound) { plt.Kernel.Struct.call(this, "make-effect:play-sound", [sound]);this.sound = sound; };
 effect_colon_play_dash_sound.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name6 = effect_colon_play_dash_sound;
 var make_dash_effect_colon_play_dash_sound = function (id0) { return new effect_colon_play_dash_sound(id0); };
 var effect_colon_play_dash_sound_dash_sound = function(obj) {
      if (effect_colon_play_dash_sound_question_ (obj)) {
@@ -150,12 +144,11 @@ var set_dash_effect_colon_play_dash_sound_dash_sound_bang_ = function(obj,newVal
 };
 
 var effect_colon_play_dash_sound_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name6; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_play_dash_sound; };
 
 var effect_colon_pause_dash_sound = function (sound) { plt.Kernel.Struct.call(this, "make-effect:pause-sound", [sound]);this.sound = sound; };
 effect_colon_pause_dash_sound.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name7 = effect_colon_pause_dash_sound;
 var make_dash_effect_colon_pause_dash_sound = function (id0) { return new effect_colon_pause_dash_sound(id0); };
 var effect_colon_pause_dash_sound_dash_sound = function(obj) {
      if (effect_colon_pause_dash_sound_question_ (obj)) {
@@ -174,12 +167,11 @@ var set_dash_effect_colon_pause_dash_sound_dash_sound_bang_ = function(obj,newVa
 };
 
 var effect_colon_pause_dash_sound_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name7; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_pause_dash_sound; };
 
 var effect_colon_stop_dash_sound = function (sound) { plt.Kernel.Struct.call(this, "make-effect:stop-sound", [sound]);this.sound = sound; };
 effect_colon_stop_dash_sound.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name8 = effect_colon_stop_dash_sound;
 var make_dash_effect_colon_stop_dash_sound = function (id0) { return new effect_colon_stop_dash_sound(id0); };
 var effect_colon_stop_dash_sound_dash_sound = function(obj) {
      if (effect_colon_stop_dash_sound_question_ (obj)) {
@@ -198,12 +190,11 @@ var set_dash_effect_colon_stop_dash_sound_dash_sound_bang_ = function(obj,newVal
 };
 
 var effect_colon_stop_dash_sound_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name8; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_stop_dash_sound; };
 
 var effect_colon_set_dash_sound_dash_volume = function (volume) { plt.Kernel.Struct.call(this, "make-effect:set-sound-volume", [volume]);this.volume = volume; };
 effect_colon_set_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name9 = effect_colon_set_dash_sound_dash_volume;
 var make_dash_effect_colon_set_dash_sound_dash_volume = function (id0) { return new effect_colon_set_dash_sound_dash_volume(id0); };
 var effect_colon_set_dash_sound_dash_volume_dash_volume = function(obj) {
      if (effect_colon_set_dash_sound_dash_volume_question_ (obj)) {
@@ -222,32 +213,29 @@ var set_dash_effect_colon_set_dash_sound_dash_volume_dash_volume_bang_ = functio
 };
 
 var effect_colon_set_dash_sound_dash_volume_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name9; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_set_dash_sound_dash_volume; };
 
 var effect_colon_raise_dash_sound_dash_volume = function () { plt.Kernel.Struct.call(this, "make-effect:raise-sound-volume", []); };
 effect_colon_raise_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name10 = effect_colon_raise_dash_sound_dash_volume;
 var make_dash_effect_colon_raise_dash_sound_dash_volume = function () { return new effect_colon_raise_dash_sound_dash_volume(); };
 
 
 var effect_colon_raise_dash_sound_dash_volume_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name10; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_raise_dash_sound_dash_volume; };
 
 var effect_colon_lower_dash_sound_dash_volume = function () { plt.Kernel.Struct.call(this, "make-effect:lower-sound-volume", []); };
 effect_colon_lower_dash_sound_dash_volume.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name11 = effect_colon_lower_dash_sound_dash_volume;
 var make_dash_effect_colon_lower_dash_sound_dash_volume = function () { return new effect_colon_lower_dash_sound_dash_volume(); };
 
 
 var effect_colon_lower_dash_sound_dash_volume_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name11; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_lower_dash_sound_dash_volume; };
 
 var effect_colon_set_dash_wake_dash_lock = function (locks) { plt.Kernel.Struct.call(this, "make-effect:set-wake-lock", [locks]);this.locks = locks; };
 effect_colon_set_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name12 = effect_colon_set_dash_wake_dash_lock;
 var make_dash_effect_colon_set_dash_wake_dash_lock = function (id0) { return new effect_colon_set_dash_wake_dash_lock(id0); };
 var effect_colon_set_dash_wake_dash_lock_dash_locks = function(obj) {
      if (effect_colon_set_dash_wake_dash_lock_question_ (obj)) {
@@ -266,22 +254,20 @@ var set_dash_effect_colon_set_dash_wake_dash_lock_dash_locks_bang_ = function(ob
 };
 
 var effect_colon_set_dash_wake_dash_lock_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name12; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_set_dash_wake_dash_lock; };
 
 var effect_colon_release_dash_wake_dash_lock = function () { plt.Kernel.Struct.call(this, "make-effect:release-wake-lock", []); };
 effect_colon_release_dash_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name13 = effect_colon_release_dash_wake_dash_lock;
 var make_dash_effect_colon_release_dash_wake_dash_lock = function () { return new effect_colon_release_dash_wake_dash_lock(); };
 
 
 var effect_colon_release_dash_wake_dash_lock_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name13; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_release_dash_wake_dash_lock; };
 
 var effect_colon_pick_dash_playlist = function (update_dash_f) { plt.Kernel.Struct.call(this, "make-effect:pick-playlist", [update_dash_f]);this.update_dash_f = update_dash_f; };
 effect_colon_pick_dash_playlist.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name14 = effect_colon_pick_dash_playlist;
 var make_dash_effect_colon_pick_dash_playlist = function (id0) { return new effect_colon_pick_dash_playlist(id0); };
 var effect_colon_pick_dash_playlist_dash_update_dash_f = function(obj) {
      if (effect_colon_pick_dash_playlist_question_ (obj)) {
@@ -300,13 +286,12 @@ var set_dash_effect_colon_pick_dash_playlist_dash_update_dash_f_bang_ = function
 };
 
 var effect_colon_pick_dash_playlist_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name14; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_pick_dash_playlist; };
 
 var effect_colon_pick_dash_random = function (n,update_dash_f) { plt.Kernel.Struct.call(this, "make-effect:pick-random", [n,update_dash_f]);this.n = n;
 this.update_dash_f = update_dash_f; };
 effect_colon_pick_dash_random.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name15 = effect_colon_pick_dash_random;
 var make_dash_effect_colon_pick_dash_random = function (id0,id1) { return new effect_colon_pick_dash_random(id0,id1); };
 var effect_colon_pick_dash_random_dash_n = function(obj) {
      if (effect_colon_pick_dash_random_question_ (obj)) {
@@ -341,7 +326,7 @@ var set_dash_effect_colon_pick_dash_random_dash_update_dash_f_bang_ = function(o
 };
 
 var effect_colon_pick_dash_random_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name15; };
+              return obj != null && obj != undefined && obj instanceof effect_colon_pick_dash_random; };
 
 var effect_question_ = function(thing) { return ((plt.Kernel.setLastLoc("offset=1069 line=43 span=20 id=\"effect-struct.ss\"")   && effect_colon_none_question_(thing))||(plt.Kernel.setLastLoc("offset=1096 line=44 span=20 id=\"effect-struct.ss\"")   && effect_colon_beep_question_(thing))||(plt.Kernel.setLastLoc("offset=1123 line=45 span=30 id=\"effect-struct.ss\"")   && effect_colon_play_dash_dtmf_dash_tone_question_(thing))||(plt.Kernel.setLastLoc("offset=1160 line=46 span=24 id=\"effect-struct.ss\"")   && effect_colon_send_dash_sms_question_(thing))||(plt.Kernel.setLastLoc("offset=1191 line=47 span=26 id=\"effect-struct.ss\"")   && effect_colon_play_dash_sound_question_(thing))||(plt.Kernel.setLastLoc("offset=1224 line=48 span=27 id=\"effect-struct.ss\"")   && effect_colon_pause_dash_sound_question_(thing))||(plt.Kernel.setLastLoc("offset=1258 line=49 span=26 id=\"effect-struct.ss\"")   && effect_colon_stop_dash_sound_question_(thing))||(plt.Kernel.setLastLoc("offset=1291 line=50 span=32 id=\"effect-struct.ss\"")   && effect_colon_set_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=1330 line=51 span=34 id=\"effect-struct.ss\"")   && effect_colon_raise_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=1371 line=52 span=34 id=\"effect-struct.ss\"")   && effect_colon_lower_dash_sound_dash_volume_question_(thing))||(plt.Kernel.setLastLoc("offset=1412 line=53 span=29 id=\"effect-struct.ss\"")   && effect_colon_set_dash_wake_dash_lock_question_(thing))||(plt.Kernel.setLastLoc("offset=1448 line=54 span=33 id=\"effect-struct.ss\"")   && effect_colon_release_dash_wake_dash_lock_question_(thing))||(plt.Kernel.setLastLoc("offset=1488 line=55 span=29 id=\"effect-struct.ss\"")   && effect_colon_pick_dash_playlist_question_(thing))||(plt.Kernel.setLastLoc("offset=1524 line=56 span=27 id=\"effect-struct.ss\"")   && effect_colon_pick_dash_random_question_(thing))); };
 (function() { 

@@ -4,87 +4,78 @@
 var permission_colon_location = function () { plt.Kernel.Struct.call(this, "make-permission:location", []); };
 permission_colon_location.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name1 = permission_colon_location;
 var make_dash_permission_colon_location = function () { return new permission_colon_location(); };
 
 
 var permission_colon_location_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name1; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_location; };
 
 var permission_colon_send_dash_sms = function () { plt.Kernel.Struct.call(this, "make-permission:send-sms", []); };
 permission_colon_send_dash_sms.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name2 = permission_colon_send_dash_sms;
 var make_dash_permission_colon_send_dash_sms = function () { return new permission_colon_send_dash_sms(); };
 
 
 var permission_colon_send_dash_sms_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name2; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_send_dash_sms; };
 
 var permission_colon_receive_dash_sms = function () { plt.Kernel.Struct.call(this, "make-permission:receive-sms", []); };
 permission_colon_receive_dash_sms.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name3 = permission_colon_receive_dash_sms;
 var make_dash_permission_colon_receive_dash_sms = function () { return new permission_colon_receive_dash_sms(); };
 
 
 var permission_colon_receive_dash_sms_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name3; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_receive_dash_sms; };
 
 var permission_colon_tilt = function () { plt.Kernel.Struct.call(this, "make-permission:tilt", []); };
 permission_colon_tilt.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name4 = permission_colon_tilt;
 var make_dash_permission_colon_tilt = function () { return new permission_colon_tilt(); };
 
 
 var permission_colon_tilt_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name4; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_tilt; };
 
 var permission_colon_shake = function () { plt.Kernel.Struct.call(this, "make-permission:shake", []); };
 permission_colon_shake.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name5 = permission_colon_shake;
 var make_dash_permission_colon_shake = function () { return new permission_colon_shake(); };
 
 
 var permission_colon_shake_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name5; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_shake; };
 
 var permission_colon_internet = function () { plt.Kernel.Struct.call(this, "make-permission:internet", []); };
 permission_colon_internet.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name6 = permission_colon_internet;
 var make_dash_permission_colon_internet = function () { return new permission_colon_internet(); };
 
 
 var permission_colon_internet_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name6; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_internet; };
 
 var permission_colon_telephony = function () { plt.Kernel.Struct.call(this, "make-permission:telephony", []); };
 permission_colon_telephony.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name7 = permission_colon_telephony;
 var make_dash_permission_colon_telephony = function () { return new permission_colon_telephony(); };
 
 
 var permission_colon_telephony_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name7; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_telephony; };
 
 var permission_colon_wake_dash_lock = function () { plt.Kernel.Struct.call(this, "make-permission:wake-lock", []); };
 permission_colon_wake_dash_lock.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name8 = permission_colon_wake_dash_lock;
 var make_dash_permission_colon_wake_dash_lock = function () { return new permission_colon_wake_dash_lock(); };
 
 
 var permission_colon_wake_dash_lock_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name8; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_wake_dash_lock; };
 
 var permission_colon_open_dash_image_dash_url = function (url) { plt.Kernel.Struct.call(this, "make-permission:open-image-url", [url]);this.url = url; };
 permission_colon_open_dash_image_dash_url.prototype = new plt.Kernel.Struct();
 
-var fresh_dash_struct_dash_name9 = permission_colon_open_dash_image_dash_url;
 var make_dash_permission_colon_open_dash_image_dash_url = function (id0) { return new permission_colon_open_dash_image_dash_url(id0); };
 var permission_colon_open_dash_image_dash_url_dash_url = function(obj) {
      if (permission_colon_open_dash_image_dash_url_question_ (obj)) {
@@ -103,7 +94,7 @@ var set_dash_permission_colon_open_dash_image_dash_url_dash_url_bang_ = function
 };
 
 var permission_colon_open_dash_image_dash_url_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof fresh_dash_struct_dash_name9; };
+              return obj != null && obj != undefined && obj instanceof permission_colon_open_dash_image_dash_url; };
 
 var permission_question_ = function(datum) { return ((plt.Kernel.setLastLoc("offset=512 line=17 span=28 id=\"permission.ss\"")   && permission_colon_location_question_(datum))||(plt.Kernel.setLastLoc("offset=547 line=18 span=28 id=\"permission.ss\"")   && permission_colon_send_dash_sms_question_(datum))||(plt.Kernel.setLastLoc("offset=582 line=19 span=31 id=\"permission.ss\"")   && permission_colon_receive_dash_sms_question_(datum))||(plt.Kernel.setLastLoc("offset=620 line=20 span=24 id=\"permission.ss\"")   && permission_colon_tilt_question_(datum))||(plt.Kernel.setLastLoc("offset=651 line=21 span=25 id=\"permission.ss\"")   && permission_colon_shake_question_(datum))||(plt.Kernel.setLastLoc("offset=683 line=22 span=28 id=\"permission.ss\"")   && permission_colon_internet_question_(datum))||(plt.Kernel.setLastLoc("offset=718 line=23 span=29 id=\"permission.ss\"")   && permission_colon_telephony_question_(datum))||(plt.Kernel.setLastLoc("offset=754 line=24 span=29 id=\"permission.ss\"")   && permission_colon_wake_dash_lock_question_(datum))||(plt.Kernel.setLastLoc("offset=790 line=25 span=34 id=\"permission.ss\"")   && permission_colon_open_dash_image_dash_url_question_(datum))); };
 var PERMISSION_colon_LOCATION; 

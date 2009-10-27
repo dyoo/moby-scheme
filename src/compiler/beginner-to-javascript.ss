@@ -231,8 +231,6 @@
           
           
 	  (define pinfo-1+gensym (pinfo-gensym a-pinfo 'fresh-struct-name))
-          (define fresh-struct-name (second pinfo-1+gensym))
-          
           (define updated-pinfo (first pinfo-1+gensym))
           
           ;; predicate-name: string
@@ -288,15 +286,6 @@
                             ".prototype = new plt.Kernel.Struct();\n"
                             
                             )
-             
-             "\n"
-
-	     ;; Keep an extra copy of the structure name.
-	     (string-append "var " (symbol->string (identifier->munged-java-identifier fresh-struct-name))
-			    " = " 
-			    (symbol->string 
-			     (identifier->munged-java-identifier (stx-e id)))
-			    ";")
 
 	     "\n"
 
@@ -354,7 +343,8 @@
              ;; structure predicate
              (string-append "var " predicate-name " = function(obj) { 
               return obj != null && obj != undefined && obj instanceof "
-                            (symbol->string (identifier->munged-java-identifier fresh-struct-name))
+                            (symbol->string (identifier->munged-java-identifier 
+                                              (stx-e id)))
                             "; };\n"))
             
             "" ;; no introduced toplevel expressions
