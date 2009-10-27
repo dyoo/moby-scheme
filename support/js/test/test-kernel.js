@@ -613,9 +613,32 @@ var getTests;
 	    testQuotient : function(){
 		this.assert(Kernel.equal_question_(Kernel.quotient(FloatPoint.makeInstance(3), FloatPoint.makeInstance(4)), Rational.ZERO));	
 		this.assert(Kernel.equal_question_(Kernel.quotient(FloatPoint.makeInstance(4), FloatPoint.makeInstance(3)), Rational.ONE));
-		this.assert(Kernel.equal_question_(Kernel.quotient(Rational.makeInstance(-36),
-								   Rational.makeInstance(7)),
-						   Rational.makeInstance(-5)));
+
+		this.assert(Kernel.equal_question_(
+		    Kernel.quotient(Rational.makeInstance(-36),
+				    Rational.makeInstance(7)),
+		    Rational.makeInstance(-5)));
+
+
+		this.assert(Kernel.equal_question_(
+		    Kernel.quotient(Rational.makeInstance(-36),
+				    Rational.makeInstance(-7)),
+		    Rational.makeInstance(5)));
+
+
+		this.assert(Kernel.equal_question_(
+		    Kernel.quotient(Rational.makeInstance(36),
+				    Rational.makeInstance(-7)),
+		    Rational.makeInstance(-5)));
+
+
+		this.assert(Kernel.equal_question_(
+		    Kernel.quotient(Rational.makeInstance(36),
+				    Rational.makeInstance(7)),
+		    Rational.makeInstance(5)));
+
+		
+
 	    },
 	    
 	    testRemainder : function(){
