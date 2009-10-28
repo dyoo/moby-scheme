@@ -484,7 +484,7 @@ var plt = plt || {};
     };
     
     plt.types.Rational.prototype.round = function(){
-	return this;
+	return plt.types.Rational.makeInstance(Math.round(this.n / this.d));
     };
     
     
