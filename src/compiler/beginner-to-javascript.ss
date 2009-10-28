@@ -803,6 +803,8 @@
      "Number.POSITIVE_INFINITY"]
     [(eqv? a-num -inf.0)
      "Number.NEGATIVE_INFINITY"]
+    [(eqv? a-num +nan.0)
+     "Number.NaN"]
     [else
      (number->string a-num)]))
 

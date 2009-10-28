@@ -1094,6 +1094,201 @@
 
 
 
+(test 1 real-part (list 1+2i))
+(test 1.0 real-part (list 1+2.0i))
+(test 1.0 real-part (list 1+0.0i))
+(test 1/5 real-part (list 1/5+2i))
+(test-on-reals real-part (lambda (x) x))
+(test 2.0 imag-part (list 1+2.0i))
+(test 0.0 imag-part (list 1+0.0i))
+(test -0.0 imag-part (list 1-0.0i))
+(test 1/5 imag-part (list 1+1/5i))
+(test-on-reals imag-part (lambda (x) 0))
+#;(test-nan.0 real-part +nan.0 (list))
+#;(test 6@1 (lambda (x) x) 6.0@1.0)
+#;(test 324.0 floor (* 100 (real-part 6@1)))
+#;(test 50488.0 floor (* 10000 (imag-part 6@1)))
+
+(test 1 make-polar (list 1 0))
+(test 1.0+0.0i make-polar (list 1 0.0))
+(test 1.0 make-polar (list 1.0 0))
+(test 1.0+0.0i make-polar (list 1.0 0.0))
+#;(err/rt-test (make-polar 1.0 0.0+0.0i))
+#;(err/rt-test (make-polar 1.0+0.0i 0.0))
+(let ([v (make-polar 1 1)])
+  (begin
+  (test 5403.0 floor (list (* 10000 (real-part v))))
+  (test 84147.0 floor (list (* 100000 (imag-part v))))
+  (test 10000.0 round (list (* 10000.0 (magnitude v))))))
+(let ([v (make-polar 1 2)])
+  (begin 
+    (test -416.0 ceiling (list (* 1000 (real-part v))))
+    (test 909.0 floor (list (* 1000 (imag-part v))))
+    (test 1.0 magnitude (list v))
+    (test 2.0 angle (list v))))
+#;(test-nan.0 make-polar +nan.0 0)
+#;(test-i-nan.0 make-polar +nan.0 1)
+#;(test-i-nan.0 make-polar 1 +nan.0)
+#;(test-i-nan.0 make-polar 1 +inf.0)
+#;(test-i-nan.0 make-polar 1 -inf.0)
+(test +inf.0 make-polar (list +inf.0 0))
+(test -inf.0 make-polar (list -inf.0 0))
+(test (make-rectangular +inf.0 +inf.0) make-polar (list +inf.0 (atan 1 1)))
+(test (make-rectangular -inf.0 +inf.0) make-polar (list +inf.0 (atan 1 -1)))
+(test (make-rectangular +inf.0 -inf.0) make-polar (list +inf.0 (atan -1 1)))
+(test 785.0 floor (list (* 1000 (angle (make-rectangular 1 1)))))
+(test 14142.0 floor (list (* 10000 (magnitude (make-rectangular 1 1)))))
+
+
+
+
+
+(define (z-round c) (make-rectangular (round (real-part c)) (round (imag-part c))))
+
+(test -1 * (list +i +i))
+(test 1 * (list +i -i))
+(test 2 * (list 1+i 1-i))
+(test +2i * (list 1+i 1+i))
+(test -3+4i - (list 3-4i))
+(test 0.5+0.0i - (list (+ 0.5 +i) +i))
+(test 1/2 - (list (+ 1/2 +i) +i))
+(test 1.0+0.0i - (list (+ 1 +0.5i) +1/2i))
+
+(test 1 sqrt (list 1))
+(test 1.0 sqrt (list 1.0))
+(test 25 sqrt (list 625))
+(test 3/7 sqrt (list 9/49))
+(test 0.5 sqrt (list 0.25))
+(test +1i sqrt (list -1))
+(test +2/3i sqrt (list -4/9))
+(test +1.0i sqrt (list -1.0))
+(test 1+1i sqrt (list +2i))
+(test 2+1i sqrt (list 3+4i))
+(test 2.0+0.0i sqrt (list 4+0.0i))
+(test +inf.0 sqrt (list +inf.0))
+(test (make-rectangular 0 +inf.0) sqrt (list -inf.0))
+#;(test-nan.0 sqrt +nan.0 (list))
+
+
+
+;; Complex `sqrt' cases where both z and (magnitude z) are exact:
+(test 1414.0 round (list (* 1000 (real-part (sqrt +4i)))))
+(test +1414.0 round (list (* 1000 (imag-part (sqrt +4i)))))
+(test 1414.0 round (list (* 1000 (real-part (sqrt -4i)))))
+(test -1414.0 round (list (* 1000 (imag-part (sqrt -4i)))))
+(test 1155.0 round (list (* 1000 (real-part (sqrt 1+4/3i)))))
+(test +577.0 round (list (* 1000 (imag-part (sqrt 1+4/3i)))))
+(test 1155.0 round (list (* 1000 (real-part (sqrt 1-4/3i)))))
+(test -577.0 round (list (* 1000 (imag-part (sqrt 1-4/3i)))))
+
+
+(test (expt 5 13) sqrt (list (expt 5 26)))
+(test 545915034.0 round (list (sqrt (expt 5 25))))
+(test (make-rectangular 0 (expt 5 13)) sqrt (list (- (expt 5 26))))
+(test (make-rectangular 0 545915034.0) z-round (list (sqrt (- (expt 5 25)))))
+
+
+#;(err/rt-test (sqrt "a"))
+#;(arity-test sqrt 1 1)
+
+(test 3 integer-sqrt (list 10))
+(test 420 integer-sqrt (list (expt 3 11)))
+(test 97184015999 integer-sqrt (list (expt 2 73)))
+(skip (lambda () (test 0+3i integer-sqrt (list -10))))
+(skip (lambda () (test 0+420i integer-sqrt (list (expt -3 11)))))
+(skip (lambda () (test 0+97184015999i integer-sqrt (list (expt -2 73)))))
+
+#;(test 2.0 integer-sqrt (list 5.0))
+#;(test 0+2.0i integer-sqrt (list -5.0))
+#;(err/rt-test (integer-sqrt 5.0+0.0i))
+#;(err/rt-test (integer-sqrt -5.0+0.0i))
+
+#;(err/rt-test (integer-sqrt "a"))
+#;(err/rt-test (integer-sqrt 1.1))
+#;(err/rt-test (integer-sqrt 1+1i))
+#;(arity-test integer-sqrt 1 1)
+
+
+
+
+(test -13/64-21/16i expt (list -3/4+7/8i 2))
+(let ([v (expt -3/4+7/8i 2+3i)])
+  (begin
+    (test 3826.0 floor (list (* 10000000 (real-part v))))
+    (test -137.0 ceiling (list (* 100000 (imag-part v))))))
+(test 49.0+0.0i expt (list 7 2+0.0i))
+(test 49.0 floor (list (* 10 (expt 2 2.3))))
+(test 189.0 floor (list (* 1000 (expt 2.3 -2))))
+(test 1/4 expt (list 2 -2))
+(test 1/1125899906842624 expt (list 2 -50))
+(test 1/1024 expt (list 1/2 10))
+(test 1024 expt (list 1/2 -10))
+(test 707.0 floor (list (* 1000 (expt 1/2 1/2))))
+(test 707.0 floor (list (* 1000 (expt 1/2 0.5))))
+(test 707.0 floor (list (* 1000 (expt 0.5 1/2))))
+(test 100.0+173.0i z-round (list (* 100 (expt -8 1/3))))
+(test 100.0+173.0i z-round (list (* 100 (expt -8.0 1/3))))
+(test 101.0+171.0i z-round (list (* 100 (expt -8 0.33))))
+(test 101.0+171.0i z-round (list (* 100 (expt -8.0 0.33))))
+(test 108.0+29.0i z-round (list (* 100 (expt 1+i 1/3))))
+(test 25.0-43.0i z-round (list (* 100 (expt -8 -1/3))))
+
+
+;; This choice doesn't make sense to me, but it fits
+;;   with other standards and implementations:
+(define INF-POWER-OF_NEGATIVE +inf.0)
+
+(test +inf.0 expt (list 2 +inf.0))
+(test +inf.0 expt (list +inf.0 10))
+(test 0.0 expt (list +inf.0 -2))
+(test 1 expt (list +inf.0 0))
+(test 1.0 expt (list +inf.0 0.))
+(test +inf.0 expt (list +inf.0 +inf.0))
+(test INF-POWER-OF_NEGATIVE expt (list -2 +inf.0))
+(test INF-POWER-OF_NEGATIVE expt (list -inf.0 +inf.0))
+(test 0.0 expt (list 2 -inf.0))
+(test -inf.0 expt (list -inf.0 11))
+(test +inf.0 expt (list -inf.0 10))
+(test 0.0 expt (list -inf.0 -2))
+(test -0.0 expt (list -inf.0 -3))
+(test 1 expt (list -inf.0 0))
+(test 1.0 expt (list -inf.0 0.0))
+(test 0.0 expt (list +inf.0 -inf.0))
+(test 0.0 expt (list -2 -inf.0))
+(test 0.0 expt (list -inf.0 -inf.0))
+(test 1 expt (list +nan.0 0))
+(test 0 expt (list 0 10))
+(test 0 expt (list 0 10.0))
+(test 0 expt (list 0 +inf.0))
+#;(test-nan.0 expt 0 (list +nan.0))
+(test 1 expt (list 1 +inf.0))
+(test 1 expt (list 1 -inf.0))
+(test 1 expt (list 1 -nan.0))
+(test 0.0 expt (list 0.0 10))
+(test 0.0 expt (list 0.0 +inf.0))
+(test +inf.0 expt (list 0.0 -5))
+(test -inf.0 expt (list -0.0 -5))
+(test +inf.0 expt (list 0.0 -4))
+(test +inf.0 expt (list -0.0 -4))
+(test +inf.0 expt (list 0.0 -4.3))
+(test +inf.0 expt (list -0.0 -4.3))
+(test +inf.0 expt (list 0.0 -inf.0))
+#;(test-nan.0 expt 0.0 (list +nan.0))
+(test 1 expt (list 0 0))
+(test 1.0 expt (list 0 0.0)) ; to match (expt 0 0)
+(test 1.0 expt (list 0 -0.0))
+(test 1.0 expt (list 0.0 0.0))
+(test 1.0 expt (list 0.0 0.0))
+(test 1 expt (list 0.0 0))
+(test 1 expt (list -0.0 0))
+(test -0.0 expt (list -0.0 1))
+#;(test-nan.0 expt +nan.0 (list 10))
+#;(test-nan.0 expt 2 (list +nan.0))
+
+
+
+
+
 
 
 
