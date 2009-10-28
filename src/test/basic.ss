@@ -319,6 +319,24 @@
 (skip (lambda () (test #t eqv? (list -0.0 -0.0))))
 
 
+(define (test-nan.0 f args)
+  (test +nan.0 f args))
+
+(define (test-i-nan.0 f args)
+  (test (make-rectangular +nan.0 +nan.0) f args))
+
+(define (test-nan c)
+  (begin
+    (test #f < (list +nan.0 c))
+    (test #f > (list +nan.0 c))
+    (test #f = (list +nan.0 c))
+    (test #f <= (list +nan.0 c))
+    (test #f >= (list +nan.0 c))))
+
+
+
+
+
 (test #t = (list 22 22 22))
 (test #t = (list 22 22))
 (test #f = (list 34 34 35))
@@ -1286,8 +1304,559 @@
 #;(test-nan.0 expt 2 (list +nan.0))
 
 
+(test 0 expt (list 0 1+i))
+(test 0 expt (list 0 1-i))
+
+#;(test-nan.0 expt 1.0 +inf.0)
+#;(test-nan.0 expt 1.0 -inf.0)
+#;(test-nan.0 expt 1.0 +nan.0)
+
+(test 0.0 expt (list 0.0 5))
+(test -0.0 expt (list -0.0 5))
+(test 0.0 expt (list 0.0 4))
+(test 0.0 expt (list -0.0 4))
+(test 0.0 expt (list 0.0 4.3))
+(test 0.0 expt (list -0.0 4.3))
+
+(test 0.0 expt (list 0.5 +inf.0))
+(test +inf.0 expt (list 0.5 -inf.0))
+(test INF-POWER-OF_NEGATIVE expt (list -0.5 -inf.0))
+(test +inf.0 expt (list 1.5 +inf.0))
+(test 0.0 expt (list 1.5 -inf.0))
+(test 0.0 expt (list -0.5 +inf.0))
+(test +inf.0 expt (list -0.5 -inf.0))
+(test INF-POWER-OF_NEGATIVE expt (list -1.5 +inf.0))
+(test 0.0 expt (list -1.5 -inf.0))
 
 
+
+
+;;;;From: fred@sce.carleton.ca (Fred J Kaudel)
+;;; Modified by jaffer.
+(define f3.9 (string->number "3.9"))
+(define f4.0 (string->number "4.0"))
+(define f-3.25 (string->number "-3.25"))
+(define f.25 (string->number ".25"))
+(define f4.5 (string->number "4.5"))
+(define f3.5 (string->number "3.5"))
+(define f0.0 (string->number "0.0"))
+(define f0.8 (string->number "0.8"))
+(define f1.0 (string->number "1.0"))
+#;(newline)
+#;(display ";testing inexact numbers; ")
+#;(newline)
+(test #t inexact? (list f3.9))
+(test #f exact? (list f3.9))
+(test #t 'inexact? (list (inexact? (max f3.9 4))))
+(test f4.0 'max (list (max f3.9 4)))
+(test f4.0 'exact->inexact (list (exact->inexact 4)))
+
+
+
+
+; Should at least be close...
+(test 4.0 round (list (log (exp 4.0))))
+(test 125.0 round (list (* 1000 (asin (sin 0.125)))))
+(test 125.0d0 round (list (* 1000 (magnitude (asin (sin 0.125+0.0d0i))))))
+(test 125.0 round (list (* 1000 (asin (sin 1/8)))))
+(test 125.0 round (list (* 1000 (acos (cos 0.125)))))
+(test 125.0d0-0.0i z-round (list (* 1000 (acos (cos 0.125+0.0d0i)))))
+(test 125.0 round (list (* 1000 (acos (cos 1/8)))))
+(test 785.0 round (list (* 1000 (atan 1 1))))
+(test 785.0 round (list (* 1000 (atan 1.0 1.0))))
+#;(err/rt-test (atan 1.0 1.0+0.0i))
+#;(err/rt-test (atan 1.0+0.0i 1.0))
+(test 2356.0 round (list (* 1000 (atan 1 -1))))
+(test -785.0 round (list (* 1000 (atan -1 1))))
+(test 785.0 round (list (* 1000 (atan 1))))
+(test 100.0 round (list (* 100 (tan (atan 1)))))
+(test 100.0-0.0i z-round (list (* 100 (tan (+ +0.0i (atan 1))))))
+(test 0.0 atan (list 0.0 0))
+#;(err/rt-test (atan 0 0) exn:fail:contract:divide-by-zero?)
+(test 1024.0 round (list (expt 2.0 10.0)))
+(test 1024.0 round (list (expt -2.0 10.0)))
+(test -512.0 round (list (expt -2.0 9.0)))
+(test 32.0 round (list (sqrt 1024.0)))
+(test 32.0+0.0i z-round (list (sqrt 1024.0+0.0i)))
+(test 1.0+1.5e-10i sqrt (list 1+3e-10i))
+
+
+(test 1 exp (list 0))
+(test 1.0 exp (list 0.0))
+(test 1.0 exp (list -0.0))
+(test 272.0 round (list (* 100 (exp 1))))
+
+
+(test 0 log (list 1))
+(test 0.0 log (list 1.0))
+(test -inf.0 log (list 0.0))
+(test -inf.0 log (list -0.0))
+(test +inf.0 log (list +inf.0))
+(test +inf.0 real-part (list (log -inf.0)))
+(test +3142.0 round (list (* 1000 (imag-part (log -inf.0)))))
+(test +nan.0 log (list +nan.0))
+#;(err/rt-test (log 0) exn:fail:contract:divide-by-zero?)
+
+(test 1 cos (list 0))
+(test 1.0 cos (list 0.0))
+(test 0 sin (list 0))
+(test 0.0 sin (list 0.0))
+(test -0.0 sin (list -0.0))
+(test 0 tan (list 0))
+(test 0.0 tan (list 0.0))
+(test -0.0 tan (list -0.0))
+
+(test #t >= (list 1 (sin 12345678901234567890123)))
+(test #t >= (list 1 (cos 12345678901234567890123)))
+(test #t <= (list -inf.0 (tan 12345678901234567890123) +inf.0))
+
+(test 0 atan (list 0))
+(test 0.0 atan (list 0.0))
+(test -0.0 atan (list -0.0))
+(test 314.0 round (list (* 400 (atan 1))))
+(test 314.0 round (list (* 400 (atan 1.0))))
+(test 0 asin (list 0))
+(test 0.0 asin (list 0.0))
+(test -0.0 asin (list -0.0))
+(test 314.0 round (list (* 200 (asin 1))))
+(test 314.0 round (list (* 200 (asin 1.0))))
+(test 0 acos (list 1))
+(test 0.0 acos (list 1.0))
+(test 314.0 round (list (* 200 (acos 0))))
+(test 314.0 round (list (* 200 (acos 0.0))))
+(test 314.0 round (list (* 200 (acos -0.0))))
+
+(test (/ 314.0 2) round (list (* 100 (atan +inf.0))))
+(test (/ -314.0 2) round (list (* 100 (atan -inf.0))))
+
+
+
+(skip (lambda () (test 71034.0 round (list (* 100 (log 312918491891666147403524564598095080760332972643192197862041633988540637438735086398143104076897116667450730097183397289314559387355872839339937813881411504027225774279272518360586167057501686099965513263132778526566297754301647311975918380842568054630540214544682491386730004162058539391336047825248736472519))))))
+(test 71117.0 round (list (* 100 (log (expt 2 1026)))))
+(test 71048.0 round (list (* 100 (log (expt 2 1025)))))
+(test 70978.0 round (list (* 100 (log (expt 2 1024)))))
+(test 70909.0 round (list (* 100 (log (expt 2 1023)))))
+(test 35420.0 round (list (* 100 (log (expt 2 511)))))
+(test 35489.0 round (list (* 100 (log (expt 2 512)))))
+(test 35558.0 round (list (* 100 (log (expt 2 513)))))
+(test 141887.0 round (list (* 100 (log (expt 2 2047)))))
+(test 141957.0 round (list (* 100 (log (expt 2 2048)))))
+(test 142026.0 round (list (* 100 (log (expt 2 2049)))))
+(test 23026.0 round (list (log (expt 10 10000))))
+(test 23026.0 round (list (real-part (log (- (expt 10 10000))))))
+(test 3.0 round (list (imag-part (log (- (expt 10 10000))))))
+
+
+
+
+
+(define (test-inf-bad f)
+  (begin
+    (test-nan.0 f (list +inf.0))
+    (test-nan.0 f (list -inf.0))
+    (test-nan.0 f (list +nan.0))))
+
+(test-inf-bad tan)
+(test-inf-bad sin)
+(test-inf-bad cos)
+(test-inf-bad asin)
+(test-inf-bad acos)
+
+#;(test 11/7 rationalize (list (inexact->exact (atan +inf.0 1)) 1/100))
+#;(skip (lambda () (test -11/7 rationalize (list (inexact->exact (atan -inf.0 1)) 1/100))))
+(test 0.0 atan (list 1 +inf.0))
+#;(skip (lambda () (test 22/7 rationalize (list (inexact->exact (atan 1 -inf.0)) 1/100))))
+
+
+
+
+; Note on the following tests with atan and inf.0:
+;  The IEEE standard makes this decision. I think it's a bad one,
+;  since (limit (atan (g x) (f x))) as x -> +inf.0 is not necessarily
+;  (atan 1 1) when (limit (f x)) and (limit (g x)) are +inf.0.
+;  Perhaps IEEE makes this choice because it's easiest to compute.
+#;(test 7/9 rationalize (list (inexact->exact (atan +inf.0 +inf.0)) 1/100))
+#;(test 26/11 rationalize (list (inexact->exact (atan +inf.0 -inf.0)) 1/100))
+#;(test -7/9 rationalize (list (inexact->exact (atan -inf.0 +inf.0)) 1/100))
+
+(test-nan.0 atan (list +nan.0))
+(test-nan.0 atan (list 1 +nan.0))
+(test-nan.0 atan (list +nan.0 1))
+
+(test -1178.+173.i  z-round (list (* 1000 (atan -2+1i))))
+
+
+
+
+
+#;(map (lambda (f) 
+       (err/rt-test (f "a"))
+       (arity-test f 1 1))
+     (list log exp asin acos tan))
+#;(err/rt-test (atan "a" 1))
+#;(err/rt-test (atan 2+i 1))
+#;(err/rt-test (atan "a"))
+#;(err/rt-test (atan 1 "a"))
+#;(err/rt-test (atan 1 2+i))
+#;(arity-test atan 1 2)
+
+(test 3166.+1960.i  z-round (list (* 1000 (sin 1+2i))))
+(test -3166.-1960.i  z-round (list (* 1000 (sin -1-2i))))
+(test 0+1175.i z-round (list (* 1000 (sin 0+i))))
+(test -642.-1069.i z-round (list (* 1000 (cos 2+i))))
+(test -642.-1069.i z-round (list (* 1000 (cos -2-i))))
+(test 1543. z-round (list (* 1000 (cos 0+i))))
+(test 272-1084.i z-round (list (* 1000 (tan 1-i))))
+(test -272+1084.i z-round (list (* 1000 (tan -1+i))))
+
+(test 693.+3142.i z-round (list (* 1000 (log -2))))
+(test 1571.-1317.i z-round (list (* 1000 (asin 2))))
+(test -1571.+1317.i z-round (list (* 1000 (asin -2))))
+(test 0+3688.i z-round (list (* 1000 (acos 20))))
+(test 3142.-3688.i z-round (list (* 1000 (acos -20))))
+
+(define (cs2 c) (+ (* (cos c) (cos c)) (* (sin c) (sin c))))
+(test 0.0 imag-part (list (cs2 2+3i)))
+(test 1000.0 round (list (* 1000 (real-part (cs2 2+3i)))))
+(test 0.0 imag-part (list (cs2 -2+3i)))
+(test 1000.0 round (list (* 1000 (real-part (cs2 -2+3i)))))
+(test 0.0 imag-part (list (cs2 2-3i)))
+(test 1000.0 round (list (* 1000 (real-part (cs2 2-3i)))))
+
+(test #t positive? (list (real-part (sqrt (- 1 (* 2+3i 2+3i))))))
+
+(test (- f4.0) round (list (- f4.5)))
+(test (- f4.0) round (list (- f3.5)))
+(test (- f4.0) round (list (- f3.9)))
+(test f0.0 round (list f0.0))
+(test f0.0 round (list f.25))
+(test f1.0 round (list f0.8))
+(test f4.0 round (list f3.5))
+(test f4.0 round (list f4.5))
+
+(let ((x (string->number "4195835.0"))
+      (y (string->number "3145727.0")))
+  (test #t 'pentium-fdiv-bug (list (> f1.0 (- x (* (/ x y) y))))))
+
+#;(test (exact->inexact 1/3) rationalize (list .3 1/10))
+#;(test 1/3 rationalize (list 3/10 1/10))
+#;(test (exact->inexact 1/3) rationalize (list .3 -1/10))
+#;(test 1/3 rationalize (list 3/10 -1/10))
+#;(test 0 rationalize (list 3/10 4/10))
+#;(test 0.0 rationalize (list .3 4/10))
+#;(err/rt-test (rationalize .3+0.0i 4/10))
+#;(err/rt-test (rationalize .3+0.0i 1/10))
+
+
+#;(define (test-rat-inf v)
+  (local [(define zero (if (exact? v) 0 0.0))]
+
+  (test +inf.0 rationalize +inf.0 v)
+  (test -inf.0 rationalize -inf.0 v)
+  (test-nan.0 rationalize +nan.0 v)
+
+  (test zero rationalize v +inf.0)
+  (test zero rationalize v -inf.0)
+  (test-nan.0 rationalize v +nan.0)))
+
+#;(let loop ([i 100])
+  (unless (= i -100)
+	  (test (/ i 100) rationalize (inexact->exact (/ i 100.0)) 1/100000)
+	  (loop (sub1 i))))
+
+
+#;(arity-test rationalize 2 2)
+
+(define tb
+  (lambda (n1 n2)
+    (= n1 (+ (* n2 (quotient n1 n2))
+	     (remainder n1 n2)))))
+
+
+
+
+(test -2147483648 - (list 2147483648))
+(test 2147483648 - (list -2147483648))
+(test #f = (list -2147483648 2147483648))
+(test #t = (list -2147483648 -2147483648))
+(test #t = (list 2147483648 2147483648))
+(test 2147483647 sub1 (list 2147483648))
+(test 2147483648 add1 (list 2147483647))
+(test 2147483648 * (list 1 2147483648))
+
+(test 437893890380859375 expt (list 15 15))
+
+(test 0 modulo (list -2177452800 86400))
+(test 0 modulo (list 2177452800 -86400))
+(test 0 modulo (list 2177452800 86400))
+(test 0 modulo (list -2177452800 -86400))
+
+(test 86399 modulo (list -2177452801 86400))
+(test -1 modulo (list 2177452799 -86400))
+(test 1 modulo (list 2177452801 86400))
+(test -86399 modulo (list -2177452799 -86400))
+
+(test #t 'remainder (list (tb 281474976710655 65535)))
+(test #t 'remainder (list (tb 281474976710654 65535)))
+(test 281474976710655 string->number (list "281474976710655"))
+(test "281474976710655" number->string (list 281474976710655))
+(skip (lambda () (test "-4" number->string (list -4 16))))
+(skip (lambda () (test "-e" number->string (list -14 16))))
+(test "0" number->string (list 0 16))
+;;(test "30000000" number->string (list #x30000000 16))
+
+
+(test "0" number->string (list 0))
+(test "100" number->string (list 100))
+(test "100" number->string (list 256 16))
+(test 256 string->number (list "100" 16))
+(skip (lambda () (test 15 string->number (list "#o17"))))
+(skip (lambda () (test 15 string->number (list "#o17" 10))))
+
+
+
+
+(test #t = (list 0 0))
+(test #f = (list 0 (expt 2 32)))
+(test #f = (list (expt 2 32) 0))
+(test #f = (list (- (expt 2 32)) (expt 2 32)))
+(test #f = (list (expt 2 32) (- (expt 2 32))))
+(test #t = (list 1234567890987654321 1234567890987654321))
+
+(test #f < (list 0 0))
+(test #t < (list 0 (expt 2 32)))
+(test #f < (list (expt 2 32) 0))
+(test #t < (list (- (expt 2 32)) 0))
+(test #f < (list 0 (- (expt 2 32))))
+(test #f < (list 1234567890987654321 1234567890987654321))
+(test #t < (list (- (expt 3 64)) (- (expt 2 13))))
+(test #f < (list (- (expt 2 13)) (- (expt 3 64))))
+(test #t < (list (- 123456789876543200) 123456789876543200))
+(test #f < (list 123456789876543200 (- 123456789876543200)))
+
+(test 1234567890987654321 + (list 1234567890987654321 0))
+(test 1234567890987654321 + (list 0 1234567890987654321))
+(test 1234567890987654321 - (list 1234567890987654321 0))
+(test -1234567890987654321 - (list 0 1234567890987654321))
+(test (expt 2 33) + (list (expt 2 32) (expt 2 32)))
+(test 0 - (list (expt 2 32) (expt 2 32)))
+(test (expt 2 31) - (list (expt 2 32) (expt 2 31)))
+(test (- (expt 2 31)) - (list (expt 2 31) (expt 2 32)))
+(test 18446744073709551621 + (list 18446744073709551615 6))
+(test 18446744073709551621 + (list 6 18446744073709551615))
+;(test 0 - (list #xfffffffffffffffff #xfffffffffffffffff))
+;(test -1 - (list #xffffffffffffffffe #xfffffffffffffffff))
+;(test 1 - (list #xfffffffffffffffff #xffffffffffffffffe))
+;(test #x1000000000000000000000000 + (list #xffffffffffffffffffffffff 1))
+
+
+(test 0 * (list 1234567890987654321 0))
+(test 0 * (list 0 1234567890987654321))
+;(test #x100000000000000000000 * #x100000000000 #x1000000000)
+;(test #x-100000000000000000000 * #x100000000000 #x-1000000000)
+;(test #x100000000000000000000 * #x-100000000000 #x-1000000000)
+;(test #x-100000000000000000000 * #x-100000000000 #x1000000000)
+;(test #x100000000000000000000 * #x1000000000 #x100000000000)
+;(test #x-100000000000000000000 * #x1000000000 #x-100000000000)
+;(test #x100000000000000000000 * #x-1000000000 #x-100000000000)
+;(test #x-100000000000000000000 * #x-1000000000 #x100000000000)
+;(test 4521191813415169 * #x100000000001 #x101)
+;(test 4521191813415169 * #x101 #x100000000001)
+
+(test (expt 2 35) * (list (expt 2 32) 8))
+(test (- (expt 2 35)) * (list (- (expt 2 32)) 8))
+(test (- (expt 2 35)) * (list (expt 2 32) -8))
+(test (expt 2 35) * (list (- (expt 2 32)) -8))
+(test (- (add1 (expt 2 128)) (expt 2 65)) * (list (sub1 (expt 2 64)) (sub1 (expt 2 64))))
+
+(test 4294967296 expt (list 2 32))
+(test 3433683820292512484657849089281 expt (list 3 64))
+(test 8192 expt (list 2 13))
+(test 8589934592 expt (list 2 33))
+(test 2147483648 expt (list 2 31))
+(test 34359738368 expt (list 2 35))
+(test 36893488147419103232 expt (list 2 65))
+(test 18446744073709551616 expt (list 2 64))
+(test 340282366920938463463374607431768211456 expt (list 2 128))
+(test 340282366920938463463374607431768211456 expt (list -2 128))
+(test 174449211009120179071170507 expt (list 3 55))
+(test -174449211009120179071170507 expt (list -3 55))
+(test 59768263894155949306790119265585619217025149412430681649 expt (list 7 66))
+(test 1 expt (list 1234567890987654321 0))
+(test 0 expt (list 0 1234567890987654321))
+(test 1 expt (list 1 1234567890987654321))
+(test 1234567890987654321 expt (list 1234567890987654321 1))
+(test 828179745220145502584084235957368498016122811853894435464201864103254919330121223037770283296858019385573376 expt (list 953962166440690129601298432 4))
+
+
+(test "0" number->string (list 0))
+(test "1" number->string (list 1))
+(test "-1" number->string (list -1))
+(test "7284132478923046920834523467890234589203467590267382904573942345703" number->string (list 7284132478923046920834523467890234589203467590267382904573942345703))
+(test "-7284132478923046920834523467890234589203467590267382904573942345703" number->string (list -7284132478923046920834523467890234589203467590267382904573942345703))
+;(test "1000101001010101011111011000101001011011100111110001111111010101000100010110001001011011101111011001111101000100110100010101111001111001001011111001000100111000011111110010101010110110001011011111101110000001010111111100111" number->string 7284132478923046920834523467890234589203467590267382904573942345703 2)
+;(test "-1000101001010101011111011000101001011011100111110001111111010101000100010110001001011011101111011001111101000100110100010101111001111001001011111001000100111000011111110010101010110110001011011111101110000001010111111100111" number->string -7284132478923046920834523467890234589203467590267382904573942345703 2)
+;(test "105125373051334761772504261133573175046425717113710470376252661337560127747" number->string 7284132478923046920834523467890234589203467590267382904573942345703 8)
+;(test "-105125373051334761772504261133573175046425717113710470376252661337560127747" number->string -7284132478923046920834523467890234589203467590267382904573942345703 8)
+;(test "452abec52dcf8fea88b12ddecfa268af3c97c89c3f955b16fdc0afe7" number->string 7284132478923046920834523467890234589203467590267382904573942345703 16)
+;(test "-452abec52dcf8fea88b12ddecfa268af3c97c89c3f955b16fdc0afe7" number->string -7284132478923046920834523467890234589203467590267382904573942345703 16)
+;(test "115792089237316195423570985008687907853269984665640564039457584007913129639936" number->string (expt 2 256))
+;(test "115792089237316195423570985008687907853269984665640564039457584007913129639935" number->string (sub1 (expt 2 256)))
+;(test "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" number->string (expt 2 256) 2)
+;(test "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" number->string (sub1 (expt 2 256)) 2)
+;(test "20000000000000000000000000000000000000000000000000000000000000000000000000000000000000" number->string (expt 2 256) 8)
+;(test "17777777777777777777777777777777777777777777777777777777777777777777777777777777777777" number->string (sub1 (expt 2 256)) 8)
+;(test "10000000000000000000000000000000000000000000000000000000000000000" number->string (expt 2 256) 16)
+;(test "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" number->string (sub1 (expt 2 256)) 16)
+;(test "-115792089237316195423570985008687907853269984665640564039457584007913129639936" number->string (- (expt 2 256)))
+;(test "-115792089237316195423570985008687907853269984665640564039457584007913129639935" number->string (- (sub1 (expt 2 256))))
+;(test "-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" number->string (- (expt 2 256)) 2)
+;(test "-1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" number->string (- (sub1 (expt 2 256))) 2)
+;(test "-20000000000000000000000000000000000000000000000000000000000000000000000000000000000000" number->string (- (expt 2 256)) 8)
+;(test "-17777777777777777777777777777777777777777777777777777777777777777777777777777777777777" number->string (- (sub1 (expt 2 256))) 8)
+;(test "-10000000000000000000000000000000000000000000000000000000000000000" number->string (- (expt 2 256)) 16)
+;(test "-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" number->string (- (sub1 (expt 2 256))) 16)
+
+
+
+
+
+(test 0 string->number (list "0"))
+(test 1 string->number (list "1"))
+(test -1 string->number (list "-1"))
+(test 7284132478923046920834523467890234589203467590267382904573942345703 string->number (list "7284132478923046920834523467890234589203467590267382904573942345703"))
+(test -7284132478923046920834523467890234589203467590267382904573942345703 string->number (list "-7284132478923046920834523467890234589203467590267382904573942345703"))
+;(test 7284132478923046920834523467890234589203467590267382904573942345703 string->number "1000101001010101011111011000101001011011100111110001111111010101000100010110001001011011101111011001111101000100110100010101111001111001001011111001000100111000011111110010101010110110001011011111101110000001010111111100111" 2)
+;(test -7284132478923046920834523467890234589203467590267382904573942345703 string->number "-1000101001010101011111011000101001011011100111110001111111010101000100010110001001011011101111011001111101000100110100010101111001111001001011111001000100111000011111110010101010110110001011011111101110000001010111111100111" 2)
+;(test  7284132478923046920834523467890234589203467590267382904573942345703 string->number "105125373051334761772504261133573175046425717113710470376252661337560127747" 8)
+;(test -7284132478923046920834523467890234589203467590267382904573942345703 string->number "-105125373051334761772504261133573175046425717113710470376252661337560127747" 8)
+;(test 7284132478923046920834523467890234589203467590267382904573942345703 string->number "452abec52dcf8fea88b12ddecfa268af3c97c89c3f955b16fdc0afe7" 16)
+;(test -7284132478923046920834523467890234589203467590267382904573942345703 string->number "-452abec52dcf8fea88b12ddecfa268af3c97c89c3f955b16fdc0afe7" 16)
+;(test (expt 2 256) string->number "115792089237316195423570985008687907853269984665640564039457584007913129639936")
+;(test (sub1 (expt 2 256)) string->number "115792089237316195423570985008687907853269984665640564039457584007913129639935")
+;(test (expt 2 256) string->number "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" 2)
+;(test (sub1 (expt 2 256)) string->number "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" 2)
+;(test (expt 2 256) string->number "20000000000000000000000000000000000000000000000000000000000000000000000000000000000000" 8)
+;(test (sub1 (expt 2 256)) string->number "17777777777777777777777777777777777777777777777777777777777777777777777777777777777777" 8)
+;(test (expt 2 256) string->number "10000000000000000000000000000000000000000000000000000000000000000" 16)
+;(test (sub1 (expt 2 256)) string->number "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" 16)
+;(test (- (expt 2 256)) string->number "-115792089237316195423570985008687907853269984665640564039457584007913129639936")
+;(test (- (sub1 (expt 2 256))) string->number "-115792089237316195423570985008687907853269984665640564039457584007913129639935")
+;(test (- (expt 2 256)) string->number "-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" 2)
+;(test (- (sub1 (expt 2 256))) string->number "-1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" 2)
+;(test (- (expt 2 256)) string->number "-20000000000000000000000000000000000000000000000000000000000000000000000000000000000000" 8)
+;(test (- (sub1 (expt 2 256))) string->number "-17777777777777777777777777777777777777777777777777777777777777777777777777777777777777" 8)
+;(test (- (expt 2 256)) string->number "-10000000000000000000000000000000000000000000000000000000000000000" 16)
+;(test (- (sub1 (expt 2 256))) string->number "-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" 16)
+;(test #f string->number "144r" 10)
+;(err/rt-test (string->number "10" 30))
+
+
+(define (q-test quotient)
+  (begin
+  (test 0 quotient (list 0 12345678909876532341))
+  (test 0 quotient (list 0 -1235782934075829307))
+  (test 2374865902374859023745 quotient (list 2374865902374859023745 1))
+  (test -2374865902374859023745 quotient (list -2374865902374859023745 1))
+  (test 0 quotient (list 1 13748910785903278450))
+  (test 1 quotient (list 13748910785903278450 13748910785903278449))
+  (test 0 quotient (list 13748910785903278450 13748910785903278451))
+  (test -1 quotient (list -13748910785903278450 13748910785903278449))
+  (test 0 quotient (list -13748910785903278450 13748910785903278451))
+  (test -1 quotient (list 13748910785903278450 -13748910785903278449))
+  (test 0 quotient (list 13748910785903278450 -13748910785903278451))
+  (test 1 quotient (list -13748910785903278450 -13748910785903278449))
+  (test 0 quotient (list -13748910785903278450 -13748910785903278451))
+  (test 1 quotient (list 13748910785903278450 13748910785903278450))
+  (test -1 quotient (list -13748910785903278450 13748910785903278450))
+  (test -1 quotient (list 13748910785903278450 -13748910785903278450))
+  (test 1 quotient (list -13748910785903278450 -13748910785903278450))
+  (test (expt 5 64) quotient (list (expt 5 256) (expt 5 192)))
+  (test 0 quotient (list (expt 5 192) (expt 5 256)))
+  (test 8636168555094444625386351862800399571116000364436281385023703470168591803162427057971507503472288226560547293946149 quotient (list (expt 5 192) (expt 2 64)))))
+(q-test quotient)
+#;(q-test (lambda (n1 n2) (let-values ([(q r) (quotient/remainder n1 n2)]) q)))
+
+(define (r-test remainder)
+  (begin
+  (test 0 remainder (list 0 12345678909876532341))
+  (test 0 remainder (list 0 -1235782934075829307))
+  (test 0 remainder (list 2374865902374859023745 1))
+  (test 0 remainder (list -2374865902374859023745 1))
+  (test 1 remainder (list 1 13748910785903278450))
+  (test 1 remainder (list 13748910785903278450 13748910785903278449))
+  (test 13748910785903278450 remainder (list 13748910785903278450 13748910785903278451))
+  (test -1 remainder (list -13748910785903278450 13748910785903278449))
+  (test -13748910785903278450 remainder (list -13748910785903278450 13748910785903278451))
+  (test 1 remainder (list 13748910785903278450 -13748910785903278449))
+  (test 13748910785903278450 remainder (list 13748910785903278450 -13748910785903278451))
+  (test -1 remainder (list -13748910785903278450 -13748910785903278449))
+  (test -13748910785903278450 remainder (list -13748910785903278450 -13748910785903278451))
+  (test 0 remainder (list 13748910785903278450 13748910785903278450))
+  (test 0 remainder (list -13748910785903278450 13748910785903278450))
+  (test 0 remainder (list 13748910785903278450 -13748910785903278450))
+  (test 0 remainder (list -13748910785903278450 -13748910785903278450))
+  (test 0 remainder (list (expt 5 256) (expt 5 192)))
+  (test (expt 5 192) remainder (list (expt 5 192) (expt 5 256)))
+  (test 12241203936672963841 remainder (list (expt 5 192) (expt 2 64)))))
+(r-test remainder)
+;(r-test (lambda (n1 n2) (let-values ([(q r) (quotient/remainder n1 n2)]) r)))
+
+
+(define (s-test sqrt)
+  (begin
+  (test 0 sqrt (list 0))
+  (test 1 sqrt (list 1))
+  (test 2 sqrt (list 4))
+  (test 3 sqrt (list 9))
+  (test (expt 2 64) sqrt (list (* (expt 2 64) (expt 2 64))))
+  (test (expt 13 70) sqrt (list (* (expt 13 70) (expt 13 70))))
+  (test (sub1 (expt 2 200)) sqrt (list (* (sub1 (expt 2 200)) (sub1 (expt 2 200)))))
+  (test (expt 2 25) sqrt (list (expt 2 50)))
+  (test 1 sqrt (list 3))
+  (test #xffffffff sqrt (list (sub1 (expt 2 64))))
+  (test 2876265888493261300027370452880859375 sqrt (list (expt 15 62)))
+  (test #x8f0767e50d4d0c07563bd81f530d36 sqrt (list (expt 15 61)))))
+(s-test integer-sqrt)
+;(s-test (lambda (a) (let-values ([(root rem) (integer-sqrt/remainder a)]) root)))
+
+(define (sr-test sqrt)
+  (begin
+  (test 0 sqrt (list 0))
+  (test 0 sqrt (list 1))
+  (test 0 sqrt (list 4))
+  (test 0 sqrt (list 9))
+  (test 0 sqrt (list (* (expt 2 64) (expt 2 64))))
+  (test 0 sqrt (list (* (expt 13 70) (expt 13 70))))
+  (test 0 sqrt (list (* (sub1 (expt 2 200)) (sub1 (expt 2 200)))))
+  (test 0 sqrt (list (expt 2 50)))
+  (test 2 sqrt (list 3))
+  (test 8589934590 sqrt (list (sub1 (expt 2 64))))
+  (test 0 sqrt (list (expt 15 62)))
+  (test 1306106749204831357295958563982718571 sqrt (list (expt 15 61)))))
+;(sr-test (lambda (a) (let-values ([(root rem) (integer-sqrt/remainder a)]) rem)))
+
+
+(test 1.7320508075688772 sqrt (list 3))
+(test 4294967296.0 sqrt (list (sub1 (expt 2 64))))
+(test 2876265888493261300027370452880859375 sqrt (list (expt 15 62)))
+(test 7.426486590265921e+35 sqrt (list (expt 15 61)))
+
+(test 5.515270307539953e+71 exact->inexact (list (expt 15 61)))
+(test -5.515270307539953e+71 exact->inexact (list (- (expt 15 61))))
+(test 1.8446744073709552e+19 exact->inexact (list (expt 2 64)))
+(test 1.157920892373162e+77 exact->inexact (list (expt 2 256)))
+(test 1.157920892373162e+77 exact->inexact (list (sub1 (expt 2 256))))
+
+
+(test 551527030753995340375346347667240734743269800540264151034260072897183744 inexact->exact (list 5.515270307539953d+71))
+(test (expt 2 64) inexact->exact (list 1.8446744073709552e+19))
+(test (- (expt 2 64)) inexact->exact (list -1.8446744073709552e+19))
+(test (expt 2 256) inexact->exact (list 1.157920892373162d+77))
+(test 115792089237316195423570985008687907853269984665640564039457584007913129639936 inexact->exact (list 1.157920892373162d+77))
+
+
+;(test (integer-bytes->integer #"\1\2" #f) integer-bytes->integer #"\1\2" #f (system-big-endian?))
 
 
 
