@@ -440,7 +440,7 @@ var plt = plt || {};
     
     plt.types.Rational.prototype.angle = function(){
 	if (0 == this.n)
-	    throw new plt.Kernel.MobyRuntimeError("angle: undefined for 0");
+	    return plt.types.Rational.ZERO;
 	if (this.n > 0)
 	    return plt.types.Rational.ZERO;
 	else

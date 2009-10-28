@@ -1050,6 +1050,53 @@
 
 
 
+(test 1 magnitude (list 1))
+(test 1 magnitude (list -1))
+(test 1.0 magnitude (list 1.0))
+(test 1.0 magnitude (list -1.0))
+#;(test big-num magnitude big-num)
+#;(test big-num magnitude (- big-num))
+(test 3/4 magnitude (list 3/4))
+(test 3/4 magnitude (list -3/4))
+(test 10.0 magnitude (list 10.0+0.0i))
+(test 10.0 magnitude (list -10.0+0.0i))
+(test 10.0 magnitude (list 0+10.0i))
+(test 10 magnitude (list 0+10i))
+#;(test 141421.0 round (list (* 1e-295 (magnitude 1e300+1e300i))))
+#;(test 141421.0 round (list (* 1e+305 (magnitude 1e-300+1e-300i))))
+#;(test +inf.0 magnitude (list +inf.0+inf.0i))
+#;(test +inf.0 magnitude (list -inf.0-inf.0i))
+#;(test +inf.0 magnitude (list 1+inf.0i))
+#;(test +inf.0 magnitude (list +inf.0+1i))
+#;(test +inf.0 magnitude (list +inf.0+0.0i))
+#;(test +inf.0 magnitude (list 0.0+inf.0i))
+#;(test +nan.0 magnitude (list +nan.0+inf.0i))
+#;(test +nan.0 magnitude (list +inf.0+nan.0i))
+
+
+
+(test 0 angle (list 1))
+(test 0 angle (list 1.0))
+(test 0 angle (list 0.0))
+#;(test 0 angle (list big-num))
+(test 0 angle (list 3/4))
+(test 0.0 angle (list 3+0.0i))
+(let ([pi (atan 0 -1)])
+  (begin
+    (test pi angle (list -1))
+    (test pi angle (list -1.0))
+    (test pi angle (list -0.0))
+    #;(test pi angle (list (- big-num)))
+    (test pi angle (list -3/4))
+    (test pi angle (list -3+0.0i))))
+(test -inf.0 atan (list 0+i))
+(test -inf.0 atan (list 0-i))
+
+
+
+
+
+
 
 
 
