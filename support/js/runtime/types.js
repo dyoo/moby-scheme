@@ -539,6 +539,15 @@ var plt = plt || {};
     };
     
 
+    plt.types.FloatPoint.makeInstance = function(n) {
+	return new plt.types.FloatPoint(n);
+    };
+
+    var NaN = plt.types.FloatPoint.makeInstance(Number.NaN);
+    var inf = plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
+    var neginf = plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+
+
 
     plt.types.FloatPoint.prototype.isFinite = function() {
 	return isFinite(this.n);
@@ -567,6 +576,8 @@ var plt = plt || {};
 	    return "+inf.0";
 	} else if (this.n == Number.NEGATIVE_INFINITY) {
 	    return "-inf.0";
+	} else if (this.n == Number.NaN) {
+	    return "+nan.0";
 	} else {
 	    return this.n.toString();
 	}
@@ -580,7 +591,6 @@ var plt = plt || {};
 	    this.n == other.n;
     };
 
-
     plt.types.FloatPoint.prototype.isRational = function() {
         return false;
     };
@@ -589,17 +599,63 @@ var plt = plt || {};
 	return true;
     };
     
+
+    // sign: plt.types.Number -> {-1, 0, 1}
+    var sign = function(n) {
+	if (plt.types.NumberTower.lessThan(n, plt.types.Rational.ZERO)) {
+	    return -1;
+	} else if (plt.types.NumberTower.greaterThan(n, plt.types.Rational.ZERO)) {
+	    return 1;
+	} else {
+	    return 0;
+	}
+    };
+
+
     plt.types.FloatPoint.prototype.add = function(other) {
-	return plt.types.FloatPoint.makeInstance(this.n + other.n);
+	if (this.isFinite() && other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(this.n + other.n);
+	} else {
+	    if (isNaN(this.n) || isNaN(other.n)) {
+		return NaN;
+	    } else if (this.isFinite() && ! other.isFinite()) {
+		return other;
+	    } else if (!this.isFinite() && other.isFinite()) {
+		return this;
+	    } else {
+		return ((sign(this) * sign(other) == 1) ?
+			this : NaN);
+	    };
+	}
     };
     
     plt.types.FloatPoint.prototype.subtract = function(other) {
-	return plt.types.FloatPoint.makeInstance(this.n - other.n);
+	if (this.isFinite() && other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(this.n - other.n);
+	} else if (isNaN(this.n) || isNaN(other.n)) {
+	    return NaN;
+	} else if (! this.isFinite() && ! other.isFinite()) {
+	    if (sign(this) == sign(other)) {
+		return NaN;
+	    } else {
+		return this;
+	    }
+	} else if (this.isFinite()) {
+	    return plt.types.NumberTower.multiply(other, plt.types.Rational.NEGATIVE_ONE);
+	} else {  // other.isFinite()
+	    return this;
+	}
+
     };
     
     plt.types.FloatPoint.prototype.multiply = function(other) {
 	if (this.n == 0 || other.n == 0) { return plt.types.Rational.ZERO; }
-	return plt.types.FloatPoint.makeInstance(this.n * other.n);
+
+	if (this.isFinite() && other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(this.n * other.n);
+	} else {
+	    return ((sign(this) * sign(other) == 1) ? inf : neginf);
+	}
     };
     
     plt.types.FloatPoint.prototype.divide = function(other) {
@@ -666,9 +722,7 @@ var plt = plt || {};
 	return plt.types.FloatPoint.makeInstance(Math.abs(this.n));
     };
     
-    plt.types.FloatPoint.makeInstance = function(n) {
-	return new plt.types.FloatPoint(n);
-    };
+
     
     plt.types.FloatPoint.prototype.log = function(){
 	if (this.n < 0)
