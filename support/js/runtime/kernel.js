@@ -95,12 +95,12 @@ var plt = plt || {};
 	    a = b;
 	    b = t % b;
 	}
-	return a;
+	return Math.abs(a);
     }
 
     // _lcm: integer integer -> integer
     var _lcm = function(a, b) {
-	return a * b / _gcd(a, b);
+	return Math.abs(a * b / _gcd(a, b));
     }
 
 
@@ -611,7 +611,7 @@ var plt = plt || {};
 	lcm : function(first, rest) {
 	    check(first, isInteger, "lcm", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
-	    var result = first.toInteger();
+	    var result = Math.abs(first.toInteger());
 	    if (result == 0) { return plt.types.Rational.ZERO; }
 	    for (var i = 0; i < rest.length; i++) {
 		if (rest[i].toInteger() == 0) {
@@ -626,7 +626,7 @@ var plt = plt || {};
 	gcd : function(first, rest) {
 	    check(first, isInteger, "gcd", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "gcd", "number", i+2); });	    
-	    var result = first.toInteger();
+	    var result = Math.abs(first.toInteger());
 	    for (var i = 0; i < rest.length; i++) {
 		result = _gcd(result, rest[i].toInteger());
 	    }
