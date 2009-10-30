@@ -55,7 +55,7 @@ plt.reader = {};
 
 		    ['complex' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?[+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)i)/],
 		    ['number' , /^((?:\#[ei])?[+-]inf.0)/],
-		    ['number' , /^((?:\#[ei])+nan.0)/],
+		    ['number' , /^((?:\#[ei])?[+-]nan.0)/],
 		    ['number' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
 
 
@@ -201,8 +201,8 @@ plt.reader = {};
 	    if (text == '+inf.0') {
 		return plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
 	    } else if (text == '-inf.0') {
-		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY); 
-	    } else if (text == "+nan.0") {
+		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+	    } else if (text == "+nan.0" || text == '-nan.0') {
 		return plt.types.FloatPoint.makeInstance(Number.NaN);
 	    } else if (text.match(/\./)) {
 		if (isExact) {

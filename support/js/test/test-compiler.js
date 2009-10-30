@@ -443,7 +443,13 @@ function init() {
 		// catching the arity error at compile time.
 		this.assertRaise("MobyRuntimeError",
 				 function() { run("(atan 1 2 3)") });
-	    }
+	    },
+
+	testNan: function() {
+	    this.assert(isEqual(
+		run("+nan.0"),
+		plt.types.FloatPoint.makeInstance(Number.NaN)));
+	}
 
     });
 

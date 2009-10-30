@@ -302,6 +302,13 @@ function init() {
 	},
 
 
+	testNan: function() {
+	    this.assert(schemeIsEqual(read("+nan.0 -nan.0"),
+				      cons(plt.types.FloatPoint.makeInstance(Number.NaN),
+					   cons(plt.types.FloatPoint.makeInstance(Number.NaN), empty))));
+	},
+
+
 	testComplex: function() {
 	    this.assert(schemeIsEqual(read("+1i"),
 				      cons(plt.types.Complex.makeInstance(0, 1), empty)));
