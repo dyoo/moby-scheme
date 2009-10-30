@@ -805,11 +805,17 @@ var plt = plt || {};
     
     
     plt.types.FloatPoint.prototype.round = function(){
-	if (plt.types.NumberTower.lessThan(this.subtract(plt.types.FloatPoint.makeInstance(0.5)).floor(), this.floor()).valueOf())
-	    return this.floor();
-	else 
-	    return this.ceiling();
-	
+	if (isFinite(this.n)) {
+	    if (Math.abs(Math.floor(this.n) - this.n) == 0.5) {
+		if (Math.floor(this.n) % 2 == 0)
+		    return plt.types.Rational.makeInstance(Math.floor(this.n));
+		return plt.types.Rational.makeInstance(Math.ceil(this.n));
+	    } else {
+		return plt.types.Rational.makeInstance(Math.round(this.n));
+	    }
+	} else {
+	    return this;
+	}	
     };
     
     
