@@ -587,9 +587,9 @@ var plt = plt || {};
 
 
     plt.types.FloatPoint.prototype.isEqual = function(other) {
-	return other instanceof plt.types.FloatPoint &&
-	    ((this.n == other.n) ||
-	     (isNaN(this.n) && isNaN(other.n)));
+	return ((other instanceof plt.types.FloatPoint) &&
+		((this.n == other.n) ||
+		 (isNaN(this.n) && isNaN(other.n))));
     };
 
     plt.types.FloatPoint.prototype.isRational = function() {

@@ -53,6 +53,8 @@ var getTests;
 
 	    },
 	    
+
+
 	    testEqual: function(){
 		var n1 = Rational.makeInstance(2,1);
 		var n2 = FloatPoint.makeInstance(2.0);

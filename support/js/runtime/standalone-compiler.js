@@ -592,9 +592,9 @@ var plt = plt || {};
 
 
     plt.types.FloatPoint.prototype.isEqual = function(other) {
-	return other instanceof plt.types.FloatPoint &&
-	    ((this.n == other.n) ||
-	     (isNaN(this.n) && isNaN(other.n)));
+	return ((other instanceof plt.types.FloatPoint) &&
+		((this.n == other.n) ||
+		 (isNaN(this.n) && isNaN(other.n))));
     };
 
     plt.types.FloatPoint.prototype.isRational = function() {
@@ -3717,7 +3717,7 @@ plt.reader = {};
 
 		    ['complex' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?[+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)i)/],
 		    ['number' , /^((?:\#[ei])?[+-]inf.0)/],
-		    ['number' , /^((?:\#[ei])+nan.0)/],
+		    ['number' , /^((?:\#[ei])?[+-]nan.0)/],
 		    ['number' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
 
 
@@ -3863,8 +3863,8 @@ plt.reader = {};
 	    if (text == '+inf.0') {
 		return plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
 	    } else if (text == '-inf.0') {
-		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY); 
-	    } else if (text == "+nan.0") {
+		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+	    } else if (text == "+nan.0" || text == '-nan.0') {
 		return plt.types.FloatPoint.makeInstance(Number.NaN);
 	    } else if (text.match(/\./)) {
 		if (isExact) {
