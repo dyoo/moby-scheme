@@ -781,6 +781,12 @@ var plt = plt || {};
 	
 
 	make_dash_polar: function(r, theta) {
+	    // special case: if theta is zero, just return
+	    // the scalar.
+	    if (plt.types.NumberTower.equal(theta, plt.types.Rational.ZERO)) {
+		return r;
+	    }
+
 	    var x = r.toFloat() * Math.cos(theta.toFloat());
 	    var y = r.toFloat() * Math.sin(theta.toFloat());
 	    return plt.types.Complex.makeInstance(x, y);
