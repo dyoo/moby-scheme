@@ -408,11 +408,24 @@ var plt = plt || {};
 
     
     plt.types.Rational.prototype.sqrt = function() {
-	var result = Math.sqrt(this.n / this.d);
-	if (result == Math.floor(result)) {
-	    return plt.types.Rational.makeInstance(result, 1);
+	if (this.n > 0) {
+	    var newN = Math.sqrt(this.n);
+	    var newD = Math.sqrt(this.d);
+	    if (Math.floor(newN) == newN &&
+		Math.floor(newD) == newD) {
+		return plt.types.Rational.makeInstance(newN, newD);
+	    } else {
+		return plt.types.FloatPoint.makeInstance(newN / newD);
+	    }
 	} else {
-	    return plt.types.FloatPoint.makeInstance(result);
+	    var newN = Math.sqrt(- this.n);
+	    var newD = Math.sqrt(this.d);
+	    if (Math.floor(newN) == newN &&
+		Math.floor(newD) == newD) {
+		return plt.types.Complex.makeInstance(0, newN / newD);
+	    } else {
+		return plt.types.Complex.makeInstance(0, newN / newD);
+	    }
 	}
     };
     
