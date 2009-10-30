@@ -483,8 +483,21 @@ var plt = plt || {};
 	return this;
     };
     
-    plt.types.Rational.prototype.round = function(){
-	return plt.types.Rational.makeInstance(Math.round(this.n / this.d));
+    plt.types.Rational.prototype.round = function() {
+	if (this.d == 2) {
+	    // Round to even if it's a n/2
+	    var v = this.n / this.d;
+	    var fl = Math.floor(v);
+	    var ce = Math.ceil(v);
+	    if (fl % 2 == 0) { 
+		return plt.types.Rational.makeInstance(fl); 
+	    }
+	    else { 
+		return plt.types.Rational.makeInstance(ce); 
+	    }
+	} else {
+	    return plt.types.Rational.makeInstance(Math.round(this.n / this.d));
+	}
     };
     
     

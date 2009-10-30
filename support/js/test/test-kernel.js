@@ -713,6 +713,13 @@ var getTests;
 						   FloatPoint.makeInstance(4)));
 		this.assert(Kernel.equal_question_(Kernel.round(Rational.makeInstance(3)),
 						   Rational.makeInstance(3)));
+
+		this.assert(Kernel.equal_question_(Kernel.round(Rational.makeInstance(17, 4)),
+						   Rational.makeInstance(4)));
+
+
+		this.assert(Kernel.equal_question_(Kernel.round(Rational.makeInstance(-17, 4)),
+						   Rational.makeInstance(-4)));
 	    },
 	    
 	    testSgn : function(){
