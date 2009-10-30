@@ -743,7 +743,7 @@ plt.Jsworld = {};
     function on_draw(redraw, redraw_css) {
 	function wrappedRedraw(w) {
 	    var newDomTree = redraw(w);
-	    checkDomSexp(newDomTree);
+	    checkDomSexp(newDomTree, newDomTree);
 	    return newDomTree;
 	}
 
@@ -897,32 +897,42 @@ plt.Jsworld = {};
     }
 
 
-    // checkDomSexp: X -> boolean
+    var throwDomError = function(thing, topThing) {
+	throw new JsworldDomError(
+	    plt.Kernel.format(
+		"Expected a non-empty array, received ~s within ~s",
+		[thing, topThing]),
+	    thing);
+    };
+
+    // checkDomSexp: X X -> boolean
     // Checks to see if thing is a DOM-sexp.  If not,
     // throws an object that explains why not.
-    function checkDomSexp(thing) {
+    function checkDomSexp(thing, topThing) {
 	if (! thing instanceof Array) {
-	    throw new JsworldDomError("Expected a non-empty array",
-				      thing);
+	    throwDomError(thing, topThing);
 	}
 	if (thing.length == 0) {
-	    throw new JsworldDomError("Expected a non-empty array",
-				      thing);
+	    throwDomError(thing, topThing);
 	}
 
 	// Check that the first element is a Text or an element.
 	if (isTextNode(thing[0])) {
 	    if (thing.length > 1) {
-		throw new JsworldDomError("Text nodes can not have children",
+		throw new JsworldDomError(plt.Kernel.format("Text node ~s can not have children",
+							    [thing]),
 					  thing);
 	    }
 	} else if (isElementNode(thing[0])) {
 	    for (var i = 1; i < thing.length; i++) {
-		checkDomSexp(thing[i]);
+		checkDomSexp(thing[i], thing);
 	    }
 	} else {
-	    throw new JsworldDomError("expected a Text or an Element",
-				      thing[0]);
+	    throw new JsworldDomError(
+		plt.Kernel.format(
+		    "expected a Text or an Element, received ~s within ~s",
+		    [thing, topThing]),
+		thing[0]);
 	}
     }
 
@@ -931,7 +941,7 @@ plt.Jsworld = {};
 	this.elt = elt;
     }
     JsworldDomError.prototype.toString = function() {
-	return this.msg + ": " + this.elt;
+	return "on-draw: " + this.msg;
     }
 
 

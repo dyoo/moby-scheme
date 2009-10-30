@@ -1050,6 +1050,48 @@
 
 
 
+#;(test-i-nan.0 * 1.+0.i (make-rectangular +inf.0 -inf.0))
+#;(test-i-nan.0 * 0.+1.0i (make-rectangular +inf.0 -inf.0))
+#;(test-i-nan.0 * -3.+0.i (make-rectangular +inf.0 -inf.0))
+#;(test-i-nan.0 * (make-rectangular +inf.0 -inf.0) 1.+0.i)
+#;(test-i-nan.0 * (make-rectangular +inf.0 -inf.0) 0.+1.0i)
+#;(test-i-nan.0 * (make-rectangular +inf.0 -inf.0) -3.+0.i)
+#;(test-i-nan.0 / (make-rectangular +inf.0 -inf.0) 1.+0.i)
+#;(test-i-nan.0 / (make-rectangular +inf.0 -inf.0) 0.+1.0i)
+#;(test-i-nan.0 / (make-rectangular +inf.0 -inf.0) -3.+0.i)
+
+
+
+(test 1 magnitude (list 1))
+(test 1 magnitude (list -1))
+(test 1.0 magnitude (list 1.0))
+(test 1.0 magnitude (list -1.0))
+#;(test big-num magnitude (list big-num))
+#;(test big-num magnitude (list (- big-num)))
+(test 3/4 magnitude (list 3/4))
+(test 3/4 magnitude (list -3/4))
+(test 10.0 magnitude (list 10.0+0.0i))
+(test 10.0 magnitude (list -10.0+0.0i))
+(test 10.0 magnitude (list 0+10.0i))
+(test 10 magnitude (list 0+10i))
+#;(test 141421.0 round (list (* 1e-295 (magnitude 1e300+1e300i))))
+#;(test 141421.0 round (list (* 1e+305 (magnitude 1e-300+1e-300i))))
+#;(test +inf.0 magnitude (list +inf.0+inf.0i))
+#;(test +inf.0 magnitude (list -inf.0-inf.0i))
+#;(test +inf.0 magnitude (list 1+inf.0i))
+#;(test +inf.0 magnitude (list +inf.0+1i))
+#;(test +inf.0 magnitude (list +inf.0+0.0i))
+#;(test +inf.0 magnitude (list 0.0+inf.0i))
+#;(test +nan.0 magnitude (list +nan.0+inf.0i))
+#;(test +nan.0 magnitude (list +inf.0+nan.0i))
+
+
+
+
+
+
+
+
 
 
 

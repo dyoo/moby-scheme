@@ -152,8 +152,9 @@ plt.world.MobyJsworld = {};
 
 	if (config.lookup('onDraw')) {
 	    var wrappedRedraw = function(w) {
+		var newDomTree = config.lookup('onDraw')([w]);
 		var result = [toplevelNode, 
-			      deepListToArray(config.lookup('onDraw')([w]))];
+			      deepListToArray(newDomTree)];
 		return result;
 	    }
 
