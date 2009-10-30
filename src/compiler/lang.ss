@@ -28,7 +28,8 @@
                      image?
                      image=?
                      set!
-                     not))
+                     not
+                     ))
 
 
 (define-syntax (my-define-struct stx)
@@ -130,6 +131,13 @@
          case
          
          let let* letrec
+         
+         
+         
+         ;; WORKAROUND: For some reason, list* isn't in ASL as of 4.2.2.
+         ;; We may need to use version-case if this changes in some new version of DrScheme.
+         list*
+         
          
          ;; The rest of these primitives will be implemented for the kernel.
          ;; Hash stuff
