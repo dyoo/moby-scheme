@@ -122,6 +122,44 @@ plt.world.MobyJsworld = {};
     };
 
 
+    // checkWellFormedDomTree: X X -> void
+    // Check to see if the tree is well formed.  If it isn't,
+    // we need to raise a meaningful error so the user can repair
+    // the structure.
+    //
+    // Invariants:
+    // The dom tree must be a pair.
+    // The first element must be a node.
+    // Each of the rest of the elements must be dom trees.
+    // If the first element is a text node, it must NOT have children.
+    var checkWellFormedDomTree = function(x, top, index) {
+	if (plt.Kernel.pair_question_(x)) {
+	    var firstElt = plt.Kernel.first(x)
+	    var restElts = plt.Kernel.rest(x)
+
+	    if (firstElt.nodeType == Node.TEXT_NODE &&
+		! plt.Kernel.empty_question_(restElts)) {
+		throw new MobyTypeError(
+		    plt.Kernel.format(
+			"on-draw: the text node ~s must not have children.  It has ~s", 
+			[firstElt, restElts]));
+	    }
+
+	    var i = 2;
+	    while(! plt.Kernel.empty_question_(restElts)) {
+		checkWellFormedDomTree(plt.Kernel.first(restElts),
+				       x,
+				       i);
+		restElts = plt.Kernel.rest(restElts);
+		i++;
+	    }
+	} else {
+	    throw new MobyTypeError(
+		plt.Kernel.format("on-draw: expected a dom-s-expression, but received ~s instead.  (the ~a element within ~s)",
+				  [x, index, top]));
+	}
+    };
+
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, handlers) {
@@ -153,6 +191,8 @@ plt.world.MobyJsworld = {};
 	if (config.lookup('onDraw')) {
 	    var wrappedRedraw = function(w) {
 		var newDomTree = config.lookup('onDraw')([w]);
+		plt.Kernel.setLastLoc(undefined);
+		checkWellFormedDomTree(newDomTree, newDomTree, 0);
 		var result = [toplevelNode, 
 			      deepListToArray(newDomTree)];
 		return result;
@@ -160,6 +200,7 @@ plt.world.MobyJsworld = {};
 
 	    var wrappedRedrawCss = function(w) {
 		var result = deepListToArray(config.lookup('onDrawCss')([w]));
+		plt.Kernel.setLastLoc(undefined);
 		return result;
 	    }
 	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
