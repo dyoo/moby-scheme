@@ -37,6 +37,21 @@ var getTests;
 		this.assert(n1.isEqual(n2));
 		this.assert(! n2.isEqual(n3));
 	    },
+
+	    testEqv: function() {
+		this.assert(Kernel.eqv_question_(FloatPoint.makeInstance(Number.NaN),
+						 FloatPoint.makeInstance(Number.NaN)));
+
+
+		this.assert(Kernel.eqv_question_(FloatPoint.makeInstance(Number.POSITIVE_INFINITY),
+						 FloatPoint.makeInstance(Number.POSITIVE_INFINITY)));
+
+
+		this.assert(Kernel.eqv_question_(FloatPoint.makeInstance(Number.NEGATIVE_INFINITY),
+						 FloatPoint.makeInstance(Number.NEGATIVE_INFINITY)));
+
+
+	    },
 	    
 	    testEqual: function(){
 		var n1 = Rational.makeInstance(2,1);

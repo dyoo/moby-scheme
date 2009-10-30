@@ -445,7 +445,7 @@ var plt = plt || {};
     
     plt.types.Rational.prototype.angle = function(){
 	if (0 == this.n)
-	    throw new plt.Kernel.MobyRuntimeError("angle: undefined for 0");
+	    return plt.types.Rational.ZERO;
 	if (this.n > 0)
 	    return plt.types.Rational.ZERO;
 	else
@@ -489,7 +489,7 @@ var plt = plt || {};
     };
     
     plt.types.Rational.prototype.round = function(){
-	return this;
+	return plt.types.Rational.makeInstance(Math.round(this.n / this.d));
     };
     
     
@@ -544,6 +544,15 @@ var plt = plt || {};
     };
     
 
+    plt.types.FloatPoint.makeInstance = function(n) {
+	return new plt.types.FloatPoint(n);
+    };
+
+    var NaN = plt.types.FloatPoint.makeInstance(Number.NaN);
+    var inf = plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
+    var neginf = plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+
+
 
     plt.types.FloatPoint.prototype.isFinite = function() {
 	return isFinite(this.n);
@@ -572,6 +581,8 @@ var plt = plt || {};
 	    return "+inf.0";
 	} else if (this.n == Number.NEGATIVE_INFINITY) {
 	    return "-inf.0";
+	} else if (this.n == Number.NaN) {
+	    return "+nan.0";
 	} else {
 	    return this.n.toString();
 	}
@@ -582,9 +593,9 @@ var plt = plt || {};
 
     plt.types.FloatPoint.prototype.isEqual = function(other) {
 	return other instanceof plt.types.FloatPoint &&
-	    this.n == other.n;
+	    ((this.n == other.n) ||
+	     (isNaN(this.n) && isNaN(other.n)));
     };
-
 
     plt.types.FloatPoint.prototype.isRational = function() {
         return false;
@@ -594,17 +605,63 @@ var plt = plt || {};
 	return true;
     };
     
+
+    // sign: plt.types.Number -> {-1, 0, 1}
+    var sign = function(n) {
+	if (plt.types.NumberTower.lessThan(n, plt.types.Rational.ZERO)) {
+	    return -1;
+	} else if (plt.types.NumberTower.greaterThan(n, plt.types.Rational.ZERO)) {
+	    return 1;
+	} else {
+	    return 0;
+	}
+    };
+
+
     plt.types.FloatPoint.prototype.add = function(other) {
-	return plt.types.FloatPoint.makeInstance(this.n + other.n);
+	if (this.isFinite() && other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(this.n + other.n);
+	} else {
+	    if (isNaN(this.n) || isNaN(other.n)) {
+		return NaN;
+	    } else if (this.isFinite() && ! other.isFinite()) {
+		return other;
+	    } else if (!this.isFinite() && other.isFinite()) {
+		return this;
+	    } else {
+		return ((sign(this) * sign(other) == 1) ?
+			this : NaN);
+	    };
+	}
     };
     
     plt.types.FloatPoint.prototype.subtract = function(other) {
-	return plt.types.FloatPoint.makeInstance(this.n - other.n);
+	if (this.isFinite() && other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(this.n - other.n);
+	} else if (isNaN(this.n) || isNaN(other.n)) {
+	    return NaN;
+	} else if (! this.isFinite() && ! other.isFinite()) {
+	    if (sign(this) == sign(other)) {
+		return NaN;
+	    } else {
+		return this;
+	    }
+	} else if (this.isFinite()) {
+	    return plt.types.NumberTower.multiply(other, plt.types.Rational.NEGATIVE_ONE);
+	} else {  // other.isFinite()
+	    return this;
+	}
+
     };
     
     plt.types.FloatPoint.prototype.multiply = function(other) {
 	if (this.n == 0 || other.n == 0) { return plt.types.Rational.ZERO; }
-	return plt.types.FloatPoint.makeInstance(this.n * other.n);
+
+	if (this.isFinite() && other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(this.n * other.n);
+	} else {
+	    return ((sign(this) * sign(other) == 1) ? inf : neginf);
+	}
     };
     
     plt.types.FloatPoint.prototype.divide = function(other) {
@@ -671,9 +728,7 @@ var plt = plt || {};
 	return plt.types.FloatPoint.makeInstance(Math.abs(this.n));
     };
     
-    plt.types.FloatPoint.makeInstance = function(n) {
-	return new plt.types.FloatPoint(n);
-    };
+
     
     plt.types.FloatPoint.prototype.log = function(){
 	if (this.n < 0)
@@ -684,7 +739,7 @@ var plt = plt || {};
     
     plt.types.FloatPoint.prototype.angle = function(){
 	if (0 == this.n)
-	    throw new plt.Kernel.MobyRuntimeError("angle: undefined for 0");
+	    return plt.types.Rational.ZERO;
 	if (this.n > 0)
 	    return plt.types.Rational.ZERO;
 	else
@@ -1281,12 +1336,12 @@ var plt = plt || {};
 	    a = b;
 	    b = t % b;
 	}
-	return a;
+	return Math.abs(a);
     }
 
     // _lcm: integer integer -> integer
     var _lcm = function(a, b) {
-	return a * b / _gcd(a, b);
+	return Math.abs(a * b / _gcd(a, b));
     }
 
 
@@ -1797,7 +1852,7 @@ var plt = plt || {};
 	lcm : function(first, rest) {
 	    check(first, isInteger, "lcm", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
-	    var result = first.toInteger();
+	    var result = Math.abs(first.toInteger());
 	    if (result == 0) { return plt.types.Rational.ZERO; }
 	    for (var i = 0; i < rest.length; i++) {
 		if (rest[i].toInteger() == 0) {
@@ -1812,7 +1867,7 @@ var plt = plt || {};
 	gcd : function(first, rest) {
 	    check(first, isInteger, "gcd", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "gcd", "number", i+2); });	    
-	    var result = first.toInteger();
+	    var result = Math.abs(first.toInteger());
 	    for (var i = 0; i < rest.length; i++) {
 		result = _gcd(result, rest[i].toInteger());
 	    }
@@ -3662,6 +3717,7 @@ plt.reader = {};
 
 		    ['complex' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?[+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)i)/],
 		    ['number' , /^((?:\#[ei])?[+-]inf.0)/],
+		    ['number' , /^((?:\#[ei])+nan.0)/],
 		    ['number' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
 
 
@@ -3807,7 +3863,9 @@ plt.reader = {};
 	    if (text == '+inf.0') {
 		return plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
 	    } else if (text == '-inf.0') {
-		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY); 
+	    } else if (text == "+nan.0") {
+		return plt.types.FloatPoint.makeInstance(Number.NaN);
 	    } else if (text.match(/\./)) {
 		if (isExact) {
 		    var decimalMatch = text.match("^(.*)[.](.*)$");
@@ -6519,39 +6577,41 @@ var floating_dash_number_dash__greaterthan_javascript_dash_string = function(a_d
  (plt.types.String.makeInstance("Number.POSITIVE_INFINITY")) :
  ((plt.Kernel.setLastLoc("offset=36574 line=804 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.eqv_question_(a_dash_num,(plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY)))) ?
  (plt.types.String.makeInstance("Number.NEGATIVE_INFINITY")) :
+ ((plt.Kernel.setLastLoc("offset=36632 line=806 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.eqv_question_(a_dash_num,(plt.types.FloatPoint.makeInstance(Number.NaN)))) ?
+ (plt.types.String.makeInstance("Number.NaN")) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=36642 line=807 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string(a_dash_num)) :
- (plt.Kernel.setLastLoc("offset=36505 line=801 span=161 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36505 line=801 span=161 id=\\\"beginner-to-javascript.ss\\\"\""))))))); };
-var number_dash__greaterthan_javascript_dash_string = function(a_dash_num, original_dash_stx) { return ((plt.Kernel.setLastLoc("offset=36775 line=812 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.integer_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=36801 line=813 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=36876 line=814 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=36892 line=814 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.inexact_dash__greaterthan_exact(a_dash_num)))),(plt.types.String.makeInstance(", 1))"))])) :
- ((plt.Kernel.setLastLoc("offset=36959 line=816 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.rational_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=36986 line=817 span=229 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=37061 line=818 span=34 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37077 line=818 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.numerator(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37149 line=820 span=36 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37165 line=820 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.denominator(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
- ((plt.Kernel.setLastLoc("offset=37226 line=822 span=13 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=37249 line=823 span=150 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(")),(plt.Kernel.setLastLoc("offset=37327 line=824 span=42 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string(a_dash_num)),(plt.types.String.makeInstance("))"))])) :
- ((plt.Kernel.setLastLoc("offset=37410 line=826 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.complex_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=37436 line=827 span=266 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(")),(plt.Kernel.setLastLoc("offset=37510 line=828 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37546 line=828 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37618 line=830 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37654 line=830 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
+ (plt.Kernel.setLastLoc("offset=36686 line=809 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string(a_dash_num)) :
+ (plt.Kernel.setLastLoc("offset=36505 line=801 span=205 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36505 line=801 span=205 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
+var number_dash__greaterthan_javascript_dash_string = function(a_dash_num, original_dash_stx) { return ((plt.Kernel.setLastLoc("offset=36819 line=814 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.integer_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=36845 line=815 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=36920 line=816 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=36936 line=816 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.inexact_dash__greaterthan_exact(a_dash_num)))),(plt.types.String.makeInstance(", 1))"))])) :
+ ((plt.Kernel.setLastLoc("offset=37003 line=818 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.rational_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=37030 line=819 span=229 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Rational.makeInstance(")),(plt.Kernel.setLastLoc("offset=37105 line=820 span=34 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37121 line=820 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.numerator(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37193 line=822 span=36 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=37209 line=822 span=19 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.denominator(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
+ ((plt.Kernel.setLastLoc("offset=37270 line=824 span=13 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=37293 line=825 span=150 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(")),(plt.Kernel.setLastLoc("offset=37371 line=826 span=42 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string(a_dash_num)),(plt.types.String.makeInstance("))"))])) :
+ ((plt.Kernel.setLastLoc("offset=37454 line=828 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.complex_question_(a_dash_num)) ?
+ (plt.Kernel.setLastLoc("offset=37480 line=829 span=266 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(")),(plt.Kernel.setLastLoc("offset=37554 line=830 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37590 line=830 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37662 line=832 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37698 line=832 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=37736 line=834 span=99 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=37750 line=834 span=48 id=\"beginner-to-javascript.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("Don't know how to handle ~s yet")), [a_dash_num])),original_dash_stx)) :
- (plt.Kernel.setLastLoc("offset=36768 line=812 span=1069 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36768 line=812 span=1069 id=\\\"beginner-to-javascript.ss\\\"\""))))))))); };
-var char_dash__greaterthan_javascript_dash_string = function(a_dash_char) { return (plt.Kernel.setLastLoc("offset=37928 line=841 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Char.makeInstance(String.fromCharCode(")),(plt.Kernel.setLastLoc("offset=38012 line=842 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=38028 line=842 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.char_dash__greaterthan_integer(a_dash_char)))),(plt.types.String.makeInstance(")))"))])); };
+ (plt.Kernel.setLastLoc("offset=37780 line=836 span=99 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=37794 line=836 span=48 id=\"beginner-to-javascript.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("Don't know how to handle ~s yet")), [a_dash_num])),original_dash_stx)) :
+ (plt.Kernel.setLastLoc("offset=36812 line=814 span=1069 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36812 line=814 span=1069 id=\\\"beginner-to-javascript.ss\\\"\""))))))))); };
+var char_dash__greaterthan_javascript_dash_string = function(a_dash_char) { return (plt.Kernel.setLastLoc("offset=37972 line=843 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Char.makeInstance(String.fromCharCode(")),(plt.Kernel.setLastLoc("offset=38056 line=844 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=38072 line=844 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.char_dash__greaterthan_integer(a_dash_char)))),(plt.types.String.makeInstance(")))"))])); };
 var string_dash__greaterthan_javascript_dash_string = function(a_dash_str) { return ((function() { 
 
-var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.setLastLoc("offset=38285 line=851 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(34))), [])) ?
- (plt.Kernel.setLastLoc("offset=38320 line=852 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(34)))])) :
- ((plt.Kernel.setLastLoc("offset=38353 line=853 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(92))), [])) ?
- (plt.Kernel.setLastLoc("offset=38388 line=854 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(92)))])) :
- ((plt.Kernel.setLastLoc("offset=38421 line=855 span=25 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(10))), [])) ?
- (plt.Kernel.setLastLoc("offset=38462 line=856 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(110)))])) :
+var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.setLastLoc("offset=38329 line=853 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(34))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38364 line=854 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(34)))])) :
+ ((plt.Kernel.setLastLoc("offset=38397 line=855 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(92))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38432 line=856 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(92)))])) :
+ ((plt.Kernel.setLastLoc("offset=38465 line=857 span=25 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(10))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38506 line=858 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(110)))])) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=38515 line=858 span=15 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([a_dash_char])) :
- (plt.Kernel.setLastLoc("offset=38264 line=850 span=268 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=38264 line=850 span=268 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
+ (plt.Kernel.setLastLoc("offset=38559 line=860 span=15 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([a_dash_char])) :
+ (plt.Kernel.setLastLoc("offset=38308 line=852 span=268 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=38308 line=852 span=268 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
 (function (toplevel_dash_expression_dash_show159) { 
  })(plt.Kernel.identity)
-return (plt.Kernel.setLastLoc("offset=38539 line=859 span=189 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=38609 line=860 span=92 id=\"beginner-to-javascript.ss\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=38622 line=860 span=43 id=\"beginner-to-javascript.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
+return (plt.Kernel.setLastLoc("offset=38583 line=861 span=189 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=38653 line=862 span=92 id=\"beginner-to-javascript.ss\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=38666 line=862 span=43 id=\"beginner-to-javascript.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);
                  }); result.toWrittenString = function() {return '<function:escape-char-code>'; }
                      result.toDisplayedString = function() {return '<function:escape-char-code>';}
-                     return result; })(), [(plt.Kernel.setLastLoc("offset=38644 line=860 span=20 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
+                     return result; })(), [(plt.Kernel.setLastLoc("offset=38688 line=862 span=20 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
               })()); };
 (function() { 
   ((function (toplevel_dash_expression_dash_show0) { 
