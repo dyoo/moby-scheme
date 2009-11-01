@@ -28,7 +28,7 @@ var effect_colon_play_dash_dtmf_dash_tone_dash_tone = function(obj) {
      if (effect_colon_play_dash_dtmf_dash_tone_question_ (obj)) {
         return obj.tone;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_play_dash_dtmf_dash_tone_dash_tone: not a effect:play-dtmf-tone: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:play-dtmf-tone-tone: not a effect:play-dtmf-tone: ~s', [obj]));
      }
 };
 
@@ -36,7 +36,7 @@ var effect_colon_play_dash_dtmf_dash_tone_dash_duration = function(obj) {
      if (effect_colon_play_dash_dtmf_dash_tone_question_ (obj)) {
         return obj.duration;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_play_dash_dtmf_dash_tone_dash_duration: not a effect:play-dtmf-tone: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:play-dtmf-tone-duration: not a effect:play-dtmf-tone: ~s', [obj]));
      }
 };
 
@@ -68,7 +68,7 @@ var effect_colon_send_dash_sms_dash_address = function(obj) {
      if (effect_colon_send_dash_sms_question_ (obj)) {
         return obj.address;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_send_dash_sms_dash_address: not a effect:send-sms: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:send-sms-address: not a effect:send-sms: ~s', [obj]));
      }
 };
 
@@ -76,7 +76,7 @@ var effect_colon_send_dash_sms_dash_msg = function(obj) {
      if (effect_colon_send_dash_sms_question_ (obj)) {
         return obj.msg;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_send_dash_sms_dash_msg: not a effect:send-sms: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:send-sms-msg: not a effect:send-sms: ~s', [obj]));
      }
 };
 
@@ -107,7 +107,7 @@ var playlist_dash_sound_dash_playlist = function(obj) {
      if (playlist_dash_sound_question_ (obj)) {
         return obj.playlist;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('playlist_dash_sound_dash_playlist: not a playlist-sound: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('playlist-sound-playlist: not a playlist-sound: ~s', [obj]));
      }
 };
 
@@ -131,7 +131,7 @@ var effect_colon_play_dash_sound_dash_sound = function(obj) {
      if (effect_colon_play_dash_sound_question_ (obj)) {
         return obj.sound;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_play_dash_sound_dash_sound: not a effect:play-sound: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:play-sound-sound: not a effect:play-sound: ~s', [obj]));
      }
 };
 
@@ -154,7 +154,7 @@ var effect_colon_pause_dash_sound_dash_sound = function(obj) {
      if (effect_colon_pause_dash_sound_question_ (obj)) {
         return obj.sound;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pause_dash_sound_dash_sound: not a effect:pause-sound: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:pause-sound-sound: not a effect:pause-sound: ~s', [obj]));
      }
 };
 
@@ -177,7 +177,7 @@ var effect_colon_stop_dash_sound_dash_sound = function(obj) {
      if (effect_colon_stop_dash_sound_question_ (obj)) {
         return obj.sound;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_stop_dash_sound_dash_sound: not a effect:stop-sound: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:stop-sound-sound: not a effect:stop-sound: ~s', [obj]));
      }
 };
 
@@ -200,7 +200,7 @@ var effect_colon_set_dash_sound_dash_volume_dash_volume = function(obj) {
      if (effect_colon_set_dash_sound_dash_volume_question_ (obj)) {
         return obj.volume;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_set_dash_sound_dash_volume_dash_volume: not a effect:set-sound-volume: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:set-sound-volume-volume: not a effect:set-sound-volume: ~s', [obj]));
      }
 };
 
@@ -241,7 +241,7 @@ var effect_colon_set_dash_wake_dash_lock_dash_locks = function(obj) {
      if (effect_colon_set_dash_wake_dash_lock_question_ (obj)) {
         return obj.locks;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_set_dash_wake_dash_lock_dash_locks: not a effect:set-wake-lock: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:set-wake-lock-locks: not a effect:set-wake-lock: ~s', [obj]));
      }
 };
 
@@ -273,7 +273,7 @@ var effect_colon_pick_dash_playlist_dash_update_dash_f = function(obj) {
      if (effect_colon_pick_dash_playlist_question_ (obj)) {
         return obj.update_dash_f;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_playlist_dash_update_dash_f: not a effect:pick-playlist: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:pick-playlist-update-f: not a effect:pick-playlist: ~s', [obj]));
      }
 };
 
@@ -297,7 +297,7 @@ var effect_colon_pick_dash_random_dash_n = function(obj) {
      if (effect_colon_pick_dash_random_question_ (obj)) {
         return obj.n;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_random_dash_n: not a effect:pick-random: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:pick-random-n: not a effect:pick-random: ~s', [obj]));
      }
 };
 
@@ -305,7 +305,7 @@ var effect_colon_pick_dash_random_dash_update_dash_f = function(obj) {
      if (effect_colon_pick_dash_random_question_ (obj)) {
         return obj.update_dash_f;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect_colon_pick_dash_random_dash_update_dash_f: not a effect:pick-random: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('effect:pick-random-update-f: not a effect:pick-random: ~s', [obj]));
      }
 };
 

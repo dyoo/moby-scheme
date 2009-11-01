@@ -81,7 +81,7 @@ var permission_colon_open_dash_image_dash_url_dash_url = function(obj) {
      if (permission_colon_open_dash_image_dash_url_question_ (obj)) {
         return obj.url;
      } else {
-        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('permission_colon_open_dash_image_dash_url_dash_url: not a permission:open-image-url: ~s', [obj]));
+        throw new plt.Kernel.MobyRuntimeError(            plt.Kernel.format('permission:open-image-url-url: not a permission:open-image-url: ~s', [obj]));
      }
 };
 
