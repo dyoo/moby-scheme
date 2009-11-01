@@ -2264,14 +2264,17 @@ var plt = plt || {};
 
 
     plt.Kernel.reportError = function(e) {
-	if (console && console.log) {
-	    console.log(e);
-	    if (plt.Kernel.lastLoc) {
-		console.log(
-		    "Error was raised around " + 
-			plt.Kernel.lastLoc);
-	    }
+	var reporter;
+	if (typeof(console) != 'undefined' && 
+	    typeof(console.log) != 'undefined') {
+	    reporter = (function(x) { console.log(x) });
+	} else {
+	    reporter = (function(x) { alert(x); });
+	}
 
+	reporter(e.msg);
+	if (plt.Kernel.lastLoc) {
+	    reporter("Error was raised around " + plt.Kernel.lastLoc);
 	}
     };
 
