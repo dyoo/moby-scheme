@@ -2410,7 +2410,7 @@ var plt = plt || {};
 
     plt.Kernel.printf = function(formatStr, args) {
 	var msg = plt.Kernel.format(formatStr, args);
-	plt.Kernel.printHook(str);
+	plt.Kernel.printHook(msg);
 	return undefined;
     }
 
