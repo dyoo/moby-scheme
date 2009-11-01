@@ -23,4 +23,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Added inexact and exact numeral literals to the reader; added complex numbers to the reader.  Fixed some edge cases with modulo and quotient.  Adjusted error message of on-draw to more specifically pinpoint structure problems."))
+(define release-notes '("Added for-each."))

@@ -1633,6 +1633,23 @@ var plt = plt || {};
     };
 
 
+    plt.Kernel.for_dash_each = function(f, arglists) {
+	check(f, isFunction, "for-each", "function", 1);
+	arrayEach(arglists, function(x, i) { 
+	    checkList(x, "for-each", i+2); });
+	// TODO: add contract on higher order argument f.
+	while (!arglists[0].isEmpty()) {
+	    var args = [];
+	    for (var i = 0; i < arglists.length; i++) {
+		args.push(arglists[i].first());
+		arglists[i] = arglists[i].rest();
+	    }
+	    f(args);
+	}
+	return undefined;
+    };
+
+
 
     plt.Kernel.andmap = function(f, arglists) {
 	check(f, isFunction, "andmap", "function", 1);

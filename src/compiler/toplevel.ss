@@ -290,6 +290,7 @@
                      (foldl 2 true)
                      (foldr 2 true)                ;; *
                      (map 1 true)
+		     (for-each 1 true)
                      (memf 2)                 ;; *
                      (ormap 1 true)                ;; *
                      (procedure? 1)           ;; *
