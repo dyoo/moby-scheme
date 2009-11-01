@@ -77,6 +77,10 @@ var main = {};
 		document.body.appendChild(document.createElement("br"));
 	    }
         };
+	plt.Kernel.printHook = function(str) {
+		document.body.appendChild(plt.Kernel.toDomNode(str));
+		document.body.appendChild(document.createElement("br"));
+        };
         try {
    	    (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(showToplevelExpression);
         } catch (e) {

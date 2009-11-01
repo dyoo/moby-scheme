@@ -2408,6 +2408,16 @@ var plt = plt || {};
     
 
 
+    plt.Kernel.printf = function(formatStr, args) {
+	var msg = plt.Kernel.format(formatStr, args);
+	plt.Kernel.printHook(str);
+	return undefined;
+    }
+
+    plt.Kernel.printHook = function(str) {
+    };
+
+
     // Expose the predicates.
     plt.Kernel.isSymbol = isSymbol;
     plt.Kernel.isChar = isChar;

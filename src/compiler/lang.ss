@@ -149,5 +149,9 @@
 
 	 syntax-error
 
+
+
+	 printf
+
          ;path->string normalize-path path? resolve-module-path build-path
          )

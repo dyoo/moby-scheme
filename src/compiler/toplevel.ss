@@ -316,7 +316,8 @@
                      (vector-ref 2)
                      (vector-set! 3)
                      (vector? 1)
-                     
+
+		     (printf 1 true)
                      
                      ;; Testing functions.
                      (check-expect 2)
