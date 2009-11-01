@@ -97,8 +97,8 @@ plt.platform = {};
     // isW3CLocationAvailable: -> boolean
     // Returns true if the W3C Location API is available.
     function isW3CLocationAvailable() {
-	return (typeof(navigator != 'undefined') &&
-		typeof(navigator.geolocation != 'undefined'));
+	return (typeof(navigator) != 'undefined' &&
+		typeof(navigator.geolocation) != 'undefined');
 		     
     }
 
