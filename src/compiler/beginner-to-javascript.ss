@@ -238,14 +238,19 @@
             (symbol->string (identifier->munged-java-identifier 
                              (string->symbol (string-append (symbol->string (stx-e id))
                                                             "?")))))
+
+	  ;; make-unmunged-accessor-name: symbol -> string
+	  (define (make-unmunged-accessor-name a-field)
+	    (string-append (symbol->string (stx-e id))
+			   "-"
+			   (symbol->string a-field)))
+
           ;; make-accessor-name: symbol -> string
           (define (make-accessor-name a-field)
             (symbol->string
              (identifier->munged-java-identifier
               (string->symbol
-               (string-append (symbol->string (stx-e id))
-                              "-"
-                              (symbol->string a-field))))))
+	       (make-unmunged-accessor-name a-field)))))
           
           ;; make-mutator-name: symbol -> string
           (define (make-mutator-name a-field)
@@ -316,7 +321,7 @@
                                     "        return obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) ";\n"
                                     "     } else {\n"
                                     "        throw new plt.Kernel.MobyRuntimeError("
-                                    "            plt.Kernel.format('" (make-accessor-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
+                                    "            plt.Kernel.format('" (make-unmunged-accessor-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
                                     "     }\n"
                                     "};\n"))
                    fields)
