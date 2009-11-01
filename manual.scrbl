@@ -935,6 +935,7 @@ same meaning as in @link["http://docs.plt-scheme.org/htdp-langs/advanced-prim-op
                         begin
                         set!
 			for-each
+			printf
                         let
                         let*
                         letrec

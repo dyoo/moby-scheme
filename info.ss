@@ -23,4 +23,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Added for-each."))
+(define release-notes '("Added for-each and printf."))
