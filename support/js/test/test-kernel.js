@@ -317,9 +317,23 @@ var getTests;
 	    
 	    
 	    testExpt : function(){
-		var i = plt.types.Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance( 1));
-		this.assert(Kernel.equal_question_(Kernel.expt(i, i), Kernel.exp(PI.half().minus())));
-		this.assert(Kernel.equal_question_(Kernel.expt(FloatPoint.makeInstance(2), FloatPoint.makeInstance(3)), FloatPoint.makeInstance(8)));
+		var i = plt.types.Complex.makeInstance(
+		    Rational.makeInstance(0),Rational.makeInstance( 1));
+		this.assert(Kernel.equal_question_(
+		    Kernel.expt(i, i), 
+		    Kernel.exp(PI.half().minus())));
+		this.assert(Kernel.equal_question_(
+		    Kernel.expt(FloatPoint.makeInstance(2), 
+				FloatPoint.makeInstance(3)), 
+		    FloatPoint.makeInstance(8)));
+		
+		this.assert(Kernel.equal_question_(
+		    Kernel.expt(Complex.makeInstance(
+			Rational.makeInstance(3,4),
+			Rational.makeInstance(7,8)),
+				Rational.makeInstance(2))),
+			    Complex.makeInstance(Rational.makeInstance(-3, 4),
+						 Rational.makeInstance(7, 8)));
 	    },
 	    
 	    
