@@ -189,7 +189,8 @@ var plt = plt || {};
 
 
     var isImage = function(thing) {
-	return (thing != null && thing != undefined && thing instanceof BaseImage);
+	return ((thing != null) && (thing != undefined)
+		&& (thing instanceof BaseImage));
     }
 
 
@@ -2086,6 +2087,7 @@ var plt = plt || {};
 	for (attr in this) {
 	    aCopy[attr] = this[attr];
 	}
+	aCopy.__proto__ = this.__proto__;
 	aCopy.pinholeX = x;
 	aCopy.pinholeY = y;
 	return aCopy;

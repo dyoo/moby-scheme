@@ -249,7 +249,11 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // placeImage: image number number scene -> scene
     plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
-	plt.Kernel.check(picture, plt.Kernel.isImage, "place-image", "image", 1);
+	plt.Kernel.check(picture, 
+			 plt.Kernel.isImage,
+			 "place-image",
+			 "image",
+			 1);
 	plt.Kernel.check(x, plt.Kernel.isNumber, "place-image", "number", 2);
 	plt.Kernel.check(y, plt.Kernel.isNumber, "place-image", "number", 3);
 	plt.Kernel.check(aScene, isScene, "place-image", "scene", 4);
@@ -360,7 +364,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     // isScene: any -> boolean
     // Produces true when x is a scene.
     var isScene = function(x) {
-	return x != undefined && x != null && x instanceof SceneImage;
+	return ((x != undefined) && (x != null) && (x instanceof SceneImage));
     };
 
     // SceneImage: primitive-number primitive-number (listof image) -> Scene
@@ -476,7 +480,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.height = height;
 	this.style = style;
 	this.color = color;
-    }
+    };
     RectangleImage.prototype = heir(BaseImage.prototype);
 
 
