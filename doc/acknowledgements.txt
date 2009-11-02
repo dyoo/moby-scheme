@@ -8,3 +8,7 @@ support/yuicompresor-2.4.2.jar
 
 Phonegap http://phonegap.com/
 support/phonegap-fork
+
+
+Gears init http://code.google.com/apis/gears/tools.html
+support/js/gears_init.js

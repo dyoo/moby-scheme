@@ -2,6 +2,7 @@
 (require (only-in scheme/list empty? empty first rest)
          scheme/runtime-path
          scheme/port
+         scheme/file
          "stx.ss"
          "../stx-helpers.ss"
          "../compile-helpers.ss"
@@ -241,10 +242,13 @@
                (loop (rest elts)))]))))
 
 
-
+;; get-runtime-source: -> bytes
+;; Returns the bytes of all the runtime files as a single chunk.
 (define (get-runtime-source)
   (call-with-input-file runtime-manifest-path
     (lambda (ip)
-      (for/list ([line (in-lines ip)])
-        (let ([fip (open-input-file (build-path moby-runtime-path line))])
-          (void))))))
+      (apply bytes-append
+             (for/list ([line (in-lines ip)])
+               (let ([fip (open-input-file (build-path moby-runtime-path line))])
+                 (bytes-append (file->bytes (build-path moby-runtime-path line))
+                               #"\n")))))))
