@@ -414,7 +414,7 @@ var plt = plt || {};
 
     
     plt.types.Rational.prototype.sqrt = function() {
-	if (this.n > 0) {
+	if (this.n >= 0) {
 	    var newN = Math.sqrt(this.n);
 	    var newD = Math.sqrt(this.d);
 	    if (Math.floor(newN) == newN &&
@@ -505,6 +505,11 @@ var plt = plt || {};
     plt.types.Rational.prototype.real_dash_part = function(){
 	return this;
     };
+
+
+    plt.types.Rational.prototype.timesI = function() {
+	return plt.types.Complex.makeInstance(plt.types.Rational.ZERO, this);
+    };
     
     plt.types.Rational.prototype.round = function() {
 	if (this.d == 2) {
@@ -564,6 +569,7 @@ var plt = plt || {};
     plt.types.Rational.NEGATIVE_ONE = _rationalCache[-1];
     plt.types.Rational.ZERO = _rationalCache[0];
     plt.types.Rational.ONE = _rationalCache[1];
+    plt.types.Rational.TWO = _rationalCache[2];
     
     
     
@@ -1031,33 +1037,50 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.log = function(){
-	return plt.types.Complex.makeInstance(this.magnitude().log(), this.angle());
+	var m = this.magnitude();
+	var theta = this.angle();
+	var result = plt.types.NumberTower.add(
+	    m.log(),
+	    theta.timesI());
+	return result;
     };
     
     plt.types.Complex.prototype.angle = function(){
-	if (this.isReal())
+	if (this.isReal()) {
 	    return this.r.angle();
+	}
 	if (plt.types.NumberTower.equal(plt.types.Rational.ZERO, this.r)) {
 	    var tmp = plt.Kernel.pi.half();
 	    return plt.types.NumberTower.greaterThan(this.i, plt.types.Rational.ZERO) ? tmp : tmp.minus();
 	} else {
 	    var tmp = plt.types.NumberTower.divide(this.i.abs(), this.r.abs()).atan();
-	    if (plt.types.NumberTower.greaterThan(this.r, plt.types.Rational.ZERO))
+	    if (plt.types.NumberTower.greaterThan(this.r, plt.types.Rational.ZERO)) {
 		return plt.types.NumberTower.greaterThan(this.i, plt.types.Rational.ZERO) ? tmp : tmp.minus();
-	    else
+	    } else {
 		return plt.types.NumberTower.greaterThan(this.i, plt.types.Rational.ZERO) ? plt.Kernel.pi.subtract(tmp) : tmp.subtract(plt.Kernel.pi);
+	    }
 	}
     };
     
+    var plusI = plt.types.Complex.makeInstance(plt.types.Rational.ZERO,
+					       plt.types.Rational.ONE);
+    var minusI = plt.types.Complex.makeInstance(plt.types.Rational.ZERO,
+						plt.types.Rational.NEGATIVE_ONE);
+    
     plt.types.Complex.prototype.atan = function(){
-	if (this.isReal())
-	    return this.r.atan();
-	var iz = this.timesI();
-	var part1 = plt.types.Complex.makeInstance(plt.types.Rational.ONE,
-						   iz.minus()).log();
-	var part2 = plt.types.Complex.makeInstance(plt.types.Rational.ONE,
-						   iz).log();
-	return part1.subtract(part2).timesI().half();
+	if (plt.types.NumberTower.equal(this, plusI) ||
+	    plt.types.NumberTower.equal(this, minusI)) {
+	    return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+	}
+	return plt.types.NumberTower.multiply(
+	    plusI,
+	    plt.types.NumberTower.multiply(
+		plt.types.FloatPoint.makeInstance(0.5),
+		(plt.types.NumberTower.divide(
+		    plt.types.NumberTower.add(plusI, this),
+		    plt.types.NumberTower.add(
+			plusI,
+			plt.types.NumberTower.subtract(plt.types.Rational.ZERO, this)))).log()));
     };
     
     plt.types.Complex.prototype.cos = function(){
@@ -1074,23 +1097,26 @@ var plt = plt || {};
 	    return this.r.sin();
 	var iz = this.timesI();
 	var iz_minus = iz.minus();
-	var z2 = plt.types.Complex.makeInstance(plt.types.Rational.ZERO, plt.types.Rational.TWO);
-	
+	var z2 = plt.types.Complex.makeInstance(plt.types.Rational.ZERO,
+						plt.types.Rational.TWO);
 	var exp_minus = plt.types.NumberTower.subtract(iz.exp(), iz_minus.exp());
-	
-	return plt.types.NumberTower.divide(exp_minus, z2);
+	var result = plt.types.NumberTower.divide(exp_minus, z2);
+	return result;
     };
     
     plt.types.Complex.prototype.expt= function(y){
-	var expo = y.multiply(this.log());
+	var expo = plt.types.NumberTower.multiply(y, this.log());
 	return expo.exp();
     };
     
     plt.types.Complex.prototype.exp = function(){
-	var part1 = this.r.exp();
-	var part2 = plt.types.Complex.makeInstance(this.i.cos(), this.i.sin().timesI());
-	
-	return plt.types.NumberTower.multiply(part1, part2);
+	var r = this.r.exp();
+	var cos_a = this.i.cos();
+	var sin_a = this.i.sin();
+
+	return plt.types.NumberTower.multiply(
+	    r,
+	    plt.types.NumberTower.add(cos_a, sin_a.timesI()));
     };
     
     plt.types.Complex.prototype.acos = function(){
@@ -6710,29 +6736,29 @@ var number_dash__greaterthan_javascript_dash_string = function(a_dash_num, origi
  ((plt.Kernel.setLastLoc("offset=37371 line=829 span=13 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_question_(a_dash_num)) ?
  (plt.Kernel.setLastLoc("offset=37394 line=830 span=150 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.FloatPoint.makeInstance(")),(plt.Kernel.setLastLoc("offset=37472 line=831 span=42 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string(a_dash_num)),(plt.types.String.makeInstance("))"))])) :
  ((plt.Kernel.setLastLoc("offset=37555 line=833 span=16 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.complex_question_(a_dash_num)) ?
- (plt.Kernel.setLastLoc("offset=37581 line=834 span=266 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(")),(plt.Kernel.setLastLoc("offset=37655 line=835 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37691 line=835 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance(", ")),(plt.Kernel.setLastLoc("offset=37763 line=837 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37799 line=837 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance("))"))])) :
+ (plt.Kernel.setLastLoc("offset=37581 line=834 span=336 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Complex.makeInstance(plt.types.FloatPoint.makeInstance(")),(plt.Kernel.setLastLoc("offset=37689 line=835 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37725 line=835 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.real_dash_part(a_dash_num)))),(plt.types.String.makeInstance("), plt.types.FloatPoint.makeInstance(")),(plt.Kernel.setLastLoc("offset=37832 line=837 span=54 id=\"beginner-to-javascript.ss\"")   && floating_dash_number_dash__greaterthan_javascript_dash_string((plt.Kernel.setLastLoc("offset=37868 line=837 span=17 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.imag_dash_part(a_dash_num)))),(plt.types.String.makeInstance(")))"))])) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=37881 line=841 span=99 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=37895 line=841 span=48 id=\"beginner-to-javascript.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("Don't know how to handle ~s yet")), [a_dash_num])),original_dash_stx)) :
- (plt.Kernel.setLastLoc("offset=36913 line=819 span=1069 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36913 line=819 span=1069 id=\\\"beginner-to-javascript.ss\\\"\""))))))))); };
-var char_dash__greaterthan_javascript_dash_string = function(a_dash_char) { return (plt.Kernel.setLastLoc("offset=38073 line=848 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Char.makeInstance(String.fromCharCode(")),(plt.Kernel.setLastLoc("offset=38157 line=849 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=38173 line=849 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.char_dash__greaterthan_integer(a_dash_char)))),(plt.types.String.makeInstance(")))"))])); };
+ (plt.Kernel.setLastLoc("offset=37951 line=841 span=99 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.syntax_dash_error((plt.Kernel.setLastLoc("offset=37965 line=841 span=48 id=\"beginner-to-javascript.ss\"") && plt.Kernel.format((plt.types.String.makeInstance("Don't know how to handle ~s yet")), [a_dash_num])),original_dash_stx)) :
+ (plt.Kernel.setLastLoc("offset=36913 line=819 span=1139 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=36913 line=819 span=1139 id=\\\"beginner-to-javascript.ss\\\"\""))))))))); };
+var char_dash__greaterthan_javascript_dash_string = function(a_dash_char) { return (plt.Kernel.setLastLoc("offset=38143 line=848 span=147 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.Char.makeInstance(String.fromCharCode(")),(plt.Kernel.setLastLoc("offset=38227 line=849 span=39 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.number_dash__greaterthan_string((plt.Kernel.setLastLoc("offset=38243 line=849 span=22 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.char_dash__greaterthan_integer(a_dash_char)))),(plt.types.String.makeInstance(")))"))])); };
 var string_dash__greaterthan_javascript_dash_string = function(a_dash_str) { return ((function() { 
 
-var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.setLastLoc("offset=38430 line=858 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(34))), [])) ?
- (plt.Kernel.setLastLoc("offset=38465 line=859 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(34)))])) :
- ((plt.Kernel.setLastLoc("offset=38498 line=860 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(92))), [])) ?
- (plt.Kernel.setLastLoc("offset=38533 line=861 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(92)))])) :
- ((plt.Kernel.setLastLoc("offset=38566 line=862 span=25 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(10))), [])) ?
- (plt.Kernel.setLastLoc("offset=38607 line=863 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(110)))])) :
+var escape_dash_char_dash_code = function(a_dash_char) { return ((plt.Kernel.setLastLoc("offset=38500 line=858 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(34))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38535 line=859 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(34)))])) :
+ ((plt.Kernel.setLastLoc("offset=38568 line=860 span=19 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(92))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38603 line=861 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(92)))])) :
+ ((plt.Kernel.setLastLoc("offset=38636 line=862 span=25 id=\"beginner-to-javascript.ss\"") && plt.Kernel.char_equal__question_(a_dash_char,(plt.types.Char.makeInstance(String.fromCharCode(10))), [])) ?
+ (plt.Kernel.setLastLoc("offset=38677 line=863 span=16 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([(plt.types.Char.makeInstance(String.fromCharCode(92))),(plt.types.Char.makeInstance(String.fromCharCode(110)))])) :
  (plt.types.Logic.TRUE ?
- (plt.Kernel.setLastLoc("offset=38660 line=865 span=15 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([a_dash_char])) :
- (plt.Kernel.setLastLoc("offset=38409 line=857 span=268 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=38409 line=857 span=268 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
+ (plt.Kernel.setLastLoc("offset=38730 line=865 span=15 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string([a_dash_char])) :
+ (plt.Kernel.setLastLoc("offset=38479 line=857 span=268 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=38479 line=857 span=268 id=\\\"beginner-to-javascript.ss\\\"\"")))))))); };
 (function (toplevel_dash_expression_dash_show159) { 
  })(plt.Kernel.identity)
-return (plt.Kernel.setLastLoc("offset=38684 line=866 span=189 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=38754 line=867 span=92 id=\"beginner-to-javascript.ss\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=38767 line=867 span=43 id=\"beginner-to-javascript.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
+return (plt.Kernel.setLastLoc("offset=38754 line=866 span=189 id=\"beginner-to-javascript.ss\"") && plt.Kernel.string_dash_append([(plt.types.String.makeInstance("(plt.types.String.makeInstance(\"")),(plt.Kernel.setLastLoc("offset=38824 line=867 span=92 id=\"beginner-to-javascript.ss\"")   && string_dash_join((plt.Kernel.setLastLoc("offset=38837 line=867 span=43 id=\"beginner-to-javascript.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
                     return escape_dash_char_dash_code(args[0]);
                  }); result.toWrittenString = function() {return '<function:escape-char-code>'; }
                      result.toDisplayedString = function() {return '<function:escape-char-code>';}
-                     return result; })(), [(plt.Kernel.setLastLoc("offset=38789 line=867 span=20 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
+                     return result; })(), [(plt.Kernel.setLastLoc("offset=38859 line=867 span=20 id=\"beginner-to-javascript.ss\"")   && plt.Kernel.string_dash__greaterthan_list(a_dash_str))])),(plt.types.String.makeInstance("")))),(plt.types.String.makeInstance("\"))"))]));
               })()); };
 (function() { 
   ((function (toplevel_dash_expression_dash_show0) { 
