@@ -845,8 +845,8 @@ var plt = plt || {};
     
 
     plt.types.Complex = function(r, i){
-	this.r = plt.types.FloatPoint.makeInstance(r);
-	this.i = plt.types.FloatPoint.makeInstance(i);
+	this.r = r;
+	this.i = i;
     };
     
     // Constructs a complex number from two basic number r and i.  r and i can

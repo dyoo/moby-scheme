@@ -60,8 +60,8 @@ var getTests;
 		var n2 = FloatPoint.makeInstance(2.0);
 		this.assert(Kernel.equal_question_(n1, n2));
 		
-		var n3 = Complex.makeInstance(2,0);
-		var n4 = Complex.makeInstance(2,1);
+		var n3 = Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance(0));
+		var n4 = Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance(1));
 		this.assert(Kernel.equal_question_(n1, n3));
 		this.assert(!Kernel.equal_question_(n3, n4));
 		
@@ -81,7 +81,8 @@ var getTests;
 	    testAbs : function(){
 		var n1 = Rational.makeInstance(-2,1);
 		var n2 = Rational.makeInstance(4, 2);
-		var n3 = Complex.makeInstance(2.0, 0);
+		var n3 = Complex.makeInstance(Rational.makeInstance(2),
+					      Rational.makeInstance(0));
 		this.assert(Kernel.equal_question_(Kernel.abs(n1), n2));
 		this.assert(Kernel.equal_question_(Kernel.abs(n3), n2));
 	    },
@@ -91,13 +92,13 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel._plus_(n1), Rational.makeInstance(5,1)));
 		var n2 = [Rational.makeInstance(2,1), FloatPoint.makeInstance(2.1)];
 		this.assert(Kernel.equal_question_(Kernel._plus_(n2), FloatPoint.makeInstance(4.1)));
-		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(2, 2)];
-		this.assert(Kernel.equal_question_(Kernel._plus_(n3), Complex.makeInstance(4, 2)));
-		var n4 = [FloatPoint.makeInstance(3.1), Complex.makeInstance(2, 2)];
+		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance(2))];
+		this.assert(Kernel.equal_question_(Kernel._plus_(n3), Complex.makeInstance(Rational.makeInstance(4),Rational.makeInstance(2))));
+		var n4 = [FloatPoint.makeInstance(3.1), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance(2))];
 		var a1 = Kernel._plus_(n4);
-		this.assert(Kernel.equal_question_(a1, Complex.makeInstance(5.1, 2)));
-		var n5 = [Complex.makeInstance(2, 2), Complex.makeInstance(3, 2)];
-		this.assert(Kernel.equal_question_(Kernel._plus_(n5), Complex.makeInstance(5, 4)));
+		this.assert(Kernel.equal_question_(a1, Complex.makeInstance(FloatPoint.makeInstance(5.1), Rational.makeInstance(2))));
+		var n5 = [Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2)), Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._plus_(n5), Complex.makeInstance(Rational.makeInstance(5),Rational.makeInstance( 4))));
 	    },
 
 	    testDivisionByZero: function() {
@@ -155,12 +156,12 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n1), Rational.makeInstance(-5,1)));		
 		var n2 = [Rational.makeInstance(2,1), FloatPoint.makeInstance(2.1)];
 		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n2), FloatPoint.makeInstance(-4.1)));
-		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(2, 2)];
-		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n3), Complex.makeInstance(-4, -2)));
-		var n4 = [FloatPoint.makeInstance(2.1), Complex.makeInstance(2, 2)];
-		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n4), Complex.makeInstance(-4.1, -2)));
-		var n5 = [Complex.makeInstance(2, 2), Complex.makeInstance(3, 2)];
-		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n5), Complex.makeInstance(-5, -4)));
+		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n3), Complex.makeInstance(Rational.makeInstance(-4),Rational.makeInstance( -2))));
+		var n4 = [FloatPoint.makeInstance(2.1), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n4), Complex.makeInstance(FloatPoint.makeInstance(-4.1),Rational.makeInstance( -2))));
+		var n5 = [Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2)), Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._dash_(Rational.ZERO, n5), Complex.makeInstance(Rational.makeInstance(-5),Rational.makeInstance( -4))));
 		
 	    },
 	    
@@ -169,12 +170,12 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel._star_(n1), Rational.makeInstance(6,1)));
 		var n2 = [Rational.makeInstance(2,1), FloatPoint.makeInstance(2.1)];
 		this.assert(Kernel.equal_question_(Kernel._star_(n2), FloatPoint.makeInstance(4.2)));
-		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(2, 2)];
-		this.assert(Kernel.equal_question_(Kernel._star_(n3), Complex.makeInstance(4, 4)));
-		var n4 = [FloatPoint.makeInstance(2.1), Complex.makeInstance(2, 2)];
-		this.assert(Kernel.equal_question_(Kernel._star_(n4), Complex.makeInstance(4.2, 4.2)));
-		var n5 = [Complex.makeInstance(2, 2), Complex.makeInstance(3, 2)];
-		this.assert(Kernel.equal_question_(Kernel._star_(n5), Complex.makeInstance(2, 10)));
+		var n3 = [Rational.makeInstance(2,1), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._star_(n3), Complex.makeInstance(Rational.makeInstance(4),Rational.makeInstance( 4))));
+		var n4 = [FloatPoint.makeInstance(2.1), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._star_(n4), Complex.makeInstance(FloatPoint.makeInstance(4.2),FloatPoint.makeInstance( 4.2))));
+		var n5 = [Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 2)), Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance( 2))];
+		this.assert(Kernel.equal_question_(Kernel._star_(n5), Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 10))));
 	    },
 	    
 	    
