@@ -409,7 +409,7 @@ var plt = plt || {};
 
     
     plt.types.Rational.prototype.sqrt = function() {
-	if (this.n > 0) {
+	if (this.n >= 0) {
 	    var newN = Math.sqrt(this.n);
 	    var newD = Math.sqrt(this.d);
 	    if (Math.floor(newN) == newN &&
@@ -1031,7 +1031,11 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.log = function(){
-	return plt.types.Complex.makeInstance(this.magnitude().log(), this.angle());
+	var m = this.magnitude();
+	var theta = this.angle();
+	return plt.types.NumberTower.add(
+	    m.log(),
+	    theta.timesI());
     };
     
     plt.types.Complex.prototype.angle = function(){

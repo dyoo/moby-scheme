@@ -1318,9 +1318,11 @@
 #;(test-nan.0 expt +nan.0 (list 10))
 #;(test-nan.0 expt 2 (list +nan.0))
 
-
+(printf "here~n")
 (test 0 expt (list 0 1+i))
 (test 0 expt (list 0 1-i))
+
+
 
 #;(test-nan.0 expt 1.0 +inf.0)
 #;(test-nan.0 expt 1.0 -inf.0)
