@@ -1,13 +1,17 @@
 #lang scheme/base
+
 (require (only-in scheme/list empty? empty first rest)
          scheme/runtime-path
          scheme/port
          scheme/file
+         scheme/contract
          "stx.ss"
          "../stx-helpers.ss"
          "../compile-helpers.ss"
          "beginner-to-javascript.ss"
          "helpers.ss")
+
+(require (for-syntax (only-in scheme/base build-path)))
 
 ;; Bootstrap the javascript compiler.
 ;; 
@@ -51,13 +55,21 @@
 (define-runtime-path read.js "../../support/js/runtime/read.js")
 
 
-;; write-runtime: -> void
+(define-runtime-path compressed-runtime.js "../../support/js/runtime/compressed-runtime.js")
+
+
+
+;; write-compressed-runtime: -> void
 ;; Write out a runtime of all of the files in the MANIFEST, compressed by the YUI compressor.
-(define (write-runtime)
+(define (write-compressed-runtime)
   (write-compiler)
   (let* ([runtime-source (get-runtime-source)]
          [compressed-runtime-source (yui-compress runtime-source)])
+    (call-with-output-file compressed-runtime.js
+      (lambda (op) (write-bytes compressed-runtime-source op))
+      #:exists 'replace)
     (void)))
+
 
 
   
@@ -252,3 +264,8 @@
                (let ([fip (open-input-file (build-path moby-runtime-path line))])
                  (bytes-append (file->bytes (build-path moby-runtime-path line))
                                #"\n")))))))
+
+
+(provide/contract
+ [write-compiler (-> any)]
+ [write-compressed-runtime (-> any)])

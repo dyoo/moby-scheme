@@ -141,26 +141,25 @@
 
 
 
-;; yui-compress: string -> string
+;; yui-compress: bytes -> bytes
 (define (yui-compress source-code)
   (let ([get-java-path
          (lambda ()
           (find-executable-path "java"))])
-    (let*-values ([(string-error-port) (open-output-string "")]
-                  [(string-output-port) (open-output-string)]
+    (let*-values ([(bytes-output-port) (open-output-bytes)]
                   [(a-subprocess inp outp errp)
                    (subprocess #f #f #f (get-java-path) "-jar" (path->string yui.jar) "--type" "js" )]
                   [(t1 t2) 
                    (values (thread (lambda () 
-                                     (copy-port inp string-output-port)))
+                                     (copy-port inp bytes-output-port)))
                            (thread (lambda ()
-                                     (copy-port errp (current-output-port)#;string-error-port))))])
-      (copy-port (open-input-string source-code) outp)
+                                     (copy-port errp (current-output-port)))))])
+      (copy-port (open-input-bytes source-code) outp)
       (close-output-port outp)
       (subprocess-wait a-subprocess)
       (sync t1)
       (sync t2)
-      (get-output-string string-output-port))))
+      (get-output-bytes bytes-output-port))))
 
 
 
@@ -173,4 +172,4 @@
  [lift-images-to-directory ((is-a?/c text%) path? . -> . (listof named-bitmap?))]
  [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]
- [yui-compress (string? . -> . string?)])
+ [yui-compress (bytes? . -> . bytes?)])
