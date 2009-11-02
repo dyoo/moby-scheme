@@ -831,11 +831,11 @@
                         (floating-number->javascript-string a-num)
                         "))")]
         [(complex? a-num)
-         (string-append "(plt.types.Complex.makeInstance("
+         (string-append "(plt.types.Complex.makeInstance(plt.types.FloatPoint.makeInstance("
                         (floating-number->javascript-string (real-part a-num))
-                        ", "
+                        "), plt.types.FloatPoint.makeInstance("
                         (floating-number->javascript-string (imag-part a-num))
-                        "))")]
+                        ")))")]
         
         [else
          (syntax-error (format "Don't know how to handle ~s yet" a-num)

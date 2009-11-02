@@ -22,9 +22,9 @@
                                              res
                                              (cons fun args)))
                  (set! number-of-errors (add1 number-of-errors))
-                 false)]
+                 (list false expect fun args))]
 	            [else
-		            ok?])))))
+		            (list ok? expect fun args)])))))
 
 
 ;; Just a note to myself about which tests need to be fixed.
