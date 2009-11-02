@@ -894,7 +894,10 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.isEqual = function(other){
-	return other instanceof plt.types.Complex  && this.r.isEqual(other.r) && this.i.isEqual(other.i);
+	var result = ((other instanceof plt.types.Complex) && 
+		      (plt.types.NumberTower.equal(this.r, other.r)) &&
+		      (plt.types.NumberTower.equal(this.i, other.i)));
+	return result;
     };
 
     plt.types.Complex.prototype.greaterThan = function(other) {
@@ -961,35 +964,45 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.multiply = function(other){
+
 	var r = plt.types.NumberTower.subtract(
 	    plt.types.NumberTower.multiply(this.r, other.r),
-	    plt.types.NumberTower.multiply(this.i * other.i));
+	    plt.types.NumberTower.multiply(this.i, other.i));
 	var i = plt.types.NumberTower.add(
-	    plt.types.NumberTower.multiply(this.r * other.i),
-	    plt.types.NumberTower.multiply(this.i * other.r));
+	    plt.types.NumberTower.multiply(this.r, other.i),
+	    plt.types.NumberTower.multiply(this.i, other.r));
+	if (plt.types.NumberTower.equal(i, plt.types.Rational.ZERO)) {
+	    return r;
+	}
 	return plt.types.Complex.makeInstance(r, i);
     };
     
     plt.types.Complex.prototype.divide = function(other){
 	var con = other.conjugate();
-	var up =  plt.types.NumberTower.multiply(this, con);
+	var up =  plt.types.NumberTower.multiply(this, con).toComplex();
+
+	// Down is guaranteed to be real by this point.
 	var down = plt.types.NumberTower.multiply(other, con);
-	return plt.types.Complex.makeInstance(
-	    plt.types.NumberTower.divide(up.r, down.r),
-	    plt.types.NumberTower.divide(up.i, down.r));
+
+	var result = plt.types.Complex.makeInstance(
+	    plt.types.NumberTower.divide(up.r, down),
+	    plt.types.NumberTower.divide(up.i, down));
+	return result;
     };
     
     plt.types.Complex.prototype.conjugate = function(){
-	return plt.types.Complex.makeInstance(
+	var result = plt.types.Complex.makeInstance(
 	    this.r, 
 	    plt.types.NumberTower.subtract(plt.types.Rational.ZERO, 
 					   this.i));
+
+	return result;
     };
     
     plt.types.Complex.prototype.magnitude = function(){
 	var sum = plt.types.NumberTower.add(
-	    plt.types.NumberTower.multiply(this.r * this.r),
-	    plt.types.NumberTower.multiply(this.i * this.i));
+	    plt.types.NumberTower.multiply(this.r, this.r),
+	    plt.types.NumberTower.multiply(this.i, this.i));
 	return sum.sqrt();
     };
     

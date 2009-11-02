@@ -185,7 +185,8 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel._slash_(six, n1), Rational.ONE));
 		var n2 = [FloatPoint.makeInstance(1.5), FloatPoint.makeInstance(4.0)];
 		this.assert(Kernel.equal_question_(Kernel._slash_(six, n2), Rational.ONE));
-		var n3 = [Complex.makeInstance(3, 4), Complex.makeInstance(3, -4)];
+		var n3 = [Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance( 4)), Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance( -4))];
+
 		this.assert(Kernel.equal_question_(Kernel._slash_(FloatPoint.makeInstance(150), n3), six));
 
 		this.assert(Kernel.equal_question_(Kernel._slash_(six, []),
@@ -198,7 +199,7 @@ var getTests;
 		var n2 = FloatPoint.makeInstance(2.1);
 		this.assert(Kernel.equal_question_(n1, Kernel.conjugate(n1)));
 		this.assert(Kernel.equal_question_(n2, Kernel.conjugate(n2)));
-		this.assert(Kernel.equal_question_(Complex.makeInstance(1, 2), Kernel.conjugate(Complex.makeInstance(1, -2))));
+		this.assert(Kernel.equal_question_(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance( 2)), Kernel.conjugate(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance( -2)))));
 	    },
 	    
 	    testMagnitude : function(){
