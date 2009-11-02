@@ -564,6 +564,7 @@ var plt = plt || {};
     plt.types.Rational.NEGATIVE_ONE = _rationalCache[-1];
     plt.types.Rational.ZERO = _rationalCache[0];
     plt.types.Rational.ONE = _rationalCache[1];
+    plt.types.Rational.TWO = _rationalCache[2];
     
     
     
@@ -1091,11 +1092,11 @@ var plt = plt || {};
 	    return this.r.sin();
 	var iz = this.timesI();
 	var iz_minus = iz.minus();
-	var z2 = plt.types.Complex.makeInstance(plt.types.Rational.ZERO, plt.types.Rational.TWO);
-	
+	var z2 = plt.types.Complex.makeInstance(plt.types.Rational.ZERO,
+						plt.types.Rational.TWO);
 	var exp_minus = plt.types.NumberTower.subtract(iz.exp(), iz_minus.exp());
-	
-	return plt.types.NumberTower.divide(exp_minus, z2);
+	var result = plt.types.NumberTower.divide(exp_minus, z2);
+	return result;
     };
     
     plt.types.Complex.prototype.expt= function(y){

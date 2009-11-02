@@ -1500,8 +1500,6 @@
 (test-nan.0 atan (list 1 +nan.0))
 (test-nan.0 atan (list +nan.0 1))
 
-(printf "here~n")
-(printf "atan ~a~n" (atan -2+1i))
 (test -1178.+173.i  z-round (list (* 1000 (atan -2+1i))))
 
 
