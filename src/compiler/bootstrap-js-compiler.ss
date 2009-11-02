@@ -40,6 +40,12 @@
 (define-runtime-path kernel.js "../../support/js/runtime/kernel.js")
 (define-runtime-path read.js "../../support/js/runtime/read.js")
 
+
+;; write-runtime: -> void
+;; Write out a runtime of all of the files in the MANIFEST
+(define (write-runtime)
+  (write-compiler))
+
   
 
 ;; write-compiler: ->void

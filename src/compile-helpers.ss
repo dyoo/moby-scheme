@@ -6,6 +6,7 @@
          scheme/file
          scheme/class
          scheme/port
+         scheme/runtime-path
          "config.ss"
          "stx-helpers.ss"
          "image-lift.ss"
@@ -14,6 +15,8 @@
          "compiler/permission.ss")
 
 ;; Common helper functions used in the compiler.
+
+(define-runtime-path yui.jar "../support/yuicompressor-2.4.2.jar")
 
 
 
@@ -132,3 +135,28 @@
         (error 'ant "Internal error while running ant: ~a"
                (get-output-string string-error-port)))
       (void))))
+
+
+
+
+;; run-yui-compressor: string -> string
+(define (run-yui-compressor source-code)
+  (let ([get-java-path
+         (lambda ()
+          (find-executable-path "java"))])
+    (let*-values ([(string-error-port) (open-output-string "")]
+                  [(string-output-port) (open-output-string)]
+                  [(a-subprocess inp outp errp)
+                   (subprocess #f #f #f (get-java-path) "-jar" (path->string yui.jar) "--type" "js" )]
+                  [(t1 t2) 
+                   (values (thread (lambda () 
+                                     (copy-port inp string-output-port)))
+                           (thread (lambda ()
+                                     (copy-port errp (current-output-port)#;string-error-port))))])
+      (copy-port (open-input-string source-code) outp)
+      (close-output-port outp)
+      (subprocess-wait a-subprocess)
+      (sync t1)
+      (sync t2)
+      (get-output-string string-output-port))))
+

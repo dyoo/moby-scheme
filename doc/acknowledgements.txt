@@ -1,2 +1,10 @@
 JUnit 4.5: http://junit.org/
 License: Common Public License 1.0
+
+
+YUI Compressor: http://developer.yahoo.com/yui/compressor/
+support/yuicompresor-2.4.2.jar
+
+
+Phonegap http://phonegap.com/
+support/phonegap-fork
