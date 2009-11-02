@@ -250,8 +250,8 @@ plt.world.Kernel = plt.world.Kernel || {};
     // placeImage: image number number scene -> scene
     plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
 	plt.Kernel.check(picture, plt.Kernel.isImage, "place-image", "image", 1);
-	plt.Kernel.check(x, plt.Kernel.isImage, "place-image", "number", 2);
-	plt.Kernel.check(y, plt.Kernel.isImage, "place-image", "number", 3);
+	plt.Kernel.check(x, plt.Kernel.isNumber, "place-image", "number", 2);
+	plt.Kernel.check(y, plt.Kernel.isNumber, "place-image", "number", 3);
 	plt.Kernel.check(aScene, isScene, "place-image", "scene", 4);
 	return aScene.add(picture,
 			  plt.types.NumberTower.toInteger(x),
@@ -275,7 +275,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // Produces true if the thing is considered a color object.
     var isColor = function(thing) {
-	return typeof(colorDb.get(aColor)) != 'undefined';
+	return typeof(colorDb.get(thing)) != 'undefined';
     };
 
 

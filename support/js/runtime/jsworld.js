@@ -323,6 +323,12 @@ plt.world.MobyJsworld = {};
 		return updater(world);
 	    } catch (e) {
 		plt.Kernel.reportError(e);
+		// When something bad happens, shut down 
+		// the world computation.
+		setTimeout(function() { 
+		    plt.world.stimuli.onShutdown(); 
+		},
+			   0);
 		return world;
 	    }
 	}
