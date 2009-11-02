@@ -479,7 +479,19 @@ var plt = plt || {};
 
 	integer_dash_sqrt: function(x) {
 	    check(x, isInteger, "integer-sqrt", "integer", 1);
-	    return plt.types.Rational.makeInstance(x.sqrt().toInteger());
+	    var result = x.sqrt();
+	    if (isRational(result)) {
+		return plt.types.Rational.makeInstance(result.toInteger());
+	    } else if (isReal(result)) {
+		return plt.types.Rational.makeInstance(result.toInteger());
+	    } else {
+		// it must be complex.
+		return plt.types.Complex.makeInstance(
+		    plt.types.Rational.makeInstance(
+			plt.Kernel.real_dash_part(result).toInteger()),
+		    plt.types.Rational.makeInstance(
+			plt.Kernel.imag_dash_part(result).toInteger()));
+	    }
 	},
 	
 	sqr: function(x) {
@@ -786,9 +798,8 @@ var plt = plt || {};
 	    if (plt.types.NumberTower.equal(theta, plt.types.Rational.ZERO)) {
 		return r;
 	    }
-
-	    var x = r.toFloat() * Math.cos(theta.toFloat());
-	    var y = r.toFloat() * Math.sin(theta.toFloat());
+	    var x = plt.types.NumberTower.multiply(r, theta.cos());
+	    var y = plt.types.NumberTower.multiply(r, theta.sin());
 	    return plt.types.Complex.makeInstance(x, y);
 	},
 
@@ -800,7 +811,7 @@ var plt = plt || {};
 	},
 	
 	make_dash_rectangular : function(x, y){
-	    return plt.types.Complex.makeInstance(x.toFloat(), y.toFloat());
+	    return plt.types.Complex.makeInstance(x, y);
 	},
 	
 	quotient : function(x, y){

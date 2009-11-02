@@ -449,6 +449,12 @@ function init() {
 	    this.assert(isEqual(
 		run("+nan.0"),
 		plt.types.FloatPoint.makeInstance(Number.NaN)));
+	},
+
+	testSqrt: function() {
+	    this.assert(isEqual(
+		run("(integer-sqrt -10)"),
+		run("0+3i")));
 	}
 
     });
