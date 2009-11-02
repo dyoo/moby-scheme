@@ -744,13 +744,14 @@ var plt = plt || {};
 
     
     plt.types.FloatPoint.prototype.sqrt = function() {
-	if (this.n < 0)
-	    return plt.types.Complex.makeInstance(
+	if (this.n < 0) {
+	    var result = plt.types.Complex.makeInstance(
 		plt.types.Rational.ZERO,
-		plt.types.FloatPoint.makeInstance(
-		    Math.sqrt(plt.types.NumberTower.subtract(plt.types.Rational.ZERO, this.n))));
-	else
+		plt.types.FloatPoint.makeInstance(Math.sqrt(-this.n)));
+	    return result;
+	} else {
 	    return plt.types.FloatPoint.makeInstance(Math.sqrt(this.n));
+	}
     };
     
     plt.types.FloatPoint.prototype.abs = function() {
@@ -1016,10 +1017,11 @@ var plt = plt || {};
 	// http://en.wikipedia.org/wiki/Square_root#Square_roots_of_negative_and_complex_numbers	
 	var r_plus_x = plt.types.NumberTower.add(this.magnitude(), this.r);
 
-
 	var r = r_plus_x.half().sqrt();
+
 	var i = plt.types.NumberTower.divide(this.i, plt.types.NumberTower.multiply(r_plus_x, plt.types.FloatPoint.makeInstance(2)).sqrt());
 	
+
 	return plt.types.Complex.makeInstance(r, i);
     };
     

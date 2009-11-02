@@ -207,7 +207,7 @@ var getTests;
 		var n2 = FloatPoint.makeInstance(2.1);
 		this.assert(Kernel.equal_question_(n1, Kernel.magnitude(n1)));
 		this.assert(Kernel.equal_question_(n2, Kernel.magnitude(n2)));
-		this.assert(Kernel.equal_question_(Complex.makeInstance(5, 0), Kernel.magnitude(Complex.makeInstance(3, -4))));
+		this.assert(Kernel.equal_question_(Complex.makeInstance(Rational.makeInstance(5),Rational.makeInstance( 0)), Kernel.magnitude(Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance( -4)))));
 	    },
 	    
 	    testComparison : function(){	
@@ -219,7 +219,7 @@ var getTests;
 		this.assert(Kernel._greaterthan__equal_(FloatPoint.makeInstance(2.0),
 							Rational.makeInstance(2,1),
 							[]));
-		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(2.0, 0),
+		this.assert(Kernel._greaterthan__equal_(Complex.makeInstance(FloatPoint.makeInstance(2.0),Rational.makeInstance( 0)),
 							Rational.makeInstance(2,1),
 							[]));
 
@@ -293,17 +293,17 @@ var getTests;
 	    
 	    testLog : function(){
 		this.assert(Kernel.equal_question_(Kernel.log(Rational.ONE), Rational.ZERO));		
-		this.assert(Kernel.equal_question_(Kernel.log(Complex.makeInstance(0,1)), plt.Kernel.pi.toComplex().timesI().half()));
+		this.assert(Kernel.equal_question_(Kernel.log(Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(1))), plt.Kernel.pi.toComplex().timesI().half()));
 		this.assert(Kernel.equal_question_(Kernel.log(FloatPoint.makeInstance(-1)), plt.Kernel.pi.toComplex().timesI()));
 	    },
 	    
 	    testAngle : function(){
-		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(0,1)), PI.half()));
-		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(1,1)), PI.half().half()));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(1))), PI.half()));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance(1))), PI.half().half()));
 		this.assert(Kernel.equal_question_(Kernel.angle(FloatPoint.makeInstance(-1)), PI));
-		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(-1, 1)), PI.multiply(FloatPoint.makeInstance(0.75))));
-		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(-1, -1)), PI.multiply(FloatPoint.makeInstance(-0.75))));
-		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(1, -1)), PI.half().half().minus()));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(Rational.makeInstance(-1),Rational.makeInstance( 1))), PI.multiply(FloatPoint.makeInstance(0.75))));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(Rational.makeInstance(-1),Rational.makeInstance( -1))), PI.multiply(FloatPoint.makeInstance(-0.75))));
+		this.assert(Kernel.equal_question_(Kernel.angle(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance( -1))), PI.half().half().minus()));
 	    },
 	    
 	    testExp : function(){
@@ -317,8 +317,8 @@ var getTests;
 	    
 	    
 	    testExpt : function(){
-		//var i = plt.types.Complex.makeInstance(0, 1);
-		//this.assert(Kernel.equal_question_(Kernel.expt(i, i), Kernel.exp(PI.half().minus())));
+		var i = plt.types.Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance( 1));
+		this.assert(Kernel.equal_question_(Kernel.expt(i, i), Kernel.exp(PI.half().minus())));
 		this.assert(Kernel.equal_question_(Kernel.expt(FloatPoint.makeInstance(2), FloatPoint.makeInstance(3)), FloatPoint.makeInstance(8)));
 	    },
 	    
@@ -350,7 +350,7 @@ var getTests;
 
 	    testSqrt : function(){
 		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(4)), FloatPoint.makeInstance(2)));
-		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(-1)), Complex.makeInstance(0,1)));
+		this.assert(Kernel.equal_question_(Kernel.sqrt(FloatPoint.makeInstance(-1)), Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(1))));
 	    },
 	    
 	    testAcos : function(){
@@ -383,7 +383,7 @@ var getTests;
 	    testMakePolar : function() {
 		this.assert(Kernel.equal_question_(Kernel.make_dash_polar(Rational.makeInstance(5),
 									  Rational.makeInstance(0)),
-						   Complex.makeInstance(5, 0)));
+						   Complex.makeInstance(Rational.makeInstance(5),Rational.makeInstance( 0))));
 		var n = Kernel.make_dash_polar(Rational.makeInstance(5),
 					       PI);
 		var delta = FloatPoint.makeInstance(0.0000001);
@@ -400,11 +400,11 @@ var getTests;
 		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular
 						   (Rational.makeInstance(4),
 						    Rational.makeInstance(3)),
-						   Complex.makeInstance(4, 3)));		
+						   Complex.makeInstance(Rational.makeInstance(4),Rational.makeInstance( 3))));		
 		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular
 						   (Rational.makeInstance(5),
 						    Rational.makeInstance(4)),
-						   Complex.makeInstance(5, 4)));
+						   Complex.makeInstance(Rational.makeInstance(5),Rational.makeInstance( 4))));
 	    },
 
 	    
@@ -467,7 +467,7 @@ var getTests;
 		this.assert(Kernel.odd_question_(Rational.ONE));
 		this.assert(! Kernel.odd_question_(Rational.ZERO));
 		this.assert(Kernel.odd_question_(FloatPoint.makeInstance(1)));
-		this.assert(Kernel.odd_question_(Complex.makeInstance(1, 0)));
+		this.assert(Kernel.odd_question_(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance( 0))));
 		this.assert(Kernel.odd_question_(Rational.makeInstance(-1, 1)));
 	    },
 	    
@@ -482,14 +482,14 @@ var getTests;
 		this.assert(Kernel.even_question_(Rational.ZERO));
 		this.assert(! Kernel.even_question_(Rational.ONE));
 		this.assert(Kernel.even_question_(FloatPoint.makeInstance(2)));
-		this.assert(Kernel.even_question_(Complex.makeInstance(2, 0)));
+		this.assert(Kernel.even_question_(Complex.makeInstance(Rational.makeInstance(2),Rational.makeInstance( 0))));
 	    },
 	    
 	    testPositive_question_ : function(){
 		this.assert(Kernel.positive_question_(Rational.ONE));
 		this.assert(!Kernel.positive_question_(Rational.ZERO));
 		this.assert(Kernel.positive_question_(FloatPoint.makeInstance(1.1)));
-		this.assert(Kernel.positive_question_(Complex.makeInstance(1,0)));
+		this.assert(Kernel.positive_question_(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance(0))));
 	    },
 	    
 	    testNegative_question_ : function(){
@@ -497,50 +497,50 @@ var getTests;
 		this.assert(!Kernel.negative_question_(Rational.ONE));
 		this.assert(!Kernel.negative_question_(Rational.ZERO));
 		this.assert(!Kernel.negative_question_(FloatPoint.makeInstance(1.1)));
-		this.assert(!Kernel.negative_question_(Complex.makeInstance(1,0)));
+		this.assert(!Kernel.negative_question_(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance(0))));
 	    },
 	    
 	    testCeiling : function(){
 		this.assert(Kernel.equal_question_(Kernel.ceiling(Rational.ONE), Rational.ONE));
 		this.assert(Kernel.equal_question_(Kernel.ceiling(PI), FloatPoint.makeInstance(4)));
-		this.assert(Kernel.equal_question_(Kernel.ceiling(Complex.makeInstance(3.1,0)), FloatPoint.makeInstance(4)));
+		this.assert(Kernel.equal_question_(Kernel.ceiling(Complex.makeInstance(FloatPoint.makeInstance(3.1),Rational.makeInstance(0))), FloatPoint.makeInstance(4)));
 	    },
 	    
 	    testFloor : function(){
 		this.assert(Kernel.equal_question_(Kernel.floor(Rational.ONE), Rational.ONE));
 		this.assert(Kernel.equal_question_(Kernel.floor(PI), FloatPoint.makeInstance(3)));
-		this.assert(Kernel.equal_question_(Kernel.floor(Complex.makeInstance(3.1,0)), FloatPoint.makeInstance(3)));
+		this.assert(Kernel.equal_question_(Kernel.floor(Complex.makeInstance(FloatPoint.makeInstance(3.1),Rational.makeInstance(0))), FloatPoint.makeInstance(3)));
 	    },
 	    
 	    testImag_dash_part : function(){
 		this.assert(Kernel.equal_question_(Kernel.imag_dash_part(Rational.ONE), Rational.ZERO));
 		this.assert(Kernel.equal_question_(Kernel.imag_dash_part(PI), Rational.ZERO));
-		this.assert(Kernel.equal_question_(Kernel.imag_dash_part(Complex.makeInstance(0,1)), Rational.ONE));
+		this.assert(Kernel.equal_question_(Kernel.imag_dash_part(Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(1))), Rational.ONE));
 	    },
 	    
 	    testReal_dash_part : function(){
 		this.assert(Kernel.equal_question_(Kernel.real_dash_part(Rational.ONE), Rational.ONE));
 		this.assert(Kernel.equal_question_(Kernel.real_dash_part(PI), PI));
-		this.assert(Kernel.equal_question_(Kernel.real_dash_part(Complex.makeInstance(0,1)), Rational.ZERO));
+		this.assert(Kernel.equal_question_(Kernel.real_dash_part(Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(1))), Rational.ZERO));
 	    },
 	    
 	    testInteger_question_ : function(){
 		this.assert(Kernel.integer_question_(Rational.ONE));
 		this.assert(Kernel.integer_question_(FloatPoint.makeInstance(3.0)));
 		this.assert(!Kernel.integer_question_(FloatPoint.makeInstance(3.1)));
-		this.assert(Kernel.integer_question_(Complex.makeInstance(3,0)));
-		this.assert(!Kernel.integer_question_(Complex.makeInstance(3.1,0)));
+		this.assert(Kernel.integer_question_(Complex.makeInstance(Rational.makeInstance(3),Rational.makeInstance(0))));
+		this.assert(!Kernel.integer_question_(Complex.makeInstance(FloatPoint.makeInstance(3.1),Rational.makeInstance(0))));
 	    },
 	    
 	    testMake_dash_rectangular: function(){
-		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular(Rational.ONE, Rational.ONE), Complex.makeInstance(1,1)));
+		this.assert(Kernel.equal_question_(Kernel.make_dash_rectangular(Rational.ONE, Rational.ONE), Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance(1))));
 	    },
 	    
 	    testMaxAndMin : function(){
 		var n1 = FloatPoint.makeInstance(-1);
 		var n2 = Rational.ZERO;
 		var n3 = Rational.ONE;
-		var n4 = Complex.makeInstance(4,0);
+		var n4 = Complex.makeInstance(Rational.makeInstance(4),Rational.makeInstance(0));
 		this.assert(Kernel.equal_question_(n4, Kernel.max(n1, [n2,n3,n4])));
 		this.assert(Kernel.equal_question_(n1, Kernel.min(n1, [n2,n3,n4])));
 
@@ -699,8 +699,8 @@ var getTests;
 	    testReal_question_ : function(){
 		this.assert(Kernel.real_question_(PI));
 		this.assert(Kernel.real_question_(Rational.ONE));
-		this.assert(!Kernel.real_question_(Complex.makeInstance(0,1)));
-		this.assert(Kernel.real_question_(Complex.makeInstance(1,0)));
+		this.assert(!Kernel.real_question_(Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(1))));
+		this.assert(Kernel.real_question_(Complex.makeInstance(Rational.makeInstance(1),Rational.makeInstance(0))));
 		this.assert(!Kernel.real_question_(plt.types.Empty.EMPTY));
 		this.assert(!Kernel.real_question_(String.makeInstance("hi")));
 		this.assert(!Kernel.real_question_(Symbol.makeInstance('h')));
@@ -733,7 +733,7 @@ var getTests;
 	    testZero_question_ : function(){
 		this.assert(Kernel.zero_question_(Rational.ZERO));
 		this.assert(!Kernel.zero_question_(Rational.ONE));
-		this.assert(Kernel.zero_question_(Complex.makeInstance(0,0)));
+		this.assert(Kernel.zero_question_(Complex.makeInstance(Rational.makeInstance(0),Rational.makeInstance(0))));
 	    },
 	    
 	    testBoolean_equal__question_ : function(){
