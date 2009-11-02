@@ -938,7 +938,13 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.toWrittenString = function() {
+	if (plt.types.NumberTower.greaterThanOrEqual(
+	    this.i,
+	    plt.types.Rational.ZERO)) {
         return plt.Kernel.toWrittenString(this.r) + "+" + plt.Kernel.toWrittenString(this.i)+"i";
+	} else {
+            return plt.Kernel.toWrittenString(this.r) + plt.Kernel.toWrittenString(this.i)+"i";
+	}
     };
 
     plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;
@@ -1631,7 +1637,8 @@ var plt = plt || {};
 
 
     var isImage = function(thing) {
-	return (thing != null && thing != undefined && thing instanceof BaseImage);
+	return ((thing != null) && (thing != undefined)
+		&& (thing instanceof BaseImage));
     }
 
 
@@ -2610,7 +2617,11 @@ var plt = plt || {};
 		if (plt.types.NumberTower.equal(plt.Kernel.length(stxList),
 						plt.types.Rational.ONE)) {
 		    var result = stx_dash_e(stxList.first());
-		    return result;
+		    if (isNumber(result)) {
+			return result;
+		    } else {
+			return plt.types.Logic.FALSE;
+		    }
 		} else {
 		    return plt.types.Logic.FALSE;
 		}
@@ -3524,6 +3535,7 @@ var plt = plt || {};
 	for (attr in this) {
 	    aCopy[attr] = this[attr];
 	}
+	aCopy.__proto__ = this.__proto__;
 	aCopy.pinholeX = x;
 	aCopy.pinholeY = y;
 	return aCopy;
@@ -3558,24 +3570,18 @@ var plt = plt || {};
 	var width = plt.world.Kernel.imageWidth(that).toInteger();
 	var height = plt.world.Kernel.imageHeight(that).toInteger();
 	var canvas = plt.Kernel._makeCanvas(width, height);
-	var rendered = false;
-	var doRender = function() {
-	    if (! rendered)  {
- 		var ctx = canvas.getContext("2d");
-		that.render(ctx, 0, 0) 
-		rendered = true;
-	    }
-	};
-	// HACK/KLUDGE: we're attaching a method afterAttach that will
-	// get called as soon as we attach this canvas to the rest of
-	// the dom.
-	// 
-	// afterAttach might get called in one of two ways: either by
-	// the event DomNodeInserted (supported in Mozilla), or
-	// the undocumented afterAttach hook which we call deep within
-	// jsworld.
-	attachEvent(canvas, "DomNodeInserted", doRender);
-	canvas.afterAttach = doRender;
+
+	// KLUDGE: some of the rendering functions depend on a context
+	// where the canvas is attached to the DOM tree.  So we temporarily
+	// make it invisible, attach it to the tree, render, and then rip it out
+	// again.
+	var oldDisplay = canvas.style.display;
+	canvas.style.setProperty("display", "none", "");
+	document.body.appendChild(canvas);
+ 	var ctx = canvas.getContext("2d");
+	that.render(ctx, 0, 0) 
+	document.body.removeChild(canvas);
+	canvas.style.removeProperty("display");
 
 	return canvas;
     };
