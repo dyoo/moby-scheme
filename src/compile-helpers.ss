@@ -1,15 +1,17 @@
 #lang scheme/base
 
-(provide (all-defined-out))
+
 
 (require scheme/gui/base
          scheme/file
          scheme/class
          scheme/port
          scheme/runtime-path
+         scheme/contract
          "config.ss"
          "stx-helpers.ss"
          "image-lift.ss"
+         "compiler/stx.ss"
          "compiler/pinfo.ss"
          "compiler/env.ss"
          "compiler/permission.ss")
@@ -139,8 +141,8 @@
 
 
 
-;; run-yui-compressor: string -> string
-(define (run-yui-compressor source-code)
+;; yui-compress: string -> string
+(define (yui-compress source-code)
   (let ([get-java-path
          (lambda ()
           (find-executable-path "java"))])
@@ -160,3 +162,15 @@
       (sync t2)
       (get-output-string string-output-port))))
 
+
+
+(provide/contract
+ [parse-text-as-program (((is-a?/c text%)) ((or/c string? false/c)) . ->* .  (listof stx?))]
+ [get-permissions (pinfo? . -> . (listof permission?))]
+ [get-on-start-code (pinfo? . -> . string?)]
+ [get-on-pause-code (pinfo? . -> . string?)]
+ [get-on-destroy-code (pinfo? . -> . string?)]
+ [lift-images-to-directory ((is-a?/c text%) path? . -> . (listof named-bitmap?))]
+ [open-beginner-program (path-string? . -> . (is-a?/c text%))]
+ [run-ant-build.xml (path? string? . -> . any)]
+ [yui-compress (string? . -> . string?)])

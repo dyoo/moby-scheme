@@ -4,6 +4,7 @@
          scheme/port
          "stx.ss"
          "../stx-helpers.ss"
+         "../compile-helpers.ss"
          "beginner-to-javascript.ss"
          "helpers.ss")
 
@@ -13,6 +14,14 @@
 ;; * Concatenates all the required modules into a single file
 ;; * Compiles the javascript compiler with the javascript compiler.
 
+
+
+
+(define-runtime-path moby-runtime-path
+  "../../support/js/runtime")
+
+(define-runtime-path runtime-manifest-path
+  "../../support/js/runtime/MANIFEST")
 
 
 (define-runtime-path
@@ -42,9 +51,13 @@
 
 
 ;; write-runtime: -> void
-;; Write out a runtime of all of the files in the MANIFEST
+;; Write out a runtime of all of the files in the MANIFEST, compressed by the YUI compressor.
 (define (write-runtime)
-  (write-compiler))
+  (write-compiler)
+  (let* ([runtime-source (get-runtime-source)]
+         [compressed-runtime-source (yui-compress runtime-source)])
+    (void)))
+
 
   
 
@@ -226,3 +239,12 @@
          (hash-set! ht (first elts) #t)
          (cons (first elts)
                (loop (rest elts)))]))))
+
+
+
+(define (get-runtime-source)
+  (call-with-input-file runtime-manifest-path
+    (lambda (ip)
+      (for/list ([line (in-lines ip)])
+        (let ([fip (open-input-file (build-path moby-runtime-path line))])
+          (void))))))
