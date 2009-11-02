@@ -198,7 +198,7 @@ var plt = plt || {};
     };
 
 
-    function appendChild(parent, child) {
+    var appendChild = function(parent, child) {
 	parent.appendChild(child);
 	if (child.afterAttach) { child.afterAttach(); }
     }
@@ -280,7 +280,7 @@ var plt = plt || {};
     
     // Rationals
     
-    function gcd(a, b) {
+    var gcd = function(a, b) {
 	var t;
 	if (isNaN(a) || !isFinite(a)) {
 	    throw new plt.Kernel.MobyRuntimeError("not a number: " + a);
@@ -1303,7 +1303,7 @@ var plt = plt || {};
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
     var heir = function(p) {
-	function f() {}
+	var f = function() {}
 	f.prototype = p;
 	return new f();
     }
@@ -2785,7 +2785,7 @@ var plt = plt || {};
     };
 
 
-    function HashTable(inputHash) {
+    var HashTable = function(inputHash) {
 	this.hash = inputHash;
     }
 
@@ -3280,27 +3280,27 @@ var plt = plt || {};
     
     // Posns
     
-    function posn(x,y) { 
+    var posn = function(x,y) { 
 	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
     }
 
     posn.prototype = heir(plt.Kernel.Struct.prototype);
 
-    function make_dash_posn(id0,id1) { 
+    var make_dash_posn = function(id0,id1) { 
 	return new posn(id0,id1); 
     }
 
-    function posn_dash_x(obj) { 
+    var posn_dash_x = function(obj) { 
 	check(obj, posn_question_, "posn-x", "posn", 1);
 	return obj._fields[0]; 
     }
 
-    function posn_dash_y(obj) { 
+    var posn_dash_y = function(obj) { 
 	check(obj, posn_question_, "posn-y", "posn", 1);
 	return obj._fields[1]; 
     }
 
-    function posn_question_(obj) { 
+    var posn_question_ = function(obj) { 
         return obj != null && obj != undefined && obj instanceof posn ; 
     }
     
@@ -3327,7 +3327,7 @@ var plt = plt || {};
 
 
     // Base class for all images.
-    function BaseImage(pinholeX, pinholeY) {
+    var BaseImage = function(pinholeX, pinholeY) {
 	this.pinholeX = pinholeX;
 	this.pinholeY = pinholeY;
     }
@@ -3863,11 +3863,11 @@ plt.reader = {};
 	var unquoteSplicingSymbol = plt.types.Symbol.makeInstance("unquote-splicing");
 	var empty = plt.types.Empty.EMPTY;
 
-	function isType(type) {
+	var isType = function(type) {
 	    return (tokens.length > 0 && tokens[0][0] == type);
 	}
 	
-	function eat(expectedType) {
+	var eat = function(expectedType) {
 	    if (tokens.length == 0) {
 		if (lastToken) { 
 		    throw new plt.Kernel.MobyParserError(
@@ -3939,7 +3939,7 @@ plt.reader = {};
 		    var decimalMatch = text.match("^(.*)[.](.*)$");
 		    return plt.types.NumberTower.add(
 			plt.types.Rational.makeInstance(
-			    parseInt(decimalMatch[1])),
+			    parseInt(decimalMatch[1] || "0")),
 			plt.types.Rational.makeInstance(
 			    parseInt(decimalMatch[2]), 
 			    Math.pow(10, decimalMatch[2].length)));

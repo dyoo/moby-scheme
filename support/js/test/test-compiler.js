@@ -343,7 +343,7 @@ function init() {
 
 	    // Check for binding symbol more than once.
 	    this.assertRaise("MobySyntaxError",
-			     function() { run("(let ((x 42)(x 43)) x)") });
+			     function() { run("(let ((x 42) (x 43)) x)") });
             
 	},
 
