@@ -391,6 +391,14 @@ var plt = plt || {};
     plt.types.Rational.prototype.toInteger = function() {
 	return Math.floor(this.n / this.d);  
     };
+
+    plt.types.Rational.prototype.numerator = function() {
+	return plt.types.Rational.makeInstance(this.n);
+    };
+
+    plt.types.Rational.prototype.denominator = function() {
+	return plt.types.Rational.makeInstance(this.d);
+    };
     
     plt.types.Rational.prototype.toFloat = function() {
 	return this.n / this.d;
@@ -639,11 +647,11 @@ var plt = plt || {};
     };
 
     plt.types.FloatPoint.prototype.isRational = function() {
-        return false;
+        return this.isFinite() && this.n == Math.floor(this.n);
     };
 
     plt.types.FloatPoint.prototype.isInteger = function() {
-	return this.n == Math.floor(this.n);
+	return this.isFinite() && this.n == Math.floor(this.n);
     };
 
     plt.types.FloatPoint.prototype.isReal = function() {
@@ -721,6 +729,27 @@ var plt = plt || {};
 	return Math.floor(this.n);  
     };
     
+    plt.types.FloatPoint.prototype.numerator = function() {
+	var stringRep = this.n.toString();
+	var match = stringRep.match(/^(.*)\.(.*)$/);
+	if (match) {
+	    return plt.types.FloatPoint.makeInstance(parseFloat(match[1] + match[2]));
+	} else {
+	    return this;
+	}
+    };
+
+    plt.types.FloatPoint.prototype.denominator = function() {
+	var stringRep = this.n.toString();
+	var match = stringRep.match(/^(.*)\.(.*)$/);
+	if (match) {
+	    return plt.types.FloatPoint.makeInstance(Math.pow(10, match[2].length));
+	} else {
+	    return plt.types.FloatPoint.makeInstance(1.0);
+	}
+    };
+
+
     plt.types.FloatPoint.prototype.toFloat = function() {
 	return this.n;
     };
@@ -974,6 +1003,20 @@ var plt = plt || {};
 	    throw new plt.Kernel.MobyRuntimeError("toInteger: expects argument of type real number");
 	return this.r.toInteger();
     };
+
+    plt.types.Complex.prototype.numerator = function() {
+	if (!this.isReal())
+	    throw new plt.Kernel.MobyRuntimeError("numerator: can only be applied to real number");
+	return this.n.numerator();
+    };
+    
+
+    plt.types.Complex.prototype.denominator = function() {
+	if (!this.isReal())
+	    throw new plt.Kernel.MobyRuntimeError("floor: can only be applied to real number");
+	return this.n.denominator();
+    };
+
     
     plt.types.Complex.prototype.toFloat = function(){
 	if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO).valueOf())
@@ -1717,8 +1760,8 @@ var plt = plt || {};
 	},
 	
 	equal_question_ : function(x, y) {
-	    if (plt.Kernel.number_question_(x).valueOf() && 
-		plt.Kernel.number_question_(y).valueOf()) {
+	    if (plt.Kernel.number_question_(x) && 
+		plt.Kernel.number_question_(y)) {
 		if ("isEqual" in x) {
 		    return plt.types.NumberTower.equal(x, y);
 		} else if ("isEqual" in y) {
@@ -2110,12 +2153,12 @@ var plt = plt || {};
 	
 	denominator : function(x) {
 	    check(x, isRational, "denominator", "rational", 1);
-	    return plt.types.Rational.makeInstance(x.d, 1);
+	    return x.denominator();
 	},
 	
 	numerator : function(x){
 	    check(x, isRational, "numerator", "rational", 1);
-	    return plt.types.Rational.makeInstance(x.n, 1);
+	    return x.numerator();
 	},
 	
 	odd_question_ : function(x){
@@ -2162,9 +2205,7 @@ var plt = plt || {};
 
 	integer_question_ : function(x){
 	    // check(x, isNumber, "integer?", "number", 1);
-	    return (isNumber(x) &&
-		    plt.types.NumberTower.isFinite(x) && 
-		    this.equal_question_(x, x.floor()));
+	    return (isInteger(x));
 	},
 	
 	make_dash_rectangular : function(x, y){
