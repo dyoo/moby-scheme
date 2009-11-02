@@ -133,8 +133,11 @@ function init() {
 	testReadFloat: function() {
 	    this.assert(schemeIsEqual(read("0.1"),
 				      cons(makeFloat(0.1), empty)));
+	    this.assert(schemeIsEqual(read(".1"),
+				      cons(makeFloat(0.1), empty)));
 	},
 	
+
 
 	testReadExact: function() {
 	    this.assert(schemeIsEqual(read("#e0.1"),

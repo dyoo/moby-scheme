@@ -209,7 +209,7 @@ plt.reader = {};
 		    var decimalMatch = text.match("^(.*)[.](.*)$");
 		    return plt.types.NumberTower.add(
 			plt.types.Rational.makeInstance(
-			    parseInt(decimalMatch[1])),
+			    parseInt(decimalMatch[1] || "0")),
 			plt.types.Rational.makeInstance(
 			    parseInt(decimalMatch[2]), 
 			    Math.pow(10, decimalMatch[2].length)));
