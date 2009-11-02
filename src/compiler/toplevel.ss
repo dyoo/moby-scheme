@@ -112,7 +112,6 @@
                      (min 1 true)
                      (modulo 2)
                      (negative? 1)
-                     (number->string 1)
                      (number? 1)
                      (numerator 1)
                      (odd? 1)

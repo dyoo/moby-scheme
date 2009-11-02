@@ -941,7 +941,7 @@ var plt = plt || {};
 
 
     plt.types.Complex.prototype.isFinite = function() {
-	return true;
+	return this.r.isFinite() && this.i.isFinite();
     }
 
 
@@ -1060,6 +1060,13 @@ var plt = plt || {};
     
     plt.types.Complex.prototype.multiply = function(other){
 
+	// If the other value is real, just do primitive division
+	if (other.isReal()) {
+	    return plt.types.Complex.makeInstance(
+		plt.types.NumberTower.multiply(this.r, other.r),
+		plt.types.NumberTower.multiply(this.i, other.r));
+	}
+
 	var r = plt.types.NumberTower.subtract(
 	    plt.types.NumberTower.multiply(this.r, other.r),
 	    plt.types.NumberTower.multiply(this.i, other.i));
@@ -1073,6 +1080,14 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.divide = function(other){
+	// If the other value is real, just do primitive division
+	if (other.isReal()) {
+	    return plt.types.Complex.makeInstance(
+		plt.types.NumberTower.divide(this.r, other.r),
+		plt.types.NumberTower.divide(this.i, other.r));
+	}
+
+
 	var con = other.conjugate();
 	var up =  plt.types.NumberTower.multiply(this, con).toComplex();
 
@@ -1264,7 +1279,6 @@ var plt = plt || {};
     //////////////////////////////////////////////////////////////////////
     // NumberTower.
     // 
-    // Currently only support Rational and Floating.
     plt.types.NumberTower = {};
     
     
