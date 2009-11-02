@@ -336,6 +336,10 @@ var plt = plt || {};
 	    this.d == other.d;
     };
 
+    plt.types.Rational.prototype.isInteger = function() { 
+	return this.d == 1;
+    }
+    
     plt.types.Rational.prototype.isRational = function() {
         return true;
     };
@@ -633,6 +637,10 @@ var plt = plt || {};
         return false;
     };
 
+    plt.types.FloatPoint.prototype.isInteger = function() {
+	return this.n == Math.floor(this.n);
+    };
+
     plt.types.FloatPoint.prototype.isReal = function() {
 	return true;
     };
@@ -859,7 +867,17 @@ var plt = plt || {};
     // Constructs a complex number from two basic number r and i.  r and i can
     // either be plt.type.Rational or plt.type.FloatPoint.
     plt.types.Complex.makeInstance = function(r, i){
-	return new plt.types.Complex(r, i);
+	if (typeof(r) == 'number') {
+	    r = (r == Math.floor(r) ? plt.types.Rational.makeInstance(r) :
+		 plt.types.FloatPoint.makeInstance(r));
+	}
+	if (typeof(i) == 'number') {
+	    i = (i == Math.floor(i) ? plt.types.Rational.makeInstance(i) :
+		 plt.types.FloatPoint.makeInstance(i));
+	}
+
+	var result = new plt.types.Complex(r, i);
+	return result;
     };
     
     plt.types.Complex.prototype.toWrittenString = function() {
@@ -877,6 +895,10 @@ var plt = plt || {};
 
     plt.types.Complex.prototype.isRational = function() {
         return false;
+    };
+
+    plt.types.Complex.prototype.isInteger = function() {
+	return this.r.isInteger() && plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO);
     };
 
     plt.types.Complex.prototype.toExact = function() { 

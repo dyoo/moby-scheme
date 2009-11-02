@@ -316,7 +316,7 @@ plt.reader = {};
 		var b = parseBasicNumber(complexMatch[3], exactness);
 		// FIXME: Complex needs to be changed so it takes in either
 		// exact or inexact basic values.
-		return makeAtom(plt.types.Complex.makeInstance(a, b));
+	        return makeAtom(plt.types.Complex.makeInstance(a, b));
 
 	    case 'string':
 		var t = eat('string');

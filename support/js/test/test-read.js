@@ -319,6 +319,9 @@ function init() {
 	    this.assert(schemeIsEqual(read("-1i"),
 				      cons(plt.types.Complex.makeInstance(0, -1), empty)));
 
+	    this.assert(schemeIsEqual(read("0+3i"),
+				      cons(plt.types.Complex.makeInstance(0, 3), empty)));
+
 	    this.assert(schemeIsEqual(read("0+1i"),
 				      cons(plt.types.Complex.makeInstance(0, 1), empty)));
 

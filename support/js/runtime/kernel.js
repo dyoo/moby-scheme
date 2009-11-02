@@ -146,31 +146,25 @@ var plt = plt || {};
     }
 
     var isRational = function(x) {
-	return x != null && x != undefined && x instanceof plt.types.Rational;
+	return isNumber(x) && x.isRational();
     }
 
 
     var isComplex = function(x) {
-	return x != null && x != undefined && (x instanceof plt.types.Complex || 
-					       x instanceof plt.types.Rational ||
-					       x instanceof plt.types.FloatPoint);
-    }
+	return isNumber(x);}
 
     var isFunction = function(x) {
 	return typeof(x) == 'function';
     }
 
-
     // Returns true if x is an integer.
     var isInteger = function(x) {
-	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor());
+	return (isNumber(x) && x.isInteger());
     }
 
     var isNatural = function(x) {
-	return x != null && x != undefined && isNumber(x) && plt.types.NumberTower.equal(x, x.floor()) && x.toInteger() >= 0;
+	return isNumber(x) && x.isInteger() && x.toInteger() >= 0;
     }
-
-
 
 
     // isAlphabeticString: string -> boolean
@@ -485,12 +479,13 @@ var plt = plt || {};
 	    } else if (isReal(result)) {
 		return plt.types.Rational.makeInstance(result.toInteger());
 	    } else {
+
 		// it must be complex.
 		return plt.types.Complex.makeInstance(
-		    plt.types.Rational.makeInstance(
-			plt.Kernel.real_dash_part(result).toInteger()),
-		    plt.types.Rational.makeInstance(
-			plt.Kernel.imag_dash_part(result).toInteger()));
+		    plt.types.Rational.makeInstance
+		    (plt.Kernel.real_dash_part(result).toInteger()),
+		    plt.types.Rational.makeInstance
+		    (plt.Kernel.imag_dash_part(result).toInteger()));
 	    }
 	},
 	
@@ -815,8 +810,8 @@ var plt = plt || {};
 	},
 	
 	quotient : function(x, y){
-	    check(x, isNumber, "quotient", "number", 1);
-	    check(y, isNumber, "quotient", "number", 2);
+	    check(x, isInteger, "quotient", "integer", 1);
+	    check(y, isInteger, "quotient", "integer", 2);
 	    var div = plt.types.NumberTower.divide(x,y);
 	    if (plt.Kernel.positive_question_(div)) {
 		return plt.types.Rational.makeInstance(div.floor().toInteger(),
