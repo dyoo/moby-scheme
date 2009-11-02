@@ -15,7 +15,7 @@ plt.world = plt.world || {};
     //
     // Processes a stimuli by compute the effect and applying it, and
     // computing a new world to replace the old.
-    function doStimuli(computeEffectF, computeWorldF, restArgs) {
+    var doStimuli = function(computeEffectF, computeWorldF, restArgs) {
 	var effectUpdaters = [];
 	change(function(w) {
 	    var args = [w].concat(restArgs);
@@ -76,7 +76,7 @@ plt.world = plt.world || {};
     stimuli.onKey = function(e) {
 	// getKeyCodeName: keyEvent -> String
 	// Given an event, try to get the name of the key.
-	function getKeyCodeName(e) {
+	var getKeyCodeName = function(e) {
 	    var code = e.charCode || e.keyCode;
 	    var keyname;
 	    if (code == 37) {
@@ -142,16 +142,16 @@ plt.world = plt.world || {};
     // Helpers
     var flt = plt.types.FloatPoint.makeInstance;
     
-    function lookup(k) {
+    var lookup = function(k) {
 	return plt.world.config.CONFIG.lookup(k);
     }
 
-    function change(f) {
+    var change = function(f) {
 	lookup('changeWorld')(f);
     }
 
     // applyEffect: compound-effect: (arrayof (world -> world))
-    function applyEffect(e) {
+    var applyEffect = function(e) {
 	return plt.world.Kernel.applyEffect(e);
     }
 

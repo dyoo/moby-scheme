@@ -13,7 +13,7 @@ plt.world.config = plt.world.config || {};
 
     // augment: hash hash -> hash
     // Functionally extend a hashtable with another one.
-    function augment(o, a) {
+    var augment = function(o, a) {
 	var oo = {};
 	for (var e in o) {
 	    oo[e] = o[e];
@@ -26,7 +26,7 @@ plt.world.config = plt.world.config || {};
 
 
 
-    function WorldConfig() {
+    var WorldConfig = function() {
 	// The following handler values are initially false until they're updated
 	// by configuration.
       
@@ -132,7 +132,7 @@ plt.world.config = plt.world.config || {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function getNoneEffect() {
+    var getNoneEffect = function() {
 	return make_dash_effect_colon_none();
     }
 

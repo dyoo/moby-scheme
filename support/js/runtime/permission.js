@@ -8,39 +8,39 @@ var plt = plt || {};
 
 
 
-    function isLocationP(p) {
+    var isLocationP = function(p) {
 	return permission_colon_location_question_(p);
     }
 
-    function isSendSmsP(p) {
+    var isSendSmsP = function(p) {
 	return permission_colon_send_dash_sms_question_(p);
     }
 
-    function isReceiveSmsP(p) {
+    var isReceiveSmsP = function(p) {
 	return permission_colon_receive_dash_sms_question_(p);
     }
 
-    function isTiltP(p) {
+    var isTiltP = function(p) {
 	return permission_colon_tilt_question_(p);
     }
 
-    function isShakeP(p) {
+    var isShakeP = function(p) {
 	return permission_colon_shake_question_(p);
     }
 
-    function isInternetP(p) {
+    var isInternetP = function(p) {
 	return permission_colon_internet_question_(p);
     }
 
-    function isTelephonyP(p) {
+    var isTelephonyP = function(p) {
 	return permission_colon_telephony_question_(p);
     }
 
-    function isWakeLockP(p) {
+    var isWakeLockP = function(p) {
 	return permission_colon_wake_dash_lock_question_(p);
     }
 
-    function isOpenImageUrlP(p) {
+    var isOpenImageUrlP = function(p) {
 	return permission_colon_open_dash_image_dash_url_question_(p);
     }
 

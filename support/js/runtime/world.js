@@ -13,7 +13,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
     var heir = function(p) {
-	function f() {}
+	var f = function() {}
 	f.prototype = p;
 	return new f();
     }
@@ -139,6 +139,12 @@ plt.world.Kernel = plt.world.Kernel || {};
     // register other reactive functions (timer tick, key press, etc.) which
     // will change the world.
     plt.world.Kernel.bigBang = function(width, height, aWorld, handlers) {
+	plt.Kernel.check(width, plt.Kernel.isNumber, "big-bang", "number", 1);
+	plt.Kernel.check(height, plt.Kernel.isNumber, "big-bang", "number", 2);
+	plt.Kernel.arrayEach(args, function(x, i) { 
+	    plt.Kernel.check(x, plt.Kernel.isFunction, "big-bang", "handler", i+4) });
+	
+
 	var i;
 	var newWindow = getBigBangWindow(width, height);
 	var canvas = 
@@ -230,17 +236,23 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     plt.world.Kernel.imageWidth = function(thing) {
+	plt.Kernel.check(thing, plt.Kernel.isImage, "image-width", "image", 1);
 	return plt.types.Rational.makeInstance(thing.getWidth(), 1);
     };
 
 
     plt.world.Kernel.imageHeight = function(thing) {
+	plt.Kernel.check(thing, plt.Kernel.isImage, "image-height", "image", 1);
 	return plt.types.Rational.makeInstance(thing.getHeight(), 1);
     };
 
 
     // placeImage: image number number scene -> scene
     plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
+	plt.Kernel.check(picture, plt.Kernel.isImage, "place-image", "image", 1);
+	plt.Kernel.check(x, plt.Kernel.isImage, "place-image", "number", 2);
+	plt.Kernel.check(y, plt.Kernel.isImage, "place-image", "number", 3);
+	plt.Kernel.check(aScene, isScene, "place-image", "scene", 4);
 	return aScene.add(picture,
 			  plt.types.NumberTower.toInteger(x),
 			  plt.types.NumberTower.toInteger(y));
@@ -258,12 +270,21 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
+
+    // isColor: any -> boolean
+
+    // Produces true if the thing is considered a color object.
+    var isColor = function(thing) {
+	return typeof(colorDb.get(aColor)) != 'undefined';
+    };
+
+
+
     // text: string number color -> TextImage
     plt.world.Kernel.text = function(aString, aSize, aColor) {
 	plt.Kernel.check(aString, plt.Kernel.isString, "text", "string", 1);
 	plt.Kernel.check(aSize, plt.Kernel.isNumber, "text", "number", 2);
-
-	// FIXME: check the color type.
+	plt.Kernel.check(aColor, isColor, "text", "color", 3);
 
 	if (colorDb.get(aColor)) {
 	    aColor = colorDb.get(aColor);
@@ -278,8 +299,9 @@ plt.world.Kernel = plt.world.Kernel || {};
     // circle: number style color -> TextImage
     plt.world.Kernel.circle = function(aRadius, aStyle, aColor) {
 	plt.Kernel.check(aRadius, plt.Kernel.isNumber, "circle", "number", 1);
-	plt.Kernel.check(aStyle, plt.Kernel.isString, "text", "string", 2);
-	// FIXME: check the color type
+	plt.Kernel.check(aStyle, plt.Kernel.isString, "circle", "string", 2);
+	plt.Kernel.check(aColor, isColor, "circle", "color", 3);
+
 
 	if (colorDb.get(aColor)) {
 	    aColor = colorDb.get(aColor);
@@ -292,11 +314,17 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     plt.world.Kernel.openImageUrl = function(path) {
+	plt.Kernel.check(path, plt.Kernel.isString, "open-image-url", "string", 1);
 	return FileImage.makeInstance(path.toString());
     };
 
 
     plt.world.Kernel.nwRectangle = function(w, h, s, c) {
+	plt.Kernel.check(w, plt.Kernel.isNumber, "nw:rectangle", "number", 1);
+	plt.Kernel.check(h, plt.Kernel.isNumber, "nw:rectangle", "number", 2);
+	plt.Kernel.check(s, plt.Kernel.isString, "nw:rectangle", "string", 3);
+	plt.Kernel.check(c, isColor, "nw:rectangle", "color", 4);
+
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
@@ -309,6 +337,11 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
     plt.world.Kernel.rectangle = function(w, h, s, c) {
+	plt.Kernel.check(w, plt.Kernel.isNumber, "rectangle", "number", 1);
+	plt.Kernel.check(h, plt.Kernel.isNumber, "rectangle", "number", 2);
+	plt.Kernel.check(s, plt.Kernel.isString, "rectangle", "string", 3);
+	plt.Kernel.check(c, isColor, "rectangle", "color", 4);
+
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
@@ -324,6 +357,12 @@ plt.world.Kernel = plt.world.Kernel || {};
     var BaseImage = plt.Kernel.BaseImage;
 
     
+    // isScene: any -> boolean
+    // Produces true when x is a scene.
+    var isScene = function(x) {
+	return x != undefined && x != null && x instanceof SceneImage;
+    };
+
     // SceneImage: primitive-number primitive-number (listof image) -> Scene
     var SceneImage = function(width, height, children) {
 	BaseImage.call(this, 0, 0);

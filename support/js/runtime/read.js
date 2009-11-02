@@ -133,11 +133,11 @@ plt.reader = {};
 	var unquoteSplicingSymbol = plt.types.Symbol.makeInstance("unquote-splicing");
 	var empty = plt.types.Empty.EMPTY;
 
-	function isType(type) {
+	var isType = function(type) {
 	    return (tokens.length > 0 && tokens[0][0] == type);
 	}
 	
-	function eat(expectedType) {
+	var eat = function(expectedType) {
 	    if (tokens.length == 0) {
 		if (lastToken) { 
 		    throw new plt.Kernel.MobyParserError(

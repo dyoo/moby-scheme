@@ -15,7 +15,7 @@ plt.platform = {};
     	return _platformSingleton;
     };
     
-    function JavascriptPlatform() {
+    var JavascriptPlatform = function() {
     	this.tiltService = JavascriptTiltService;
 	this.shakeService = chooseShakeService();
     	this.locationService = chooseLocationService();
@@ -66,7 +66,7 @@ plt.platform = {};
 
 
     // Dynamically choose which location service we grab
-    function chooseLocationService() {
+    var chooseLocationService = function() {
 	if (isPhonegapAvailable()) {
     	    return new PhonegapLocationService();
 	} else if (isGoogleGearsAvailable()) {
@@ -81,14 +81,14 @@ plt.platform = {};
 
     // isPhonegapAvailable: -> boolean
     // Returns true if the Phonegap library exists.
-    function isPhonegapAvailable() {
+    var isPhonegapAvailable = function() {
 	return (typeof Device != 'undefined');
     }
 
 
     // isGoogleGearsAvailable: -> boolean
     // Returns true if Google Gears exists.
-    function isGoogleGearsAvailable() {
+    var isGoogleGearsAvailable = function() {
 	return (window.google && window.google.gears && true);
     }
 
@@ -96,7 +96,7 @@ plt.platform = {};
 
     // isW3CLocationAvailable: -> boolean
     // Returns true if the W3C Location API is available.
-    function isW3CLocationAvailable() {
+    var isW3CLocationAvailable = function() {
 	return (typeof(navigator) != 'undefined' &&
 		typeof(navigator.geolocation) != 'undefined');
 		     
@@ -107,7 +107,7 @@ plt.platform = {};
     
 
     // Given two places on a globe, return the shortest distance between them in meters (uses spherical geometry)
-    function roughDistanceBetween(lat1, long1, lat2, long2) {
+    var roughDistanceBetween = function(lat1, long1, lat2, long2) {
 	var toRad = function(deg) {
 	    return deg * Math.PI / 180; 
 	}
@@ -126,7 +126,7 @@ plt.platform = {};
 
 
 
-    function GoogleGearsLocationService() {
+    var GoogleGearsLocationService = function() {
 	this.geo = google.gears.factory.create("beta.geolocation");
 	this.listeners = [];
 	this.currentPosition = {latitude: 0, 
@@ -196,7 +196,7 @@ plt.platform = {};
     //////////////////////////////////////////////////////////////////////
     // NoOpLocationService does nothing.
 
-    function NoOpLocationService() {
+    var NoOpLocationService = function() {
     };
     
     NoOpLocationService.prototype.startService = function() {
@@ -239,7 +239,7 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function PhonegapLocationService() {
+    var PhonegapLocationService = function() {
 	this.locationListeners = [];
 	this.currentPosition = {latitude: 0, 
 				longitude: 0,
@@ -251,7 +251,7 @@ plt.platform = {};
     
     PhonegapLocationService.prototype.startService = function() {
 	var that = this;
-	function locSuccessCallback(pos) {
+	var locSuccessCallback = function(pos) {
 	    that.currentPosition.latitude = parseFloat(pos.latitude);
 	    that.currentPosition.longitude = parseFloat(pos.longitude);
 
@@ -314,7 +314,7 @@ plt.platform = {};
     // This version of the location service uses the W3C location api
     // if it's available.
 
-    function W3CLocationService() {
+    var W3CLocationService = function() {
 	this.locationListeners = [];
 	this.currentPosition = {latitude: 0, 
 				longitude: 0,
@@ -443,7 +443,7 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function chooseTelephonyService() {
+    var chooseTelephonyService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapTelephonyService();
 	} else {
@@ -452,7 +452,7 @@ plt.platform = {};
     }
 
     //////////////////////////////////////////////////////////////////////
-    function NoOpTelephonyService() {
+    var NoOpTelephonyService = function() {
     }
 
     NoOpTelephonyService.prototype.getSignalStrengths = function() {
@@ -461,7 +461,7 @@ plt.platform = {};
 
 
     //////////////////////////////////////////////////////////////////////
-    function PhonegapTelephonyService() {
+    var PhonegapTelephonyService = function() {
     }
 
     PhonegapTelephonyService.prototype.getSignalStrengths = function() {
@@ -483,7 +483,7 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function chooseShakeService() {
+    var chooseShakeService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapShakeService();
 	} else {
@@ -493,18 +493,18 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function PhonegapShakeService() {
+    var PhonegapShakeService = function() {
 	this.listeners = [];
     }
 
     PhonegapShakeService.prototype.startService = function() {
 	var that = this;
-	function success() {
+	var success = function() {
 	    for (var i = 0; i < that.listeners.length; i++) {
 		that.listeners[i]();
 	    }
 	}
-	function fail() {}
+	var fail = function() {}
 	this.shakeId = navigator.accelerometer.watchShake(success, fail);
     };
 
@@ -521,7 +521,7 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function NoOpShakeService() {
+    var NoOpShakeService = function() {
     }
 
     NoOpShakeService.prototype.startService = function() {
@@ -539,7 +539,7 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function chooseNetworkService() {
+    var chooseNetworkService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapNetworkService();
 	} else {
@@ -548,7 +548,7 @@ plt.platform = {};
     }
 
 
-    function PhonegapNetworkService() {}
+    var PhonegapNetworkService = function() {}
     PhonegapNetworkService.prototype.getUrl = function(aUrl) {
 	var result = Device.getUrl(aUrl);
 	return plt.types.String.makeInstance("" + result);
@@ -556,7 +556,7 @@ plt.platform = {};
 
 
 
-    function WeSchemeNetworkService() {}
+    var WeSchemeNetworkService = function() {}
     WeSchemeNetworkService.prototype.getUrl = function(aUrl) {
 	var req = new XMLHttpRequest();
 	var url = "/networkProxy?url=" + encodeURIComponent(aUrl);
@@ -569,7 +569,7 @@ plt.platform = {};
 
 
 
-    function chooseSoundService() {
+    var chooseSoundService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapSoundService();
 	} else if (supportsHtml5()) {
@@ -579,13 +579,13 @@ plt.platform = {};
 	}
     }
 
-    function supportsHtml5() {
+    var supportsHtml5 = function() {
 	return !!(document.createElement('audio').canPlayType);
 
     }
 
 
-    function PhonegapSoundService() {
+    var PhonegapSoundService = function() {
     };
     PhonegapSoundService.prototype.beep = function() {
 	navigator.notification.beep(1);
@@ -633,7 +633,7 @@ plt.platform = {};
 
 
 
-    function Html5SoundService() {
+    var Html5SoundService = function() {
 	this.cachedUrls = {};
 	this.baseVolume = 100;
     }
@@ -699,7 +699,7 @@ plt.platform = {};
 
 
 
-    function GenericSoundService() {
+    var GenericSoundService = function() {
     }
     GenericSoundService.prototype.beep = function() {
 	alert("Beep");
@@ -743,7 +743,7 @@ plt.platform = {};
 
 
     //////////////////////////////////////////////////////////////////////
-    function choosePowerService() {
+    var choosePowerService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapPowerService();
 	} else {
@@ -751,7 +751,7 @@ plt.platform = {};
 	}
     }
 
-    function PhonegapPowerService() {
+    var PhonegapPowerService = function() {
 	this.currentLockFlags = -1;
     }
 
@@ -770,7 +770,7 @@ plt.platform = {};
     };
 
 
-    function GenericPowerService() {
+    var GenericPowerService = function() {
     }
     GenericPowerService.prototype.setWakeLock = function(flags) {
     };
@@ -780,19 +780,19 @@ plt.platform = {};
 
     //////////////////////////////////////////////////////////////////////
 
-    function chooseSmsService() {
+    var chooseSmsService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapSmsService();
 	} else {
 	    return new GenericSmsService();
 	}
     }
-    function PhonegapSmsService() {
+    var PhonegapSmsService = function() {
     }
     PhonegapSmsService.prototype.send = function(address, msg) {
 	navigator.sms.send(address, msg);
     };
-    function GenericSmsService() {
+    var GenericSmsService = function() {
     }
     GenericSmsService.prototype.send = function(address, msg) {
 	alert("SMS should be sent to " + address + " with the content: " + msg);
@@ -801,14 +801,14 @@ plt.platform = {};
 
 
     //////////////////////////////////////////////////////////////////////
-    function choosePickPlaylistService() {
+    var choosePickPlaylistService = function() {
 	if (isPhonegapAvailable()) {
 	    return new PhonegapPickPlaylistService();
 	} else {
 	    return new GenericPickPlaylistService();
 	}
     }
-    function PhonegapPickPlaylistService() {
+    var PhonegapPickPlaylistService = function() {
     }
     PhonegapPickPlaylistService.prototype.pickPlaylist = function(callback) {
 	// playlist: plt.playlist.PlaylistRecord
@@ -819,7 +819,7 @@ plt.platform = {};
 	navigator.dialogPickers.pickPlaylist(wrappedCallback);
     }
     
-    function GenericPickPlaylistService() {
+    var GenericPickPlaylistService = function() {
     }
 
     GenericPickPlaylistService.prototype.pickPlaylist = function(callback) {

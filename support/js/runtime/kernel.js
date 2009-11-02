@@ -30,7 +30,7 @@ var plt = plt || {};
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
     var heir = function(p) {
-	function f() {}
+	var f = function() {}
 	f.prototype = p;
 	return new f();
     }
@@ -1512,7 +1512,7 @@ var plt = plt || {};
     };
 
 
-    function HashTable(inputHash) {
+    var HashTable = function(inputHash) {
 	this.hash = inputHash;
     }
 
@@ -2007,27 +2007,27 @@ var plt = plt || {};
     
     // Posns
     
-    function posn(x,y) { 
+    var posn = function(x,y) { 
 	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
     }
 
     posn.prototype = heir(plt.Kernel.Struct.prototype);
 
-    function make_dash_posn(id0,id1) { 
+    var make_dash_posn = function(id0,id1) { 
 	return new posn(id0,id1); 
     }
 
-    function posn_dash_x(obj) { 
+    var posn_dash_x = function(obj) { 
 	check(obj, posn_question_, "posn-x", "posn", 1);
 	return obj._fields[0]; 
     }
 
-    function posn_dash_y(obj) { 
+    var posn_dash_y = function(obj) { 
 	check(obj, posn_question_, "posn-y", "posn", 1);
 	return obj._fields[1]; 
     }
 
-    function posn_question_(obj) { 
+    var posn_question_ = function(obj) { 
         return obj != null && obj != undefined && obj instanceof posn ; 
     }
     
@@ -2054,7 +2054,7 @@ var plt = plt || {};
 
 
     // Base class for all images.
-    function BaseImage(pinholeX, pinholeY) {
+    var BaseImage = function(pinholeX, pinholeY) {
 	this.pinholeX = pinholeX;
 	this.pinholeY = pinholeY;
     }

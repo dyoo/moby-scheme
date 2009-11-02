@@ -22,7 +22,7 @@ plt.world.MobyJsworld = {};
     // isHandler: X -> boolean
     // Right now, a handler is a function that consumes and produces
     // configs.  We should tighten up the type check eventually.
-    function isHandler(x) {
+    var isHandler = function(x) {
 	return typeof(x) == 'function';
     }
 
@@ -36,7 +36,7 @@ plt.world.MobyJsworld = {};
 
     // deepListToArray: any -> any
     // Converts list structure to array structure.
-    function deepListToArray(x) {
+    var deepListToArray = function(x) {
 	var thing = x;
 	if (plt.Kernel.empty_question_(thing)) {
 	    return [];
@@ -53,7 +53,7 @@ plt.world.MobyJsworld = {};
     }
 
     // assocListToAssocArray: (listof (list X Y)) -> (hashof X Y)
-    function assocListToAssocArray(aList) {
+    var assocListToAssocArray = function(aList) {
 	var result = {};
 	while (! aList.isEmpty()) {
 	    var key = aList.first().first();
@@ -66,7 +66,7 @@ plt.world.MobyJsworld = {};
 
 
     // getBigBangWindow: -> window
-    function getBigBangWindow() {
+    var getBigBangWindow = function() {
         if (window.document.getElementById("jsworld-div") != undefined) {
 	    return window;
 	}
@@ -98,7 +98,7 @@ plt.world.MobyJsworld = {};
 
 
 
-    function isList(x) {
+    var isList = function(x) {
 	return (x instanceof plt.types.Cons) || (x instanceof plt.types.Empty);
     }
 
@@ -303,7 +303,7 @@ plt.world.MobyJsworld = {};
 
 
 
-    function arrayToList(anArray) {
+    var arrayToList = function(anArray) {
 	var result = plt.types.Empty.EMPTY;
 	for(var i = 0; i < anArray.length; i++) {
 	    result = plt.types.Cons.makeInstance(anArray[length-i-1],
@@ -318,7 +318,7 @@ plt.world.MobyJsworld = {};
 
     // updateWorld: (world -> world) -> void
     Jsworld.updateWorld = function(updater) {
-	function wrappedUpdater(world) {
+	var wrappedUpdater = function(world) {
 	    try {
 		return updater(world);
 	    } catch (e) {
@@ -339,7 +339,7 @@ plt.world.MobyJsworld = {};
     };
 
 
-    function getAttribs(args) {
+    var getAttribs = function(args) {
 	if (args.length == 0) {
 	    return []
 	}
@@ -393,7 +393,7 @@ plt.world.MobyJsworld = {};
 
     Jsworld.buttonStar = function(worldUpdateF, effectF, args) {
 	var attribs = getAttribs(args);
-	function wrappedF(world, evt) {
+	var wrappedF = function(world, evt) {
 	    try {
 		plt.world.Kernel.applyEffect(effectF([world]));
 		var result = worldUpdateF([world]);

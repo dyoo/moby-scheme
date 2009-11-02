@@ -193,7 +193,7 @@ var plt = plt || {};
     };
 
 
-    function appendChild(parent, child) {
+    var appendChild = function(parent, child) {
 	parent.appendChild(child);
 	if (child.afterAttach) { child.afterAttach(); }
     }
@@ -275,7 +275,7 @@ var plt = plt || {};
     
     // Rationals
     
-    function gcd(a, b) {
+    var gcd = function(a, b) {
 	var t;
 	if (isNaN(a) || !isFinite(a)) {
 	    throw new plt.Kernel.MobyRuntimeError("not a number: " + a);

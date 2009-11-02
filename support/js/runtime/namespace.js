@@ -4,7 +4,7 @@
 var Namespace = 
     (function() {
 	
-	function Namespace() {
+	var Namespace = function() {
 	    this._eval = function(s) { return eval(s); };
 	}
 	// eval: string string -> X
