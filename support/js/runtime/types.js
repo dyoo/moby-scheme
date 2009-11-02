@@ -707,16 +707,29 @@ var plt = plt || {};
 
 	if (this.isFinite() && other.isFinite()) {
 	    return plt.types.FloatPoint.makeInstance(this.n * other.n);
+	} else if (isNaN(this.n) || isNaN(other.n)) {
+	    return NaN;
 	} else {
 	    return ((sign(this) * sign(other) == 1) ? inf : neginf);
 	}
     };
     
     plt.types.FloatPoint.prototype.divide = function(other) {
-	if (other.n == 0) {
-	    throw new plt.Kernel.MobyRuntimeError("division by zero");
+	if (this.isFinite() && other.isFinite()) {
+	    if (other.n == 0) {
+		throw new plt.Kernel.MobyRuntimeError("division by zero");
+	    }
+            return plt.types.FloatPoint.makeInstance(this.n / other.n);
+	} else if (isNaN(this.n) || isNaN(other.n)) {
+	    return NaN;
+	} else if (! this.isFinite() && !other.isFinite()) {
+	    return NaN;
+	} else if (this.isFinite() && !other.isFinite()) {
+	    return plt.types.FloatPoint.makeInstance(0.0);
+	} else if (! this.isFinite() && other.isFinite()) {
+	    return ((sign(this) * sign(other) == 1) ? inf : neginf);
 	}
-        return plt.types.FloatPoint.makeInstance(this.n / other.n);
+
     };
     
     
@@ -832,7 +845,17 @@ var plt = plt || {};
     };
     
     plt.types.FloatPoint.prototype.expt = function(a){
-	return plt.types.FloatPoint.makeInstance(Math.pow(this.n, a.n));
+	if (this.n == 1) {
+	    if (a.isFinite()) {
+		return this;
+	    } else if (isNaN(a.n)){
+		return this;
+	    } else {
+		return this;
+	    }
+	} else {
+	    return plt.types.FloatPoint.makeInstance(Math.pow(this.n, a.n));
+	}
     };
     
     plt.types.FloatPoint.prototype.exp = function(){

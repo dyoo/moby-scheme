@@ -332,8 +332,8 @@ var getTests;
 			Rational.makeInstance(3,4),
 			Rational.makeInstance(7,8)),
 				Rational.makeInstance(2))),
-			    Complex.makeInstance(Rational.makeInstance(-3, 4),
-						 Rational.makeInstance(7, 8)));
+			    Complex.makeInstance(Rational.makeInstance(-13, 64),
+						 Rational.makeInstance(21, 16)));
 	    },
 	    
 	    
