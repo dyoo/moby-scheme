@@ -1163,13 +1163,25 @@ var plt = plt || {};
 
 	string_dash__greaterthan_number : function(str){
 	    check(str, isString, "string->number", "string", 1);
-	    var aNum = str * 1;
-	    if (isNaN(aNum))
+	    try {
+		var stxList = plt.reader.readSchemeExpressions(str, "");
+		if (plt.types.NumberTower.equal(plt.Kernel.length(stxList),
+						plt.types.Rational.ONE)) {
+		    var result = stx_dash_e(stxList.first());
+		    return result;
+		} else {
+		    return plt.types.Logic.FALSE;
+		}
+	    } catch (e) {
 		return plt.types.Logic.FALSE;
-	    if (Math.floor(aNum) == aNum && isFinite(aNum)) {
-		return plt.types.Rational.makeInstance(aNum);
 	    }
-	    return plt.types.FloatPoint.makeInstance(aNum);
+// 	    var aNum = str * 1;
+// 	    if (isNaN(aNum))
+// 		return plt.types.Logic.FALSE;
+// 	    if (Math.floor(aNum) == aNum && isFinite(aNum)) {
+// 		return plt.types.Rational.makeInstance(aNum);
+// 	    }
+// 	    return plt.types.FloatPoint.makeInstance(aNum);
 	},
 	
 
