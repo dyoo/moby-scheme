@@ -748,12 +748,12 @@ var plt = plt || {};
 	
 	denominator : function(x) {
 	    check(x, isRational, "denominator", "rational", 1);
-	    return plt.types.Rational.makeInstance(x.d, 1);
+	    return x.denominator();
 	},
 	
 	numerator : function(x){
 	    check(x, isRational, "numerator", "rational", 1);
-	    return plt.types.Rational.makeInstance(x.n, 1);
+	    return x.numerator();
 	},
 	
 	odd_question_ : function(x){
@@ -800,9 +800,7 @@ var plt = plt || {};
 
 	integer_question_ : function(x){
 	    // check(x, isNumber, "integer?", "number", 1);
-	    return (isNumber(x) &&
-		    plt.types.NumberTower.isFinite(x) && 
-		    this.equal_question_(x, x.floor()));
+	    return (isInteger(x));
 	},
 	
 	make_dash_rectangular : function(x, y){

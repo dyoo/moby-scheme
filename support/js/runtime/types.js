@@ -386,6 +386,14 @@ var plt = plt || {};
     plt.types.Rational.prototype.toInteger = function() {
 	return Math.floor(this.n / this.d);  
     };
+
+    plt.types.Rational.prototype.numerator = function() {
+	return plt.types.Rational.makeInstance(this.d);
+    };
+
+    plt.types.Rational.prototype.denominator = function() {
+	return plt.types.Rational.makeInstance(this.d);
+    };
     
     plt.types.Rational.prototype.toFloat = function() {
 	return this.n / this.d;
@@ -634,11 +642,11 @@ var plt = plt || {};
     };
 
     plt.types.FloatPoint.prototype.isRational = function() {
-        return false;
+        return this.isFinite() && this.n == Math.floor(this.n);
     };
 
     plt.types.FloatPoint.prototype.isInteger = function() {
-	return this.n == Math.floor(this.n);
+	return this.isFinite() && this.n == Math.floor(this.n);
     };
 
     plt.types.FloatPoint.prototype.isReal = function() {
@@ -716,6 +724,27 @@ var plt = plt || {};
 	return Math.floor(this.n);  
     };
     
+    plt.types.FloatPoint.prototype.numerator = function() {
+	var stringRep = this.n.toString();
+	var match = stringRep.match(/^(.*)\.(.*)$/);
+	if (match) {
+	    return plt.types.FloatPoint.makeInstance(parseFloat(match[1] + match[2]));
+	} else {
+	    return this;
+	}
+    };
+
+    plt.types.FloatPoint.prototype.denominator = function() {
+	var stringRep = this.n.toString();
+	var match = stringRep.match(/^(.*)\.(.*)$/);
+	if (match) {
+	    return plt.types.FloatPoint.makeInstance(Math.expt(10, match[2].length));
+	} else {
+	    return plt.types.FloatPoint.makeInstance(1.0);
+	}
+    };
+
+
     plt.types.FloatPoint.prototype.toFloat = function() {
 	return this.n;
     };
@@ -894,7 +923,7 @@ var plt = plt || {};
 
 
     plt.types.Complex.prototype.isRational = function() {
-        return false;
+	return this.r.isRational() && plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO);
     };
 
     plt.types.Complex.prototype.isInteger = function() {
@@ -969,6 +998,20 @@ var plt = plt || {};
 	    throw new plt.Kernel.MobyRuntimeError("toInteger: expects argument of type real number");
 	return this.r.toInteger();
     };
+
+    plt.types.Complex.prototype.numerator = function() {
+	if (!this.isReal())
+	    throw new plt.Kernel.MobyRuntimeError("numerator: can only be applied to real number");
+	return this.n.numerator();
+    };
+    
+
+    plt.types.Complex.prototype.denominator = function() {
+	if (!this.isReal())
+	    throw new plt.Kernel.MobyRuntimeError("floor: can only be applied to real number");
+	return this.n.denominator();
+    };
+
     
     plt.types.Complex.prototype.toFloat = function(){
 	if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO).valueOf())
