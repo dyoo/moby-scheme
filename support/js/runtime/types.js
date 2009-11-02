@@ -500,6 +500,11 @@ var plt = plt || {};
     plt.types.Rational.prototype.real_dash_part = function(){
 	return this;
     };
+
+
+    plt.types.Rational.prototype.timesI = function() {
+	return plt.types.Complex.makeInstance(plt.types.Rational.ZERO, this);
+    };
     
     plt.types.Rational.prototype.round = function() {
 	if (this.d == 2) {
@@ -1077,15 +1082,18 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.expt= function(y){
-	var expo = y.multiply(this.log());
+	var expo = plt.types.NumberTower.multiply(y, this.log());
 	return expo.exp();
     };
     
     plt.types.Complex.prototype.exp = function(){
-	var part1 = this.r.exp();
-	var part2 = plt.types.Complex.makeInstance(this.i.cos(), this.i.sin().timesI());
-	
-	return plt.types.NumberTower.multiply(part1, part2);
+	var r = this.r.exp();
+	var cos_a = this.i.cos();
+	var sin_a = this.i.sin();
+
+	return plt.types.NumberTower.multiply(
+	    r,
+	    plt.types.NumberTower.add(cos_a, sin_a.timesI()));
     };
     
     plt.types.Complex.prototype.acos = function(){

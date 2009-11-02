@@ -1246,6 +1246,7 @@
 (test -13/64-21/16i expt (list -3/4+7/8i 2))
 (let ([v (expt -3/4+7/8i 2+3i)])
   (begin
+    (printf "I see v as ~s~n" v)
     (test 3826.0 floor (list (* 10000000 (real-part v))))
     (test -137.0 ceiling (list (* 100000 (imag-part v))))))
 (test 49.0+0.0i expt (list 7 2+0.0i))
