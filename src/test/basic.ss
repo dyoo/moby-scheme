@@ -1318,10 +1318,8 @@
 #;(test-nan.0 expt +nan.0 (list 10))
 #;(test-nan.0 expt 2 (list +nan.0))
 
-(printf "here~n")
 (test 0 expt (list 0 1+i))
 (test 0 expt (list 0 1-i))
-
 
 
 #;(test-nan.0 expt 1.0 +inf.0)
@@ -1379,6 +1377,8 @@
 (test 125.0 round (list (* 1000 (acos (cos 0.125)))))
 (test 125.0d0-0.0i z-round (list (* 1000 (acos (cos 0.125+0.0d0i)))))
 (test 125.0 round (list (* 1000 (acos (cos 1/8)))))
+
+
 (test 785.0 round (list (* 1000 (atan 1 1))))
 (test 785.0 round (list (* 1000 (atan 1.0 1.0))))
 #;(err/rt-test (atan 1.0 1.0+0.0i))
@@ -1500,6 +1500,8 @@
 (test-nan.0 atan (list 1 +nan.0))
 (test-nan.0 atan (list +nan.0 1))
 
+(printf "here~n")
+(printf "atan ~a~n" (atan -2+1i))
 (test -1178.+173.i  z-round (list (* 1000 (atan -2+1i))))
 
 

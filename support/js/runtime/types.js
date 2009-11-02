@@ -1033,35 +1033,48 @@ var plt = plt || {};
     plt.types.Complex.prototype.log = function(){
 	var m = this.magnitude();
 	var theta = this.angle();
-	return plt.types.NumberTower.add(
+	var result = plt.types.NumberTower.add(
 	    m.log(),
 	    theta.timesI());
+	return result;
     };
     
     plt.types.Complex.prototype.angle = function(){
-	if (this.isReal())
+	if (this.isReal()) {
 	    return this.r.angle();
+	}
 	if (plt.types.NumberTower.equal(plt.types.Rational.ZERO, this.r)) {
 	    var tmp = plt.Kernel.pi.half();
 	    return plt.types.NumberTower.greaterThan(this.i, plt.types.Rational.ZERO) ? tmp : tmp.minus();
 	} else {
 	    var tmp = plt.types.NumberTower.divide(this.i.abs(), this.r.abs()).atan();
-	    if (plt.types.NumberTower.greaterThan(this.r, plt.types.Rational.ZERO))
+	    if (plt.types.NumberTower.greaterThan(this.r, plt.types.Rational.ZERO)) {
 		return plt.types.NumberTower.greaterThan(this.i, plt.types.Rational.ZERO) ? tmp : tmp.minus();
-	    else
+	    } else {
 		return plt.types.NumberTower.greaterThan(this.i, plt.types.Rational.ZERO) ? plt.Kernel.pi.subtract(tmp) : tmp.subtract(plt.Kernel.pi);
+	    }
 	}
     };
     
+    var plusI = plt.types.Complex.makeInstance(plt.types.Rational.ZERO,
+					       plt.types.Rational.ONE);
+    var minusI = plt.types.Complex.makeInstance(plt.types.Rational.ZERO,
+						plt.types.Rational.NEGATIVE_ONE);
+    
     plt.types.Complex.prototype.atan = function(){
-	if (this.isReal())
-	    return this.r.atan();
-	var iz = this.timesI();
-	var part1 = plt.types.Complex.makeInstance(plt.types.Rational.ONE,
-						   iz.minus()).log();
-	var part2 = plt.types.Complex.makeInstance(plt.types.Rational.ONE,
-						   iz).log();
-	return part1.subtract(part2).timesI().half();
+	if (plt.types.NumberTower.equal(this, plusI) ||
+	    plt.types.NumberTower.equal(this, minusI)) {
+	    return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
+	}
+	return plt.types.NumberTower.multiply(
+	    plusI,
+	    plt.types.NumberTower.multiply(
+		plt.types.FloatPoint.makeInstance(0.5),
+		(plt.types.NumberTower.divide(
+		    plt.types.NumberTower.add(plusI, this),
+		    plt.types.NumberTower.add(
+			plusI,
+			plt.types.NumberTower.subtract(plt.types.Rational.ZERO, this)))).log()));
     };
     
     plt.types.Complex.prototype.cos = function(){
