@@ -355,8 +355,8 @@ var plt = plt || {};
 	},
 	
 	equal_question_ : function(x, y) {
-	    if (plt.Kernel.number_question_(x).valueOf() && 
-		plt.Kernel.number_question_(y).valueOf()) {
+	    if (plt.Kernel.number_question_(x) && 
+		plt.Kernel.number_question_(y)) {
 		if ("isEqual" in x) {
 		    return plt.types.NumberTower.equal(x, y);
 		} else if ("isEqual" in y) {

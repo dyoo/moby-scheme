@@ -388,7 +388,7 @@ var plt = plt || {};
     };
 
     plt.types.Rational.prototype.numerator = function() {
-	return plt.types.Rational.makeInstance(this.d);
+	return plt.types.Rational.makeInstance(this.n);
     };
 
     plt.types.Rational.prototype.denominator = function() {
@@ -738,7 +738,7 @@ var plt = plt || {};
 	var stringRep = this.n.toString();
 	var match = stringRep.match(/^(.*)\.(.*)$/);
 	if (match) {
-	    return plt.types.FloatPoint.makeInstance(Math.expt(10, match[2].length));
+	    return plt.types.FloatPoint.makeInstance(Math.pow(10, match[2].length));
 	} else {
 	    return plt.types.FloatPoint.makeInstance(1.0);
 	}

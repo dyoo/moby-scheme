@@ -418,15 +418,15 @@ var getTests;
 	    
 	    testDenominator : function(){
 		this.assert(Kernel.equal_question_(Kernel.denominator(Rational.makeInstance(7,2)), Rational.makeInstance(2,1)));
-		this.assertRaise("MobyTypeError",
-				 function() { Kernel.denominator(FloatPoint.makeInstance(3)); });
+		this.assert(Kernel.equal_question_(Kernel.denominator(FloatPoint.makeInstance(3)),
+						   FloatPoint.makeInstance(1)));
 	    },
 	    
 	    testNumerator : function(){
 		this.assert(Kernel.equal_question_(Kernel.numerator(Rational.makeInstance(7,2)), Rational.makeInstance(7,1)));
-		this.assertRaise("MobyTypeError",
-				 function() { Kernel.numerator(FloatPoint.makeInstance(3)); });
-	    },
+		this.assert(Kernel.equal_question_(Kernel.numerator(FloatPoint.makeInstance(3)),
+						   FloatPoint.makeInstance(3)));
+		},
 
 
 	    testIsExact : function() {
