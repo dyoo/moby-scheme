@@ -933,7 +933,13 @@ var plt = plt || {};
     };
     
     plt.types.Complex.prototype.toWrittenString = function() {
+	if (plt.types.NumberTower.greaterThanOrEqual(
+	    this.i,
+	    plt.types.Rational.ZERO)) {
         return plt.Kernel.toWrittenString(this.r) + "+" + plt.Kernel.toWrittenString(this.i)+"i";
+	} else {
+            return plt.Kernel.toWrittenString(this.r) + plt.Kernel.toWrittenString(this.i)+"i";
+	}
     };
 
     plt.types.Complex.prototype.toDisplayedString = plt.types.Complex.prototype.toWrittenString;

@@ -596,6 +596,16 @@ var getTests;
 	    testNumber_dash__greaterthan_string : function(){
 		this.assert(Kernel.string_equal__question_(String.makeInstance("1"), Kernel.number_dash__greaterthan_string(Rational.ONE),[]));
 		this.assert(!Kernel.string_equal__question_(String.makeInstance("2"), Kernel.number_dash__greaterthan_string(Rational.ONE),[]));
+
+		this.assertEqual("5+0i",
+				 Kernel.number_dash__greaterthan_string(Complex.makeInstance(5, 0)));
+
+		this.assertEqual("5+1i",
+				 Kernel.number_dash__greaterthan_string(Complex.makeInstance(5, 1)));
+
+		this.assertEqual("4-2i",
+				 Kernel.number_dash__greaterthan_string(Complex.makeInstance(4, -2)));
+
 	    },
 	    
 	    testString_equal__question_	: function(){
@@ -1023,7 +1033,9 @@ var getTests;
 	    
 	    testString_dash__greaterthan_number : function(){
 		this.assert(!Kernel.string_dash__greaterthan_number("hi"));
-		this.assert(Kernel.equal_question_(Kernel.string_dash__greaterthan_number("5"), FloatPoint.makeInstance(5)));
+		this.assert(Kernel.equal_question_(
+		    Kernel.string_dash__greaterthan_number("5"), 
+		    FloatPoint.makeInstance(5)));
 	    },
 	    
 	    testString_dash__greaterthan_symbol : function(){

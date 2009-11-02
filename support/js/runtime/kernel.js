@@ -1168,7 +1168,11 @@ var plt = plt || {};
 		if (plt.types.NumberTower.equal(plt.Kernel.length(stxList),
 						plt.types.Rational.ONE)) {
 		    var result = stx_dash_e(stxList.first());
-		    return result;
+		    if (isNumber(result)) {
+			return result;
+		    } else {
+			return plt.types.Logic.FALSE;
+		    }
 		} else {
 		    return plt.types.Logic.FALSE;
 		}
