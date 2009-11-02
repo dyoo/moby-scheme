@@ -40,6 +40,12 @@
   standalone-compiler-path
   "../../support/js/runtime/standalone-compiler.js")
 
+
+(define-runtime-path
+  compressed-standalone-compiler-path
+  "../../support/js/runtime/compressed-standalone-compiler.js")
+
+
 (define-runtime-path permission-struct-path
   "../../support/js/runtime/permission-struct.js")
 
@@ -61,14 +67,22 @@
 
 ;; write-compressed-runtime: -> void
 ;; Write out a runtime of all of the files in the MANIFEST, compressed by the YUI compressor.
+;; Also writes a compressed version of the standalone compiler.
 (define (write-compressed-runtime)
   (write-compiler)
+
   (let* ([runtime-source (get-runtime-source)]
          [compressed-runtime-source (yui-compress runtime-source)])
     (call-with-output-file compressed-runtime.js
       (lambda (op) (write-bytes compressed-runtime-source op))
-      #:exists 'replace)
-    (void)))
+      #:exists 'replace))
+  
+  (let* ([standalone-source (file->bytes standalone-compiler-path)]
+         [compressed-standalone-source (yui-compress standalone-source)])
+    (call-with-output-file compressed-standalone-compiler-path
+      (lambda (op) (write-bytes compressed-standalone-source op))
+      #:exists 'replace))
+  (void))
 
 
 
