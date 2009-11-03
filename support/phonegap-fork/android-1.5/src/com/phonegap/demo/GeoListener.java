@@ -33,7 +33,7 @@ public class GeoListener {
 	/*
 	 * We only need to figure out what we do when we succeed!
 	 */
-	if(id != "global")
+	if(!id.equals("global"))
 	    {
 		arguments.put("gpsId", id);
 		mAppView.loadUrl("javascript:navigator.geolocation.success()");
