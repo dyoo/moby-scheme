@@ -122,6 +122,22 @@ plt.world.MobyJsworld = {};
     };
 
 
+
+    // Figure out the target of an event.
+    // http://www.quirksmode.org/js/events_properties.html#target
+    var findEventTarget = function(e) {
+	var targ;
+	if (e.target) 
+	    targ = e.target;
+	else if (e.srcElement) 
+	    targ = e.srcElement;
+	if (targ.nodeType == 3) // defeat Safari bug
+	    targ = targ.parentNode;
+	return targ;
+    }
+
+
+
     // checkWellFormedDomTree: X X (or number undefined) -> void
     // Check to see if the tree is well formed.  If it isn't,
     // we need to raise a meaningful error so the user can repair
@@ -181,6 +197,7 @@ plt.world.MobyJsworld = {};
 	// Ensure that the toplevelNode can be focused by mouse or keyboard
 	toplevelNode.tabIndex = 0;
 	toplevelNode.style.borderStyle = "solid";
+	toplevelNode.style.borderWidth = 1;
 
 	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
@@ -282,16 +299,30 @@ plt.world.MobyJsworld = {};
 	
 
 	if (config.lookup('onKey')) {
-	    toplevelNode.onkeydown = function(e) {
-		plt.world.stimuli.onKey(e);
-		e.preventDefault();
-	    }
+	    // Add event handlers that listen in on key events that are applied
+	    // directly on the toplevelNode.  We pay attention to keydown, and
+	    // omit keypress.
+	    toplevelNode.addEventListener('keydown',
+					  function(e) {
+					      if (findEventTarget(e) === toplevelNode) {
+						  plt.world.stimuli.onKey(e);
+						  e.preventDefault();
+					      } else {
+						  return true;
+					      }
+					  },
+					  false);
+	    toplevelNode.addEventListener('keypress',
+					  function(e) {
+					      if (findEventTarget(e) === toplevelNode) {
+						  e.preventDefault();
+					      } else {
+						  return true;
+					      }
+					  },
+					  false);
 	    toplevelNode.focus();
-	    toplevelNode.onkeypress = function(e) {
-		e.preventDefault();
-	    }
 	}
-
 
 
 	if (config.lookup('initialEffect')) {
