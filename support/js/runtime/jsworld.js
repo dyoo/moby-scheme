@@ -196,8 +196,6 @@ plt.world.MobyJsworld = {};
 	
 	// Ensure that the toplevelNode can be focused by mouse or keyboard
 	toplevelNode.tabIndex = 0;
-	toplevelNode.style.borderStyle = "solid";
-	toplevelNode.style.borderWidth = "thin";
 	// Absorb all click events so they don't bubble up.
 	toplevelNode.addEventListener('click',
 				      function(e) {
