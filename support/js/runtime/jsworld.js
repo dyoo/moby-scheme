@@ -122,7 +122,7 @@ plt.world.MobyJsworld = {};
     };
 
 
-    // checkWellFormedDomTree: X X -> void
+    // checkWellFormedDomTree: X X (or number undefined) -> void
     // Check to see if the tree is well formed.  If it isn't,
     // we need to raise a meaningful error so the user can repair
     // the structure.
@@ -155,8 +155,13 @@ plt.world.MobyJsworld = {};
 	    }
 	} else {
 	    throw new MobyTypeError(
-		plt.Kernel.format("on-draw: expected a dom-s-expression, but received ~s instead.  (the ~a element within ~s)",
-				  [x, index, top]));
+		plt.Kernel.format(
+		    "on-draw: expected a dom-s-expression, but received ~s instead.~a",
+		    [x,
+		     (index != undefined ? 
+		      plt.Kernel.format("the ~a element within ~s", [index, top])
+		      : 
+		      "")]));
 	}
     };
 
@@ -192,7 +197,7 @@ plt.world.MobyJsworld = {};
 	    var wrappedRedraw = function(w) {
 		var newDomTree = config.lookup('onDraw')([w]);
 		plt.Kernel.setLastLoc(undefined);
-		checkWellFormedDomTree(newDomTree, newDomTree, 0);
+		checkWellFormedDomTree(newDomTree, newDomTree, undefined);
 		var result = [toplevelNode, 
 			      deepListToArray(newDomTree)];
 		return result;
@@ -325,10 +330,10 @@ plt.world.MobyJsworld = {};
 		plt.Kernel.reportError(e);
 		// When something bad happens, shut down 
 		// the world computation.
-		setTimeout(function() { 
-		    plt.world.stimuli.onShutdown(); 
-		},
-			   0);
+		plt.Kernel.reportError("Shutting down jsworld computations");
+
+		plt.world.stimuli.onShutdown(); 
+
 		return world;
 	    }
 	}
@@ -401,9 +406,10 @@ plt.world.MobyJsworld = {};
 	var attribs = getAttribs(args);
 	var wrappedF = function(world, evt) {
 	    try {
-		plt.world.Kernel.applyEffect(effectF([world]));
-		var result = worldUpdateF([world]);
-		return result;
+		var effect = effectF([world]);
+		var newWorld = worldUpdateF([world]);
+		plt.world.Kernel.applyEffect(effect);
+		return newWorld;
 	    } catch (e) {
 		plt.Kernel.reportError(e);
 		return world;

@@ -2295,7 +2295,9 @@ var plt = plt || {};
 
 
 
-
+    // reportError: (or exception string) -> void
+    // Reports an error to the user, either at the console
+    // if the console exists, or as alerts otherwise.
     plt.Kernel.reportError = function(e) {
 	var reporter;
 	if (typeof(console) != 'undefined' && 
@@ -2304,8 +2306,13 @@ var plt = plt || {};
 	} else {
 	    reporter = (function(x) { alert(x); });
 	}
-
-	reporter(e.msg);
+	if (typeof e == 'string') {
+	    reporter(e);
+	} else if (e.msg) {
+	    reporter(e.msg);
+	} else {
+	    reporter(e.toString());
+	}
 	if (plt.Kernel.lastLoc) {
 	    reporter("Error was raised around " + plt.Kernel.lastLoc);
 	}
