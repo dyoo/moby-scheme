@@ -177,6 +177,10 @@ plt.world.MobyJsworld = {};
 						  "handler or attribute list",
 						  i+2) });
 	var toplevelNode = Jsworld.makeToplevelNode();
+	
+	// Ensure that the toplevelNode can be focused by mouse or keyboard
+	toplevelNode.tabIndex = 0;
+	toplevelNode.style.borderStyle = "solid";
 
 	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
@@ -278,9 +282,10 @@ plt.world.MobyJsworld = {};
 	
 
 	if (config.lookup('onKey')) {
-	    window.onkeydown = function(e) {
+	    toplevelNode.onkeydown = function(e) {
 		plt.world.stimuli.onKey(e);
 	    }
+	    toplevelNode.focus();
 	}
 
 
