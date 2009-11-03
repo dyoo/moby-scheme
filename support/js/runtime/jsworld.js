@@ -284,8 +284,12 @@ plt.world.MobyJsworld = {};
 	if (config.lookup('onKey')) {
 	    toplevelNode.onkeydown = function(e) {
 		plt.world.stimuli.onKey(e);
+		e.preventDefault();
 	    }
 	    toplevelNode.focus();
+	    toplevelNode.onkeypress = function(e) {
+		e.preventDefault();
+	    }
 	}
 
 
