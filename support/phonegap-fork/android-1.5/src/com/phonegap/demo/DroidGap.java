@@ -97,7 +97,10 @@ public class DroidGap extends Activity {
 	    {
 		this.uri = "http://www.phonegap.com";
 	    }
+	Log.d(LOG_TAG, "Loading the uri " + this.uri);
+
         appView.loadUrl(this.uri);        
+	Log.d(LOG_TAG, "uri loaded");
     }
 	
 
@@ -109,14 +112,22 @@ public class DroidGap extends Activity {
     
     private void bindBrowser(WebView appView)
     {
+	Log.d(LOG_TAG, "Binding the browser");
+
     	// The PhoneGap class handles the Notification and Android Specific crap
 	arguments = new ArgTable();
+	Log.d(LOG_TAG, "Instantiating gap");
     	gap = new PhoneGap(this, this.handler, appView, getAssets(), arguments);
+	Log.d(LOG_TAG, "Instantiating geo");
     	geo = new GeoBroker(this, appView, arguments);
+	Log.d(LOG_TAG, "Instantiating accel");
     	accel = new AccelListener(this, appView, arguments);
+	Log.d(LOG_TAG, "Instantiating console");
     	console = new ConsoleOutput(this, appView);
+	Log.d(LOG_TAG, "Instantiating playlistpicker");
 	playlistPicker = new PlaylistPicker();
 
+	Log.d(LOG_TAG, "Adding interfaces");
     	// This creates the new javascript interfaces for PhoneGap
     	appView.addJavascriptInterface(gap, "Device");
     	appView.addJavascriptInterface(geo, "Geo");
@@ -124,6 +135,7 @@ public class DroidGap extends Activity {
 	appView.addJavascriptInterface(console, "Console");
 	appView.addJavascriptInterface(arguments, "Args");
 	appView.addJavascriptInterface(playlistPicker, "PlaylistPicker");
+	Log.d(LOG_TAG, "Bound the browser");
     }
 
 
