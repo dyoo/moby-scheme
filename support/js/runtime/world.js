@@ -164,7 +164,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
 	if (config.lookup('onKey')) {
-	    newWindow.onkeypress = function(e) {
+	    newWindow.onkeydown = function(e) {
 		plt.world.stimuli.onKey(e);
 	    }
 	}
