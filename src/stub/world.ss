@@ -1036,6 +1036,17 @@
 
 
 
+
+;; open-image-url: string -> snip
+(define (open-image-url a-url)
+  (let* ([bm (make-object bitmap% 1 1)]
+         [a-snip (make-object image-snip% bm)])
+   a-snip))
+
+
+
+(provide open-image-url)
+
 ;
 ;
 ;(provide-higher-order-primitive
