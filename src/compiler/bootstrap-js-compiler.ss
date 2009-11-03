@@ -107,7 +107,9 @@
       (display "var compile = (function() {\n" op)
       (copy-path-to-port types.js op)
       (copy-path-to-port kernel.js op)
+      (copy-path-to-port syntax-path op)
       (copy-path-to-port read.js op)
+
       (display (bootstrap-compile "beginner-to-javascript.ss") op)
       
       (display "
