@@ -1000,6 +1000,15 @@ plt.Jsworld = {};
 // 	return addFocusTracking(copy_attribs(n, attribs));
 //     }
 //     Jsworld.bidirectional_input = bidirectional_input;
+
+    var stopClickPropagation = function(node) {
+	node.addEventListener("click",
+			      function(e) {
+				  e.stopPropagation();
+			      },
+			      false);
+	return node;
+    }
     
 
     function input(type, updateF, attribs) {
@@ -1027,7 +1036,8 @@ plt.Jsworld = {};
 	    }
 	},
 		    delay);
-	return addFocusTracking(copy_attribs(n, attribs));
+	return stopClickPropagation(
+	    addFocusTracking(copy_attribs(n, attribs)));
     }
     Jsworld.input = input;
 
@@ -1043,6 +1053,9 @@ plt.Jsworld = {};
 	    return updateF(w, n.value);
 	}
 	add_ev(n, 'keypress', monitor);
+	return stopClickPropagation(
+	    addFocusTracking(
+		copy_attribs(n, attribs)));
     }
     
 

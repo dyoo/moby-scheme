@@ -197,7 +197,26 @@ plt.world.MobyJsworld = {};
 	// Ensure that the toplevelNode can be focused by mouse or keyboard
 	toplevelNode.tabIndex = 0;
 	toplevelNode.style.borderStyle = "solid";
-	toplevelNode.style.borderWidth = 1;
+	toplevelNode.style.borderWidth = "thin";
+	// Absorb all click events so they don't bubble up.
+	toplevelNode.addEventListener('click',
+				      function(e) {
+					  e.preventDefault();
+					  e.stopPropagation();
+					  return false;
+// 					  if (findEventTarget(e) === toplevelNode) {
+// 					      e.preventDefault();
+// 					      e.stopPropagation();
+// 					      return false;
+// 					  } else {
+// 					      return true;
+// 					  }
+				      },
+				      false);
+	
+
+
+
 
 	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
@@ -307,6 +326,8 @@ plt.world.MobyJsworld = {};
 					      if (findEventTarget(e) === toplevelNode) {
 						  plt.world.stimuli.onKey(e);
 						  e.preventDefault();
+						  e.stopPropagation();
+						  return false;
 					      } else {
 						  return true;
 					      }
@@ -316,6 +337,8 @@ plt.world.MobyJsworld = {};
 					  function(e) {
 					      if (findEventTarget(e) === toplevelNode) {
 						  e.preventDefault();
+						  e.stopPropagation();
+						  return false;
 					      } else {
 						  return true;
 					      }
