@@ -713,7 +713,8 @@ Geolocation.gotCurrentPosition = function() {
     var lng = Args.get("gpsLng");
     //  Console.println("Got position " + lat + ", " + lng);
     
-    if (lat == null || lng == null)
+    if (typeof lat == "undefined" || lat == null
+        || typeof lng == "undefined" ||  lng == null)
     {
 	this.fail();
     }
@@ -766,19 +767,19 @@ Geolocation.prototype.success = function(key, lat, lng)
     //    Console.println("Success for finding location " + lat + ", " + lng + " with key " + key);
     //    Console.println("typeof this.listeners = " + (typeof this.listeners));
 
-    if (key == null) {
-	Console.logd("PhoneGap", "Geolocation key undefined in Geolocation.success");
+    if (typeof key == "undefined" || key == null) {
+        Console.logd("PhoneGap", "Geolocation key undefined in Geolocation.success");
     }
     else if (lat == null || lng == null) {
-	this.listeners[key].fail();
+            this.listeners[key].fail();
     }
-
-
-    p = {};
-    p.latitude = lat;
-    p.longitude = lng;
-    this.lastPosition = p;
-    this.listeners[key].success(p);
+    else {
+        p = {};
+        p.latitude = lat;
+        p.longitude = lng;
+        this.lastPosition = p;
+        this.listeners[key].success(p);
+    }
 }
 
 Geolocation.prototype.fail = function(key)
