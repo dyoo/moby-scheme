@@ -200,7 +200,6 @@ var plt = plt || {};
 
     var appendChild = function(parent, child) {
 	parent.appendChild(child);
-	if (child.afterAttach) { child.afterAttach(); }
     }
 
     plt.types.Cons.prototype.toDomNode = function() {
@@ -3592,7 +3591,7 @@ var plt = plt || {};
 	    document.body.appendChild(canvas);
 	    canvas = window.G_vmlCanvasManager.initElement(canvas);
 	    document.body.removeChild(canvas);
-	    canvas.style.disaply = '';
+	    canvas.style.display = '';
 	}
 	return canvas;
     };
@@ -3732,7 +3731,6 @@ var plt = plt || {};
 
     var appendChild = function(parent, child) {
 	parent.appendChild(child);
-	if (child.afterAttach) { child.afterAttach(); }
     }
 
 

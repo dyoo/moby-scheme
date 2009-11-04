@@ -257,6 +257,9 @@ plt.world.MobyJsworld = {};
 
 		    if (! reusableCanvas) {
 			reusableCanvas = plt.Kernel._makeCanvas(width, height);
+			// Note: the canvas object may itself manage objects,
+			// as in the case of an excanvas.  In that case, we must make
+			// sure jsworld doesn't try to disrupt its contents!
 			reusableCanvas.jsworldOpaque = true;
 			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
 		    }
