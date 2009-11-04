@@ -406,6 +406,7 @@ plt.Jsworld = {};
 		
 	    if (!unsorted) break;
 	}
+
 	
 	// remove dead nodes
 	var live_nodes;
@@ -473,11 +474,12 @@ plt.Jsworld = {};
 			
 		if (!found) {
 		    // reparent children, remove node
-		    while (node.firstChild != null)
+		    while (node.firstChild != null) {
 			appendChild(node.parentNode, node.firstChild);
+		    }
 				
 		    next = node.nextSibling; // HACKY
-				
+		    var p = node.parentNode;
 		    node.parentNode.removeChild(node);
 		} else {
 		    mergeNodeValues(node, foundNode);
@@ -488,6 +490,7 @@ plt.Jsworld = {};
 		else { node = next; break; }
 	    }
 	}
+
 	
 	refresh_node_values(nodes);
     }
@@ -545,6 +548,10 @@ plt.Jsworld = {};
 	    if (nodes[i].onWorldChange) {
 		nodes[i].onWorldChange(world);
 	    }
+
+	    if (nodes[i].onJsworldRefresh) {
+		nodes[i].onJsworldRefresh();
+	    }
 	}
     }
 
@@ -555,8 +562,9 @@ plt.Jsworld = {};
 	    // Simple path
 	    var t = sexp2tree(redraw_func(world));
 	    var ns = nodes(t);
-	    update_dom(toplevelNode, ns, relations(t));
+	    // HACK: css before dom, due to excanvas hack.
 	    update_css(ns, sexp2css(redraw_css_func(world)));
+	    update_dom(toplevelNode, ns, relations(t));
 	    return;
 	} else {
 	    maintainingSelection(

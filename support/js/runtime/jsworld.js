@@ -263,14 +263,13 @@ plt.world.MobyJsworld = {};
 			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
 		    }
 
-		    reusableCanvas.afterAttach = function() {
+		    reusableCanvas.onJsworldRefresh = function() {
 			reusableCanvas.width = width;
 			reusableCanvas.height = height;
 			reusableCanvas.style.width = reusableCanvas.width + "px";
 			reusableCanvas.style.height = reusableCanvas.height + "px";
 			var ctx = reusableCanvas.getContext("2d");
 			aScene.render(ctx, 0, 0);
-			alert("rendered");
 		    }
 
 		    return [toplevelNode, reusableCanvasNode];
