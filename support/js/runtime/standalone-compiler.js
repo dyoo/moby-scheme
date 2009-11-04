@@ -3576,12 +3576,12 @@ var plt = plt || {};
 	// make it invisible, attach it to the tree, render, and then rip it out
 	// again.
 	var oldDisplay = canvas.style.display;
-	canvas.style.setProperty("display", "none", "");
+	canvas.style.display = 'none';
 	document.body.appendChild(canvas);
  	var ctx = canvas.getContext("2d");
 	that.render(ctx, 0, 0) 
 	document.body.removeChild(canvas);
-	canvas.style.removeProperty("display");
+	canvas.style.display = '';
 
 	return canvas;
     };

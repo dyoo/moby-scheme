@@ -501,7 +501,7 @@ plt.Jsworld = {};
 
     function set_css_attribs(node, attribs) {
 	for (var j = 0; j < attribs.length; j++){
-	    node.style.setProperty(attribs[j].attrib, attribs[j].values.join(" "), "");
+	    node.style[attribs[j].attrib] = attribs[j].values.join(" ");
 	}
 		
     }
