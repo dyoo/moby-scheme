@@ -22,7 +22,7 @@ var plt = plt || {};
 	    node.addEventListener(eventName, fn, false);
 	} else {
 	    // IE
-	    node.attachevent('on' + event, fn, false);
+	    node.attachEvent('on' + event, fn, false);
 	}
     };
 
