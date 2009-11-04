@@ -1,11 +1,25 @@
 <html>
 <head>
 
+<!--[if lt IE 8]>
+    <script src="runtime/compat/IE8.js" type="text/javascript"></script>
+    <script src="runtime/compat/ie7-squish.js" type="text/javascript"></script>
+<![endif]-->
+
+<!--[if IE]>
+    <script src="runtime/compat/excanvas.js" type="text/javascript"></script>
+<![endif]-->
+
+
+
+  <!-- Under IE8, excanvas doesn't work unless we get into IE7 standards mode.  Argh. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=7" />
+
   <!-- The individual files in the runtime may be loaded instead of compressed-runtime.js -->
   <!-- for debugging purposes. -->
 
   <!-- <script type="text/javascript" charset="utf-8" src="runtime/gears_init.js"></script> -->
-  <!-- <script type="text/javascript" charset="utf-8" src="runtime/excanvas.js"></script> -->
+
   <!-- <script type="text/javascript" charset="utf-8" src="runtime/phonegap.js"></script> -->
   <!-- <script type="text/javascript" charset="utf-8" src="runtime/types.js"></script> -->
   <!-- <script type="text/javascript" charset="utf-8" src="runtime/kernel.js"></script> -->
@@ -29,6 +43,10 @@
   <script type="text/javascript" charset="utf-8" src="runtime/compressed-runtime.js"></script>
 
   <script type="text/javascript" charset="utf-8" src="main.js"></script>
+
+
+
+
 
 </head>
 
