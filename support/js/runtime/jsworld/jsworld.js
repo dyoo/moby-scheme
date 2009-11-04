@@ -810,7 +810,7 @@ plt.Jsworld = {};
 	    node.addEventListener(eventName, fn, false);
 	} else {
 	    // IE
-	    node.attachevent('on' + event, fn, false);
+	    node.attachEvent('on' + event, fn, false);
 	}
     }
 
@@ -1002,11 +1002,10 @@ plt.Jsworld = {};
 //     Jsworld.bidirectional_input = bidirectional_input;
 
     var stopClickPropagation = function(node) {
-	node.addEventListener("click",
-			      function(e) {
-				  e.stopPropagation();
-			      },
-			      false);
+	attachEvent(node, "click",
+		    function(e) {
+			e.stopPropagation();
+		    });
 	return node;
     }
     

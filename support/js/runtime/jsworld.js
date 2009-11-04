@@ -181,6 +181,10 @@ plt.world.MobyJsworld = {};
 	}
     };
 
+    var attachEvent = function(node, eventName, fn) {
+	plt.Kernel.attachEvent(node, eventName, fn);
+    }
+
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, handlers) {
@@ -197,24 +201,15 @@ plt.world.MobyJsworld = {};
 	// Ensure that the toplevelNode can be focused by mouse or keyboard
 	toplevelNode.tabIndex = 0;
 	// Absorb all click events so they don't bubble up.
-	toplevelNode.addEventListener('click',
-				      function(e) {
-					  e.preventDefault();
-					  e.stopPropagation();
-					  return false;
-// 					  if (findEventTarget(e) === toplevelNode) {
-// 					      e.preventDefault();
-// 					      e.stopPropagation();
-// 					      return false;
-// 					  } else {
-// 					      return true;
-// 					  }
-				      },
-				      false);
+	attachEvent(toplevelNode,
+		    'click',
+		    function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		    },
+		    false);
 	
-
-
-
 
 	var config = new plt.world.config.WorldConfig();
 	for(var i = 0; i < handlers.length; i++) {
@@ -319,29 +314,21 @@ plt.world.MobyJsworld = {};
 	    // Add event handlers that listen in on key events that are applied
 	    // directly on the toplevelNode.  We pay attention to keydown, and
 	    // omit keypress.
-	    toplevelNode.addEventListener('keydown',
-					  function(e) {
-					      if (findEventTarget(e) === toplevelNode) {
-						  plt.world.stimuli.onKey(e);
-						  e.preventDefault();
-						  e.stopPropagation();
-						  return false;
-					      } else {
-						  return true;
-					      }
-					  },
-					  false);
-	    toplevelNode.addEventListener('keypress',
-					  function(e) {
-					      if (findEventTarget(e) === toplevelNode) {
-						  e.preventDefault();
-						  e.stopPropagation();
-						  return false;
-					      } else {
-						  return true;
-					      }
-					  },
-					  false);
+	    attachEvent(toplevelNode,
+			'keydown',
+			function(e) {
+			    plt.world.stimuli.onKey(e);
+			    e.preventDefault();
+			    e.stopPropagation();
+			    return false;
+			});
+	    attachEvent(toplevelNode,
+			'keypress',
+			function(e) {
+			    e.preventDefault();
+			    e.stopPropagation();
+			    return false;
+			});
 	    toplevelNode.focus();
 	}
 

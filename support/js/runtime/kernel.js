@@ -2476,5 +2476,9 @@ var plt = plt || {};
     plt.Kernel.MobySyntaxError = MobySyntaxError;
     plt.Kernel.MobyTypeError = MobyTypeError;
     plt.Kernel.MobyRuntimeError = MobyRuntimeError;
+
+
+
+    plt.Kernel.attachEvent = attachEvent;
     
 })();
