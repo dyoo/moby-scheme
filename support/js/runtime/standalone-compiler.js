@@ -3588,7 +3588,11 @@ var plt = plt || {};
 	// KLUDGE: IE compatibility uses /js/excanvas.js, and dynamic
 	// elements must be marked this way.
 	if (typeof window.G_vmlCanvasManager != 'undefined') {
+	    canvas.style.display = 'none';
+	    document.body.appendChild(canvas);
 	    canvas = window.G_vmlCanvasManager.initElement(canvas);
+	    document.body.removeChild(canvas);
+	    canvas.style.disaply = '';
 	}
 	return canvas;
     };

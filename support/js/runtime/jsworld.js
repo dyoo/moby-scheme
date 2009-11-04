@@ -224,10 +224,10 @@ plt.world.MobyJsworld = {};
 	plt.world.config.CONFIG = config;
 	
 	var wrappedHandlers = [];
-	
+	var wrappedRedrawCss;
 
 	if (config.lookup('onDraw')) {
-	    var wrappedRedraw = function(w) {
+	    wrappedRedraw = function(w) {
 		var newDomTree = config.lookup('onDraw')([w]);
 		plt.Kernel.setLastLoc(undefined);
 		checkWellFormedDomTree(newDomTree, newDomTree, undefined);
@@ -236,7 +236,7 @@ plt.world.MobyJsworld = {};
 		return result;
 	    }
 
-	    var wrappedRedrawCss = function(w) {
+	    wrappedRedrawCss = function(w) {
 		var result = deepListToArray(config.lookup('onDrawCss')([w]));
 		plt.Kernel.setLastLoc(undefined);
 		return result;
@@ -245,7 +245,8 @@ plt.world.MobyJsworld = {};
 	} else if (config.lookup('onRedraw')) {
 	    var reusableCanvas = undefined;
 	    var reusableCanvasNode = undefined;
-	    var wrappedRedraw = function(w) {
+	    
+	    wrappedRedraw = function(w) {
 		var aScene = config.lookup('onRedraw')([w]);
 		// Performance hack: if we're using onRedraw, we know
 		// we've got a scene, so we optimize away the repeated
@@ -261,17 +262,17 @@ plt.world.MobyJsworld = {};
 			reusableCanvas = plt.Kernel._makeCanvas(width, height);
 			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
 		    }
- 		    reusableCanvas.width = width;
- 		    reusableCanvas.height = height;
- 		    reusableCanvas.style.width = reusableCanvas.width + "px";
- 		    reusableCanvas.style.height = reusableCanvas.height + "px";
- 		    var ctx = reusableCanvas.getContext("2d");
 
-		    reusableCanvas.style.display = "none";
-		    document.body.appendChild(reusableCanvas);
-		    aScene.render(ctx, 0, 0);
-		    document.body.removeChild(reusableCanvas);
-		    reusableCanvas.style.display = "";
+		    reusableCanvas.afterAttach = function() {
+			reusableCanvas.width = width;
+			reusableCanvas.height = height;
+			reusableCanvas.style.width = reusableCanvas.width + "px";
+			reusableCanvas.style.height = reusableCanvas.height + "px";
+			var ctx = reusableCanvas.getContext("2d");
+			aScene.render(ctx, 0, 0);
+			alert("rendered");
+		    }
+
 		    return [toplevelNode, reusableCanvasNode];
 		} else {
 		    return [toplevelNode, 
@@ -281,8 +282,10 @@ plt.world.MobyJsworld = {};
 		}
 	    }
 	    
-	    var wrappedRedrawCss = function(w) {
-		return [];
+	    wrappedRedrawCss = function(w) {
+		return [[reusableCanvas, 
+			 ["width", reusableCanvas.width + "px"],
+			 ["height", reusableCanvas.height + "px"]]];
 	    }
 	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
 	} else {

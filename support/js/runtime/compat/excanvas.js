@@ -174,11 +174,11 @@ if (!document.createElement('canvas').getContext) {
     switch (e.propertyName) {
       case 'width':
         el.style.width = el.attributes.width.nodeValue + 'px';
-        el.getContext().clearRect();
+	el.getContext().clearRect();
         break;
       case 'height':
         el.style.height = el.attributes.height.nodeValue + 'px';
-        el.getContext().clearRect();
+	el.getContext().clearRect();
         break;
     }
   }

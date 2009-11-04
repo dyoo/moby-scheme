@@ -37,6 +37,6 @@
 
 ;; Start up a big bang, 15 frames a second.
 (js-big-bang INITIAL-WORLD
-             (on-tick 1/15 tick)
+             #;(on-tick 1/15 tick)
              (on-redraw render)
-             (stop-when hits-floor?))
+             #;(stop-when hits-floor?))

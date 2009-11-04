@@ -574,8 +574,13 @@ plt.Jsworld = {};
 		    // dom updates.
 
  		    if(oldRedraw !== newRedraw) {
- 			update_dom(toplevelNode, ns, relations(t));
+			// Kludge: update the CSS styles first.
+			// This is a workaround an issue with excanvas: any style change
+			// clears the content of the canvas, so we do this first before
+			// attaching the dom element.
+			// The afterAttach hook triggers the drawing onto the canvas.
  			update_css(ns, sexp2css(newRedrawCss));
+ 			update_dom(toplevelNode, ns, relations(t));
  		    } else {
 			if(oldRedrawCss !== newRedrawCss) {
  			    update_css(ns, sexp2css(newRedrawCss));
