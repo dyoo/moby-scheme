@@ -116,9 +116,6 @@ plt.world.MobyJsworld = {};
 	    newNode = plt.Kernel.toDomNode(world);
 	    node.replaceChild(newNode, node.lastChild);
 	}
-	if (newNode.afterAttach) {
-	    newNode.afterAttach();
-	}
     };
 
 
@@ -260,24 +257,14 @@ plt.world.MobyJsworld = {};
 
 		    if (! reusableCanvas) {
 			reusableCanvas = plt.Kernel._makeCanvas(width, height);
+			reusableCanvas.jsworldOpaque = true;
 			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
 		    }
 
-		    reusableCanvas.jsworldOpaque = true;
-
 		    reusableCanvas.width = width;
-		    reusableCanvas.height = height;
-		    //reusableCanvas.style.width = reusableCanvas.width + "px";
-		    //reusableCanvas.style.height = reusableCanvas.height + "px";
-			
-		    reusableCanvas.onJsworldRefresh = function() {
-			reusableCanvas.width = width;
-			reusableCanvas.height = height;
-			var ctx = reusableCanvas.getContext("2d");
-			ctx.save();
-			aScene.render(ctx, 0, 0);
-			ctx.restore();
-		    }
+		    reusableCanvas.height = height;			
+		    var ctx = reusableCanvas.getContext("2d");
+		    aScene.render(ctx, 0, 0);
 
 		    return [toplevelNode, reusableCanvasNode];
 		} else {

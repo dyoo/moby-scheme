@@ -370,11 +370,6 @@ plt.Jsworld = {};
 
     function appendChild(parent, child) {
 	parent.appendChild(child);
-	// HACK!  If this node is aware of afterAttach, fire off that
-	// event handler.
-	if (child.afterAttach) {
-	    child.afterAttach();
-	}
     }
 
 
@@ -559,10 +554,6 @@ plt.Jsworld = {};
 	    if (nodes[i].onWorldChange) {
 		nodes[i].onWorldChange(world);
 	    }
-
-	    if (nodes[i].onJsworldRefresh) {
-		nodes[i].onJsworldRefresh();
-	    }
 	}
     }
 
@@ -597,7 +588,6 @@ plt.Jsworld = {};
 			// This is a workaround an issue with excanvas: any style change
 			// clears the content of the canvas, so we do this first before
 			// attaching the dom element.
-			// The afterAttach hook triggers the drawing onto the canvas.
  			update_css(ns, sexp2css(newRedrawCss));
  			update_dom(toplevelNode, ns, relations(t));
  		    } else {

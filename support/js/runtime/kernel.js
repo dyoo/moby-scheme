@@ -2284,7 +2284,6 @@ var plt = plt || {};
 
     var appendChild = function(parent, child) {
 	parent.appendChild(child);
-	if (child.afterAttach) { child.afterAttach(); }
     }
 
 

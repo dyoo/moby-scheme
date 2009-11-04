@@ -195,7 +195,6 @@ var plt = plt || {};
 
     var appendChild = function(parent, child) {
 	parent.appendChild(child);
-	if (child.afterAttach) { child.afterAttach(); }
     }
 
     plt.types.Cons.prototype.toDomNode = function() {
