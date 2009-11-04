@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Some bug fixes for complex numbers."))
+(define release-notes '("Improvements to IE compatibility."))
