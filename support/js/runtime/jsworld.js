@@ -263,13 +263,20 @@ plt.world.MobyJsworld = {};
 			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
 		    }
 
+		    reusableCanvas.jsworldOpaque = true;
+
+		    reusableCanvas.width = width;
+		    reusableCanvas.height = height;
+		    //reusableCanvas.style.width = reusableCanvas.width + "px";
+		    //reusableCanvas.style.height = reusableCanvas.height + "px";
+			
 		    reusableCanvas.onJsworldRefresh = function() {
 			reusableCanvas.width = width;
 			reusableCanvas.height = height;
-			reusableCanvas.style.width = reusableCanvas.width + "px";
-			reusableCanvas.style.height = reusableCanvas.height + "px";
 			var ctx = reusableCanvas.getContext("2d");
+			ctx.save();
 			aScene.render(ctx, 0, 0);
+			ctx.restore();
 		    }
 
 		    return [toplevelNode, reusableCanvasNode];
