@@ -19,6 +19,7 @@
 ;; Common helper functions used in the compiler.
 
 (define-runtime-path yui.jar "../support/yuicompressor-2.4.2.jar")
+(define-runtime-path google-closure-compiler.jar "../support/closure-compiler.jar")
 
 
 
@@ -140,26 +141,39 @@
 
 
 
-
-;; yui-compress: bytes -> bytes
-(define (yui-compress source-code)
+;; run-java-jar: path bytes (listof string) -> bytes
+(define (run-java-jar jar-file-path 
+                      #:bytes some-bytes 
+                      #:args args)
   (let ([get-java-path
          (lambda ()
-          (find-executable-path "java"))])
+           (find-executable-path "java"))])
     (let*-values ([(bytes-output-port) (open-output-bytes)]
                   [(a-subprocess inp outp errp)
-                   (subprocess #f #f #f (get-java-path) "-jar" (path->string yui.jar) "--type" "js" )]
+                   (apply subprocess #f #f #f (get-java-path) "-jar" (path->string jar-file-path)
+                          args)]
                   [(t1 t2) 
                    (values (thread (lambda () 
                                      (copy-port inp bytes-output-port)))
                            (thread (lambda ()
                                      (copy-port errp (current-output-port)))))])
-      (copy-port (open-input-bytes source-code) outp)
+      (copy-port (open-input-bytes some-bytes) outp)
       (close-output-port outp)
       (subprocess-wait a-subprocess)
       (sync t1)
       (sync t2)
       (get-output-bytes bytes-output-port))))
+
+  
+
+;; yui-compress: bytes -> bytes
+(define (yui-compress source-code)
+  (run-java-jar yui.jar #:bytes source-code #:args (list "--type" "js")))
+
+
+;; google-closure-compile: bytes -> bytes
+(define (google-closure-compile source-code)
+  (run-java-jar google-closure-compiler.jar #:bytes source-code #:args (list)))
 
 
 
@@ -172,4 +186,5 @@
  [lift-images-to-directory ((is-a?/c text%) path? . -> . (listof named-bitmap?))]
  [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]
- [yui-compress (bytes? . -> . bytes?)])
+ [yui-compress (bytes? . -> . bytes?)]
+ [google-closure-compile (bytes? . -> . bytes?)])
