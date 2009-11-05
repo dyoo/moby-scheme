@@ -166,6 +166,11 @@
                        (append (module-binding-bindings world-handlers-module)
                                (module-binding-bindings world-effects-module)
                                (list (bf 'big-bang module-path 3 true "plt.world.Kernel.bigBang")
+
+				     ;; Images
+				     (bf 'image? module-path 1 false "plt.world.Kernel.isImage")
+				     (bf 'image=? module-path 2 false "plt.world.Kernel.image_equal__question__")
+
                                      (bf 'empty-scene module-path 2 false
                                          "plt.world.Kernel.emptyScene")
                                      (bf 'place-image module-path 4 false

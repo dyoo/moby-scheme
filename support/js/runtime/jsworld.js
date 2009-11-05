@@ -249,7 +249,7 @@ plt.world.MobyJsworld = {};
 		// we've got a scene, so we optimize away the repeated
 		// construction of a canvas object.
 		if (aScene != null && aScene != undefined && 
-		    aScene instanceof plt.Kernel.BaseImage) {
+		    aScene instanceof plt.world.Kernel.BaseImage) {
 		    var width = 
 			plt.world.Kernel.imageWidth(aScene).toInteger();
 		    var height = 

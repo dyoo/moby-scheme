@@ -236,13 +236,13 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     plt.world.Kernel.imageWidth = function(thing) {
-	plt.Kernel.check(thing, plt.Kernel.isImage, "image-width", "image", 1);
+	plt.Kernel.check(thing, isImage, "image-width", "image", 1);
 	return plt.types.Rational.makeInstance(thing.getWidth(), 1);
     };
 
 
     plt.world.Kernel.imageHeight = function(thing) {
-	plt.Kernel.check(thing, plt.Kernel.isImage, "image-height", "image", 1);
+	plt.Kernel.check(thing, isImage, "image-height", "image", 1);
 	return plt.types.Rational.makeInstance(thing.getHeight(), 1);
     };
 
@@ -250,7 +250,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     // placeImage: image number number scene -> scene
     plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
 	plt.Kernel.check(picture, 
-			 plt.Kernel.isImage,
+			 isImage,
 			 "place-image",
 			 "image",
 			 1);
@@ -358,7 +358,99 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
-    var BaseImage = plt.Kernel.BaseImage;
+
+
+
+    // Base class for all images.
+    var BaseImage = function(pinholeX, pinholeY) {
+	this.pinholeX = pinholeX;
+	this.pinholeY = pinholeY;
+    }
+    plt.world.Kernel.BaseImage = BaseImage;
+
+
+    var isImage = function(thing) {
+	return ((thing != null) && (thing != undefined)
+		&& (thing instanceof BaseImage));
+    }
+    plt.world.Kernel.isImage = isImage;
+
+
+    BaseImage.prototype.updatePinhole = function(x, y) {
+	var aCopy = {};
+	for (attr in this) {
+	    aCopy[attr] = this[attr];
+	}
+	aCopy.__proto__ = this.__proto__;
+	aCopy.pinholeX = x;
+	aCopy.pinholeY = y;
+	return aCopy;
+    };
+
+
+    BaseImage.prototype.render = function(ctx, x, y) {
+	throw new MobyRuntimeError("Unimplemented method render");
+    };
+
+
+    // makeCanvas: number number -> canvas
+    // Constructs a canvas object of a particular width and height.
+    plt.world.Kernel._makeCanvas = function(width, height) {
+	var canvas = document.createElement("canvas");
+ 	canvas.width = width;
+ 	canvas.height = height;
+ 	canvas.style.width = canvas.width + "px";
+ 	canvas.style.height = canvas.height + "px";
+	
+	// KLUDGE: IE compatibility uses /js/excanvas.js, and dynamic
+	// elements must be marked this way.
+	if (window && typeof window.G_vmlCanvasManager != 'undefined') {
+	    canvas.style.display = 'none';
+	    document.body.appendChild(canvas);
+	    canvas = window.G_vmlCanvasManager.initElement(canvas);
+	    document.body.removeChild(canvas);
+	    canvas.style.display = '';
+	}
+	return canvas;
+    };
+
+
+    BaseImage.prototype.toDomNode = function() {
+	var that = this;
+	var width = plt.world.Kernel.imageWidth(that).toInteger();
+	var height = plt.world.Kernel.imageHeight(that).toInteger();
+	var canvas = plt.Kernel._makeCanvas(width, height);
+
+	// KLUDGE: some of the rendering functions depend on a context
+	// where the canvas is attached to the DOM tree.  So we temporarily
+	// make it invisible, attach it to the tree, render, and then rip it out
+	// again.
+	var oldDisplay = canvas.style.display;
+	canvas.style.display = 'none';
+	document.body.appendChild(canvas);
+ 	var ctx = canvas.getContext("2d");
+	that.render(ctx, 0, 0) 
+	document.body.removeChild(canvas);
+	canvas.style.display = '';
+
+	return canvas;
+    };
+    BaseImage.prototype.toWrittenString = function() { return "<image>"; }
+    BaseImage.prototype.toDisplayedString = function() { return "<image>"; }
+
+
+
+    plt.world.Kernel.image_question_ = function(thing) {
+	return isImage(thing);
+    };
+
+
+    plt.world.Kernel.image_equal__question_ = function(thing, other) {
+	check(thing, isImage, "image=?", "image", 1);
+	check(other, isImage, "image=?", "image", 2);
+	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
+    };
+
 
     
     // isScene: any -> boolean

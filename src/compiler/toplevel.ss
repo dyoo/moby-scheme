@@ -296,11 +296,7 @@
                      (quicksort 2)            ;; *
                      (sort 2)                 ;; *
                      
-                     ;; Images
-                     (image? 1)
-                     (image=? 2)
-                     
-                     
+                                         
                      (void 0 true)
                      
                      ;; Parsing

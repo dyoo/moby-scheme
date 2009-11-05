@@ -209,12 +209,6 @@ var plt = plt || {};
 
 
 
-    var isImage = function(thing) {
-	return ((thing != null) && (thing != undefined)
-		&& (thing instanceof BaseImage));
-    }
-
-
 
     // Returns true if x is a vector
     var isVector = function(x) {
@@ -2095,91 +2089,6 @@ var plt = plt || {};
 
 
 
-    // Base class for all images.
-    var BaseImage = function(pinholeX, pinholeY) {
-	this.pinholeX = pinholeX;
-	this.pinholeY = pinholeY;
-    }
-    plt.Kernel.BaseImage = BaseImage;
-
-
-    BaseImage.prototype.updatePinhole = function(x, y) {
-	var aCopy = {};
-	for (attr in this) {
-	    aCopy[attr] = this[attr];
-	}
-	aCopy.__proto__ = this.__proto__;
-	aCopy.pinholeX = x;
-	aCopy.pinholeY = y;
-	return aCopy;
-    };
-
-
-    BaseImage.prototype.render = function(ctx, x, y) {
-	throw new MobyRuntimeError("Unimplemented method render");
-    };
-
-
-    // makeCanvas: number number -> canvas
-    // Constructs a canvas object of a particular width and height.
-    plt.Kernel._makeCanvas = function(width, height) {
-	var canvas = document.createElement("canvas");
- 	canvas.width = width;
- 	canvas.height = height;
- 	canvas.style.width = canvas.width + "px";
- 	canvas.style.height = canvas.height + "px";
-	
-	// KLUDGE: IE compatibility uses /js/excanvas.js, and dynamic
-	// elements must be marked this way.
-	if (window && typeof window.G_vmlCanvasManager != 'undefined') {
-	    canvas.style.display = 'none';
-	    document.body.appendChild(canvas);
-	    canvas = window.G_vmlCanvasManager.initElement(canvas);
-	    document.body.removeChild(canvas);
-	    canvas.style.display = '';
-	}
-	return canvas;
-    };
-
-
-    BaseImage.prototype.toDomNode = function() {
-	var that = this;
-	var width = plt.world.Kernel.imageWidth(that).toInteger();
-	var height = plt.world.Kernel.imageHeight(that).toInteger();
-	var canvas = plt.Kernel._makeCanvas(width, height);
-
-	// KLUDGE: some of the rendering functions depend on a context
-	// where the canvas is attached to the DOM tree.  So we temporarily
-	// make it invisible, attach it to the tree, render, and then rip it out
-	// again.
-	var oldDisplay = canvas.style.display;
-	canvas.style.display = 'none';
-	document.body.appendChild(canvas);
- 	var ctx = canvas.getContext("2d");
-	that.render(ctx, 0, 0) 
-	document.body.removeChild(canvas);
-	canvas.style.display = '';
-
-	return canvas;
-    };
-    BaseImage.prototype.toWrittenString = function() { return "<image>"; }
-    BaseImage.prototype.toDisplayedString = function() { return "<image>"; }
-
-
-
-    plt.Kernel.image_question_ = function(thing) {
-	return isImage(thing);
-    };
-
-
-    plt.Kernel.image_equal__question_ = function(thing, other) {
-	check(thing, isImage, "image=?", "image", 1);
-	check(other, isImage, "image=?", "image", 2);
-	return thing == other ? plt.types.Logic.TRUE : plt.types.Logic.FALSE;
-    };
-
-
-
     plt.Kernel.toWrittenString = function(x) {
 	if (x == undefined || x == null) {
 	    return "<undefined>";
@@ -2480,7 +2389,6 @@ var plt = plt || {};
     plt.Kernel.isNumber = isNumber;
     plt.Kernel.isAlphabeticString = isAlphabeticString;
     plt.Kernel.isWhitespaceString = isWhitespaceString;
-    plt.Kernel.isImage = isImage;
     plt.Kernel.isList = isList;
     plt.Kernel.isVector = isVector;
     plt.Kernel.isFunction = isFunction;
