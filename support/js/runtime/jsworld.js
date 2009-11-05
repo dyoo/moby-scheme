@@ -256,7 +256,7 @@ plt.world.MobyJsworld = {};
 			plt.world.Kernel.imageHeight(aScene).toInteger();
 
 		    if (! reusableCanvas) {
-			reusableCanvas = plt.Kernel._makeCanvas(width, height);
+			reusableCanvas = plt.world.Kernel.makeCanvas(width, height);
 			// Note: the canvas object may itself manage objects,
 			// as in the case of an excanvas.  In that case, we must make
 			// sure jsworld doesn't try to disrupt its contents!

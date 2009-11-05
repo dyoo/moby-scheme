@@ -395,7 +395,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     // makeCanvas: number number -> canvas
     // Constructs a canvas object of a particular width and height.
-    plt.world.Kernel._makeCanvas = function(width, height) {
+    plt.world.Kernel.makeCanvas = function(width, height) {
 	var canvas = document.createElement("canvas");
  	canvas.width = width;
  	canvas.height = height;
@@ -419,7 +419,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	var that = this;
 	var width = plt.world.Kernel.imageWidth(that).toInteger();
 	var height = plt.world.Kernel.imageHeight(that).toInteger();
-	var canvas = plt.Kernel._makeCanvas(width, height);
+	var canvas = plt.world.Kernel.makeCanvas(width, height);
 
 	// KLUDGE: some of the rendering functions depend on a context
 	// where the canvas is attached to the DOM tree.  So we temporarily
