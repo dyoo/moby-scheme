@@ -182,6 +182,14 @@ plt.world.MobyJsworld = {};
 	plt.Kernel.attachEvent(node, eventName, fn);
     }
 
+    var preventDefault = function(event) {
+	if (event.preventDefault) {
+	    event.preventDefault();
+	} else {
+	    event.returnValue = false;
+	}
+    }
+
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, handlers) {
@@ -201,7 +209,7 @@ plt.world.MobyJsworld = {};
 	attachEvent(toplevelNode,
 		    'click',
 		    function(e) {
-			e.preventDefault();
+			preventDefault(e);
 			e.stopPropagation();
 			return false;
 		    },
@@ -316,14 +324,14 @@ plt.world.MobyJsworld = {};
 			'keydown',
 			function(e) {
 			    plt.world.stimuli.onKey(e);
-			    e.preventDefault();
+			    preventDefault(e);
 			    e.stopPropagation();
 			    return false;
 			});
 	    attachEvent(toplevelNode,
 			'keypress',
 			function(e) {
-			    e.preventDefault();
+			    preventDefault(e);
 			    e.stopPropagation();
 			    return false;
 			});
