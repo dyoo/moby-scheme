@@ -190,6 +190,14 @@ plt.world.MobyJsworld = {};
 	}
     }
 
+    var stopPropagation = function(event) {
+	if (event.stopPropagation) {
+	    event.stopPropagation();
+	} else {
+	    event.cancelBubble = true;
+	}
+    }
+
 
     // bigBang: world (listof (list string string)) (listof handler) -> world
     Jsworld.bigBang = function(initWorld, handlers) {
@@ -210,7 +218,7 @@ plt.world.MobyJsworld = {};
 		    'click',
 		    function(e) {
 			preventDefault(e);
-			e.stopPropagation();
+			stopPropagation(e);
 			return false;
 		    },
 		    false);
@@ -325,14 +333,14 @@ plt.world.MobyJsworld = {};
 			function(e) {
 			    plt.world.stimuli.onKey(e);
 			    preventDefault(e);
-			    e.stopPropagation();
+			    stopPropagation(e);
 			    return false;
 			});
 	    attachEvent(toplevelNode,
 			'keypress',
 			function(e) {
 			    preventDefault(e);
-			    e.stopPropagation();
+			    stopPropagation(e);
 			    return false;
 			});
 	    toplevelNode.focus();

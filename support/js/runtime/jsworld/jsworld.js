@@ -1015,10 +1015,28 @@ plt.Jsworld = {};
 //     }
 //     Jsworld.bidirectional_input = bidirectional_input;
 
+
+    var preventDefault = function(event) {
+	if (event.preventDefault) {
+	    event.preventDefault();
+	} else {
+	    event.returnValue = false;
+	}
+    }
+
+    var stopPropagation = function(event) {
+	if (event.stopPropagation) {
+	    event.stopPropagation();
+	} else {
+	    event.cancelBubble = true;
+	}
+    }
+
+
     var stopClickPropagation = function(node) {
 	attachEvent(node, "click",
 		    function(e) {
-			e.stopPropagation();
+			stopPropagation(e);
 		    });
 	return node;
     }
