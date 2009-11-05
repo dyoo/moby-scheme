@@ -12,3 +12,6 @@ support/phonegap-fork
 
 Gears init http://code.google.com/apis/gears/tools.html
 support/js/gears_init.js
+
+
+xmlhttprequest: cross browser XMLHttpRequest: http://code.google.com/p/xmlhttprequest/
