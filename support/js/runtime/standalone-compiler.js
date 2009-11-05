@@ -1498,7 +1498,7 @@ var plt = plt || {};
 	    node.addEventListener(eventName, fn, false);
 	} else {
 	    // IE
-	    node.attachEvent('on' + event, fn, false);
+	    node.attachEvent('on' + eventName, fn, false);
 	}
     };
 
