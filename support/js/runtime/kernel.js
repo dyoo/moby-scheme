@@ -55,6 +55,16 @@ var plt = plt || {};
 	}
     };
 
+    var detachEvent = function(node, eventName, fn) {
+	if (node.addEventListener) {
+	    // Mozilla
+	    node.removeEventListener(eventName, fn, false);
+	} else {
+	    // IE
+	    node.detachEvent('on' + eventName, fn, false);
+	}
+    }
+
 
 
     // Inheritance from pg 168: Javascript, the Definitive Guide.
@@ -2512,5 +2522,6 @@ var plt = plt || {};
 
 
     plt.Kernel.attachEvent = attachEvent;
+    plt.Kernel.detachEvent = detachEvent;
     
 })();

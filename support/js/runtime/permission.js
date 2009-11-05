@@ -53,7 +53,6 @@ var plt = plt || {};
 	if (perms.length > 0) {
 	    var p = perms.pop();
 	    plt.permission._runStartupCode(p, perms, thunk);
-
 	} else {
 	    thunk();
 	}
@@ -131,31 +130,26 @@ var plt = plt || {};
 	else if (isOpenImageUrlP(p)) {
 	    var path = permission_colon_open_dash_image_dash_url_dash_url(p);
 	    var img = new Image();
-	    var loaded = false;
-	    img.onload = function() {
-		if (! loaded) {
-		    // WARNING WARNING
-		    // This looks clumsy, but we're intentionally making sure that this is
-		    // not reentrant.  It turns out that in Internet Explorer, an animated
-		    // gif will call onload every time the animation loops!  This is a terrible
-		    // bug that we're working around.
-		    loaded = true;
-		    plt.world.Kernel.FileImage.installInstance(path, img);
-		    keepGoing();
-		}
+	    var loadHandler = function() {
+		// Detach, because looping animated gifs are defined to call onload
+		// on every loop
+		plt.Kernel.detachEvent(img, 'load', loadHandler);
+		plt.world.Kernel.FileImage.installInstance(path, img);
+		keepGoing();
 	    };
+	    plt.Kernel.attachEvent(img, "load", loadHandler);
 	    // If something goes wrong, we should show
 	    // some default image.
-	    img.onerror = function() {
-		img.onerror = function() {
-		    keepGoing();
-		};
-		img.src = "http://www.wescheme.org/images/broken.png";
-	    };
+	    plt.Kernel.attachEvent(img, 
+				   "error",
+				   function() {
+				       img.src = "http://www.wescheme.org/images/broken.png";
+				       plt.Kernel.detachEvent(img, 'load', loadHandler);
+				       keepGoing();
+				   });
 	    img.src = path;
-	} 
 
-	else {
+	} else {
 	    keepGoing();
 	}
     };
