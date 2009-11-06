@@ -10,6 +10,12 @@
        (list? (rest datum)))))
 
 
+;; symbol<: symbol symbol -> boolean
+(define (symbol< x y)
+  (string<? (symbol->string x)
+            (symbol->string y)))
+
+
 ;; program: any -> boolean
 ;; Returns true if the datum is a program.
 (define (program? datum)
@@ -305,7 +311,8 @@
 
 
 
-(provide/contract [program? (any/c . -> . boolean?)]
+(provide/contract [symbol< (symbol? symbol? . -> . boolean?)]
+                  [program? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
                   [defn? (any/c . -> . boolean?)]
                   [test-case? (any/c . -> . boolean?)]

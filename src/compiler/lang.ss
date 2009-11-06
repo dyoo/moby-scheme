@@ -143,7 +143,10 @@
          ;; Hash stuff
          ;; FIXME: the hash in javascript only accepts strings as keys.
          ;; We should use contracts here.
-         hash-set hash-ref hash-remove make-immutable-hasheq hash-map
+         ;; disabled: using internal rbtree in the compiler now.
+         ;;hash-set hash-ref hash-remove make-immutable-hasheq hash-map
+         
+         
          ;; To support include and require
          open-input-stx
 

@@ -326,12 +326,14 @@
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
-                   (append '((hash-set 3 "plt.Kernel._kernelHashSet")
-                             (hash-ref 3 "plt.Kernel._kernelHashRef")
-                             (hash-remove 2 "plt.Kernel._kernelHashRemove")
-                             (make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
-                             (hash-map 2 "plt.Kernel._kernelHashMap")
-                             (hash? 1 "plt.Kernel._isHash")
+                   (append '(#;(hash-set 3 "plt.Kernel._kernelHashSet")
+                             #;(hash-ref 3 "plt.Kernel._kernelHashRef")
+                             #;(hash-remove 2 "plt.Kernel._kernelHashRemove")
+                             #;(make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
+                             #;(hash-map 2 "plt.Kernel._kernelHashMap")
+                             #;(hash? 1 "plt.Kernel._isHash")
+                             
+                             
                              (open-input-stx 1 "plt.Kernel.openInputStx"))
                    
                            (map (lambda (id+arity)

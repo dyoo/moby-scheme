@@ -10,15 +10,15 @@
 
 ;; rbtree-empty?: (treeof X Y) -> boolean
 (define (rbtree-empty? t) 
-  (eqv? t empty-rbtree))
+  (eq? t empty-rbtree))
 
 ;; red?: color -> boolean
 (define (rbtree-color-red? c) 
-  (eqv? c 'red))
+  (eq? c 'red))
 
 ;; black?: color -> boolean
 (define (rbtree-color-black? c) 
-  (eqv? c 'black))
+  (eq? c 'black))
 
 
 ;; rbtree-lookup: (X X -> boolean) (treeof X Y) X -> (or/c false (list X Y))
@@ -91,4 +91,7 @@
                                                   . -> . rbtree?)]
                   [rbtree-lookup 
                    ((any/c any/c . -> . boolean?) rbtree? any/c 
-                                                  . -> . (or/c false/c (list/c any/c any/c)))])
+                                                  . -> . (or/c false/c (list/c any/c any/c)))]
+                  
+                  [rbtree->list
+                   (rbtree? . -> . (listof (list/c any/c any/c)))])
