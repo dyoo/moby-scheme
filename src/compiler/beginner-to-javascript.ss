@@ -331,10 +331,11 @@
              
              ;; mutators
              (string-join 
-              (map (lambda (a-field)
+              (mapi (lambda (a-field an-index)
                      (string-append "var " (make-mutator-name (stx-e a-field)) " = function(obj,newVal) {\n"
                                     "	 if (" predicate-name" (obj)) {\n"
                                     "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
+				    "           obj._fields[" (number->string an-index) "] = newVal;"
                                     "     } else {\n"
                                     "        throw new plt.Kernel.MobyRuntimeError("
                                     "            plt.Kernel.format('" (make-mutator-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"

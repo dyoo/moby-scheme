@@ -2101,6 +2101,7 @@ var plt = plt || {};
 
     plt.Kernel.toWrittenString = function(x, cache) {
 	if (! cache) { cache = new plt._Hashtable(); }
+
 	if (cache.containsKey(x)) {
 	    return "...";
 	}

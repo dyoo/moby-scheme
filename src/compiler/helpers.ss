@@ -309,9 +309,21 @@
      (void)]))
 
 
+;; mapi: (X number -> Y) (listof X) -> (listof Y)
+(define (mapi f lst)
+  (local ([define (loop lst i)
+	    
+	    (cond
+	     [(empty? lst)
+	      empty]
+	     [else
+	      (cons (f (first lst) i)
+		    (loop (rest lst) (add1 i)))])])
+    (loop lst 0)))
 
 
 (provide/contract [symbol< (symbol? symbol? . -> . boolean?)]
+                  [mapi ((any/c number? . -> . any/c) (listof any/c) . -> . (listof any/c))]
                   [program? (any/c . -> . boolean?)]
                   [expression? (any/c . -> . boolean?)]
                   [defn? (any/c . -> . boolean?)]
