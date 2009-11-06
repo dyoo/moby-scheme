@@ -1560,10 +1560,10 @@ var plt = plt || {};
     var HashTable = function(inputHash) {
 	this.hash = new plt._Hashtable();
     };
-    HashTable.prototype.toWrittenString = function() {
+    HashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
     };
-    HashTable.prototype.toDisplayedString = function() {
+    HashTable.prototype.toDisplayedString = function(cache) {
 	return "<hash>";
     }
 
@@ -2099,7 +2099,12 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.toWrittenString = function(x) {
+    plt.Kernel.toWrittenString = function(x, cache) {
+	if (! cache) { cache = new plt._Hashtable(); }
+	if (cache.containsKey(x)) {
+	    return "...";
+	}
+
 	if (x == undefined || x == null) {
 	    return "<undefined>";
 	}
@@ -2110,17 +2115,22 @@ var plt = plt || {};
 	    return x.toString();
 	}
 	if ('toWrittenString' in x) {
-	    return x.toWrittenString();
+	    return x.toWrittenString(cache);
 	}
 	if ('toDisplayedString' in x) {
-	    return x.toDisplayedString();
+	    return x.toDisplayedString(cache);
 	} else {
 	    return x.toString();
 	}
     };
 
 
-    plt.Kernel.toDisplayedString = function(x) {
+    plt.Kernel.toDisplayedString = function(x, cache) {
+	if (! cache) { cache = new plt._Hashtable(); }
+	if (cache.containsKey(x)) {
+	    return "...";
+	}
+
 	if (x == undefined || x == null) {
 	    return "<undefined>";
 	}
@@ -2131,10 +2141,10 @@ var plt = plt || {};
 	    return x.toString();
 	}
 	if ('toWrittenString' in x) {
-	    return x.toWrittenString();
+	    return x.toWrittenString(cache);
 	}
 	if ('toDisplayedString' in x) {
-	    return x.toDisplayedString();
+	    return x.toDisplayedString(cache);
 	} else {
 	    return x.toString();
 	}
@@ -2143,7 +2153,12 @@ var plt = plt || {};
 
 
     // toDomNode: scheme-value -> dom-node
-    plt.Kernel.toDomNode = function(x) {
+    plt.Kernel.toDomNode = function(x, cache) {
+	if (! cache) { cache = new plt._Hashtable();}
+	if (cache.containsKey(x)) {
+	    return document.createTextNode("...");
+	}
+
 	if (x == undefined || x == null) {
 	    var node = document.createTextNode("<undefined>");
 	    return node;
@@ -2160,14 +2175,14 @@ var plt = plt || {};
 	    return x;
 	}
 	if ('toDomNode' in x) {
-	    return x.toDomNode();
+	    return x.toDomNode(cache);
 	}
 	if ('toWrittenString' in x) {
-	    var node = document.createTextNode(x.toWrittenString());
+	    var node = document.createTextNode(plt.Kernel.toWrittenString(x, cache));
 	    return node;
 	}
 	if ('toDisplayedString' in x) {
-	    var node = document.createTextNode(x.toDisplayedString());
+	    var node = document.createTextNode(plt.Kernel.toDisplayedString(x, cache));
 	    return node;
 	} else {
 	    var node = document.createTextNode(x.toString());
@@ -2178,13 +2193,14 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.Struct.prototype.toWrittenString = function() { 
+    plt.Kernel.Struct.prototype.toWrittenString = function(cache) { 
+	cache.put(this, true);
 	var buffer = [];
 	buffer.push("(");
 	buffer.push(this._constructorName);
 	for(var i = 0; i < this._fields.length; i++) {
 	    buffer.push(" ");
-	    buffer.push(plt.Kernel.toWrittenString(this._fields[i]));
+	    buffer.push(plt.Kernel.toWrittenString(this._fields[i], cache));
 	}
 	buffer.push(")");
 	return plt.types.String.makeInstance(buffer.join(""));
@@ -2198,13 +2214,14 @@ var plt = plt || {};
     }
 
 
-    plt.Kernel.Struct.prototype.toDomNode = function() {
+    plt.Kernel.Struct.prototype.toDomNode = function(cache) {
+	cache.put(this, true);
 	var node = document.createElement("div");
 	node.appendChild(document.createTextNode("("));
 	node.appendChild(document.createTextNode(this._constructorName));
 	for(var i = 0; i < this._fields.length; i++) {
 	    node.appendChild(document.createTextNode(" "));
-	    appendChild(node, plt.Kernel.toDomNode(this._fields[i]));
+	    appendChild(node, plt.Kernel.toDomNode(this._fields[i], cache));
 	}
 	node.appendChild(document.createTextNode(")"));
 	return node;

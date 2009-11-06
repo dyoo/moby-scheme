@@ -142,7 +142,7 @@ plt.world.config = plt.world.config || {};
 
 
     var addStringMethods = function(f, name) {
-	f.toWrittenString = function() { return "(" + name + " ...)"; }
+	f.toWrittenString = function(cache) { return "(" + name + " ...)"; }
 	f.toDisplayedString = f.toWrittenString;
 	return f;
     }

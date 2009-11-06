@@ -24,7 +24,7 @@ var plt = plt || {};
 	FALSE : false
     };
     
-    Boolean.prototype.toWrittenString = function() {
+    Boolean.prototype.toWrittenString = function(cache) {
 	if (this.valueOf()) { return "true"; }
 	return "false";
     };
@@ -48,11 +48,11 @@ var plt = plt || {};
 	return new plt.types.Char(val);
     };
 
-    plt.types.Char.prototype.toWrittenString = function() {
+    plt.types.Char.prototype.toWrittenString = function(cache) {
 	return "#\\" + this.val;
     };
 
-    plt.types.Char.prototype.toDisplayedString = function () {
+    plt.types.Char.prototype.toDisplayedString = function (cache) {
         return this.val;
     };
 
@@ -93,11 +93,11 @@ var plt = plt || {};
         return this.val;
     };
 
-    plt.types.Symbol.prototype.toWrittenString = function() {
+    plt.types.Symbol.prototype.toWrittenString = function(cache) {
 	return this.val;
     };
 
-    plt.types.Symbol.prototype.toDisplayedString = function() {
+    plt.types.Symbol.prototype.toDisplayedString = function(cache) {
 	return this.val;
     };
 
@@ -121,8 +121,8 @@ var plt = plt || {};
     plt.types.Empty.prototype.isEmpty = function() {
 	return true;
     };
-    plt.types.Empty.prototype.toWrittenString = function() { return "empty"; };
-    plt.types.Empty.prototype.toDisplayedString = function() { return "empty"; };
+    plt.types.Empty.prototype.toWrittenString = function(cache) { return "empty"; };
+    plt.types.Empty.prototype.toDisplayedString = function(cache) { return "empty"; };
 
 
 
@@ -176,11 +176,12 @@ var plt = plt || {};
 	return ret;
     };
     
-    plt.types.Cons.prototype.toWrittenString = function() {
+    plt.types.Cons.prototype.toWrittenString = function(cache) {
+	cache.put(this, true);
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
-	    texts.push(plt.Kernel.toWrittenString(p.first()));
+	    texts.push(plt.Kernel.toWrittenString(p.first(), cache));
 	    p = p.rest();
 	}
 	return "(" + texts.join(" ") + ")";
@@ -188,10 +189,11 @@ var plt = plt || {};
 
 
     plt.types.Cons.prototype.toDisplayedString = function() {
+	cache.put(this, true);
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
-	    texts.push(p.first().toDisplayedString());
+	    texts.push(plt.Kernel.toDisplayedString(p.first(), cache));
 	    p = p.rest();
 	}
 	return "(" + texts.join(" ") + ")";
@@ -246,27 +248,30 @@ var plt = plt || {};
 	this.elts[k] = v;
     };
 
-    plt.types.Vector.prototype.toWrittenString = function() {
+    plt.types.Vector.prototype.toWrittenString = function(cache) {
+	cache.put(this, true);
 	var texts = [];
 	for (var i = 0; i < this.length(); i++) {
-	    texts.push(plt.Kernel.toWrittenString(this.ref(i)));
+	    texts.push(plt.Kernel.toWrittenString(this.ref(i), cache));
 	}
 	return "#(" + texts.join(" ") + ")";
     };
-    plt.types.Vector.prototype.toDisplayedString = function() {
+    plt.types.Vector.prototype.toDisplayedString = function(cache) {
+	cache.put(this, true);
 	var texts = [];
 	for (var i = 0; i < this.length(); i++) {
-	    texts.push(plt.Kernel.toDisplayedStringString(this.ref(i)));
+	    texts.push(plt.Kernel.toDisplayedStringString(this.ref(i), cache));
 	}
 	return "#(" + texts.join(" ") + ")";
     };
 
-    plt.types.Vector.prototype.toDomNode = function() {
+    plt.types.Vector.prototype.toDomNode = function(cache) {
+	cache.put(this, true);
 	var node = document.createElement("div");
 	node.appendChild(document.createTextNode("#("));
 	for (var i = 0; i < this.length(); i++) {
 	    appendChild(node,
-			plt.Kernel.toDomNode(this.ref(i)));
+			plt.Kernel.toDomNode(this.ref(i), cache));
 	}
 	node.appendChild(document.createTextNode(")"));
 	return node;
@@ -305,7 +310,7 @@ var plt = plt || {};
 	this.d = d / divisor;
     };
     
-    plt.types.Rational.prototype.toWrittenString = function() {
+    plt.types.Rational.prototype.toWrittenString = function(cache) {
 	if (this.d == 1) {
 	    return this.n + "";
 	} else {
@@ -624,7 +629,7 @@ var plt = plt || {};
 	return plt.types.Complex.makeInstance(this, plt.types.Rational.ZERO);
     };
     
-    plt.types.FloatPoint.prototype.toWrittenString = function() {
+    plt.types.FloatPoint.prototype.toWrittenString = function(cache) {
 	if (this.n == Number.POSITIVE_INFINITY) {
 	    return "+inf.0";
 	} else if (this.n == Number.NEGATIVE_INFINITY) {
@@ -936,7 +941,7 @@ var plt = plt || {};
 	return result;
     };
     
-    plt.types.Complex.prototype.toWrittenString = function() {
+    plt.types.Complex.prototype.toWrittenString = function(cache) {
 	if (plt.types.NumberTower.greaterThanOrEqual(
 	    this.i,
 	    plt.types.Rational.ZERO)) {
@@ -1432,7 +1437,7 @@ var plt = plt || {};
     };
     
 
-    plt.types.String.prototype.toWrittenString = function() {
+    plt.types.String.prototype.toWrittenString = function(cache) {
     	return '"' + this.replace(/["\\]/g,
     	                       function(match, submatch, index) {
                                        return "\\" + match;
@@ -3007,10 +3012,10 @@ var plt = plt || {};
     var HashTable = function(inputHash) {
 	this.hash = new plt._Hashtable();
     };
-    HashTable.prototype.toWrittenString = function() {
+    HashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
     };
-    HashTable.prototype.toDisplayedString = function() {
+    HashTable.prototype.toDisplayedString = function(cache) {
 	return "<hash>";
     }
 
@@ -3546,7 +3551,8 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.toWrittenString = function(x) {
+    plt.Kernel.toWrittenString = function(x, cache) {
+	if 
 	if (x == undefined || x == null) {
 	    return "<undefined>";
 	}

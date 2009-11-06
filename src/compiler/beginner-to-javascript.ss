@@ -714,8 +714,8 @@
                     return "
                             (binding:function-java-string binding)
                             ".apply(null, args.slice(0, " (number->string (binding:function-min-arity binding)) ").concat([args.slice("(number->string (binding:function-min-arity binding))")]));
-                  }); result.toWrittenString = function() {return '<function:" (symbol->string (binding-id binding)) ">'; }
-                      result.toDisplayedString = function() {return '<function:" (symbol->string (binding-id binding)) ">';}
+                  }); result.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; }
+                      result.toDisplayedString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">';}
                       return result; })())")]
             [else
              (string-append "(function() { var result = (function(args) {
@@ -727,8 +727,8 @@
                                               (range (binding:function-min-arity binding)))
                                          ", ")
                             ");
-                 }); result.toWrittenString = function() {return '<function:"(symbol->string (binding-id binding))">'; }
-                     result.toDisplayedString = function() {return '<function:"(symbol->string (binding-id binding))">';}
+                 }); result.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; }
+                     result.toDisplayedString = function(cache) {return '<function:"(symbol->string (binding-id binding))">';}
                      return result; })()")])]))]))
 
 
@@ -791,7 +791,7 @@
                              return "
                       body-string
                       "; });
-                      result.toWrittenString = function () {
+                      result.toWrittenString = function (cache) {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
