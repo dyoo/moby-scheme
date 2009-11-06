@@ -414,10 +414,17 @@ window.Canvas.Text = {
         this.lineWidth = style.size * (style.weight == 'bold' ? 0.5 : 0.3);
       }
     }
+    // dyoo: for some reason, the drawing isn't taking unless
+    // we call this twice.  I don't know why yet.
+    this[(stroke || (face.strokeFont && !moz)) ? 'stroke' : 'fill']();
     this[(stroke || (face.strokeFont && !moz)) ? 'stroke' : 'fill']();
     this.closePath();
     this.restore();
-    if (true) { //ctxt.options.debug) {
+
+
+
+
+    if (ctxt.options.debug) {
       var left = Math.floor(offset.x + x) + 0.5,
           top = Math.floor(y)+0.5;
       this.save();
