@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Improvements to IE compatibility."))
+(define release-notes '("Improvements to IE compatibility.  Added mutable hash table primitives make-hasheq, hash-set!, hash-ref, hash-remove!, hash-map, and hash?."))
