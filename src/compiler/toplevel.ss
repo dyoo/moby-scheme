@@ -321,17 +321,16 @@
                      )))
           
           
-          ;; These are identifiers we'll need to do the bootstrapping.
           (define top-env-3 
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
-                   (append '(#;(hash-set 3 "plt.Kernel._kernelHashSet")
-                             #;(hash-ref 3 "plt.Kernel._kernelHashRef")
-                             #;(hash-remove 2 "plt.Kernel._kernelHashRemove")
-                             #;(make-immutable-hasheq 1 "plt.Kernel._kernelMakeImmutableHashEq")
-                             #;(hash-map 2 "plt.Kernel._kernelHashMap")
-                             #;(hash? 1 "plt.Kernel._isHash")
+                   (append '((make-hasheq 0 "plt.Kernel.makeHashEq")
+                             (hash-set! 3 "plt.Kernel.hashSetBang")
+                             (hash-ref 3 "plt.Kernel.hashRef")
+                             (hash-remove! 2 "plt.Kernel.hashRemoveBang")
+                             (hash-map 2 "plt.Kernel.hashMap")
+                             (hash? 1 "plt.Kernel.isHash")
                              
                              
                              (open-input-stx 1 "plt.Kernel.openInputStx"))

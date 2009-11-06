@@ -1,5 +1,6 @@
 gears_init.js
 types.js
+jshashtable.js
 kernel.js
 read.js
 stx.js

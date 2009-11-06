@@ -1548,44 +1548,48 @@ var plt = plt || {};
     };
 
 
-    var HashTable = function(inputHash) {
-	this.hash = inputHash;
-    }
 
     // open-input-stx: string -> (listof stx)
     plt.Kernel.openInputStx = function(path) {
 	// Doesn't do anything here.
 	throw new MobyRuntimeError("open-input-stx currently unsupported");
-    },
-
-
-    // kernelMakeImmutableHashEq: list -> hash
-    plt.Kernel._kernelMakeImmutableHashEq = function(pairs) {
-	var myhash = {};
-	while (! pairs.isEmpty()) {
-	    var nextPair = pairs.first();
-	    var aKey = nextPair.first(); 
-	    var aVal = nextPair.rest(); 
-	    myhash[aKey] = aVal;
-	    pairs = pairs.rest();
-	}
-	return new HashTable(myhash);
     };
 
-    // plt.Kernel._kernelHashSet: hash object value -> hash
-    plt.Kernel._kernelHashSet = function(obj, key, val) {
-	var newHash = {};
-	var hash = obj.hash;
-	for (var k in hash) {
-	    newHash[k] = hash[k];
-	}
-	newHash[key] = val;
-	return new HashTable(newHash);
+
+    //////////////////////////////////////////////////////////////////////
+    var HashTable = function(inputHash) {
+	this.hash = new plt._Hashtable();
+    };
+    HashTable.prototype.toWrittenString = function() {
+	return "<hash>";
+    };
+    HashTable.prototype.toDisplayedString = function() {
+	return "<hash>";
+    }
+
+    HashTable.prototype.isEqual = function(other) {
+	return this === other;
     };
 
-    plt.Kernel._kernelHashRef = function(obj, key, defaultVal) {
-	if (key in obj.hash) {
-	    return obj.hash[key];
+    // makeHashEq: -> hash
+    plt.Kernel.makeHashEq = function() {
+	var myhash = new HashTable();
+	return myhash;
+    };
+
+
+    // plt.Kernel.hashSet: hash object value -> undefined
+    // Mutates the hash with a new key/value binding.
+    plt.Kernel.hashSetBang = function(obj, key, val) {
+	check(obj, isHash, "hash-set!", "hash", 1);
+	obj.hash.put(key, val);
+	return undefined;
+    };
+
+    plt.Kernel.hashRef = function(obj, key, defaultVal) {
+	check(obj, isHash, "hash-ref", "hash", 1);
+	if (obj.hash.containsKey(key)) {
+	    return obj.hash.get(key);
 	} else {
 	    if (isFunction(defaultVal)) {
 		return defaultVal([]);
@@ -1594,28 +1598,34 @@ var plt = plt || {};
 	}
     };
     
-    plt.Kernel._kernelHashRemove = function(obj, key) {
-	var newHash = {};
-	var hash = obj.hash;
-    	for (var k in hash) {
-	    if (k != key)
-    	    	newHash[k] = hash[k];
-	}
-	return new HashTable(newHash);
+    plt.Kernel.hashRemoveBang = function(obj, key) {
+	check(obj, isHash, "hash-remove!", "hash", 1);
+	obj.hash.remove(key);
+	return undefined;
     };
 
-    plt.Kernel._kernelHashMap = function(ht, f) {
+    plt.Kernel.hashMap = function(ht, f) {
+	check(ht, isHash, "hash-map", "hash", 1);
 	var result = plt.types.Empty.EMPTY;
-	var key;
-	for (key in ht.hash) {
-	    var val = ht.hash[key];
-	    result = plt.Kernel.cons(f([key, val]),
+	var keys = ht.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    var val = ht.hash.get(keys[i]);
+	    result = plt.Kernel.cons(f([keys[i], val]),
 				     result);
 	}
 	return result;
     };
 
+    var isHash = function(x) {
+	return ((x != null) && 
+		(x != undefined) && 
+		(x instanceof HashTable))
+    }
+    plt.Kernel.isHash = isHash;
 
+
+
+    //////////////////////////////////////////////////////////////////////
 
 
 
