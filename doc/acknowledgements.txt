@@ -14,4 +14,11 @@ Gears init http://code.google.com/apis/gears/tools.html
 support/js/gears_init.js
 
 
+excanvas: http://excanvas.sourceforge.net/
+support/js/compat/excanvas.js
+
+
+canvas-text: http://code.google.com/p/canvas-text/
+support/js/compat/canvas-text
+
 xmlhttprequest: cross browser XMLHttpRequest: http://code.google.com/p/xmlhttprequest/

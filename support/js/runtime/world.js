@@ -606,7 +606,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.msg = msg;
 	this.size = size;
 	this.color = color;
-	this.font = "Verdana";
+	this.font = "sans serf";
     }
     TextImage.prototype = heir(BaseImage.prototype);
 
@@ -620,10 +620,10 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    ctx.fillStyle = this.color;
 	    ctx.mozDrawText(this.msg);
 	} else {
-	    //ctx.font.color = this.color;
-	    //ctx.font.size = this.size + "px";
+	    alert("color = " + this.color.toRGBAString());
+	    ctx.font = this.size + "pt sans-serf";
+	    ctx.fillStyle = this.color.toRGBAString();
 	    ctx.fillText(this.msg, x, y);
-	    // FIXME.
 	}
     };
     
@@ -818,6 +818,10 @@ plt.world.Kernel = plt.world.Kernel || {};
     ColorRecord.prototype.toString = function() {
 	return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
     };
+
+    ColorRecord.prototype.toRGBAString = function() {
+	return "rgba(" + this.r + "," + this.g + "," + this.b + ", 1)";
+    }
 
     var colorDb = new ColorDb();
     colorDb.put("ORANGE", new ColorRecord(255, 165, 0));
