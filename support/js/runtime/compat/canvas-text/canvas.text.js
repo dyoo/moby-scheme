@@ -403,7 +403,6 @@ window.Canvas.Text = {
       this.strokeStyle = this.fillStyle;
     }
     this.beginPath();
-
     if (moz) {
       this.mozTextStyle = this.buildStyle(style);
       this[stroke ? 'mozPathText' : 'mozDrawText'](text);
@@ -415,25 +414,19 @@ window.Canvas.Text = {
         this.lineWidth = style.size * (style.weight == 'bold' ? 0.5 : 0.3);
       }
     }
-
     this[(stroke || (face.strokeFont && !moz)) ? 'stroke' : 'fill']();
-
     this.closePath();
     this.restore();
-    
-    if (ctxt.options.debug) {
+    if (true) { //ctxt.options.debug) {
       var left = Math.floor(offset.x + x) + 0.5,
           top = Math.floor(y)+0.5;
-          
       this.save();
       this.strokeStyle = '#F00';
       this.lineWidth = 0.5;
       this.beginPath();
-      
       // Text baseline
       this.moveTo(left + offset.metrics.width, top);
       this.lineTo(left, top);
-      
       // Text align
       this.moveTo(left - offset.x, top + offset.y);
       this.lineTo(left - offset.x, top + offset.y - style.size);
@@ -441,6 +434,7 @@ window.Canvas.Text = {
       this.stroke();
       this.closePath();
       this.restore();
+
     }
   };
   

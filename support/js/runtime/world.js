@@ -606,22 +606,21 @@ plt.world.Kernel = plt.world.Kernel || {};
 	this.msg = msg;
 	this.size = size;
 	this.color = color;
-	this.font = "sans serf";
+	this.font = "Optimer";
     }
     TextImage.prototype = heir(BaseImage.prototype);
 
     TextImage.prototype.render = function(ctx, x, y) {
 	// Fixme: not quite right yet.
 	if ('mozDrawText' in ctx) {
-	    ctx.mozTextStyle=this.size+"pt "+this.font;
+	    ctx.mozTextStyle=this.size+"px "+this.font;
 	    // Fix me: I don't quite know how to get the
 	    // baseline right.
 	    ctx.translate(x, y + this.size);
 	    ctx.fillStyle = this.color;
 	    ctx.mozDrawText(this.msg);
 	} else {
-	    alert("color = " + this.color.toRGBAString());
-	    ctx.font = this.size + "pt sans-serf";
+	    ctx.font = this.size +"px Optimer";
 	    ctx.fillStyle = this.color.toRGBAString();
 	    ctx.fillText(this.msg, x, y);
 	}
