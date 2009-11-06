@@ -430,6 +430,101 @@ function init() {
 	    this.assert(isEqual(run("1"),
 				run("(length (list +inf.0))")));
 				    
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(+ +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(+ +inf.0 -42)")));
+
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(- +inf.0 -42)")));
+
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(- 42 +inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(- 42 -inf.0)")));
+
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(* 42 -inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* -42 -inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* -inf.0 -42)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* -inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(+ -inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("+nan.0"),
+				run("(- -inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("+nan.0"),
+				run("(- +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("+nan.0"),
+				run("(+ +inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(> +inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("false"),
+				run("(> -inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(<= +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("false"),
+				run("(> +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(>= +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("false"),
+				run("(< +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(<= +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* +inf.0 1)")));
+				    
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(* +inf.0 -1)")));
+
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(/ +inf.0 1)")));
+				    
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(/ +inf.0 -1)")));
+
+
+	    this.assert(isEqual(run("0"),
+				run("(/ 1 +inf.0)")));
+				    
+
+	    this.assert(isEqual(run("0"),
+				run("(/ -1 +inf.0)")));
+
+	    this.assert(isEqual(run("0"),
+				run("(/ 1 -inf.0)")));
+				    
+
+	    this.assert(isEqual(run("0"),
+				run("(/ -1 -inf.0)")));
+
+
 	    },
 
 	    testAtan: function() {
