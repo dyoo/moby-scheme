@@ -274,6 +274,7 @@
 
 ;; check-duplicate-identifiers!: (listof stx) -> void
 ;; Return a list of the identifiers that are duplicated.
+;; Also check to see that each of the ids is really a symbolic identifier.
 (define (check-duplicate-identifiers! ids)
   (local [(define (loop ids known-ids)
             (cond
@@ -281,7 +282,12 @@
                (void)]
               [else
                (cond [(member (stx-e (first ids)) known-ids)
-                      (syntax-error "found a name that's used more than once" (first ids))]
+                      (syntax-error (format "found a name that's used more than once: ~s"
+                                            (stx->datum (first ids)))
+                                    (first ids))]
+                     [(not (symbol? (stx-e (first ids))))
+                      (syntax-error (format "not an identifier: ~s" (stx->datum (first ids)))
+                                    (first ids))]
                      [else
                       (loop (rest ids) 
                             (cons (stx-e (first ids)) 
