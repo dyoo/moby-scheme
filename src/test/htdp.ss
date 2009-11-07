@@ -722,6 +722,634 @@
 (test 90 interest (list 2000))
 (test 500 interest (list 10000))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.4.2
+(local [
+(define (tax gross-pay)
+  (cond
+    [(<= gross-pay 240) 0]
+    [(<= gross-pay 480) (* gross-pay .15)]
+    [else (* gross-pay .28)]))
+
+;; netpay : number -> number
+;; to determine the amount of income, after taxes.
+(define (netpay hours-worked)
+  (- (* hours-worked 12) 
+     (tax (* hours-worked 12))))
+]
+
+(begin
+(test 0 tax (list 10))
+(test 0 tax (list 240))
+(test 45 tax (list 300))
+(test 72 tax (list 480))
+(test 140 tax (list 500))
+
+(test 12 netpay (list 1))
+(test 408 netpay (list 40))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.4.3
+
+(local [
+(define (pay-back a)
+  (cond
+    [(<= a 500)
+     (pay-back-0-500 a)]
+    [(and (> a 500) (<= a 1500))
+     (pay-back-500-1500 a)]
+    [(and (> a 1500) (<= a 2500))
+     (pay-back-1500-2500 a)]
+    [else
+     (pay-back-2500+ a)]))
+
+;; pay-back-0-500 : number -> number
+;; computes the pay back for amounts between 0 and 500
+(define (pay-back-0-500 a)
+  (* a (* .25 1/100)))
+
+;; pay-back-500-1500 : number -> number
+;; computes the pay back for amounts between 500 and 1500
+(define (pay-back-500-1500 a)
+  (+ (pay-back-0-500 500)
+     (* (- a 500) (* .50 1/100))))
+
+;; pay-back-1500-2500 : number -> number
+;; computes the pay back for amounts between 1500 and 2500
+(define (pay-back-1500-2500 a)
+  (+ (pay-back-500-1500 1500)
+     (* (- a 1500) (* .75 1/100))))
+
+;; pay-back-2500+ : number -> number
+;; computes the pay back for amounts between 2500 and higher
+(define (pay-back-2500+ a)
+  (+ (pay-back-1500-2500 2500)
+     (* (- a 2500) (* 1 1/100))))
+]
+(begin
+
+(test 1 pay-back-0-500 (list 400))
+(test 1 pay-back (list 400))
+
+(test 5.75 pay-back-500-1500 (list 1400))
+(test 5.75 pay-back (list 1400))
+
+(test 10.00 pay-back-1500-2500 (list 2000))
+(test 10.00 pay-back (list 2000))
+
+(test 14.75 pay-back-2500+ (list 2600))
+(test 14.75 pay-back (list 2600))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.4.4
+
+(local [
+(define (how-many a b c)
+  (cond
+    [(> (discriminant a b c) 0) 2]
+    [(= (discriminant a b c) 0) 1]
+    [(< (discriminant a b c) 0) 0]))
+
+(define (discriminant a b c)
+  (- (* b b) (* 4 a c)))]
+(begin
+
+(test 0 discriminant (list 1 2 1))
+(test 8 discriminant (list 2 4 1))
+(test -8 discriminant (list 2 4 3))
+
+(test 1 how-many (list 1 2 1))
+(test 2 how-many (list 2 4 1))
+(test 0 how-many (list 2 4 3))
+(test 2 how-many (list 1 0 -1))
+(test 1 how-many (list 2 4 2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 5.1.1
+
+
+(local [(define (reply s)
+  (cond
+    [(symbol=? s 'GoodMorning) 'Hi]
+    [(symbol=? s 'HowAreYou?) 'Fine]
+    [(symbol=? s 'GoodAfternoon) 'INeedANap]
+    [(symbol=? s 'GoodEvening) 'BoyAmITired]))]
+
+(begin
+
+(test 'Fine reply (list 'HowAreYou?))
+(test 'Hi reply (list 'GoodMorning))
+(test 'INeedANap reply (list 'GoodAfternoon))
+(test 'BoyAmITired reply (list 'GoodEvening))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 5.1.2
+(local [
+(define (check-guess guess target)
+  (cond
+    ((= guess target) 'Perfect)
+    ((< guess target) 'TooSmall)
+    ((> guess target) 'TooLarge)))
+]
+
+(begin
+(test 'Perfect check-guess (list 1 1))
+(test 'TooSmall check-guess (list 1 2))
+(test 'TooLarge check-guess (list 1 0))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 5.1.3
+
+(local [
+(define (check-guess3 ones tens hundreds target)
+  (check-guess (digits ones tens hundreds) target))
+
+(define (digits ones tens hundreds)
+  (+ ones
+     (* tens 10)
+     (* hundreds 100)))
+(define (check-guess guess target)
+  (cond
+    [(= guess target) 'Perfect]
+    [(< guess target) 'TooSmall]
+    [(> guess target) 'TooLarge]))]
+(begin
+
+
+(test 'Perfect check-guess (list 1 1))
+(test 'TooSmall check-guess (list 1 2))
+(test 'TooLarge check-guess (list 1 0))
+
+(test 321 digits (list 1 2 3))
+
+(test 'TooSmall check-guess3 (list 1 2 3 500))
+(test 'TooLarge check-guess3 (list 1 2 3 100))
+(test 'Perfect check-guess3 (list 1 2 3 321))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 5.1.4
+(local [
+(define (how-many a b c)
+  (cond
+    [(= a 0) 'degenerate]
+    [(> (discriminant a b c) 0) 'two]
+    [(= (discriminant a b c) 0) 'one]
+    [(< (discriminant a b c) 0) 'none]))
+
+;; discriminant : number number number -> number
+;; computes the discriminant of the quadratic equation with
+;; coefficients a, b, and c.
+(define (discriminant a b c)
+  (- (* b b) (* 4 a c)))]
+(begin
+
+(test 0 discriminant (list 1 2 1))
+(test 8 discriminant (list 2 4 1))
+(test -8 discriminant (list 2 4 3))
+
+(test 'one how-many (list 1 2 1))
+(test 'two how-many (list 2 4 1))
+(test 'none how-many (list 2 4 3))
+(test 'two how-many (list 1 0 -1))
+(test 'one how-many (list 2 4 2))
+(test 'degenerate how-many (list 0 1 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 5.1.5
+(local [
+(define (check-color target-1 target-2 guess-1 guess-2)
+  (cond
+    [(and (symbol=? guess-1 target-1) (symbol=? guess-2 target-2))
+     'perfect!]
+    [(or  (symbol=? guess-1 target-1) (symbol=? guess-2 target-2)) 
+     'One_Color_At_Correct_Position]
+    [(or  (symbol=? guess-1 target-2) (symbol=? guess-2 target-1))
+     'The_Colors_Occur]
+    [else
+     'Nothing_Correct]))]
+(begin
+
+(test 'perfect! check-color (list 'red 'green 'red 'green) )
+(test 'One_Color_At_Correct_Position check-color (list 'red 'green 'red 'purple))
+(test 'The_Colors_Occur check-color (list 'red 'green 'purple 'red))
+(test 'The_Colors_Occur check-color (list 'green 'red 'red 'purple))
+(test 'Nothing_Correct check-color (list 'green 'blue 'red 'purple))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.1.1
+
+(local [
+(define (distance-to-0 a-posn)
+  (sqrt (+ (sqr (posn-x a-posn))
+           (sqr (posn-y a-posn)))))]
+
+(begin
+(test 5 distance-to-0 (list (make-posn 3 4)))
+(test 10 distance-to-0 (list (make-posn (* 2 3) (* 2 4))))
+(test 13 distance-to-0 (list (make-posn 12 (- 6 1))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.2.1
+
+;; SKIPPED: we don't have the right primitives
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.3.2
+(local [(define-struct movie (title producer))]
+(begin
+
+(test 'ThePhantomMenace movie-title (list (make-movie 'ThePhantomMenace 'Lucas)))
+(test 'Lucas movie-producer (list (make-movie 'TheEmpireStrikesBack 'Lucas)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.3.3
+(local [
+(define-struct jet-fighter (designation acceleration top-speed range))
+
+(define (within-range jf d)
+  (<= d (jet-fighter-range jf)))
+
+;; reduce-range : jet-fighter -> jet-fighter
+;; to return a jet-fighter whose range is 80% of jf's.
+(define (reduce-range jf)
+  (make-jet-fighter
+   (jet-fighter-designation jf)
+   (jet-fighter-acceleration jf)
+   (jet-fighter-top-speed jf)
+   (* .8 (jet-fighter-range jf))))]
+
+(begin
+
+(test true within-range (list (make-jet-fighter 'f22 4 1000 600) 400))
+(test false within-range (list (make-jet-fighter 'mig22 10 800 300) 400))
+
+(test (make-jet-fighter 'f22 4 1000 480) reduce-range (list (make-jet-fighter 'f22 4 1000 600)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.5.1
+(local [
+(define-struct time (hours minutes seconds))
+
+(define (time->seconds t)
+  (+ (time-seconds t)
+     (* 60 (time-minutes t))
+     (* 60 60 (time-hours t))))]
+
+(begin
+(test 0 time->seconds (list (make-time 0 0 0)))
+(test 1 time->seconds (list (make-time 0 0 1)))
+(test 60 time->seconds (list (make-time 0 1 0)))
+(test 3600 time->seconds (list (make-time 1 0 0)))
+(test 3782 time->seconds (list (make-time 1 3 2)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.6.8 + 6.6.10
+(local [
+(define-struct rectangle (nw-corner width height color))
+
+(define example-rectangle1 (make-rectangle (make-posn 20 20) 260 260 'red))
+(define example-rectangle2 (make-rectangle (make-posn 60 60) 180 180 'blue))
+(define (in-rectangle? a-rectangle a-posn)
+  (and (<= (posn-x (rectangle-nw-corner a-rectangle))
+           (posn-x a-posn)
+           (+ (posn-x (rectangle-nw-corner a-rectangle))
+              (rectangle-width a-rectangle)))
+       (<= (posn-y (rectangle-nw-corner a-rectangle))
+           (posn-y a-posn)
+           (+ (posn-y (rectangle-nw-corner a-rectangle))
+              (rectangle-height a-rectangle)))))
+(define (translate-rectangle a-rectangle x)
+  (make-rectangle (make-posn
+                   (+ x (posn-x (rectangle-nw-corner a-rectangle)))
+                   (posn-y (rectangle-nw-corner a-rectangle)))
+                  (rectangle-width a-rectangle)
+                  (rectangle-height a-rectangle)
+                  (rectangle-color a-rectangle)))
+
+]
+(begin
+(test false in-rectangle? (list example-rectangle1 (make-posn 0 0)))
+(test false in-rectangle? (list example-rectangle1 (make-posn 25 0)))
+(test false in-rectangle? (list example-rectangle1 (make-posn 0 25)))
+(test true in-rectangle? (list example-rectangle1 (make-posn 25 25)))
+
+(test (make-rectangle (make-posn 50 20) 260 260 'red) translate-rectangle (list example-rectangle1 30))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 6.7.3
+(local [
+
+(define-struct word (first second third))
+
+(define (reveal chosen status guess)
+  (make-word (reveal1 (word-first chosen) (word-first status) guess)
+             (reveal1 (word-second chosen) (word-second status) guess)
+             (reveal1 (word-third chosen) (word-third status) guess)))
+
+(define (reveal1 ch st gu) 
+  (cond
+    ((eq? ch st) ch)
+    ((eq? ch gu) gu)
+    (else st)))
+]
+(begin
+(test 'a  reveal1 (list 'a 'a 'x))
+(test 'x reveal1 (list 'x '_ 'x))
+(test '_ reveal1 (list 'x '_ 'y))
+
+(test (make-word 'd'_ '_) reveal (list (make-word 'd 'e 'r) (make-word '_ '_ '_) 'd))
+(test (make-word '_ '_ '_) reveal (list (make-word 'd 'e 'r) (make-word '_ '_ '_) 'f))
+))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 7.1.1
+(local [
+(define-struct employee (last first dob ssn))
+]
+(begin
+(test false number? (list (make-posn 2 3)))
+(test true number? (list (+ 12 10)))
+(test false posn? (list 23))
+(test true posn? (list (make-posn 23 3)))
+(test false employee? (list (make-posn 23 23)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 7.1.2
+(local [
+(define-struct square (nw-corner length))
+(define-struct circle (center radius))
+
+;; perimeter : shape -> number
+;; to compute the perimeter of a-shape
+(define (perimeter a-shape)
+  (cond
+    [(square? a-shape) (* (square-length a-shape) 4)]
+    [(circle? a-shape) (* (* 2 (circle-radius a-shape)) pi)]))
+]
+(begin
+(test 16 perimeter (list (make-square (make-posn 10 10) 4)))
+(test (* 40 pi) perimeter (list (make-circle (make-posn 30 30) 20)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(local [
+
+(define-struct square (nw-corner length))
+(define-struct circle (center radius))
+
+;; area : shape -> number
+;; computes the area of a-shape
+
+#|
+;; Template
+(define (area a-shape)
+  (cond
+    [(square? a-shape) ...
+     (square-nw-corner a-shape) ...
+     (square-length a-shape) ...]
+    [(circle? a-shape) ...
+     (circle-center a-shape) ...
+     (circle-radius a-shape) ...]))
+|#
+
+(define (area a-shape)
+  (cond
+    [(square? a-shape)
+     (* (square-length a-shape)
+        (square-length a-shape))]
+    [(circle? a-shape) 
+     (* pi
+        (circle-radius a-shape)
+        (circle-radius a-shape))]))
+]
+
+(begin
+
+(test 16 area (list (make-square (make-posn 10 10) 4)))
+(test (* 4 pi) area (list (make-circle (make-posn 10 10) 2)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 7.1.3 
+(local [
+(define-struct spider (legs space))
+(define-struct elephant (space))
+(define-struct monkey (intelligence space))
+]
+(void))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 7.3.1
+(local [
+
+
+(define-struct square (nw-corner length))
+(define-struct circle (center radius))
+(define-struct rectangle (nw-corner width height))
+
+(define (perimeter a-shape)
+  (cond
+    [(square? a-shape)
+     (* (square-length a-shape)
+        (square-length a-shape))]
+    [(circle? a-shape) 
+     (* pi
+        (circle-radius a-shape)
+        (circle-radius a-shape))]
+    [(rectangle? a-shape) 
+     (* (rectangle-width a-shape)
+        (rectangle-height a-shape))]))
+]
+(begin
+(test 16 perimeter (list (make-square (make-posn 10 10) 4)))
+(test (* 4 pi) perimeter (list (make-circle (make-posn 10 10) 2)))
+(test 8 perimeter (list (make-rectangle (make-posn 10 10) 2 4)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 7.4.4
+(local [
+
+(define-struct circle (color center radius))
+(define-struct rectangle (color nw-corner width height))
+
+(define (translate-shape a-shape delta)
+  (cond
+    [(circle? a-shape) 
+     (make-circle      
+      (circle-color a-shape)
+      (make-posn (+ delta (posn-x (circle-center a-shape)))
+                 (posn-y (circle-center a-shape)))
+      (circle-radius a-shape))]
+    [(rectangle? a-shape)
+     (make-rectangle
+      (rectangle-color a-shape)
+      (make-posn (+ delta (posn-x (rectangle-nw-corner a-shape)))
+                 (posn-y (rectangle-nw-corner a-shape)))
+      (rectangle-width a-shape)
+      (rectangle-height a-shape))]))
+]
+(begin
+(test (make-circle 'red (make-posn 40 30) 20) translate-shape (list (make-circle 'red (make-posn 30 30) 20) 10))
+(test (make-rectangle 'blue (make-posn 50 60) 20 50) translate-shape (list (make-rectangle 'blue (make-posn 30 60) 20 50) 20))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 8.3.2
+(local [
+(define (f x y)
+  (+ (* 3 x) (* y y)))
+]
+(begin
+(test 14 '8.3.2 (list (+ (f 1 2) (f 2 1))))
+(test 39 f (list 1 (* 2 3)))
+(test 478 f (list (f 1 (* 2 3)) 19))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 9.1.3
+(local [
+
+(define (add-up-3 a-lo3n)
+  (+ (first a-lo3n)
+     (first (rest a-lo3n))
+     (first (rest (rest a-lo3n)))))
+
+
+(define (distance-to-0-for-3 a-lo3n)
+  (sqrt (+ (sqr (first a-lo3n))
+           (sqr (first (rest a-lo3n)))
+           (sqr (first (rest (rest a-lo3n)))))))]
+
+(begin
+(test 3 add-up-3 (list (cons 1 (cons 1 (cons 1 empty)))))
+(test 0 add-up-3 (list (cons -1 (cons 2 (cons -1 empty)))))
+
+
+(test (sqrt 3) distance-to-0-for-3 (list (cons 1 (cons 1 (cons 1 empty)))))
+(test (sqrt 6) distance-to-0-for-3 (list (cons -1 (cons 2 (cons -1 empty)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 9.1.4
+(local [
+
+(define (contains-2-doll? a-lo2s)
+  (or (eq? 'doll (first a-lo2s))
+      (eq? 'doll (first (rest a-lo2s)))))
+]
+
+(begin
+(test true contains-2-doll? (list (cons 'doll (cons 'rocket empty))))
+(test true contains-2-doll? (list (cons 'candy (cons 'doll empty))))
+(test false contains-2-doll? (list (cons 'candy (cons 'rocket empty))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 9.3.1
+(local [
+(define (contains-doll? a-list-of-symbols)
+  (cond
+    [(empty? a-list-of-symbols) false]
+    [else
+     (cond
+       [(eq? (first a-list-of-symbols) 'doll) true]
+       [else (contains-doll? (rest a-list-of-symbols))])]))
+]
+(begin
+(test false contains-doll? (list empty))
+(test false contains-doll? (list (cons 'ball empty)))
+(test true contains-doll? (list (cons 'arrow (cons 'doll empty))))
+(test false contains-doll? (list (cons 'bow (cons 'arrow (cons 'ball empty)))))
+(test true contains-doll? (list (cons 'make-up-set
+                      (cons 'clown
+                            (cons 'arrow
+                                  (cons 'doll
+                                        (cons 'ball
+                                              empty)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 9.5.1
+(local [
+(define (sum a-list-of-nums)
+  (cond
+    [(empty? a-list-of-nums) 0]
+    [else (+ (first a-list-of-nums)
+             (sum (rest a-list-of-nums)))]))
+]
+(begin
+(test 0 sum (list empty))
+(test 1 sum (list (cons 1.00 empty)))
+(test 20.86 sum (list (cons 17.05 (cons 1.22 (cons 2.59 empty)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 9.5.2
+(local [
+
+;; how-many-symbols: list-of-symbol -> number
+;; Determins how many symbols are in a-lon
+
+;; Template
+#|
+(define (how-many-symbols a-los)
+  (cond
+   [(empty? a-los) ...]
+   [else ... (first a-los) ... (how-many-symbols (rest a-lon) ...)]))
+|#
+
+;; 
+(define (how-many-symbols a-los)
+  (cond
+   [(empty? a-los) 0]
+   [else (add1 (how-many-symbols (rest a-los)))]))
+]
+(begin
+(test 0 how-many-symbols (list empty))
+(test 1 how-many-symbols (list (cons 'apple empty)))
+(test 3 how-many-symbols (list (cons 'dandelion (cons 'mashed (cons 'potatoes empty)))))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 9.5.3
+(local[
+
+(define (dollar-store? a-lon)
+  (cond
+   [(empty? a-lon) true]
+   [else (and (<= (first a-lon) 1.00)
+              (dollar-store? (rest a-lon)))]))]
+(begin
+(test true dollar-store? (list empty))
+(test false dollar-store? (list (cons .75 (cons 1.95 (cons .25 empty)))))
+(test true dollar-store? (list (cons .75 (cons 0.95 (cons .25 empty)))))))
+
+(local [
+(define (N-dollar-store? a-lon an-n)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (<= (first a-lon) an-n)
+               (N-dollar-store? (rest a-lon) an-n))]))
+]
+(begin
+(test true N-dollar-store? (list empty 1.00))
+(test true N-dollar-store? (list (cons 1.50 empty) 2.00))
+(test false N-dollar-store? (list (cons 3.00 empty) 2.00))
+(test false N-dollar-store? (list (cons .75 (cons 1.95 (cons .25 empty))) 1.50))
+(test true N-dollar-store? (list (cons .75 (cons 0.95 (cons .25 empty))) 1.50))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
 
 
 
