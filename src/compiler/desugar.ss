@@ -165,19 +165,21 @@
               
               ;; (local ([define ...] ...) body)
               [(stx-begins-with? expr 'local)
-               (local [(define local-symbol-stx (first (stx-e expr)))
-                       (define defns (stx-e (second (stx-e expr))))
-                       (define body (third (stx-e expr)))
-                       
-                       (define desugared-defns+pinfo (desugar-program defns pinfo))
-                       (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
-                 (list (make-stx:list (list local-symbol-stx
-                                            (make-stx:list (first desugared-defns+pinfo)
-                                                           (stx-loc (second (stx-e expr))))
-                                            (first desugared-body+pinfo))
-                                      (stx-loc expr))
-                       (pinfo-update-env (second desugared-body+pinfo)
-                                         (pinfo-env pinfo))))]
+               (begin
+                 (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+                 (local [(define local-symbol-stx (first (stx-e expr)))
+                         (define defns (stx-e (second (stx-e expr))))
+                         (define body (third (stx-e expr)))
+                         
+                         (define desugared-defns+pinfo (desugar-program defns pinfo))
+                         (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
+                   (list (make-stx:list (list local-symbol-stx
+                                              (make-stx:list (first desugared-defns+pinfo)
+                                                             (stx-loc (second (stx-e expr))))
+                                              (first desugared-body+pinfo))
+                                        (stx-loc expr))
+                         (pinfo-update-env (second desugared-body+pinfo)
+                                           (pinfo-env pinfo)))))]
               
               ;; (begin ...)
               [(stx-begins-with? expr 'begin)
