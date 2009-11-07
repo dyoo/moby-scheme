@@ -42,7 +42,7 @@
     
 
 (base:define (syntax-error msg . stx)
-  (raise (make-exn:fail:moby-syntax-error (format "~a: ~a" msg stx) (current-continuation-marks) stx)))
+  (raise (make-exn:fail:moby-syntax-error (format "~a: ~s" msg (map stx->datum stx)) (current-continuation-marks) stx)))
 
 
 

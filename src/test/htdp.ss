@@ -372,13 +372,355 @@
 (test 5280 miles->feet (list 1))
 (test 21120 miles->feet (list 4))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 3.3.2
+(local [(define (volume-cylinder radius height)
+  (* (area-circle radius) height))
+(define (area-circle radius)
+  (* radius radius pi))]
+(begin
+(test pi area-circle (list 1))
+(test (* 18 pi) volume-cylinder (list 3 2))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; 3.3.3
+(local[
+(define (area-cylinder radius height)
+  (+ (* (circumference-circle radius) height)
+     (area-circle radius)
+     (area-circle radius)))
+
+;; area-circle : number -> number
+;; to determine the area of a circle
+(define (area-circle radius)
+  (* pi radius radius))
+
+;; circumference-circle : number -> number
+;; to deteremine the circumference of a circle
+(define (circumference-circle radius)
+  (* radius 2 pi))]
+
+;; EXAMPLES AS TESTS
+(begin
+(test (* 4 pi) circumference-circle (list 2))
+(test (* pi 9) area-circle (list 3))
+(test (* 20 pi) area-cylinder (list 2 3))
+(test (* 42 pi) area-cylinder (list 3 4))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 3.3.4
+
+(local [
+;; area-pipe-one-def : number number number -> number
+;; to determine the area of a pipe with given inner radius, length, and thickness
+;; this version does not use any helper functions
+(define (area-pipe-one-def inner len thickness)
+  (+ (* 2 (- (* pi (+ inner thickness) (+ inner thickness))
+             (* pi inner inner)))
+     (* len (* 2 pi (+ inner thickness)))
+     (* len (* 2 pi inner))))
+
+;; area-pipe : number number number -> number
+;; to determine the area of a pipe with given inner radius, length, and thickness
+(define (area-pipe inner len thickness)
+  (+ (* 2 (area-donut inner (+ inner thickness)))  ; s.a. of rings on ends
+     (* len (circumference (+ inner thickness)))   ; s.a. of outer cylinder
+     (* len (circumference inner))))               ; s.a. of inner cylinder
+
+;; area-donut : number number -> number
+;; finds the area of a circle with a chunk missing
+;; the entire circle has radius outer and the missing
+;; middle portion has radius inner.
+(define (area-donut inner outer)
+  (- (area-circle outer)
+     (area-circle inner)))
+
+;; area-circle : number -> number
+;; determines the area of a circle with given radius
+(define (area-circle r)
+  (* pi r r))
+
+;; circumference : number -> number
+;; determines the circumference of a circle with given radius
+(define (circumference r)
+  (* 2 pi r))]
+
+;; EXAMPLES AS TESTS
+(begin (test (* 9 pi) area-circle (list 3))
+(test (* 6 pi) circumference (list 3))
+(test (* 16 pi) area-donut (list 3 5))
+(test (* 112 pi) area-pipe (list 2 3 4))
+(test (* 112 pi) area-pipe-one-def (list 2 3 4))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 3.3.5
+(local[
+;; height : number number -> number
+;; to determine the height a rocket reaches in a time t.
+(define (height g t)
+  (height-from-speed t (speed-from-time g t)))
+
+;; height-from-speed : number number -> number
+;; to determine the height a rocket reaches from its speed and time
+(define (height-from-speed t v)
+  (* 1/2 v t))
+
+;; speed-from-time : number number -> number
+;; to determine the speed a rocket reaches in time t
+(define (speed-from-time g t)
+  (* g t))]
+
+;; EXAMPLES AS TESTS
+(begin 
+(test 10 speed-from-time (list 10 1))
+(test 25 height-from-speed (list 10 5))
+(test 500 height (list 10 10))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 3.3.6
+
+(local[
+(define (fahrenheit->celsius t)
+  (* 5/9 (- t 32)))
+
+;; celsius->fahrenheit : number -> number
+;; computes the farenheit equivalent of t
+(define (celsius->fahrenheit t)
+  (+ (* 9/5 t) 32))
+
+;; I : number -> number
+;; to convert a Fahrenheight temperature to Celsuis and back
+(define (I f)
+  (celsius->fahrenheit (fahrenheit->celsius f)))]
+
+;; EXAMPLES AS TESTS
+(test 32 I (list 32)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.1.1
+(test true (lambda (x y) (and x y)) (list (> 4 3) (<= 10 100)))
+(test true (lambda (x y) (or x y)) (list (> 4 3) (= 10 100)))
+(test true not (list (= 2 3)))
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.1.2
+(test true > (list 4 3))
+(test false > (list 2 3))
+(test true > (list 7/2 3))
+(test false (lambda (x y) (and x y)) (list (> 4 3) (> 3 3)))
+(test false (lambda (x y) (and x y)) (list (> 4 2) (> 2 3)))
+(test true (lambda (x y) (and x y)) (list (> 4 7/2) (> 7/2 3)))
+(test false = (list (* 4 4) 4))
+(test false = (list (* 2 2) 2))
+(test false = (list (* 7/2 7/2) 7/2))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.2.1
+
+(local [(define (interval-1 n)
+  (and (> n 3)
+       (<= n 7)))]
+
+(begin
+(test false interval-1 (list -1))
+(test false interval-1 (list 3))
+(test true interval-1 (list 5))
+(test true interval-1 (list 7))
+(test false interval-1 (list 10))))
 
 
+(local [(define (interval-2 n)
+  (and (>= n 3)
+       (<= n 7)))]
+(begin
+(test false interval-2 (list -1))
+(test true interval-2 (list 3))
+(test true interval-2 (list 5))
+(test true interval-2 (list 7))
+(test false interval-2 (list 10))))
+
+
+(local [(define (interval-3 n)
+  (and (>= n 3)
+       (< n 9)))]
+(begin
+(test false interval-3 (list -1))
+(test true interval-3 (list 3))
+(test true interval-3 (list 5))
+(test false interval-3 (list 9))
+(test false interval-3 (list 10))))
+
+
+(local [(define (interval-4 n)
+  (or (and (> n 1)
+           (< n 3))
+      (and (> n 9)
+           (< n 11))))]
+(begin
+(test false interval-4 (list 1))
+(test true interval-4 (list 2))
+(test false interval-4 (list 3))
+(test false interval-4 (list 5))
+(test false interval-4 (list 9))
+(test true interval-4 (list 10))
+(test false interval-4 (list 11))
+(test false interval-4 (list 50))))
+
+(local [(define (interval-5 n)
+  (or (< n 1)
+      (> n 3)))]
+(begin
+(test true interval-5 (list -100))
+(test false interval-5 (list 1))
+(test false interval-5 (list 3))
+(test true interval-5 (list 100))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.2.2
+
+(local [
+
+(define (in-interval1? x)
+  (and (< -3 x) (< x 0)))
+
+(define (in-interval2? x)
+  (or (< x 1) (> x 2)))
+
+(define (in-interval3? x)
+  (not (and (<= 1 x) (<= x 5))))]
+(begin
+
+(test false in-interval1? (list -4))
+(test false in-interval1? (list -3))
+(test false in-interval1? (list 0))
+(test false in-interval1? (list 1))
+(test true in-interval1? (list -2))
+(test true in-interval1? (list -1))
+
+(test true in-interval2? (list 0))
+(test true in-interval2? (list 3))
+(test false in-interval2? (list 1))
+(test false in-interval2? (list 2))
+(test false in-interval2? (list 3/2))
+
+(test false in-interval3? (list 1))
+(test false in-interval3? (list 3))
+(test false in-interval3? (list 5))
+(test true in-interval3? (list 0))
+(test true in-interval3? (list 6))
+))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.2.3
+(local [(define (equation1 n)
+  (= (+ (* 4 n) 2)
+     62))
+
+;; equation2 : number -> boolean
+;; determines if n satisfies equation #2
+(define (equation2 n)
+  (= (* 2 (* n n))
+     102))
+
+;; equation3 : number -> boolean
+;; determines if n satisfies equation #3
+(define (equation3 n)
+  (= (+ (* 4 (* n n)) (* 6 n) 2)
+     462))]
+(begin
+(test false equation1 (list 10))
+(test false equation1 (list 12))
+(test false equation1 (list 14))
+(test false equation2 (list 10))
+(test false equation2 (list 12))
+(test false equation2 (list 14))
+(test true equation3 (list 10))
+(test false equation3 (list 12))
+(test false equation3 (list 14))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.2.4
+(local[
+(define (f n)
+  (= (+ (* 4 n) 2) 62))]
+(begin
+(test false f (list 10))
+(test false f (list 12))
+(test false f (list 14))))
+
+(local [
+(define (g n)
+  (= (* 2 n n) 102))]
+(begin
+(test false g (list 10))
+(test false g (list 12))
+(test false g (list 14))))
+
+(local [
+(define (h n)
+  (= (+ (* 4 n n) (* 6 n) 2) 462))]
+(begin
+(test true h (list 10))
+(test false h (list 12))
+(test false h (list 14))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.3.3
+(local[(define n1 500)]
+
+(test 40 'cond (list (cond
+  [(<= n1 1000) (* .040 1000)]
+  [(<= n1 5000) (+ (* 1000 .040) 
+                  (* (- n1 1000) .045))]
+  [else (+ (* 1000 .040) 
+           (* 4000 .045)
+           (* (- n1 10000) .055))]))))
+
+
+(local[(define n2 2800)]
+(test 121 'cond (list (cond
+  [(<= n2 1000) (* .040 1000)]
+  [(<= n2 5000) (+ (* 1000 .040) 
+                  (* (- n2 1000) .045))]
+  [else (+ (* 1000 .040) 
+           (* 4000 .045)
+           (* (- n2 10000) .055))]))))
+
+(local [
+(define n3 15000)]
+(test 495 'cond (list
+(cond
+  [(<= n3 1000) (* .040 1000)]
+  [(<= n3 5000) (+ (* 1000 .040) 
+                  (* (- n3 1000) .045))]
+  [else (+ (* 1000 .040) 
+           (* 4000 .045)
+           (* (- n3 10000) .055))]))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 4.4.1
+(local[
+(define (interest d)
+  (cond
+    [(<= d 1000) (* d 4/100)]
+    [(<= d 5000) (* d 45/1000)]
+    [(> d 5000) (* d 5/100)]))]
+(begin
+
+(test 20 interest (list 500))
+(test 90 interest (list 2000))
+(test 500 interest (list 10000))))
 
 
 
