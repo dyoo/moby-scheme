@@ -186,7 +186,7 @@ var datum_dash__greaterthan_stx = function(a_dash_datum, a_dash_loc) { return ((
    var result = (function(args4) {
 var x = args4[0];
                              return (plt.Kernel.setLastLoc("offset=1570 line=68 span=20 id=\"stx.ss\"")   && datum_dash__greaterthan_stx(x,a_dash_loc)); });
-                      result.toWrittenString = function () {
+                      result.toWrittenString = function (cache) {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;
@@ -200,8 +200,8 @@ var stx_dash__greaterthan_datum = function(a_dash_stx) { return ((plt.Kernel.set
  ((plt.Kernel.setLastLoc("offset=1839 line=86 span=17 id=\"stx.ss\"")   && stx_colon_list_question_(a_dash_stx)) ?
  (plt.Kernel.setLastLoc("offset=1862 line=87 span=38 id=\"stx.ss\"") && plt.Kernel.map((function() { var result = (function(args) {
                     return stx_dash__greaterthan_datum(args[0]);
-                 }); result.toWrittenString = function() {return '<function:stx->datum>'; }
-                     result.toDisplayedString = function() {return '<function:stx->datum>';}
+                 }); result.toWrittenString = function(cache) {return '<function:stx->datum>'; }
+                     result.toDisplayedString = function(cache) {return '<function:stx->datum>';}
                      return result; })(), [(plt.Kernel.setLastLoc("offset=1878 line=87 span=21 id=\"stx.ss\"")   && stx_colon_list_dash_elts(a_dash_stx))])) :
  (plt.Kernel.setLastLoc("offset=1776 line=83 span=126 id=\"stx.ss\"")   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=1776 line=83 span=126 id=\\\"stx.ss\\\"\"")))))); };
 (function() { 

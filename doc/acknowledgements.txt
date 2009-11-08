@@ -22,3 +22,7 @@ canvas-text: http://code.google.com/p/canvas-text/
 support/js/compat/canvas-text
 
 xmlhttprequest: cross browser XMLHttpRequest: http://code.google.com/p/xmlhttprequest/
+
+
+jshahstable: http://www.timdown.co.uk/jshashtable/
+support/js/jshashtable.js

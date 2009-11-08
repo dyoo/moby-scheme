@@ -1548,44 +1548,48 @@ var plt = plt || {};
     };
 
 
-    var HashTable = function(inputHash) {
-	this.hash = inputHash;
-    }
 
     // open-input-stx: string -> (listof stx)
     plt.Kernel.openInputStx = function(path) {
 	// Doesn't do anything here.
 	throw new MobyRuntimeError("open-input-stx currently unsupported");
-    },
-
-
-    // kernelMakeImmutableHashEq: list -> hash
-    plt.Kernel._kernelMakeImmutableHashEq = function(pairs) {
-	var myhash = {};
-	while (! pairs.isEmpty()) {
-	    var nextPair = pairs.first();
-	    var aKey = nextPair.first(); 
-	    var aVal = nextPair.rest(); 
-	    myhash[aKey] = aVal;
-	    pairs = pairs.rest();
-	}
-	return new HashTable(myhash);
     };
 
-    // plt.Kernel._kernelHashSet: hash object value -> hash
-    plt.Kernel._kernelHashSet = function(obj, key, val) {
-	var newHash = {};
-	var hash = obj.hash;
-	for (var k in hash) {
-	    newHash[k] = hash[k];
-	}
-	newHash[key] = val;
-	return new HashTable(newHash);
+
+    //////////////////////////////////////////////////////////////////////
+    var HashTable = function(inputHash) {
+	this.hash = new plt._Hashtable();
+    };
+    HashTable.prototype.toWrittenString = function(cache) {
+	return "<hash>";
+    };
+    HashTable.prototype.toDisplayedString = function(cache) {
+	return "<hash>";
+    }
+
+    HashTable.prototype.isEqual = function(other) {
+	return this === other;
     };
 
-    plt.Kernel._kernelHashRef = function(obj, key, defaultVal) {
-	if (key in obj.hash) {
-	    return obj.hash[key];
+    // makeHashEq: -> hash
+    plt.Kernel.makeHashEq = function() {
+	var myhash = new HashTable();
+	return myhash;
+    };
+
+
+    // plt.Kernel.hashSet: hash object value -> undefined
+    // Mutates the hash with a new key/value binding.
+    plt.Kernel.hashSetBang = function(obj, key, val) {
+	check(obj, isHash, "hash-set!", "hash", 1);
+	obj.hash.put(key, val);
+	return undefined;
+    };
+
+    plt.Kernel.hashRef = function(obj, key, defaultVal) {
+	check(obj, isHash, "hash-ref", "hash", 1);
+	if (obj.hash.containsKey(key)) {
+	    return obj.hash.get(key);
 	} else {
 	    if (isFunction(defaultVal)) {
 		return defaultVal([]);
@@ -1594,28 +1598,34 @@ var plt = plt || {};
 	}
     };
     
-    plt.Kernel._kernelHashRemove = function(obj, key) {
-	var newHash = {};
-	var hash = obj.hash;
-    	for (var k in hash) {
-	    if (k != key)
-    	    	newHash[k] = hash[k];
-	}
-	return new HashTable(newHash);
+    plt.Kernel.hashRemoveBang = function(obj, key) {
+	check(obj, isHash, "hash-remove!", "hash", 1);
+	obj.hash.remove(key);
+	return undefined;
     };
 
-    plt.Kernel._kernelHashMap = function(ht, f) {
+    plt.Kernel.hashMap = function(ht, f) {
+	check(ht, isHash, "hash-map", "hash", 1);
 	var result = plt.types.Empty.EMPTY;
-	var key;
-	for (key in ht.hash) {
-	    var val = ht.hash[key];
-	    result = plt.Kernel.cons(f([key, val]),
+	var keys = ht.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    var val = ht.hash.get(keys[i]);
+	    result = plt.Kernel.cons(f([keys[i], val]),
 				     result);
 	}
 	return result;
     };
 
+    var isHash = function(x) {
+	return ((x != null) && 
+		(x != undefined) && 
+		(x instanceof HashTable))
+    }
+    plt.Kernel.isHash = isHash;
 
+
+
+    //////////////////////////////////////////////////////////////////////
 
 
 
@@ -2089,7 +2099,13 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.toWrittenString = function(x) {
+    plt.Kernel.toWrittenString = function(x, cache) {
+	if (! cache) { cache = new plt._Hashtable(); }
+
+	if (cache.containsKey(x)) {
+	    return "...";
+	}
+
 	if (x == undefined || x == null) {
 	    return "<undefined>";
 	}
@@ -2100,17 +2116,22 @@ var plt = plt || {};
 	    return x.toString();
 	}
 	if ('toWrittenString' in x) {
-	    return x.toWrittenString();
+	    return x.toWrittenString(cache);
 	}
 	if ('toDisplayedString' in x) {
-	    return x.toDisplayedString();
+	    return x.toDisplayedString(cache);
 	} else {
 	    return x.toString();
 	}
     };
 
 
-    plt.Kernel.toDisplayedString = function(x) {
+    plt.Kernel.toDisplayedString = function(x, cache) {
+	if (! cache) { cache = new plt._Hashtable(); }
+	if (cache.containsKey(x)) {
+	    return "...";
+	}
+
 	if (x == undefined || x == null) {
 	    return "<undefined>";
 	}
@@ -2121,10 +2142,10 @@ var plt = plt || {};
 	    return x.toString();
 	}
 	if ('toWrittenString' in x) {
-	    return x.toWrittenString();
+	    return x.toWrittenString(cache);
 	}
 	if ('toDisplayedString' in x) {
-	    return x.toDisplayedString();
+	    return x.toDisplayedString(cache);
 	} else {
 	    return x.toString();
 	}
@@ -2133,7 +2154,12 @@ var plt = plt || {};
 
 
     // toDomNode: scheme-value -> dom-node
-    plt.Kernel.toDomNode = function(x) {
+    plt.Kernel.toDomNode = function(x, cache) {
+	if (! cache) { cache = new plt._Hashtable();}
+	if (cache.containsKey(x)) {
+	    return document.createTextNode("...");
+	}
+
 	if (x == undefined || x == null) {
 	    var node = document.createTextNode("<undefined>");
 	    return node;
@@ -2150,14 +2176,14 @@ var plt = plt || {};
 	    return x;
 	}
 	if ('toDomNode' in x) {
-	    return x.toDomNode();
+	    return x.toDomNode(cache);
 	}
 	if ('toWrittenString' in x) {
-	    var node = document.createTextNode(x.toWrittenString());
+	    var node = document.createTextNode(plt.Kernel.toWrittenString(x, cache));
 	    return node;
 	}
 	if ('toDisplayedString' in x) {
-	    var node = document.createTextNode(x.toDisplayedString());
+	    var node = document.createTextNode(plt.Kernel.toDisplayedString(x, cache));
 	    return node;
 	} else {
 	    var node = document.createTextNode(x.toString());
@@ -2168,13 +2194,14 @@ var plt = plt || {};
 
 
 
-    plt.Kernel.Struct.prototype.toWrittenString = function() { 
+    plt.Kernel.Struct.prototype.toWrittenString = function(cache) { 
+	cache.put(this, true);
 	var buffer = [];
 	buffer.push("(");
 	buffer.push(this._constructorName);
 	for(var i = 0; i < this._fields.length; i++) {
 	    buffer.push(" ");
-	    buffer.push(plt.Kernel.toWrittenString(this._fields[i]));
+	    buffer.push(plt.Kernel.toWrittenString(this._fields[i], cache));
 	}
 	buffer.push(")");
 	return plt.types.String.makeInstance(buffer.join(""));
@@ -2188,13 +2215,14 @@ var plt = plt || {};
     }
 
 
-    plt.Kernel.Struct.prototype.toDomNode = function() {
+    plt.Kernel.Struct.prototype.toDomNode = function(cache) {
+	cache.put(this, true);
 	var node = document.createElement("div");
 	node.appendChild(document.createTextNode("("));
 	node.appendChild(document.createTextNode(this._constructorName));
 	for(var i = 0; i < this._fields.length; i++) {
 	    node.appendChild(document.createTextNode(" "));
-	    appendChild(node, plt.Kernel.toDomNode(this._fields[i]));
+	    appendChild(node, plt.Kernel.toDomNode(this._fields[i], cache));
 	}
 	node.appendChild(document.createTextNode(")"));
 	return node;

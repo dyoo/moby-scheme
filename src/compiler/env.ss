@@ -1,11 +1,13 @@
 #lang s-exp "lang.ss"
 
 (require "permission.ss")
+(require "rbtree.ss")
+(require "helpers.ss")
 
 
 ;; An env collects a set of bindings.
 (define-struct env (bindings))
-(define empty-env (make-env (make-immutable-hasheq '())))
+(define empty-env (make-env empty-rbtree))
 
 
 ;; A binding associates a symbol with some value.
@@ -43,33 +45,36 @@
 
 
 
+
 ;; env-extend: env binding -> env
 (define (env-extend an-env new-binding)
-  (make-env (hash-set (env-bindings an-env) (binding-id new-binding) new-binding)))
+  (make-env (rbtree-insert symbol< (env-bindings an-env) (binding-id new-binding) new-binding)))
 
 
 
 ;; env-lookup: env symbol -> (or/c binding false)
 (define (env-lookup an-env name)
-  (hash-ref (env-bindings an-env) name false))
+  (local [(define result (rbtree-lookup symbol< (env-bindings an-env) name))]
+    (cond [(pair? result)
+           (second result)]
+          [else
+           false])))
 
 ;; env-remove: env symbol -> env
-(define (env-remove an-env name)
-  (make-env (hash-remove (env-bindings an-env) name)))
+#;(define (env-remove an-env name)
+    (make-env (hash-remove (env-bindings an-env) name)))
 
 
 ;; env-contains?: env symbol -> boolean
 (define (env-contains? an-env name)
-  (binding? (hash-ref (env-bindings an-env) name false)))
+  (binding? (env-lookup an-env name)))
     
 
 
 ;; env-keys: env -> (listof symbol)
 ;; Produces the keys in the environment.
 (define (env-keys an-env)
-  (hash-map (env-bindings an-env)
-            (lambda (k v)
-              k)))
+  (map first (rbtree->list (env-bindings an-env))))
 
 
 
@@ -114,7 +119,7 @@
  [empty-env env?]
  [env-extend (env? binding? . -> . env?)]
  [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
- [env-remove (env? symbol? . -> . env?)]
+ #;[env-remove (env? symbol? . -> . env?)]
  [env-contains? (env? symbol? . -> . boolean?)]
  [env-keys (env? . -> . (listof symbol?))]
  

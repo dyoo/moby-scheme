@@ -415,7 +415,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
-    BaseImage.prototype.toDomNode = function() {
+    BaseImage.prototype.toDomNode = function(cache) {
 	var that = this;
 	var width = plt.world.Kernel.imageWidth(that).toInteger();
 	var height = plt.world.Kernel.imageHeight(that).toInteger();
@@ -435,8 +435,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 	return canvas;
     };
-    BaseImage.prototype.toWrittenString = function() { return "<image>"; }
-    BaseImage.prototype.toDisplayedString = function() { return "<image>"; }
+    BaseImage.prototype.toWrittenString = function(cache) { return "<image>"; }
+    BaseImage.prototype.toDisplayedString = function(cache) { return "<image>"; }
 
 
 
@@ -564,7 +564,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
     // Override toDomNode: we don't need a full-fledged canvas here.
-    FileImage.prototype.toDomNode = function() {
+    FileImage.prototype.toDomNode = function(cache) {
 	return this.img.cloneNode(true);
     };
 

@@ -1391,24 +1391,25 @@ var getTests;
 	    
 	    
 	    testToWrittenString : function() {
-		this.assertEqual(String.makeInstance('hello').toWrittenString(),
+		var cache = new plt._Hashtable();
+		this.assertEqual(String.makeInstance('hello').toWrittenString(cache),
 				 '"hello"');
 		this.assertEqual(Kernel.make_dash_posn(FloatPoint.makeInstance(3),
-						       FloatPoint.makeInstance(4)).toWrittenString(),
+						       FloatPoint.makeInstance(4)).toWrittenString(cache),
 				 '(make-posn 3 4)');
-		this.assertEqual(Logic.TRUE.toWrittenString(), "true");
-		this.assertEqual(Logic.FALSE.toWrittenString(), "false");
+		this.assertEqual(Logic.TRUE.toWrittenString(cache), "true");
+		this.assertEqual(Logic.FALSE.toWrittenString(cache), "false");
 
 
 		this.assertEqual(Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(2),
 								     Empty.EMPTY),
-						   Empty.EMPTY).toWrittenString(),
+						   Empty.EMPTY).toWrittenString(cache),
 				 "((2))");
-		this.assertEqual(FloatPoint.makeInstance(3.1415).toWrittenString(),
+		this.assertEqual(FloatPoint.makeInstance(3.1415).toWrittenString(cache),
 				 "3.1415");
 		this.assertEqual(Cons.makeInstance(Cons.makeInstance(FloatPoint.makeInstance(3.1415),
 								     Empty.EMPTY),
-						   Empty.EMPTY).toWrittenString(),
+						   Empty.EMPTY).toWrittenString(cache),
 				 "((3.1415))");
 
 	    },

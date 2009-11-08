@@ -2,8 +2,10 @@
 
 (require "env.ss")
 (require "toplevel.ss")
+(require "helpers.ss")
 (require "permission.ss")
 (require "modules.ss")
+(require "rbtree.ss")
 
 
 
@@ -25,7 +27,7 @@
 (define empty-pinfo
   (make-pinfo empty-env
               empty 
-              (make-immutable-hasheq empty)
+              empty-rbtree
               0
               empty))
 
@@ -35,8 +37,8 @@
 ;; pinfo-used-bindings: pinfo -> (listof binding)
 ;; Returns the list of used bindings computed from the program analysis.
 (define (pinfo-used-bindings a-pinfo)
-  (hash-map (pinfo-used-bindings-hash a-pinfo)
-            (lambda (k v) v)))
+  (map second (rbtree->list (pinfo-used-bindings-hash a-pinfo))))
+
 
 
 (define (pinfo-clear-enduring-names a-pinfo)
@@ -92,9 +94,10 @@
 (define (pinfo-accumulate-binding-use a-binding a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
-              (hash-set (pinfo-used-bindings-hash a-pinfo)
-                        (binding-id a-binding)
-                        a-binding)
+              (rbtree-insert symbol<
+                             (pinfo-used-bindings-hash a-pinfo)
+                             (binding-id a-binding)
+                             a-binding)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-enduring-names a-pinfo)))
 

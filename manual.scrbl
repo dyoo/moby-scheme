@@ -193,8 +193,18 @@ The following program shows a ball falling down a scene.
 @defproc[(stop-when [stop? (world -> boolean)]) handler?]{
 When the world should be stopped --- when @scheme[stop?] applied to the world
 produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
-}
 
+The program:
+@(mobyblock
+(define (at-ten x)
+  (>= x 10))
+
+(js-big-bang 0
+             (on-tick 1 add1)
+             (stop-when at-ten))
+)
+counts up to ten and then stops.
+}
 
 
 
@@ -447,6 +457,36 @@ defines the following forms:
            @item{set-foo-b!: foo Y -> void}
 ]
 }
+
+
+
+
+@defproc[(make-hasheq) hash?]{
+Creates a mutable hashtable whose keys are compared by @scheme[eq?].
+}
+
+@defproc[(hash? (x any/c)) boolean?]{
+Returns @scheme[true] if @scheme[x] is a @scheme[hash], and @scheme[false] otherwise.}
+
+@defproc[(hash-set! (a-hash hash?) (key any/c) (value any/c)) void]{
+Mutates @scheme[a-hash].
+}
+
+@defproc[(hash-ref (a-hash hash?) (key any/c) (value any/c) (default-val any/c)) any/c]{
+Looks up @scheme[key] in @scheme[a-hash]; if a value can't be found,
+@itemize[@item{If @scheme[default-val] is a thunk, calls it and returns its value.}
+	 @item{Otherwise, returns @scheme[default-val].}]
+}
+
+@defproc[(hash-remove! (a-hash hash?) (key any/c)) (void)]{
+Removes a key and its associated value from @scheme[a-hash].
+}
+
+@defproc[(hash-map (a-hash hash?) (f (any/c any/c -> any/c))) (listof any/c)]{
+Maps a function @scheme[f] across all the key/value pairs in @scheme[a-hash].  The
+order of the traversal is not defined.
+}
+
 
 
 
@@ -718,6 +758,7 @@ The Javascript program that's emitted depends on a runtime kernel
 that's currently implemented in Javascript.  See the files in
 @filepath{support/js/runtime}.
 
+@;{
 @subsection{Ugly Hacks}
 
 
@@ -743,7 +784,7 @@ in the following files:
            @item{@filepath{support/js/runtime/types.js}}
            @item{@filepath{support/js/runtime/kernel.js}}
 ]
-
+}
 
 
 @section{Appendix}

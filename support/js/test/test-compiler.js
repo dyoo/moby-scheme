@@ -430,6 +430,101 @@ function init() {
 	    this.assert(isEqual(run("1"),
 				run("(length (list +inf.0))")));
 				    
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(+ +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(+ +inf.0 -42)")));
+
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(- +inf.0 -42)")));
+
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(- 42 +inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(- 42 -inf.0)")));
+
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(* 42 -inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* -42 -inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* -inf.0 -42)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* -inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(+ -inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("+nan.0"),
+				run("(- -inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("+nan.0"),
+				run("(- +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("+nan.0"),
+				run("(+ +inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(> +inf.0 -inf.0)")));
+
+	    this.assert(isEqual(run("false"),
+				run("(> -inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(<= +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("false"),
+				run("(> +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(>= +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("false"),
+				run("(< +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("true"),
+				run("(<= +inf.0 +inf.0)")));
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(* +inf.0 1)")));
+				    
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(* +inf.0 -1)")));
+
+
+	    this.assert(isEqual(run("+inf.0"),
+				run("(/ +inf.0 1)")));
+				    
+
+	    this.assert(isEqual(run("-inf.0"),
+				run("(/ +inf.0 -1)")));
+
+
+	    this.assert(isEqual(run("0"),
+				run("(/ 1 +inf.0)")));
+				    
+
+	    this.assert(isEqual(run("0"),
+				run("(/ -1 +inf.0)")));
+
+	    this.assert(isEqual(run("0"),
+				run("(/ 1 -inf.0)")));
+				    
+
+	    this.assert(isEqual(run("0"),
+				run("(/ -1 -inf.0)")));
+
+
 	    },
 
 	    testAtan: function() {
@@ -457,6 +552,32 @@ function init() {
 		this.assert(isEqual(
 				    run("(integer-sqrt -10)"),
 				    run("0+3i")));
+	},
+
+	testHashtables: function() {
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (equal? ht ht))"),
+				run("true")));
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (hash? ht))"),
+				run("true")));
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (hash? 'hash))"),
+				run("false")));
+	    
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (begin (hash-set! ht 'danny 'yoo) (hash-ref ht 'danny 'unknown)))"),
+				run("'yoo")));
+
+
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (begin (hash-set! ht 'danny 'yoo) (hash-map ht (lambda (k v) (list v k)))))"),
+				run("'((yoo danny))")));
+
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (begin (hash-set! ht 'danny 'yoo) (hash-ref ht 'yoo 'unknown)))"),
+				run("'unknown")));
+	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (begin (hash-set! ht 'danny 'yoo) (hash-remove! ht 'shriram) (hash-ref ht 'danny 'unknown)))"),
+				run("'yoo")));
+            this.assert(isEqual(run("(let ([ht (make-hasheq)]) (begin (hash-set! ht 'danny 'yoo) (hash-remove! ht 'danny) (hash-ref ht 'danny 'unknown)))"),
+				 run("'unknown")));
+
+
+
 	}
 
     });

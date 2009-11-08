@@ -331,10 +331,11 @@
              
              ;; mutators
              (string-join 
-              (map (lambda (a-field)
+              (mapi (lambda (a-field an-index)
                      (string-append "var " (make-mutator-name (stx-e a-field)) " = function(obj,newVal) {\n"
                                     "	 if (" predicate-name" (obj)) {\n"
                                     "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
+				    "           obj._fields[" (number->string an-index) "] = newVal;"
                                     "     } else {\n"
                                     "        throw new plt.Kernel.MobyRuntimeError("
                                     "            plt.Kernel.format('" (make-mutator-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
@@ -714,8 +715,8 @@
                     return "
                             (binding:function-java-string binding)
                             ".apply(null, args.slice(0, " (number->string (binding:function-min-arity binding)) ").concat([args.slice("(number->string (binding:function-min-arity binding))")]));
-                  }); result.toWrittenString = function() {return '<function:" (symbol->string (binding-id binding)) ">'; }
-                      result.toDisplayedString = function() {return '<function:" (symbol->string (binding-id binding)) ">';}
+                  }); result.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; }
+                      result.toDisplayedString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">';}
                       return result; })())")]
             [else
              (string-append "(function() { var result = (function(args) {
@@ -727,8 +728,8 @@
                                               (range (binding:function-min-arity binding)))
                                          ", ")
                             ");
-                 }); result.toWrittenString = function() {return '<function:"(symbol->string (binding-id binding))">'; }
-                     result.toDisplayedString = function() {return '<function:"(symbol->string (binding-id binding))">';}
+                 }); result.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; }
+                     result.toDisplayedString = function(cache) {return '<function:"(symbol->string (binding-id binding))">';}
                      return result; })()")])]))]))
 
 
@@ -791,7 +792,7 @@
                              return "
                       body-string
                       "; });
-                      result.toWrittenString = function () {
+                      result.toWrittenString = function (cache) {
                           return '<function:lambda>';
                       };
                       result.toDisplayedString = result.toWrittenString;

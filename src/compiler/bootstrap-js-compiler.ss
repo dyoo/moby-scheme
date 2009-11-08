@@ -285,6 +285,6 @@
 
 (write-compressed-runtime)
 
-#;(provide/contract
+(provide/contract
  [write-compiler (-> any)]
  [write-compressed-runtime (-> any)])
