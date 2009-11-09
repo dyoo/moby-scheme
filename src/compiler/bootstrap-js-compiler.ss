@@ -65,6 +65,7 @@
 
 
 
+  
 ;; write-compressed-runtime: -> void
 ;; Write out a runtime of all of the files in the MANIFEST, compressed by the YUI compressor.
 ;; Also writes a compressed version of the standalone compiler.
@@ -72,19 +73,25 @@
   (write-compiler)
 
   (let* ([runtime-source (get-runtime-source)]
-         [compressed-runtime-source (yui-compress runtime-source)])
+         [compressed-runtime-source (compress-and-optimize-source runtime-source)])
     (call-with-output-file compressed-runtime.js
       (lambda (op) (write-bytes compressed-runtime-source op))
       #:exists 'replace))
   
   (let* ([standalone-source (file->bytes standalone-compiler-path)]
-         [compressed-standalone-source (yui-compress standalone-source)])
+         [compressed-standalone-source (compress-and-optimize-source standalone-source)])
     (call-with-output-file compressed-standalone-compiler-path
       (lambda (op) (write-bytes compressed-standalone-source op))
       #:exists 'replace))
   (void))
 
 
+
+;; compress-and-optimize-source: bytes -> bytes
+;; Apply some process for compressing and optimizing the Javascript.
+(define (compress-and-optimize-source bytes)
+  #;(yui-compile bytes)
+  (google-closure-compile bytes))
 
   
 

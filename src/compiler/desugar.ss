@@ -47,13 +47,15 @@
             (local [(define define-stx (first (stx-e a-defn)))]
               (case-analyze-definition a-defn
                                        (lambda (id args body) 
-                                         (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
-                                           (list (list (make-stx:list (list define-stx
-                                                                            (make-stx:list (cons id args)
-                                                                                           (stx-loc a-defn))
-                                                                            (first subexpr+pinfo))
-                                                                      (stx-loc a-defn)))
-                                                 (second subexpr+pinfo))))
+                                         (begin
+                                           (check-duplicate-identifiers! (cons id args))   
+                                           (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
+                                             (list (list (make-stx:list (list define-stx
+                                                                              (make-stx:list (cons id args)
+                                                                                             (stx-loc a-defn))
+                                                                              (first subexpr+pinfo))
+                                                                        (stx-loc a-defn)))
+                                                   (second subexpr+pinfo)))))
                                        (lambda (id body) 
                                          (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
                                            (list (list (make-stx:list (list define-stx
@@ -165,19 +167,21 @@
               
               ;; (local ([define ...] ...) body)
               [(stx-begins-with? expr 'local)
-               (local [(define local-symbol-stx (first (stx-e expr)))
-                       (define defns (stx-e (second (stx-e expr))))
-                       (define body (third (stx-e expr)))
-                       
-                       (define desugared-defns+pinfo (desugar-program defns pinfo))
-                       (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
-                 (list (make-stx:list (list local-symbol-stx
-                                            (make-stx:list (first desugared-defns+pinfo)
-                                                           (stx-loc (second (stx-e expr))))
-                                            (first desugared-body+pinfo))
-                                      (stx-loc expr))
-                       (pinfo-update-env (second desugared-body+pinfo)
-                                         (pinfo-env pinfo))))]
+               (begin
+                 (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+                 (local [(define local-symbol-stx (first (stx-e expr)))
+                         (define defns (stx-e (second (stx-e expr))))
+                         (define body (third (stx-e expr)))
+                         
+                         (define desugared-defns+pinfo (desugar-program defns pinfo))
+                         (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
+                   (list (make-stx:list (list local-symbol-stx
+                                              (make-stx:list (first desugared-defns+pinfo)
+                                                             (stx-loc (second (stx-e expr))))
+                                              (first desugared-body+pinfo))
+                                        (stx-loc expr))
+                         (pinfo-update-env (second desugared-body+pinfo)
+                                           (pinfo-env pinfo)))))]
               
               ;; (begin ...)
               [(stx-begins-with? expr 'begin)
@@ -235,16 +239,18 @@
               
               ;; (lambda (args ...) body)
               [(stx-begins-with? expr 'lambda)
-               (local [(define lambda-symbol-stx (first (stx-e expr)))
-                       (define args (second (stx-e expr)))
-                       (define body (third (stx-e expr)))
-                       (define desugared-body+pinfo (desugar-expression body pinfo))]
-                 (list (make-stx:list (list lambda-symbol-stx
-                                            args
-                                            (first desugared-body+pinfo))
-                                      (stx-loc expr))
-                       ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
-                       (second desugared-body+pinfo)))]
+               (begin
+                 (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+                 (local [(define lambda-symbol-stx (first (stx-e expr)))
+                         (define args (second (stx-e expr)))
+                         (define body (third (stx-e expr)))
+                         (define desugared-body+pinfo (desugar-expression body pinfo))]
+                   (list (make-stx:list (list lambda-symbol-stx
+                                              args
+                                              (first desugared-body+pinfo))
+                                        (stx-loc expr))
+                         ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
+                         (second desugared-body+pinfo))))]
               
               ;; Numbers
               [(number? (stx-e expr))

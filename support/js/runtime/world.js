@@ -1,6 +1,6 @@
 
 // Depends on kernel.js, world-config.js, effect-struct.js
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 plt.world = plt.world || {};
 plt.world.Kernel = plt.world.Kernel || {};
 (function() {
