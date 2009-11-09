@@ -2,7 +2,7 @@
 
 
 // Depends on kernel.js, types.js, world-config.js
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 plt.world = plt.world || {};
 
 

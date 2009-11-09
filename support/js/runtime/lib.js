@@ -1,5 +1,5 @@
 // Platform-specific stuff.
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 
 plt.lib = {};
 

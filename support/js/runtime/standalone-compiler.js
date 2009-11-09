@@ -3,7 +3,7 @@
 // Please don't hand-edit this file.
 // compile: string -> (list string, (listof string))
 var compile = (function() {
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 
 
 // Depends on kernel.js.
@@ -1451,7 +1451,7 @@ var plt = plt || {};
 
 
 
-})();var plt = plt || {};
+})();if (typeof(plt) == 'undefined') { plt = {} }
 
 
 //////////////////////////////////////////////////////////////////////
@@ -4116,7 +4116,7 @@ var stx_dash__greaterthan_datum = function(a_dash_stx) { return ((plt.Kernel.set
  })  )(arguments[0] || plt.Kernel.identity);
 })();// Depends on kernel.js, stx.ss
 
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 
 plt.reader = {};
 

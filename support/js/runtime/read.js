@@ -1,6 +1,6 @@
 // Depends on kernel.js, stx.ss
 
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 
 plt.reader = {};
 

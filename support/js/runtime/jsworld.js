@@ -1,4 +1,4 @@
-var plt = plt || {};
+if (typeof(plt) == 'undefined') { plt = {}; }
 plt.world = plt.world || {};
 plt.world.MobyJsworld = {};
 
