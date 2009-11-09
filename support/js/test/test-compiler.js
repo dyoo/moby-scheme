@@ -98,7 +98,11 @@ function init() {
 				    "(add1 42)")));
 	},
 	
-
+	testApplication: function() {
+	    this.assert(isEqual(number(9),
+				run("(let ((x (lambda (a b c) (a b c)))) (x + 4 5))")));
+	},
+	
 	testAnd: function() {
 	    this.assert(isEqual(FALSE, run("(and false)")));
 	    this.assert(isEqual(TRUE, run("(and true)")));

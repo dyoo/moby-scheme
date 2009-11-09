@@ -621,10 +621,9 @@
          
          [(binding:constant? operator-binding)
           (list (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
-                               "  && "
-                               (binding:constant-java-string operator-binding)".apply(null, [["
-                               (string-join operand-strings ", ")
-                               "]]))")
+                               "  && plt.Kernel.apply(" (binding:constant-java-string operator-binding)", "
+                               "                       plt.Kernel.list([" (string-join operand-strings ", ") "]),"
+                               "                       []))")
                 updated-pinfo)]
          
          [(binding:function? operator-binding)
@@ -688,9 +687,9 @@
        (list
         (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx))) 
                        " && "
-                       "(" operator-string ").apply(null, [["
-                       (string-join operand-strings ", ")
-                       "]]))")
+                       "plt.Kernel.apply(" operator-string ", "
+                       "                   plt.Kernel.list([" (string-join operand-strings ", ") "]), "
+                       "                   []))")
         updated-pinfo))]))
 
 
