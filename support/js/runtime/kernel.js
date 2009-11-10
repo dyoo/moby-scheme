@@ -1546,11 +1546,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
     };
     
 
-    plt.Kernel.procedure_dash_arity = function(f) {
-	check(f, isFunction, "procedure-arity", "function", 1);
-	return f.procedureArity;
-    }
-
 
 
     // DEBUGGING: get out all the functions defined in the kernel.
@@ -1954,6 +1949,11 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	return isFunction(f);
     };
     
+
+    plt.Kernel.procedure_dash_arity = function(f) {
+	check(f, isFunction, "procedure-arity", "function", 1);
+	return f.procedureArity;
+    };
 
 
 

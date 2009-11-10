@@ -459,6 +459,11 @@ defines the following forms:
 }
 
 
+@defproc[(procedure-arity (p procedure?)) (or/c number? (list/c 'at-least number?))]{
+Returns the number of arguments a procedure accepts.  If the procedure takes a minimum number of arguments,
+returns the list containing @scheme['at-least] and the minimum arity.
+}
+
 
 
 @defproc[(make-hasheq) hash?]{
