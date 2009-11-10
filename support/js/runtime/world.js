@@ -377,9 +377,9 @@ plt.world.Kernel = plt.world.Kernel || {};
 
 
     plt.world.Kernel.put_dash_pinhole = function(img, x, y) {
-	check(img, isImage, "put-pinhole", "image", 1);
-	check(x, plt.Kernel.isNumber, "put-pinhole", "number", 2);
-	check(y, plt.Kernel.isNumber, "put-pinhole", "number", 3);
+	plt.Kernel.check(img, isImage, "put-pinhole", "image", 1);
+	plt.Kernel.check(x, plt.Kernel.isNumber, "put-pinhole", "number", 2);
+	plt.Kernel.check(y, plt.Kernel.isNumber, "put-pinhole", "number", 3);
 	return img.updatePinhole(x.toInteger(), y.toInteger());
     };
 
