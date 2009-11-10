@@ -6,10 +6,14 @@ OLDDIR=`pwd`
 mkdir -p tmp
 rm -rf tmp/moby
 git archive --format=tar --prefix=moby/ HEAD | (cd tmp && tar xf -)
-cd tmp/moby
+
+cd $OLDDIR/tmp/moby
 rm -rf sandbox
+
+cd $OLDDIR/tmp/moby/src/compiler
+mred bootstrap-js-compiler.ss
+
 cd $OLDDIR/tmp
-mred moby/src/compiler/bootstrap-js-compiler.js
 
 planet unlink dyoo moby.plt $MAJOR $MINOR
 planet link dyoo moby.plt $MAJOR $MINOR moby
