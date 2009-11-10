@@ -315,6 +315,9 @@
 
 		     (printf 1 true)
                      
+                     (procedure-arity 1)
+                     
+                     
                      ;; Testing functions.
                      (check-expect 2)
                      (check-within 3)

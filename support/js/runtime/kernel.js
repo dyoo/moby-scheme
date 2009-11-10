@@ -1546,9 +1546,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
     };
     
 
-
-
-
+    plt.Kernel.procedure_dash_arity = function(f) {
+	check(f, isFunction, "procedure-arity", "function", 1);
+	return f.procedureArity;
+    }
 
 
 

@@ -102,6 +102,23 @@ function init() {
 	    this.assert(isEqual(number(9),
 				run("(let ((x (lambda (a b c) (a b c)))) (x + 4 5))")));
 	},
+
+
+	testProcedureArity: function() {
+	    this.assert(isEqual(number(2),
+				run("(procedure-arity make-rectangular)")));
+	    this.assert(isEqual(run("'(at-least 0)"),
+				run("(procedure-arity +)")));
+	    this.assert(isEqual(run("3"),
+				run("(procedure-arity (lambda (x y z) 'blah))")));
+	    this.assert(isEqual(run("2"), 
+				run("(local [(define (f x) (procedure-arity x))] (f make-polar))")));
+
+	    this.assert(isEqual(run("'(at-least 1)"),
+				run("(procedure-arity /)")));
+
+	},
+
 	
 	testAnd: function() {
 	    this.assert(isEqual(FALSE, run("(and false)")));
