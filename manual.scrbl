@@ -932,6 +932,7 @@ same meaning as in @link["http://docs.plt-scheme.org/htdp-langs/advanced-prim-op
                         posn-x
                         posn-y
                         posn?
+			procedure?
                         quotient
                         random
                         rational?
