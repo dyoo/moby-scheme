@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Printer should detect cyclic data structures.  Also fixed printer bug that didn't show effects of mutation."))
+(define release-notes '("Implemented procedure-arity?, put-pinhole, list?.  Added more error trapping on js-big-bang's on-draw handler."))
