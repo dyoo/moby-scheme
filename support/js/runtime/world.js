@@ -376,6 +376,14 @@ plt.world.Kernel = plt.world.Kernel || {};
     plt.world.Kernel.isImage = isImage;
 
 
+    plt.world.Kernel.put_dash_pinhole = function(img, x, y) {
+	check(img, isImage, "put-pinhole", "image", 1);
+	check(x, plt.Kernel.isNumber, "put-pinhole", "number", 2);
+	check(y, plt.Kernel.isNumber, "put-pinhole", "number", 3);
+	return img.updatePinhole(x.toInteger(), y.toInteger());
+    };
+
+
     BaseImage.prototype.updatePinhole = function(x, y) {
 	var aCopy = {};
 	for (attr in this) {

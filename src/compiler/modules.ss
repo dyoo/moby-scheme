@@ -175,6 +175,10 @@
                                          "plt.world.Kernel.emptyScene")
                                      (bf 'place-image module-path 4 false
                                          "plt.world.Kernel.placeImage")
+                                     
+                                     (bf 'put-pinhole module-path 3 false
+                                         "plt.world.Kernel.put_dash_pinhole")
+
                                      (bf 'circle module-path 3 false
                                          "plt.world.Kernel.circle")
                                      (bf 'nw:rectangle module-path 4 false
