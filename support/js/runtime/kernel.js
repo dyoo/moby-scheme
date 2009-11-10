@@ -1551,6 +1551,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 
 
+
     // DEBUGGING: get out all the functions defined in the kernel.
     plt.Kernel._dumpKernelSymbols = function() {
 	var result = plt.types.Empty.EMPTY;

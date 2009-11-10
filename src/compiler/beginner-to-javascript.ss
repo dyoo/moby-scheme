@@ -710,26 +710,27 @@
          [(binding:function? binding)
           (cond
             [(binding:function-var-arity? binding)
-             (string-append "((function() { var result = (function(args) {
-                    return "
-                            (binding:function-java-string binding)
-                            ".apply(null, args.slice(0, " (number->string (binding:function-min-arity binding)) ").concat([args.slice("(number->string (binding:function-min-arity binding))")]));
-                  }); result.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; }
-                      result.toDisplayedString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">';}
-                      return result; })())")]
+             (string-append "((function() { var _result_ = (function(_args_) {
+                    return " (binding:function-java-string binding)
+                             "    .apply(null, _args_.slice(0, " (number->string (binding:function-min-arity binding)) 
+                             "                        ).concat([_args_.slice("(number->string (binding:function-min-arity binding))")])); });"
+                             "_result_.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; };"
+                             "_result_.toDisplayedString = _result_.toWrittenString;"
+                             "_result_.procedureArity = plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (number->string (binding:function-min-arity binding)) "]);"
+                             "return _result_; })())")]
             [else
-             (string-append "(function() { var result = (function(args) {
-                    return "
-                            (binding:function-java-string binding)
+             (string-append "(function() { var _result_ = (function(_args_) {
+                    return " (binding:function-java-string binding)
                             "("
                             (string-join (map (lambda (i)
-                                                (string-append "args[" (number->string i)"]"))
+                                                (string-append "_args_[" (number->string i)"]"))
                                               (range (binding:function-min-arity binding)))
                                          ", ")
-                            ");
-                 }); result.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; }
-                     result.toDisplayedString = function(cache) {return '<function:"(symbol->string (binding-id binding))">';}
-                     return result; })()")])]))]))
+                            ");});"
+                            "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
+                            "_result_.toDisplayedString = _result_.toWrittenString; "
+                            "_result_.procedureArity = " (number->string (binding:function-min-arity binding)) ";"
+                            "return _result_; })()")])]))]))
 
 
 
@@ -803,44 +804,53 @@
 
 ;; floating-number->javascript-string: number -> string
 (define (floating-number->javascript-string a-num)
-  (cond
-    [(eqv? a-num +inf.0)
-     "Number.POSITIVE_INFINITY"]
-    [(eqv? a-num -inf.0)
-     "Number.NEGATIVE_INFINITY"]
-    [(eqv? a-num +nan.0)
-     "Number.NaN"]
-    [else
-     (number->string a-num)]))
+  (string-append "(plt.types.FloatPoint.makeInstance("
+                 (cond
+                   [(eqv? a-num +inf.0)
+                    "Number.POSITIVE_INFINITY"]
+                   [(eqv? a-num -inf.0)
+                    "Number.NEGATIVE_INFINITY"]
+                   [(eqv? a-num +nan.0)
+                    "Number.NaN"]
+                   [else
+                    (number->string a-num)])
+                 "))"))
 
 
-;; number->java-string: number -> string
+;; rational-number->javascript-string: number -> string
+(define (rational-number->javascript-string a-num)
+  (string-append "(plt.types.Rational.makeInstance("
+                 (number->string (numerator a-num))
+                 ", "
+                 (number->string (denominator a-num))
+                 "))"))
+
+
+
+;; number->java-string: number stx -> string
 (define (number->javascript-string a-num original-stx)
-  (cond [(integer? a-num)
-         (string-append "(plt.types.Rational.makeInstance("
-                        (number->string (inexact->exact a-num))
-                        ", 1))")]
-        [(rational? a-num)
-         (string-append "(plt.types.Rational.makeInstance("
-                        (number->string (numerator a-num))
-                        ", "
-                        (number->string (denominator a-num))
-                        "))")]
-        [(real? a-num)
-         (string-append "(plt.types.FloatPoint.makeInstance(" 
-                        (floating-number->javascript-string a-num)
-                        "))")]
+  (cond 
+    
+    ;; FIXME: do we need a separate case for integers now?
+    #;[(integer? a-num)
+     (rational-number->javascript-string a-num)]
 
-        [(complex? a-num)
-         (string-append "(plt.types.Complex.makeInstance("
-			(number->javascript-string (real-part a-num) original-stx)
-			", "
-			(number->javascript-string (imag-part a-num) original-stx)
-			"))")]
-        
-        [else
-         (syntax-error (format "Don't know how to handle ~s yet" a-num)
-                       original-stx)]))
+    [(rational? a-num)
+     (rational-number->javascript-string a-num)]
+    
+    [(real? a-num)
+     (floating-number->javascript-string a-num)]
+    
+    [(complex? a-num)
+     (string-append "(plt.types.Complex.makeInstance("
+                    (number->javascript-string (real-part a-num) original-stx)
+                    ", "
+                    (number->javascript-string (imag-part a-num) original-stx)
+                    "))")]
+    
+    [else
+     (syntax-error (format "Don't know how to handle ~s yet" a-num)
+                   original-stx)]))
 
 
 
