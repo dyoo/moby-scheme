@@ -898,6 +898,7 @@ same meaning as in @link["http://docs.plt-scheme.org/htdp-langs/advanced-prim-op
                         lcm
                         length
                         list
+			list?
                         list*
                         list->string
                         list-ref

@@ -1028,6 +1028,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    return isPair(x);
 	},
 
+	list_question_: function(x) {
+	    return isList(x);
+	},
+
 	
 	sixth : function(lst){
 	    checkList(lst, "sixth", 1);

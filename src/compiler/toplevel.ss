@@ -165,6 +165,7 @@
                      (cdadr 1)
                      (cdar 1)
                      (cons? 1)
+                     (list? 1)
                      (cons 2)
                      (empty? 1)
                      (length 1)
