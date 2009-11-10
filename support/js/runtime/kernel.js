@@ -1638,7 +1638,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     //////////////////////////////////////////////////////////////////////
 
-
+    
 
     plt.Kernel.apply = function(f, secondArg, restArgs) {
 	var argList;
@@ -1667,8 +1667,17 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    argArray.unshift(secondArg);
 
 	}
-
-	return f(argArray);
+	if (procedureArityIncludes(f, argArray.length)) {
+	    return f(argArray);
+	} else {
+	    throw new MobyRuntimeError(
+		plt.Kernel.format(
+		    "~a: expects ~a, given ~a: ~s", 
+		    [f,
+		     procedureArityDescription(f),
+		     argArray.length,
+		     plt.Kernel.list(argArray)]));
+	}
     };
 
 
@@ -1955,6 +1964,29 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	return f.procedureArity;
     };
 
+
+    // procedureArityIncludes: function fixnum -> boolean
+    // Returns true if the procedure arity of f includes n; false otherwise.
+    var procedureArityIncludes = function(f, n) {
+	if (isPair(f.procedureArity)) {
+	    return n >= f.procedureArity.rest().first().toInteger();
+	} else {
+	    return n == f.procedureArity.toInteger();
+	}
+    };
+    
+    // procedureArityDescription: function -> string
+    var procedureArityDescription = function(f) {
+	if (isPair(f.procedureArity)) {
+	    return ("at least " + 
+		    (f.procedureArity.rest().first().toInteger() == 1) ? 
+		    "one argument" : 
+		    f.procedureArity.rest().first().toInteger() + " arguments");
+	} else {
+	    return ((f.procedureArity.toInteger() == 1) ? 
+		    "one argument" : f.procedureArity.toInteger() + " arguments");
+	}
+    };
 
 
     plt.Kernel.xml_dash__greaterthan_s_dash_exp  = function(s) {
