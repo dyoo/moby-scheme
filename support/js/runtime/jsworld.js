@@ -133,6 +133,11 @@ plt.world.MobyJsworld = {};
 	return targ;
     }
 
+    // isNode: any -> boolean
+    // Returns true if the thing has a nodeType.
+    var isNode = function(thing) {
+	return typeof(thing.nodeType) != 'undefined';
+    }
 
 
     // checkWellFormedDomTree: X X (or number undefined) -> void
@@ -149,6 +154,13 @@ plt.world.MobyJsworld = {};
 	if (plt.Kernel.pair_question_(x)) {
 	    var firstElt = plt.Kernel.first(x)
 	    var restElts = plt.Kernel.rest(x)
+
+	    if (! isNode(firstElt)) {
+		throw new MobyTypeError(
+		    plt.Kernel.format(
+		         "on-draw: expected a dom-element, but received ~s instead, the first element within ~s",
+			 [firstElt, top]));
+	    }
 
 	    if (firstElt.nodeType == Node.TEXT_NODE &&
 		! plt.Kernel.empty_question_(restElts)) {
@@ -169,12 +181,12 @@ plt.world.MobyJsworld = {};
 	} else {
 	    throw new MobyTypeError(
 		plt.Kernel.format(
-		    "on-draw: expected a dom-s-expression, but received ~s instead.~a",
+		    "on-draw: expected a dom-s-expression, but received ~s instead~a",
 		    [x,
 		     (index != undefined ? 
-		      plt.Kernel.format("the ~a element within ~s", [index, top])
+		      plt.Kernel.format(", the ~a element within ~s.", [plt.Kernel.ordinalize(index), top])
 		      : 
-		      "")]));
+		      ".")]));
 	}
     };
 

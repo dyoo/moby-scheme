@@ -9,6 +9,7 @@ git archive --format=tar --prefix=moby/ HEAD | (cd tmp && tar xf -)
 cd tmp/moby
 rm -rf sandbox
 cd $OLDDIR/tmp
+mred moby/src/compiler/bootstrap-js-compiler.js
 
 planet unlink dyoo moby.plt $MAJOR $MINOR
 planet link dyoo moby.plt $MAJOR $MINOR moby

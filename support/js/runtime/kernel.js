@@ -261,16 +261,26 @@ if (typeof(plt) == 'undefined') { plt = {} }
     }
 
 
+    // ordinalize: number -> string
+    // Adds the ordinal suffix to an number, according to the rules in
+    // http://en.wikipedia.org/wiki/Names_of_numbers_in_English#Ordinal_numbers
+    var ordinalize = function(n) {
+	var suffixes = ["th", "st", "nd", "rd", "th",
+			"th", "th", "th", "th", "th"];
+	if ((Math.floor(n / 10) % 10) == 1) {
+	    return n + "th";
+	} else {
+	    return n + suffixes[n % 10];
+	}
+    };
+
 
     var makeTypeErrorMessage = function(functionName, typeName, position, value) {
-	// This is not right: we really need to turn the position into English
-	// first.  This is just a hack for now.
-	var suffixes = ["th", "st", "nd", "rd", "th", "th", "th", "th"];
 	return plt.Kernel.format(
 	    "~a: expects type <~a> as ~a argument, given: ~s",
 	    [functionName, 
 	     typeName,
-	     position + suffixes[Math.min(suffixes.length-1, position)],
+	     ordinalize(position),
 	     value]);
     }
 
@@ -2445,5 +2455,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     plt.Kernel.attachEvent = attachEvent;
     plt.Kernel.detachEvent = detachEvent;
+
+
+    plt.Kernel.ordinalize = ordinalize;
+
     
 })();
