@@ -294,6 +294,12 @@ function init() {
 					    empty))));
 	},
 
+	testReadSciNotation: function() {
+	    this.assert(schemeIsEqual(read("-1.2246467991473532e-16"),
+				      cons(makeFloat(-1.2246467991473532e-16),
+					   empty)));
+	},
+
 	testInfinities: function() {
 	    this.assert(schemeIsEqual(read("+inf.0"),
 				      cons(plt.types.FloatPoint.makeInstance(Number.POSITIVE_INFINITY),
