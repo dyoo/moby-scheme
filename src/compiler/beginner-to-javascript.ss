@@ -716,7 +716,7 @@
                              "                        ).concat([_args_.slice("(number->string (binding:function-min-arity binding))")])); });"
                              "_result_.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; };"
                              "_result_.toDisplayedString = _result_.toWrittenString;"
-                             "_result_.procedureArity = plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (number->string (binding:function-min-arity binding)) "]);"
+                             "_result_.procedureArity = plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (rational-number->javascript-string (binding:function-min-arity binding)) "]);"
                              "return _result_; })())")]
             [else
              (string-append "(function() { var _result_ = (function(_args_) {
@@ -729,7 +729,7 @@
                             ");});"
                             "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
                             "_result_.toDisplayedString = _result_.toWrittenString; "
-                            "_result_.procedureArity = " (number->string (binding:function-min-arity binding)) ";"
+                            "_result_.procedureArity = " (rational-number->javascript-string (binding:function-min-arity binding)) ";"
                             "return _result_; })()")])]))]))
 
 
@@ -779,7 +779,7 @@
       (list
        (string-append "((function() {\n"
                       "   plt.Kernel.setLastLoc(" (format "~s" (Loc->string (stx-loc original-stx))) ");\n"
-                      "   var result = (function(" (symbol->string args-sym) ") {\n"
+                      "   var _result_ = (function(" (symbol->string args-sym) ") {\n"
                       (string-join (mapi (lambda (arg-id i)
                                            (string-append "var "
                                                           (symbol->string arg-id)
@@ -789,15 +789,11 @@
                                          munged-arg-ids)
                                    "\n")
                       "
-                             return "
-                      body-string
-                      "; });
-                      result.toWrittenString = function (cache) {
-                          return '<function:lambda>';
-                      };
-                      result.toDisplayedString = result.toWrittenString;
-                      return result;
-                   })())")
+                             return " body-string "; });"
+                      "_result_.toWrittenString = function (cache) { return '<function:lambda>'; };"
+                      "_result_.procedureArity = " (rational-number->javascript-string (length args)) ";"
+                      "_result_.toDisplayedString = _result_.toWrittenString;"
+                      "return _result_;  })())")
        updated-pinfo))))
 
 
