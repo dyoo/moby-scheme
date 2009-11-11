@@ -508,9 +508,16 @@ plt.Jsworld = {};
     }
 
 
+
+    // camelCase: string -> string
+    function camelCase(name) {
+	return name.replace(/\-(.)/g, function(m, l){return l.toUpperCase()});
+    }
+
+
     function set_css_attribs(node, attribs) {
 	for (var j = 0; j < attribs.length; j++){
-	    node.style[attribs[j].attrib] = attribs[j].values.join(" ");
+	    node.style[camelCase(attribs[j].attrib)] = attribs[j].values.join(" ");
 	}
     }
 
