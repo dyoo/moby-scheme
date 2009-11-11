@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Implemented procedure-arity?, put-pinhole, list?.  Added more error trapping on js-big-bang's on-draw handler."))
+(define release-notes '("Added error checks on procedure arity when using apply.  Fixed regression involving CSS and on-draw."))
