@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../runtime/compressed-standalone-compiler.js"></script>
+
+<script lang="javascript">
+function doEvaluate() {
+    var interaction = window.document.getElementById("interaction");
+    var output = window.document.getElementById("output");
+    var compiledSource = compile(interaction.value);
+    output.value = compiledSource;
+}
+</script>
+</head>
+
+
+<body>
+
+Input:
+<textarea id="interaction" rows="20" cols="80">
+</textarea>
+<br>
+Output:
+<textarea id="output" rows="20" cols="80">
+</textarea>
+<br>
+
+<input type="button" value="evaluate" 
+       onclick="doEvaluate()">
+</body>
