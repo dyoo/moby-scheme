@@ -12,6 +12,7 @@
 (define-struct permission:telephony ())
 (define-struct permission:wake-lock ())
 (define-struct permission:open-image-url (url))
+(define-struct permission:universe (url))
 
 (define (permission? datum)
   (or (permission:location? datum)
@@ -22,7 +23,8 @@
       (permission:internet? datum)
       (permission:telephony? datum)
       (permission:wake-lock? datum)
-      (permission:open-image-url? datum)))
+      (permission:open-image-url? datum)
+      (permission:universe? datum)))
 
 
 (define PERMISSION:LOCATION (make-permission:location))
@@ -37,6 +39,7 @@
 
 
 ;; permission->string: permission -> string
+;; Translates a permission into a string reference.
 (define (permission->string a-permission)
   (cond
     [(permission:location? a-permission)
@@ -56,40 +59,57 @@
     [(permission:wake-lock? a-permission)
      "PERMISSION:WAKE-LOCK"]
     [(permission:open-image-url? a-permission)
-     (format "PERMISSION:OPEN-IMAGE-URL ~a" (permission:open-image-url-url a-permission))]))
+     (format "PERMISSION:OPEN-IMAGE-URL ~a" (permission:open-image-url-url a-permission))]
+    [(permission:universe? a-permission)
+     (format "PERMISSION:UNIVERSE ~a" (permission:universe-url a-permission))]))
 
 
 ;; string->permission: string -> permission
+;; Translates a string reference of a permission back into a permission.
 (define (string->permission a-ref)
-  (cond
-    [(string=? a-ref "PERMISSION:LOCATION")
-     PERMISSION:LOCATION]
-    [(string=? a-ref "PERMISSION:SEND-SMS")
-     PERMISSION:SEND-SMS]     
-    [(string=? a-ref "PERMISSION:RECEIVE-SMS")
-     PERMISSION:RECEIVE-SMS]
-    [(string=? a-ref "PERMISSION:TILT")
-     PERMISSION:TILT]
-    [(string=? a-ref "PERMISSION:SHAKE")
-     PERMISSION:SHAKE]
-    [(string=? a-ref "PERMISSION:INTERNET")
-     PERMISSION:INTERNET]
-    [(string=? a-ref "PERMISSION:TELEPHONY")
-     PERMISSION:TELEPHONY]
-    [(string=? a-ref "PERMISSION:WAKE-LOCK")
-     PERMISSION:WAKE-LOCK]
-    [(and (> (string-length a-ref)
-             (string-length "PERMISSION:OPEN-IMAGE-URL"))
-          (string=? (substring a-ref 0 (string-length "PERMISSION:OPEN-IMAGE-URL"))
-                    "PERMISSION:OPEN-IMAGE-URL"))
-     (make-permission:open-image-url (substring a-ref 
-                                                (add1 (string-length "PERMISSION:OPEN-IMAGE-URL"))
-                                                (string-length a-ref)))]))
+  (local [
+          ;; is-permission/1?: string string -> boolean
+          ;; Returns true if the reference appears to be a permission of the given
+          ;; name
+          (define (is-permission/1? permission-name a-ref)
+            (and (> (string-length a-ref)
+                     (string-length permission-name))
+                  (string=? (substring a-ref 0 (string-length permission-name))
+                            permission-name)))
+
+          ;; construct-permission: string string (string -> permission) -> permission
+          ;; Constructs a permission out of a permission string reference.
+          (define (construct-permission/1 permission-name a-ref make-permission:*)
+            (make-permission:* (substring a-ref 
+                                          (add1 (string-length permission-name))
+                                          (string-length a-ref))))]
+    (cond
+      [(string=? a-ref "PERMISSION:LOCATION")
+       PERMISSION:LOCATION]
+      [(string=? a-ref "PERMISSION:SEND-SMS")
+       PERMISSION:SEND-SMS]     
+      [(string=? a-ref "PERMISSION:RECEIVE-SMS")
+       PERMISSION:RECEIVE-SMS]
+      [(string=? a-ref "PERMISSION:TILT")
+       PERMISSION:TILT]
+      [(string=? a-ref "PERMISSION:SHAKE")
+       PERMISSION:SHAKE]
+      [(string=? a-ref "PERMISSION:INTERNET")
+       PERMISSION:INTERNET]
+      [(string=? a-ref "PERMISSION:TELEPHONY")
+       PERMISSION:TELEPHONY]
+      [(string=? a-ref "PERMISSION:WAKE-LOCK")
+       PERMISSION:WAKE-LOCK]
+      [(is-permission/1? "PERMISSION:OPEN-IMAGE-URL" a-ref)
+       (construct-permission/1 "PERMISSION:OPEN-IMAGE-URL" a-ref make-permission:open-image-url)]
+      [(is-permission/1? "PERMISSION:UNIVERSE" a-ref)
+       (construct-permission/1 "PERMISSION:UNIVERSE" a-ref make-permission:universe)])))
 
 
 
 
 ;; permission->android-permissions: permission -> (listof string)
+;; Given a permission, translates to the permissions associated with the Google Android platform.
 (define (permission->android-permissions a-permission)
   (cond
     [(permission:location? a-permission)
@@ -110,11 +130,13 @@
     [(permission:wake-lock? a-permission)
      (list "android.permission.WAKE_LOCK")]
     [(permission:open-image-url? a-permission)
-     (list)]))
+     (list)]
+    [(permission:universe? a-permission)
+     (list "android.permission.INTERNET")]))
 
 
 ;; permission->on-start-code: permission -> string
-(define (permission->on-start-code a-permission)
+#;(define (permission->on-start-code a-permission)
   (cond
     [(permission:location? a-permission)
      "plt.platform.Platform.getInstance().getLocationService().startService();
@@ -143,7 +165,7 @@
 
 
 ;; permission->on-pause-code: permission -> string
-(define (permission->on-pause-code a-permission)
+#;(define (permission->on-pause-code a-permission)
   (cond
     [(permission:location? a-permission)
      "plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
@@ -166,7 +188,7 @@
 
 
 ;; permission->on-destroy-code: permission -> string
-(define (permission->on-destroy-code a-permission)
+#;(define (permission->on-destroy-code a-permission)
   (cond
     [(permission:location? a-permission)
      "plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
@@ -192,6 +214,7 @@
 (provide/contract [permission? (any/c . -> . boolean?)]
                   
                   [struct permission:open-image-url ((url string?))]
+                  [struct permission:universe ((url string?))]
                   
                   [PERMISSION:LOCATION permission?]
                   [PERMISSION:SEND-SMS permission?]
@@ -210,13 +233,13 @@
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))]
                   
-                  [permission->on-start-code
+                  #;[permission->on-start-code
                    (permission? . -> . string?)]
                   
-                  [permission->on-pause-code
+                  #;[permission->on-pause-code
                    (permission? . -> . string?)]
                   
-                  [permission->on-destroy-code
+                  #;[permission->on-destroy-code
                    (permission? . -> . string?)]
                   
                   )

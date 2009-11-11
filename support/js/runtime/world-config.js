@@ -35,12 +35,25 @@ plt.world.config = plt.world.config || {};
 
 
 	this.vals = {
+	    // changeWorld: (world -> world) -> void
+	    // When called, this will update the world based on the
+	    // updater passed to it.
 	    changeWorld: false,
 
+	    // shutdownWorld: -> void
+	    // When called, this will shut down the world computation.
 	    shutdownWorld: false,
 
-
+	    // initialEffect: effect
+	    // The initial effect to invoke when the world computation
+	    // begins.
 	    initialEffect: false,
+
+	    // registerWithUniverse: string
+	    // Registers with some universe, given an identifier
+	    // which is a URL to a Universe server.
+	    registerWithUniverse: false,
+
 
 	    // onRedraw: world -> scene
 	    onRedraw: false,
@@ -189,9 +202,9 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onTick_star_ = function(aDelay, handler, effectHandler) {
-	plt.Kernel.check(aDelay, plt.Kernel.isNumber, "on-tick*", "number", 1);
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tick*", "function", 2);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tick*","function", 3);
+	plt.Kernel.check(aDelay, plt.Kernel.isNumber, "on-tick!", "number", 1);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tick!", "function", 2);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tick!","function", 3);
 	return addStringMethods(
 	    function(config) {
 		var newVals = { onTick: handler,
@@ -214,8 +227,8 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onTilt_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tilt*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tilt*", "function", 2);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-tilt!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-tilt!", "function", 2);
 	return addStringMethods(
 	    function(config) {
 		return config.updateAll({onTilt : handler,
@@ -233,8 +246,8 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onAnnounce_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-announce*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-announce*", "function", 2);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-announce!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-announce!", "function", 2);
 	return addStringMethods(
 	    function(config) {
 		return config.updateAll({onAnnounce : handler,
@@ -252,8 +265,8 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onAcceleration_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-acceleration*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-acceleration*", "function", 2);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-acceleration!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-acceleration!", "function", 2);
 	return addStringMethods(
 	    function(config) {
 		return config.updateAll({onAcceleration : handler,
@@ -270,8 +283,8 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onShake_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-shake*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-shake*", "function", 2);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-shake!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-shake!", "function", 2);
 	return addStringMethods(
 	    function(config) {
 		return config.updateAll({onShake : handler,
@@ -289,8 +302,8 @@ plt.world.config = plt.world.config || {};
     };
 
     plt.world.config.Kernel.onKey_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-key*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-key*", "function", 2);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-key!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-key!", "function", 2);
 	return addStringMethods(
 	    function(config) {
 		return config.updateAll({onKey : handler,
@@ -307,8 +320,8 @@ plt.world.config = plt.world.config || {};
     }
 
     plt.world.config.Kernel.onLocationChange_star_ = function(handler, effectHandler) {
-	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-location-change*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-location-change*", "function", 2);
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-location-change!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-location-change!", "function", 2);
 
 	return addStringMethods(
 	    function(config) {
@@ -326,9 +339,10 @@ plt.world.config = plt.world.config || {};
 							  return getNoneEffect(); });
     };
 
+
     plt.world.config.Kernel.stopWhen_star_ = function(stopHandler, effectHandler) {
-	plt.Kernel.check(stopHandler, plt.Kernel.isFunction, "stop-when*", "function", 1);
-	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "stop-when*", "function", 2);
+	plt.Kernel.check(stopHandler, plt.Kernel.isFunction, "stop-when!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "stop-when!", "function", 2);
 
 	return addStringMethods(
 	    function(config) {
@@ -336,7 +350,15 @@ plt.world.config = plt.world.config || {};
 					 'stopWhenEffect' : effectHandler});
 	    }, "stop-when");
     };
+
+
+
+    // Registers with some universe resource.
+    plt.world.config.Kernel.register = function(url) {
+	plt.Kernel.check(url, plt.Kernel.isString, "register", "string", 1);
+	return addStringMethods(
+	    function(config) {
+		return config.updateAll({'registerWithUniverse': url });
+	    }, "register");
+    };
 })();
-
-
-

@@ -57,17 +57,17 @@
     p))
   
 ;; get-on-start-code: pinfo -> string
-(define (get-on-start-code a-pinfo)
+#;(define (get-on-start-code a-pinfo)
   (apply string-append
          (map permission->on-start-code (get-permissions a-pinfo))))
 
 ;; get-on-pause-code: pinfo -> string
-(define (get-on-pause-code a-pinfo)
+#;(define (get-on-pause-code a-pinfo)
   (apply string-append
          (map permission->on-pause-code (get-permissions a-pinfo))))
 
 ;; get-on-shutdown-code: pinfo -> string
-(define (get-on-destroy-code a-pinfo)
+#;(define (get-on-destroy-code a-pinfo)
   (apply string-append
          (map permission->on-destroy-code (get-permissions a-pinfo))))
   
@@ -180,9 +180,9 @@
 (provide/contract
  [parse-text-as-program (((is-a?/c text%)) ((or/c string? false/c)) . ->* .  (listof stx?))]
  [get-permissions (pinfo? . -> . (listof permission?))]
- [get-on-start-code (pinfo? . -> . string?)]
- [get-on-pause-code (pinfo? . -> . string?)]
- [get-on-destroy-code (pinfo? . -> . string?)]
+ #;[get-on-start-code (pinfo? . -> . string?)]
+ #;[get-on-pause-code (pinfo? . -> . string?)]
+ #;[get-on-destroy-code (pinfo? . -> . string?)]
  [lift-images-to-directory ((is-a?/c text%) path? . -> . (listof named-bitmap?))]
  [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]

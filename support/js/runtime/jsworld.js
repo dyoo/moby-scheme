@@ -250,6 +250,7 @@ plt.world.MobyJsworld = {};
 	
 	var wrappedHandlers = [];
 	var wrappedRedrawCss;
+	
 
 	if (config.lookup('onDraw')) {
 	    wrappedRedraw = function(w) {
