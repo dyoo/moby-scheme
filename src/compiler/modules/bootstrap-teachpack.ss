@@ -7,6 +7,7 @@
 (define-struct being [posn costume])
 
 
+
 ; start:String Image (Being list) (Being list) Being 
 ;              (Being -> Being) (Being -> Being) (Being -> Being)
 ;              (Being Being -> Boolean) (Being -> Boolean) -> Boolean
@@ -170,3 +171,9 @@
                    (on-redraw draw-world)
                    (on-tick .1 update-world)
                    (on-key keypress*)))))
+
+
+
+
+(provide start
+         make-being)

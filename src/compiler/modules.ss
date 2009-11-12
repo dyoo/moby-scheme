@@ -223,11 +223,12 @@
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string empty false))
           (define module-path
-            "moby/bootstrap-world")]
+            "moby/bootstrap")]
     (make-module-binding 'world
                          module-path
                          (append (list 
-                                  (bf 'start module-path 10 false "plt.world.Bootstrap.start"))
+                                  (bf 'start module-path 10 false "plt.bootstrap.start")
+                                  (bf 'make-being module-path 2 false "plt.bootstrap.make_dash_being"))
                                  (module-binding-bindings world-stub-module)))))
 
 
