@@ -34,6 +34,8 @@
                (desugar-defn an-element a-pinfo)]
               [(stx-begins-with? an-element 'include)
                (desugar-include an-element a-pinfo)]
+              [(library-require? an-element)
+               (list (list an-element) a-pinfo)]
               [(test-case? an-element)
                (desugar-test-case an-element a-pinfo)]
               [(expression? an-element)

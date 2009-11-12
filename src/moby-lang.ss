@@ -71,17 +71,15 @@
      (cond
        [(and (syntax-e #'path)
              (string=? (syntax-e #'path) "moby/bootstrap"))
-        (datum->syntax stx `(begin
-                              (define-struct being (posn costume))
-                              (define (start title background playerImg targetImgs objectImgs  
-                                             update-player update-target update-object 
-                                             collide? offscreen?)
-                                (void))
-                              (void)))
-        #;(begin
-          (printf "bootstrap is ~s~n" bootstrap-module-path)
-          (syntax/loc stx
-            (base:require bootstrap-module-path-string)))]
+        (with-syntax ([being (datum->syntax stx 'being)]
+                      [start (datum->syntax stx 'start)])
+          (syntax/loc stx (base:begin
+                            (define-struct being (posn costume))
+                            (define (start title background playerImg targetImgs objectImgs  
+                                           update-player update-target update-object 
+                                           collide? offscreen?)
+                              (void))
+                            (void))))]
        [else
         (raise-syntax-error #f "Not currently implemented" stx)])]
     [else

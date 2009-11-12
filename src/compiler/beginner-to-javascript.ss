@@ -69,7 +69,6 @@
           (define toplevel-env (pinfo-env a-pinfo))
           
           (define (loop program defns tops a-pinfo)
-            
             (cond [(empty? program)
                    (make-compiled-program defns 
                                           (string-append "(function (" 
