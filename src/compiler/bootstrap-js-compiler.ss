@@ -95,8 +95,10 @@
 ;; compress-and-optimize-source: bytes -> bytes
 ;; Apply some process for compressing and optimizing the Javascript.
 (define (compress-and-optimize-source bytes)
-  #;(yui-compile bytes)
-  (google-closure-compile bytes))
+  (yui-compress bytes)
+  ;; Switched away from google closure: the output of it is actually
+  ;; crashing Rhino for some strange reason!
+  #;(google-closure-compile bytes))
 
   
 ;; write-bootstrap-module: -> void
