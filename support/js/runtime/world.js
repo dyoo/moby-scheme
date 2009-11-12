@@ -247,8 +247,8 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
-    // placeImage: image number number scene -> scene
-    plt.world.Kernel.placeImage = function(picture, x, y, aScene) {
+    // placeImage: image number number image -> scene
+    plt.world.Kernel.placeImage = function(picture, x, y, background) {
 	plt.Kernel.check(picture, 
 			 isImage,
 			 "place-image",
@@ -256,10 +256,22 @@ plt.world.Kernel = plt.world.Kernel || {};
 			 1);
 	plt.Kernel.check(x, plt.Kernel.isNumber, "place-image", "number", 2);
 	plt.Kernel.check(y, plt.Kernel.isNumber, "place-image", "number", 3);
-	plt.Kernel.check(aScene, isScene, "place-image", "scene", 4);
-	return aScene.add(picture,
-			  plt.types.NumberTower.toInteger(x),
-			  plt.types.NumberTower.toInteger(y));
+	plt.Kernel.check(background,
+			 function(x) { return isScene(x) || isImage(x) },
+			 "place-image", "image", 4);
+	if (isScene(background)) {
+	    return background.add(picture,
+				  plt.types.NumberTower.toInteger(x),
+				  plt.types.NumberTower.toInteger(y));
+	} else {
+	    var newScene = plt.world.Kernel.emptyScene(background.getWidth(),
+						       background.getHeight());
+	    newScene = newScene.add(background, 0, 0);
+	    newScene = newScene.add(picture, 
+				    plt.types.NumberTower.toInteger(x),
+				    plt.types.NumberTower.toInteger(y));
+	    return newScene;
+	}
     };
 
     
