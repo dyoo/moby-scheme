@@ -264,8 +264,9 @@ plt.world.Kernel = plt.world.Kernel || {};
 				  plt.types.NumberTower.toInteger(x),
 				  plt.types.NumberTower.toInteger(y));
 	} else {
-	    var newScene = plt.world.Kernel.emptyScene(background.getWidth(),
-						       background.getHeight());
+	    var newScene = new SceneImage(background.getWidth(),
+					  background.getHeight(),
+					  []);
 	    newScene = newScene.add(background, 0, 0);
 	    newScene = newScene.add(picture, 
 				    plt.types.NumberTower.toInteger(x),
