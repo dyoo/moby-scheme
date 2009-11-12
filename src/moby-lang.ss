@@ -10,7 +10,8 @@
          "compiler/effect-struct.ss"
 	 "stub/location.ss"
          scheme/runtime-path
-         (for-syntax scheme/base "stx-helpers.ss")
+         (for-syntax scheme/base
+                     "stx-helpers.ss")
          (prefix-in base: scheme/base))
 
 
@@ -61,22 +62,30 @@
        (syntax/loc stx
          (base:begin body ...)))]))
 
-(define-runtime-path bootstrap-module-path "compiler/modules/bootstrap-teachpack.ss")
 
 
 ;; require: currently broken
 (define-syntax (broken-require stx)
   (syntax-case stx ()
     [(_ path)
-     (with-syntax ([updated-path
-                    (path->string #'bootstrap-module-path)])
      (cond
        [(and (syntax-e #'path)
              (string=? (syntax-e #'path) "moby/bootstrap"))
-        (syntax/loc stx
-          (base:require (file updated-path)))]))]
+        (datum->syntax stx `(begin
+                              (define-struct being (posn costume))
+                              (define (start title background playerImg targetImgs objectImgs  
+                                             update-player update-target update-object 
+                                             collide? offscreen?)
+                                (void))
+                              (void)))
+        #;(begin
+          (printf "bootstrap is ~s~n" bootstrap-module-path)
+          (syntax/loc stx
+            (base:require bootstrap-module-path-string)))]
+       [else
+        (raise-syntax-error #f "Not currently implemented" stx)])]
     [else
-     (error 'require "Not currently implemented")]))
+     (raise-syntax-error #f "Not currently implemented" stx)]))
 
 
 
