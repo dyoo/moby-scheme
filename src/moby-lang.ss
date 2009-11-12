@@ -9,9 +9,10 @@
          "stub/net.ss"
          "compiler/effect-struct.ss"
 	 "stub/location.ss"
+         scheme/runtime-path
          (for-syntax scheme/base "stx-helpers.ss")
-
          (prefix-in base: scheme/base))
+
 
 
 (define-for-syntax source-code #'not-initialized-yet)
@@ -59,12 +60,30 @@
                                    (loop))]))))])
        (syntax/loc stx
          (base:begin body ...)))]))
-         
+
+(define-runtime-path bootstrap-module-path "compiler/modules/bootstrap-teachpack.ss")
+
+
+;; require: currently broken
+(define-syntax (broken-require stx)
+  (syntax-case stx ()
+    [(_ path)
+     (with-syntax ([updated-path
+                    (path->string #'bootstrap-module-path)])
+     (cond
+       [(and (syntax-e #'path)
+             (string=? (syntax-e #'path) "moby/bootstrap"))
+        (syntax/loc stx
+          (base:require (file updated-path)))]))]
+    [else
+     (error 'require "Not currently implemented")]))
 
 
 
 (provide (except-out (all-from-out "compiler/lang.ss") #%module-begin provide require)
          (rename-out (-#%module-begin #%module-begin))
+         (rename-out (broken-require require))
+         
          (all-from-out "stub/parser.ss")
          (all-from-out "stub/world.ss")
          (all-from-out "stub/net.ss")
