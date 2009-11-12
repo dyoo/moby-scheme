@@ -108,7 +108,8 @@
                      (my-define-struct define-struct)
                      (base:define define)
                      (base:set! set!)
-                     (base:not not))
+                     (base:not not)
+                     (base:procedure-arity procedure-arity))
 
          (all-from-out "stx.ss")
 

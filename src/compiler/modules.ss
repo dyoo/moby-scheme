@@ -226,7 +226,8 @@
             "moby/bootstrap-world")]
     (make-module-binding 'world
                          module-path
-                         (append (list (bf 'start module-path 10 false "plt.world.Bootstrap.start"))
+                         (append (list 
+                                  (bf 'start module-path 10 false "plt.world.Bootstrap.start"))
                                  (module-binding-bindings world-stub-module)))))
 
 

@@ -1,5 +1,4 @@
-#lang planet dyoo/moby:2:13
-
+#lang s-exp "../../moby-lang.ss"
 
 ; A being is a (make-being Posn Image)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
