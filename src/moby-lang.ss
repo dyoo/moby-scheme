@@ -71,10 +71,8 @@
      (cond
        [(and (syntax-e #'path)
              (string=? (syntax-e #'path) "moby/bootstrap"))
-        (with-syntax ([being (datum->syntax stx 'being)]
-                      [start (datum->syntax stx 'start)])
+        (with-syntax ([start (datum->syntax stx 'start)])
           (syntax/loc stx (base:begin
-                            (define-struct being (posn costume))
                             (define (start title background playerImg targetImgs objectImgs  
                                            update-player update-target update-object 
                                            collide? offscreen?)

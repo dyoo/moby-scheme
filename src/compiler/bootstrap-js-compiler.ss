@@ -118,7 +118,6 @@
                                                  (get-base-pinfo 'moby)))
                op)
       (display "plt.bootstrap.start = start;\n" op)
-      (display "plt.bootstrap.make_dash_being = make_dash_being;" op)
       (display "}())\n" op))
     #:exists 'replace))
 
@@ -319,8 +318,9 @@
                                #"\n")))))))
 
 
-
+(write-bootstrap-teachpack-module)
 (write-compressed-runtime)
+
 
 (provide/contract
  [write-compiler (-> any)]

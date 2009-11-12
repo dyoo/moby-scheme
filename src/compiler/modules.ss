@@ -227,8 +227,7 @@
     (make-module-binding 'world
                          module-path
                          (append (list 
-                                  (bf 'start module-path 10 false "plt.bootstrap.start")
-                                  (bf 'make-being module-path 2 false "plt.bootstrap.make_dash_being"))
+                                  (bf 'start module-path 10 false "plt.bootstrap.start"))
                                  (module-binding-bindings world-stub-module)))))
 
 

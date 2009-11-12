@@ -1,10 +1,6 @@
 #lang s-exp "../../moby-lang.ss"
 
-; A being is a (make-being Posn Image)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Game Structures
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define-struct being [posn costume])
+
 
 
 
@@ -18,6 +14,12 @@
   (local [;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           ;; Game Structures
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+          ; A being is a (make-being Posn Image)
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          ;; Game Structures
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          (define-struct being [posn costume])
           
           ; A World is a (make-world (Being list) (Being list) Being Image Number String Integer)
           (define-struct world [objects targets player bg score title timer])
@@ -108,9 +110,9 @@
               [(not (string? key)) w]
               [(member key (list "up" "down" "left" "right"))
                (let* ((p (being-posn (world-player w)))
-                      (new-loc ;(if (= (procedure-arity update-player) 2)
-                       (update-player (posn-y p) key))
-                      ;   (update-player (posn-x p) (posn-y p) key)))
+                      (new-loc (if (= (procedure-arity update-player) 2)
+                                   (update-player (posn-y p) key)
+                                   (update-player (posn-x p) (posn-y p) key)))
                       (new-posn (if (posn? new-loc) new-loc (make-posn (posn-x p) new-loc ))))
                  (make-world (world-objects w)
                              (world-targets w)
@@ -173,7 +175,4 @@
                    (on-key keypress*)))))
 
 
-
-
-(provide start
-         make-being)
+;(provide start)
