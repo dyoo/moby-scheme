@@ -36,6 +36,12 @@ plt.reader = {};
 	return c;
     }
 
+    var numberHeader = ("(?:\\d+\\/\\d+|"+
+			"\\d+\\.\\d+|"+
+			"\\d+\\.|"+
+			"\\.\\d+|"+
+			"\\d+)");
+
 
     var PATTERNS = [['whitespace' , /^(\s+)/],
 		    ['#;', /^([#][;])/],
@@ -53,10 +59,13 @@ plt.reader = {};
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
 
-		    ['complex' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)?[+\-](?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+)i)/],
+
+
+		    ['complex' , new RegExp("^((?:(?:\\#[ei])?[+\\-]?" + numberHeader +")?"
+					    + "(?:[+\\-]" + numberHeader + ")i)")],
 		    ['number' , /^((?:\#[ei])?[+-]inf.0)/],
 		    ['number' , /^((?:\#[ei])?[+-]nan.0)/],
-		    ['number' , /^((?:\#[ei])?[+\-]?(?:\d+\/\d+|\d+\.\d+|\d+\.|\.\d+|\d+))/],
+		    ['number' , new RegExp("^((?:\\#[ei])?[+\\-]?" + numberHeader + ")")],
 
 
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
