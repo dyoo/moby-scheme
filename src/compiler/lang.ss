@@ -98,6 +98,9 @@
 
 
 
+(define (my-hash-ref a-hash key default-val)
+  (base:hash-ref a-hash key default-val))
+
 ;; The following primitives will need support in the runtime,
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
@@ -146,7 +149,8 @@
          ;; We should use contracts here.
          ;; disabled: using internal rbtree in the compiler now.
          ;;hash-set hash-ref hash-remove make-immutable-hasheq hash-map
-         
+         make-hasheq hash? hash-set! hash-remove! hash-map
+	 (rename-out (my-hash-ref hash-ref))
          
          ;; To support include and require
          open-input-stx
