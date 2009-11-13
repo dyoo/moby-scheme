@@ -30,7 +30,8 @@
 (define (parse-text-as-program a-text [source-name #f])
   (let* ([ip (open-input-text-editor a-text)])
     (port-count-lines! ip)
-    (parameterize ([read-accept-reader #t])
+    (parameterize ([read-accept-reader #t]
+		   [read-decimal-as-inexact #f])
       (let ([stx (read-syntax source-name ip)])
         (syntax-case stx ()
           [(module name lang body ...)

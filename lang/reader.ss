@@ -3,7 +3,9 @@
   #:wrapper2
   (lambda (in rd stx?)
     (let* ([lang `(file ,(path->string (resolved-module-path-name moby-lang-path)))]
-           [mod  (rd in)]
+           [mod
+            (parameterize ([read-decimal-as-inexact #f])
+              (rd in))]
            [mod  (if stx? mod (datum->syntax #f mod))]
            [r (syntax-case mod ()
                 [(module name lang* . body)
