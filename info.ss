@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Added error checks on procedure arity when using apply.  Fixed regression involving CSS and on-draw."))
+(define release-notes '("Generalized place-image to allow images as fourth argument.  Fixed Complex.asin.  Fixed reader bug that was reading decimals as inexact rather than exact.  Fixed reader bug on scientific notation."))
