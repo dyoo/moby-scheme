@@ -174,5 +174,5 @@
                    (on-tick .1 update-world)
                    (on-key keypress*)))))
 
-
-;(provide start)
+(void)
+#;(provide start)
