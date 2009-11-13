@@ -298,6 +298,9 @@ function init() {
 	    this.assert(schemeIsEqual(read("-1.2246467991473532e-16"),
 				      cons(makeFloat(-1.2246467991473532e-16),
 					   empty)));
+	    this.assert(schemeIsEqual(read("1e20"),
+				      cons(makeFloat(1e20),
+					   empty)));
 	},
 
 	testInfinities: function() {

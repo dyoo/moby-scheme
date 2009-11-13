@@ -36,9 +36,9 @@ plt.reader = {};
 	return c;
     }
 
-    var numberHeader = ("(?:\\d+\\/\\d+|"+
-			("(?:(?:\\d+\\.\\d+|"+ "\\d+\\.|"+ "\\.\\d+)(?:e[+\\-]\\d+))?|")+
-			"\\d+)");
+    var numberHeader = ("(?:(?:\\d+\\/\\d+)|"+
+			(  "(?:(?:\\d+\\.\\d+|\\d+\\.|\\.\\d+)(?:[eE][+\\-]?\\d+)?)|")+
+			(  "(?:\\d+(?:[eE][+\\-]?\\d+)?))"));
 
 
     var PATTERNS = [['whitespace' , /^(\s+)/],
@@ -211,6 +211,8 @@ plt.reader = {};
 		return plt.types.FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
 	    } else if (text == "+nan.0" || text == '-nan.0') {
 		return plt.types.FloatPoint.makeInstance(Number.NaN);
+	    } else if (text.match(/[eE]/)) {
+		return plt.types.FloatPoint.makeInstance(parseFloat(text));
 	    } else if (text.match(/\./)) {
 		if (isExact) {
 		    var decimalMatch = text.match("^(.*)[.](.*)$");
