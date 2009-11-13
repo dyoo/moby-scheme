@@ -1241,11 +1241,19 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.Complex.prototype.asin = function(){
 	if (this.isReal())
 	    return this.r.asin();
-	var iz = this.timesI();
-	var root = plt.types.NumberTower.subtract(plt.types.Rational.ONE, this.multiply(this)).sqrt();
-	var ret = plt.types.NumberTower.add(iz, root).log().timesI().minus();
-	// FIXME: missing return value!
-	throw new plt.Kernel.MobyRuntimeError("");
+
+	var oneMinusThisSq = 
+	    plt.types.NumberTower.subtract(
+		plt.types.Rational.ONE, 
+		this.multiply(this));
+	var sqrtOneMinusThisSq = oneMinusThisSq.sqrt();
+	return plt.types.NumberTower.multiply(
+	    plt.types.Rational.TWO,
+	    (plt.types.NumberTower.divide(
+		this, 
+		plt.types.NumberTower.add(
+		    plt.types.Rational.ONE,
+		    sqrtOneMinusThisSq))).atan());
     };
     
     plt.types.Complex.prototype.ceiling = function(){

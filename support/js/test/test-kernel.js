@@ -373,9 +373,21 @@ var getTests;
 	    },
 	    
 	    testAsin : function(){
-		this.assert(Kernel.equal_question_(Kernel.asin(Rational.ZERO), Rational.ZERO));
-		this.assert(Kernel.equal_question_(Kernel.asin(Rational.ONE.minus()), PI.half().minus()));
-		this.assert(Kernel.equal_question_(Kernel.asin(Rational.ONE), PI.half()));
+		this.assert(Kernel.equal_question_(
+		    Kernel.asin(Rational.ZERO), Rational.ZERO));
+		this.assert(Kernel.equal_question_(
+		    Kernel.asin(Rational.ONE.minus()), PI.half().minus()));
+		this.assert(Kernel.equal_question_(
+		    Kernel.asin(Rational.ONE), PI.half()));
+
+		this.assert(Kernel.equal_question_(
+		    Kernel.asin(Rational.makeInstance(1, 4)),
+		    FloatPoint.makeInstance(0.25268025514207865)));
+
+		this.assert(Kernel.equal_question_(
+		    Kernel.asin(Complex.makeInstance(1, 5)),
+		    Complex.makeInstance(0.1937931365549321,
+					 2.3309746530493123)));
 	    },
 	    
 	    testTan : function(){
