@@ -49,11 +49,6 @@ plt.world.config = plt.world.config || {};
 	    // begins.
 	    initialEffect: false,
 
-	    // registerWithUniverse: string
-	    // Registers with some universe, given an identifier
-	    // which is a URL to a Universe server.
-	    registerWithUniverse: false,
-
 
 	    // onRedraw: world -> scene
 	    onRedraw: false,
@@ -106,7 +101,22 @@ plt.world.config = plt.world.config || {};
 	    // stopWhen: world -> boolean
 	    stopWhen: false,
 	    // stopWhenEffect: world -> effect
-	    stopWhenEffect: false
+	    stopWhenEffect: false,
+
+
+
+	    //////////////////////////////////////////////////////////////////////
+	    // For universe game playing
+
+	    // connectToGame: string
+	    // Registers with some universe, given an identifier
+	    // which is a URL to a Universe server.
+	    connectToGame: false,
+	    onGameStart: false,
+	    onOpponentTurn: false,
+	    onMyTurn: false,
+	    afterMyTurn: false,
+	    onGameFinish: false
 	};
     }
 
@@ -352,13 +362,65 @@ plt.world.config = plt.world.config || {};
     };
 
 
-
-    // Registers with some universe resource.
-    plt.world.config.Kernel.register = function(url) {
-	plt.Kernel.check(url, plt.Kernel.isString, "register", "string", 1);
-	return addStringMethods(
-	    function(config) {
-		return config.updateAll({'registerWithUniverse': url });
-	    }, "register");
+    // makeSimplePropertyUpdater: (string (X -> boolean) string string) -> (X -> handler)
+    var makeSimplePropertyUpdater = function(propertyName,
+					     propertyPredicate,
+					     propertyTypeName,
+					     updaterName) {
+	return function(val) {
+	    plt.Kernel.check(val, propertyPredicate, updaterName, propertyTypeName, 1);
+	    return addStringMethods(
+		function(config) {
+		    return config.updateAll({propertyName: val });
+		}, updaterName);
+	}
     };
+
+    // connects to the game
+    plt.world.config.Kernel.connect_dash_to_dash_game = 
+	makeSimplePropertyUpdater('connectToGame',
+				  plt.Kernel.isString,
+				  "string",
+				  "connect-to-game");
+
+
+    // Registers a handler for game-start events.
+    plt.world.config.Kernel.on_dash_game_dash_start = 
+	makeSimplePropertyUpdater('onGameStart',
+				  plt.Kernel.isFunction,
+				  "function",
+				  "on-game-start");
+
+
+    // Registers a handler for opponent-turn events.
+    plt.world.config.Kernel.on_dash_opponent_dash_turn = 
+	makeSimplePropertyUpdater('onOpponentTurn',
+				  plt.Kernel.isFunction,
+				  "function",
+				  "on-opponent-turn");
+
+
+    // Registers a handler for my turn.
+    plt.world.config.Kernel.on_dash_my_dash_turn = 
+	makeSimplePropertyUpdater('onMyTurn',
+				  plt.Kernel.isFunction,
+				  "function",
+				  "on-my-turn");
+
+    // Register a handler after I make a move.
+    plt.world.config.Kernel.after_dash_my_dash_turn = 
+	makeSimplePropertyUpdater('afterMyTurn',
+				  plt.Kernel.isFunction,
+				  "function",
+				  "after-my-turn");
+
+    plt.world.config.Kernel.on_dash_game_dash_finish = 
+	makeSimplePropertyUpdater('onGameFinish',
+				  plt.Kernel.isFunction,
+				  "function",
+				  "on-game-finish");
+
+
+
+
 })();
