@@ -547,7 +547,7 @@ plt.world.MobyJsworld = {};
     // text: string -> node
     Jsworld.text = function(s) {
 	var node = _js.text(s, []);
-	node.toWrittenString = function(cache) { return "(js-img ...)"; }
+	node.toWrittenString = function(cache) { return "(js-text ...)"; }
 	node.toDisplayedString = node.toWrittenString;
 	node.toDomNode = function(cache) { return node; }
 	return node;
@@ -562,7 +562,7 @@ plt.world.MobyJsworld = {};
     Jsworld.rawNode = function(x, args) {
 	var attribs = getAttribs(args);
 	var node = _js.raw_node(plt.Kernel.toDomNode(x), attribs);
-	node.toWrittenString = function(cache) { return "(js-img ...)"; }
+	node.toWrittenString = function(cache) { return "(js-raw-node ...)"; }
 	node.toDisplayedString = node.toWrittenString;
 	node.toDomNode = function(cache) { return node; }
 	return node;
