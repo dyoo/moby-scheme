@@ -19,6 +19,23 @@ plt.world.Kernel = plt.world.Kernel || {};
     }
 
 
+    // clone: object -> object
+    // Copies an object.  The new object should respond like the old
+    // object, including to things like instanceof
+    var clone = function(obj) {
+	var C = function() {}
+	C.prototype = obj;
+	var c = new C();
+	for (property in obj) {
+	    if (obj.hasOwnProperty(property)) {
+		c[property] = obj[property];
+	    }
+	}
+	return c;
+    };
+
+
+
 
     var announceListeners = [];
     plt.world.Kernel.addAnnounceListener = function(listener) {
@@ -397,12 +414,9 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
 
 
+
     BaseImage.prototype.updatePinhole = function(x, y) {
-	var aCopy = {};
-	for (attr in this) {
-	    aCopy[attr] = this[attr];
-	}
-	aCopy.__proto__ = this.__proto__;
+	var aCopy = clone(this);
 	aCopy.pinholeX = x;
 	aCopy.pinholeY = y;
 	return aCopy;
