@@ -149,7 +149,9 @@
          ;; We should use contracts here.
          ;; disabled: using internal rbtree in the compiler now.
          ;;hash-set hash-ref hash-remove make-immutable-hasheq hash-map
-         make-hasheq hash? hash-set! hash-remove! hash-map
+	 make-hash
+         make-hasheq
+	 hash? hash-set! hash-remove! hash-map
 	 (rename-out (my-hash-ref hash-ref))
          
          ;; To support include and require

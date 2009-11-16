@@ -330,6 +330,7 @@
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
                    (append '((make-hasheq 0 "plt.Kernel.makeHashEq")
+			     (make-hash 0 "plt.Kernel.makeHash")
                              (hash-set! 3 "plt.Kernel.hashSetBang")
                              (hash-ref 3 "plt.Kernel.hashRef")
                              (hash-remove! 2 "plt.Kernel.hashRemoveBang")

@@ -1568,26 +1568,46 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 
     //////////////////////////////////////////////////////////////////////
-    var HashTable = function(inputHash) {
-	this.hash = new plt._Hashtable();
+    var EqHashTable = function(inputHash) {
+	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.toWrittenString(x); },
+				       function(x, y) { return x === y; });
     };
-    HashTable.prototype.toWrittenString = function(cache) {
+    EqHashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
     };
-    HashTable.prototype.toDisplayedString = function(cache) {
+    EqHashTable.prototype.toDisplayedString = function(cache) {
 	return "<hash>";
-    }
+    };
 
-    HashTable.prototype.isEqual = function(other) {
+    EqHashTable.prototype.isEqual = function(other) {
 	return this === other;
     };
 
+    var EqualHashTable = function(inputHash) {
+	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.toWrittenString(x); },
+				       function(x, y) { return plt.Kernel.equal_question_(x, y); });
+    };
+    EqualHashTable.prototype.toWrittenString = function(cache) {
+	return "<hash>";
+    };
+    EqualHashTable.prototype.toDisplayedString = function(cache) {
+	return "<hash>";
+    };
+
+    EqualHashTable.prototype.isEqual = function(other) {
+	return this === other;
+    };
+
+
     // makeHashEq: -> hash
     plt.Kernel.makeHashEq = function() {
-	var myhash = new HashTable();
+	var myhash = new EqHashTable();
 	return myhash;
     };
 
+    plt.Kernel.makeHash = function() {
+	return new EqualHashTable();
+    };
 
     // plt.Kernel.hashSet: hash object value -> undefined
     // Mutates the hash with a new key/value binding.
@@ -1630,7 +1650,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     var isHash = function(x) {
 	return ((x != null) && 
 		(x != undefined) && 
-		(x instanceof HashTable))
+		((x instanceof EqHashTable) || (x instanceof EqualHashTable)));
     }
     plt.Kernel.isHash = isHash;
 
