@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("include generalized to work with a module."))
+(define release-notes '("Bug fix: if an image can't be loaded, it's replaced with a warning text image.  Bug fix: identifiers with a leading digit were being miscompiled."))
