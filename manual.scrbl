@@ -470,6 +470,10 @@ returns the list containing @scheme['at-least] and the minimum arity.
 Creates a mutable hashtable whose keys are compared by @scheme[eq?].
 }
 
+@defproc[(make-hash) hash?]{
+Creates a mutable hashtable whose keys are compared by @scheme[equal?].
+}
+
 @defproc[(hash? (x any/c)) boolean?]{
 Returns @scheme[true] if @scheme[x] is a @scheme[hash], and @scheme[false] otherwise.}
 
