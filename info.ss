@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Generalized place-image to allow images as fourth argument.  Fixed Complex.asin.  Fixed bug in not exposing hash-table functions out to DrScheme language level.  Fixed reader bug that was reading decimals as inexact rather than exact.  Fixed reader bug on scientific notation."))
+(define release-notes '("Exposed make-hash for equality hash tables.  Fixed printer bug involving js-text nodes.  More IE/Opera comptability fixes to avoid use of __proto__."))
