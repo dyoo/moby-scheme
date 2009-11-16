@@ -136,7 +136,6 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	    var loadHandler = function() {
 		// Detach, because looping animated gifs are defined to call onload
 		// on every loop
-		console.log("attaching " + path);
 		plt.Kernel.detachEvent(img, 'load', loadHandler);
 		plt.world.Kernel.FileImage.installInstance(path, img);
 		keepGoing();
