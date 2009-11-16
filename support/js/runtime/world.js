@@ -579,9 +579,16 @@ plt.world.Kernel = plt.world.Kernel || {};
 	} 
 	return imageCache[path];
     };
+    
     FileImage.installInstance = function(path, rawImage) {
 	imageCache[path] = new FileImage(path, rawImage);
-    }
+    };
+    
+    FileImage.installBrokenImage = function(path) {
+	imageCache[path] = new TextImage("Unable to load " + path, 10, 
+					 colorDb.get("red"));
+    };
+
 
 
     FileImage.prototype.render = function(ctx, x, y) {

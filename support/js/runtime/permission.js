@@ -136,6 +136,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	    var loadHandler = function() {
 		// Detach, because looping animated gifs are defined to call onload
 		// on every loop
+		console.log("attaching " + path);
 		plt.Kernel.detachEvent(img, 'load', loadHandler);
 		plt.world.Kernel.FileImage.installInstance(path, img);
 		keepGoing();
@@ -146,8 +147,9 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	    plt.Kernel.attachEvent(img, 
 				   "error",
 				   function() {
-				       img.src = "http://www.wescheme.org/images/broken.png";
-				       plt.Kernel.detachEvent(img, 'load', loadHandler);
+				       // Note that the image loading doesn't work, and
+				       // keep going.
+				       plt.world.Kernel.FileImage.installBrokenImage(path);
 				       keepGoing();
 				   });
 	    img.src = path;
