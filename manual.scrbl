@@ -309,13 +309,13 @@ some value.
 
 (js-big-bang ""
              (on-draw draw draw-css))
+)
 }
-
 
 @defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.
 }
 
-@defproc[(js-select (options (listof string?)) (world-update-f (world string -> world)) (attribs (listof attrib) '())) -> dom-element]
+@defproc[(js-select (options (listof string?)) (world-update-f (world string -> world)) (attribs (listof attrib) '())) dom-element]
 Constructs a select element with the given options.  Whenever a new
 option is selected, the @scheme[world-update-f] function is called to
 get the new world.
