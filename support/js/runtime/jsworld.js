@@ -565,8 +565,8 @@ plt.world.MobyJsworld = {};
 	var optionsArray = deepListToArray(options);
 	var node = _js.select(attribs, 
 			      optionsArray,
-			      function(w, v) { 
-				  return updateF([w, v])
+			      function(w, selectEvent) { 
+				  return updateF([w, node.value])
 			      });
 	node.toWrittenString = function(cache) { return "(js-select ...)"; }
 	node.toDisplayedString = node.toWrittenString;

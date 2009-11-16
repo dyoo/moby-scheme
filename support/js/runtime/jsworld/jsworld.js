@@ -1109,16 +1109,23 @@ plt.Jsworld = {};
 
     function select(attribs, opts, f){
 	var n = document.createElement('select');
-	for(var i = 0; i < opts.length; i++)
-	    appendChild(n, option({value: opts[i]}));
+	for(var i = 0; i < opts.length; i++) {
+	    n.add(option({value: opts[i]}), null);
+	}
 	add_ev(n, 'change', f);
 	return addFocusTracking(copy_attribs(n, attribs));
     }
     Jsworld.select = select;
 
     function option(attribs){
- 	return copy_attribs(document.createElement('option'), attribs)
+	var node = document.createElement("option");
+	node.jsworldOpaque = true;
+        node.text = attribs.value;
+	node.value = attribs.value;
+ 	return copy_attribs(node, attribs)
     }
+
+
 
     function textarea(attribs){
 	return addFocusTracking(copy_attribs(document.createElement('textarea'), attribs));

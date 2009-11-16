@@ -315,6 +315,36 @@ some value.
 @defproc[(js-img (url string) (attribs (listof attrib) '())) dom-element]{Creates an image element.
 }
 
+@defproc[(js-select (options (listof string?)) (world-update-f (world string -> world)) (attribs (listof attrib) '())) -> dom-element]
+Constructs a select element with the given options.  Whenever a new
+option is selected, the @scheme[world-update-f] function is called to
+get the new world.
+
+The example below has a select with five elements.
+@(mobyblock
+(define (select-house w an-option)
+  an-option)
+
+(define a-select-element
+  (js-select (list ""
+                   "Gryffindor"
+                   "Hufflepuff" 
+                   "Ravenclaw"
+                   "Slytherin")
+             select-house))
+
+(define (draw w)
+  (list (js-div)
+        (list a-select-element)
+        (list (js-text (format "House: ~a" w)))))
+
+(define (draw-css w)
+  '())
+
+(js-big-bang ""
+             (on-draw draw draw-css))
+)
+
              
              
 @subsection{Stimulus Handlers}
