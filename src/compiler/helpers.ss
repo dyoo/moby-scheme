@@ -143,7 +143,13 @@
     [(member an-id java-identifiers)
      (string->symbol (string-append "_" (symbol->string an-id) "_"))]
     [else
-     (local [(define chars (string->list (symbol->string an-id)))
+     (local [(define (maybe-prepend-hyphen chars)
+               (cond
+                 [(member (first chars) (string->list "0123456789"))
+                  (cons #\- chars)]
+                 [else
+                  chars]))
+             (define chars (maybe-prepend-hyphen (string->list (symbol->string an-id))))
              (define translated-chunks 
                (map translate-special-character chars))
              (define translated-id
