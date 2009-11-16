@@ -254,6 +254,23 @@ Constructs a paragraph element.}
                     (attribs (listof attrib) '()))
          dom-element]{
 Constructs a button.  When the button is pressed, the world is updated through @scheme[world-update-f].
+
+The following example counts how many times a button has been clicked.
+@(mobyblock
+(define (press w)
+  (add1 w))
+
+(define (draw w)
+  (list (js-div)
+        (list (js-button press) (list (js-text "Press me")))
+        (list (js-text (format "Button presses: ~a" w)))))
+
+(define (draw-css w)
+  '())
+
+(js-big-bang 0
+             (on-draw draw draw-css))
+)
 }
                      
                      
@@ -273,28 +290,25 @@ Creates an input form element.  When the user changes the content of the form el
 the runtime uses @scheme[world-update-f] to update the world with the string value of the element.
 
 The example below has a single text input form element, which allows the user to enter
-some value.  That value is read from the interface by the @scheme[refresh] function that's associated
-to the button.
-
+some value.
 @(mobyblock
-(define input-node
-  (js-input "text" '(("id" "myname"))))
+(define (refresh w form-val)
+  form-val)
 
-(define (refresh w)
-  (get-input-value "myname"))
+(define input-node
+  (js-input "text" refresh '(("id" "myname"))))
 
 (define (draw w)
   (list (js-div)
         (list (js-div) (list (js-text (format "I see: ~s~n" w))))
-        (list (js-div) (list input-node))
-        (list (js-div) (list (js-button refresh)
-                             (list (js-text "Update!"))))))
+        (list (js-div) (list input-node))))
+
 
 (define (draw-css w)
   '())
 
-(js-big-bang "" 
-             (on-draw draw draw-css)))
+(js-big-bang ""
+             (on-draw draw draw-css))
 }
 
 
