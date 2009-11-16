@@ -535,6 +535,7 @@ plt.world.MobyJsworld = {};
 
     // Images.
     Jsworld.img = function(src, args) {
+	plt.Kernel.check(src, plt.Kernel.isString, "js-img", "string", 1);
 	var attribs = getAttribs(args);
 	var node = _js.img(src, attribs);
 	node.toWrittenString = function(cache) { return "(js-img ...)"; }
@@ -546,6 +547,7 @@ plt.world.MobyJsworld = {};
 
     // text: string -> node
     Jsworld.text = function(s) {
+	plt.Kernel.check(s, plt.Kernel.isString, "js-text", "string", 1);
 	var node = _js.text(s, []);
 	node.toWrittenString = function(cache) { return "(js-text ...)"; }
 	node.toDisplayedString = node.toWrittenString;
@@ -555,7 +557,25 @@ plt.world.MobyJsworld = {};
 
 
 
-    // fixme: add support for select, option, textarea, h1, canvas
+    Jsworld.select = function(options, updateF, args) { 
+	plt.Kernel.checkListof(options, plt.Kernel.isString, "js-select", "string", 1);
+	plt.Kernel.check(updateF, plt.Kernel.isFunction, "js-select", "function", 2);
+	var attribs = getAttribs(args);
+	// convert options to array
+	var optionsArray = deepListToArray(options);
+	var node = _js.select(attribs, 
+			      optionsArray,
+			      function(w, v) { 
+				  return updateF([w, v])
+			      });
+	node.toWrittenString = function(cache) { return "(js-select ...)"; }
+	node.toDisplayedString = node.toWrittenString;
+	node.toDomNode = function(cache) { return node; }
+	return node;
+    };
+
+
+    // fixme: add support for textarea, h1, canvas
 
 
     // raw_node: scheme-value assoc -> node

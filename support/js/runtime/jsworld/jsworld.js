@@ -1117,9 +1117,8 @@ plt.Jsworld = {};
     Jsworld.select = select;
 
     function option(attribs){
-	return addFocusTracking(copy_attribs(document.createElement('option'), attribs));
+ 	return copy_attribs(document.createElement('option'), attribs)
     }
-    Jsworld.option = option;
 
     function textarea(attribs){
 	return addFocusTracking(copy_attribs(document.createElement('textarea'), attribs));

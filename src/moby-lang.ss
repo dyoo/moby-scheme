@@ -124,5 +124,6 @@
          js-img
          js-text
          js-node
-         
+         js-select
+
          #;get-input-value)

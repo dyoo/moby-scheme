@@ -11,6 +11,7 @@
 (define-struct (jsworld-widget:img jsworld-widget) (src) #:prefab)
 (define-struct (jsworld-widget:text jsworld-widget) (text) #:prefab)
 (define-struct (jsworld-widget:node jsworld-widget) (node) #:prefab)
+(define-struct (jsworld-widget:select jsworld-widget) (optiosn update-f) #:prefab)
 
 
 (define (js-div (attrs '()))
@@ -40,6 +41,9 @@
 (define (js-node raw-node (attrs '()))
   (make-jsworld-widget:node attrs raw-node))
 
+(define (js-select options update-f (attrs '()))
+  (make-jsworld-widget:select attrs options update-f))
+
 #;(define (get-input-value an-input-node)
   "")
 
@@ -65,7 +69,7 @@
                   [js-img ((string?) (attrs/c) . ->* . jsworld-widget?)]
                   [js-text (string? . -> . jsworld-widget?)]
                   [js-node ((any/c) (attrs/c) . ->* . jsworld-widget?)]
-                  
+                  [js-select (((listof string?) (any/c string? . -> . any/c)) (attrs/c) . ->* . jsworld-widget?)]
                   #;[get-input-value ((or/c jsworld-widget:input? 
                                           jsworld-widget:bidirectional-input? 
                                           string?)

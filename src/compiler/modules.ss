@@ -375,7 +375,8 @@
                                (bf 'js-input 2 "plt.world.MobyJsworld.input")
 			       (bf 'js-img 1
 				   "plt.world.MobyJsworld.img")
-                               (bf 'js-node 1 "plt.world.MobyJsworld.rawNode")))))
+                               (bf 'js-node 1 "plt.world.MobyJsworld.rawNode")
+			       (bf 'js-select 2 "plt.world.MobyJsworld.select")))))
   
 
 
