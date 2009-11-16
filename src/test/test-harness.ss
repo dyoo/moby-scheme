@@ -1,3 +1,4 @@
+#lang s-exp "../moby-lang.ss"
 (define number-of-tests 0)
 (define number-of-skipped-tests 0)
 (define number-of-errors 0)

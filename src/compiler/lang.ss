@@ -86,7 +86,8 @@
             (let* ([ip (open-input-text-editor a-text)])
               (begin
               (port-count-lines! ip)
-              (parameterize ([read-accept-reader #t])
+              (parameterize ([read-accept-reader #t]
+                             [read-decimal-as-inexact #f])
                 (let loop ()
                   (let ([stx (read-syntax source-name ip)])
                     (cond [(not (eof-object? stx))

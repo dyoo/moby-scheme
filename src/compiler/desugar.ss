@@ -316,7 +316,14 @@
      
      (local [(define file-path (stx-e (second (stx-e include-expr))))
              (define stxs (open-input-stx file-path))]
-       (desugar-program stxs pinfo))]))
+       (cond 
+         [(and (= (length stxs) 1)
+               (stx-begins-with? (first stxs) 'module))
+          ;; If's it's a module, skip over
+          (desugar-program (rest (rest (rest (stx-e (first stxs)))))
+                           pinfo)]
+         [else
+          (desugar-program stxs pinfo)]))]))
 
 
 

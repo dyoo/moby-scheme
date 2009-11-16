@@ -44,21 +44,33 @@
               )))))]))
 
 
-;; include: textually include content from another file.
+;; include: textually include content from another module.
 (define-syntax (include stx)
   (syntax-case stx ()
     [(_ path)
      (with-syntax ([(body ...)
-                    (let* ([pathname (syntax-e #'path)]
-                           [ip (open-input-file pathname)])
-                      (let loop ()
-                        (let ([datum (read ip)])
-                          (cond
-                            [(eof-object? datum)
-                             '()]
-                            [else
-                             (cons (datum->syntax stx datum stx) 
-                                   (loop))]))))])
+                    (let ([result
+                           (parameterize ([read-accept-reader #t]
+                                          [read-decimal-as-inexact #f])
+                             (let* ([pathname (syntax-e #'path)]
+                                    [ip (open-input-file pathname)])
+                               (let loop ()
+                                 (let ([datum (read ip)])
+                                   (cond
+                                     [(eof-object? datum)
+                                      '()]
+                                     [else
+                                      (cons (datum->syntax stx datum stx) 
+                                            (loop))])))))])
+                      (cond
+                        [(= 1 (length result))
+                         (syntax-case (car result) ()
+                           [(module a-name a-lang a-body ...)
+                            (syntax->list #'(a-body ...))]
+                           [else
+                            result])]
+                        [else
+                         result]))])
        (syntax/loc stx
          (base:begin body ...)))]))
 
