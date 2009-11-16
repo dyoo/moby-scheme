@@ -335,6 +335,7 @@
                              (hash-ref 3 "plt.Kernel.hashRef")
                              (hash-remove! 2 "plt.Kernel.hashRemoveBang")
                              (hash-map 2 "plt.Kernel.hashMap")
+                             (hash-for-each 2 "plt.Kernel.hashForEach")
                              (hash? 1 "plt.Kernel.isHash")
                              
                              

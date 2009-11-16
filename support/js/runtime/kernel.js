@@ -1647,6 +1647,18 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	return result;
     };
 
+
+    plt.Kernel.hashForEach = function(ht, f) {
+	check(ht, isHash, "hash-map", "hash", 1);
+	var result = plt.types.Empty.EMPTY;
+	var keys = ht.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    var val = ht.hash.get(keys[i]);
+	    f([keys[i], val]);
+	}
+	return undefined;
+    };
+
     var isHash = function(x) {
 	return ((x != null) && 
 		(x != undefined) && 

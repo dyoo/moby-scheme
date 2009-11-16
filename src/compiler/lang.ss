@@ -151,7 +151,7 @@
          ;;hash-set hash-ref hash-remove make-immutable-hasheq hash-map
 	 make-hash
          make-hasheq
-	 hash? hash-set! hash-remove! hash-map
+	 hash? hash-set! hash-remove! hash-map hash-for-each
 	 (rename-out (my-hash-ref hash-ref))
          
          ;; To support include and require
