@@ -536,7 +536,12 @@ Removes a key and its associated value from @scheme[a-hash].
 }
 
 @defproc[(hash-map (a-hash hash?) (f (any/c any/c -> any/c))) (listof any/c)]{
-Maps a function @scheme[f] across all the key/value pairs in @scheme[a-hash].  The
+Maps a function @scheme[f] across all the key/value pairs in
+@scheme[a-hash], collecting results into a list.  The order of the
+traversal is not defined.  }
+
+@defproc[(hash-for-each (a-hash hash?) (f (any/c any/c -> any/c))) (void)]{
+Applies a function @scheme[f] across all the key/value pairs in @scheme[a-hash].  The
 order of the traversal is not defined.
 }
 
