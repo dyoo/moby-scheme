@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Fixed stale js-input example in docs.  Added js-select.  Added hash-for-each."))
+(define release-notes '("include generalized to work with a module."))
