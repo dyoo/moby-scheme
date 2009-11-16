@@ -597,9 +597,19 @@ function init() {
             this.assert(isEqual(run("(let ([ht (make-hasheq)]) (begin (hash-set! ht 'danny 'yoo) (hash-remove! ht 'danny) (hash-ref ht 'danny 'unknown)))"),
 				 run("'unknown")));
 
-
-
-	}
+	    this.assert(isEqual(run('(list 42 "???" 43)'),
+				run(
+				    '(local [(define m (make-hash))' +
+				    '        (define m2 (make-hasheq))' +
+				    '        (define p (make-posn 5 6))]' +
+				    '  (begin' +
+				    '    (hash-set! m (make-posn 3 4) 42)' +
+				    '    (hash-set! m2 p 43)' +
+				    '    (list' +
+				    '     (hash-ref m (make-posn 3 4) "???")' +
+				    '     (hash-ref m2 (make-posn 5 6) "???")' +
+				    '     (hash-ref m2 p "!!!"))))')));
+       }
 
     });
 
