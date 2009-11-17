@@ -1,6 +1,6 @@
 #!/bin/bash
 MAJOR=2
-MINOR=19
+MINOR=20
 
 OLDDIR=`pwd`
 mkdir -p tmp
