@@ -285,8 +285,16 @@ and the original world is used to construct an effect.
 
 @defproc[(js-text (text string?)) dom-element]{Constructs regular text.}
 
-@defproc[(js-input (type string) (world-update-f (world string -> world)) (attribs (listof attrib) '())) dom-element]{
-Creates an input form element.  When the user changes the content of the form element,
+@defproc[(js-input (type string)
+                   (world-update-f (or/c (world string -> world)
+                                         (world boolean -> world)))
+                   (attribs (listof attrib) '()))
+         dom-element]{
+Creates an input form element.  The types that are currently supported are:
+@itemlist[@item{@scheme["text"]}
+          @item{@scheme["password"]}
+          @item{@scheme["checkbox"]}]
+When the user changes the content of the form element,
 the runtime uses @scheme[world-update-f] to update the world with the string value of the element.
 
 The example below has a single text input form element, which allows the user to enter
