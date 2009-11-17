@@ -294,8 +294,12 @@ Creates an input form element.  The types that are currently supported are:
 @itemlist[@item{@scheme["text"]}
           @item{@scheme["password"]}
           @item{@scheme["checkbox"]}]
-When the user changes the content of the form element,
-the runtime uses @scheme[world-update-f] to update the world with the string value of the element.
+When the user changes the content of the form element, the runtime
+uses @scheme[world-update-f] to update the world.  If the
+@scheme[type] is either @scheme["text"] or @scheme["password"], then
+the string value of the element will be passed as the second argument
+to it.  If @scheme[type] is @scheme["checkbox"], a boolean
+representing the checked status of the element will be passed to it.
 
 The example below has a single text input form element, which allows the user to enter
 some value.
