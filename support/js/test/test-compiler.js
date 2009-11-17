@@ -98,6 +98,12 @@ function init() {
 				    "(add1 42)")));
 	},
 	
+	// Bug reported by David Treijo
+	testIdentifierWithLeadingNumber: function() {
+		this.assert(isEqual("first",
+				    run("(define 1px \"first\")" + " 1px")));
+	},
+
 	testApplication: function() {
 	    this.assert(isEqual(number(9),
 				run("(let ((x (lambda (a b c) (a b c)))) (x + 4 5))")));

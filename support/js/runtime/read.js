@@ -36,6 +36,10 @@ plt.reader = {};
 	return c;
     }
 
+    var delimiter = "[\\s\\\(\\\)\\\[\\\]\\\{\\\}\\\"\\\,\\\'\\\`\\\;]";
+    var nondelimiter = "[^\\s\\\(\\\)\\\[\\\]\\\{\\\}\\\"\\\,\\\'\\\`\\\;]";
+
+
     var numberHeader = ("(?:(?:\\d+\\/\\d+)|"+
 			(  "(?:(?:\\d+\\.\\d+|\\d+\\.|\\.\\d+)(?:[eE][+\\-]?\\d+)?)|")+
 			(  "(?:\\d+(?:[eE][+\\-]?\\d+)?))"));
@@ -56,21 +60,17 @@ plt.reader = {};
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
+		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],
+		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")]
+		    ];
 
 
-
-		    ['complex' , new RegExp("^((?:(?:\\#[ei])?[+\\-]?" + numberHeader +")?"
-					    + "(?:[+\\-]" + numberHeader + ")i)")],
-		    ['number' , /^((?:\#[ei])?[+-]inf.0)/],
-		    ['number' , /^((?:\#[ei])?[+-]nan.0)/],
-		    ['number' , new RegExp("^((?:\\#[ei])?[+\\-]?" + numberHeader + ")")],
-
-
-		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],      
-		    ['symbol' ,/^([a-zA-Z\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<][\w\:\+\=\~\_\?\!\@\#\$\%\^\&\*\-\/\.\>\<]*)/]
-		   ];
-
-
+    var numberPatterns = [['complex' , new RegExp("^((?:(?:\\#[ei])?[+\\-]?" + numberHeader +")?"
+						  + "(?:[+\\-]" + numberHeader + ")i$)")],
+			  ['number' , /^((?:\#[ei])?[+-]inf.0)$/],
+			  ['number' , /^((?:\#[ei])?[+-]nan.0)$/],
+			  ['number' , new RegExp("^((?:\\#[ei])?[+\\-]?" + numberHeader + "$)")]];
+	
 
     var tokenize = function(s, source) {
 
@@ -87,20 +87,46 @@ plt.reader = {};
 		var pattern = PATTERNS[i][1]
 		var result = s.match(pattern);
 		if (result != null) {
+		    var wholeMatch = result[0];
+		    var tokenText = result[1];
 		    if (patternName == 'string') {
-			result[1] = replaceEscapes(result[1]);
-		    }
-		    if (patternName != 'whitespace' && patternName != 'comment') {
+			tokenText = replaceEscapes(tokenText);
+		    } 
+		    if (patternName == "symbol-or-number") {
+			var isNumber = false;
+			for (var j = 0; j < numberPatterns.length; j++) {
+			    var numberMatch = tokenText.match(numberPatterns[j][1]);
+			    if (numberMatch) {
+				tokens.push([numberPatterns[j][0], 
+					     tokenText,
+					     new Loc(offset,
+						     line,
+						     wholeMatch.length, 
+						     source)]);
+				isNumber = true;
+				break;
+			    }
+			}
+			if (! isNumber) {
+			    tokens.push(["symbol", 
+					 tokenText,
+					 new Loc(offset,
+						 line,
+						 wholeMatch.length, 
+						 source)]);
+			}
+		    } else if (patternName != 'whitespace' && patternName != 'comment') {
 			tokens.push([patternName, 
-				     result[1], 
+				     tokenText,
 				     new Loc(offset,
 					     line,
-					     result[0].length, 
+					     wholeMatch.length, 
 					     source)]);
 		    }
-		    offset = offset + result[0].length;
-		    line = line + countLines(result[0]);
-		    s = s.substring(result[0].length);
+
+		    offset = offset + wholeMatch.length;
+		    line = line + countLines(wholeMatch);
+		    s = s.substring(wholeMatch.length);
 		    shouldContinue = true;
 		    break;
 		}

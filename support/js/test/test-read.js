@@ -81,6 +81,11 @@ function init() {
 				[[["symbol", "hello"]], ""]));
 	},
 
+	testTokenizeSymbol2: function() {
+	    this.assert(isEqual(tokenize("1st"),
+				[[["symbol", "1st"]], ""]));
+	},
+
 	testTokenizeSimpleList: function() {
 	    this.assert(isEqual(tokenize("(hello world)"),
 				[[["(", "("],
