@@ -331,7 +331,9 @@ The example below uses a checkbox to select among three elements:
                (remove ingredient w)]))]
     (list (js-div)
           (list (js-text ingredient))
-          (list (js-input "checkbox" on-check `(("value" ,ingredient)))))))
+          (list (js-input "checkbox" 
+	                  on-check
+			  `(("value" ,ingredient)))))))
 
 (define c1 (make-ingredient-checkbox-sexp "mushrooms"))
 (define c2 (make-ingredient-checkbox-sexp "green peppers"))
@@ -350,6 +352,8 @@ The example below uses a checkbox to select among three elements:
 (js-big-bang '()
              (on-draw draw draw-css)))
 }
+
+
 
 
 
