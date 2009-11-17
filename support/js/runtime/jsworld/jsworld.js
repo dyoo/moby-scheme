@@ -1055,6 +1055,22 @@ plt.Jsworld = {};
     
 
     function input(type, updateF, attribs) {
+	type = type.toLowerCase();
+	var dispatchTable = { text : text_input,
+			      password: text_input,
+			      checkbox: checkbox_input,
+			      //button: button_input,
+			      //radio: radio_input 
+	};
+        if (type in dispatchTable) { return dispatchTable[type](type, updateF, attribs); }
+	else {
+	    throw new plt.Kernel.MobyRuntimeError("js-input: does not currently support type " + type);
+	}
+    }
+    Jsworld.input = input;
+
+
+    var text_input = function(type, updateF, attribs) {
 	var n = document.createElement('input');
 	n.type = type;
 	function onKey(w, e) {
@@ -1081,8 +1097,33 @@ plt.Jsworld = {};
 		    delay);
 	return stopClickPropagation(
 	    addFocusTracking(copy_attribs(n, attribs)));
-    }
-    Jsworld.input = input;
+    };
+
+
+    var checkbox_input = function(type, updateF, attribs) {
+	var n = document.createElement('input');
+	n.type = type;
+
+	var onCheck = function(w, e) {
+	    return updateF(w, (n.checked ? plt.types.Logic.TRUE : plt.types.Logic.FALSE));
+	};
+	// This established the widget->world direction
+	add_ev_after(n, 'change', onCheck);
+	
+	attachEvent(n, 'click', function(e) {
+		stopPropagation(e);
+	    });
+
+	return n;
+	//return addFocusTracking(copy_attribs(n, attribs));
+    };
+
+
+    var button_input = function(type, updateF, attribs) {
+	var n = document.createElement('button');
+	add_ev(n, 'click', function(w) { return updateF(w, n.value)});
+	return addFocusTracking(copy_attribs(n, attribs));
+    };
 
 
 
