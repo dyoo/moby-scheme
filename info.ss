@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fix: attributes on a checkbox were being ignored."))
+(define release-notes '("Bug fix: attributes on a checkbox were being ignored.  Adjusted make-vector to allow second initialization argument."))
