@@ -1738,9 +1738,9 @@ var getTests;
 					 Kernel.vector_dash_ref
 					     (Kernel.vector(["foo", "bar"]), Rational.makeInstance(2));});
 
-		    this.assertEqual(5, Kernel.vector_dash_length(Kernel.make_dash_vector(Rational.makeInstance(5))).toInteger());
+		    this.assertEqual(5, Kernel.vector_dash_length(Kernel.make_dash_vector(Rational.makeInstance(5), [])).toInteger());
 
-		    var aVector = Kernel.make_dash_vector(Rational.makeInstance(5));
+		    var aVector = Kernel.make_dash_vector(Rational.makeInstance(5), []);
 		    Kernel.vector_dash_set_bang_(aVector, Rational.ZERO, "blah");
 		    this.assertEqual("blah", Kernel.vector_dash_ref(aVector, Rational.ZERO));
 		    Kernel.vector_dash_set_bang_(aVector, Rational.ZERO, "boing");
