@@ -70,7 +70,8 @@ plt.Jsworld = {};
 	try {
 	    world = updater(world);
 	} catch(e) {
-	    return;
+	    world = originalWorld;
+	    throw e;
 	}
 	if (originalWorld != world) {
 	    for(var i = 0; i < worldListeners.length; i++) {

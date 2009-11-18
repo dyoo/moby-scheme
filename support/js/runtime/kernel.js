@@ -2343,7 +2343,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	var reporter;
 	if (typeof(console) != 'undefined' && 
 	    typeof(console.log) != 'undefined') {
-	    reporter = (function(x) { console.log(x) });
+	    reporter = (function(x) { console.log(x); alert(x); });
 	} else {
 	    reporter = (function(x) { alert(x); });
 	}

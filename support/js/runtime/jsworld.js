@@ -254,18 +254,28 @@ plt.world.MobyJsworld = {};
 
 	if (config.lookup('onDraw')) {
 	    wrappedRedraw = function(w) {
-		var newDomTree = config.lookup('onDraw')([w]);
-		plt.Kernel.setLastLoc(undefined);
-		checkWellFormedDomTree(newDomTree, newDomTree, undefined);
-		var result = [toplevelNode, 
-			      deepListToArray(newDomTree)];
-		return result;
+		try {
+		    var newDomTree = config.lookup('onDraw')([w]);
+		    plt.Kernel.setLastLoc(undefined);
+		    checkWellFormedDomTree(newDomTree, newDomTree, undefined);
+		    var result = [toplevelNode, 
+				  deepListToArray(newDomTree)];
+		    return result;
+		} catch (e) {
+		    handleError(e);
+		    throw e;
+		}
 	    }
 
 	    wrappedRedrawCss = function(w) {
-		var result = deepListToArray(config.lookup('onDrawCss')([w]));
-		plt.Kernel.setLastLoc(undefined);
-		return result;
+		try {
+		    var result = deepListToArray(config.lookup('onDrawCss')([w]));
+		    plt.Kernel.setLastLoc(undefined);
+		    return result;
+		} catch (e) {
+		    handleError(e);
+		    throw e;
+		}
 	    }
 	    wrappedHandlers.push(_js.on_draw(wrappedRedraw, wrappedRedrawCss));
 	} else if (config.lookup('onRedraw')) {
@@ -273,37 +283,42 @@ plt.world.MobyJsworld = {};
 	    var reusableCanvasNode = undefined;
 	    
 	    wrappedRedraw = function(w) {
-		var aScene = config.lookup('onRedraw')([w]);
-		// Performance hack: if we're using onRedraw, we know
-		// we've got a scene, so we optimize away the repeated
-		// construction of a canvas object.
-		if (aScene != null && aScene != undefined && 
-		    aScene instanceof plt.world.Kernel.BaseImage) {
-		    var width = 
-			plt.world.Kernel.imageWidth(aScene).toInteger();
-		    var height = 
-			plt.world.Kernel.imageHeight(aScene).toInteger();
+		try {
+		    var aScene = config.lookup('onRedraw')([w]);
+		    // Performance hack: if we're using onRedraw, we know
+		    // we've got a scene, so we optimize away the repeated
+		    // construction of a canvas object.
+		    if (aScene != null && aScene != undefined && 
+			aScene instanceof plt.world.Kernel.BaseImage) {
+			var width = 
+			    plt.world.Kernel.imageWidth(aScene).toInteger();
+			var height = 
+			    plt.world.Kernel.imageHeight(aScene).toInteger();
 
-		    if (! reusableCanvas) {
-			reusableCanvas = plt.world.Kernel.makeCanvas(width, height);
-			// Note: the canvas object may itself manage objects,
-			// as in the case of an excanvas.  In that case, we must make
-			// sure jsworld doesn't try to disrupt its contents!
-			reusableCanvas.jsworldOpaque = true;
-			reusableCanvasNode = _js.node_to_tree(reusableCanvas);
+			if (! reusableCanvas) {
+			    reusableCanvas = plt.world.Kernel.makeCanvas(width, height);
+			    // Note: the canvas object may itself manage objects,
+			    // as in the case of an excanvas.  In that case, we must make
+			    // sure jsworld doesn't try to disrupt its contents!
+			    reusableCanvas.jsworldOpaque = true;
+			    reusableCanvasNode = _js.node_to_tree(reusableCanvas);
+			}
+
+			reusableCanvas.width = width;
+			reusableCanvas.height = height;			
+			var ctx = reusableCanvas.getContext("2d");
+			aScene.render(ctx, 0, 0);
+
+			return [toplevelNode, reusableCanvasNode];
+		    } else {
+			return [toplevelNode, 
+				_js.node_to_tree(
+						 plt.Kernel.toDomNode(
+								      aScene))];
 		    }
-
-		    reusableCanvas.width = width;
-		    reusableCanvas.height = height;			
-		    var ctx = reusableCanvas.getContext("2d");
-		    aScene.render(ctx, 0, 0);
-
-		    return [toplevelNode, reusableCanvasNode];
-		} else {
-		    return [toplevelNode, 
-			    _js.node_to_tree(
-				plt.Kernel.toDomNode(
-				    aScene))];
+		} catch (e) {
+		    handleError(e);
+		    throw e;
 		}
 	    }
 	    
@@ -393,7 +408,14 @@ plt.world.MobyJsworld = {};
     }
 
 
-
+    var handleError = function(e) {
+	plt.Kernel.reportError(e);
+	// When something bad happens, shut down 
+	// the world computation.
+	plt.Kernel.reportError("Shutting down jsworld computations");
+	plt.world.stimuli.onShutdown(); 
+    }
+    
 
 
     // updateWorld: (world -> world) -> void
@@ -402,13 +424,7 @@ plt.world.MobyJsworld = {};
 	    try {
 		return updater(world);
 	    } catch (e) {
-		plt.Kernel.reportError(e);
-		// When something bad happens, shut down 
-		// the world computation.
-		plt.Kernel.reportError("Shutting down jsworld computations");
-
-		plt.world.stimuli.onShutdown(); 
-
+		handleError(e);
 		return world;
 	    }
 	}
@@ -486,7 +502,7 @@ plt.world.MobyJsworld = {};
 		plt.world.Kernel.applyEffect(effect);
 		return newWorld;
 	    } catch (e) {
-		plt.Kernel.reportError(e);
+		handleError(e);
 		return world;
 	    }
 	}
