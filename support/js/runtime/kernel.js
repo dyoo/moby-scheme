@@ -387,8 +387,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 	equal_tilde__question_ : function(x, y, delta) {
 	    check(delta, isNumber, "equal~?", "number", 3);
-	    if (plt.Kernel.number_question_(x).valueOf() && 
-		plt.Kernel.number_question_(y).valueOf()) {
+	    if (isNumber(x) && isNumber(y)) {
 		if ("isEqual" in x) {
 		    return plt.types.NumberTower.approxEqual(x, y, delta);
 		} else if ("isEqual" in y) {
@@ -676,8 +675,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	},
 	
 	rational_question_ : function(x) {
-	    return (plt.Kernel.number_question_(x) &&
-		    x.isRational());
+	    return (isNumber(x) && x.isRational());
 	},
 
 	number_dash__greaterthan_string: function(x) {
@@ -1538,8 +1536,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     // isEqual: X Y -> boolean
     // Returns true if the objects are equivalent; otherwise, returns false.
     plt.Kernel.isEqual = function(x, y, aUnionFind) {
-	if (plt.Kernel.number_question_(x) && 
-	    plt.Kernel.number_question_(y)) {
+	if (isNumber(x) && isNumber(y)) {
 	    if ("isEqual" in x) {
 		return plt.types.NumberTower.equal(x, y);
 	    } else if ("isEqual" in y) {
