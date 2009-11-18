@@ -1,5 +1,6 @@
 #lang s-exp "lang.ss"
 
+(require "rbtree.ss")
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 
@@ -75,20 +76,25 @@
   (stx-begins-with? an-sexp 'require))
 
 
+;; java-identifiers: (rbtreeof symbol boolean)
 (define java-identifiers
-  '(abstract  continue  	for  	new  	switch
-              assert 	default 	goto 	package 	synchronized
-              boolean 	do 	if 	private 	#; this
-              break 	double 	implements 	protected 	throw
-              byte 	delete  else 	import 	public 	throws
-              case 	enum 	instanceof instanceOf 	return 	transient
-              catch 	extends 	int 	short 	try
-              char 	final 	interface 	static 	void
-              class 	finally 	long 	strictfp 	volatile
-              const 	float 	native 	super 	while null
-              
-              comment export import in label typeof with false true
-              debugger))
+  (foldl (lambda (sym an-rbtree)
+          (rbtree-insert symbol< an-rbtree sym true))
+        empty-rbtree
+        
+        '(abstract  continue  	for  	new  	switch
+                    assert 	default 	goto 	package 	synchronized
+                    boolean 	do 	if 	private 	#; this
+                    break 	double 	implements 	protected 	throw
+                    byte 	delete  else 	import 	public 	throws
+                    case 	enum 	instanceof instanceOf 	return 	transient
+                    catch 	extends 	int 	short 	try
+                    char 	final 	interface 	static 	void
+                    class 	finally 	long 	strictfp 	volatile
+                    const 	float 	native 	super 	while null
+                    
+                    comment export import in label typeof with false true
+                    debugger)))
           
 
 ;; translate-special-character: char -> string
@@ -140,7 +146,7 @@
 ;; identifier->munged-java-identifier: symbol -> symbol
 (define (identifier->munged-java-identifier an-id)
   (cond
-    [(member an-id java-identifiers)
+    [(cons? (rbtree-lookup symbol< java-identifiers an-id))
      (string->symbol (string-append "_" (symbol->string an-id) "_"))]
     [else
      (local [(define (maybe-prepend-hyphen chars)

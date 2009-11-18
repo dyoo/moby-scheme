@@ -81,7 +81,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
     var UnionFind = function() {
 	// 
 	this.nodeMap = new plt._Hashtable(
-	    function(x) { return plt.Kernel.toWrittenString(x); },
+	    function(x) { 
+		return plt.Kernel.toWrittenString(x); 
+	    },
 	    function(x, y) { return x === y; });
     }
     // find: ptr -> UnionFindNode
@@ -1152,9 +1154,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	remove : function(item, lst){
 	    checkList(lst, "member", 2);
 	    var originalLst = lst;
+	    var aUnionFind = new UnionFind();
 	    var result = plt.types.Empty.EMPTY;
 	    while (!lst.isEmpty()){
-		if (plt.Kernel.equal_question_(item, lst.first()).valueOf()) {
+		if (plt.Kernel.isEqual(item, lst.first(), aUnionFind).valueOf()) {
 		    return plt.Kernel.append(plt.Kernel.reverse(result),
 					     [lst.rest()]);
 		} else {
@@ -1168,8 +1171,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 	member : function(item, lst){
 	    checkList(lst, "member", 2);
+	    var aUnionFind = new UnionFind();
 	    while (!lst.isEmpty()){
-		if (plt.Kernel.equal_question_(item, lst.first()).valueOf())
+		if (plt.Kernel.isEqual(item, lst.first(), aUnionFind).valueOf())
 		    return plt.types.Logic.TRUE;
 		lst = lst.rest();
 	    }
