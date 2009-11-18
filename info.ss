@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fix: fixed the generation of apk and zip packages when using include."))
+(define release-notes '("Bug fix: attributes on a checkbox were being ignored."))
