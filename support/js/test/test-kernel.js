@@ -34,8 +34,8 @@ var getTests;
 		var n1 = Rational.makeInstance(1,2);
 		var n2 = Rational.makeInstance(5, 10);
 		var n3 = Rational.makeInstance(5, 12);
-		this.assert(n1.isEqual(n2));
-		this.assert(! n2.isEqual(n3));
+		this.assert(plt.types.NumberTower.equal(n1, n2));
+		this.assert(! plt.types.NumberTower.equal(n2, n3));
 	    },
 
 	    testEqv: function() {
