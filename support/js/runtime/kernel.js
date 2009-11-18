@@ -80,7 +80,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     var UnionFind = function() {
 	// 
-	this.nodeMap = new plt._Hashtable();
+	this.nodeMap = new plt._Hashtable(
+	    function(x) { return plt.Kernel.toWrittenString(x); },
+	    function(x, y) { return x === y; });
     }
     // find: ptr -> UnionFindNode
     // Returns the representative UnionFindNode for this pointer.
@@ -1634,9 +1636,11 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.toWrittenString(x); },
 				       function(x, y) { return x === y; });
     };
+
     EqHashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
     };
+
     EqHashTable.prototype.toDisplayedString = function(cache) {
 	return "<hash>";
     };
