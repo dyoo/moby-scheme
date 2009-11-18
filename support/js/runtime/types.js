@@ -26,7 +26,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     Boolean.prototype.toDisplayedString = Boolean.prototype.toWrittenString;
 
 
-    Boolean.prototype.isEqual = function(other){
+    Boolean.prototype.isEqual = function(other, aUnionFind){
 	return this == other;
     };
 
@@ -55,7 +55,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	return this.val;
     };
 
-    plt.types.Char.prototype.isEqual = function(other){
+    plt.types.Char.prototype.isEqual = function(other, aUnionFind){
 	return other instanceof plt.types.Char && this.val == other.val;
     };
     
@@ -78,7 +78,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	return symbolCache[val];
     };
     
-    plt.types.Symbol.prototype.isEqual = function(other) {
+    plt.types.Symbol.prototype.isEqual = function(other, aUnionFind) {
 	return other instanceof plt.types.Symbol &&
 	    this.val == other.val;
     };
@@ -103,7 +103,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.Empty.EMPTY = new plt.types.Empty();
 
 
-    plt.types.Empty.prototype.isEqual = function(other) {
+    plt.types.Empty.prototype.isEqual = function(other, aUnionFind) {
 	return other instanceof plt.types.Empty;
     };
 
@@ -137,12 +137,12 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     };
 
 
-    plt.types.Cons.prototype.isEqual = function(other) {
+    plt.types.Cons.prototype.isEqual = function(other, aUnionFind) {
 	if (! (other instanceof plt.types.Cons)) {
 	    return plt.types.Logic.FALSE;
 	}
-	return (plt.Kernel.equal_question_(this.first(), other.first()) &&
-		plt.Kernel.equal_question_(this.rest(), other.rest()));
+	return (plt.Kernel.isEqual(this.first(), other.first(), aUnionFind) &&
+		plt.Kernel.isEqual(this.rest(), other.rest(), aUnionFind));
     };
     
     plt.types.Cons.prototype.first = function() {
@@ -335,11 +335,16 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	return true;
     };
 
-    plt.types.Rational.prototype.isEqual = function(other) {
+    plt.types.Rational.prototype.isEqual = function(other, aUnionFind) {
+	return this.equals(other);
+    };
+
+    plt.types.Rational.prototype.equals = function(other) {
 	return other instanceof plt.types.Rational &&
 	    this.n == other.n &&
 	    this.d == other.d;
     };
+
 
     plt.types.Rational.prototype.isInteger = function() { 
 	return this.d == 1;
@@ -640,11 +645,16 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.FloatPoint.prototype.toDisplayedString = plt.types.FloatPoint.prototype.toWrittenString;
 
 
-    plt.types.FloatPoint.prototype.isEqual = function(other) {
+    plt.types.FloatPoint.prototype.isEqual = function(other, aUnionFind) {
+	return this.equals(other);
+    };
+
+    plt.types.FloatPoint.prototype.equals = function(other) {
 	return ((other instanceof plt.types.FloatPoint) &&
 		((this.n == other.n) ||
 		 (isNaN(this.n) && isNaN(other.n))));
     };
+
 
     plt.types.FloatPoint.prototype.isRational = function() {
         return this.isFinite() && this.n == Math.floor(this.n);
@@ -985,12 +995,17 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	throw new plt.Kernel.MobyRuntimeError("Don't know how to lift Complex number");
     };
     
-    plt.types.Complex.prototype.isEqual = function(other){
+    plt.types.Complex.prototype.isEqual = function(other, aUnionFind){
+	return this.equals(other);
+    };
+
+    plt.types.Complex.prototype.equals = function(other) {
 	var result = ((other instanceof plt.types.Complex) && 
 		      (plt.types.NumberTower.equal(this.r, other.r)) &&
 		      (plt.types.NumberTower.equal(this.i, other.i)));
 	return result;
     };
+
 
     plt.types.Complex.prototype.greaterThan = function(other) {
 	if (! this.isReal() || ! other.isReal()) {
@@ -1349,7 +1364,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	if (x.level() < y.level()) x = x.lift(y);
 	if (y.level() < x.level()) y = y.lift(x);
 	
-	return x.isEqual(y);
+	return x.equals(y);
     };
     
     plt.types.NumberTower.approxEqual = function(x, y, delta) {
@@ -1436,7 +1451,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	return s.valueOf();
     };
     
-    plt.types.String.prototype.isEqual = function(other){
+    plt.types.String.prototype.isEqual = function(other, aUnionFind){
 	return this == other;
     };
     

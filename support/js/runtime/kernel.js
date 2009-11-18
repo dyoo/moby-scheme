@@ -429,26 +429,13 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	},
 	
 	equal_question_ : function(x, y) {
-	    if (plt.Kernel.number_question_(x) && 
-		plt.Kernel.number_question_(y)) {
-		// FIXME: this logic should be done in NumberTower.
-		if ("isEqual" in x) {
-		    return plt.types.NumberTower.equal(x, y);
-		} else if ("isEqual" in y) {
-		    return plt.types.NumberTower.equal(y, x);
-		} else {
-		    return (x == y);
-		}
-	    } else {
-		return x.isEqual(y, new UnionFind());
-	    }
+	    return plt.Kernel.isEqual(x, y, new UnionFind());
 	},
 
 
 	equal_tilde__question_ : function(x, y, delta) {
 	    check(delta, isNumber, "equal~?", "number", 3);
-	    if (plt.Kernel.number_question_(x).valueOf() && 
-		plt.Kernel.number_question_(y).valueOf()) {
+	    if (isNumber(x) && isNumber(y)) {
 		if ("isEqual" in x) {
 		    return plt.types.NumberTower.approxEqual(x, y, delta);
 		} else if ("isEqual" in y) {
@@ -736,8 +723,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	},
 	
 	rational_question_ : function(x) {
-	    return (plt.Kernel.number_question_(x) &&
-		    x.isRational());
+	    return (isNumber(x) && x.isRational());
 	},
 
 	number_dash__greaterthan_string: function(x) {
@@ -1595,6 +1581,33 @@ if (typeof(plt) == 'undefined') { plt = {} }
     };
     
 
+    // isEqual: X Y -> boolean
+    // Returns true if the objects are equivalent; otherwise, returns false.
+    plt.Kernel.isEqual = function(x, y, aUnionFind) {
+	if (isNumber(x) && isNumber(y)) {
+	    if ("isEqual" in x) {
+		return plt.types.NumberTower.equal(x, y);
+	    } else if ("isEqual" in y) {
+		return plt.types.NumberTower.equal(y, x);
+	    } else {
+		return (x == y);
+	    }
+	}
+
+	if (x == undefined || x == null) {
+	    return (y == undefined || y == null);
+	}
+
+	if (typeof(x) == 'object' && typeof(y) == 'object' && 
+	    aUnionFind.find(x) === aUnionFind.find(y)) {
+	    return true;
+	} else {
+	    if (typeof(x) == 'object' && typeof(y) == 'object') { 
+		aUnionFind.merge(x, y); 
+	    }
+	    return x.isEqual(y, aUnionFind);
+	}
+    }
 
 
     // DEBUGGING: get out all the functions defined in the kernel.
@@ -1628,7 +1641,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	return "<hash>";
     };
 
-    EqHashTable.prototype.isEqual = function(other) {
+    EqHashTable.prototype.isEqual = function(other, aUnionFind) {
 	return this === other;
     };
 
@@ -1643,7 +1656,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	return "<hash>";
     };
 
-    EqualHashTable.prototype.isEqual = function(other) {
+    EqualHashTable.prototype.isEqual = function(other, aUnionFind) {
 	return this === other;
     };
 
@@ -2358,7 +2371,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     }
 
 
-    plt.Kernel.Struct.prototype.isEqual = function(other) {
+    plt.Kernel.Struct.prototype.isEqual = function(other, aUnionFind) {
 	if (typeof(other) != 'object') {
 	    return false;
 	}
@@ -2375,8 +2388,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    return false;
 	}
 	for (var i = 0; i < this._fields.length; i++) {
-	    if (! plt.Kernel.equal_question_(this._fields[i],
-					     other._fields[i])) {
+	    if (! plt.Kernel.isEqual(this._fields[i],
+				     other._fields[i],
+				     aUnionFind)) {
 		return false;
 	    }
 	}
