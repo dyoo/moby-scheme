@@ -43,6 +43,8 @@ function init() {
 	
         teardown: function() {},
 	
+
+
 	testSimpleDatum: function() {
 	    this.assert(isEqual(number(42), run("42")))
 	},
@@ -623,7 +625,75 @@ function init() {
 				    '     (hash-ref m (make-posn 3 4) "???")' +
 				    '     (hash-ref m2 (make-posn 5 6) "???")' +
 				    '     (hash-ref m2 p "!!!"))))')));
-       }
+	},
+
+
+
+	testCircularity: function() {
+	    this.assert(isEqual(run("true"),
+				run("(local [(define-struct p (f r)) " +
+				    "        (define p1 (make-p 1 empty)) "+
+				    "        (define p2 (make-p 1 empty))] "+
+				    "  (begin " + 
+				    "    (set-p-r! p1 p1)"+
+				    "    (set-p-r! p2 p2)"+
+				    "    (equal? p1 p2)))")));
+				    
+
+	    this.assert(isEqual(run("false"),
+				run("(local [(define-struct p (f r)) " +
+				    "        (define p1 (make-p 1 empty)) "+
+				    "        (define p2 (make-p 2 empty))]"+
+				    "  (begin " + 
+				    "    (set-p-r! p1 p1)"+
+				    "    (set-p-r! p2 p2)"+
+				    "    (equal? p1 p2)))")));
+				    
+
+	    this.assert(isEqual(run("true"),
+				run("(local [(define-struct p (f r))" +
+				    "        (define p1 (make-p 1 (make-p 1 empty))) "+
+				    "        (define p2 (make-p 1 empty))]"+
+				    "  (begin " + 
+				    "    (set-p-r! (p-r p1) p1)"+
+				    "    (set-p-r! p2 p2)"+
+				    "    (equal? p1 p2)))")));
+
+
+	    this.assert(isEqual(run("false"),
+				run("(local [(define-struct p (f r)) " +
+				    "        (define p1 (make-p 1 (make-p 0 empty))) "+
+				    "        (define p2 (make-p 1 empty))]"+
+				    "  (begin " + 
+				    "    (set-p-r! (p-r p1) p1)"+
+				    "    (set-p-r! p2 p2)"+
+				    "    (equal? p1 p2)))")));
+				    
+
+
+	    this.assert(isEqual(run("false"),
+				run("(local [(define-struct p (f r)) " +
+				    "        (define p1 (make-p 1 (make-p 0 (make-p 1 empty)))) "+
+				    "        (define p2 (make-p 1 (make-p 0 empty)))]"+
+				    "  (begin " + 
+				    "    (set-p-r! (p-r (p-r p1)) p1)"+
+				    "    (set-p-r! (p-r p2) p2)"+
+				    "    (equal? p1 p2)))")));
+				    
+
+
+	    this.assert(isEqual(run("true"),
+				run("(local [(define-struct p (f r)) " +
+				    "        (define p1 (make-p 1 (make-p 0 (make-p 1 (make-p 0 empty))))) "+
+				    "        (define p2 (make-p 1 (make-p 0 empty)))]"+
+				    "  (begin " + 
+				    "    (set-p-r! (p-r (p-r (p-r p1))) p1)"+
+				    "    (set-p-r! (p-r p2) p2)"+
+				    "    (equal? p1 p2)))")));
+				    
+
+
+	}
 
     });
 
