@@ -1114,8 +1114,7 @@ plt.Jsworld = {};
 		stopPropagation(e);
 	    });
 
-	return n;
-	//return addFocusTracking(copy_attribs(n, attribs));
+	return copy_attribs(n, attribs);
     };
 
 
