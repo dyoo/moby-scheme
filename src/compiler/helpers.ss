@@ -97,48 +97,38 @@
                     debugger)))
           
 
+;; special-character-mappings: (rbtreeof char string)
+(define special-character-mappings
+  (foldl (lambda (ch+translation an-rbtree)
+           (rbtree-insert char<? an-rbtree (first ch+translation) (second ch+translation)))
+         empty-rbtree
+         '((#\- "_dash_")
+           (#\_ "_underline_")
+           (#\? "_question_")
+           (#\! "_bang_")
+           (#\. "_dot_")
+           (#\: "_colon_")
+           (#\= "_equal_")
+           (#\@ "_at_")
+           (#\# "_pound_")
+           (#\$ "_dollar_")
+           (#\% "_percent_")
+           (#\^ "_tilde_")
+           (#\& "_and_")
+           (#\* "_star_")
+           (#\+ "_plus_")
+           (#\/ "_slash_")
+           (#\< "_lessthan_")
+           (#\> "_greaterthan_")
+           (#\~ "_tilde_"))))
+
+
 ;; translate-special-character: char -> string
 ;; Special character mappings for identifiers.
 (define (translate-special-character ch)
   (cond
-    [(char=? ch #\-)
-     "_dash_"]
-    [(char=? ch #\_)
-     "_underline_"]
-    [(char=? ch #\?)
-     "_question_"]
-    [(char=? ch #\!)
-     "_bang_"]
-    [(char=? ch #\.)
-     "_dot_"]
-    [(char=? ch #\:)
-     "_colon_"]
-    [(char=? ch #\=)
-     "_equal_"]
-    [(char=? ch #\#)
-     "_pound_"]
-    [(char=? ch #\$)
-     "_dollar_"]
-    [(char=? ch #\%)
-     "_percent_"]
-    [(char=? ch #\^)
-     "_tilde_"]
-    [(char=? ch #\&)
-     "_and_"]
-    [(char=? ch #\*)
-     "_star_"]
-    [(char=? ch #\+)
-     "_plus_"]
-    [(char=? ch #\*)
-     "_star_"]
-    [(char=? ch #\/)
-     "_slash_"]
-    [(char=? ch #\<)
-     "_lessthan_"]
-    [(char=? ch #\>)
-     "_greaterthan_"]
-    [(char=? ch #\~)
-     "_tilde_"]
+    [(cons? (rbtree-lookup char<? special-character-mappings ch))
+     (second (rbtree-lookup char<? special-character-mappings ch))]
     [else
      (string ch)]))
 
