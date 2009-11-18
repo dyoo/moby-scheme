@@ -721,13 +721,13 @@ plt.platform = {};
 
     GenericSoundService.prototype.playSoundUrl = function(url) {
 	// Can't do anything here.
-	alert("sound url " + url);
+	plt.Kernel.reportError("sound url " + url + " should play, but I don't have sound support.");
     };
 
 
     GenericSoundService.prototype.playDtmfTone = function(tone, duration) {
 	// Can't do anything here.
-	alert("dtmf tone");
+	plt.Kernel.reportError("DTMF tone should play, but I don't have DTMF support");
     };
 
     GenericSoundService.prototype.stopSoundUrl = function(url) {
