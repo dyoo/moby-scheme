@@ -109,6 +109,14 @@ function init() {
 				run("(let ((x (lambda (a b c) (a b c)))) (x + 4 5))")));
 	},
 
+	testMakeVector: function() {
+		this.assert(isEqual("#(0 0 0 0 0)\n",
+				    run("(format \"~a~n\" (make-vector 5 0))")));
+
+		this.assert(isEqual("#(<undefined> <undefined> <undefined> <undefined>)\n",
+				    run("(format \"~a~n\" (make-vector 4))")));
+        },
+
 
 	testProcedureArity: function() {
 	    this.assert(isEqual(number(2),

@@ -2182,7 +2182,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     plt.Kernel.toWrittenString = function(x, cache) {
 	if (! cache) { cache = new plt._Hashtable(); }
 
-	if (cache.containsKey(x)) {
+	if (x && cache.containsKey(x)) {
 	    return "...";
 	}
 
@@ -2208,7 +2208,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     plt.Kernel.toDisplayedString = function(x, cache) {
 	if (! cache) { cache = new plt._Hashtable(); }
-	if (cache.containsKey(x)) {
+	if (x && cache.containsKey(x)) {
 	    return "...";
 	}
 
@@ -2236,7 +2236,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     // toDomNode: scheme-value -> dom-node
     plt.Kernel.toDomNode = function(x, cache) {
 	if (! cache) { cache = new plt._Hashtable();}
-	if (cache.containsKey(x)) {
+	if (x && cache.containsKey(x)) {
 	    return document.createTextNode("...");
 	}
 
@@ -2380,9 +2380,19 @@ if (typeof(plt) == 'undefined') { plt = {} }
 					     elts);
     };
 
-    plt.Kernel.make_dash_vector = function(n) {
+    plt.Kernel.make_dash_vector = function(n, args) {
 	check(n, isNatural, "make-vector", "natural", 1);
-	return plt.types.Vector.makeInstance(n.toInteger());
+	// FIXME: not quite right.  We need mixed arity function definition.
+	check(args, function(x) { return x.length == 0 || x.length == 1}, "make-vector", "at most two", 2);
+	var len = n.toInteger();
+	var i;
+	var result = plt.types.Vector.makeInstance(len);
+	if (args.length == 1) {
+	    for (i = 0; i < len; i++) {
+		result.set(i, args[0]);
+	    }
+	}
+	return result;
     };
 
     plt.Kernel.vector = function(args) {

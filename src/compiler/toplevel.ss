@@ -306,7 +306,10 @@
                      ;; Vectors
                      
                      (build-vector 2)
-                     (make-vector 1)
+                     
+                     ;; FIXME: should only take one or two arguments, not vararity
+                     (make-vector 1 true)
+
                      (vector 0 true)
                      (vector-length 1)
                      (vector-ref 2)
