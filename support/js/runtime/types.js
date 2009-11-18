@@ -335,12 +335,16 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	return true;
     };
 
-    // WARNING: in this case, aUnionFind can be null!
     plt.types.Rational.prototype.isEqual = function(other, aUnionFind) {
+	return this.equals(other);
+    };
+
+    plt.types.Rational.prototype.equals = function(other) {
 	return other instanceof plt.types.Rational &&
 	    this.n == other.n &&
 	    this.d == other.d;
     };
+
 
     plt.types.Rational.prototype.isInteger = function() { 
 	return this.d == 1;
@@ -641,12 +645,16 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.FloatPoint.prototype.toDisplayedString = plt.types.FloatPoint.prototype.toWrittenString;
 
 
-    // WARNING: in this case, aUnionFind can be null!
     plt.types.FloatPoint.prototype.isEqual = function(other, aUnionFind) {
+	return this.equals(other);
+    };
+
+    plt.types.FloatPoint.prototype.equals = function(other) {
 	return ((other instanceof plt.types.FloatPoint) &&
 		((this.n == other.n) ||
 		 (isNaN(this.n) && isNaN(other.n))));
     };
+
 
     plt.types.FloatPoint.prototype.isRational = function() {
         return this.isFinite() && this.n == Math.floor(this.n);
@@ -987,13 +995,17 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	throw new plt.Kernel.MobyRuntimeError("Don't know how to lift Complex number");
     };
     
-    // WARNING: in this case, aUnionFind can be null!
     plt.types.Complex.prototype.isEqual = function(other, aUnionFind){
+	return this.equals(other);
+    };
+
+    plt.types.Complex.prototype.equals = function(other) {
 	var result = ((other instanceof plt.types.Complex) && 
 		      (plt.types.NumberTower.equal(this.r, other.r)) &&
 		      (plt.types.NumberTower.equal(this.i, other.i)));
 	return result;
     };
+
 
     plt.types.Complex.prototype.greaterThan = function(other) {
 	if (! this.isReal() || ! other.isReal()) {
@@ -1352,8 +1364,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	if (x.level() < y.level()) x = x.lift(y);
 	if (y.level() < x.level()) y = y.lift(x);
 	
-	// WARNING: in this case, we're passing aUnionFind=null.
-	return x.isEqual(y, null);
+	return x.equals(y);
     };
     
     plt.types.NumberTower.approxEqual = function(x, y, delta) {
