@@ -1650,12 +1650,30 @@ if (typeof(plt) == 'undefined') { plt = {} }
     };
 
     EqHashTable.prototype.isEqual = function(other, aUnionFind) {
-	return this === other;
+	if (other == undefined || other == null || (! (other instanceof EqHashTable))) {
+	    return false; 
+	}
+
+	if (this.hash.keys() != other.hash.keys().length) { 
+	    return false;
+	}
+
+	var keys = this.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    if (! (this.hash.get(keys[i]) === other.hash.get(keys[i]))) {
+		return false;
+	    }
+	}
+	return true;
     };
 
     var EqualHashTable = function(inputHash) {
-	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.toWrittenString(x); },
-				       function(x, y) { return plt.Kernel.equal_question_(x, y); });
+	this.hash = new plt._Hashtable(function(x) { 
+                                           return plt.Kernel.toWrittenString(x); 
+                                       },
+				       function(x, y) {
+					   return plt.Kernel.equal_question_(x, y); 
+				       });
     };
     EqualHashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
@@ -1665,14 +1683,30 @@ if (typeof(plt) == 'undefined') { plt = {} }
     };
 
     EqualHashTable.prototype.isEqual = function(other, aUnionFind) {
-	return this === other;
+	if (other == undefined || other == null || (! (other instanceof EqualHashTable))) {
+	    return false; 
+	}
+
+	if (this.hash.keys() != other.hash.keys().length) { 
+	    return false;
+	}
+
+	var aUnionFind = new UnionFind();
+	var keys = this.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    if (! (plt.Kernel.isEqual(this.hash.get(keys[i]),
+				      other.hash.get(keys[i]),
+				      aUnionFind))) {
+		return false;
+	    }
+	}
+	return true;
     };
 
 
     // makeHashEq: -> hash
     plt.Kernel.makeHashEq = function() {
-	var myhash = new EqHashTable();
-	return myhash;
+	return new EqHashTable();
     };
 
     plt.Kernel.makeHash = function() {
