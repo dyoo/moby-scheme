@@ -60,10 +60,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     //////////////////////////////////////////////////////////////////////
     // Union/find for circular equality testing.
-    var UnionFind = function() {
-	// 
-	this.nodeMap = new plt._Hashtable();
-    }
 
     var UnionFindNode = function() {
 	this.parent = this;
@@ -82,6 +78,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     }
 
+    var UnionFind = function() {
+	// 
+	this.nodeMap = new plt._Hashtable();
+    }
     // find: ptr -> UnionFindNode
     // Returns the representative UnionFindNode for this pointer.
     // Invariant: the representative node must have its parent pointer
@@ -431,6 +431,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	equal_question_ : function(x, y) {
 	    if (plt.Kernel.number_question_(x) && 
 		plt.Kernel.number_question_(y)) {
+		// FIXME: this logic should be done in NumberTower.
 		if ("isEqual" in x) {
 		    return plt.types.NumberTower.equal(x, y);
 		} else if ("isEqual" in y) {
@@ -439,7 +440,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 		    return (x == y);
 		}
 	    } else {
-		return x.isEqual(y);
+		return x.isEqual(y, new UnionFind());
 	    }
 	},
 
