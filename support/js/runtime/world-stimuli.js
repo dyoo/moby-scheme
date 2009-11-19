@@ -147,7 +147,9 @@ plt.world = plt.world || {};
     }
 
     var change = function(f) {
-	lookup('changeWorld')(f);
+	if (lookup('changeWorld')) {
+	    lookup('changeWorld')(f);
+	}
     }
 
     // applyEffect: compound-effect: (arrayof (world -> world))
