@@ -73,15 +73,17 @@ plt.Jsworld = {};
 	    world = originalWorld;
 	    throw e;
 	}
-	if (originalWorld != world) {
-	    for(var i = 0; i < worldListeners.length; i++) {
-		try {
-		    worldListeners[i](world, originalWorld);
-		} catch (e) {
-		    // Revert the world state
-		    world = originalWorld;
-		    throw e;
-		}
+
+	// Originally, we'd optimize away the update if the world
+	// hasn't changed, but with mutation, we no longer can
+	// make that optimization.
+	for(var i = 0; i < worldListeners.length; i++) {
+	    try {
+		worldListeners[i](world, originalWorld);
+	    } catch (e) {
+		// Revert the world state
+		world = originalWorld;
+		throw e;
 	    }
 	}
     }
