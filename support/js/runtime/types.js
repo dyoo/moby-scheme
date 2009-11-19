@@ -244,6 +244,22 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	this.elts[k] = v;
     };
 
+    plt.types.Vector.prototype.isEqual = function(other, aUnionFind) {
+	if (other != null && other != undefined && other instanceof plt.types.Vector) {
+	    if (other.length() != this.length()) {
+		return false
+	    }
+	    for (var i = 0; i <  this.elts.length(); i++) {
+		if (! plt.Kernel.isEqual(this.elts[i], other.elts[i], aUnionFind)) {
+		    return false;
+		}
+	    }
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
     plt.types.Vector.prototype.toWrittenString = function(cache) {
 	cache.put(this, true);
 	var texts = [];
