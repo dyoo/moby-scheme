@@ -1691,7 +1691,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    return false;
 	}
 
-	var aUnionFind = new UnionFind();
 	var keys = this.hash.keys();
 	for (var i = 0; i < keys.length; i++){
 	    if (! (plt.Kernel.isEqual(this.hash.get(keys[i]),
