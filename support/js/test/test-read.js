@@ -76,6 +76,11 @@ function init() {
 	
 	teardown: function() {},
 	
+	testTokenizeNegativeNumber: function() {
+	    this.assert(isEqual(tokenize("-7.1"),
+		                [[["number", "-7.1"]], ""]));
+	},
+
 	testTokenizeSymbol: function() {
 	    this.assert(isEqual(tokenize("hello"),
 				[[["symbol", "hello"]], ""]));
@@ -180,6 +185,37 @@ function init() {
 	    this.assert(schemeIsEqual(read("(hello #;42 again)"),
 				      cons(cons(symbol("hello"), cons(symbol("again"), empty)),
 					   empty)));
+	},
+
+	testReadPositiveNumber: function() {
+		this.assert(schemeIsEqual(read("7.1"),
+					   cons(plt.types.Rational.makeInstance(71, 10),
+						empty)));
+		this.assert(schemeIsEqual(read(".1"),
+					   cons(plt.types.Rational.makeInstance(1, 10),
+						empty)));
+		this.assert(schemeIsEqual(read(".111"),
+					   cons(plt.types.Rational.makeInstance(111, 1000),
+						empty)));
+	},
+
+        // Thanks to Paul Jonathon and Amanda Provost for catching a bug in the reader.
+	testReadNegativeNumber: function() {
+		this.assert(schemeIsEqual(read("-7.1"),
+					   cons(plt.types.Rational.makeInstance(-71, 10),
+						empty)));
+
+		this.assert(schemeIsEqual(read("-11.9"),
+					   cons(plt.types.Rational.makeInstance(-119, 10),
+						empty)));
+
+		this.assert(schemeIsEqual(read("-10.1"),
+					   cons(plt.types.Rational.makeInstance(-101, 10),
+						empty)));
+
+		this.assert(schemeIsEqual(read("-11.91"),
+					   cons(plt.types.Rational.makeInstance(-1191, 100),
+						empty)));
 	},
 
 	testReadHashComment2: function() {

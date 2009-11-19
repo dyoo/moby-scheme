@@ -1758,7 +1758,16 @@ var getTests;
 
 		    this.assert(Kernel.vector_question_(Kernel.vector([])));
 		    this.assert(! Kernel.vector_question_(Kernel.list([])));
-	    }
+		},
+
+	    testExactToInexact: function() {
+		    this.assert(plt.types.NumberTower.equal(plt.Kernel.exact_dash__greaterthan_inexact(Rational.makeInstance(-71, 10)),
+							    FloatPoint.makeInstance(-7.1)));
+
+
+		    this.assert(plt.Kernel.equal_question_(plt.Kernel.format("~s", [plt.Kernel.exact_dash__greaterthan_inexact(Rational.makeInstance(-71, 10))]),
+							    "-7.1"));
+		}
 	    
 	    
 	})
