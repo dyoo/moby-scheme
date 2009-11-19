@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fix: equal? on circular data structures should terminate.  hash tables should be comparable with equal?  Fixed bug in the reader when reading negative decimals."))
+(define release-notes '("Bug fixes: vector missing equality comparator in the runtime.  Append allows zero arguments."))

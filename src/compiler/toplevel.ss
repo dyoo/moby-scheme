@@ -147,7 +147,7 @@
                      (symbol? 1)
                      
                      ;; Lists
-                     (append 1 true)
+                     (append 0 true)
                      (assq 2)                 ;; *
                      (caaar 1)
                      (caadr 1)

@@ -137,6 +137,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     };
 
 
+    // FIXME: can we reduce the recursion on this?
     plt.types.Cons.prototype.isEqual = function(other, aUnionFind) {
 	if (! (other instanceof plt.types.Cons)) {
 	    return plt.types.Logic.FALSE;
@@ -249,7 +250,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	    if (other.length() != this.length()) {
 		return false
 	    }
-	    for (var i = 0; i <  this.elts.length(); i++) {
+	    for (var i = 0; i <  this.length(); i++) {
 		if (! plt.Kernel.isEqual(this.elts[i], other.elts[i], aUnionFind)) {
 		    return false;
 		}

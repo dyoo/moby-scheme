@@ -955,13 +955,18 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	},
 	
 	
-	append : function(first, rest){
-	    checkList(first, "append", 1);
-            var ret = first;
+	append : function(args){
 	    var i;
-	    for (i = 0; i < rest.length; i++) {
-		checkList(rest[i], "append", i+2);
-		ret = ret.append(rest[i]);
+	    for (i = 0; i < args.length; i++) {
+		checkList(args[i], "append", i+1);
+	    }
+
+	    if (args.length == 0) { 
+		return plt.types.Empty.EMPTY;
+	    }
+            var ret = args[0];
+	    for (i = 1; i < args.length; i++) {
+		ret = ret.append(args[i]);
 	    }
 	    return ret;
 	},
