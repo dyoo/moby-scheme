@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fix: attributes on a checkbox were being ignored.  Adjusted make-vector to allow second initialization argument."))
+(define release-notes '("Bug fix: equal? on circular data structures should terminate.  hash tables should be comparable with equal?  Fixed bug in the reader when reading negative decimals."))
