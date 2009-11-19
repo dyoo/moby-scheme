@@ -1654,7 +1654,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    return false; 
 	}
 
-	if (this.hash.keys() != other.hash.keys().length) { 
+	if (this.hash.keys().length != other.hash.keys().length) { 
 	    return false;
 	}
 
@@ -1687,7 +1687,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    return false; 
 	}
 
-	if (this.hash.keys() != other.hash.keys().length) { 
+	if (this.hash.keys().length != other.hash.keys().length) { 
 	    return false;
 	}
 
