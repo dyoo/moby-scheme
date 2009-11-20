@@ -374,7 +374,7 @@
                                (bf 'js-button! 2 "plt.world.MobyJsworld.buttonStar")
                                (bf 'js-input 2 "plt.world.MobyJsworld.input")
 			       (make-binding:function 'js-img module-path 1 true 
-						      "plt.world.MobyJsWorld.img"
+						      "plt.world.MobyJsworld.img"
 						      (list PERMISSION:INTERNET) 
 						      false)
                                (bf 'js-node 1 "plt.world.MobyJsworld.rawNode")
