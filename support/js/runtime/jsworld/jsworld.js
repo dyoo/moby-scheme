@@ -981,12 +981,15 @@ plt.Jsworld = {};
 
     function copy_attribs(node, attribs) {
 	if (attribs)
-	    for (a in attribs)
-		if (typeof attribs[a] == 'function')
-		    add_ev(node, a, attribs[a]);
-		else{
-		    node[a] = attribs[a];//eval("node."+a+"='"+attribs[a]+"'");
+	    for (a in attribs) {
+		if (attribs.hasOwnProperty(a)) {
+		    if (typeof attribs[a] == 'function')
+			add_ev(node, a, attribs[a]);
+		    else{
+			node[a] = attribs[a];//eval("node."+a+"='"+attribs[a]+"'");
+		    }
 		}
+	    }
 	return node;
     }
 
@@ -1054,17 +1057,20 @@ plt.Jsworld = {};
     }
     
 
-    function input(type, updateF, attribs) {
-	type = type.toLowerCase();
+    function input(aType, updateF, attribs) {
+	aType = aType.toLowerCase();
 	var dispatchTable = { text : text_input,
 			      password: text_input,
-			      checkbox: checkbox_input,
+			      checkbox: checkbox_input
 			      //button: button_input,
 			      //radio: radio_input 
 	};
-        if (type in dispatchTable) { return dispatchTable[type](type, updateF, attribs); }
+
+	if (dispatchTable[aType]) {
+	    return (dispatchTable[aType])(aType, updateF, attribs);
+	}
 	else {
-	    throw new plt.Kernel.MobyRuntimeError("js-input: does not currently support type " + type);
+	    throw new plt.Kernel.MobyRuntimeError("js-input: does not currently support type " + aType);
 	}
     }
     Jsworld.input = input;
@@ -1143,7 +1149,8 @@ plt.Jsworld = {};
     
 
     function text(s, attribs) {
-	return addFocusTracking(copy_attribs(document.createTextNode(s), attribs));
+	var result = document.createTextNode(s);
+	return result;
     }
     Jsworld.text = text;
 
@@ -1154,7 +1161,8 @@ plt.Jsworld = {};
 	}
 	n.jsworldOpaque = true;
 	add_ev(n, 'change', f);
-	return addFocusTracking(copy_attribs(n, attribs));
+	var result = addFocusTracking(copy_attribs(n, attribs));
+	return result;
     }
     Jsworld.select = select;
 
@@ -1162,7 +1170,7 @@ plt.Jsworld = {};
 	var node = document.createElement("option");
         node.text = attribs.value;
 	node.value = attribs.value;
- 	return copy_attribs(node, attribs)
+ 	return node;
     }
 
 
