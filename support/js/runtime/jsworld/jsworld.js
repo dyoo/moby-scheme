@@ -453,47 +453,44 @@ plt.Jsworld = {};
 	    while (node != stop) {
 		var next = node.nextSibling, parent = node.parentNode;
 		
-		if (node.jsworldOpaque == true) {
-		    // KLUDGE: don't touch anything that has the mark of Cain.  Umm...
-		    // that is, don't wipe out any nodes that are in the context of an opaque
-		    // node.
-		} else {
-		    // process last
-		    var found = false;
-		    var foundNode = undefined;
+		// process last
+		var found = false;
+		var foundNode = undefined;
 
-		    if (live_nodes != null)
-			while (live_nodes.length > 0 && positionComparator(node, live_nodes[0]) >= 0) {
-			    var other_node = live_nodes.shift();
-			    if (nodeEq(other_node, node)) {
-				found = true;
-				foundNode = other_node;
-				break;
-			    }
-			    // need to think about this
-			    //live_nodes.push(other_node);
+		if (live_nodes != null)
+		    while (live_nodes.length > 0 && positionComparator(node, live_nodes[0]) >= 0) {
+			var other_node = live_nodes.shift();
+			if (nodeEq(other_node, node)) {
+			    found = true;
+			    foundNode = other_node;
+			    break;
 			}
-		    else
-			for (var i = 0; i < nodes.length; i++)
-			    if (nodeEq(nodes[i], node)) {
-				found = true;
-				foundNode = nodes[i];
-				break;
-			    }
+			// need to think about this
+			//live_nodes.push(other_node);
+		    }
+		else
+		    for (var i = 0; i < nodes.length; i++)
+			if (nodeEq(nodes[i], node)) {
+			    found = true;
+			    foundNode = nodes[i];
+			    break;
+			}
 			
-		    if (!found) {
+		if (!found) {
+		    if (node.isJsworldOpaque) {
+		    } else {
 			// reparent children, remove node
 			while (node.firstChild != null) {
 			    appendChild(node.parentNode, node.firstChild);
 			}
-				
-			next = node.nextSibling; // HACKY
-			node.parentNode.removeChild(node);
-		    } else {
-			mergeNodeValues(node, foundNode);
 		    }
+				
+		    next = node.nextSibling; // HACKY
+		    node.parentNode.removeChild(node);
+		} else {
+		    mergeNodeValues(node, foundNode);
 		}
-			
+
 		// move sideways
 		if (next == null) node = parent;
 		else { node = next; break; }
@@ -1155,6 +1152,7 @@ plt.Jsworld = {};
 	for(var i = 0; i < opts.length; i++) {
 	    n.add(option({value: opts[i]}), null);
 	}
+	n.jsworldOpaque = true;
 	add_ev(n, 'change', f);
 	return addFocusTracking(copy_attribs(n, attribs));
     }
@@ -1162,7 +1160,6 @@ plt.Jsworld = {};
 
     function option(attribs){
 	var node = document.createElement("option");
-	node.jsworldOpaque = true;
         node.text = attribs.value;
 	node.value = attribs.value;
  	return copy_attribs(node, attribs)
