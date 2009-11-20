@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fixes: vector missing equality comparator in the runtime.  Append allows zero arguments.  Fixed race condition re: location change."))
+(define release-notes '("Removed optimization on refreshing on-draw in the presence of mutation.  js-img now properly generates a PERMISSION:INTERNET permission.  Fixed regression in behavior of remove and list*."))
