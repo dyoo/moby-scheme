@@ -79,6 +79,9 @@ public class DroidGap extends Activity {
         appView.setWebChromeClient(new GapClient(this));
         appView.getSettings().setJavaScriptEnabled(true);
         appView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);        
+	appView.getSettings().setBlockNetworkImage(false);
+	appView.getSettings().setLoadsImagesAutomatically(true);
+	
         
         /* Bind the appView object to the gap class methods */
         bindBrowser(appView);
