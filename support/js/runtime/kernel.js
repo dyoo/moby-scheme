@@ -1138,7 +1138,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 		throw new MobyTypeError("list*: " + lastListItem + " not a list");
 	    }
 	    otherItems.unshift(items);
-	    return plt.Kernel.append(plt.Kernel.list(otherItems), [lastListItem]);
+	    return plt.Kernel.append([plt.Kernel.list(otherItems), lastListItem]);
 	},
 	
 	list_dash_ref : function(lst, x){
@@ -1163,8 +1163,8 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    var result = plt.types.Empty.EMPTY;
 	    while (!lst.isEmpty()){
 		if (plt.Kernel.isEqual(item, lst.first(), aUnionFind).valueOf()) {
-		    return plt.Kernel.append(plt.Kernel.reverse(result),
-					     [lst.rest()]);
+		    return plt.Kernel.append([plt.Kernel.reverse(result),
+					     lst.rest()]);
 		} else {
 		    result = plt.types.Cons.makeInstance(lst.first(),
 							 result);
