@@ -842,7 +842,7 @@ var getTests;
 		var lst3 = Cons.makeInstance(FloatPoint.makeInstance(5), Cons.makeInstance(FloatPoint.makeInstance(6), EMPTY));
 		var lst4 = Cons.makeInstance(FloatPoint.makeInstance(7), Cons.makeInstance(FloatPoint.makeInstance(8), EMPTY));
 		
-		var lst6 = Kernel.append(lst1, [lst2, lst3, lst4]);
+		var lst6 = Kernel.append([lst1, lst2, lst3, lst4]);
 		
 		var i;
 		for (i = 1; i < 9; i++){
