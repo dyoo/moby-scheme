@@ -2299,9 +2299,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
     }
 
 
-    // plt.Kernel.getHashCode: any -> (or number string)
+    // plt.Kernel.getHashCode: any -> number
     // Produces a hashcode appropriate for eq.
-    plt.Kernel.getEqHashCode(x) {
+    plt.Kernel.getEqHashCode = function(x) {
 	if (x && x._eqHashCode) {
 	    return x._eqHashCode;
 	}
