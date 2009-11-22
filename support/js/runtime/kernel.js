@@ -421,7 +421,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	Struct: function (constructorName, fields) {
 	    this._constructorName = constructorName; 
 	    this._fields = fields;
-	    this._eqHashCode = plt.Kernel.getEqHashCode();
+	    this._eqHashCode = plt.types.makeEqHashCode();
 	},
 
 	
@@ -1643,9 +1643,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     //////////////////////////////////////////////////////////////////////
     var EqHashTable = function(inputHash) {
-	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.getEqHashCode(x); },
+	this.hash = new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
 				       function(x, y) { return x === y; });
-	this._eqHashCode = plt.Kernel.getEqHashCode();
+	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     EqHashTable.prototype.toWrittenString = function(cache) {
@@ -1681,7 +1681,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 				       function(x, y) {
 					   return plt.Kernel.equal_question_(x, y); 
 				       });
-	this._eqHashCode = plt.Kernel.getEqHashCode();
+	this._eqHashCode = plt.types.makeEqHashCode();
     };
     EqualHashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
@@ -2214,7 +2214,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     
     var Box = function(x) { 
 	plt.Kernel.Struct.call(this, "box", [x]);
-	this._eqHashCode = plt.Kernel.getEqHashCode();
+	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     Box.prototype = heir(plt.Kernel.Struct.prototype);
@@ -2248,7 +2248,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     
     var posn = function(x,y) { 
 	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
-	this._eqHashCode = plt.Kernel.getEqHashCode();
+	this._eqHashCode = plt.types.makeEqHashCode();
     }
 
     posn.prototype = heir(plt.Kernel.Struct.prototype);
@@ -2288,24 +2288,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	check(msg, isString, "syntax-error", "string", 1);
 	check(stx, isStx, "syntax-error", "stx", 2);
 	throw new MobySyntaxError(msg, stx);
-    };
-
-
-
-    var _eqHashCodeCounter = 0;
-    plt.Kernel.makeEqHashCode = function() {
-	_eqHashCodeCounter++;
-	return _eqHashCodeCounter;
-    }
-
-
-    // plt.Kernel.getHashCode: any -> number
-    // Produces a hashcode appropriate for eq.
-    plt.Kernel.getEqHashCode = function(x) {
-	if (x && x._eqHashCode) {
-	    return x._eqHashCode;
-	}
-	return 0;
     };
 
 
