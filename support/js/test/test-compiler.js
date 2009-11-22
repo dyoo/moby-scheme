@@ -627,6 +627,19 @@ function init() {
 				    '     (hash-ref m2 p "!!!"))))')));
 	},
 
+	testHashtables2: function() {
+		this.assert(isEqual(run("(list \"yes\" \"no\")"),
+				    run("(local [(define-struct blob (boy))"+
+					"        (define ht (make-hasheq))"+
+					"        (define b1 (make-blob \"sam\"))"+
+					"        (define b2 (make-blob \"lisa\"))"+
+					"]" +
+					"  (begin " +
+					"    (hash-set! ht b1 \"yes\")" +
+					"    (set-blob-boy! b1 \"lisa\")" +
+					"    (list (hash-ref ht b1 \"no\")" +
+					"          (hash-ref ht b2 \"no\"))))")));
+	},
 
 
 	testCircularity: function() {

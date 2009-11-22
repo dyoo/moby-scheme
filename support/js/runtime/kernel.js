@@ -78,11 +78,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     }
 
+
     var UnionFind = function() {
 	// 
 	this.nodeMap = new plt._Hashtable(
 	    function(x) { 
-		return plt.Kernel.toWrittenString(x); 
+		return plt.types.getEqHashCode(x); 
 	    },
 	    function(x, y) { return x === y; });
     }
@@ -2293,7 +2294,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 
     plt.Kernel.toWrittenString = function(x, cache) {
-	if (! cache) { cache = new plt._Hashtable(); }
+	if (! cache) { 
+	    cache = new plt._Hashtable(function(x) { 
+					   return plt.types.getEqHashCode(x); 
+				       },
+		                       function(x, y) { return x === y; });	    
+	}
 
 	if (x && cache.containsKey(x)) {
 	    return "...";
@@ -2320,7 +2326,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 
     plt.Kernel.toDisplayedString = function(x, cache) {
-	if (! cache) { cache = new plt._Hashtable(); }
+	if (! cache) {
+	    cache = new plt._Hashtable(function(x) { 
+					   return plt.types.getEqHashCode(x); 
+				       },
+		                       function(x, y) { return x === y; });	    
+	}
 	if (x && cache.containsKey(x)) {
 	    return "...";
 	}
@@ -2348,7 +2359,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     // toDomNode: scheme-value -> dom-node
     plt.Kernel.toDomNode = function(x, cache) {
-	if (! cache) { cache = new plt._Hashtable();}
+	if (! cache) {
+	    cache = new plt._Hashtable(function(x) { 
+					   return plt.types.getEqHashCode(x); 
+				       },
+		                       function(x, y) { return x === y; });	    
+	}
 	if (x && cache.containsKey(x)) {
 	    return document.createTextNode("...");
 	}
