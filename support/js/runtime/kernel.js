@@ -2084,6 +2084,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     // args: arrayof plt.types.Char
     plt.Kernel.string = function(args) {
+	arrayEach(args, function(x, i) { check(x, isChar, "string", "char", i+1)});
 	var vals = [];
 	for(var i = 0; i < args.length; i++) {
 	    vals.push(args[i].getValue());
