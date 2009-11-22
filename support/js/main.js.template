@@ -82,7 +82,15 @@ var main = {};
 		document.body.appendChild(document.createElement("br"));
         };
         try {
+	    var startTime = (new Date()).getTime();
    	    (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(showToplevelExpression);
+	    var stopTime = (new Date()).getTime();
+	    if (typeof(console) != 'undefined' && 
+	        typeof(console.log) != 'undefined') {
+		try {
+		    console.log("DEBUG: toplevel evaluation took " + (stopTime - startTime) + " milliseconds");
+                } catch (e) {}
+            }
         } catch (e) {
 	    alert(e);
 	    if (plt.Kernel.lastLoc) {
