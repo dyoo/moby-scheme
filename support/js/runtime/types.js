@@ -37,6 +37,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     // Char: string -> Char
     plt.types.Char = function(val){
 	this.val = val;
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
     
     plt.types.Char.makeInstance = function(val){
@@ -64,6 +65,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 
     plt.types.Symbol = function(val) {
 	this.val = val;
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
 
     var symbolCache = {};
@@ -99,7 +101,9 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     
     
     
-    plt.types.Empty = function() {};
+    plt.types.Empty = function() {
+	this._eqHashCode = plt.Kernel.getEqHashCode();
+    };
     plt.types.Empty.EMPTY = new plt.types.Empty();
 
 
@@ -130,6 +134,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.Cons = function(f, r) {
 	this.f = f;
 	this.r = r;
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
     
     plt.types.Cons.makeInstance = function(f, r) {
@@ -231,6 +236,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 		this.elts[i] = undefined;
 	    }
 	}
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
     plt.types.Vector.makeInstance = function(n, elts) {
 	return new plt.types.Vector(n, elts);
@@ -321,7 +327,9 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	var divisor = gcd(Math.abs(n), Math.abs(d));
 	this.n = n / divisor;
 	this.d = d / divisor;
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
+
     
     plt.types.Rational.prototype.toWrittenString = function(cache) {
 	if (this.d == 1) {
@@ -612,6 +620,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     
     plt.types.FloatPoint = function(n) {
 	this.n = n;
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
     
 
@@ -946,6 +955,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.Complex = function(r, i){
 	this.r = r;
 	this.i = i;
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
     
     // Constructs a complex number from two basic number r and i.  r and i can

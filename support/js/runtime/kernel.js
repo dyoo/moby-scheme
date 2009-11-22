@@ -421,6 +421,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	Struct: function (constructorName, fields) {
 	    this._constructorName = constructorName; 
 	    this._fields = fields;
+	    this._eqHashCode = plt.Kernel.getEqHashCode();
 	},
 
 	
@@ -1642,8 +1643,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     //////////////////////////////////////////////////////////////////////
     var EqHashTable = function(inputHash) {
-	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.toWrittenString(x); },
+	this.hash = new plt._Hashtable(function(x) { return plt.Kernel.getEqHashCode(x); },
 				       function(x, y) { return x === y; });
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
 
     EqHashTable.prototype.toWrittenString = function(cache) {
@@ -1679,6 +1681,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 				       function(x, y) {
 					   return plt.Kernel.equal_question_(x, y); 
 				       });
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
     EqualHashTable.prototype.toWrittenString = function(cache) {
 	return "<hash>";
@@ -2211,6 +2214,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     
     var Box = function(x) { 
 	plt.Kernel.Struct.call(this, "box", [x]);
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     };
 
     Box.prototype = heir(plt.Kernel.Struct.prototype);
@@ -2244,6 +2248,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     
     var posn = function(x,y) { 
 	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
+	this._eqHashCode = plt.Kernel.getEqHashCode();
     }
 
     posn.prototype = heir(plt.Kernel.Struct.prototype);
@@ -2285,6 +2290,23 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	throw new MobySyntaxError(msg, stx);
     };
 
+
+
+    var _eqHashCodeCounter = 0;
+    plt.Kernel.makeEqHashCode = function() {
+	_eqHashCodeCounter++;
+	return _eqHashCodeCounter;
+    }
+
+
+    // plt.Kernel.getHashCode: any -> (or number string)
+    // Produces a hashcode appropriate for eq.
+    plt.Kernel.getEqHashCode(x) {
+	if (x && x._eqHashCode) {
+	    return x._eqHashCode;
+	}
+	return 0;
+    };
 
 
 
