@@ -21,11 +21,14 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     }
     
     
-    // plt.Kernel.getHashCode: any -> number
+    // plt.Kernel.getHashCode: any -> (or number string)
     // Produces a hashcode appropriate for eq.
     plt.types.getEqHashCode = function(x) {
 	if (x && x._eqHashCode) {
 	    return x._eqHashCode;
+	}
+	if (typeof(x) == 'string') {
+	    return x;
 	}
 	return 0;
     };
