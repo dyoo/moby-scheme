@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Fixed rendering issue on js-selects."))
+(define release-notes '("Bug fix: eq hash tables were using an incorrect hashing algorithm, which lead to broken performance.  Also added contract check on 'string' primitive."))
