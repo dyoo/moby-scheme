@@ -81,11 +81,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     var UnionFind = function() {
 	// 
-	this.nodeMap = new plt._Hashtable(
-	    function(x) { 
-		return plt.types.getEqHashCode(x); 
-	    },
-	    function(x, y) { return x === y; });
+	this.nodeMap = makeEqHashtable();
     }
     // find: ptr -> UnionFindNode
     // Returns the representative UnionFindNode for this pointer.
@@ -1643,9 +1639,14 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 
     //////////////////////////////////////////////////////////////////////
+
+    var makeEqHashtable = function() {
+	return new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
+				  function(x, y) { return x === y; });
+    };
+
     var EqHashTable = function(inputHash) {
-	this.hash = new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
-				       function(x, y) { return x === y; });
+	this.hash = makeEqHashtable();
 	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
@@ -2295,10 +2296,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     plt.Kernel.toWrittenString = function(x, cache) {
 	if (! cache) { 
-	    cache = new plt._Hashtable(function(x) { 
-					   return plt.types.getEqHashCode(x); 
-				       },
-		                       function(x, y) { return x === y; });	    
+	    cache = makeEqHashtable();
 	}
 
 	if (x && cache.containsKey(x)) {
@@ -2327,10 +2325,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     plt.Kernel.toDisplayedString = function(x, cache) {
 	if (! cache) {
-	    cache = new plt._Hashtable(function(x) { 
-					   return plt.types.getEqHashCode(x); 
-				       },
-		                       function(x, y) { return x === y; });	    
+	    cache = makeEqHashtable();
 	}
 	if (x && cache.containsKey(x)) {
 	    return "...";
@@ -2360,10 +2355,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     // toDomNode: scheme-value -> dom-node
     plt.Kernel.toDomNode = function(x, cache) {
 	if (! cache) {
-	    cache = new plt._Hashtable(function(x) { 
-					   return plt.types.getEqHashCode(x); 
-				       },
-		                       function(x, y) { return x === y; });	    
+	    cache = makeEqHashtable();
 	}
 	if (x && cache.containsKey(x)) {
 	    return document.createTextNode("...");
