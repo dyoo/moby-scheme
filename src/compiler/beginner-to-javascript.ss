@@ -714,6 +714,7 @@
                              "    .apply(null, _args_.slice(0, " (number->string (binding:function-min-arity binding)) 
                              "                        ).concat([_args_.slice("(number->string (binding:function-min-arity binding))")])); });"
                              "_result_._eqHashCode = plt.types.makeEqHashCode();"                      
+                             "_result_.isEqual = function(other, cache) { return this === other; };"
                              "_result_.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; };"
                              "_result_.toDisplayedString = _result_.toWrittenString;"
                              "_result_.procedureArity = plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (rational-number->javascript-string (binding:function-min-arity binding)) "]);"
@@ -727,7 +728,8 @@
                                               (range (binding:function-min-arity binding)))
                                          ", ")
                             ");});"
-                            "_result_._eqHashCode = plt.types.makeEqHashCode();"                      
+                            "_result_._eqHashCode = plt.types.makeEqHashCode();"
+                            "_result_.isEqual = function(other, cache) { return this === other; };"
                             "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
                             "_result_.toDisplayedString = _result_.toWrittenString; "
                             "_result_.procedureArity = " (rational-number->javascript-string (binding:function-min-arity binding)) ";"
@@ -792,6 +794,7 @@
                       "  return " body-string "; });"
                       "_result_._eqHashCode = plt.types.makeEqHashCode();"
                       "_result_.toWrittenString = function (cache) { return '<function:lambda>'; };"
+                      "_result_.isEqual = function(other, cache) { return this === other; };"
                       "_result_.procedureArity = " (rational-number->javascript-string (length args)) ";"
                       "_result_.toDisplayedString = _result_.toWrittenString;"
                       "return _result_;  })())")
