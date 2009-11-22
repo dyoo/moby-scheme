@@ -1348,7 +1348,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    if (i.toInteger() >= str.length) {
 		throw new MobyRuntimeError("string-ref: index >= length");
 	    }
-	    return plt.types.String.makeInstance(str.charAt(i.toInteger()));
+	    return plt.types.Char.makeInstance(str.charAt(i.toInteger()));
 	},
 
 	string_dash_ith : function (str, i) {
