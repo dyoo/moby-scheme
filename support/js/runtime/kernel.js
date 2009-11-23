@@ -296,8 +296,8 @@ if (typeof(plt) == 'undefined') { plt = {} }
     }
 
 
-    // ordinalize: number -> string
-    // Adds the ordinal suffix to an number, according to the rules in
+    // ordinalize: fixnum -> string
+    // Adds the ordinal suffix to an fixnum, according to the rules in
     // http://en.wikipedia.org/wiki/Names_of_numbers_in_English#Ordinal_numbers
     var ordinalize = function(n) {
 	var suffixes = ["th", "st", "nd", "rd", "th",
@@ -836,7 +836,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	},
 
 	integer_question_ : function(x){
-	    // check(x, isNumber, "integer?", "number", 1);
 	    return (isInteger(x));
 	},
 	
@@ -1227,13 +1226,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    } catch (e) {
 		return plt.types.Logic.FALSE;
 	    }
-// 	    var aNum = str * 1;
-// 	    if (isNaN(aNum))
-// 		return plt.types.Logic.FALSE;
-// 	    if (Math.floor(aNum) == aNum && isFinite(aNum)) {
-// 		return plt.types.Rational.makeInstance(aNum);
-// 	    }
-// 	    return plt.types.FloatPoint.makeInstance(aNum);
 	},
 	
 
