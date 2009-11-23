@@ -399,12 +399,8 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	_heir : heir,
 
-
-	pi : plt.types.FloatPoint.makeInstance(Math.PI),
-	e : plt.types.FloatPoint.makeInstance(Math.E),
-
-
-
+	pi : plt.types.FloatPoint.pi,
+	e : plt.types.FloatPoint.e,
 	
 	struct_question_: function(thing) {
 	    return (thing != null && 
@@ -1556,6 +1552,8 @@ if (typeof(plt) == 'undefined') { plt = {} }
     // isEqual: X Y -> boolean
     // Returns true if the objects are equivalent; otherwise, returns false.
     plt.Kernel.isEqual = function(x, y, aUnionFind) {
+	if (x === y) { return true; }
+
 	if (isNumber(x) && isNumber(y)) {
 	    return NumberTower.equal(x, y);
 	}
