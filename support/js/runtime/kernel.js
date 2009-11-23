@@ -424,15 +424,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	equal_tilde__question_ : function(x, y, delta) {
 	    check(delta, isNumber, "equal~?", "number", 3);
 	    if (isNumber(x) && isNumber(y)) {
-		if ("isEqual" in x) {
-		    return NumberTower.approxEqual(x, y, delta);
-		} else if ("isEqual" in y) {
-		    return NumberTower.approxEqual(y, x, delta);
-		} else {
-		    return (x == y);
-		}
+		return NumberTower.approxEqual(x, y, delta);
 	    } else {
-		return x.isEqual(y);
+		return plt.Kernel.isEqual(x, y, new UnionFind());
 	    }
 	},
 
@@ -1586,8 +1580,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
     plt.Kernel._dumpKernelSymbols = function() {
 	var result = plt.types.Empty.EMPTY;
 	for (var sym in plt.Kernel) {
-	    result = plt.types.Cons.makeInstance(plt.types.Symbol.makeInstance(sym),
-						 result);
+	    if (plt.Kernel.hasOwnProperty(sym)) {
+		result = plt.types.Cons.makeInstance(plt.types.Symbol.makeInstance(sym),
+						     result);
+	    }
 	}
 	return result;
     };
