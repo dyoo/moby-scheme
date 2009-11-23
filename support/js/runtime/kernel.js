@@ -401,15 +401,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	e : plt.types.FloatPoint.makeInstance(Math.E),
 
 
-	Struct: function (constructorName, fields) {
-	    this._constructorName = constructorName; 
-	    this._fields = fields;
-	    this._eqHashCode = plt.types.makeEqHashCode();
-	},
 
 	
 	struct_question_: function(thing) {
-	    return (thing != null && thing != undefined && thing instanceof plt.Kernel.Struct);
+	    return (thing != null && 
+		    thing != undefined && 
+		    thing instanceof plt.types.Struct);
 	},
 	
 	number_question_ : function(x){
@@ -2192,23 +2189,17 @@ if (typeof(plt) == 'undefined') { plt = {} }
     };
     
 
-    // Boxes
-    
-    var Box = function(x) { 
-	plt.Kernel.Struct.call(this, "box", [x]);
-	this._eqHashCode = plt.types.makeEqHashCode();
-    };
 
-    Box.prototype = heir(plt.Kernel.Struct.prototype);
-    
-    
+    //////////////////////////////////////////////////////////////////////
+    // Boxes
+
     plt.Kernel.box = function(any) {
-	return new Box(any);
+	return new plt.types.Box(any);
     };
     
     plt.Kernel.unbox = function(obj) {
 	check(obj, plt.Kernel.box_question_, "unbox", "box", 1);
-	return obj._fields[0];
+	return obj.unbox();
     };
     
     plt.Kernel.box_question_ = function(obj) {
@@ -2217,23 +2208,21 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     plt.Kernel.set_dash_box_bang_ = function(obj, newVal) {
 	check(obj, plt.Kernel.box_question_, "set-box!", "box", 1);
-	obj._fields[0] = newVal;
+	obj.set(newVal);
 	return undefined;
     };
     
-    
+    //////////////////////////////////////////////////////////////////////
 
-
-    
     
     // Posns
     
     var posn = function(x,y) { 
-	plt.Kernel.Struct.call(this, "make-posn", [x, y]);
+	plt.types.Struct.call(this, "make-posn", [x, y]);
 	this._eqHashCode = plt.types.makeEqHashCode();
     }
 
-    posn.prototype = heir(plt.Kernel.Struct.prototype);
+    posn.prototype = heir(plt.types.Struct.prototype);
 
     var make_dash_posn = function(id0,id1) { 
 	return new posn(id0,id1); 
@@ -2374,67 +2363,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 
 
-
-    plt.Kernel.Struct.prototype.toWrittenString = function(cache) { 
-	cache.put(this, true);
-	var buffer = [];
-	buffer.push("(");
-	buffer.push(this._constructorName);
-	for(var i = 0; i < this._fields.length; i++) {
-	    buffer.push(" ");
-	    buffer.push(plt.Kernel.toWrittenString(this._fields[i], cache));
-	}
-	buffer.push(")");
-	return plt.types.String.makeInstance(buffer.join(""));
-    };
-
-    plt.Kernel.Struct.prototype.toDisplayedString = plt.Kernel.Struct.prototype.toWrittenString;
-
-
-    var appendChild = function(parent, child) {
-	parent.appendChild(child);
-    }
-
-
-    plt.Kernel.Struct.prototype.toDomNode = function(cache) {
-	cache.put(this, true);
-	var node = document.createElement("div");
-	node.appendChild(document.createTextNode("("));
-	node.appendChild(document.createTextNode(this._constructorName));
-	for(var i = 0; i < this._fields.length; i++) {
-	    node.appendChild(document.createTextNode(" "));
-	    appendChild(node, plt.Kernel.toDomNode(this._fields[i], cache));
-	}
-	node.appendChild(document.createTextNode(")"));
-	return node;
-    }
-
-
-    plt.Kernel.Struct.prototype.isEqual = function(other, aUnionFind) {
-	if (typeof(other) != 'object') {
-	    return false;
-	}
-	if (! other._constructorName) {
-	    return false;
-	}
-	if (other._constructorName != this._constructorName) {
-	    return false;
-	}
-	if (! '_fields' in other) {
-	    return false;
-	}
-	if (this._fields.length != other._fields.length) {
-	    return false;
-	}
-	for (var i = 0; i < this._fields.length; i++) {
-	    if (! plt.Kernel.isEqual(this._fields[i],
-				     other._fields[i],
-				     aUnionFind)) {
-		return false;
-	    }
-	}
-	return true;
-    };
 
 
 

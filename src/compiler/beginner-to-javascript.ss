@@ -267,7 +267,7 @@
                                               fields)
                                          ",")
                             ") { "
-                            (format "plt.Kernel.Struct.call(this, ~s, [~a]);"
+                            (format "plt.types.Struct.call(this, ~s, [~a]);"
                                     (string-append "make-" (symbol->string (stx-e id)))
                                     (string-join (map (lambda (i) (symbol->string
                                                                    (identifier->munged-java-identifier
@@ -287,7 +287,7 @@
                             " };\n"
                             
                             (symbol->string (identifier->munged-java-identifier (stx-e id)))
-                            ".prototype = new plt.Kernel.Struct();\n"
+                            ".prototype = new plt.types.Struct();\n"
                             
                             )
 

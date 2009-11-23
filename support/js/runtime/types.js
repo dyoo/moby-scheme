@@ -12,8 +12,23 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types = plt.types || {};
     
 
-
     //////////////////////////////////////////////////////////////////////
+    // helper functions
+
+
+    var appendChild = function(parent, child) {
+	parent.appendChild(child);
+    }
+
+
+    // Inheritance from pg 168: Javascript, the Definitive Guide.
+    var heir = function(p) {
+	var f = function() {}
+	f.prototype = p;
+	return new f();
+    }
+
+
     var _eqHashCodeCounter = 0;
     plt.types.makeEqHashCode = function() {
 	_eqHashCodeCounter++;
@@ -34,6 +49,100 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     };
 
 
+
+    //////////////////////////////////////////////////////////////////////
+
+
+    // Structures.
+    var Struct = function (constructorName, fields) {
+	this._constructorName = constructorName; 
+	this._fields = fields;
+	this._eqHashCode = plt.types.makeEqHashCode();
+    };
+
+    plt.types.Struct = Struct;
+
+    Struct.prototype.toWrittenString = function(cache) { 
+	cache.put(this, true);
+	var buffer = [];
+	buffer.push("(");
+	buffer.push(this._constructorName);
+	for(var i = 0; i < this._fields.length; i++) {
+	    buffer.push(" ");
+	    buffer.push(plt.Kernel.toWrittenString(this._fields[i], cache));
+	}
+	buffer.push(")");
+	return plt.types.String.makeInstance(buffer.join(""));
+    };
+
+    Struct.prototype.toDisplayedString = Struct.prototype.toWrittenString;
+
+    Struct.prototype.toDomNode = function(cache) {
+	cache.put(this, true);
+	var node = document.createElement("div");
+	node.appendChild(document.createTextNode("("));
+	node.appendChild(document.createTextNode(this._constructorName));
+	for(var i = 0; i < this._fields.length; i++) {
+	    node.appendChild(document.createTextNode(" "));
+	    appendChild(node, plt.Kernel.toDomNode(this._fields[i], cache));
+	}
+	node.appendChild(document.createTextNode(")"));
+	return node;
+    }
+
+
+    Struct.prototype.isEqual = function(other, aUnionFind) {
+	if (typeof(other) != 'object') {
+	    return false;
+	}
+	if (! other._constructorName) {
+	    return false;
+	}
+	if (other._constructorName != this._constructorName) {
+	    return false;
+	}
+	if (! '_fields' in other) {
+	    return false;
+	}
+	if (this._fields.length != other._fields.length) {
+	    return false;
+	}
+	for (var i = 0; i < this._fields.length; i++) {
+	    if (! plt.Kernel.isEqual(this._fields[i],
+				     other._fields[i],
+				     aUnionFind)) {
+		return false;
+	    }
+	}
+	return true;
+    };
+
+
+
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    // Boxes
+    
+    var Box = function(x) { 
+	plt.types.Struct.call(this, "box", [x]);
+	this._eqHashCode = plt.types.makeEqHashCode();
+    };
+
+    Box.prototype = heir(plt.types.Struct.prototype);
+
+    Box.prototype.unbox = function() {
+	return this._fields[0];
+    }
+
+    Box.prototype.set = function(newVal) {
+	this._fields[0] = newVal;
+    }
+    //////////////////////////////////////////////////////////////////////
 
 
 
@@ -230,9 +339,6 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     };
 
 
-    var appendChild = function(parent, child) {
-	parent.appendChild(child);
-    }
 
     plt.types.Cons.prototype.toDomNode = function(cache) {
 	cache.put(this, true);
