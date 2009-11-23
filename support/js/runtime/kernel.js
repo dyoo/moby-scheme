@@ -499,7 +499,8 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	},
 	
 	current_dash_seconds: function () {
-	    return plt.types.Rational.makeInstance(new Date().getMilliseconds() / 1000);	    
+	    return plt.types.Rational.makeInstance(
+		Math.floor(new Date().getTime() / 1000));
 	},
 
 
