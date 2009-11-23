@@ -219,7 +219,7 @@ plt.world.config = plt.world.config || {};
 	    function(config) {
 		var newVals = { onTick: handler,
 				onTickEffect: effectHandler,
-				tickDelay: (plt.types.NumberTower.toInteger(
+				tickDelay: (plt.types.NumberTower.toFixnum(
 				    plt.types.NumberTower.multiply(
 					plt.types.Rational.makeInstance(1000, 1), 
 					aDelay)))

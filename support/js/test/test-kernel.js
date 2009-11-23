@@ -348,7 +348,7 @@ var getTests;
 
 	    testSqr: function() {
 		var n1 = Rational.makeInstance(42);
-		this.assertEqual(1764, Kernel.sqr(n1).toInteger());
+		this.assertEqual(1764, Kernel.sqr(n1).toFixnum());
 		this.assertRaise("MobyTypeError",
 				 function() { Kernel.sqr("42"); });
 	    },
@@ -1249,14 +1249,14 @@ var getTests;
 	    },
 
 	    testRandom : function() {
-		this.assert(Kernel.random(Rational.makeInstance(5)).toInteger() < 5);	
+		this.assert(Kernel.random(Rational.makeInstance(5)).toFixnum() < 5);	
 		this.assertRaise("MobyTypeError", function() { Kernel.random(42) });
 	    },
 
 	    testCurrentSeconds : function() {
 		var n1 = Kernel.current_dash_seconds();
 		var n2 = Kernel.current_dash_seconds();
-		this.assert(n1.toInteger() <= n2.toInteger());
+		this.assert(n1.toFixnum() <= n2.toFixnum());
 	    },
 
 	    
@@ -1632,16 +1632,16 @@ var getTests;
 				       Rational.makeInstance(8)]);
 		this.assertEqual(lst,
 				 Kernel.memf(function(args) {
-				     return args[0].toInteger() % 2 == 0},
+				     return args[0].toFixnum() % 2 == 0},
 					     lst));
 		
 		this.assertEqual(lst.rest().rest(),
 				 Kernel.memf(function(args) {
-				     return args[0].toInteger() % 2 == 1},
+				     return args[0].toFixnum() % 2 == 1},
 					     lst));
 
 		this.assert(! Kernel.memf(function(args) {
-		    return args[0].toInteger() > 8},
+		    return args[0].toFixnum() > 8},
 					  lst));
 
 
@@ -1738,7 +1738,7 @@ var getTests;
 					 Kernel.vector_dash_ref
 					     (Kernel.vector(["foo", "bar"]), Rational.makeInstance(2));});
 
-		    this.assertEqual(5, Kernel.vector_dash_length(Kernel.make_dash_vector(Rational.makeInstance(5), [])).toInteger());
+		    this.assertEqual(5, Kernel.vector_dash_length(Kernel.make_dash_vector(Rational.makeInstance(5), [])).toFixnum());
 
 		    var aVector = Kernel.make_dash_vector(Rational.makeInstance(5), []);
 		    Kernel.vector_dash_set_bang_(aVector, Rational.ZERO, "blah");
@@ -1753,7 +1753,7 @@ var getTests;
 							      });
 		    for (var i = 0; i < 3; i++) {
 			this.assertEqual(i,
-					 Kernel.vector_dash_ref(zeroonetwo, Rational.makeInstance(i)).toInteger());
+					 Kernel.vector_dash_ref(zeroonetwo, Rational.makeInstance(i)).toFixnum());
 		    }
 
 		    this.assert(Kernel.vector_question_(Kernel.vector([])));

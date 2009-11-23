@@ -219,7 +219,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     }
 
     var isNatural = function(x) {
-	return isNumber(x) && x.isInteger() && x.toInteger() >= 0;
+	return isNumber(x) && x.isInteger() && x.toFixnum() >= 0;
     }
 
 
@@ -493,7 +493,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	random: function(x) {
 	    check(x, isInteger, "random", "integer", 1);
-	    return plt.types.Rational.makeInstance(Math.floor(plt.types.NumberTower.toInteger(x) * 
+	    return plt.types.Rational.makeInstance(Math.floor(plt.types.NumberTower.toFixnum(x) * 
 							      Math.random()),
 						   1);
 	},
@@ -523,17 +523,17 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(x, isInteger, "integer-sqrt", "integer", 1);
 	    var result = x.sqrt();
 	    if (isRational(result)) {
-		return plt.types.Rational.makeInstance(result.toInteger());
+		return plt.types.Rational.makeInstance(result.toFixnum());
 	    } else if (isReal(result)) {
-		return plt.types.Rational.makeInstance(result.toInteger());
+		return plt.types.Rational.makeInstance(result.toFixnum());
 	    } else {
 
 		// it must be complex.
 		return plt.types.Complex.makeInstance(
 		    plt.types.Rational.makeInstance
-		    (plt.Kernel.real_dash_part(result).toInteger()),
+		    (plt.Kernel.real_dash_part(result).toFixnum()),
 		    plt.types.Rational.makeInstance
-		    (plt.Kernel.imag_dash_part(result).toInteger()));
+		    (plt.Kernel.imag_dash_part(result).toFixnum()));
 	    }
 	},
 	
@@ -795,12 +795,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	odd_question_ : function(x){
 	    check(x, isNumber, "odd?", "number", 1);
-	    return (Math.abs((x.toInteger() % 2)) == 1);
+	    return (Math.abs((x.toFixnum() % 2)) == 1);
 	},
 	
 	even_question_ : function(x) {
 	    check(x, isNumber, "even?", "number", 1);
-	    return (Math.abs((x.toInteger() % 2)) == 0);
+	    return (Math.abs((x.toFixnum() % 2)) == 0);
 	},
 	
 	positive_question_ : function(x){
@@ -849,10 +849,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(y, isInteger, "quotient", "integer", 2);
 	    var div = plt.types.NumberTower.divide(x,y);
 	    if (plt.Kernel.positive_question_(div)) {
-		return plt.types.Rational.makeInstance(div.floor().toInteger(),
+		return plt.types.Rational.makeInstance(div.floor().toFixnum(),
 						       1);
 	    } else {
-		return plt.types.Rational.makeInstance(div.ceiling().toInteger(),
+		return plt.types.Rational.makeInstance(div.ceiling().toFixnum(),
 						       1);
 	    }
 	},
@@ -860,7 +860,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	remainder : function(x, y) {
 	    check(x, isNumber, "remainder", "number", 1);
 	    check(y, isNumber, "remainder", "number", 2);
-	    return plt.types.Rational.makeInstance(x.toInteger() % y.toInteger(), 1);
+	    return plt.types.Rational.makeInstance(x.toFixnum() % y.toFixnum(), 1);
 	},
 	
 
@@ -1259,7 +1259,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(n, isNatural, "replicate", "natural", 1);
 	    check(s, isString, "replicate", "string", 2);
 	    var buffer = [];
-	    for (var i = 0; i < n.toInteger(); i++) {
+	    for (var i = 0; i < n.toFixnum(); i++) {
 		buffer.push(s);
 	    }
 	    return plt.types.String.makeInstance(buffer.join(""));
@@ -1319,24 +1319,24 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	string_dash_ref : function(str, i){
 	    check(str, isString, "string-ref", "string", 1);
 	    check(i, isNatural, "string-ref", "natural", 2);
-	    if (i.toInteger() >= str.length) {
+	    if (i.toFixnum() >= str.length) {
 		throw new MobyRuntimeError("string-ref: index >= length");
 	    }
-	    return plt.types.Char.makeInstance(str.charAt(i.toInteger()));
+	    return plt.types.Char.makeInstance(str.charAt(i.toFixnum()));
 	},
 
 	string_dash_ith : function (str, i) {
 	    check(str, isString, "string-ith", "string", 1);
 	    check(i, isNatural, "string-ith", "natural", 2);
-	    if (i.toInteger() >= str.length) {
+	    if (i.toFixnum() >= str.length) {
 		throw new MobyRuntimeError("string-ith: index >= string length");
 	    }
-	    return plt.types.String.makeInstance(str.substring(i.toInteger(), i.toInteger()+1));
+	    return plt.types.String.makeInstance(str.substring(i.toFixnum(), i.toFixnum()+1));
 	},
 
 	int_dash__greaterthan_string: function (i) {
 	    check(i, isInteger, "int->string", "integer", 1);
-	    return plt.types.String.makeInstance(String.fromCharCode(i.toInteger()));
+	    return plt.types.String.makeInstance(String.fromCharCode(i.toFixnum()));
 	},
 
 	
@@ -1349,13 +1349,13 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(str, isString, "substring", "string", 1);
 	    check(begin, isNatural, "substring", "natural", 2);
 	    check(end, isNatural, "substring", "natural", 3);
-	    if (begin.toInteger() > end.toInteger()) {
+	    if (begin.toFixnum() > end.toFixnum()) {
 		throw new MobyRuntimeError("substring: begin > end");
 	    }
-	    if (end.toInteger() > str.length) {
+	    if (end.toFixnum() > str.length) {
 		throw new MobyRuntimeError("substring: end > length");
 	    }
-	    return String.makeInstance(str.substring(begin.toInteger(), end.toInteger()));
+	    return String.makeInstance(str.substring(begin.toFixnum(), end.toFixnum()));
 	},
 
 	char_question_: function(x) {
@@ -1370,7 +1370,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	integer_dash__greaterthan_char : function(n){
 	    check(n, isInteger, "integer->char", "integer", 1);
-	    var str = String.fromCharCode(n.toInteger());
+	    var str = String.fromCharCode(n.toFixnum());
 	    return plt.types.Char.makeInstance(str);
 	},
 	
@@ -2007,7 +2007,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 	// TODO: add contract on higher order argument f.
 	var result = plt.types.Empty.EMPTY;
-	for(var i = 0; i < n.toInteger(); i++) {
+	for(var i = 0; i < n.toFixnum(); i++) {
 	    result = plt.Kernel.cons(f([plt.types.Rational.makeInstance(i, 1)]),
 				     result);
 	}
@@ -2021,7 +2021,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 	// TODO: add contract on higher order argument f.
 	var chars = [];
-	for(var i = 0; i < n.toInteger(); i++) {
+	for(var i = 0; i < n.toFixnum(); i++) {
 	    var ch = f([plt.types.Rational.makeInstance(i, 1)]);
 	    //	    check(ch, isChar, "char");
 	    chars.push(ch.val);
@@ -2093,9 +2093,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
     // Returns true if the procedure arity of f includes n; false otherwise.
     var procedureArityIncludes = function(f, n) {
 	if (isPair(f.procedureArity)) {
-	    return n >= f.procedureArity.rest().first().toInteger();
+	    return n >= f.procedureArity.rest().first().toFixnum();
 	} else {
-	    return n == f.procedureArity.toInteger();
+	    return n == f.procedureArity.toFixnum();
 	}
     };
     
@@ -2103,12 +2103,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
     var procedureArityDescription = function(f) {
 	if (isPair(f.procedureArity)) {
 	    return ("at least " + 
-		    (f.procedureArity.rest().first().toInteger() == 1) ? 
+		    (f.procedureArity.rest().first().toFixnum() == 1) ? 
 		    "one argument" : 
-		    f.procedureArity.rest().first().toInteger() + " arguments");
+		    f.procedureArity.rest().first().toFixnum() + " arguments");
 	} else {
-	    return ((f.procedureArity.toInteger() == 1) ? 
-		    "one argument" : f.procedureArity.toInteger() + " arguments");
+	    return ((f.procedureArity.toFixnum() == 1) ? 
+		    "one argument" : f.procedureArity.toFixnum() + " arguments");
 	}
     };
 
@@ -2404,10 +2404,10 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	check(n, isNatural, "build-vector", "natural", 1);
 	check(f, isFunction, "build-vector", "function", 2);
 	var elts = [];
-	for(var i = 0; i < n.toInteger(); i++) {
+	for(var i = 0; i < n.toFixnum(); i++) {
 	    elts[i] = f([plt.types.Rational.makeInstance(i, 1)])
 	}
-	return plt.types.Vector.makeInstance(n.toInteger(),
+	return plt.types.Vector.makeInstance(n.toFixnum(),
 					     elts);
     };
 
@@ -2415,7 +2415,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	check(n, isNatural, "make-vector", "natural", 1);
 	// FIXME: not quite right.  We need mixed arity function definition.
 	check(args, function(x) { return x.length == 0 || x.length == 1}, "make-vector", "at most two", 2);
-	var len = n.toInteger();
+	var len = n.toFixnum();
 	var i;
 	var result = plt.types.Vector.makeInstance(len);
 	if (args.length == 1) {
@@ -2437,14 +2437,14 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     plt.Kernel.vector_dash_ref = function(vec, k) {
 	check(vec, isVector, "vector-ref", "vector", 1);
-	check(k, function(x) { return isNatural(x) && x.toInteger() < vec.length()}, "vector-ref", "natural < vector length", 2);
-	return vec.ref(k.toInteger());
+	check(k, function(x) { return isNatural(x) && x.toFixnum() < vec.length()}, "vector-ref", "natural < vector length", 2);
+	return vec.ref(k.toFixnum());
     };
 
     plt.Kernel.vector_dash_set_bang_ = function(vec, k, v) {
 	check(vec, isVector, "vector-set!", "vector", 1);
-	check(k, function(x) { return isNatural(x) && x.toInteger() < vec.length()}, "vector-set!", "natural < vector length", 2);
-	return vec.set(k.toInteger(), v);
+	check(k, function(x) { return isNatural(x) && x.toFixnum() < vec.length()}, "vector-set!", "natural < vector length", 2);
+	return vec.set(k.toFixnum(), v);
     };
 
     plt.Kernel.vector_question_ = function(x) {

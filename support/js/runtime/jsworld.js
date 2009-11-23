@@ -291,9 +291,9 @@ plt.world.MobyJsworld = {};
 		    if (aScene != null && aScene != undefined && 
 			aScene instanceof plt.world.Kernel.BaseImage) {
 			var width = 
-			    plt.world.Kernel.imageWidth(aScene).toInteger();
+			    plt.world.Kernel.imageWidth(aScene).toFixnum();
 			var height = 
-			    plt.world.Kernel.imageHeight(aScene).toInteger();
+			    plt.world.Kernel.imageHeight(aScene).toFixnum();
 
 			if (! reusableCanvas) {
 			    reusableCanvas = plt.world.Kernel.makeCanvas(width, height);

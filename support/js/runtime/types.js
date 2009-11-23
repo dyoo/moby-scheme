@@ -575,7 +575,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
         return true;
     };
     
-    plt.types.Rational.prototype.toInteger = function() {
+    plt.types.Rational.prototype.toFixnum = function() {
 	return Math.floor(this.n / this.d);  
     };
 
@@ -931,7 +931,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     };
     
     
-    plt.types.FloatPoint.prototype.toInteger = function() {
+    plt.types.FloatPoint.prototype.toFixnum = function() {
 	return Math.floor(this.n);  
     };
     
@@ -1226,10 +1226,10 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 	return this.r.abs();
     };
     
-    plt.types.Complex.prototype.toInteger = function(){
+    plt.types.Complex.prototype.toFixnum = function(){
 	if (!plt.types.NumberTower.equal(this.i, plt.types.Rational.ZERO).valueOf())
-	    throw new plt.Kernel.MobyRuntimeError("toInteger: expects argument of type real number");
-	return this.r.toInteger();
+	    throw new plt.Kernel.MobyRuntimeError("toFixnum: expects argument of type real number");
+	return this.r.toFixnum();
     };
 
     plt.types.Complex.prototype.numerator = function() {
@@ -1500,8 +1500,8 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     plt.types.NumberTower = {};
     
     
-    plt.types.NumberTower.toInteger = function(num) {
-	return num.toInteger();
+    plt.types.NumberTower.toFixnum = function(num) {
+	return num.toFixnum();
     };
     
     plt.types.NumberTower.toFloat = function(num) {
@@ -1594,7 +1594,7 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     
     plt.types.NumberTower.modulo = function(m, n) {
 	var result = 
-	    plt.types.Rational.makeInstance(m.toInteger() % n.toInteger(),
+	    plt.types.Rational.makeInstance(m.toFixnum() % n.toFixnum(),
 					    1);
 
 	// The sign of the result should match the sign of n.
@@ -1625,22 +1625,22 @@ if (typeof(plt) == 'undefined') { plt = {}; }
 
     // gcd: number [number ...] -> number
     plt.types.NumberTower.gcd = function(first, rest) {
-	var result = Math.abs(first.toInteger());
+	var result = Math.abs(first.toFixnum());
 	for (var i = 0; i < rest.length; i++) {
-	    result = _gcd(result, rest[i].toInteger());
+	    result = _gcd(result, rest[i].toFixnum());
 	}
 	return plt.types.Rational.makeInstance(result);	
     };
 
     // lcm: number [number ...] -> number
     plt.types.NumberTower.lcm = function(first, rest) {
-	var result = Math.abs(first.toInteger());
+	var result = Math.abs(first.toFixnum());
 	if (result == 0) { return plt.types.Rational.ZERO; }
 	for (var i = 0; i < rest.length; i++) {
-	    if (rest[i].toInteger() == 0) {
+	    if (rest[i].toFixnum() == 0) {
 		return plt.types.Rational.ZERO;
 	    }
-	    result = _lcm(result, rest[i].toInteger());
+	    result = _lcm(result, rest[i].toFixnum());
 	}
 	return plt.types.Rational.makeInstance(result);
     };

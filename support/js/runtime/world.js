@@ -166,8 +166,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	var newWindow = getBigBangWindow(width, height);
 	var canvas = 
 	    newWindow.document.getElementById("canvas");
-	canvas.width = width.toInteger();
-	canvas.height = height.toInteger();
+	canvas.width = width.toFixnum();
+	canvas.height = height.toFixnum();
 
 	resetWorld();
 
@@ -278,16 +278,16 @@ plt.world.Kernel = plt.world.Kernel || {};
 			 "place-image", "image", 4);
 	if (isScene(background)) {
 	    return background.add(picture,
-				  plt.types.NumberTower.toInteger(x),
-				  plt.types.NumberTower.toInteger(y));
+				  plt.types.NumberTower.toFixnum(x),
+				  plt.types.NumberTower.toFixnum(y));
 	} else {
 	    var newScene = new SceneImage(background.getWidth(),
 					  background.getHeight(),
 					  []);
 	    newScene = newScene.add(background, 0, 0);
 	    newScene = newScene.add(picture, 
-				    plt.types.NumberTower.toInteger(x),
-				    plt.types.NumberTower.toInteger(y));
+				    plt.types.NumberTower.toFixnum(x),
+				    plt.types.NumberTower.toFixnum(y));
 	    return newScene;
 	}
     };
@@ -298,8 +298,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	plt.Kernel.check(width, plt.Kernel.isNumber, "empty-scene", "number", 1);
 	plt.Kernel.check(height, plt.Kernel.isNumber, "empty-scene", "number", 2);
 	return new SceneImage(
-	    plt.types.NumberTower.toInteger(width), 
-	    plt.types.NumberTower.toInteger(height),
+	    plt.types.NumberTower.toFixnum(width), 
+	    plt.types.NumberTower.toFixnum(height),
 	    []);
     };
 
@@ -325,7 +325,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	}
 	return new TextImage
 	(aString, 
-	 plt.types.NumberTower.toInteger(aSize), 
+	 plt.types.NumberTower.toFixnum(aSize), 
 	 aColor);
     };
 
@@ -341,7 +341,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    aColor = colorDb.get(aColor);
 	}
 	return new CircleImage
-	(plt.types.NumberTower.toInteger(aRadius), 
+	(plt.types.NumberTower.toFixnum(aRadius), 
 	 aStyle,
 	 aColor);
     };
@@ -363,8 +363,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    c = colorDb.get(c);
 	}
 	var aRect = new RectangleImage
-	(plt.types.NumberTower.toInteger(w),
-	 plt.types.NumberTower.toInteger(h),
+	(plt.types.NumberTower.toFixnum(w),
+	 plt.types.NumberTower.toFixnum(h),
 	 s,
 	 c);
 	return aRect.updatePinhole(0, 0);
@@ -381,8 +381,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 	}
 	// Fixme: get the pinholes!
 	return new RectangleImage(
-	    plt.types.NumberTower.toInteger(w),
-	    plt.types.NumberTower.toInteger(h),
+	    plt.types.NumberTower.toFixnum(w),
+	    plt.types.NumberTower.toFixnum(h),
 	    s,
 	    c);
     };
@@ -410,7 +410,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	plt.Kernel.check(img, isImage, "put-pinhole", "image", 1);
 	plt.Kernel.check(x, plt.Kernel.isNumber, "put-pinhole", "number", 2);
 	plt.Kernel.check(y, plt.Kernel.isNumber, "put-pinhole", "number", 3);
-	return img.updatePinhole(x.toInteger(), y.toInteger());
+	return img.updatePinhole(x.toFixnum(), y.toFixnum());
     };
 
 
@@ -452,8 +452,8 @@ plt.world.Kernel = plt.world.Kernel || {};
 
     BaseImage.prototype.toDomNode = function(cache) {
 	var that = this;
-	var width = plt.world.Kernel.imageWidth(that).toInteger();
-	var height = plt.world.Kernel.imageHeight(that).toInteger();
+	var width = plt.world.Kernel.imageWidth(that).toFixnum();
+	var height = plt.world.Kernel.imageHeight(that).toFixnum();
 	var canvas = plt.world.Kernel.makeCanvas(width, height);
 
 	// KLUDGE: some of the rendering functions depend on a context
@@ -753,8 +753,8 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
     effect_colon_play_dash_dtmf_dash_tone.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService().playDtmfTone(
-	    this._fields[0].toInteger(),
-	    this._fields[1].toInteger());
+	    this._fields[0].toFixnum(),
+	    this._fields[1].toFixnum());
     };
     effect_colon_send_dash_sms.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSmsService().send(
@@ -789,7 +789,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
     effect_colon_set_dash_sound_dash_volume.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService().setVolume(
-	    this._fields[0].toInteger());
+	    this._fields[0].toFixnum());
     };
     effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService.raiseVolume();
@@ -799,7 +799,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     };
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
 	plt.platform.Platform.getInstance().getPowerService().setWakeLock(
-	    this._fields[0].toInteger());
+	    this._fields[0].toFixnum());
     };
     effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
 	plt.platform.Platform.getInstance().getPowerService().releaseWakeLock();
@@ -820,7 +820,7 @@ plt.world.Kernel = plt.world.Kernel || {};
     effect_colon_pick_dash_random.prototype.run = function() {
 	var aRandomNumber =
 	    plt.types.Rational.makeInstance(
-		Math.floor(plt.types.NumberTower.toInteger(this._fields[0]) * 
+		Math.floor(plt.types.NumberTower.toFixnum(this._fields[0]) * 
 			   Math.random()),
 		1);
 	var callback = this._fields[1];
