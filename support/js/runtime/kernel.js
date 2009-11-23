@@ -13,6 +13,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 (function() {
 
+    var NumberTower = plt.types.NumberTower;
+
+
     // Compatibility hack: add Array.indexOf if it doesn't exist.
     if(!Array.indexOf){
 	Array.prototype.indexOf = function(obj){
@@ -422,9 +425,9 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(delta, isNumber, "equal~?", "number", 3);
 	    if (isNumber(x) && isNumber(y)) {
 		if ("isEqual" in x) {
-		    return plt.types.NumberTower.approxEqual(x, y, delta);
+		    return NumberTower.approxEqual(x, y, delta);
 		} else if ("isEqual" in y) {
-		    return plt.types.NumberTower.approxEqual(y, x, delta);
+		    return NumberTower.approxEqual(y, x, delta);
 		} else {
 		    return (x == y);
 		}
@@ -441,7 +444,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
 	eqv_question_ : function(x, y){
 	    if (isNumber(x) && isNumber(y) && x.level() == y.level()) {
-		return plt.types.NumberTower.equal(x, y);
+		return NumberTower.equal(x, y);
 	    } else if (isChar(x) && isChar(y)) {
 		return x.getValue() == y.getValue();
 	    }
@@ -493,7 +496,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	random: function(x) {
 	    check(x, isInteger, "random", "integer", 1);
-	    return plt.types.Rational.makeInstance(Math.floor(plt.types.NumberTower.toFixnum(x) * 
+	    return plt.types.Rational.makeInstance(Math.floor(NumberTower.toFixnum(x) * 
 							      Math.random()),
 						   1);
 	},
@@ -539,7 +542,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	sqr: function(x) {
 	    check(x, isNumber, "sqr", "number", 1);
-	    return plt.types.NumberTower.sqr(x);
+	    return NumberTower.sqr(x);
 	},
 	
 	sin: function(x) {
@@ -555,12 +558,12 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	modulo: function(m, n) {
 	    check(m, isNumber, "modulo", "number", 1);
 	    check(n, isNumber, "modulo", "number", 2);
-	    return plt.types.NumberTower.modulo(m, n);
+	    return NumberTower.modulo(m, n);
 	},
 	
 	zero_question_: function(m) {
 	    check(m, isNumber, "zero?", "number", 1);
-	    return plt.types.NumberTower.equal(m, plt.types.Rational.ZERO);
+	    return NumberTower.equal(m, plt.types.Rational.ZERO);
 	},
 	
 	
@@ -568,23 +571,23 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(x, isNumber, "=~", "number", 1);
 	    check(y, isNumber, "=~", "number", 2);
 	    check(delta, isNumber, "=~", "number", 3);
-	    return plt.types.NumberTower.approxEqual(x, y, delta);
+	    return NumberTower.approxEqual(x, y, delta);
 	},
 	
 	abs: function(x) {
 	    check(x, isNumber, "abs", "number", 1);
-	    return plt.types.NumberTower.abs(x);
+	    return NumberTower.abs(x);
 	},
 	
 	add1 : function(x) {
 	    check(x, isNumber, "add1", "number", 1);
-	    return plt.types.NumberTower.add(x, plt.types.Rational.ONE);
+	    return NumberTower.add(x, plt.types.Rational.ONE);
 	},
 	
 	
 	sub1 : function(x) {
 	    check(x, isNumber, "sub1", "number", 1);
-	    return plt.types.NumberTower.subtract(x, plt.types.Rational.ONE);
+	    return NumberTower.subtract(x, plt.types.Rational.ONE);
 	},
 	
 	
@@ -592,7 +595,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    arrayEach(args, function(x, i) { check(x, isNumber, "+", "number", i+1) });
 	    var i, sum = plt.types.Rational.ZERO;
 	    for(i = 0; i < args.length; i++) {
-		sum = plt.types.NumberTower.add(sum, args[i]);
+		sum = NumberTower.add(sum, args[i]);
 	    }
 	    return sum;
 	},
@@ -602,13 +605,13 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(first, isNumber, "-", "number", 1);
 	    arrayEach(args, function(x, i) { check(x, isNumber, "-", "number", i+2) });
 	    if (args.length == 0) {
-		return plt.types.NumberTower.subtract
+		return NumberTower.subtract
 		(plt.types.Rational.ZERO, first);
 	    }
 	    
 	    var i, diff = first;
 	    for(i = 0; i < args.length; i++) {
-		diff = plt.types.NumberTower.subtract(diff, args[i]);
+		diff = NumberTower.subtract(diff, args[i]);
 	    }
 	    return diff;
 	},
@@ -618,7 +621,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    arrayEach(args, function(x, i) { check(x, isNumber, "*", "number", i+1) });
 	    var i, prod = plt.types.Rational.ONE;
 	    for(i = 0; i < args.length; i++) {
-		prod = plt.types.NumberTower.multiply(prod, args[i]);
+		prod = NumberTower.multiply(prod, args[i]);
 	    }
 	    return prod;    
 	},
@@ -629,27 +632,27 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    arrayEach(args, function(x, i) { check(x, isNumber, "/", "number", i+2) });
 	    var i, div = first;
 	    if (args.length == 0) {
-		return plt.types.NumberTower.divide(plt.types.Rational.ONE, div);
+		return NumberTower.divide(plt.types.Rational.ONE, div);
 	    } else {
 		for(i = 0; i < args.length; i++) {
-		    div = plt.types.NumberTower.divide(div, args[i]);
+		    div = NumberTower.divide(div, args[i]);
 		}
 		return div;    
 	    }
 	},
 	
 
-	_equal_ : makeNumericChainingComparator(plt.types.NumberTower.equal, "="),
-	_greaterthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.greaterThanOrEqual, ">="),
-	_lessthan__equal_: makeNumericChainingComparator(plt.types.NumberTower.lessThanOrEqual, "<="),
-	_greaterthan_: makeNumericChainingComparator(plt.types.NumberTower.greaterThan, ">"),
-	_lessthan_: makeNumericChainingComparator(plt.types.NumberTower.lessThan, "<"),
+	_equal_ : makeNumericChainingComparator(NumberTower.equal, "="),
+	_greaterthan__equal_: makeNumericChainingComparator(NumberTower.greaterThanOrEqual, ">="),
+	_lessthan__equal_: makeNumericChainingComparator(NumberTower.lessThanOrEqual, "<="),
+	_greaterthan_: makeNumericChainingComparator(NumberTower.greaterThan, ">"),
+	_lessthan_: makeNumericChainingComparator(NumberTower.lessThan, "<"),
 
 	
 	min : function(first, rest) {
 	    check(first, isNumber, "min", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isNumber, "min", "number", i+2); });
-	    return chainFind(plt.types.NumberTower.lessThanOrEqual,
+	    return chainFind(NumberTower.lessThanOrEqual,
 			     first, 
 			     rest);
 	},
@@ -657,7 +660,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	max : function(first, rest) {
 	    check(first, isNumber, "max", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isNumber, "max", "number", i+2); });
-	    return chainFind(plt.types.NumberTower.greaterThanOrEqual,
+	    return chainFind(NumberTower.greaterThanOrEqual,
 			     first, 
 			     rest);
 	},
@@ -666,7 +669,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	lcm : function(first, rest) {
 	    check(first, isInteger, "lcm", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
-	    return plt.types.NumberTower.lcm(first, rest);
+	    return NumberTower.lcm(first, rest);
 	},
 
 	
@@ -675,7 +678,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    arrayEach(rest, function(x, i) {
 		check(this, isInteger, "gcd", "number", i+2); 
 	    });
-	    return plt.types.NumberTower.gcd(first, rest);
+	    return NumberTower.gcd(first, rest);
 	},
 
 	exact_dash__greaterthan_inexact: function(x) {
@@ -685,7 +688,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	inexact_dash__greaterthan_exact: function(x) {
 	    check(x, isNumber, "inexact->exact", "number", 1);
-	    return plt.types.NumberTower.toExact(x);
+	    return NumberTower.toExact(x);
 	},
 
 	exact_question_ : function(x) {
@@ -735,8 +738,8 @@ if (typeof(plt) == 'undefined') { plt = {} }
 		check(x, isReal, "atan", "number", 1);
 		check(args[0], isReal, "atan", "number", 2);
 		return plt.types.FloatPoint.makeInstance(
-		    Math.atan2(plt.types.NumberTower.toFloat(x),
-			       plt.types.NumberTower.toFloat(args[0])));
+		    Math.atan2(NumberTower.toFloat(x),
+			       NumberTower.toFloat(args[0])));
 	    } else {
 		// FIXME: this should really be an error at compile time.
 		throw new MobyRuntimeError(plt.Kernel.format("atan: expects 1 to 2 arguments, given ~a.", [plt.types.Rational.makeInstance(args.length)]));
@@ -746,7 +749,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	expt : function(x, y){
 	    check(x, isNumber, "expt", "number", 1);
 	    check(y, isNumber, "expt", "number", 2);
-	    return plt.types.NumberTower.expt(x, y);
+	    return NumberTower.expt(x, y);
 	},
 	
 	exp : function(x){
@@ -766,7 +769,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	tan : function(x){
 	    check(x, isNumber, "tan", "number", 1);
-	    return plt.types.NumberTower.divide(x.sin(), x.cos());
+	    return NumberTower.divide(x.sin(), x.cos());
 	},
 	
 	complex_question_ : function(x){
@@ -780,7 +783,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	
 	sinh : function(x) {
 	    check(x, isNumber, "sinh", "number", 1);
-	    return plt.types.NumberTower.subtract(this.exp(x), this.exp(x.minus())).half();
+	    return NumberTower.subtract(this.exp(x), this.exp(x.minus())).half();
 	},
 	
 	denominator : function(x) {
@@ -827,11 +830,11 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	make_dash_polar: function(r, theta) {
 	    // special case: if theta is zero, just return
 	    // the scalar.
-	    if (plt.types.NumberTower.equal(theta, plt.types.Rational.ZERO)) {
+	    if (NumberTower.equal(theta, plt.types.Rational.ZERO)) {
 		return r;
 	    }
-	    var x = plt.types.NumberTower.multiply(r, theta.cos());
-	    var y = plt.types.NumberTower.multiply(r, theta.sin());
+	    var x = NumberTower.multiply(r, theta.cos());
+	    var y = NumberTower.multiply(r, theta.sin());
 	    return plt.types.Complex.makeInstance(x, y);
 	},
 
@@ -846,7 +849,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	quotient : function(x, y){
 	    check(x, isInteger, "quotient", "integer", 1);
 	    check(y, isInteger, "quotient", "integer", 2);
-	    var div = plt.types.NumberTower.divide(x,y);
+	    var div = NumberTower.divide(x,y);
 	    if (plt.Kernel.positive_question_(div)) {
 		return plt.types.Rational.makeInstance(div.floor().toFixnum(),
 						       1);
@@ -1212,7 +1215,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    check(str, isString, "string->number", "string", 1);
 	    try {
 		var stxList = plt.reader.readSchemeExpressions(str, "");
-		if (plt.types.NumberTower.equal(plt.Kernel.length(stxList),
+		if (NumberTower.equal(plt.Kernel.length(stxList),
 						plt.types.Rational.ONE)) {
 		    var result = stx_dash_e(stxList.first());
 		    if (isNumber(result)) {
@@ -1560,13 +1563,7 @@ if (typeof(plt) == 'undefined') { plt = {} }
     // Returns true if the objects are equivalent; otherwise, returns false.
     plt.Kernel.isEqual = function(x, y, aUnionFind) {
 	if (isNumber(x) && isNumber(y)) {
-	    if ("isEqual" in x) {
-		return plt.types.NumberTower.equal(x, y);
-	    } else if ("isEqual" in y) {
-		return plt.types.NumberTower.equal(y, x);
-	    } else {
-		return (x == y);
-	    }
+	    return NumberTower.equal(x, y);
 	}
 
 	if (x == undefined || x == null) {
