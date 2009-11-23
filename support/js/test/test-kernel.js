@@ -1119,8 +1119,8 @@ var getTests;
 	    testString_dash_ref : function(){
 		var zhe = String.makeInstance("zhe");
 		var i = FloatPoint.makeInstance(2);
-		this.assert(Kernel.string_equal__question_(String.makeInstance("e"), 
-							   Kernel.string_dash_ref(zhe, i), []));
+		this.assert(Kernel.char_equal__question_(Char.makeInstance("e"), 
+							 Kernel.string_dash_ref(zhe, i), []));
 		this.assertRaise("MobyTypeError",
 				 function() { Kernel.string_dash_ref
 					      (zhe, Rational.makeInstance(-1)) });
