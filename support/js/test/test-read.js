@@ -79,6 +79,10 @@ function init() {
 	testTokenizeNegativeNumber: function() {
 	    this.assert(isEqual(tokenize("-7.1"),
 		                [[["number", "-7.1"]], ""]));
+	    this.assert(isEqual(tokenize("-0.1"),
+		                [[["number", "-0.1"]], ""]));
+	    this.assert(isEqual(tokenize("-.1"),
+		                [[["number", "-.1"]], ""]));
 	},
 
 	testTokenizeSymbol: function() {
@@ -216,6 +220,15 @@ function init() {
 		this.assert(schemeIsEqual(read("-11.91"),
 					   cons(plt.types.Rational.makeInstance(-1191, 100),
 						empty)));
+
+
+
+		this.assert(schemeIsEqual(read("-0.1"),
+					   cons(plt.types.Rational.makeInstance(-1, 10),
+						empty)));
+		this.assert(schemeIsEqual(read("-.1"),
+					  cons(plt.types.Rational.makeInstance(-1, 10),
+					       empty)));
 	},
 
 	testReadHashComment2: function() {

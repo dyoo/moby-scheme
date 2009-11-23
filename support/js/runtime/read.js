@@ -242,8 +242,8 @@ plt.reader = {};
 	    } else if (text.match(/\./)) {
 		if (isExact) {
 		    var decimalMatch = text.match("^(.*)[.](.*)$");
-		    var whole = plt.types.Rational.makeInstance(parseInt(decimalMatch[1] || "0"));
-		    if (plt.types.NumberTower.lessThan(whole, plt.types.Rational.ZERO)) {
+		    var whole = plt.types.Rational.makeInstance(parseInt(decimalMatch[1] || "0") || 0);
+		    if (decimalMatch[1].match(/-/)) {
 			return plt.types.NumberTower.subtract(whole,
 			  plt.types.Rational.makeInstance(
 			      parseInt(decimalMatch[2]), 
