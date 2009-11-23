@@ -329,6 +329,28 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     //////////////////////////////////////////////////////////////////////
 
 
+    // _gcd: fixnum fixnum -> fixnum
+    var _gcd = function(a, b) {
+	while (b != 0) {
+	    var t = a;
+	    a = b;
+	    b = t % b;
+	}
+	return Math.abs(a);
+    }
+
+    // _lcm: fixnum fixnum -> integer
+    var _lcm = function(a, b) {
+	return Math.abs(a * b / _gcd(a, b));
+    }
+
+    // FIXME: there are two definitions of gcd floating around: which one is right?
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+
     
     // Rationals
     
@@ -1495,8 +1517,27 @@ if (typeof(plt) == 'undefined') { plt = {}; }
     };
     
 
+    // gcd: number [number ...] -> number
+    plt.types.NumberTower.gcd = function(first, rest) {
+	var result = Math.abs(first.toInteger());
+	for (var i = 0; i < rest.length; i++) {
+	    result = _gcd(result, rest[i].toInteger());
+	}
+	return plt.types.Rational.makeInstance(result);	
+    };
 
-
+    // lcm: number [number ...] -> number
+    plt.types.NumberTower.lcm = function(first, rest) {
+	var result = Math.abs(first.toInteger());
+	if (result == 0) { return plt.types.Rational.ZERO; }
+	for (var i = 0; i < rest.length; i++) {
+	    if (rest[i].toInteger() == 0) {
+		return plt.types.Rational.ZERO;
+	    }
+	    result = _lcm(result, rest[i].toInteger());
+	}
+	return plt.types.Rational.makeInstance(result);
+    };
 
 
 

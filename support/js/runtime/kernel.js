@@ -158,20 +158,6 @@ if (typeof(plt) == 'undefined') { plt = {} }
     //////////////////////////////////////////////////////////////////////
 
 
-    // _gcd: integer integer -> integer
-    var _gcd = function(a, b) {
-	while (b != 0) {
-	    var t = a;
-	    a = b;
-	    b = t % b;
-	}
-	return Math.abs(a);
-    }
-
-    // _lcm: integer integer -> integer
-    var _lcm = function(a, b) {
-	return Math.abs(a * b / _gcd(a, b));
-    }
 
 
     // Returns true if x is a number.
@@ -682,26 +668,16 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	lcm : function(first, rest) {
 	    check(first, isInteger, "lcm", "number", 1);
 	    arrayEach(rest, function(x, i) { check(this, isInteger, "lcm", "number", i+2); });
-	    var result = Math.abs(first.toInteger());
-	    if (result == 0) { return plt.types.Rational.ZERO; }
-	    for (var i = 0; i < rest.length; i++) {
-		if (rest[i].toInteger() == 0) {
-		    return plt.types.Rational.ZERO;
-		}
-		result = _lcm(result, rest[i].toInteger());
-	    }
-	    return plt.types.Rational.makeInstance(result);
+	    return plt.types.NumberTower.lcm(first, rest);
 	},
 
 	
 	gcd : function(first, rest) {
 	    check(first, isInteger, "gcd", "number", 1);
-	    arrayEach(rest, function(x, i) { check(this, isInteger, "gcd", "number", i+2); });	    
-	    var result = Math.abs(first.toInteger());
-	    for (var i = 0; i < rest.length; i++) {
-		result = _gcd(result, rest[i].toInteger());
-	    }
-	    return plt.types.Rational.makeInstance(result);
+	    arrayEach(rest, function(x, i) {
+		check(this, isInteger, "gcd", "number", i+2); 
+	    });
+	    return plt.types.NumberTower.gcd(first, rest);
 	},
 
 	exact_dash__greaterthan_inexact: function(x) {
@@ -1640,10 +1616,14 @@ if (typeof(plt) == 'undefined') { plt = {} }
 
     //////////////////////////////////////////////////////////////////////
 
+
+    // makeEqHashtable: -> hashtable
+    // Constructs an eq hashtable that uses Moby's getEqHashCode function.
     var makeEqHashtable = function() {
 	return new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
 				  function(x, y) { return x === y; });
     };
+
 
     var EqHashTable = function(inputHash) {
 	this.hash = makeEqHashtable();
