@@ -22,7 +22,7 @@ function init() {
     // Evaluates the string and produces the evaluated scheme value.
     var run = function(aSource) {
 	var namespace = new Namespace();
-	var program = plt.reader.readSchemeExpressions(aSource);
+	var program = plt.reader.readSchemeExpressions(aSource, "test");
 	var compiledProgram = (program_dash__greaterthan_compiled_dash_program_slash_pinfo
 			       (program, pinfo));
 	var defns = compiled_dash_program_dash_defns(compiledProgram);
@@ -72,7 +72,7 @@ function init() {
 	    plt.Kernel.lastLoc = undefined;
 	    this.assertRaise("MobyRuntimeError",
 			     function() { run("   (/ 1 0)")});
-	    this.assert(isEqual("offset=3 line=1 span=7 id=\"\"", plt.Kernel.lastLoc));
+	    this.assert(isEqual("offset=3, line=1, span=7, id=test", plt.Kernel.locToString(plt.Kernel.lastLoc)));
 	},
 
 
