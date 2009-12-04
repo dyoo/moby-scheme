@@ -15,6 +15,13 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 
     var NumberTower = plt.types.NumberTower;
 
+    var MobyError = plt.types.MobyError;
+    var MobyParserError = plt.types.MobyParserError;
+    var MobySyntaxError = plt.types.MobySyntaxError;
+    var MobyTypeError = plt.types.MobyTypeError;
+    var MobyRuntimeError = plt.types.MobyRuntimeError;
+
+
 
     // Compatibility hack: add Array.indexOf if it doesn't exist.
     if(!Array.indexOf){
@@ -90,56 +97,6 @@ if (typeof(plt) === 'undefined') { var plt = {} }
     UnionFind.prototype.merge = function(ptr1, ptr2) {
 	this.parentMap.put(this.find(ptr1), this.find(ptr2));
     };
-
-
-
-
-    //////////////////////////////////////////////////////////////////////
-
-    var MobyError = function(msg) {
-	this.msg = msg;
-    }
-    MobyError.prototype.name= 'MobyError';
-    MobyError.prototype.toString = function () { return this.name + ": " + this.msg }
-
-
-    var MobyParserError = function(msg, loc) {
-	MobyError.call(this, msg);
-	this.loc = loc;
-    }
-    MobyParserError.prototype = heir(MobyError.prototype);
-    MobyParserError.prototype.name= 'MobyParserError';
-
-    
-    var MobySyntaxError = function(msg, stx) {
-	MobyError.call(this, msg);
-	this.stx = stx;
-    }
-    MobySyntaxError.prototype = heir(MobyError.prototype);
-    MobySyntaxError.prototype.name= 'MobySyntaxError';
-
-
-    var MobyTypeError = function(msg) {
-	MobyError.call(this, msg);
-    }
-    MobyTypeError.prototype = heir(MobyError.prototype);
-    MobyTypeError.prototype.name= 'MobyTypeError';
-
-
-
-    var MobyRuntimeError = function(msg) {
-	MobyError.call(this, msg);
-    }
-    MobyRuntimeError.prototype = heir(MobyError.prototype);
-    MobyRuntimeError.prototype.name= 'MobyRuntimeError';
-
-
-    
-    var MobyTestingError = function(msg) {
-	MobyError.call(this, msg);
-    }
-    MobyTestingError.prototype = heir(MobyRuntimeError.prototype);
-    MobyTestingError.prototype.name= 'MobyTestingError';
 
 
     
@@ -2537,11 +2494,11 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 
 
     // Expose the error classes.
-    plt.Kernel.MobyError = MobyError;
-    plt.Kernel.MobyParserError = MobyParserError;
-    plt.Kernel.MobySyntaxError = MobySyntaxError;
-    plt.Kernel.MobyTypeError = MobyTypeError;
-    plt.Kernel.MobyRuntimeError = MobyRuntimeError;
+    plt.Kernel.MobyError = plt.types.MobyError;
+    plt.Kernel.MobyParserError = plt.types.MobyParserError;
+    plt.Kernel.MobySyntaxError = plt.types.MobySyntaxError;
+    plt.Kernel.MobyTypeError = plt.types.MobyTypeError;
+    plt.Kernel.MobyRuntimeError = plt.types.MobyRuntimeError;
 
 
 
