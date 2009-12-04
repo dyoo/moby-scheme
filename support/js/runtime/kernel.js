@@ -880,13 +880,7 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 	
 	reverse : function(lst){
 	    checkList(lst, "reverse", 1);
-	    var ret = plt.types.Empty.EMPTY;
-	    while (!lst.isEmpty()){
-		ret = plt.types.Cons.makeInstance(lst.first(), ret);
-		lst = lst.rest();
-	    }
-	    
-	    return ret;
+	    return plt.types.Cons.reverse(lst);
 	}, 
 	
 	assq : function(x, lst){

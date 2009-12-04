@@ -1,4 +1,4 @@
-// Depends on kernel.js, stx.ss
+// Depends on types.js, stx.js
 
 if (typeof(plt) === 'undefined') { var plt = {}; }
 
@@ -150,7 +150,7 @@ plt.reader = {};
 	var lastToken = undefined;
 
 	if (tokensAndError[1].length > 0) {
-	    throw new plt.Kernel.MobyParserError(
+	    throw new plt.types.MobyParserError(
 		"Error while tokenizing: the rest of the stream is: " +
 		    tokensAndError[1],
 		new Loc(s.length - tokensAndError[1].length,
@@ -173,12 +173,12 @@ plt.reader = {};
 	var eat = function(expectedType) {
 	    if (tokens.length == 0) {
 		if (lastToken) { 
-		    throw new plt.Kernel.MobyParserError(
+		    throw new plt.types.MobyParserError(
 			"token stream exhausted while trying to eat " +
 			    expectedType,
 			lastToken[2]);
 		} else {
-		    throw new plt.Kernel.MobyParserError(
+		    throw new plt.types.MobyParserError(
 			"token stream exhausted while trying to eat " +
 			    expectedType,
 			new Loc(0, 0, s.length, source));
@@ -189,7 +189,7 @@ plt.reader = {};
 	    if (t[0] == expectedType) {
 		return t;
 	    } else {
-		throw new plt.Kernel.MobyParserError(
+		throw new plt.types.MobyParserError(
 		    "Unexpected token " + t,
 		    t[2]);
 	    }
@@ -205,9 +205,9 @@ plt.reader = {};
 	readQuoted = function(quoteChar, quoteSymbol) {
 	    var leadingQuote = eat(quoteChar);
 	    var quoted = readExpr();
-	    return makeList(plt.Kernel.cons(
+	    return makeList(plt.types.Cons.makeInstance(
 		makeAtom(quoteSymbol, leadingQuote[2]),
-		plt.Kernel.cons(quoted, empty)),
+		plt.types.Cons.makeInstance(quoted, empty)),
 			    new Loc(leadingQuote[2].offset,
 				    leadingQuote[2].line,
 				    (quoted.loc.offset -
@@ -279,11 +279,11 @@ plt.reader = {};
 	readExpr = function() {
 	    if (tokens.length == 0) {
 		if (lastToken) { 
-		    throw new plt.Kernel.MobyParserError(
+		    throw new plt.types.MobyParserError(
 			"Parse broke with empty token stream",
 			lastToken[2]);
 		} else {
-		    throw new plt.Kernel.MobyParserError(
+		    throw new plt.types.MobyParserError(
 			"Parse broke with empty token stream",
 			new Loc(0, 0, s.length, source));
 		}
@@ -297,11 +297,11 @@ plt.reader = {};
 		var rshape = getParenRShape(lparen[1]);
 		var result = readExprs();
 		if (tokens.length == 0) {
-		    throw new plt.Kernel.MobyParserError(
+		    throw new plt.types.MobyParserError(
 			"Expected a " + rshape + " to close " + lshape,
 			lparen[2]);
 		} else if (tokens[0][1] != rshape) {
-		    throw new plt.Kernel.MobyParserError(
+		    throw new plt.types.MobyParserError(
 			"Expected a " + rshape + " to close " + lshape,
 			tokens[0][2]);
 		}
@@ -379,13 +379,13 @@ plt.reader = {};
 	    case 'symbol':
 		var t = eat('symbol');
 		if (t[1] == '.') {
-		    throw new plt.Kernel.MobyParserError
+		    throw new plt.types.MobyParserError
 		    ("Dotted pairs are not currently accepted by Moby", t[2]);
 		}
 		return makeAtom(plt.types.Symbol.makeInstance(t[1]), t[2]);
 
 	    default:
-		throw new plt.Kernel.MobyParserError
+		throw new plt.types.MobyParserError
 		("Parse broke with token stream " + tokens, 
 		 tokens[0][2]);
 	    }
@@ -407,13 +407,13 @@ plt.reader = {};
 		    result = plt.types.Cons.makeInstance(nextElt, result);
 		}
 	    }
-	    return plt.Kernel.reverse(result);
+	    return plt.types.Cons.reverse(result);
 	};
 	
 
 	var result = readExprs();
 	if (tokens.length > 0) {
-	    throw new plt.Kernel.MobyParserError
+	    throw new plt.types.MobyParserError
 	    ("More elements in the program's token stream than expected: "+
 	     "the next unconsumed token is: "  + tokens[0][1],
 	     tokens[0][2])

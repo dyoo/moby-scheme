@@ -277,6 +277,15 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	this.r = r;
 	this._eqHashCode = plt.types.makeEqHashCode();
     };
+
+    plt.types.Cons.reverse = function(lst) {
+	var ret = plt.types.Empty.EMPTY;
+	while (!lst.isEmpty()){
+	    ret = plt.types.Cons.makeInstance(lst.first(), ret);
+	    lst = lst.rest();
+	}
+	return ret;
+    };
     
     plt.types.Cons.makeInstance = function(f, r) {
 	return new plt.types.Cons(f, r);
@@ -309,7 +318,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	if (b.isEmpty())
 	    return this;
 	var ret = b;
-	var lst = plt.Kernel.reverse(this);
+	var lst = plt.types.Cons.reverse(this);
 	while (!lst.isEmpty()){
 	    ret = plt.types.Cons.makeInstance(lst.first(), ret);
 	    lst = lst.rest();
