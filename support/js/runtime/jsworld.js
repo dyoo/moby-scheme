@@ -110,10 +110,10 @@ plt.world.MobyJsworld = {};
     Jsworld.printWorldHook = function(world, node) {
 	var newNode;
 	if(node.lastChild == null) {
-	    newNode = plt.Kernel.toDomNode(world);
+	    newNode = plt.types.toDomNode(world);
 	    node.appendChild(newNode);
 	} else {
-	    newNode = plt.Kernel.toDomNode(world);
+	    newNode = plt.types.toDomNode(world);
 	    node.replaceChild(newNode, node.lastChild);
 	}
     };
@@ -313,7 +313,7 @@ plt.world.MobyJsworld = {};
 		    } else {
 			return [toplevelNode, 
 				_js.node_to_tree(
-						 plt.Kernel.toDomNode(
+						 plt.types.toDomNode(
 								      aScene))];
 		    }
 		} catch (e) {
@@ -597,7 +597,7 @@ plt.world.MobyJsworld = {};
     // raw_node: scheme-value assoc -> node
     Jsworld.rawNode = function(x, args) {
 	var attribs = getAttribs(args);
-	var node = _js.raw_node(plt.Kernel.toDomNode(x), attribs);
+	var node = _js.raw_node(plt.types.toDomNode(x), attribs);
 	node.toWrittenString = function(cache) { return "(js-raw-node ...)"; }
 	node.toDisplayedString = node.toWrittenString;
 	node.toDomNode = function(cache) { return node; }

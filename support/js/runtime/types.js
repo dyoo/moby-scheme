@@ -1,7 +1,7 @@
 if (typeof(plt) === 'undefined') { var plt = {}; }
 
 
-// Depends on kernel.js.
+
 (function() {
     
     
@@ -36,7 +36,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
     }
     
     
-    // plt.Kernel.getHashCode: any -> (or fixnum string)
+    // plt.types.getHashCode: any -> (or fixnum string)
     // Produces a hashcode appropriate for eq.
     plt.types.getEqHashCode = function(x) {
 	if (x && x._eqHashCode) {
@@ -69,7 +69,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	buffer.push(this._constructorName);
 	for(var i = 0; i < this._fields.length; i++) {
 	    buffer.push(" ");
-	    buffer.push(plt.Kernel.toWrittenString(this._fields[i], cache));
+	    buffer.push(plt.types.toWrittenString(this._fields[i], cache));
 	}
 	buffer.push(")");
 	return plt.types.String.makeInstance(buffer.join(""));
@@ -84,7 +84,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	node.appendChild(document.createTextNode(this._constructorName));
 	for(var i = 0; i < this._fields.length; i++) {
 	    node.appendChild(document.createTextNode(" "));
-	    appendChild(node, plt.Kernel.toDomNode(this._fields[i], cache));
+	    appendChild(node, plt.types.toDomNode(this._fields[i], cache));
 	}
 	node.appendChild(document.createTextNode(")"));
 	return node;
@@ -108,7 +108,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	    return false;
 	}
 	for (var i = 0; i < this._fields.length; i++) {
-	    if (! plt.Kernel.isEqual(this._fields[i],
+	    if (! plt.types.isEqual(this._fields[i],
 				     other._fields[i],
 				     aUnionFind)) {
 		return false;
@@ -297,8 +297,8 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	if (! (other instanceof plt.types.Cons)) {
 	    return plt.types.Logic.FALSE;
 	}
-	return (plt.Kernel.isEqual(this.first(), other.first(), aUnionFind) &&
-		plt.Kernel.isEqual(this.rest(), other.rest(), aUnionFind));
+	return (plt.types.isEqual(this.first(), other.first(), aUnionFind) &&
+		plt.types.isEqual(this.rest(), other.rest(), aUnionFind));
     };
     
     plt.types.Cons.prototype.first = function() {
@@ -332,7 +332,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
-	    texts.push(plt.Kernel.toWrittenString(p.first(), cache));
+	    texts.push(plt.types.toWrittenString(p.first(), cache));
 	    p = p.rest();
 	}
 	return "(" + texts.join(" ") + ")";
@@ -344,7 +344,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	var texts = [];
 	var p = this;
 	while (! p.isEmpty()) {
-	    texts.push(plt.Kernel.toDisplayedString(p.first(), cache));
+	    texts.push(plt.types.toDisplayedString(p.first(), cache));
 	    p = p.rest();
 	}
 	return "(" + texts.join(" ") + ")";
@@ -358,7 +358,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	node.appendChild(document.createTextNode("("));
 	var p = this;
 	while (! p.isEmpty()) {
-	    appendChild(node, plt.Kernel.toDomNode(p.first(), cache));
+	    appendChild(node, plt.types.toDomNode(p.first(), cache));
 	    p = p.rest();
 	    if (! p.isEmpty()) {
 		appendChild(node, document.createTextNode(" "));
@@ -404,7 +404,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 		return false
 	    }
 	    for (var i = 0; i <  this.length(); i++) {
-		if (! plt.Kernel.isEqual(this.elts[i], other.elts[i], aUnionFind)) {
+		if (! plt.types.isEqual(this.elts[i], other.elts[i], aUnionFind)) {
 		    return false;
 		}
 	    }
@@ -418,7 +418,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	cache.put(this, true);
 	var texts = [];
 	for (var i = 0; i < this.length(); i++) {
-	    texts.push(plt.Kernel.toWrittenString(this.ref(i), cache));
+	    texts.push(plt.types.toWrittenString(this.ref(i), cache));
 	}
 	return "#(" + texts.join(" ") + ")";
     };
@@ -426,7 +426,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	cache.put(this, true);
 	var texts = [];
 	for (var i = 0; i < this.length(); i++) {
-	    texts.push(plt.Kernel.toDisplayedStringString(this.ref(i), cache));
+	    texts.push(plt.types.toDisplayedString(this.ref(i), cache));
 	}
 	return "#(" + texts.join(" ") + ")";
     };
@@ -437,7 +437,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	node.appendChild(document.createTextNode("#("));
 	for (var i = 0; i < this.length(); i++) {
 	    appendChild(node,
-			plt.Kernel.toDomNode(this.ref(i), cache));
+			plt.types.toDomNode(this.ref(i), cache));
 	}
 	node.appendChild(document.createTextNode(")"));
 	return node;
@@ -1152,9 +1152,9 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	if (NumberTower.greaterThanOrEqual(
 	    this.i,
 	    plt.types.Rational.ZERO)) {
-        return plt.Kernel.toWrittenString(this.r) + "+" + plt.Kernel.toWrittenString(this.i)+"i";
+        return plt.types.toWrittenString(this.r) + "+" + plt.types.toWrittenString(this.i)+"i";
 	} else {
-            return plt.Kernel.toWrittenString(this.r) + plt.Kernel.toWrittenString(this.i)+"i";
+            return plt.types.toWrittenString(this.r) + plt.types.toWrittenString(this.i)+"i";
 	}
     };
 
@@ -1691,6 +1691,158 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
     plt.types.String.prototype.toDisplayedString = function(cache) {
         return this;
     }
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    // makeEqHashtable: -> hashtable
+    // Constructs an eq hashtable that uses Moby's getEqHashCode function.
+    var makeEqHashtable = function() {
+	return new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
+				  function(x, y) { return x === y; });
+    };
+
+
+
+
+
+    plt.types.toWrittenString = function(x, cache) {
+	if (! cache) { 
+	    cache = makeEqHashtable();
+	}
+
+	if (x && cache.containsKey(x)) {
+	    return "...";
+	}
+
+	if (x == undefined || x == null) {
+	    return "<undefined>";
+	}
+	if (typeof(x) == 'string') {
+	    return x.toWrittenString();
+	}
+	if (typeof(x) != 'object' && typeof(x) != 'function') {
+	    return x.toString();
+	}
+	if (typeof(x.toWrittenString) !== 'undefined') {
+	    return x.toWrittenString(cache);
+	}
+	if (typeof(x.toDisplayedString) !== 'undefined') {
+	    return x.toDisplayedString(cache);
+	} else {
+	    return x.toString();
+	}
+    };
+
+
+
+    plt.types.toDisplayedString = function(x, cache) {
+	if (! cache) {
+	    cache = makeEqHashtable();
+	}
+	if (x && cache.containsKey(x)) {
+	    return "...";
+	}
+
+	if (x == undefined || x == null) {
+	    return "<undefined>";
+	}
+	if (typeof(x) == 'string') {
+	    return x.toDisplayedString();
+	}
+	if (typeof(x) != 'object' && typeof(x) != 'function') {
+	    return x.toString();
+	}
+	if (typeof(x.toWrittenString) !== 'undefined') {
+	    return x.toWrittenString(cache);
+	}
+	if (typeof(x.toDisplayedString) !== 'undefined') {
+	    return x.toDisplayedString(cache);
+	} else {
+	    return x.toString();
+	}
+    };
+
+
+
+    // toDomNode: scheme-value -> dom-node
+    plt.types.toDomNode = function(x, cache) {
+	if (! cache) {
+	    cache = makeEqHashtable();
+	}
+	if (x && cache.containsKey(x)) {
+	    return document.createTextNode("...");
+	}
+
+	if (x == undefined || x == null) {
+	    var node = document.createTextNode("<undefined>");
+	    return node;
+	}
+	if (typeof(x) == 'string') {
+	    var node = document.createTextNode(x.toWrittenString());
+	    return node;
+	}
+	if (typeof(x) != 'object' && typeof(x) != 'function') {
+	    var node = document.createTextNode(x.toString());
+	    return node;
+	}
+	if (x.nodeType) {
+	    return x;
+	}
+	if (typeof(x.toDomNode) !== 'undefined') {
+	    return x.toDomNode(cache);
+	}
+	if (typeof(x.toWrittenString) !== 'undefined') {
+	    var node = document.createTextNode(plt.types.toWrittenString(x, cache));
+	    return node;
+	}
+	if (typeof(x.toDisplayedString) !== 'undefined') {
+	    var node = document.createTextNode(plt.types.toDisplayedString(x, cache));
+	    return node;
+	} else {
+	    var node = document.createTextNode(x.toString());
+	    return node;
+	}
+    };
+
+
+
+
+
+    var isNumber = function(x) {
+	return (x != null && x != undefined && (x instanceof plt.types.Rational || 
+						x instanceof plt.types.FloatPoint ||
+						x instanceof plt.types.Complex));
+    }
+    plt.types.isNumber = isNumber;
+
+
+
+    // isEqual: X Y -> boolean
+    // Returns true if the objects are equivalent; otherwise, returns false.
+    plt.types.isEqual = function(x, y, aUnionFind) {
+	if (x === y) { return true; }
+
+	if (isNumber(x) && isNumber(y)) {
+	    return NumberTower.equal(x, y);
+	}
+
+	if (x == undefined || x == null) {
+	    return (y == undefined || y == null);
+	}
+
+	if (typeof(x) == 'object' && typeof(y) == 'object' && 
+	    aUnionFind.find(x) === aUnionFind.find(y)) {
+	    return true;
+	} else {
+	    if (typeof(x) == 'object' && typeof(y) == 'object') { 
+		aUnionFind.merge(x, y); 
+	    }
+	    return x.isEqual(y, aUnionFind);
+	}
+    }
+
 
 
 

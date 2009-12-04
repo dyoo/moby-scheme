@@ -73,7 +73,7 @@ var main = {};
     main.runToplevel = function() {
 	var showToplevelExpression = function(val) {
 	    if (val != undefined && val != null) {
-		document.body.appendChild(plt.Kernel.toDomNode(val));
+		document.body.appendChild(plt.types.toDomNode(val));
 		document.body.appendChild(document.createElement("br"));
 	    }
         };

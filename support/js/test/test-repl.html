@@ -106,7 +106,7 @@ function runSource(aSource) {
 		
 		runToplevel(function(val) {
 		    if (val != undefined) {
-			addToInteractions(plt.Kernel.toWrittenString(val) + "\n");
+			addToInteractions(plt.types.toWrittenString(val) + "\n");
 		    }
 		});
 
