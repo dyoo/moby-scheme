@@ -619,7 +619,7 @@
        (cond
          
          [(binding:constant? operator-binding)
-          (list (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
+          (list (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
                                "  && plt.Kernel.apply(" (binding:constant-java-string operator-binding)", "
                                "                       plt.Kernel.list([" (string-join operand-strings ", ") "]),"
                                "                       []))")
@@ -637,7 +637,7 @@
             [(binding:function-var-arity? operator-binding)
              (cond [(> (binding:function-min-arity operator-binding) 0)
                     (list 
-                     (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
+                     (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
                                     " && "
                                     (binding:function-java-string operator-binding)
                                     "("
@@ -649,7 +649,7 @@
                      updated-pinfo)]
                    [else
                     (list
-                     (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
+                     (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
                                     " && "
                                     (binding:function-java-string operator-binding) 
                                     "(["
@@ -668,7 +668,7 @@
                [else
                 (list 
                  (string-append "("
-                                (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx)))
+                                (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
                                 "   && "
                                 (binding:function-java-string operator-binding)
                                 "(" (string-join operand-strings ",") "))")
@@ -684,7 +684,7 @@
              (define operand-strings (rest (first expression-strings+pinfo)))
              (define updated-pinfo (second expression-strings+pinfo))]
        (list
-        (string-append "(" (format "plt.Kernel.setLastLoc(~s)" (Loc->string (stx-loc original-stx))) 
+        (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx))) 
                        " && "
                        "plt.Kernel.apply(" operator-string ", "
                        "                   plt.Kernel.list([" (string-join operand-strings ", ") "]), "
@@ -781,7 +781,7 @@
       (check-duplicate-identifiers! args)
       (list
        (string-append "((function() {\n"
-                      "   plt.Kernel.setLastLoc(" (format "~s" (Loc->string (stx-loc original-stx))) ");\n"
+                      "   plt.Kernel.setLastLoc(" (format "~a" (Loc->javascript-string (stx-loc original-stx))) ");\n"
                       "   var _result_ = (function(" (symbol->string args-sym) ") {\n"
                       (string-join (mapi (lambda (arg-id i)
                                            (string-append "var "
@@ -800,6 +800,15 @@
                       "return _result_;  })())")
        updated-pinfo))))
 
+
+;; Loc->javascript-string: Loc -> string
+;; Produces a hashtable literal.
+(define (Loc->javascript-string a-loc)
+  (format "{offset:~a, line:~a, span:~a, id:~s}" 
+          (Loc-offset a-loc) 
+          (Loc-line a-loc) 
+          (Loc-span a-loc) 
+          (Loc-id a-loc)))
 
 
 ;; floating-number->javascript-string: number -> string

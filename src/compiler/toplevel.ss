@@ -359,7 +359,11 @@
                                   (stx-loc 1)
                                   (datum->stx 2)
                                   (stx->datum 1)
-                                  (Loc->string 1))))))]
+                                  (Loc->string 1)
+                                  (Loc-offset 1)
+                                  (Loc-line 1)
+                                  (Loc-span 1)
+                                  (Loc-id 1))))))]
     top-env-3))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

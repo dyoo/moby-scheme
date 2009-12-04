@@ -2354,7 +2354,15 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    reporter(e.toString());
 	}
 	if (plt.Kernel.lastLoc) {
-	    reporter("Error was raised around " + plt.Kernel.lastLoc);
+	    if (typeof(lastLoc) === 'string') {
+		reporter("Error was raised around " + plt.Kernel.lastLoc);
+	    } else if ('offset' in lastLoc &&
+		       'line' in lastLoc &&
+		       'span' in lastLoc &&
+		       'id' in lastLoc) {
+		reporter("Error was raised around: "
+			 + plt.Kernel.getLastLocString());
+	    }
 	}
     };
 
@@ -2478,6 +2486,13 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	plt.Kernel.lastLoc = loc;
 	return true;
     }
+
+    plt.Kernel.getLastLocString = function() {
+	return ("offset=" + plt.Kernel.lastLoc.offset
+		+ ", line=" + plt.Kernel.lastLoc.line 
+		+ ", span=" + plt.Kernel.lastLoc.span 
+		+ ", id=" + plt.Kernel.lastLoc.id);
+    };
     
 
 
