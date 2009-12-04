@@ -164,7 +164,7 @@
    var aPinfo = get_dash_base_dash_pinfo(plt.types.Symbol.makeInstance('moby'));
 
    return function(s) {
-       var exprs = plt.reader.readSchemeExpressions(s);
+       var exprs = plt.reader.readSchemeExpressions(s, 'standalone');
        var compiledProgram =
            program_dash__greaterthan_compiled_dash_program_slash_pinfo(exprs, aPinfo);
 
