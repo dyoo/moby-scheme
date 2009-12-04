@@ -2157,9 +2157,6 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 
 
 
-    plt.Kernel.toDisplayedString = plt.types.toDisplayedString;
-
-    plt.Kernel.toDomNode = plt.types.toDomNode;
 
 
 
