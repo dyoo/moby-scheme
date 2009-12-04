@@ -2354,14 +2354,14 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	    reporter(e.toString());
 	}
 	if (plt.Kernel.lastLoc) {
-	    if (typeof(lastLoc) === 'string') {
+	    if (typeof(plt.Kernel.lastLoc) === 'string') {
 		reporter("Error was raised around " + plt.Kernel.lastLoc);
-	    } else if ('offset' in lastLoc &&
-		       'line' in lastLoc &&
-		       'span' in lastLoc &&
-		       'id' in lastLoc) {
+	    } else if ('offset' in plt.Kernel.lastLoc &&
+		       'line' in plt.Kernel.lastLoc &&
+		       'span' in plt.Kernel.lastLoc &&
+		       'id' in plt.Kernel.lastLoc) {
 		reporter("Error was raised around: "
-			 + plt.Kernel.getLastLocString());
+			 + plt.Kernel.locToString(plt.Kernel.lastLoc));
 	    }
 	}
     };
@@ -2487,11 +2487,14 @@ if (typeof(plt) == 'undefined') { plt = {} }
 	return true;
     }
 
-    plt.Kernel.getLastLocString = function() {
-	return ("offset=" + plt.Kernel.lastLoc.offset
-		+ ", line=" + plt.Kernel.lastLoc.line 
-		+ ", span=" + plt.Kernel.lastLoc.span 
-		+ ", id=" + plt.Kernel.lastLoc.id);
+    plt.Kernel.locToString = function(lastLoc) {
+	if (typeof(lastLoc) === 'string') {
+	    return lastLoc;
+	}
+	return ("offset=" + lastLoc.offset
+		+ ", line=" + lastLoc.line 
+		+ ", span=" + lastLoc.span 
+		+ ", id=" + lastLoc.id);
     };
     
 
