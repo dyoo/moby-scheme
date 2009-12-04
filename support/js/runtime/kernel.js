@@ -1,4 +1,4 @@
-if (typeof(plt) == 'undefined') { plt = {} }
+if (typeof(plt) === 'undefined') { var plt = {} }
 
 
 //////////////////////////////////////////////////////////////////////
