@@ -1,5 +1,7 @@
 if (typeof(plt) === 'undefined') { var plt = {} }
 
+goog.provide('plt.Kernel');
+
 
 //////////////////////////////////////////////////////////////////////
 // Kernel
