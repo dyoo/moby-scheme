@@ -1742,6 +1742,9 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
     plt.types.MobySyntaxError = MobySyntaxError;
     plt.types.MobyTypeError = MobyTypeError;
     plt.types.MobyRuntimeError = MobyRuntimeError;
+    plt.types.MobyTestingError = MobyTestingError;
+
+
 
 
     plt.types.Box = Box;

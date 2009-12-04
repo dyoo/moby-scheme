@@ -20,6 +20,7 @@ if (typeof(plt) === 'undefined') { var plt = {} }
     var MobySyntaxError = plt.types.MobySyntaxError;
     var MobyTypeError = plt.types.MobyTypeError;
     var MobyRuntimeError = plt.types.MobyRuntimeError;
+    var MobyTestingError = plt.types.MobyTestingError;
 
 
 
@@ -2499,6 +2500,7 @@ if (typeof(plt) === 'undefined') { var plt = {} }
     plt.Kernel.MobySyntaxError = plt.types.MobySyntaxError;
     plt.Kernel.MobyTypeError = plt.types.MobyTypeError;
     plt.Kernel.MobyRuntimeError = plt.types.MobyRuntimeError;
+    plt.Kernel.MobyTestingError = plt.types.MobyTestingError;
 
 
 
