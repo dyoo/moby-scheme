@@ -1,10 +1,5 @@
 // Feeds stimuli inputs into the world.
-
-
-// Depends on kernel.js, types.js, world-config.js
-if (typeof(plt) === 'undefined') { var plt = {}; }
-plt.world = plt.world || {};
-
+goog.provide('plt.world.stimuli');
 
 (function() {
     var stimuli = {}

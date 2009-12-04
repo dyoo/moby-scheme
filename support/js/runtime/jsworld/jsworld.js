@@ -1,11 +1,4 @@
-
-if(typeof(plt) == 'undefined') {   
-    var plt = {};
-}
-
-plt.Jsworld = {};
-
-
+goog.provide('plt.Jsworld');
 
 
 // Stuff here is copy-and-pasted from Chris's JSWorld.  We

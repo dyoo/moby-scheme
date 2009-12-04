@@ -1,5 +1,5 @@
-if (typeof(plt) === 'undefined') { var plt = {}; }
-plt.world = plt.world || {};
+goog.provide('plt.world.MobyJsWorld');
+
 plt.world.MobyJsworld = {};
 
 // Depends on world.js, world-config.js

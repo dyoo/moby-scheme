@@ -1,8 +1,7 @@
+goog.provide('plt.world.Kernel');
+
 
 // Depends on kernel.js, world-config.js, effect-struct.js
-if (typeof(plt) === 'undefined') { var plt = {}; }
-plt.world = plt.world || {};
-plt.world.Kernel = plt.world.Kernel || {};
 (function() {
     
     var world;

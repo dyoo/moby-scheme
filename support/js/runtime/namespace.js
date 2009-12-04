@@ -1,3 +1,6 @@
+goog.provide('plt.namespace')
+
+
 
 // Namespacing mechanism for dynamic evaluation.
 

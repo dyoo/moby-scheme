@@ -1,10 +1,7 @@
 // depends on kernel.js
 
-
-if (typeof(plt) === 'undefined') { var plt = {}; }
-plt.world = plt.world || {};
-plt.world.config = plt.world.config || {};
-
+goog.provide('plt.world.config');
+goog.require('plt.Kernel');
 
 
 (function() {

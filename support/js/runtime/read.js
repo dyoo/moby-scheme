@@ -1,8 +1,5 @@
 // Depends on types.js, stx.js
-
-if (typeof(plt) === 'undefined') { var plt = {}; }
-
-plt.reader = {};
+goog.provide('plt.reader');
 
 
 (function(){
