@@ -2129,7 +2129,7 @@ if (typeof(plt) === 'undefined') { var plt = {} }
     };
     
     plt.Kernel.box_question_ = function(obj) {
-	return obj != null && obj != undefined && obj instanceof Box ;
+	return obj != null && obj != undefined && obj instanceof plt.types.Box ;
     };
 
     plt.Kernel.set_dash_box_bang_ = function(obj, newVal) {

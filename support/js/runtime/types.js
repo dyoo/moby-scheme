@@ -1744,5 +1744,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
     plt.types.MobyRuntimeError = MobyRuntimeError;
 
 
+    plt.types.Box = Box;
+    
 
 })();
