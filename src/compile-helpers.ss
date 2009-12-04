@@ -174,7 +174,8 @@
 
 ;; google-closure-compile: bytes -> bytes
 (define (google-closure-compile source-code)
-  (run-java-jar google-closure-compiler.jar #:bytes source-code #:args (list)))
+  (run-java-jar google-closure-compiler.jar #:bytes source-code #:args 
+                (list "--compilation_level" "ADVANCED_OPTIMIZATIONS")))
 
 
 

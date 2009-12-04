@@ -2250,10 +2250,10 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 	if (typeof(x) != 'object' && typeof(x) != 'function') {
 	    return x.toString();
 	}
-	if ('toWrittenString' in x) {
+	if (typeof(x.toWrittenString) !== 'undefined') {
 	    return x.toWrittenString(cache);
 	}
-	if ('toDisplayedString' in x) {
+	if (typeof(x.toDisplayedString) !== 'undefined') {
 	    return x.toDisplayedString(cache);
 	} else {
 	    return x.toString();
@@ -2278,10 +2278,10 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 	if (typeof(x) != 'object' && typeof(x) != 'function') {
 	    return x.toString();
 	}
-	if ('toWrittenString' in x) {
+	if (typeof(x.toWrittenString) !== 'undefined') {
 	    return x.toWrittenString(cache);
 	}
-	if ('toDisplayedString' in x) {
+	if (typeof(x.toDisplayedString) !== 'undefined') {
 	    return x.toDisplayedString(cache);
 	} else {
 	    return x.toString();
@@ -2314,14 +2314,14 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 	if (x.nodeType) {
 	    return x;
 	}
-	if ('toDomNode' in x) {
+	if (typeof(x.toDomNode) !== 'undefined') {
 	    return x.toDomNode(cache);
 	}
-	if ('toWrittenString' in x) {
+	if (typeof(x.toWrittenString) !== 'undefined') {
 	    var node = document.createTextNode(plt.Kernel.toWrittenString(x, cache));
 	    return node;
 	}
-	if ('toDisplayedString' in x) {
+	if (typeof(x.toDisplayedString) !== 'undefined') {
 	    var node = document.createTextNode(plt.Kernel.toDisplayedString(x, cache));
 	    return node;
 	} else {
@@ -2354,14 +2354,13 @@ if (typeof(plt) === 'undefined') { var plt = {} }
 	    reporter(e.toString());
 	}
 	if (plt.Kernel.lastLoc) {
-	    if (typeof(plt.Kernel.lastLoc) === 'string') {
-		reporter("Error was raised around " + plt.Kernel.lastLoc);
-	    } else if ('offset' in plt.Kernel.lastLoc &&
-		       'line' in plt.Kernel.lastLoc &&
-		       'span' in plt.Kernel.lastLoc &&
-		       'id' in plt.Kernel.lastLoc) {
+	    var loc = plt.Kernel.lastLoc;
+	    if (typeof(loc) === 'string') {
+		reporter("Error was raised around " + loc);
+	    } else if (typeof(loc) !== 'undefined' &&
+		       typeof(loc.line) !== 'undefined') {
 		reporter("Error was raised around: "
-			 + plt.Kernel.locToString(plt.Kernel.lastLoc));
+			 + plt.Kernel.locToString(loc));
 	    }
 	}
     };

@@ -101,7 +101,7 @@ if (typeof(plt) === 'undefined') { var plt = {}; }
 	if (other._constructorName != this._constructorName) {
 	    return false;
 	}
-	if (! '_fields' in other) {
+	if (typeof(other._fields) === 'undefined') {
 	    return false;
 	}
 	if (this._fields.length != other._fields.length) {

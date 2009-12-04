@@ -658,7 +658,7 @@ plt.world.Kernel = plt.world.Kernel || {};
 	    ctx.fillStyle = this.color.toRGBAString();
 	    ctx.fillText(this.msg, x, y);
 	}
-	else if ('mozDrawText' in ctx) {
+	else if (typeof(ctx.mozDrawText) !== 'undefined') {
 	    ctx.mozTextStyle=this.size+"px "+this.font;
 	    // Fix me: I don't quite know how to get the
 	    // baseline right.
