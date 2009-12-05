@@ -25,4 +25,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fix: the value produced by string-ref wasn't a character in 2.26; this has been corrected."))
+(define release-notes '("Bug fix: boxes should be fixed."))
