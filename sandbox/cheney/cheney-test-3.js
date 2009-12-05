@@ -1,5 +1,94 @@
 // Test of possible Cheney on the MTA for tail calls.
 
+
+var usingDirectTrampoline = {};
+(function() {
+    // Test of possible Cheney on the MTA for tail calls.
+    var depth = 0;
+
+    var Bounce = function(continuation, arg) {
+	this.continuation = continuation;
+	this.arg = arg;
+    }
+
+        
+    // startTrampoline: continuation arg ->  void
+    // If we come out with a value, return it.  Otherwise, bounce off the
+    // trampoline and continue working.
+    //
+    // WARNING: startTrampoline is NOT reentrant!
+    var startTrampoline = function(aContinuation, arg) {
+	var currentBouncing = aContinuation;
+	var currentArg = arg;
+	while(true) {
+	    var e = applyContinuation(currentBouncing, currentArg);
+	    if (e instanceof Bounce) {
+		currentBouncing = e.continuation;
+		currentArg = e.arg;
+		depth = 0;
+	    } else {
+		return e;
+	    }
+	}
+    };
+
+    // Apply a continuation.
+    var applyContinuation = function(aContinuation, arg) {
+	if (depth == 0) {
+	    depth++;
+	    return aContinuation.restart(arg);
+	} else {
+	    return new Bounce(aContinuation, arg);
+	}
+    };
+
+    // Under direct trampoline, tail calls aren't treated specially and just
+    // call applyContinuation.
+    var tailCall = function(f, args, whenStackBlowsOver) {
+	return whenStackBlowsOver();
+    };
+
+
+    var Continuation = function(f, env) {
+	this.f = f;
+	this.env = env;
+    };
+
+
+    // Continuation.restart: X -> void
+    Continuation.prototype.restart = function(arg) {
+	return this.f.apply(null, [arg].concat([this.env]));
+    };
+
+
+    // makeContinuation: (X env -> void) env -> Continuation
+    var makeContinuation = function(f, env) {
+	return new Continuation(f, env);
+    };
+
+
+    usingDirectTrampoline.startTrampoline = startTrampoline;
+    usingDirectTrampoline.applyContinuation = applyContinuation;
+    usingDirectTrampoline.makeContinuation = makeContinuation;
+    usingDirectTrampoline.tailCall = tailCall;
+    usingDirectTrampoline.setThreshold = function(n) {
+	trampolineThreshold = n;
+    };    
+})();    
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
 var usingException = {};
 (function() {
     // Test of possible Cheney on the MTA for tail calls.
@@ -88,14 +177,13 @@ var usingException = {};
     usingException.tailCall = tailCall;
     usingException.setThreshold = function(n) {
 	trampolineThreshold = n;
-    };
-    
+    };    
 })();    
     
+
     
     //////////////////////////////////////////////////////////////////////
     var usingTimeout = {};
-    
     (function() {
 
     var trampolineThreshold = 3;
@@ -198,39 +286,39 @@ var tailCall;
 //////////////////////////////////////////////////////////////////////
 function sum(n, k) {
   if (n == 0) {
-      applyContinuation(k, 0);
+      return applyContinuation(k, 0);
   } else {
       var k1 = makeContinuation(sum_lift_1, { k: k, n: n });
       var k2 = makeContinuation(sum_lift_2, { k1: k1 });
-      applyContinuation(k2, n-1);
+      return applyContinuation(k2, n-1);
   }
 }
 
 function sum_lift_1(val, env) {
-  applyContinuation(env.k, val + env.n);
+    return applyContinuation(env.k, val + env.n);
 }
 
 function sum_lift_2(val, env) {
-  sum(val, env.k1);
+    return sum(val, env.k1);
 }
 
 //////////////////////////////////////////////////////////////////////
 function sumIter(n, k) {
-    _sumIter(n, 0, k);
+    return _sumIter(n, 0, k);
 }
 
 function _sumIter(n, acc, k) {
     if (n == 0) {
-	applyContinuation(k, acc);
+	return applyContinuation(k, acc);
     } else {
-	tailCall(_sumIter, [n-1, acc+n, k],
-		 function() {
-		     applyContinuation(makeContinuation(sumIter_lift_2, {n:n, acc:acc, k:k}))});
+	return tailCall(_sumIter, [n-1, acc+n, k],
+			function() {
+			    return applyContinuation(makeContinuation(sumIter_lift_2, {n:n, acc:acc, k:k}))});
     }
 }
 
 function sumIter_lift_2(val, env) {
-    _sumIter(env.n-1, env.acc+env.n, env.k)
+    return _sumIter(env.n-1, env.acc+env.n, env.k)
 }
 
     
@@ -240,10 +328,21 @@ function sumLoop(n, k) {
   for(var i = 1; i <= n; i++) {
     result += i;
   }
-  k(result);
+  return k(result);
 }
 
 //////////////////////////////////////////////////////////////////////
+
+function directTrampolineDriver(f, inputValue, threshold, withResultTo) {
+    makeContinuation = usingDirectTrampoline.makeContinuation;
+    applyContinuation = usingDirectTrampoline.applyContinuation;
+    tailCall = usingDirectTrampoline.tailCall;
+    
+    usingDirectTrampoline.setThreshold(threshold);
+    usingDirectTrampoline.startTrampoline(makeContinuation(function(arg, env) { 
+		return f(Number(arg), makeContinuation(withResultTo, {}))}),
+	inputValue);
+}
 
   
 function exceptionDriver(f, inputValue, threshold, withResultTo) {
@@ -253,8 +352,8 @@ function exceptionDriver(f, inputValue, threshold, withResultTo) {
 
     usingException.setThreshold(threshold);
     usingException.startTrampoline(makeContinuation(function(arg, env) { 
-        f(Number(arg), makeContinuation(withResultTo, {}))}),
-                    inputValue);
+		return f(Number(arg), makeContinuation(withResultTo, {}))}),
+	inputValue);
 }
 
 function timeoutDriver(f, inputValue, threshold, withResultTo) {
@@ -264,12 +363,12 @@ function timeoutDriver(f, inputValue, threshold, withResultTo) {
 
     usingTimeout.setThreshold(threshold);
     usingTimeout.startTrampoline(makeContinuation(function(arg, env) { 
-        f(Number(arg), makeContinuation(withResultTo, {}))}),
-                    inputValue);
+		return f(Number(arg), makeContinuation(withResultTo, {}))}),
+	inputValue);
 }
 
 function plainDriver(f, inputValue, threshold, withResultTo) {
-    f(inputValue, withResultTo);
+    return f(inputValue, withResultTo);
 }
 
 

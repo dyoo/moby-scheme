@@ -10,11 +10,17 @@
   <div>f <input type="text" id="input" value="10000"></div>
   
   <h1>Single test</h1>
+  <input type="button" value="sumUsingDirectTrampoline"
+         onClick="compute(directTrampolineDriver, sum)">
+
   <input type="button" value="sumUsingException"
          onClick="compute(exceptionDriver, sum)">
 
   <input type="button" value="sumUsingTimeout" 
          onClick="compute(timeoutDriver, sum)">
+
+  <input type="button" value="sumIterUsingDirectTrampoline"
+         onClick="compute(directTrampolineDriver, sumIter)">
 
   <input type="button" value="sumIterUsingException"
          onClick="compute(exceptionDriver, sumIter)">
