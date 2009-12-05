@@ -8,7 +8,7 @@ var usingException = {};
     var currentDepth = 0;
 
 
-    function Bounce(continuation, arg) {
+    var Bounce = function(continuation, arg) {
 	this.continuation = continuation;
 	this.arg = arg;
     }
@@ -20,7 +20,7 @@ var usingException = {};
     // trampoline and continue working.
     //
     // WARNING: startTrampoline is NOT reentrant!
-    function startTrampoline(aContinuation, arg) {
+    var startTrampoline = function(aContinuation, arg) {
 	var currentBouncing = aContinuation;
 	var currentArg = arg;
 	currentDepth = 0;
@@ -41,7 +41,7 @@ var usingException = {};
     }
 
     // Apply a continuation.
-    function applyContinuation(aContinuation, arg) {
+    var applyContinuation = function(aContinuation, arg) {
 	// If the depth goes beyond the threshold, throw an exception.
 	// Otherwise, just apply and continue.
 	currentDepth = currentDepth + 1;
@@ -54,8 +54,12 @@ var usingException = {};
 	}
     }
 
+    var tailCall = function(f, args, whenStackBlowsOver) {
+	whenStackBlowsOver();
+    };
 
-    function Continuation(f, env) {
+
+    var Continuation = function(f, env) {
 	this.f = f;
 	this.env = env;
     }
@@ -68,7 +72,7 @@ var usingException = {};
 
 
     // makeContinuation: (X env -> void) env -> Continuation
-    function makeContinuation(f, env) {
+    var makeContinuation = function(f, env) {
 	return new Continuation(f, env);
     }
 
@@ -76,6 +80,7 @@ var usingException = {};
     usingException.startTrampoline = startTrampoline;
     usingException.applyContinuation = applyContinuation;
     usingException.makeContinuation = makeContinuation;
+    usingException.tailCall = tailCall;
     usingException.setThreshold = function(n) {
 	trampolineThreshold = n;
     };
@@ -98,14 +103,14 @@ var usingException = {};
     // trampoline and continue working.
     //
     // WARNING: startTrampoline is NOT reentrant!
-    function startTrampoline(aContinuation, arg) {
+    var startTrampoline = function(aContinuation, arg) {
 	currentDepth = 0; 
 	applyContinuation(aContinuation, arg);
     }
 
 
     // Apply a continuation.
-    function applyContinuation(aContinuation, arg) {
+    var applyContinuation = function(aContinuation, arg) {
 	// If the depth goes beyond the threshold, set up a timeout
 	// Otherwise, just apply and continue.
 	currentDepth = currentDepth + 1;
@@ -118,14 +123,21 @@ var usingException = {};
 	}
     }
 
-    function continueApplication() {
+
+    var tailCall = function(f, args, whenStackBlowsOver) {
+	whenStackBlowsOver();
+    };
+
+
+
+    var continueApplication = function() {
 	currentDepth = 0;
 	currentContinuation.restart(currentArg);
     }
 
 
 
-    function Continuation(f, env) {
+    var Continuation = function(f, env) {
 	this.f = f;
 	this.env = env;
     }
@@ -138,13 +150,14 @@ var usingException = {};
 
 
     // makeContinuation: (X env -> void) env -> Continuation
-    function makeContinuation(f, env) {
+    var makeContinuation = function(f, env) {
 	return new Continuation(f, env);
     }
 
     usingTimeout.startTrampoline = startTrampoline;
     usingTimeout.applyContinuation = applyContinuation;
     usingTimeout.makeContinuation = makeContinuation;
+    usingTimeout.tailCall = tailCall;
     usingTimeout.setThreshold = function(n) {
 	trampolineThreshold = n;
     };
@@ -166,6 +179,8 @@ var usingException = {};
 var makeContinuation;
 var applyContinuation;
 var startTrampoline;
+var tailCall;
+
 
 // User functions should be in CPS form, and all functions should be
 // lifted to the toplevel.
@@ -198,8 +213,9 @@ function _sumIter(n, acc, k) {
     if (n == 0) {
 	applyContinuation(k, acc);
     } else {
-	applyContinuation(
-	    makeContinuation(sumIter_lift_2, {n:n, acc:acc, k:k}));
+	tailCall(_sumIter, [n-1, acc, k],
+		 function() {
+		     applyContinuation(makeContinuation(sumIter_lift_2, {n:n, acc:acc, k:k}))});
     }
 }
 
@@ -223,6 +239,7 @@ function sumLoop(n, k) {
 function exceptionDriver(f, inputValue, threshold, withResultTo) {
     makeContinuation = usingException.makeContinuation;
     applyContinuation = usingException.applyContinuation;
+    tailCall = usingException.tailCall;
 
     usingException.setThreshold(threshold);
     usingException.startTrampoline(makeContinuation(function(arg, env) { 
@@ -233,6 +250,7 @@ function exceptionDriver(f, inputValue, threshold, withResultTo) {
 function timeoutDriver(f, inputValue, threshold, withResultTo) {
     makeContinuation = usingTimeout.makeContinuation;
     applyContinuation = usingTimeout.applyContinuation;
+    tailCall = usingTimeout.tailCall;
 
     usingTimeout.setThreshold(threshold);
     usingTimeout.startTrampoline(makeContinuation(function(arg, env) { 
