@@ -55,7 +55,12 @@ var usingException = {};
     }
 
     var tailCall = function(f, args, whenStackBlowsOver) {
-	whenStackBlowsOver();
+	currentDepth = currentDepth + 1;
+	if (currentDepth <= trampolineThreshold) {
+	    f.apply(null, args);
+	} else {
+	    whenStackBlowsOver();
+	}
     };
 
 
@@ -125,7 +130,12 @@ var usingException = {};
 
 
     var tailCall = function(f, args, whenStackBlowsOver) {
-	whenStackBlowsOver();
+	currentDepth = currentDepth + 1;
+	if (currentDepth <= trampolineThreshold) {
+	    f.apply(null, args);
+	} else {
+	    whenStackBlowsOver();
+	}
     };
 
 
@@ -213,7 +223,7 @@ function _sumIter(n, acc, k) {
     if (n == 0) {
 	applyContinuation(k, acc);
     } else {
-	tailCall(_sumIter, [n-1, acc, k],
+	tailCall(_sumIter, [n-1, acc+n, k],
 		 function() {
 		     applyContinuation(makeContinuation(sumIter_lift_2, {n:n, acc:acc, k:k}))});
     }
