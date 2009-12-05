@@ -1,9 +1,10 @@
 (module reader syntax/module-reader
   -ignored-
+  
   #:wrapper1
   (lambda (t stx?)
     (let* ([body (t)]
-           [wrapped-body `(#%module-begin . ,body)])
+           [wrapped-body `((#%module-begin . ,body))])
       (if stx?
           (datum->syntax #f wrapped-body)
           wrapped-body)))
@@ -18,9 +19,8 @@
            [r 
             (syntax-case mod ()
               [(module name lang* . body)
-               (with-syntax ([lang (datum->syntax
-                                    #'lang* lang #'lang*)])
-                 (syntax/loc mod (module name lang body)))])])
+               (with-syntax ([lang (datum->syntax #'lang* lang #'lang*)])
+                 (syntax/loc mod (module name lang . body)))])])
       (if stx? r (syntax->datum r))))
   
   (require scheme/runtime-path)
