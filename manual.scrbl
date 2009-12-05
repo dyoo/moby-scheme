@@ -641,24 +641,34 @@ you'll also need:
 @subsection{Installing from Developer Sources}
 
 
-To install Moby from the development sources:
+Moby is used as a PLaneT package; to install Moby from the development sources and set
+up a PLaneT local link:
 @itemize[
     #:style 'ordered
 
     @item{Download the Moby source, currently hosted on 
         @link["http://github.com/dyoo/moby-scheme/tree/devel"]{github}
-    and place them in your PLT Scheme collects directory.
-
+    and place them somewhere convenient.
+    
 
     For example, 
 @verbatim{
-        $ cd ~/.plt-scheme/4.2.1/collects
+        $ cd ~/work
         $ git clone git://github.com/dyoo/moby-scheme.git moby
 }
-    downloads the developer sources into a PLT Scheme user collects directory.
+    downloads the developer sources.
     
-    Also, do a @exec{setup-plt -l moby} so that PLT Scheme compiles the
-    Moby source code.
+    Next, add a PLaneT local link to the moby directory:
+    
+@verbatim{
+        $ planet link dyoo moby.plt 2 <<some-high-number>> moby
+}
+
+    with @tt{<<some-high-number>>} replaced with a number greater than the latest released version of Moby.
+    
+    
+    Once this is done, the development link should be established, and you should be able to use
+    Moby as before.
 
 }
      @item{

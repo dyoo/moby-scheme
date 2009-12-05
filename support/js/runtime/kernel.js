@@ -1,8 +1,5 @@
 goog.provide('plt.Kernel');
 
-if (typeof(plt) === 'undefined') { var plt = {} }
-
-
 
 
 //////////////////////////////////////////////////////////////////////

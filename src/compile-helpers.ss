@@ -173,9 +173,12 @@
 
 
 ;; google-closure-compile: bytes -> bytes
-(define (google-closure-compile source-code)
+(define (google-closure-compile source-code #:aggressive? (aggressive? #f) )
   (run-java-jar google-closure-compiler.jar #:bytes source-code #:args 
-                (list "--compilation_level" "ADVANCED_OPTIMIZATIONS")))
+                (if aggressive?
+                    (list "--compilation_level" "ADVANCED_OPTIMIZATIONS")
+                    (list))))
+                
 
 
 
@@ -189,4 +192,4 @@
  [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]
  [yui-compress (bytes? . -> . bytes?)]
- [google-closure-compile (bytes? . -> . bytes?)])
+ [google-closure-compile ((bytes?) (#:aggressive? boolean?) . ->* . bytes?)])
