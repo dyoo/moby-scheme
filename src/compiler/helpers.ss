@@ -17,6 +17,65 @@
             (symbol->string y)))
 
 
+;; expression<: expression expression -> boolean
+;; Induces a well ordering of expressions.
+;; Returns true if one expression is less than another.
+;; Well defined even if x and y are different things.
+(define (expression<? x y)
+  (cond
+    [(< (expression-type-number x)
+        (expression-type-number y))
+     true]
+    [(= (expression-type-number x)
+        (expression-type-number y))
+     (cond
+       [(number? (stx-e x))
+        (< (stx-e x) (stx-e y))]
+       [(string? (stx-e x))
+        (string<? (stx-e x) (stx-e y))]
+       [(boolean? (stx-e x))
+        (< (if (stx-e x) 1 0) (if (stx-e y) 1 0))]
+       [(char? (stx-e x))
+        (char<? (stx-e x) (stx-e y))]
+       [(symbol? (stx-e x))
+        (symbol< (stx-e x) (stx-e y))]
+       [(pair? (stx-e x))
+        (cond
+          [(< (length (stx-e x))
+              (length (stx-e y)))
+           true]
+          [(= (length (stx-e x))
+              (length (stx-e y)))
+           (ormap expression<? (stx-e x) (stx-e y))]
+          [else
+           false])])]
+    [else
+     false]))
+
+
+;; expression-type-number: expression -> number
+;; Produces an arbitrary but consistent numbering on an expression based on its type.
+(define (expression-type-number x)
+  (cond
+    [(number? (stx-e x))
+     0]
+    [(string? (stx-e x))
+     1]
+    [(boolean? (stx-e x))
+     2]
+    [(char? (stx-e x))
+     3]
+    [(symbol? (stx-e x))
+     4]
+    [(empty? (stx-e x))
+     5]
+    [(pair? (stx-e x))
+     6]))
+
+
+
+
+
 ;; program: any -> boolean
 ;; Returns true if the datum is a program.
 (define (program? datum)

@@ -18,7 +18,8 @@
                       gensym-counter         ; number
                       
                       ;; names that aren't allowed to be re-extended.
-                      enduring-names   ; (listof symbol)
+                      enduring-names         ; (listof symbol)
+                      shared-expressions     ; (hashof expression labeled-translation)
                       ))
 
 
@@ -29,7 +30,8 @@
               empty 
               empty-rbtree
               0
-              empty))
+              empty
+              empty-rbtree))
 
 
 
@@ -46,7 +48,8 @@
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
               (pinfo-gensym-counter a-pinfo)
-              empty))
+              empty
+              (pinfo-shared-expressions a-pinfo)))
 
 
 ;; pinfo-update-env: pinfo env -> pinfo
@@ -57,7 +60,8 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
-   (pinfo-enduring-names a-pinfo)))
+   (pinfo-enduring-names a-pinfo)
+   (pinfo-shared-expressions a-pinfo)))
 
 
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
@@ -68,7 +72,8 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
-   (pinfo-enduring-names a-pinfo)))
+   (pinfo-enduring-names a-pinfo)
+   (pinfo-shared-expressions a-pinfo)))
 
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
@@ -86,7 +91,8 @@
               (cons a-module (pinfo-modules a-pinfo))
               (pinfo-used-bindings-hash a-pinfo)
               (pinfo-gensym-counter a-pinfo)
-              (pinfo-enduring-names a-pinfo)))
+              (pinfo-enduring-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)))
 
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
@@ -99,7 +105,8 @@
                              (binding-id a-binding)
                              a-binding)
               (pinfo-gensym-counter a-pinfo)
-              (pinfo-enduring-names a-pinfo)))
+              (pinfo-enduring-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)))
 
 
 ;; pinfo-gensym: pinfo symbol -> (list pinfo symbol)
@@ -109,7 +116,8 @@
                     (pinfo-modules a-pinfo)
                     (pinfo-used-bindings-hash a-pinfo)
                     (add1 (pinfo-gensym-counter a-pinfo))
-                    (pinfo-enduring-names a-pinfo))
+                    (pinfo-enduring-names a-pinfo)
+                    (pinfo-shared-expressions a-pinfo))
 
         (string->symbol
          (string-append (symbol->string a-label)
@@ -174,7 +182,8 @@
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash hash?]
                                  [gensym-counter number?]
-                                 [enduring-names (listof symbol?)])]
+                                 [enduring-names (listof symbol?)]
+                                 [shared-expressions hash?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]

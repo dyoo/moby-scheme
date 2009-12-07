@@ -33,6 +33,19 @@
          (list (rbtree-key t) (rbtree-value t))]))
 
 
+;; rbtree-member? (X X -> boolean) (treeof X Y) X -> boolean
+(define (rbtree-member? lt? t k)
+  (cond [(rbtree-empty? t) 
+         #f]
+        [(lt? k (rbtree-key t)) 
+         (rbtree-lookup lt? (rbtree-lkid t) k)]
+        [(lt? (rbtree-key t) k)
+         (rbtree-lookup lt? (rbtree-rkid t) k)]
+        [else 
+         (list (rbtree-key t) (rbtree-value t))]))
+
+
+
 ;; rbtree-insert: (X X -> boolean) (treeof X Y) X Y -> (treeof X Y)
 (define (rbtree-insert lt? t k v)
   (local [(define (ins t)
@@ -89,6 +102,10 @@
                   [rbtree-insert 
                    ((any/c any/c . -> . boolean?) rbtree? any/c any/c
                                                   . -> . rbtree?)]
+                  [rbtree-member? 
+                   ((any/c any/c . -> . boolean?) rbtree? any/c
+                                                  . -> . boolean?)]
+
                   [rbtree-lookup 
                    ((any/c any/c . -> . boolean?) rbtree? any/c 
                                                   . -> . (or/c false/c (list/c any/c any/c)))]

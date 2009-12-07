@@ -890,6 +890,18 @@
 
 
 
+;; expression-sharable?: expression program-info -> boolean
+;; Returns true if the expression syntax denotes a value that can be shared.
+(define (expression-sharable? an-expr a-pinfo)
+  (or (number? (stx-e an-expr))
+      (string? (stx-e an-expr))
+      (boolean? (stx-e an-expr))
+      (char? (stx-e an-expr))
+      (stx-begins-with? an-expr 'quote)
+      ;; FIXME: add definition that allows toplevel identifiers to be sharable.
+      ))
+
+    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
