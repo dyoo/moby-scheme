@@ -398,6 +398,9 @@
                   [library-require? (any/c . -> . boolean?)]
                   [take ((listof any/c) number? . -> . (listof any/c))]
                   [list-tail ((listof any/c) number? . -> . (listof any/c))]
+
+                  [expression<? (expression? expression? . -> . boolean?)]
+                  
                   [remove-leading-whitespace (string? . -> . string?)]
                   [identifier->munged-java-identifier (symbol? . -> . symbol?)]
                   [range (number? . -> . (listof number?))]

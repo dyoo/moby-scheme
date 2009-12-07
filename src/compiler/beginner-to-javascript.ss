@@ -70,6 +70,8 @@
           
           (define (loop program defns tops a-pinfo)
             (cond [(empty? program)
+                   ;; FIXME: look at the pinfo, and grab the
+                   ;; shared expressions and put them at the top.
                    (make-compiled-program defns 
                                           (string-append "(function (" 
                                                          (symbol->string
@@ -363,6 +365,28 @@
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (expression->javascript-string expr env a-pinfo)
+  (cond
+    [(expression-sharable? expr a-pinfo)
+     (sharable-expression->javascript-string expr env a-pinfo)]
+    [else
+     (unsharable-expression->javascript-string expr env a-pinfo)]))
+
+
+;; Translates an expression into a Java expression string whose evaluation
+;; should produce an Object.
+(define (sharable-expression->javascript-string expr env a-pinfo)
+  #;(cond
+      [(rbtree-member? (pinfo-sharable-expressions a-pinfo)
+                       )
+       ...]
+      [else
+       ...])
+  (unsharable-expression->javascript-string expr env a-pinfo))
+
+
+;; Translates an expression into a Java expression string whose evaluation
+;; should produce an Object.
+(define (unsharable-expression->javascript-string expr env a-pinfo)
   (cond
     ;; (local ([define ...] ...) body)
     [(stx-begins-with? expr 'local)

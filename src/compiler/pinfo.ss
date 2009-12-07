@@ -64,6 +64,19 @@
    (pinfo-shared-expressions a-pinfo)))
 
 
+(define (pinfo-accumulate-shared-expression a-shared-expression a-labeled-translation a-pinfo)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-enduring-names a-pinfo)
+              (rbtree-insert expression<? 
+                             (pinfo-shared-expressions a-pinfo) 
+                             a-shared-expression 
+                             a-labeled-translation)))
+
+                                            
+
 ;; pinfo-accumulate-binding: binding pinfo -> pinfo
 ;; Adds a new binding to a pinfo's set.
 (define (pinfo-accumulate-binding a-binding a-pinfo)
