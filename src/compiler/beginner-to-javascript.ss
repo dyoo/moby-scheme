@@ -11,6 +11,8 @@
 (require "analyzer.ss")
 (require "helpers.ss")
 (require "desugar.ss")
+(require "labeled-translation.ss")
+(require "rbtree.ss")
 
 
 ;; A compiled program is a:
@@ -68,17 +70,33 @@
                                                  (second desugared-program+pinfo)))
           (define toplevel-env (pinfo-env a-pinfo))
           
+          (define (collect-shared-expression-translation-definitions a-pinfo)
+            (string-append "var _SHARED = {};\n"
+                           (rbtree-fold 
+                            (lambda (an-expression a-labeled-translation acc)
+                              (string-append (format "_SHARED[~a] = ~a;\n"
+                                                     (labeled-translation-label
+                                                      a-labeled-translation)
+                                                     (labeled-translation-translation 
+                                                      a-labeled-translation)) 
+                                             acc))
+                            ""
+                            (pinfo-shared-expressions a-pinfo))))
+          
+          
           (define (loop program defns tops a-pinfo)
             (cond [(empty? program)
                    ;; FIXME: look at the pinfo, and grab the
                    ;; shared expressions and put them at the top.
-                   (make-compiled-program defns 
-                                          (string-append "(function (" 
-                                                         (symbol->string
-                                                          (identifier->munged-java-identifier
-                                                           toplevel-expression-show))
-                                                         ") { " tops " })") 
-                                          a-pinfo)]
+                   (make-compiled-program 
+                    (string-append defns
+                                   (collect-shared-expression-translation-definitions a-pinfo))
+                    (string-append "(function (" 
+                                   (symbol->string
+                                    (identifier->munged-java-identifier
+                                     toplevel-expression-show))
+                                   ") { " tops " })") 
+                    a-pinfo)]
                   [else
                    (cond [(defn? (first program))
                           (local [(define defn-string+expr-string+pinfo
@@ -134,6 +152,7 @@
 
 
     
+
 
 
 ;; definition->java-string: definition env pinfo -> (list string string pinfo)
@@ -375,13 +394,25 @@
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (sharable-expression->javascript-string expr env a-pinfo)
-  #;(cond
-      [(rbtree-member? (pinfo-sharable-expressions a-pinfo)
-                       )
-       ...]
+  (cond
+      [(rbtree-member? (pinfo-shared-expressions a-pinfo)
+                       expression<?
+                       expr)
+       (list (format "_SHARED[~a]" (labeled-translation-label
+                                    (rbtree-lookup 
+                                     (pinfo-shared-expressions a-pinfo)
+                                     expression<?
+                                     expr)))
+             a-pinfo)]
       [else
-       ...])
-  (unsharable-expression->javascript-string expr env a-pinfo))
+       (local [(define translation+pinfo
+                 (unsharable-expression->javascript-string expr env a-pinfo))
+               (define updated-pinfo
+                 (pinfo-accumulate-shared-expression expr
+                                                     (first translation+pinfo)
+                                                     (second translation+pinfo)))]
+         (sharable-expression->javascript-string expr env updated-pinfo))]))
+  
 
 
 ;; Translates an expression into a Java expression string whose evaluation

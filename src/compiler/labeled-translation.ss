@@ -5,3 +5,8 @@
 (define-struct labeled-translation (label  ;; number
                                     translation ;; string
                                     ))
+
+
+(provide/contract [struct labeled-translation
+                          ([label number?]
+                           [translation string?])])

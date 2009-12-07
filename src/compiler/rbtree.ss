@@ -95,6 +95,20 @@
     (enlist t empty)))
 
 
+;; rbtree-fold: rbtree (X Y Z -> Z) Z -> Z
+;; Folds a function across all the key/value pairs in the tree.
+(define (rbtree-fold t folding-function acc)
+  (cond
+    [(rbtree-empty? t)
+     acc]
+    [else
+     (folding-function (rbtree-key t)
+                       (rbtree-value t)
+                       (rbtree-fold (rbtree-rkid t) 
+                                    folding-function
+                                    (rbtree-fold (rbtree-lkid t) folding-function acc)))]))
+                       
+
 
 (provide/contract [empty-rbtree 
                    rbtree?]
@@ -111,4 +125,8 @@
                                                   . -> . (or/c false/c (list/c any/c any/c)))]
                   
                   [rbtree->list
-                   (rbtree? . -> . (listof (list/c any/c any/c)))])
+                   (rbtree? . -> . (listof (list/c any/c any/c)))]
+                  
+                  [rbtree-fold
+                   (rbtree? (any/c any/c any/c . -> . any/c) any/c . -> . any/c)]
+                  )

@@ -6,7 +6,7 @@
 (require "permission.ss")
 (require "modules.ss")
 (require "rbtree.ss")
-
+(require "labeled-translation.ss")
 
 
 ;; pinfo (program-info) is the "world" structure for the compilers; 
@@ -64,16 +64,17 @@
    (pinfo-shared-expressions a-pinfo)))
 
 
-(define (pinfo-accumulate-shared-expression a-shared-expression a-labeled-translation a-pinfo)
+(define (pinfo-accumulate-shared-expression a-shared-expression a-translation a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
-              (pinfo-gensym-counter a-pinfo)
+              (add1 (pinfo-gensym-counter a-pinfo))
               (pinfo-enduring-names a-pinfo)
               (rbtree-insert expression<? 
                              (pinfo-shared-expressions a-pinfo) 
                              a-shared-expression 
-                             a-labeled-translation)))
+                             (make-labeled-translation (pinfo-gensym-counter a-pinfo)
+                                                       a-translation))))
 
                                             
 
@@ -204,6 +205,7 @@
                   [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-binding-use (binding? pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-bindings ((listof binding?) pinfo? . -> . pinfo?)]
+                  [pinfo-accumulate-shared-expression (expression? string? pinfo? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
                   [pinfo-permissions (pinfo? . -> . (listof permission?))])
