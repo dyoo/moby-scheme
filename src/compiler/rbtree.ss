@@ -36,13 +36,14 @@
 ;; rbtree-member? (X X -> boolean) (treeof X Y) X -> boolean
 (define (rbtree-member? lt? t k)
   (cond [(rbtree-empty? t) 
-         #f]
+         false]
         [(lt? k (rbtree-key t)) 
-         (rbtree-lookup lt? (rbtree-lkid t) k)]
+         (rbtree-member? lt? (rbtree-lkid t) k)]
         [(lt? (rbtree-key t) k)
-         (rbtree-lookup lt? (rbtree-rkid t) k)]
+         (rbtree-member? lt? (rbtree-rkid t) k)]
         [else 
-         (list (rbtree-key t) (rbtree-value t))]))
+         true]))
+
 
 
 
@@ -110,7 +111,9 @@
                        
 
 
-(provide/contract [empty-rbtree 
+(provide/contract [rbtree? (any/c . -> . boolean?)]
+                  
+                  [empty-rbtree 
                    rbtree?]
                   
                   [rbtree-insert 

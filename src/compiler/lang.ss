@@ -29,6 +29,9 @@
                      image=?
                      set!
                      not
+                     
+                     andmap
+                     ormap
                      ))
 
 
@@ -113,7 +116,10 @@
                      (base:define define)
                      (base:set! set!)
                      (base:not not)
-                     (base:procedure-arity procedure-arity))
+                     (base:procedure-arity procedure-arity)
+                     (base:andmap andmap)
+                     (base:ormap ormap)
+                     )
 
          (all-from-out "stx.ss")
 

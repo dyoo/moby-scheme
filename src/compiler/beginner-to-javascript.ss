@@ -71,17 +71,16 @@
           (define toplevel-env (pinfo-env a-pinfo))
           
           (define (collect-shared-expression-translation-definitions a-pinfo)
-            (string-append "var _SHARED = {};\n"
-                           (rbtree-fold 
-                            (lambda (an-expression a-labeled-translation acc)
-                              (string-append (format "_SHARED[~a] = ~a;\n"
-                                                     (labeled-translation-label
-                                                      a-labeled-translation)
-                                                     (labeled-translation-translation 
-                                                      a-labeled-translation)) 
-                                             acc))
-                            ""
-                            (pinfo-shared-expressions a-pinfo))))
+            (rbtree-fold 
+             (pinfo-shared-expressions a-pinfo)
+             (lambda (an-expression a-labeled-translation acc)
+               (string-append (format "_SHARED[~a] = ~a;\n"
+                                      (labeled-translation-label
+                                       a-labeled-translation)
+                                      (labeled-translation-translation 
+                                       a-labeled-translation)) 
+                              acc))
+             ""))
           
           
           (define (loop program defns tops a-pinfo)
@@ -89,7 +88,8 @@
                    ;; FIXME: look at the pinfo, and grab the
                    ;; shared expressions and put them at the top.
                    (make-compiled-program 
-                    (string-append defns
+                    (string-append "var _SHARED = {};"
+                                   defns
                                    (collect-shared-expression-translation-definitions a-pinfo))
                     (string-append "(function (" 
                                    (symbol->string
@@ -395,14 +395,14 @@
 ;; should produce an Object.
 (define (sharable-expression->javascript-string expr env a-pinfo)
   (cond
-      [(rbtree-member? (pinfo-shared-expressions a-pinfo)
-                       expression<?
+      [(rbtree-member? expression<?
+                       (pinfo-shared-expressions a-pinfo)
                        expr)
        (list (format "_SHARED[~a]" (labeled-translation-label
-                                    (rbtree-lookup 
-                                     (pinfo-shared-expressions a-pinfo)
-                                     expression<?
-                                     expr)))
+                                    (second (rbtree-lookup 
+                                             expression<?
+                                             (pinfo-shared-expressions a-pinfo)
+                                             expr))))
              a-pinfo)]
       [else
        (local [(define translation+pinfo

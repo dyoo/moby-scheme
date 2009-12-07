@@ -194,10 +194,10 @@
 
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
-                                 [used-bindings-hash hash?]
+                                 [used-bindings-hash rbtree?]
                                  [gensym-counter number?]
                                  [enduring-names (listof symbol?)]
-                                 [shared-expressions hash?])]
+                                 [shared-expressions rbtree?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
