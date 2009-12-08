@@ -53,8 +53,8 @@
                      "  )(arguments[0] || plt.Kernel.identity);\n"
                      (apply string-append (map (lambda (a-name)
                                                  (local [(define munged-name (identifier->munged-java-identifier a-name))]
-                                                   (format "_that.~a = ~a;\n"
-                                                           munged-name
+                                                   (format "_that[~s] = ~a;\n"
+                                                           (symbol->string munged-name)
                                                            munged-name
                                                            )))
                                                defined-names))
