@@ -16,9 +16,7 @@
                       modules                ; (listof module-binding) 
                       used-bindings-hash     ; (hashof symbol binding)
                       gensym-counter         ; number
-                      
-                      ;; names that aren't allowed to be re-extended.
-                      enduring-names         ; (listof symbol)
+                      defined-names          ; (hashof symbol binding)
                       shared-expressions     ; (hashof expression labeled-translation)
                       ))
 
@@ -30,7 +28,7 @@
               empty 
               empty-rbtree
               0
-              empty
+              empty-rbtree
               empty-rbtree))
 
 
@@ -43,7 +41,7 @@
 
 
 
-(define (pinfo-clear-enduring-names a-pinfo)
+(define (pinfo-clear-defined-names a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
@@ -60,16 +58,26 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
-   (pinfo-enduring-names a-pinfo)
+   (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)))
 
+;; pinfo-update-defined-names: pinfo rbtree -> pinfo
+;; Updates the defined names of a pinfo.
+(define (pinfo-update-defined-names a-pinfo defined-names)
+  (make-pinfo
+   (pinfo-env a-pinfo)
+   (pinfo-modules a-pinfo)
+   (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-gensym-counter a-pinfo)
+   defined-names
+   (pinfo-shared-expressions a-pinfo)))
 
 (define (pinfo-accumulate-shared-expression a-shared-expression a-translation a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
               (add1 (pinfo-gensym-counter a-pinfo))
-              (pinfo-enduring-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
               (rbtree-insert expression<? 
                              (pinfo-shared-expressions a-pinfo) 
                              a-shared-expression 
@@ -78,22 +86,42 @@
 
                                             
 
-;; pinfo-accumulate-binding: binding pinfo -> pinfo
-;; Adds a new binding to a pinfo's set.
-(define (pinfo-accumulate-binding a-binding a-pinfo)
+;; pinfo-accumulate-defined-binding: binding pinfo -> pinfo
+;; Adds a new defined binding to a pinfo's set.
+(define (pinfo-accumulate-defined-binding a-binding a-pinfo)
   (make-pinfo
    (env-extend (pinfo-env a-pinfo) a-binding)
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
-   (pinfo-enduring-names a-pinfo)
+   (rbtree-insert symbol< 
+                  (pinfo-defined-names a-pinfo)
+                  (binding-id a-binding)
+                  a-binding)
    (pinfo-shared-expressions a-pinfo)))
 
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
-;; Adds a list of bindings to the pinfo's set.
-(define (pinfo-accumulate-bindings bindings a-pinfo)
-  (foldl pinfo-accumulate-binding
+;; Adds a list of defined bindings to the pinfo's set.
+(define (pinfo-accumulate-defined-bindings bindings a-pinfo)
+  (foldl pinfo-accumulate-defined-binding
+         a-pinfo
+         bindings))
+
+
+
+;; pinfo-accumuldate-module-bindings: (listof binding) pinfo -> pinfo
+;; Adds a list of module-imported bindings to the pinfo's known set of bindings, without
+;; including them within the set of defined names.
+(define (pinfo-accumulate-module-bindings bindings a-pinfo)
+  (foldl (lambda (a-binding a-pinfo)
+           (make-pinfo
+            (env-extend (pinfo-env a-pinfo) a-binding)
+            (pinfo-modules a-pinfo)
+            (pinfo-used-bindings-hash a-pinfo)
+            (pinfo-gensym-counter a-pinfo)
+            (pinfo-defined-names a-pinfo)
+            (pinfo-shared-expressions a-pinfo)))
          a-pinfo
          bindings))
 
@@ -105,7 +133,7 @@
               (cons a-module (pinfo-modules a-pinfo))
               (pinfo-used-bindings-hash a-pinfo)
               (pinfo-gensym-counter a-pinfo)
-              (pinfo-enduring-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)))
 
 
@@ -119,7 +147,7 @@
                              (binding-id a-binding)
                              a-binding)
               (pinfo-gensym-counter a-pinfo)
-              (pinfo-enduring-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)))
 
 
@@ -130,7 +158,7 @@
                     (pinfo-modules a-pinfo)
                     (pinfo-used-bindings-hash a-pinfo)
                     (add1 (pinfo-gensym-counter a-pinfo))
-                    (pinfo-enduring-names a-pinfo)
+                    (pinfo-defined-names a-pinfo)
                     (pinfo-shared-expressions a-pinfo))
 
         (string->symbol
@@ -196,16 +224,18 @@
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash rbtree?]
                                  [gensym-counter number?]
-                                 [enduring-names (listof symbol?)]
+                                 [defined-names rbtree?]
                                  [shared-expressions rbtree?])]
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
                   [pinfo-accumulate-module (module-binding? pinfo? . -> . pinfo?)]
-                  [pinfo-accumulate-binding (binding? pinfo? . -> . pinfo?)]
+                  [pinfo-accumulate-defined-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-binding-use (binding? pinfo? . -> . pinfo?)]
-                  [pinfo-accumulate-bindings ((listof binding?) pinfo? . -> . pinfo?)]
+                  [pinfo-accumulate-defined-bindings ((listof binding?) pinfo? . -> . pinfo?)]
+                  [pinfo-accumulate-module-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-shared-expression (expression? string? pinfo? . -> . pinfo?)]
+                  [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
                   [pinfo-permissions (pinfo? . -> . (listof permission?))])

@@ -85,7 +85,7 @@
    
    ;; For functions
    (lambda (id args body)
-     (pinfo-accumulate-binding (bf (stx-e id)
+     (pinfo-accumulate-defined-binding (bf (stx-e id)
                                    false
                                    (length args) 
                                    false 
@@ -95,7 +95,7 @@
    
    ;; For regular defintions
    (lambda (id expr)
-     (pinfo-accumulate-binding (make-binding:constant (stx-e id)
+     (pinfo-accumulate-defined-binding (make-binding:constant (stx-e id)
                                                       (symbol->string 
                                                        (identifier->munged-java-identifier (stx-e id)))
                                                       empty)
@@ -103,7 +103,7 @@
    
    ;; For structure definitions
    (lambda (id fields)
-     (pinfo-accumulate-bindings (struct-definition-bindings (stx-e id) 
+     (pinfo-accumulate-defined-bindings (struct-definition-bindings (stx-e id) 
                                                             (map stx-e fields))
                                 pinfo))))
 
@@ -354,7 +354,7 @@
                          (module-binding-source (first modules)))
                (pinfo-accumulate-module 
                 (first modules)
-                (pinfo-accumulate-bindings
+                (pinfo-accumulate-module-bindings
                  (module-binding-bindings (first modules))
                  pinfo))]
               [else
