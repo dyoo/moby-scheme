@@ -151,7 +151,7 @@
     (loop (first desugared-program+pinfo) "" "" a-pinfo)))
 
 
-    
+
 
 
 
@@ -250,7 +250,7 @@
                             (symbol->string field-name))))
           
           
-	  (define pinfo-1+gensym (pinfo-gensym a-pinfo 'fresh-struct-name))
+          (define pinfo-1+gensym (pinfo-gensym a-pinfo 'fresh-struct-name))
           (define updated-pinfo (first pinfo-1+gensym))
           
           ;; predicate-name: string
@@ -258,19 +258,19 @@
             (symbol->string (identifier->munged-java-identifier 
                              (string->symbol (string-append (symbol->string (stx-e id))
                                                             "?")))))
-
-	  ;; make-unmunged-accessor-name: symbol -> string
-	  (define (make-unmunged-accessor-name a-field)
-	    (string-append (symbol->string (stx-e id))
-			   "-"
-			   (symbol->string a-field)))
-
+          
+          ;; make-unmunged-accessor-name: symbol -> string
+          (define (make-unmunged-accessor-name a-field)
+            (string-append (symbol->string (stx-e id))
+                           "-"
+                           (symbol->string a-field)))
+          
           ;; make-accessor-name: symbol -> string
           (define (make-accessor-name a-field)
             (symbol->string
              (identifier->munged-java-identifier
               (string->symbol
-	       (make-unmunged-accessor-name a-field)))))
+               (make-unmunged-accessor-name a-field)))))
           
           ;; make-mutator-name: symbol -> string
           (define (make-mutator-name a-field)
@@ -311,9 +311,9 @@
                             ".prototype = new plt.types.Struct();\n"
                             
                             )
-
-	     "\n"
-
+             
+             "\n"
+             
              
              ;; make-id
              (string-append "var " (local [(define make-id (string->symbol 
@@ -352,16 +352,16 @@
              ;; mutators
              (string-join 
               (mapi (lambda (a-field an-index)
-                     (string-append "var " (make-mutator-name (stx-e a-field)) " = function(obj,newVal) {\n"
-                                    "	 if (" predicate-name" (obj)) {\n"
-                                    "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
-				    "           obj._fields[" (number->string an-index) "] = newVal;"
-                                    "     } else {\n"
-                                    "        throw new plt.Kernel.MobyRuntimeError("
-                                    "            plt.Kernel.format('" (make-mutator-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
-                                    "     }\n"
-                                    "};\n"))
-                   fields)
+                      (string-append "var " (make-mutator-name (stx-e a-field)) " = function(obj,newVal) {\n"
+                                     "	 if (" predicate-name" (obj)) {\n"
+                                     "		obj." (symbol->string (identifier->munged-java-identifier (stx-e a-field))) " = newVal;\n"
+                                     "           obj._fields[" (number->string an-index) "] = newVal;"
+                                     "     } else {\n"
+                                     "        throw new plt.Kernel.MobyRuntimeError("
+                                     "            plt.Kernel.format('" (make-mutator-name (stx-e a-field)) ": not a " (symbol->string (stx-e id)) ": ~s', [obj]));\n"
+                                     "     }\n"
+                                     "};\n"))
+                    fields)
               "\n")
              
              "\n"
@@ -370,7 +370,7 @@
              (string-append "var " predicate-name " = function(obj) { 
               return obj != null && obj != undefined && obj instanceof "
                             (symbol->string (identifier->munged-java-identifier 
-                                              (stx-e id)))
+                                             (stx-e id)))
                             "; };\n"))
             
             "" ;; no introduced toplevel expressions
@@ -395,24 +395,24 @@
 ;; should produce an Object.
 (define (sharable-expression->javascript-string expr env a-pinfo)
   (cond
-      [(rbtree-member? expression<?
-                       (pinfo-shared-expressions a-pinfo)
-                       expr)
-       (list (format "_SHARED[~a]" (labeled-translation-label
-                                    (second (rbtree-lookup 
-                                             expression<?
-                                             (pinfo-shared-expressions a-pinfo)
-                                             expr))))
-             a-pinfo)]
-      [else
-       (local [(define translation+pinfo
-                 (unsharable-expression->javascript-string expr env a-pinfo))
-               (define updated-pinfo
-                 (pinfo-accumulate-shared-expression expr
-                                                     (first translation+pinfo)
-                                                     (second translation+pinfo)))]
-         (sharable-expression->javascript-string expr env updated-pinfo))]))
-  
+    [(rbtree-member? expression<?
+                     (pinfo-shared-expressions a-pinfo)
+                     expr)
+     (list (format "_SHARED[~a]" (labeled-translation-label
+                                  (second (rbtree-lookup 
+                                           expression<?
+                                           (pinfo-shared-expressions a-pinfo)
+                                           expr))))
+           a-pinfo)]
+    [else
+     (local [(define translation+pinfo
+               (unsharable-expression->javascript-string expr env a-pinfo))
+             (define updated-pinfo
+               (pinfo-accumulate-shared-expression expr
+                                                   (first translation+pinfo)
+                                                   (second translation+pinfo)))]
+       (sharable-expression->javascript-string expr env updated-pinfo))]))
+
 
 
 ;; Translates an expression into a Java expression string whose evaluation
@@ -777,18 +777,18 @@
             [else
              (string-append "(function() { var _result_ = (function(_args_) {
                     return " (binding:function-java-string binding)
-                            "("
-                            (string-join (map (lambda (i)
-                                                (string-append "_args_[" (number->string i)"]"))
-                                              (range (binding:function-min-arity binding)))
-                                         ", ")
-                            ");});"
-                            "_result_._eqHashCode = plt.types.makeEqHashCode();"
-                            "_result_.isEqual = function(other, cache) { return this === other; };"
-                            "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
-                            "_result_.toDisplayedString = _result_.toWrittenString; "
-                            "_result_.procedureArity = " (rational-number->javascript-string (binding:function-min-arity binding)) ";"
-                            "return _result_; })()")])]))]))
+                             "("
+                             (string-join (map (lambda (i)
+                                                 (string-append "_args_[" (number->string i)"]"))
+                                               (range (binding:function-min-arity binding)))
+                                          ", ")
+                             ");});"
+                             "_result_._eqHashCode = plt.types.makeEqHashCode();"
+                             "_result_.isEqual = function(other, cache) { return this === other; };"
+                             "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
+                             "_result_.toDisplayedString = _result_.toWrittenString; "
+                             "_result_.procedureArity = " (rational-number->javascript-string (binding:function-min-arity binding)) ";"
+                             "return _result_; })()")])]))]))
 
 
 
@@ -897,8 +897,8 @@
     
     ;; FIXME: do we need a separate case for integers now?
     #;[(integer? a-num)
-     (rational-number->javascript-string a-num)]
-
+       (rational-number->javascript-string a-num)]
+    
     [(rational? a-num)
      (rational-number->javascript-string a-num)]
     
@@ -956,7 +956,7 @@
       ;; FIXME: add definition that allows toplevel identifiers to be sharable.
       ))
 
-    
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
