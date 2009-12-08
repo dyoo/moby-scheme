@@ -285,4 +285,4 @@ _that.PERMISSION_colon_RECEIVE_dash_SMS = PERMISSION_colon_RECEIVE_dash_SMS;
 _that.PERMISSION_colon_SEND_dash_SMS = PERMISSION_colon_SEND_dash_SMS;
 _that.PERMISSION_colon_LOCATION = PERMISSION_colon_LOCATION;
 _that.PERMISSION_colon_INTERNET = PERMISSION_colon_INTERNET;
-})();})(this)
+})();})(this);

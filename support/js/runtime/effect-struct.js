@@ -406,4 +406,4 @@ _that.effect_colon_lower_dash_sound_dash_volume_question_ = effect_colon_lower_d
 _that.effect_colon_none_question_ = effect_colon_none_question_;
 _that.effect_colon_pause_dash_sound_dash_sound = effect_colon_pause_dash_sound_dash_sound;
 _that.effect_colon_beep_question_ = effect_colon_beep_question_;
-})();})(this)
+})();})(this);
