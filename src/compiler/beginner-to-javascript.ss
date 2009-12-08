@@ -37,13 +37,29 @@
 
 ;; Generates the main output source, exposing all of the definitions to the toplevel.
 (define (compiled-program-main/expose a-compiled-program)
-  (string-append (compiled-program-defns a-compiled-program)
-                 "\n"
-                 "(function() { \n"
-                 "  (" 
-                 (compiled-program-toplevel-exprs a-compiled-program)
-                 "  )(arguments[0] || plt.Kernel.identity);\n"
-                 "})();"))
+  (local [(define defined-names 
+            (rbtree-fold (pinfo-defined-names
+                          (compiled-program-pinfo a-compiled-program))
+                         (lambda (name binding acc)
+                           (cons name acc))
+                         empty))]
+    (begin
+      (string-append "(function(_that) {"
+                     (compiled-program-defns a-compiled-program)
+                     "\n"
+                     "(function() { \n"
+                     "  (" 
+                     (compiled-program-toplevel-exprs a-compiled-program)
+                     "  )(arguments[0] || plt.Kernel.identity);\n"
+                     (apply string-append (map (lambda (a-name)
+                                                 (local [(define munged-name (identifier->munged-java-identifier a-name))]
+                                                   (format "_that[~s] = ~a;\n"
+                                                           (symbol->string munged-name)
+                                                           munged-name
+                                                           )))
+                                               defined-names))
+                     "})();"
+                     "})(this);\n"))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -53,14 +69,24 @@
 ;; program->compiled-program: program -> compiled-program
 ;; Consumes a program and returns a compiled program.
 ;; If pinfo is provided, uses that as the base set of known toplevel definitions.
-
 (define (program->compiled-program program)
   (program->compiled-program/pinfo program 
                                    (get-base-pinfo 'base)))
 
 
 ;; program->compiled-program/pinfo: program pinfo -> compiled-program
+;; Consumes a program and returns a compiled program.
+;; The provided pinfo is used as the base set of known toplevel definitions.
 (define (program->compiled-program/pinfo program input-pinfo)
+  (program->compiled-program/pinfo/at-toplevel? program input-pinfo true))
+
+
+;; program->compiled-program/pinfo/at-toplevel?: program pinfo -> compiled-program
+;; Consumes a program and returns a compiled program.
+;; The provided pinfo is used as the base set of known toplevel definitions.
+;; If not at toplevel, we don't produce the set of shared definitions as a part
+;; of the output.
+(define (program->compiled-program/pinfo/at-toplevel? program input-pinfo at-toplevel?)
   (local [(define pinfo-1+gensym (pinfo-gensym input-pinfo 'toplevel-expression-show))
           (define toplevel-expression-show (second pinfo-1+gensym))
           
@@ -85,12 +111,14 @@
           
           (define (loop program defns tops a-pinfo)
             (cond [(empty? program)
-                   ;; FIXME: look at the pinfo, and grab the
-                   ;; shared expressions and put them at the top.
+                   
                    (make-compiled-program 
-                    (string-append "var _SHARED = {};"
-                                   defns
-                                   (collect-shared-expression-translation-definitions a-pinfo))
+                    (cond [at-toplevel?
+                           (string-append "var _SHARED = {};"
+                                          defns
+                                          (collect-shared-expression-translation-definitions a-pinfo))]
+                          [else
+                           defns])
                     (string-append "(function (" 
                                    (symbol->string
                                     (identifier->munged-java-identifier
@@ -632,8 +660,9 @@
 ;; local-expression->javascript-string: (listof defn) expr env pinfo -> (list string pinfo)
 (define (local-expression->javascript-string defns body env a-pinfo)
   (local [(define inner-compiled-program 
-            (program->compiled-program/pinfo defns
-                                             (pinfo-update-env a-pinfo env)))
+            (program->compiled-program/pinfo/at-toplevel? defns
+                                                          (pinfo-update-env a-pinfo env)
+                                                          false))
           (define inner-body-string+pinfo
             (expression->javascript-string 
              body
@@ -650,7 +679,9 @@
                          "\n"
                          "return " inner-body-string ";
               })())")
-          (pinfo-update-env updated-pinfo (pinfo-env a-pinfo)))))
+          (pinfo-update-defined-names 
+           (pinfo-update-env updated-pinfo (pinfo-env a-pinfo))
+           (pinfo-defined-names a-pinfo)))))
 
 
 
@@ -948,13 +979,22 @@
 ;; expression-sharable?: expression program-info -> boolean
 ;; Returns true if the expression syntax denotes a value that can be shared.
 (define (expression-sharable? an-expr a-pinfo)
-  (or (number? (stx-e an-expr))
-      (string? (stx-e an-expr))
-      (boolean? (stx-e an-expr))
-      (char? (stx-e an-expr))
-      (stx-begins-with? an-expr 'quote)
-      ;; FIXME: add definition that allows toplevel identifiers to be sharable.
-      ))
+  false
+  #;(local [(define (weird-number? x)
+            (or (= x +inf.0)
+                (= x -inf.0)
+                (= x +nan.0)))]
+    (or (and (number? (stx-e an-expr))
+             ;; KLUDGE.  Something breaks when I try to share a weird number.
+             (not (weird-number? (stx-e an-expr)))
+             (not (weird-number? (real-part (stx-e an-expr))))
+             (not (weird-number? (imag-part (stx-e an-expr)))))
+        (string? (stx-e an-expr))
+        (boolean? (stx-e an-expr))
+        (char? (stx-e an-expr))
+        (stx-begins-with? an-expr 'quote)
+        ;; FIXME: add definition that allows toplevel identifiers to be sharable.
+        )))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

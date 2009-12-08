@@ -85,7 +85,7 @@
    
    ;; For functions
    (lambda (id args body)
-     (pinfo-accumulate-binding (bf (stx-e id)
+     (pinfo-accumulate-defined-binding (bf (stx-e id)
                                    false
                                    (length args) 
                                    false 
@@ -95,7 +95,7 @@
    
    ;; For regular defintions
    (lambda (id expr)
-     (pinfo-accumulate-binding (make-binding:constant (stx-e id)
+     (pinfo-accumulate-defined-binding (make-binding:constant (stx-e id)
                                                       (symbol->string 
                                                        (identifier->munged-java-identifier (stx-e id)))
                                                       empty)
@@ -103,7 +103,7 @@
    
    ;; For structure definitions
    (lambda (id fields)
-     (pinfo-accumulate-bindings (struct-definition-bindings (stx-e id) 
+     (pinfo-accumulate-defined-bindings (struct-definition-bindings (stx-e id) 
                                                             (map stx-e fields))
                                 pinfo))))
 
@@ -113,7 +113,11 @@
 ;; struct-definition-bindings: (listof symbol) -> (listof binding)
 ;; Makes the bindings for the identifiers introduced by a structure definition.
 (define (struct-definition-bindings id fields)
-  (local [(define constructor-id 
+  (local [(define type-id id)
+          (define type-id-binding
+            (make-binding:constant id (symbol->string (identifier->munged-java-identifier id))
+                                   (list)))
+          (define constructor-id 
             (string->symbol (string-append "make-" (symbol->string id))))
           (define constructor-binding 
             (bf constructor-id false (length fields) false
@@ -144,7 +148,10 @@
                    (bf mut-id false 2 false
                        (symbol->string (identifier->munged-java-identifier mut-id))))
                  mutator-ids))]
-    (append (list constructor-binding) (list predicate-binding) selector-bindings mutator-bindings)))
+    (append (list type-id-binding)
+            (list constructor-binding)
+            (list predicate-binding)
+            selector-bindings mutator-bindings)))
 
 
 
@@ -354,7 +361,7 @@
                          (module-binding-source (first modules)))
                (pinfo-accumulate-module 
                 (first modules)
-                (pinfo-accumulate-bindings
+                (pinfo-accumulate-module-bindings
                  (module-binding-bindings (first modules))
                  pinfo))]
               [else
