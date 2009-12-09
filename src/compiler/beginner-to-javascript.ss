@@ -926,10 +926,6 @@
 (define (number->javascript-string a-num original-stx)
   (cond 
     
-    ;; FIXME: do we need a separate case for integers now?
-    #;[(integer? a-num)
-     (rational-number->javascript-string a-num)]
-
     [(rational? a-num)
      (rational-number->javascript-string a-num)]
     

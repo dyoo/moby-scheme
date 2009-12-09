@@ -27,62 +27,64 @@
      true]
     [(= (expression-type-number x)
         (expression-type-number y))
-     (cond
-       [(number? (stx-e x))
-        (cond 
-          [(= (stx-e x) +inf.0)
-           false]
-          [(= (stx-e x) -inf.0)
-           (cond
-             [(= (stx-e y) -inf.0)
-              false]
-             [else
-              true])]
-
-          [(= (stx-e x) +nan.0)
-           false]
-          
-          [(and (= (imag-part (stx-e x)) 0)
-                (= (imag-part (stx-e y)) 0))
-           (< (real-part (stx-e x)) (real-part (stx-e y)))]
-          
-          [(and (not (= (imag-part (stx-e x)) 0))
-                (not (= (imag-part (stx-e y)) 0)))
-           (cond [(< (real-part (stx-e x))
-                     (real-part (stx-e y)))
-                  true]
-                 [(= (real-part (stx-e x))
-                     (real-part (stx-e y)))
-                  (< (imag-part (stx-e x))
-                     (imag-part (stx-e y)))]
-                 [else
-                  false])]
-          
-          [(= (imag-part (stx-e x)) 0)
-           true]
-          
-          [else
-           false])]
-       [(string? (stx-e x))
-        (string<? (stx-e x) (stx-e y))]
-       [(boolean? (stx-e x))
-        (< (if (stx-e x) 1 0) (if (stx-e y) 1 0))]
-       [(char? (stx-e x))
-        (char<? (stx-e x) (stx-e y))]
-       [(symbol? (stx-e x))
-        (symbol< (stx-e x) (stx-e y))]
-       [(pair? (stx-e x))
-        (cond
-          [(< (length (stx-e x))
-              (length (stx-e y)))
-           true]
-          [(= (length (stx-e x))
-              (length (stx-e y)))
-           (ormap expression<? (stx-e x) (stx-e y))]
-          [else
-           false])]
-       [(empty? (stx-e x))
-        false])]
+     (begin
+       (printf "Comparing ~s and ~s~n" x y)
+       (cond
+         [(number? (stx-e x))
+          (cond 
+            [(= (stx-e x) +inf.0)
+             false]
+            [(= (stx-e x) -inf.0)
+             (cond
+               [(= (stx-e y) -inf.0)
+                false]
+               [else
+                true])]
+            
+            [(= (stx-e x) +nan.0)
+             false]
+            
+            [(and (= (imag-part (stx-e x)) 0)
+                  (= (imag-part (stx-e y)) 0))
+             (< (real-part (stx-e x)) (real-part (stx-e y)))]
+            
+            [(and (not (= (imag-part (stx-e x)) 0))
+                  (not (= (imag-part (stx-e y)) 0)))
+             (cond [(< (real-part (stx-e x))
+                       (real-part (stx-e y)))
+                    true]
+                   [(= (real-part (stx-e x))
+                       (real-part (stx-e y)))
+                    (< (imag-part (stx-e x))
+                       (imag-part (stx-e y)))]
+                   [else
+                    false])]
+            
+            [(= (imag-part (stx-e x)) 0)
+             true]
+            
+            [else
+             false])]
+         [(string? (stx-e x))
+          (string<? (stx-e x) (stx-e y))]
+         [(boolean? (stx-e x))
+          (< (if (stx-e x) 1 0) (if (stx-e y) 1 0))]
+         [(char? (stx-e x))
+          (char<? (stx-e x) (stx-e y))]
+         [(symbol? (stx-e x))
+          (symbol< (stx-e x) (stx-e y))]
+         [(pair? (stx-e x))
+          (cond
+            [(< (length (stx-e x))
+                (length (stx-e y)))
+             true]
+            [(= (length (stx-e x))
+                (length (stx-e y)))
+             (ormap expression<? (stx-e x) (stx-e y))]
+            [else
+             false])]
+         [(empty? (stx-e x))
+          false]))]
     [else
      false]))
 
