@@ -92,10 +92,7 @@ var main = {};
                 } catch (e) {}
             }
         } catch (e) {
-	    alert(e);
-	    if (plt.Kernel.lastLoc) {
-	        alert("Error was raised around " + plt.Kernel.lastLoc);
-            }
+	    plt.Kernel.reportError(e);
             throw e;
         }
     };
