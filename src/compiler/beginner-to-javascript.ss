@@ -894,7 +894,8 @@
           (Loc-offset a-loc) 
           (Loc-line a-loc) 
           (Loc-span a-loc) 
-          (Loc-id a-loc)))
+          ;; DEFENSIVE: make sure this is a string.
+          (format "~a" (Loc-id a-loc))))
 
 
 ;; floating-number->javascript-string: number -> string
@@ -974,8 +975,8 @@
 ;; expression-sharable?: expression program-info -> boolean
 ;; Returns true if the expression syntax denotes a value that can be shared.
 (define (expression-sharable? an-expr a-pinfo)
-  #;false
-  (local [(define (weird-number? x)
+  false
+  #;(local [(define (weird-number? x)
             (or (= x +inf.0)
                 (= x -inf.0)
                 (= x +nan.0)))]
