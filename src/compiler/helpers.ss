@@ -20,7 +20,10 @@
 ;; expression<: expression expression -> boolean
 ;; Induces an ordering of expressions.
 ;; Returns true if one expression is less than another.
+;; FIXME: this is a partial function at the moment: it doesn't know how to handle
+;; +-inf.0, nan.0, or complex numbers yet.
 (define (expression<? x y)
+
   (cond
     [(< (expression-type-number x)
         (expression-type-number y))
@@ -29,40 +32,8 @@
         (expression-type-number y))
      (cond
        [(number? (stx-e x))
-        (cond 
-          [(= (stx-e x) +inf.0)
-           false]
-          [(= (stx-e x) -inf.0)
-           (cond
-             [(= (stx-e y) -inf.0)
-              false]
-             [else
-              true])]
-
-          [(= (stx-e x) +nan.0)
-           false]
-          
-          [(and (= (imag-part (stx-e x)) 0)
-                (= (imag-part (stx-e y)) 0))
-           (< (real-part (stx-e x)) (real-part (stx-e y)))]
-          
-          [(and (not (= (imag-part (stx-e x)) 0))
-                (not (= (imag-part (stx-e y)) 0)))
-           (cond [(< (real-part (stx-e x))
-                     (real-part (stx-e y)))
-                  true]
-                 [(= (real-part (stx-e x))
-                     (real-part (stx-e y)))
-                  (< (imag-part (stx-e x))
-                     (imag-part (stx-e y)))]
-                 [else
-                  false])]
-          
-          [(= (imag-part (stx-e x)) 0)
-           true]
-          
-          [else
-           false])]
+        ;; FIXME: bug here if x is not a finite real number.
+        (< (stx-e x) (stx-e y))]
        [(string? (stx-e x))
         (string<? (stx-e x) (stx-e y))]
        [(boolean? (stx-e x))
