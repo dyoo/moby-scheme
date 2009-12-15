@@ -925,11 +925,6 @@
 ;; number->java-string: number stx -> string
 (define (number->javascript-string a-num original-stx)
   (cond 
-    
-    ;; FIXME: do we need a separate case for integers now?
-    #;[(integer? a-num)
-       (rational-number->javascript-string a-num)]
-    
     [(rational? a-num)
      (rational-number->javascript-string a-num)]
     
@@ -985,10 +980,13 @@
                 (= x -inf.0)
                 (= x +nan.0)))]
     (or (and (number? (stx-e an-expr))
-             ;; KLUDGE.  Something breaks when I try to share a weird number.
              (not (weird-number? (stx-e an-expr)))
-             (not (weird-number? (real-part (stx-e an-expr))))
-             (not (weird-number? (imag-part (stx-e an-expr)))))
+             (or (integer? (stx-e an-expr))
+                 (real? (stx-e an-expr)))
+             ;; KLUDGE.  Something breaks when I try to share a weird number.
+             #;(not (weird-number? (stx-e an-expr)))
+             #;(not (weird-number? (real-part (stx-e an-expr))))
+             #;(not (weird-number? (imag-part (stx-e an-expr)))))
         (string? (stx-e an-expr))
         (boolean? (stx-e an-expr))
         (char? (stx-e an-expr))

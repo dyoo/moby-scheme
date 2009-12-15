@@ -23,7 +23,6 @@
 ;; FIXME: this is a partial function at the moment: it doesn't know how to handle
 ;; +-inf.0, nan.0, or complex numbers yet.
 (define (expression<? x y)
-
   (cond
     [(< (expression-type-number x)
         (expression-type-number y))

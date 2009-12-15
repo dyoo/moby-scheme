@@ -27,7 +27,7 @@
 
 ;; parse-text-as-program: text -> program
 ;; Given a text, returns a program as well.
-(define (parse-text-as-program a-text [source-name #f])
+(define (parse-text-as-program a-text [source-name "<unknown>"])
   (let* ([ip (open-input-text-editor a-text)])
     (port-count-lines! ip)
     (parameterize ([read-accept-reader #t]
