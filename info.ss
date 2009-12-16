@@ -27,4 +27,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Bug fix: boxes should be fixed."))
+(define release-notes '("Fixes to issues with NaN.  Fixed error where warnings were not showing up with location information.  Fixed definition of eq? on functions."))
