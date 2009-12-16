@@ -651,6 +651,7 @@ this way, Moby should be able to support multiple platforms with a lot
 of code reuse.  Moby handles the other libraries (tilt, location, sms,
 music), though with support only for the Android platforms for now.
 
+
 @subsection{Dependencies}
 
 Moby is mostly written in PLT Scheme, and the project sources are

@@ -19,6 +19,8 @@
 (define categories '(devtools))
 (define repositories '("4.x"))
 
+(define primary-file "moby-lang.ss")
+
 (define scribblings 
   '(("manual.scrbl" ())))
 
