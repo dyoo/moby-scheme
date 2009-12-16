@@ -42,6 +42,9 @@ var getTests;
 		this.assert(Kernel.eqv_question_(FloatPoint.makeInstance(Number.NaN),
 						 FloatPoint.makeInstance(Number.NaN)));
 
+		this.assert(false == Kernel.eqv_question_(FloatPoint.makeInstance(42),
+							  Rational.makeInstance(42)));
+
 
 		this.assert(Kernel.eqv_question_(FloatPoint.makeInstance(Number.POSITIVE_INFINITY),
 						 FloatPoint.makeInstance(Number.POSITIVE_INFINITY)));
@@ -75,6 +78,11 @@ var getTests;
 		this.assert(false == Kernel._equal_(Rational.makeInstance(1, 2),
 						    Rational.makeInstance(2, 5),
 						    [])); 
+
+
+		this.assert(false === Kernel._equal_(FloatPoint.NaN, FloatPoint.NaN, []));
+		this.assert(false === Kernel._equal_(FloatPoint.NaN, Rational.makeInstance(3), []));
+		this.assert(false === Kernel._equal_(Rational.makeInstance(3), FloatPoint.NaN, []));
 
 	    },
 	    

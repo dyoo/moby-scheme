@@ -373,8 +373,8 @@ goog.provide('plt.Kernel');
 	
 
 	eqv_question_ : function(x, y){
-	    if (isNumber(x) && isNumber(y) && x.level() == y.level()) {
-		return NumberTower.equal(x, y);
+	    if (isNumber(x) && isNumber(y)) {
+		return NumberTower.eqv(x, y);
 	    } else if (isChar(x) && isChar(y)) {
 		return x.getValue() == y.getValue();
 	    }

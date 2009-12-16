@@ -794,17 +794,26 @@ goog.provide('plt.types');
     plt.types.FloatPoint = FloatPoint;
 
 
+    var NaN = new FloatPoint(Number.NaN);
+    var inf = new FloatPoint(Number.POSITIVE_INFINITY);
+    var neginf = new FloatPoint(Number.NEGATIVE_INFINITY);
+
+    FloatPoint.pi = new FloatPoint(Math.PI);
+    FloatPoint.e = new FloatPoint(Math.E);
+    FloatPoint.NaN = NaN;
+    FloatPoint.inf = inf;
+    FloatPoint.neginf = neginf;
+
     FloatPoint.makeInstance = function(n) {
+	if (isNaN(n)) {
+	    return FloatPoint.NaN;
+	} else if (n === Number.POSITIVE_INFINITY) {
+	    return FloatPoint.inf;
+	} else if (n === Number.NEGATIVE_INFINITY) {
+	    return FloatPoint.neginf;
+	}
 	return new FloatPoint(n);
     };
-
-    
-    FloatPoint.pi = FloatPoint.makeInstance(Math.PI);
-    FloatPoint.e = FloatPoint.makeInstance(Math.E);
-
-    var NaN = FloatPoint.makeInstance(Number.NaN);
-    var inf = FloatPoint.makeInstance(Number.POSITIVE_INFINITY);
-    var neginf = FloatPoint.makeInstance(Number.NEGATIVE_INFINITY);
 
 
 
@@ -846,13 +855,14 @@ goog.provide('plt.types');
 
 
     FloatPoint.prototype.isEqual = function(other, aUnionFind) {
-	return this.equals(other);
+	return ((other instanceof FloatPoint) &&
+		((this.n == other.n) ||
+		 (isNaN(this.n) && isNaN(other.n))));
     };
 
     FloatPoint.prototype.equals = function(other) {
 	return ((other instanceof FloatPoint) &&
-		((this.n == other.n) ||
-		 (isNaN(this.n) && isNaN(other.n))));
+		((this.n == other.n)));
     };
 
 
@@ -1567,6 +1577,11 @@ goog.provide('plt.types');
 	if (y.level() < x.level()) y = y.lift(x);
 	
 	return x.equals(y);
+    };
+
+    NumberTower.eqv = function(x, y) {
+	return ((x === y) ||
+		(x.level() === y.level() && x.equals(y)));
     };
     
     NumberTower.approxEqual = function(x, y, delta) {
