@@ -795,7 +795,14 @@
          [(binding:function? binding)
           (cond
             [(binding:function-var-arity? binding)
-             (string-append "((function() { var _result_ = (function(_args_) {
+             (string-append "("
+                            "plt.types.liftToplevelToFunctionValue(" 
+                            (binding:function-java-string binding) ","
+                            (string->javascript-string (symbol->string (binding-id binding))) ","
+                            (rational-number->javascript-string (binding:function-min-arity binding)) ","
+                            "plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (rational-number->javascript-string (binding:function-min-arity binding)) "])"
+                            "))")
+             #;(string-append "((function() { var _result_ = (function(_args_) {
                     return " (binding:function-java-string binding)
                              "    .apply(null, _args_.slice(0, " (number->string (binding:function-min-arity binding)) 
                              "                        ).concat([_args_.slice("(number->string (binding:function-min-arity binding))")])); });"
@@ -806,7 +813,15 @@
                              "_result_.procedureArity = plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (rational-number->javascript-string (binding:function-min-arity binding)) "]);"
                              "return _result_; })())")]
             [else
-             (string-append "(function() { var _result_ = (function(_args_) {
+             (string-append "("
+                            "plt.types.liftToplevelToFunctionValue(" 
+                            (binding:function-java-string binding) ","
+                            (string->javascript-string (symbol->string (binding-id binding))) ","
+                            (rational-number->javascript-string (binding:function-min-arity binding)) ","
+                            (rational-number->javascript-string (binding:function-min-arity binding))
+                            "))")
+
+             #;(string-append "(function() { var _result_ = (function(_args_) {
                     return " (binding:function-java-string binding)
                              "("
                              (string-join (map (lambda (i)

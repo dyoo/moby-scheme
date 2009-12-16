@@ -1876,6 +1876,34 @@ goog.provide('plt.types');
 
 
 
+    // liftToplevelToFunctionValue: primitive-function -> scheme-value
+    // Lifts a primitive toplevel or module-bound value to a scheme value.
+    plt.types.liftToplevelToFunctionValue = function(primitiveF,
+					      name,
+					      minArity, 
+					      procedureArityDescription) {
+	if (! primitiveF._mobyLiftedFunction) {
+	    var lifted = function(args) {
+		return primitiveF.apply(null, args.slice(0, minArity).concat([args.slice(minArity)]));
+	    };
+	    lifted._eqHashCode = plt.types.makeEqHashCode();
+	    lifted.isEqual = function(other, cache) { 
+		return this === other; 
+	    }
+	    lifted.toWrittenString = function(cache) { 
+		return "<function:" + name + ">";
+	    };
+	    lifted.toDisplayedString = lifted.toWrittenString;
+	    lifted.procedureArity = procedureArityDescription;
+	    primitiveF._mobyLiftedFunction = lifted;
+	    
+	} 
+	return primitiveF._mobyLiftedFunction;
+    };
+
+
+
+
 
 
     //////////////////////////////////////////////////////////////////////
