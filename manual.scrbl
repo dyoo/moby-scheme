@@ -599,9 +599,46 @@ order of the traversal is not defined.
 
 
 
+  
+@section{Building Android packages}
+
+Moby supports the building of Android @filepath{.apk} packages;
+programs built as Android packages can take advantage of native
+features of the device.
+
+@subsection{Dependencies}
+
+If you wish to generate programs for the Android+Phonegap backend,
+you'll need the following:
+@itemize[
+          @item{@link["http://java.sun.com"]{Java >=1.6}}
+           @item{@link["http://ant.apache.org"]{Apache Ant >=1.7.1}}
+           @item{@link["http://developer.android.com"]{Google Android SDK >= 1.5r3}}
+           ]
+
+Moby finds these by using @scheme[find-executable-path]; make sure that
+@exec{ant} and the @exec{android} binary are in your path; Moby will use
+your PATH variable to find Apache Ant and the Android SDK.
 
 
-@section{Developer details}
+You can verify that @exec{android} and @exec{ant} can be found
+with the following at the interactions window:
+
+@schemeblock[(find-executable-path "android")]
+@schemeblock[(find-executable-path "ant")]
+
+Both of these expressions must return non-false values for Moby
+to be able to build packages.
+
+Running a Moby program generates a web page with links to run the
+program; once the Android SDK has been successfully installed, the
+link that's named "Generate Android APK" will generate an Android
+package.
+
+
+
+
+@section{Underlying developer details}
     
 The compiler takes a ASL program and translates it to Javascript code.
 Moby reimplements the ASL primitives in a Javascript runtime library
@@ -613,8 +650,6 @@ provides access to the native facilities of several cell phones.  In
 this way, Moby should be able to support multiple platforms with a lot
 of code reuse.  Moby handles the other libraries (tilt, location, sms,
 music), though with support only for the Android platforms for now.
-
-
 
 @subsection{Dependencies}
 
@@ -628,25 +663,11 @@ following:
   ]
 
 
-If you wish to generate programs for the Android+Phonegap backend,
-you'll also need:
-@itemize[
-          @item{@link["http://java.sun.com"]{Java >=1.6}}
-           @item{@link["http://ant.apache.org"]{Apache Ant >=1.7.1}}
-           @item{@link["http://developer.android.com"]{Google Android SDK >= 1.5r3}}
-           ]
-
-  
-  
-@subsection{Installing from Developer Sources}
-
-
+@subsection{Setting up the Moby sources from github}
 Moby is used as a PLaneT package; to install Moby from the development sources and set
-up a PLaneT local link:
-@itemize[
-    #:style 'ordered
+up a PLaneT local link.
 
-    @item{Download the Moby source, currently hosted on 
+Download the Moby source, currently hosted on 
         @link["http://github.com/dyoo/moby-scheme/tree/devel"]{github}
     and place them somewhere convenient.
     
@@ -669,30 +690,6 @@ up a PLaneT local link:
     
     Once this is done, the development link should be established, and you should be able to use
     Moby as before.
-
-}
-     @item{
-    2.  If you're going to do Android development, make sure that
-        @exec{ant} and the @exec{android} binary are in your path; Moby will use
-        your PATH variable to find Apache Ant and the Android SDK.
-
-    You can verify that @exec{android} and @exec{ant} can be found with the following:
-@verbatim{
-        $ which android
-        /usr/local/android/tools/android
-
-        $ which ant
-        /usr/bin/ant
-}
-    The path values you get back may differ according to your
-    system's configuration.
-    
-
-}]
-    
-    
-
-
 
 
 @subsection{Running Moby from the command line}
