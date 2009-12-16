@@ -755,13 +755,27 @@ goog.provide('plt.types');
 	    throw new MobyRuntimeError("n undefined");
 
 	if (d == undefined) { d = 1; }
-
 	
 	if (d < 0) {
 	    n = -n;
 	    d = -d;
 	}
-	
+
+	// Defensive edge cases.  We should never hit these
+	// cases, but since we don't yet have bignum arithmetic,
+	// it's possible that we may pass bad arguments to
+	// Integer.makeInstance.
+	if (isNaN (n) || isNaN(d)) {
+	    return FloatPoint.nan;
+	}
+	if (! isFinite(d)) {
+	    return Rational.ZERO;
+	}
+	if (! isFinite(n)) {
+	    return FloatPoint.makeInstance(n);
+	}
+
+
 	if (d == 1 && n in _rationalCache) {
 	    return _rationalCache[n];
 	}
@@ -800,13 +814,13 @@ goog.provide('plt.types');
 
     FloatPoint.pi = new FloatPoint(Math.PI);
     FloatPoint.e = new FloatPoint(Math.E);
-    FloatPoint.NaN = NaN;
+    FloatPoint.nan = NaN;
     FloatPoint.inf = inf;
     FloatPoint.neginf = neginf;
 
     FloatPoint.makeInstance = function(n) {
 	if (isNaN(n)) {
-	    return FloatPoint.NaN;
+	    return FloatPoint.nan;
 	} else if (n === Number.POSITIVE_INFINITY) {
 	    return FloatPoint.inf;
 	} else if (n === Number.NEGATIVE_INFINITY) {
