@@ -971,28 +971,29 @@
                    "\"))")))
 
 
+;; weird-number?: number -> boolean
+;; Returns true if the number is one of the very strange ones.
+(define (weird-number? x)
+  (or (eqv? x +inf.0)
+      (eqv? x -inf.0)
+      (eqv? x +nan.0)))
+
 
 ;; expression-sharable?: expression program-info -> boolean
 ;; Returns true if the expression syntax denotes a value that can be shared.
 (define (expression-sharable? an-expr a-pinfo)
-  false
-  #;(local [(define (weird-number? x)
-            (or (= x +inf.0)
-                (= x -inf.0)
-                (= x +nan.0)))]
-    (or (and (number? (stx-e an-expr))
-             (not (weird-number? (stx-e an-expr)))
-             (or (integer? (stx-e an-expr))
-                 (real? (stx-e an-expr)))
-             ;; KLUDGE.  Something breaks when I try to share a weird number.
-             #;(not (weird-number? (stx-e an-expr)))
-             #;(not (weird-number? (real-part (stx-e an-expr))))
-             #;(not (weird-number? (imag-part (stx-e an-expr)))))
-        (string? (stx-e an-expr))
-        (boolean? (stx-e an-expr))
-        (char? (stx-e an-expr))
-        ;; FIXME: add definition that allows toplevel identifiers to be sharable.
-        )))
+  #;false
+  (or (and (number? (stx-e an-expr))
+           ;; KLUDGE.  Something breaks when I try to share a weird number.
+           (not (weird-number? (stx-e an-expr)))
+           (or (integer? (stx-e an-expr))
+               (real? (stx-e an-expr))))
+      (string? (stx-e an-expr))
+      (boolean? (stx-e an-expr))
+      (char? (stx-e an-expr))
+      ;; FIXME: allow quoted things.
+      ;; FIXME: add definition that allows toplevel identifiers to be sharable.
+      ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

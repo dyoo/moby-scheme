@@ -80,9 +80,9 @@ var getTests;
 						    [])); 
 
 
-		this.assert(false === Kernel._equal_(FloatPoint.NaN, FloatPoint.NaN, []));
-		this.assert(false === Kernel._equal_(FloatPoint.NaN, Rational.makeInstance(3), []));
-		this.assert(false === Kernel._equal_(Rational.makeInstance(3), FloatPoint.NaN, []));
+		this.assert(false === Kernel._equal_(FloatPoint.nan, FloatPoint.nan, []));
+		this.assert(false === Kernel._equal_(FloatPoint.nan, Rational.makeInstance(3), []));
+		this.assert(false === Kernel._equal_(Rational.makeInstance(3), FloatPoint.nan, []));
 
 	    },
 	    
