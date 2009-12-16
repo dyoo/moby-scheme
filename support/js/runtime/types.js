@@ -1876,12 +1876,12 @@ goog.provide('plt.types');
 
 
 
-    // liftToplevelToFunctionValue: primitive-function -> scheme-value
+    // liftToplevelToFunctionValue: primitive-function string fixnum scheme-value -> scheme-value
     // Lifts a primitive toplevel or module-bound value to a scheme value.
     plt.types.liftToplevelToFunctionValue = function(primitiveF,
-					      name,
-					      minArity, 
-					      procedureArityDescription) {
+						     name,
+						     minArity, 
+						     procedureArityDescription) {
 	if (! primitiveF._mobyLiftedFunction) {
 	    var lifted = function(args) {
 		return primitiveF.apply(null, args.slice(0, minArity).concat([args.slice(minArity)]));

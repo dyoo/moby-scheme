@@ -628,17 +628,27 @@ function init() {
 	},
 
 	testHashtables2: function() {
-		this.assert(isEqual(run("(list \"yes\" \"no\")"),
-				    run("(local [(define-struct blob (boy))"+
-					"        (define ht (make-hasheq))"+
-					"        (define b1 (make-blob \"sam\"))"+
-					"        (define b2 (make-blob \"lisa\"))"+
-					"]" +
-					"  (begin " +
-					"    (hash-set! ht b1 \"yes\")" +
-					"    (set-blob-boy! b1 \"lisa\")" +
-					"    (list (hash-ref ht b1 \"no\")" +
-					"          (hash-ref ht b2 \"no\"))))")));
+	    this.assert(isEqual(run("(list \"yes\" \"no\")"),
+				run("(local [(define-struct blob (boy))"+
+				    "        (define ht (make-hasheq))"+
+				    "        (define b1 (make-blob \"sam\"))"+
+				    "        (define b2 (make-blob \"lisa\"))"+
+				    "]" +
+				    "  (begin " +
+				    "    (hash-set! ht b1 \"yes\")" +
+				    "    (set-blob-boy! b1 \"lisa\")" +
+				    "    (list (hash-ref ht b1 \"no\")" +
+				    "          (hash-ref ht b2 \"no\"))))")));
+	},
+
+	testFunctionEq: function() {
+	    // Thanks to Daniel Patterson for exposing an error involving function comparison.
+	    this.assert(run("(eq? + +)"));
+	    this.assert(run("(equal? + +)"));
+	    this.assert(false === run("(equal? + sqr)"));
+	    this.assert(false === run("(eq? + -)"));
+	    this.assert(run("(local [(define (f x) x)] (eq? f f))"));
+	    this.assert(false === run("(local [(define (f x) x) (define (g x) x)] (eq? f g))"));
 	},
 
 

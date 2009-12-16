@@ -799,7 +799,7 @@
                             "plt.types.liftToplevelToFunctionValue(" 
                             (binding:function-java-string binding) ","
                             (string->javascript-string (symbol->string (binding-id binding))) ","
-                            (rational-number->javascript-string (binding:function-min-arity binding)) ","
+                            (number->string (binding:function-min-arity binding)) ","
                             "plt.Kernel.list([plt.types.Symbol.makeInstance('at-least'), " (rational-number->javascript-string (binding:function-min-arity binding)) "])"
                             "))")
              #;(string-append "((function() { var _result_ = (function(_args_) {
@@ -817,7 +817,7 @@
                             "plt.types.liftToplevelToFunctionValue(" 
                             (binding:function-java-string binding) ","
                             (string->javascript-string (symbol->string (binding-id binding))) ","
-                            (rational-number->javascript-string (binding:function-min-arity binding)) ","
+                            (number->string (binding:function-min-arity binding)) ","
                             (rational-number->javascript-string (binding:function-min-arity binding))
                             "))")
 
