@@ -8,188 +8,25 @@ Danny Yoo (dyoo@cs.wpi.edu)
 What is Moby?
 
 Moby is a project from the PLT Scheme team.  The Moby compiler
-consumes Intermediate Student Language (ISL) programs that use World
+consumes Advanced Student Language (ASL) programs that use World[1]
 primitives, and produces applications for mobile platforms.  The
-current prototype supports the Android platform and desktop browsers.
-Our long-term goal is to make Scheme the premiere reactive scripting
+current prototype supports desktop browsers and smartphones.  Our
+long-term goal is to make Scheme the premiere reactive scripting
 language for mobile phones.
 
-Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009;
-his talk "The Moby Scheme Compiler for Smartphones" can be found here:
+Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
+his talk "The Moby Scheme Compiler for Smartphones"[2].
 
-    http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/
+The documentation for Moby can be found on PLaneT:
 
+    http://planet.plt-scheme.org/display.ss?package=moby.plt&owner=dyoo
 
-----------------------------------------------------------------------
+under the Docs link.
 
-How does it work?
+    http://planet.plt-scheme.org/package-source/dyoo/moby.plt/2/30/planet-docs/manual/index.html
 
-The compiler takes a ISL program and translates it to Javascript code.
-We've reimplemented the ISL primitives in a Javascript runtime library
-that's included with the compiled application.  (See
-doc/moby-developer-api.txt for more details.)
 
-To support Android, we use a bridge library called Phonegap, which
-provides access to the native facilities of several cell phones.  In
-this way, we should be able to support multiple platforms with a lot
-of code reuse.  We handle the other libraries (tilt, location, sms,
-music), though with support only for the Android platforms for now.
 
+[1] http://world.cs.brown.edu/
 
-----------------------------------------------------------------------
-
-Dependencies
-
-Moby is mostly written in PLT Scheme, and the project sources are
-hosted by github.com.  To develop with Moby, you will need the
-following:
-
-  PLT Scheme >=4.1.3 (http://plt-scheme.org/)
-  git (http://git-scm.com)
-
-
-
-If you wish to generate programs for the Android+Phonegap backend,
-you'll also need:
-
-  Java >=1.6 (http://java.sun.com/)
-  Apache Ant >=1.7.1 (http://ant.apache.org/)
-  Google Android SDK >= 1.5r3 (http://developer.android.com/)
-
-
-----------------------------------------------------------------------
-
-
-To install Moby from the development sources:
-
-    1.  Grab the Moby source, currently hosted on github at:
-
-        http://github.com/dyoo/moby-scheme/tree/devel
-
-    and place them in your PLT Scheme collects directory.
-
-
-    For example, 
-
-        $ cd ~/.plt-scheme/4.2.1/collects
-        $ git clone git://github.com/dyoo/moby-scheme.git moby
-
-    Also, do a 'setup-plt -l moby' so that PLT Scheme compiles the
-    Moby source code.
-
-
-
-    2.  If you're going to do Android development, make sure that
-        'ant' and the 'android' binary are in your path; Moby will use
-        your PATH variable to find Apache Ant and the Android SDK.
-
-    You can verify that android and ant can be found with the following:
-
-        $ which android
-        /usr/local/android/tools/android
-
-        $ which ant
-        /usr/bin/ant
-
-    The path values you get back may differ according to your
-    system's configuration.
-
-
-
-----------------------------------------------------------------------
-
-Running Moby from DrScheme
-
-
-
-To use Moby from DrScheme, create a file in the Module language, and
-at the top of your program, include the following language line:
-
-    #lang moby
-
-followed by the program.  For example:
-
-    #lang moby
-
-    (define initial-world 0)
-
-    (js-big-bang initial-world (on-tick 1 add1))
-
-
-When this program is run, a web browser should fire off with the
-program running from the web page.
-
-
-
-
-----------------------------------------------------------------------
-
-Running Moby from the command line
-
-
-You can run the Moby command line utility (moby/src/moby.ss) on a Moby
-program to produce a compiled version of your application.  Moby
-supports two output backends, both which rely on Javascript:
-
-    * js: compiles to a web page application, which can be deployed on
-      any web server.
-
-    * js+android-phonegap: compiles to an Android .apk application
-      package; can also use features of the mobile platform.
-
-
-By default, the command line utility will use the js backend.
-
-Let's run moby on the falling-ball.ss example in
-moby/examples/falling-ball.ss.  We can first generate a web program.
-
-    $ cd moby/examples
-    $ mred ../src/moby.ss falling-ball.ss
-    $ cd FallingBall/
-    $ ls
-    index.html  main.js  runtime  test
-
-If you open up index.html from your web browser, you should see a red
-ball falling down the screen.
-
-
-Furthermore, we may want to generate an Android application.
-
-    $ cd moby/examples
-    $ mred ../src/moby.ss -t js+android-phonegap falling-ball.ss
-    $ cd FallingBall
-    $ ls
-    AndroidManifest.xml  build.properties    gen               res
-    assets               build.xml           libs              src
-    bin                  default.properties  local.properties  tests
-
-    $ ls bin
-    classes  classes.dex  DroidGap.ap_  DroidGap-debug.apk
-
-DroidGap-debug.apk is the compiled Android binary.  The Ant build.xml
-build-script in the FallingBall directory can install, uninstall, and
-reinstall the application if the Android emulator is online.
-
-    $ ant install
-Buildfile: build.xml
-
-[some output cut]
-
-install:
-     [echo] Installing bin/DroidGap-debug.apk onto default emulator...
-     [exec] 1594 KB/s (120997 bytes in 0.074s)
-03:38 I/ddms: Created: [Debugger 8610-->1641 inactive]
-03:38 I/ddms: Good handshake from client, sending HELO to 1641
-     [exec] 	pkg: /data/local/tmp/DroidGap-debug.apk
-     [exec] Success
-03:39 I/ddms: Closing [Client pid: 1641]
-
-BUILD SUCCESSFUL
-Total time: 6 seconds
-
-
-After this, you can look at the Android emulator, which should now
-have the FallingBall application installed.
-
-
-----------------------------------------------------------------------
+[2] http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/
