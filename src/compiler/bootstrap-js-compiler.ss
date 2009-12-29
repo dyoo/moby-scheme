@@ -57,7 +57,7 @@
   "../../support/js/runtime/effect-struct.js")
 
 (define-runtime-path bootstrap-teachpack-module-path
-  "../../support/js/runtime/modules/bootstrap-teachpack.js")
+  "../../support/js/runtime/collects/bootstrap-teachpack.js")
 
 
 (define-runtime-path jshashtable.js  "../../support/js/runtime/jshashtable.js")
@@ -109,8 +109,8 @@
 ;; write-bootstrap-module: -> void
 ;; Writes out the bootstrap-teachpack module
 (define (write-bootstrap-teachpack-module)
-  (unless (directory-exists? (build-path moby-runtime-path "modules"))
-    (make-directory (build-path moby-runtime-path "modules")))
+  (unless (directory-exists? (build-path moby-runtime-path "collects"))
+    (make-directory (build-path moby-runtime-path "collects")))
                              
   (call-with-output-file bootstrap-teachpack-module-path
     (lambda (op)
@@ -121,7 +121,7 @@
       (display "if (typeof(plt.bootstrap) == 'undefined') { plt.bootstrap = {}; }\n" op)
       (display "(function() {\n" op)
       (display (compiled-program-main/expose
-                (program->compiled-program/pinfo (read-program "modules/bootstrap-teachpack.ss")
+                (program->compiled-program/pinfo (read-program "collects/bootstrap-teachpack.ss")
                                                  (get-base-pinfo 'moby)))
                op)
       (display "plt.bootstrap.start = start;\n" op)
