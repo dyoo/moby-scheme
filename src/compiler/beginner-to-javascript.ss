@@ -685,6 +685,19 @@
 
 
 
+;; maybe-emit-location-mark: string loc pinfo -> string
+;; Provisionally add the mark for the last location.
+(define (maybe-emit-location-mark a-str a-loc a-pinfo)
+  (cond
+    [(pinfo-with-location-emits? a-pinfo)
+     (format "(plt.Kernel.setLastLoc(~a) && ~a)"
+             (Loc->javascript-string a-loc)
+             a-str)]
+    [else
+     a-str]))
+
+
+
 ;; application-expression->java-string: symbol-stx (listof expr) env pinfo -> (list string pinfo)
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string original-stx operator operands env a-pinfo)
@@ -705,11 +718,13 @@
        (cond
          
          [(binding:constant? operator-binding)
-          (list (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
-                               "  && plt.Kernel.apply(" (binding:constant-java-string operator-binding)", "
-                               "                       plt.Kernel.list([" (string-join operand-strings ", ") "]),"
-                               "                       []))")
-                updated-pinfo)]
+          (list 
+           (maybe-emit-location-mark (string-append "plt.Kernel.apply(" (binding:constant-java-string operator-binding) ", "
+                                                    "                    plt.Kernel.list([" (string-join operand-strings ", ") "]),"
+                                                    "                    [])")
+                                     (stx-loc original-stx)
+                                     updated-pinfo)
+           updated-pinfo)]
          
          [(binding:function? operator-binding)
           (cond
@@ -723,24 +738,24 @@
             [(binding:function-var-arity? operator-binding)
              (cond [(> (binding:function-min-arity operator-binding) 0)
                     (list 
-                     (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
-                                    " && "
-                                    (binding:function-java-string operator-binding)
-                                    "("
-                                    (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
-                                    ", ["
-                                    (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
-                                                 ",")
-                                    "]))")
+                     (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding)
+                                                              "("
+                                                              (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
+                                                              ", ["
+                                                              (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
+                                                                           ",")
+                                                              "])")
+                                               (stx-loc original-stx)
+                                               updated-pinfo)
                      updated-pinfo)]
                    [else
                     (list
-                     (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
-                                    " && "
-                                    (binding:function-java-string operator-binding) 
-                                    "(["
-                                    (string-join operand-strings ",")
-                                    "]))")
+                     (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding) 
+                                                              "(["
+                                                              (string-join operand-strings ",")
+                                                              "])")
+                                               (stx-loc original-stx)
+                                               updated-pinfo)
                      updated-pinfo)])]
             [else
              (cond
@@ -753,11 +768,10 @@
                               original-stx)]
                [else
                 (list 
-                 (string-append "("
-                                (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx)))
-                                "   && "
-                                (binding:function-java-string operator-binding)
-                                "(" (string-join operand-strings ",") "))")
+                 (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding)
+                                                          "(" (string-join operand-strings ",") ")")
+                                           (stx-loc original-stx)
+                                           updated-pinfo)
                  updated-pinfo)])])]))]
     
     ;; General application
@@ -770,11 +784,11 @@
              (define operand-strings (rest (first expression-strings+pinfo)))
              (define updated-pinfo (second expression-strings+pinfo))]
        (list
-        (string-append "(" (format "plt.Kernel.setLastLoc(~a)" (Loc->javascript-string (stx-loc original-stx))) 
-                       " && "
-                       "plt.Kernel.apply(" operator-string ", "
-                       "                   plt.Kernel.list([" (string-join operand-strings ", ") "]), "
-                       "                   []))")
+        (maybe-emit-location-mark (string-append "plt.Kernel.apply(" operator-string ", "
+                                                 "                   plt.Kernel.list([" (string-join operand-strings ", ") "]), "
+                                                 "                   [])")
+                                  (stx-loc original-stx)
+                                  updated-pinfo)
         updated-pinfo))]))
 
 
@@ -882,7 +896,6 @@
       (check-duplicate-identifiers! args)
       (list
        (string-append "((function() {\n"
-                      "   plt.Kernel.setLastLoc(" (format "~a" (Loc->javascript-string (stx-loc original-stx))) ");\n"
                       "   var _result_ = (function(" (symbol->string args-sym) ") {\n"
                       (string-join (mapi (lambda (arg-id i)
                                            (string-append "var "
