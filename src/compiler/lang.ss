@@ -30,6 +30,10 @@
                      set!
                      not
                      
+                     map
+                     foldl
+                     foldr
+                     for-each
                      andmap
                      ormap
                      ))
@@ -119,6 +123,11 @@
                      (base:procedure-arity procedure-arity)
                      (base:andmap andmap)
                      (base:ormap ormap)
+                     (base:foldl foldl)
+                     (base:foldr foldr)
+                     (base:map map)
+                     (base:for-each for-each)
+                     
                      )
 
          (all-from-out "stx.ss")
