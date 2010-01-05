@@ -36,16 +36,20 @@
   "../support/js/runtime/compiler.js")
 
 
+(define-runtime-path
+  standalone-compiler-parent-path
+  "../support/js/standalone-compiler")
+
 ;; The standalone compiler combines the sources of the regular compiler
 ;; and its dependent libraries.
 (define-runtime-path
   standalone-compiler-path
-  "../support/js/runtime/standalone-compiler.js")
+  "../support/js/standalone-compiler/standalone-compiler.js")
 
 
 (define-runtime-path
   compressed-standalone-compiler-path
-  "../support/js/runtime/compressed-standalone-compiler.js")
+  "../support/js/standalone-compiler/compressed-standalone-compiler.js")
 
 
 (define-runtime-path permission-struct-path
@@ -139,7 +143,8 @@
   (boot-compile-to-file "compiler/permission.ss" permission-struct-path)
   (boot-compile-to-file "compiler/effect-struct.ss" effect-struct-path)
   
-  
+  (unless (directory-exists? standalone-compiler-parent-path)
+    (make-directory standalone-compiler-parent-path))
   (call-with-output-file standalone-compiler-path
     (lambda (op)
       (display "// This is the standalone compiler.\n" op)

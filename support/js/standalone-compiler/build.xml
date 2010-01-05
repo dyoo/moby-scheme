@@ -1,0 +1,12 @@
+<project name="StandaloneCompiler" basedir=".">
+
+  <property name="build" location="build"/>
+  <property name="dist" location="dist"/>
+
+  <target name="init">
+    <mkdir dir="${build}">
+  </target>
+
+  <target name="compile" depends="init">
+  </target>
+</project>
