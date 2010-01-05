@@ -211,8 +211,12 @@
 
 ;; bootstrap-compile: path -> string
 (define (bootstrap-compile a-path)
-  (compiled-program-main/expose
-   (program->compiled-program (get-big-program a-path))))
+  (let ([pinfo-without-debugging-location-emits
+         (pinfo-update-with-location-emits? (get-base-pinfo 'base)
+                                            #f)])
+    (compiled-program-main/expose
+     (program->compiled-program/pinfo (get-big-program a-path)
+                                      pinfo-without-debugging-location-emits))))
 
 
 ;; get-big-program: path -> program
