@@ -46,4 +46,13 @@
 	 basedir="${build}"/>
   </target>
 
+  <target name="test" depends="dist">
+    <java classname="org.plt.moby.TestStandaloneCompiler">
+      <classpath>
+	<pathelement location="../../js.jar"/>
+	<pathelement location="${dist}/standalone-compiler.jar"/>
+      </classpath>
+    </java>
+  </target>
+
 </project>
