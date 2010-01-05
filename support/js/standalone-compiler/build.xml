@@ -1,6 +1,7 @@
-<project name="StandaloneCompiler" default="run-rhino" basedir=".">
+<project name="StandaloneCompiler" default="dist" basedir=".">
 
   <property name="src" location="src"/>
+  <property name="src2" location="src2"/>
   <property name="build" location="build"/>
   <property name="dist" location="dist"/>
 
@@ -15,7 +16,7 @@
   <target name="run-rhino" depends="compile-interface">
     <java classname="org.mozilla.javascript.tools.jsc.Main">
       <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="StandaloneCompiler.class"/>
+      <arg value="-o"/> <arg value="_StandaloneCompiler.class"/>
       <arg value="-d"/> <arg path="${build}"/>
       <arg value="-opt"/> <arg value="9"/>
       <arg value="-implements"/> <arg value="org.plt.moby.CompilerI"/>
@@ -29,7 +30,17 @@
   </target>
 
 
-  <target name="dist" depends="run-rhino">
+  <target name="compile-stage-2" depends="run-rhino">
+    <javac srcdir="${src2}" destdir="${build}">
+      <classpath>
+	<pathelement location="../../js.jar"/>
+	<pathelement path="${build}"/>
+      </classpath>
+    </javac>
+  </target>
+
+
+  <target name="dist" depends="run-rhino,compile-stage-2">
     <mkdir dir="${dist}"/>
     <jar destfile="${dist}/standalone-compiler.jar"
 	 basedir="${build}"/>
