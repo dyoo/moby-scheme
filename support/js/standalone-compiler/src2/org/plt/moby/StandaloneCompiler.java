@@ -37,7 +37,7 @@ public class StandaloneCompiler {
 
 
     public CompilationResult compile(String src) {
-	Object[] results = this.impl.compile(src);
+	Object[] results = this.impl.compileScheme(src);
 	String compiledText = results[0].toString();
 	Scriptable permArray = (Scriptable) results[1];
 	double length = (Double) permArray.get("length", permArray);

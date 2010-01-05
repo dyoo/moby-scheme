@@ -1,5 +1,5 @@
 package org.plt.moby;
 
 public interface CompilerI {
-    Object[] compile(String s);
+    Object[] compileScheme(String s);
 }
