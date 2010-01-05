@@ -200,9 +200,9 @@ var permission_dash__greaterthan_android_dash_permissions = function(a_dash_perm
  plt.Kernel.list([_SHARED[31]]) :
  plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),_SHARED[34]))))))))))); };_SHARED[15] = (plt.types.String.makeInstance("PERMISSION:SHAKE"));
 _SHARED[27] = (plt.types.String.makeInstance("android.permission.ACCESS_COARSE_LOCATION"));
-_SHARED[21] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=1583 line=44 span=812 id=\\\"permission.ss\\\"\""));
-_SHARED[26] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=3448 line=86 span=897 id=\\\"permission.ss\\\"\""));
-_SHARED[34] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=4573 line=114 span=844 id=\\\"permission.ss\\\"\""));
+_SHARED[21] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=1583 line=44 span=812 id=\\\"compiler/permission.ss\\\"\""));
+_SHARED[26] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=3448 line=86 span=897 id=\\\"compiler/permission.ss\\\"\""));
+_SHARED[34] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=4573 line=114 span=844 id=\\\"compiler/permission.ss\\\"\""));
 _SHARED[30] = (plt.types.String.makeInstance("android.permission.RECEIVE_SMS"));
 _SHARED[29] = (plt.types.String.makeInstance("android.permission.SEND_SMS"));
 _SHARED[33] = (plt.types.String.makeInstance("android.permission.WAKE_LOCK"));

@@ -2,15 +2,16 @@
 
 (require (only-in scheme/list empty? empty first rest)
          scheme/runtime-path
+         scheme/path
          scheme/port
          scheme/file
          scheme/contract
-         "stx.ss"
-         "pinfo.ss"
-         "../stx-helpers.ss"
-         "../compile-helpers.ss"
-         "beginner-to-javascript.ss"
-         "helpers.ss")
+         "compiler/stx.ss"
+         "compiler/pinfo.ss"
+         "stx-helpers.ss"
+         "compile-helpers.ss"
+         "compiler/beginner-to-javascript.ss"
+         "compiler/helpers.ss")
 
 (require (for-syntax (only-in scheme/base build-path)))
 
@@ -24,49 +25,49 @@
 
 
 (define-runtime-path moby-runtime-path
-  "../../support/js/runtime")
+  "../support/js/runtime")
 
 (define-runtime-path runtime-manifest-path
-  "../../support/js/runtime/MANIFEST")
+  "../support/js/runtime/MANIFEST")
 
 
 (define-runtime-path
   compiler-path
-  "../../support/js/runtime/compiler.js")
+  "../support/js/runtime/compiler.js")
 
 
 ;; The standalone compiler combines the sources of the regular compiler
 ;; and its dependent libraries.
 (define-runtime-path
   standalone-compiler-path
-  "../../support/js/runtime/standalone-compiler.js")
+  "../support/js/runtime/standalone-compiler.js")
 
 
 (define-runtime-path
   compressed-standalone-compiler-path
-  "../../support/js/runtime/compressed-standalone-compiler.js")
+  "../support/js/runtime/compressed-standalone-compiler.js")
 
 
 (define-runtime-path permission-struct-path
-  "../../support/js/runtime/permission-struct.js")
+  "../support/js/runtime/permission-struct.js")
 
 (define-runtime-path syntax-path
-  "../../support/js/runtime/stx.js")
+  "../support/js/runtime/stx.js")
 
 (define-runtime-path effect-struct-path 
-  "../../support/js/runtime/effect-struct.js")
+  "../support/js/runtime/effect-struct.js")
 
 (define-runtime-path bootstrap-teachpack-module-path
-  "../../support/js/runtime/collects/bootstrap-teachpack.js")
+  "../support/js/runtime/collects/bootstrap-teachpack.js")
 
 
-(define-runtime-path jshashtable.js  "../../support/js/runtime/jshashtable.js")
-(define-runtime-path types.js "../../support/js/runtime/types.js")
-(define-runtime-path kernel.js "../../support/js/runtime/kernel.js")
-(define-runtime-path read.js "../../support/js/runtime/read.js")
+(define-runtime-path jshashtable.js  "../support/js/runtime/jshashtable.js")
+(define-runtime-path types.js "../support/js/runtime/types.js")
+(define-runtime-path kernel.js "../support/js/runtime/kernel.js")
+(define-runtime-path read.js "../support/js/runtime/read.js")
 
 
-(define-runtime-path compressed-runtime.js "../../support/js/runtime/compressed-runtime.js")
+(define-runtime-path compressed-runtime.js "../support/js/runtime/compressed-runtime.js")
 
 
 
@@ -121,7 +122,7 @@
       (display "if (typeof(plt.bootstrap) == 'undefined') { plt.bootstrap = {}; }\n" op)
       (display "(function() {\n" op)
       (display (compiled-program-main/expose
-                (program->compiled-program/pinfo (read-program "collects/bootstrap-teachpack.ss")
+                (program->compiled-program/pinfo (read-program "compiler/collects/bootstrap-teachpack.ss")
                                                  (get-base-pinfo 'moby)))
                op)
       (display "plt.bootstrap.start = start;\n" op)
@@ -133,10 +134,10 @@
 ;; Writes out the javascript compiler and other files.
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
-  (boot-compile-to-file "beginner-to-javascript.ss" compiler-path)
-  #;(boot-compile-to-file "stx.ss" syntax-path)
-  (boot-compile-to-file "permission.ss" permission-struct-path)
-  (boot-compile-to-file "effect-struct.ss" effect-struct-path)
+  (boot-compile-to-file "compiler/beginner-to-javascript.ss" compiler-path)
+  #;(boot-compile-to-file "compiler/stx.ss" syntax-path)
+  (boot-compile-to-file "compiler/permission.ss" permission-struct-path)
+  (boot-compile-to-file "compiler/effect-struct.ss" effect-struct-path)
   
   
   (call-with-output-file standalone-compiler-path
@@ -152,7 +153,7 @@
       (copy-path-to-port syntax-path op)
       (copy-path-to-port read.js op)
 
-      (display (bootstrap-compile "beginner-to-javascript.ss") op)
+      (display (bootstrap-compile "compiler/beginner-to-javascript.ss") op)
       
       (display "
    function listToArray(aList) {
@@ -237,7 +238,8 @@
   (unique
    (let loop ([a-path a-path])
      (let ([new-paths 
-            (get-require-paths (read-program a-path))])
+            (get-require-paths (read-program a-path)
+                               (path-only a-path))])
        (cond
          [(empty? new-paths)
           (list a-path)]
@@ -273,17 +275,23 @@
 
 
 
-;; get-require-paths: program -> (listof module-path)
+;; get-require-paths: program path -> (listof module-path)
 ;; Produces the module paths that are required in the program.
-(define (get-require-paths a-program)
+(define (get-require-paths a-program base-path)
   (cond
     [(empty? a-program)
      empty]
     [(library-require? (first a-program))
-     (append (map stx-e (rest (stx-e (first a-program))))
-             (get-require-paths (rest a-program)))]
+     (append (map (lambda (x)
+                    (let ([a-path (stx-e x)])
+                      (cond [(string? a-path)
+                             (path->string (build-path base-path a-path))]
+                            [else
+                             a-path])))
+                  (rest (stx-e (first a-program))))
+             (get-require-paths (rest a-program) base-path))]
     [else
-     (get-require-paths (rest a-program))]))
+     (get-require-paths (rest a-program) base-path)]))
 
 
 ;; remove-provide/contracts: program -> program
