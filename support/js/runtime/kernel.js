@@ -76,7 +76,7 @@ goog.provide('plt.Kernel');
     var UnionFind = function() {
 	// this.parenMap holds the arrows from an arbitrary pointer
 	// to its parent.
-	this.parentMap = makeEqHashtable();
+	this.parentMap = plt.types.makeLowLevelEqHash();
     }
 
     // find: ptr -> UnionFindNode
@@ -1506,93 +1506,23 @@ goog.provide('plt.Kernel');
     };
 
 
+
+
     //////////////////////////////////////////////////////////////////////
-
-
-    // makeEqHashtable: -> hashtable
-    // Constructs an eq hashtable that uses Moby's getEqHashCode function.
-    var makeEqHashtable = function() {
-	return new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
-				  function(x, y) { return x === y; });
-    };
-
-
-    var EqHashTable = function(inputHash) {
-	this.hash = makeEqHashtable();
-	this._eqHashCode = plt.types.makeEqHashCode();
-    };
-
-    EqHashTable.prototype.toWrittenString = function(cache) {
-	return "<hash>";
-    };
-
-    EqHashTable.prototype.toDisplayedString = function(cache) {
-	return "<hash>";
-    };
-
-    EqHashTable.prototype.isEqual = function(other, aUnionFind) {
-	if (other == undefined || other == null || (! (other instanceof EqHashTable))) {
-	    return false; 
-	}
-
-	if (this.hash.keys().length != other.hash.keys().length) { 
-	    return false;
-	}
-
-	var keys = this.hash.keys();
-	for (var i = 0; i < keys.length; i++){
-	    if (! (this.hash.get(keys[i]) === other.hash.get(keys[i]))) {
-		return false;
-	    }
-	}
-	return true;
-    };
-
-    var EqualHashTable = function(inputHash) {
-	this.hash = new plt._Hashtable(function(x) { 
-                                           return plt.types.toWrittenString(x); 
-                                       },
-				       function(x, y) {
-					   return plt.Kernel.equal_question_(x, y); 
-				       });
-	this._eqHashCode = plt.types.makeEqHashCode();
-    };
-    EqualHashTable.prototype.toWrittenString = function(cache) {
-	return "<hash>";
-    };
-    EqualHashTable.prototype.toDisplayedString = function(cache) {
-	return "<hash>";
-    };
-
-    EqualHashTable.prototype.isEqual = function(other, aUnionFind) {
-	if (other == undefined || other == null || (! (other instanceof EqualHashTable))) {
-	    return false; 
-	}
-
-	if (this.hash.keys().length != other.hash.keys().length) { 
-	    return false;
-	}
-
-	var keys = this.hash.keys();
-	for (var i = 0; i < keys.length; i++){
-	    if (! (plt.Kernel.isEqual(this.hash.get(keys[i]),
-				      other.hash.get(keys[i]),
-				      aUnionFind))) {
-		return false;
-	    }
-	}
-	return true;
-    };
+    // Hashtable functions
 
 
     // makeHashEq: -> hash
     plt.Kernel.makeHashEq = function() {
-	return new EqHashTable();
+	return new plt.types.EqHashTable();
     };
 
+
+    // makeHash: -> hash
     plt.Kernel.makeHash = function() {
-	return new EqualHashTable();
+	return new plt.types.EqualHashTable();
     };
+
 
     // plt.Kernel.hashSet: hash object value -> undefined
     // Mutates the hash with a new key/value binding.
@@ -1645,9 +1575,10 @@ goog.provide('plt.Kernel');
     };
 
     var isHash = function(x) {
-	return ((x != null) && 
-		(x != undefined) && 
-		((x instanceof EqHashTable) || (x instanceof EqualHashTable)));
+	return ((x !== null) && 
+		(x !== undefined) && 
+		((x instanceof plt.types.EqHashTable) || 
+		 (x instanceof plt.types.EqualHashTable)));
     }
     plt.Kernel.isHash = isHash;
 
