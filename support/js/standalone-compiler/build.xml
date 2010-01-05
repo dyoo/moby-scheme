@@ -1,4 +1,4 @@
-<project name="StandaloneCompiler" basedir=".">
+<project name="StandaloneCompiler" default="run-rhino" basedir=".">
 
   <property name="src" location="src"/>
   <property name="build" location="build"/>
@@ -26,6 +26,13 @@
 	<pathelement path="${build}"/>
       </classpath>
     </java>
+  </target>
+
+
+  <target name="dist" depends="run-rhino">
+    <mkdir dir="${dist}"/>
+    <jar destfile="${dist}/standalone-compiler.jar"
+	 basedir="${build}"/>
   </target>
 
 </project>
