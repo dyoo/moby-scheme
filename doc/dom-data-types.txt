@@ -1,4 +1,5 @@
-Here's a description of the data types that will be supported in interactions output and error messages.
+Here's a description of the data types and DOM representations that I
+think we should have for interactions output and error messages.
 
 -----
 
@@ -60,23 +61,34 @@ A SchemeValue is one of the following:
                <span class="SchemeValue:Struct.rparen">)</span>
           </span>
 
-
     Box of SchemeValue
     e.g.  <span class="SchemeValue:Box">
               <span class="SchemeValue:Box.lparen">(<span>
               <span class="SchemeValue:Box.keyword">box<span>
+	      <span class="SchemeValue:Box.item">
+                <span class="SchemeValue:String">"I am in a box"</span>
+              </span>
               <span class="SchemeValue:Box.rparen">)<span>
           </span>
-
 
     Hash
     e.g.  <span class="SchemeValue:Hash">
               <span class="SchemeValue:Hash.keyword">&lt;#hash&gt;<span>
           </span>
 
-    Function
+    Function of String * Location
     e.g   <span class="SchemeValue:Function">
-              <span class="SchemeValue:function.keyword">&lt;function&gt;<span>
+              <span class="SchemeValue:function.keyword">&lt;function:circle&gt;<span>
+              <span class="SchemeValue:function.name">circle</span>
+              <span class="SchemeValue:function.location">
+                  <span class="Location">
+                      <span class="Location.offset">0</span>
+                      <span class="Location.line">0</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">0</span>
+                      <span class="Location.id">world.js</span>
+                  </span>
+              </span>
           </span>
 
 
@@ -91,9 +103,7 @@ A SchemeValue is one of the following:
                           <span class="SchemeValue:Number">1</span>
                       </span>
                       <span class="SchemeValue:List.item">
-                          <span class="SchemeValue:SharedReference">
-                              <span class="SchemeValue:SharedReference.reference">#1</span>
-                          </span>
+                          <span class="SchemeValue:SharedReference">#1</span>
                       </span>
                       <span class="SchemeValue:List.rparen">)</span>
                   <span>
@@ -102,9 +112,7 @@ A SchemeValue is one of the following:
 
 
     SharedReference of string
-    e.g.  <span class="SchemeValue:SharedReference">
-              <span class="SchemeValue:SharedReference.reference">#1</span>
-          <span>
+    e.g.  <span class="SchemeValue:SharedReference">#1</span>
 
 
     Undefined
@@ -115,7 +123,7 @@ A SchemeValue is one of the following:
 
     OpaqueObject of string                ;; catchall for a Javascript object value with some string rendering
     e.g.  <span class="SchemeValue:Opaque">
-              <span class="SchemeValue:Opaque.value">blah</span>
+              blah
           </span>
 
 
@@ -125,14 +133,14 @@ An Arity is one of:
 
     Fixed of number
     e.g.  <span class="Arity:Fixed">
-              <span class="Arity.Fixed.exact">2</span>
+              <span class="Arity:Fixed.exact">2</span>
           </span>
 
 
     Variable of number
     e.g.  <span class="Arity:Variable">
                <span class="Arity:Variable.minimum">3</span>
- 	  </span>
+          </span>
     e.g.  <span class="Arity:Variable">
                <span class="Arity:Variable.minimum">1</span>
           </span>
@@ -141,15 +149,15 @@ An Arity is one of:
     Mixed of (listof (Fixed | Variable))
     e.g.  <span class="Arity:Mixed">
               <span class="Arity:Mixed.item">
-	          <span class="Arity.Fixed">
-                      <span class="Arity.Fixed.exact">2</span>
-	          </span>
+                  <span class="Arity:Fixed">
+                      <span class="Arity:Fixed.exact">2</span>
+                  </span>
               </span>
               <span class="Arity:Mixed.item">
-	          <span class="Arity.Fixed">
-                      <span class="Arity.Fixed.exact">3</span>
+                  <span class="Arity:Fixed">
+                      <span class="Arity:Fixed.exact">3</span>
                   </span>
-	      </span>
+              </span>
           </span>
 
 
@@ -161,9 +169,9 @@ A Location is a:
     e.g.  <span class="Location">
              <span class="Location.offset">24</span>
              <span class="Location.line">1</span>
-	     <span class="Location.column">0</span>
-	     <span class="Location.span">4</span>
-	     <span class="Location.id">&lt;definitions&gt;</span>
+             <span class="Location.column">0</span>
+             <span class="Location.span">4</span>
+             <span class="Location.id">&lt;definitions&gt;</span>
           </span>
 
 
@@ -174,149 +182,269 @@ An Error is one of the following:
 
     UnclosedLexicalTokenError of string * Location         ;; reason, location
     e.g.  <span class="Error:UnclosedLexicalTokenError">
-              <span class="Error:UnclosedLexicalTokenError.reason">I saw " to start a string, but no " to close it</span>
-	      <span class="Error:UnclosedLexicalTokenError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">1</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">0</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:UnclosedLexicalTokenError.reason">I saw " to start a string, but no " to close it.</span>
+              <span class="Error:UnclosedLexicalTokenError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">1</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">0</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
 
 
     UnrecognizedLexicalTokenError of string * Location         ;; reason, location
     e.g.  <span class="Error:UnrecognizedLexicalTokenError">
-              <span class="Error:UnrecognizedLexicalTokenError.reason">I saw \newline which I don't recognize as a program element</span>
-	      <span class="Error:UnrecognizedLexicalTokenError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">1</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">9</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:UnrecognizedLexicalTokenError.reason">I saw \newline which I don't recognize as a program element.</span>
+              <span class="Error:UnrecognizedLexicalTokenError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">1</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">9</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
 
 
     UnsupportedLexicalTokenError of string * Location         ;; reason, location
     e.g.  <span class="Error:UnsupportedLexicalTokenError">
-              <span class="Error:UnsupportedLexicalTokenError.reason">Dotted pairs are currently unsupported</span>
-	      <span class="Error:UnsupportedLexicalTokenError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">1</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">1</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:UnsupportedLexicalTokenError.reason">Dotted pairs are currently unsupported.</span>
+              <span class="Error:UnsupportedLexicalTokenError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">1</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">1</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
 
 
 
     UnclosedParensError of string * Location
     e.g.  <span class="Error:UnclosedParensError">
-              <span class="Error:UnclosedParensError.reason">I saw ( to start an expression, but no ) to close it</span>
-	      <span class="Error:UnclosedParensError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">1</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">0</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:UnclosedParensError.reason">I saw ( to start an expression, but no ) to close it.</span>
+              <span class="Error:UnclosedParensError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">1</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">0</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
     e.g.  <span class="Error:UnclosedParensError">
-              <span class="Error:UnclosedParensError.reason">I saw ) to end an expression, but no ( to open it</span>
-	      <span class="Error:UnclosedParensError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">1</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">0</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:UnclosedParensError.reason">I saw ) to end an expression, but no ( to open it.</span>
+              <span class="Error:UnclosedParensError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">1</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">0</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
 
 
 
     MissingExpressionError of string * Location
     e.g.  <span class="Error:UnclosedParensError">
-              <span class="Error:MissingExpressionError.reason">I expected an expression following `, but did not find one</span>
-	      <span class="Error:MissingExpressionError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">1</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">0</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:MissingExpressionError.reason">I expected an expression following `, but did not find one.</span>
+              <span class="Error:MissingExpressionError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">1</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">0</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
 
 
 
     DuplicateIdentifierError of string * Location * Location       ;; the identifier, where it was first observed, where the duplication is being seen
     e.g.  <span class="Error:DuplicateIdentifierError">
-              <span class="Error:DuplicateIdentifierError.reason">The identifier foo has been duplicated</span>
-	      <span class="Error:DuplicateIdentifierError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">7</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">3</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
-	      <span class="Error:DuplicateIdentifierError.secondLocation">
-	          <span class="Location">
-             	      <span class="Location.offset">29</span>
-             	      <span class="Location.line">7</span>
-	     	      <span class="Location.column">5</span>
-	     	      <span class="Location.span">3</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
-	      </span>
+              <span class="Error:DuplicateIdentifierError.reason">The identifier foo has been duplicated.</span>
+              <span class="Error:DuplicateIdentifierError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">3</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
+              <span class="Error:DuplicateIdentifierError.secondLocation">
+                  <span class="Location">
+                      <span class="Location.offset">29</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">5</span>
+                      <span class="Location.span">3</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
           </span>
 
 
 
+    UndefinedIdentifierError of string * Location
+    e.g.  <span class="Error:UndefinedIdentifierError">
+              <span class="Error:UndefinedIdentifierError.reason">I don't know what beer is; it's not defined as an input or a primitive.</span>
+              <span class="Error:UndefinedIdentifierError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">4</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
+          </span>
+
+
     ArityError of Arity * number * Location                  ;; expected arity, observed # of arguments, syntactic location
     e.g.  <span class="Error:ArityError">
-              <span class="Error:ArityError.reason">The function circle expects 3 inputs, but instead I see 1 input</span>
+              <span class="Error:ArityError.reason">The function circle expects 3 inputs, but instead I see 1 input.</span>
               <span class="Error:ArityError.expectedArity">
-	          <span class="Arity.Fixed">
-                      <span class="Arity.Fixed.exact">3</span>
+                  <span class="Arity:Fixed">
+                      <span class="Arity:Fixed.exact">3</span>
                   </span>
               </span>
               <span class="Error:ArityError.location">
-	          <span class="Location">
-             	      <span class="Location.offset">24</span>
-             	      <span class="Location.line">7</span>
-	     	      <span class="Location.column">0</span>
-	     	      <span class="Location.span">10</span>
-	     	      <span class="Location.id">&lt;definitions&gt;</span>
-          	  </span>
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">10</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
               </span>
           </span>
 
 
 
     IndexError of number * number * number * Location            ;; minimum index, maximum index, observed index, syntactic location
+    e.g.  <span class="Error:IndexError">
+              <span class="Error:IndexError.reason">The index -1 is not within the expected boundary [0, 20].</span>
+              <span class="Error:IndexError.observed">-1</span>
+              <span class="Error:IndexError.minimum">0</span>
+              <span class="Error:IndexError.maximum">20</span>
+              <span class="Error:IndexError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">10</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
+          </span>
 
-    TypeError of string * ExpectedValue * number * SchemeValue * Location       ;; function name, the expected type of the value, position in the function application, the observed value, syntactic location
 
-    CondFallThroughError of Location
 
-    DivideByZeroError of Location
+    TypeError of SchemeValue * ExpectedValue * number * SchemeValue * Location       ;; who's raising the error, the expected value, position in the function application, the observed value, syntactic location
+    e.g.  <span class="Error:TypeError">
+              <span class="Error:TypeError.reason">
+                  The function
 
-    UnimplementedError of string * Location (function name, syntactic location)
+                      <span class="SchemeValue:Function">
+                          <span class="SchemeValue:function.keyword">&lt;function:circle&gt;<span>
+                          <span class="SchemeValue:function.name">circle</span>
+                          <span class="SchemeValue:function.location">
+                             <span class="Location">
+                                <span class="Location.offset">0</span>
+                                <span class="Location.line">0</span>
+                                <span class="Location.column">0</span>
+                                <span class="Location.span">0</span>
+                                <span class="Location.id">world.js</span>
+                             </span>
+                          </span>
+                      </span>
+
+                  expects 
+
+                      <span class="ExpectedValue:ExpectedSomething.reason">
+                          a fill (<span class="SchemeValue:String">"solid"</span> or 
+                          <span class="SchemeValue:String">"outline"</span>)
+                      </span>
+
+                  as its 2nd argument, but instead I see
+
+                  <span class="SchemeValue:String">"sloid"</span>
+              </span>
+
+              <span class="Error:TypeError.who">
+                  <span class="SchemeValue:Function">
+                      <span class="SchemeValue:function.keyword">&lt;function:circle&gt;<span>
+                      <span class="SchemeValue:function.name">circle</span>
+                      <span class="SchemeValue:function.location">
+                         <span class="Location">
+                            <span class="Location.offset">0</span>
+                            <span class="Location.line">0</span>
+                            <span class="Location.column">0</span>
+                            <span class="Location.span">0</span>
+                            <span class="Location.id">world.js</span>
+                         </span>
+                      </span>
+                  </span>
+              </span>
+
+              <span class="Error:TypeError.expected">
+                  <span class="ExpectedValue:ExpectedSomething">
+                      <span class="ExpectedValue:ExpectedSomething.reason">
+                          a fill (<span class="SchemeValue:String">"solid"</span> or 
+                          <span class="SchemeValue:String">"outline"</span>)
+                      </span>
+                  </span>
+              </span>
+
+              <span class="Error:TypeError.position">2</span>
+              <span class="Error:TypeError.observed">
+                  <span class="SchemeValue:String">"sloid"</span>
+              </span>
+          </span>
+
+
+
+    RuntimeError of string * Location
+    e.g.  <span class="Error:RuntimeError">
+              <span class="Error:RuntimeError.reason">
+                  Inside a cond branch, I expected a question and an answer, but the first expression is not a question
+              </span>
+              <span class="Error:RuntimeError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">10</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
+          </span>
+    e.g.  <span class="Error:RuntimeError">
+              <span class="Error:RuntimeError.reason">
+	          I can't divide by zero.
+              </span>
+              <span class="Error:RuntimeError.location">
+                  <span class="Location">
+                      <span class="Location.offset">24</span>
+                      <span class="Location.line">7</span>
+                      <span class="Location.column">0</span>
+                      <span class="Location.span">10</span>
+                      <span class="Location.id">&lt;definitions&gt;</span>
+                  </span>
+              </span>
+          </span>
+
+
 
 
 
@@ -324,47 +452,129 @@ An Error is one of the following:
 An ExpectedValue is:
 
     ExpectedString
+    e.g.  <span class="ExpectedValue:ExpectedString">
+              <span class="ExpectedValue:ExpectedString.reason">
+                  &lt;string&gt;
+              </span>
+          </span>
 
-    ExpectedIntegerNumber
+    ExpectedInteger
+    e.g.  <span class="ExpectedValue:ExpectedInteger">
+              <span class="ExpectedValue:ExpectedInteger.reason">
+                  &lt;integer&gt;
+              </span>
+          </span>
 
-    ExpectedNaturalNumber
+    ExpectedNatural
+    e.g.  <span class="ExpectedValue:ExpectedNatural">
+              <span class="ExpectedValue:ExpectedNatural.reason">
+                  &lt;natural&gt;
+              </span>
+          </span>
 
-    ExpectedRationalNumber
+    ExpectedRational
+    e.g.  <span class="ExpectedValue:ExpectedRational">
+              <span class="ExpectedValue:ExpectedRational.reason">
+                  &lt;rational&gt;
+              </span>
+          </span>
 
-    ExpectedRealNumber
+    ExpectedReal
+    e.g.  <span class="ExpectedValue:ExpectedReal">
+              <span class="ExpectedValue:ExpectedReal.reason">
+                  &lt;real&gt;
+              </span>
+          </span>
 
-    ExpectedComplexNumber
+    ExpectedComplex
+    e.g.  <span class="ExpectedValue:ExpectedComplex">
+              <span class="ExpectedValue:ExpectedComplex.reason">
+                  &lt;complex&gt;
+              </span>
+          </span>
 
     ExpectedNumber
+    e.g.  <span class="ExpectedValue:ExpectedNumber">
+              <span class="ExpectedValue:ExpectedNumber.reason">
+                  &lt;number&gt;
+              </span>
+          </span>
 
     ExpectedBoolean
+    e.g.  <span class="ExpectedValue:ExpectedBoolean">
+              <span class="ExpectedValue:ExpectedBoolean.reason">
+                  &lt;boolean&gt;
+              </span>
+          </span>
 
     ExpectedChar
+    e.g.  <span class="ExpectedValue:ExpectedChar">
+              <span class="ExpectedValue:ExpectedChar.reason">
+                  &lt;char&gt;
+              </span>
+          </span>
 
     ExpectedSymbol
+    e.g.  <span class="ExpectedValue:ExpectedSymbol">
+              <span class="ExpectedValue:ExpectedSymbol.reason">
+                  &lt;symbol&gt;
+              </span>
+          </span>
 
     ExpectedList
+    e.g.  <span class="ExpectedValue:ExpectedList">
+              <span class="ExpectedValue:ExpectedList.reason">
+                  &lt;list&gt;
+              </span>
+          </span>
 
     ExpectedVector
+    e.g.  <span class="ExpectedValue:ExpectedVector">
+              <span class="ExpectedValue:ExpectedVector.reason">
+                  &lt;vector&gt;
+              </span>
+          </span>
 
     ExpectedStruct
+    e.g.  <span class="ExpectedValue:ExpectedStruct">
+              <span class="ExpectedValue:ExpectedStruct.reason">
+                  &lt;struct&gt;
+              </span>
+          </span>
 
     ExpectedBox
+    e.g.  <span class="ExpectedValue:ExpectedBox">
+              <span class="ExpectedValue:ExpectedBox.reason">
+                  &lt;box&gt;
+              </span>
+          </span>
 
-    ExpectedHashtable
+    ExpectedHash
+    e.g.  <span class="ExpectedValue:ExpectedHash">
+              <span class="ExpectedValue:ExpectedHash.reason">
+                  &lt;hash&gt;
+              </span>
+          </span>
 
-    ExpectedFunction of Arity
+    ExpectedFunction of arity
+    e.g.  <span class="ExpectedValue:ExpectedFunction">
+              <span class="ExpectedValue:ExpectedFunction.reason">
+                  &lt;function consuming exactly 1 argument&gt;
+              </span>
+              <span class="ExpectedValue:ExpectedFunction.arity">
+                  <span class="Arity:Fixed">
+                      <span class="Arity:Fixed.exact">1</span>
+                  </span>
+              </span>
+          </span>
 
     ExpectedSomething of string                    ;; catch-all for other expected types
+    e.g.  <span class="ExpectedValue:ExpectedSomething">
+              <span class="ExpectedValue:ExpectedSomething.reason">
+                  an even number between 0 and 255
+              </span>
+          </span>
 
-
-
-
-An AsideMessage is a:
-
-    NoTestCasesAside
-    SingleTestCaseAside
-    SufficientTestCasesAside
 
 
 
@@ -375,7 +585,9 @@ An AsideMessage is a:
 
 
 
+An AsideMessage is a:
 
+    NoTestCasesAside
+    SingleTestCaseAside
+    SufficientTestCasesAside
 
-
-Generating this from WeScheme won't be hard.  If this looks ok, I will change WeScheme to start emitting DOM nodes that follow this structure.
