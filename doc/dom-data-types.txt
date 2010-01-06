@@ -122,23 +122,34 @@ A SchemeValue is one of the following:
 
 
 An Arity is one of:
+
     Fixed of number
     e.g.  <span class="Arity:Fixed">
-              <span class="Arity.Fixed.exact">
-                  exactly 2 arguments
-              </span>
+              <span class="Arity.Fixed.exact">2</span>
           </span>
+
 
     Variable of number
     e.g.  <span class="Arity:Variable">
-               <span class="Arity:Variable.minimum">
-                   at least 3 arguments
-               </span>
+               <span class="Arity:Variable.minimum">3</span>
  	  </span>
     e.g.  <span class="Arity:Variable">
-               <span class="Arity:Variable.minimum">
-                   at least 1 argument
-               </span>
+               <span class="Arity:Variable.minimum">1</span>
+          </span>
+
+
+    Mixed of (listof (Fixed | Variable))
+    e.g.  <span class="Arity:Mixed">
+              <span class="Arity:Mixed.item">
+	          <span class="Arity.Fixed">
+                      <span class="Arity.Fixed.exact">2</span>
+	          </span>
+              </span>
+              <span class="Arity:Mixed.item">
+	          <span class="Arity.Fixed">
+                      <span class="Arity.Fixed.exact">3</span>
+                  </span>
+	      </span>
           </span>
 
 
@@ -163,7 +174,7 @@ An Error is one of the following:
 
     UnclosedLexicalTokenError of string * Location         ;; reason, location
     e.g.  <span class="Error:UnclosedLexicalTokenError">
-              <span class="Error:UnclosedLexicalTokenError.reason">I saw " to start a string, but no " to close it.</span>
+              <span class="Error:UnclosedLexicalTokenError.reason">I saw " to start a string, but no " to close it</span>
 	      <span class="Error:UnclosedLexicalTokenError.location">
 	          <span class="Location">
              	      <span class="Location.offset">24</span>
@@ -178,7 +189,7 @@ An Error is one of the following:
 
     UnrecognizedLexicalTokenError of string * Location         ;; reason, location
     e.g.  <span class="Error:UnrecognizedLexicalTokenError">
-              <span class="Error:UnrecognizedLexicalTokenError.reason">I saw \newline which I don't recognize as a program element.</span>
+              <span class="Error:UnrecognizedLexicalTokenError.reason">I saw \newline which I don't recognize as a program element</span>
 	      <span class="Error:UnrecognizedLexicalTokenError.location">
 	          <span class="Location">
              	      <span class="Location.offset">24</span>
@@ -193,7 +204,7 @@ An Error is one of the following:
 
     UnsupportedLexicalTokenError of string * Location         ;; reason, location
     e.g.  <span class="Error:UnsupportedLexicalTokenError">
-              <span class="Error:UnsupportedLexicalTokenError.reason">Dotted pairs are currently unsupported.</span>
+              <span class="Error:UnsupportedLexicalTokenError.reason">Dotted pairs are currently unsupported</span>
 	      <span class="Error:UnsupportedLexicalTokenError.location">
 	          <span class="Location">
              	      <span class="Location.offset">24</span>
@@ -209,7 +220,7 @@ An Error is one of the following:
 
     UnclosedParensError of string * Location
     e.g.  <span class="Error:UnclosedParensError">
-              <span class="Error:UnclosedParensError.reason">I saw ( to start an expression, but no ) to close it.</span>
+              <span class="Error:UnclosedParensError.reason">I saw ( to start an expression, but no ) to close it</span>
 	      <span class="Error:UnclosedParensError.location">
 	          <span class="Location">
              	      <span class="Location.offset">24</span>
@@ -221,7 +232,7 @@ An Error is one of the following:
 	      </span>
           </span>
     e.g.  <span class="Error:UnclosedParensError">
-              <span class="Error:UnclosedParensError.reason">I saw ) to end an expression, but no ( to open it.</span>
+              <span class="Error:UnclosedParensError.reason">I saw ) to end an expression, but no ( to open it</span>
 	      <span class="Error:UnclosedParensError.location">
 	          <span class="Location">
              	      <span class="Location.offset">24</span>
@@ -237,7 +248,7 @@ An Error is one of the following:
 
     MissingExpressionError of string * Location
     e.g.  <span class="Error:UnclosedParensError">
-              <span class="Error:MissingExpressionError.reason">I expected an expression following `, but did not find one.</span>
+              <span class="Error:MissingExpressionError.reason">I expected an expression following `, but did not find one</span>
 	      <span class="Error:MissingExpressionError.location">
 	          <span class="Location">
              	      <span class="Location.offset">24</span>
@@ -252,8 +263,50 @@ An Error is one of the following:
 
 
     DuplicateIdentifierError of string * Location * Location       ;; the identifier, where it was first observed, where the duplication is being seen
+    e.g.  <span class="Error:DuplicateIdentifierError">
+              <span class="Error:DuplicateIdentifierError.reason">The identifier foo has been duplicated</span>
+	      <span class="Error:DuplicateIdentifierError.location">
+	          <span class="Location">
+             	      <span class="Location.offset">24</span>
+             	      <span class="Location.line">7</span>
+	     	      <span class="Location.column">0</span>
+	     	      <span class="Location.span">3</span>
+	     	      <span class="Location.id">&lt;definitions&gt;</span>
+          	  </span>
+	      </span>
+	      <span class="Error:DuplicateIdentifierError.secondLocation">
+	          <span class="Location">
+             	      <span class="Location.offset">29</span>
+             	      <span class="Location.line">7</span>
+	     	      <span class="Location.column">5</span>
+	     	      <span class="Location.span">3</span>
+	     	      <span class="Location.id">&lt;definitions&gt;</span>
+          	  </span>
+	      </span>
+          </span>
+
+
 
     ArityError of Arity * number * Location                  ;; expected arity, observed # of arguments, syntactic location
+    e.g.  <span class="Error:ArityError">
+              <span class="Error:ArityError.reason">The function circle expects 3 inputs, but instead I see 1 input</span>
+              <span class="Error:ArityError.expectedArity">
+	          <span class="Arity.Fixed">
+                      <span class="Arity.Fixed.exact">3</span>
+                  </span>
+              </span>
+              <span class="Error:ArityError.location">
+	          <span class="Location">
+             	      <span class="Location.offset">24</span>
+             	      <span class="Location.line">7</span>
+	     	      <span class="Location.column">0</span>
+	     	      <span class="Location.span">10</span>
+	     	      <span class="Location.id">&lt;definitions&gt;</span>
+          	  </span>
+              </span>
+          </span>
+
+
 
     IndexError of number * number * number * Location            ;; minimum index, maximum index, observed index, syntactic location
 
@@ -265,8 +318,6 @@ An Error is one of the following:
 
     UnimplementedError of string * Location (function name, syntactic location)
 
-
-    
 
 
 
@@ -305,6 +356,20 @@ An ExpectedValue is:
     ExpectedFunction of Arity
 
     ExpectedSomething of string                    ;; catch-all for other expected types
+
+
+
+
+An AsideMessage is a:
+
+    NoTestCasesAside
+    SingleTestCaseAside
+    SufficientTestCasesAside
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////
 
