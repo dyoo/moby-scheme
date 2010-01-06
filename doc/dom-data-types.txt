@@ -1,0 +1,218 @@
+Here's a description of the data types that will be supported in interactions output and error messages.
+
+-----
+
+
+A SchemeValue is one of the following:
+
+    String of string
+    e.g. <span class="SchemeValue:String">"hello world"</span>
+
+    Number of number
+    e.g. <span class="SchemeValue:Number">42</span>
+    e.g. <span class="SchemeValue:Number"><sup>1</sup>&frasl;<sub>17</sub></span>
+
+    Boolean of boolean
+    e.g. <span class="SchemeValue:Boolean">true</span>
+
+    Char of char
+    e.g. <span class="SchemeValue:Char">#\S</span>
+
+    Symbol of symbol
+    e.g. <span class="SchemeValue:Symbol">sqr</span>
+
+    List of (listof SchemeValue)
+    e.g. <span class="SchemeValue:List">
+              <span class="SchemeValue:List.lparen">(</span>
+              <span class="SchemeValue:List.keyword">list</span>
+              <span class="SchemeValue:List.item">
+                  <span class="SchemeValue:Number">1</span>
+              </span>
+              <span class="SchemeValue:List.item">
+                  <span class="SchemeValue:String">"two"</span>
+              </span>
+              <span class="SchemeValue:List.rparen">)</span>
+          </span>
+
+    Vector of (listof SchemeValue)
+    e.g. <span class="SchemeValue:Vector">
+               <span class="SchemeValue:Vector.lparen">(</span>
+               <span class="SchemeValue:Vector.keyword">vector</span>
+               <span class="SchemeValue:Vector.item">
+                   <span class="SchemeValue:Symbol">x</span>
+               </span>
+               <span class="SchemeValue:Vector.item">
+                   <span class="SchemeValue:Symbol">y</span>
+               </span>
+               <span class="SchemeValue:Vector.rparen">)</span>
+           </span>
+
+    Struct of symbol * (listof SchemeValue)
+    e.g.  <span class="SchemeValue:Struct">
+                 <span class="SchemeValue:Struct.lparen">(</span>
+                 <span class="SchemeValue:Struct.keyword">make-posn</span>
+                 <span class="SchemeValue:Struct.item">
+                     <span class="SchemeValue:Number">3</span>
+                 </span>
+                 <span class="SchemeValue:Struct.item">
+                     <span class="SchemeValue:Number">4</span>
+                 </span>
+                 <span class="SchemeValue:Struct.rparen">)</span>
+            </span>
+
+
+    Box of SchemeValue
+    e.g.  <span class="SchemeValue:Box">
+                <span class="SchemeValue:Box.lparen">(<span>
+                <span class="SchemeValue:Box.keyword">box<span>
+                <span class="SchemeValue:Box.rparen">)<span>
+            </span>
+
+
+    Hash
+    e.g.  <span class="SchemeValue:Hash">
+                <span class="SchemeValue:Hash.keyword">&lt;#hash&gt;<span>
+            </span>
+
+    Function
+    e.g   <span class="SchemeValue:Function">
+                <span class="SchemeValue:function.keyword">&lt;function&gt;<span>
+            </span>
+
+
+    SharedLabel of string * SchemeValue
+    e.g.  <span class="SchemeValue:SharedLabel">
+                <span class="SchemeValue:SharedLabel.label">#1</span>
+                <span class="SharedValue:SharedLabel.item">
+                    <span class="SchemeValue:List">
+                        <span class="SchemeValue:List.lparen">(</span>
+                        <span class="SchemeValue:List.keyword">list</span>
+                        <span class="SchemeValue:List.item">
+                            <span class="SchemeValue:Number">1</span>
+                        </span>
+                        <span class="SchemeValue:List.item">
+                            <span class="SchemeValue:SharedReference">
+                                <span class="SchemeValue:SharedReference.reference">#1</span>
+                            </span>
+                        </span>
+                        <span class="SchemeValue:List.rparen">)</span>
+                    <span>
+                </span>
+            </span>
+
+
+    SharedReference of string
+    e.g.  <span class="SchemeValue:SharedReference">
+                <span class="SchemeValue:SharedReference.reference">#1</span>
+            <span>
+
+
+    Undefined
+    e.g.  <span class="SchemeValue:Undefined">
+                <span class="SchemeValue:Undefined.keyword">&lt;undefined&gt;</span>
+            <span>
+
+
+    OpaqueObject of string                ;; catchall for a Javascript object value with some string rendering
+    e.g.  <span class="SchemeValue:Opaque">
+                <span class="SchemeValue:Opaque.value">blah</span>
+            </span>
+
+
+
+
+
+
+An Arity is one of:
+    Fixed of number
+    e.g.  <span class="Arity:Fixed">
+                <span class="Arity.Fixed.exact">
+                    exactly 2 arguments
+                </span>
+            </span>
+
+    Variable of number
+    e.g.  <span class="Arity:Variable">
+                <span class="Arity:Variable.minimum">
+                    at least 3 arguments
+                </span>
+            </span>
+    e.g.  <span class="Arity:Variable">
+                <span class="Arity:Variable.minimum">
+                    at least 1 argument
+                </span>
+            </span>
+
+
+
+
+A Location is a:
+
+    Loc of number * number * number * number * string      ;; offset, line, column, span, source identifier
+
+
+
+An Error is one of the following:
+
+    LexingError of string * Location                  ;; reason for the error, syntactic location
+
+    ParsingError of string * Location                 ;; reason for the error, syntactic location
+
+    DuplicateIdentifierError of string * Location * Location       ;; the identifier, where it was first observed, where the duplication is being seen
+
+    ArityError of Arity * number * Location                  ;; expected arity, observed # of arguments, syntactic location
+
+    IndexError of number * number * number * Location            ;; minimum index, maximum index, observed index, syntactic location
+
+    TypeError of string * ExpectedValue * number * SchemeValue * Location       ;; function name, the expected type of the value, position in the function application, the observed value, syntactic location
+
+    CondFallThroughError of Location
+
+    UnimplementedError of string * Location (function name, syntactic location)
+
+
+
+An ExpectedValue is:
+
+    ExpectedString
+
+    ExpectedIntegerNumber
+
+    ExpectedNaturalNumber
+
+    ExpectedRationalNumber
+
+    ExpectedRealNumber
+
+    ExpectedComplexNumber
+
+    ExpectedNumber
+
+    ExpectedBoolean
+
+    ExpectedChar
+
+    ExpectedSymbol
+
+    ExpectedList
+
+    ExpectedVector
+
+    ExpectedStruct
+
+    ExpectedBox
+
+    ExpectedHashtable
+
+    ExpectedFunction of Arity
+
+    ExpectedSomething of string                    ;; catch-all for other expected types
+
+///////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+Generating this from WeScheme won't be hard.  If this looks ok, I will change WeScheme to start emitting DOM nodes that follow this structure.
