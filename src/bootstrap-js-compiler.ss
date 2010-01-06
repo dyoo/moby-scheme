@@ -155,7 +155,6 @@
       (copy-path-to-port kernel.js op)
       (copy-path-to-port syntax-path op)
       (copy-path-to-port read.js op)
-      (display "// compile: string -> (list string, (listof string))\n" op)
       (display (bootstrap-compile "compiler/beginner-to-javascript.ss") op)
       
       
@@ -169,6 +168,7 @@
            }
            var aPinfo = get_dash_base_dash_pinfo(plt.types.Symbol.makeInstance('moby'));"
                op)
+      (display "// compileScheme: string -> (array string (arrayof string))\n" op)
       (display "
    function compileScheme(s) {
        var exprs = plt.reader.readSchemeExpressions(s, 'standalone');
