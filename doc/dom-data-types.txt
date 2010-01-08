@@ -121,8 +121,8 @@ A SchemeValue is one of the following:
           <span>
 
 
-    OpaqueObject of string                ;; catchall for a Javascript object value with some string rendering
-    e.g.  <span class="SchemeValue:Opaque">
+    DisplayedObject of string        ;; catchall for a Javascript object value with some kind of DOM display
+    e.g.  <span class="SchemeValue:DisplayedObject">
               blah
           </span>
 
@@ -371,7 +371,7 @@ An Error is one of the following:
 
                   expects 
 
-                      <span class="ExpectedValue:ExpectedSomething.reason">
+                      <span class="ExpectedValue:ExpectedSomething.display">
                           a fill (<span class="SchemeValue:String">"solid"</span> or 
                           <span class="SchemeValue:String">"outline"</span>)
                       </span>
@@ -399,7 +399,7 @@ An Error is one of the following:
 
               <span class="Error:TypeError.expected">
                   <span class="ExpectedValue:ExpectedSomething">
-                      <span class="ExpectedValue:ExpectedSomething.reason">
+                      <span class="ExpectedValue:ExpectedSomething.display">
                           a fill (<span class="SchemeValue:String">"solid"</span> or 
                           <span class="SchemeValue:String">"outline"</span>)
                       </span>
@@ -453,112 +453,112 @@ An ExpectedValue is:
 
     ExpectedString
     e.g.  <span class="ExpectedValue:ExpectedString">
-              <span class="ExpectedValue:ExpectedString.reason">
+              <span class="ExpectedValue:ExpectedString.display">
                   &lt;string&gt;
               </span>
           </span>
 
     ExpectedInteger
     e.g.  <span class="ExpectedValue:ExpectedInteger">
-              <span class="ExpectedValue:ExpectedInteger.reason">
+              <span class="ExpectedValue:ExpectedInteger.display">
                   &lt;integer&gt;
               </span>
           </span>
 
     ExpectedNatural
     e.g.  <span class="ExpectedValue:ExpectedNatural">
-              <span class="ExpectedValue:ExpectedNatural.reason">
+              <span class="ExpectedValue:ExpectedNatural.display">
                   &lt;natural&gt;
               </span>
           </span>
 
     ExpectedRational
     e.g.  <span class="ExpectedValue:ExpectedRational">
-              <span class="ExpectedValue:ExpectedRational.reason">
+              <span class="ExpectedValue:ExpectedRational.display">
                   &lt;rational&gt;
               </span>
           </span>
 
     ExpectedReal
     e.g.  <span class="ExpectedValue:ExpectedReal">
-              <span class="ExpectedValue:ExpectedReal.reason">
+              <span class="ExpectedValue:ExpectedReal.display">
                   &lt;real&gt;
               </span>
           </span>
 
     ExpectedComplex
     e.g.  <span class="ExpectedValue:ExpectedComplex">
-              <span class="ExpectedValue:ExpectedComplex.reason">
+              <span class="ExpectedValue:ExpectedComplex.display">
                   &lt;complex&gt;
               </span>
           </span>
 
     ExpectedNumber
     e.g.  <span class="ExpectedValue:ExpectedNumber">
-              <span class="ExpectedValue:ExpectedNumber.reason">
+              <span class="ExpectedValue:ExpectedNumber.display">
                   &lt;number&gt;
               </span>
           </span>
 
     ExpectedBoolean
     e.g.  <span class="ExpectedValue:ExpectedBoolean">
-              <span class="ExpectedValue:ExpectedBoolean.reason">
+              <span class="ExpectedValue:ExpectedBoolean.display">
                   &lt;boolean&gt;
               </span>
           </span>
 
     ExpectedChar
     e.g.  <span class="ExpectedValue:ExpectedChar">
-              <span class="ExpectedValue:ExpectedChar.reason">
+              <span class="ExpectedValue:ExpectedChar.display">
                   &lt;char&gt;
               </span>
           </span>
 
     ExpectedSymbol
     e.g.  <span class="ExpectedValue:ExpectedSymbol">
-              <span class="ExpectedValue:ExpectedSymbol.reason">
+              <span class="ExpectedValue:ExpectedSymbol.display">
                   &lt;symbol&gt;
               </span>
           </span>
 
     ExpectedList
     e.g.  <span class="ExpectedValue:ExpectedList">
-              <span class="ExpectedValue:ExpectedList.reason">
+              <span class="ExpectedValue:ExpectedList.display">
                   &lt;list&gt;
               </span>
           </span>
 
     ExpectedVector
     e.g.  <span class="ExpectedValue:ExpectedVector">
-              <span class="ExpectedValue:ExpectedVector.reason">
+              <span class="ExpectedValue:ExpectedVector.display">
                   &lt;vector&gt;
               </span>
           </span>
 
     ExpectedStruct
     e.g.  <span class="ExpectedValue:ExpectedStruct">
-              <span class="ExpectedValue:ExpectedStruct.reason">
+              <span class="ExpectedValue:ExpectedStruct.display">
                   &lt;struct&gt;
               </span>
           </span>
 
     ExpectedBox
     e.g.  <span class="ExpectedValue:ExpectedBox">
-              <span class="ExpectedValue:ExpectedBox.reason">
+              <span class="ExpectedValue:ExpectedBox.display">
                   &lt;box&gt;
               </span>
           </span>
 
     ExpectedHash
     e.g.  <span class="ExpectedValue:ExpectedHash">
-              <span class="ExpectedValue:ExpectedHash.reason">
+              <span class="ExpectedValue:ExpectedHash.display">
                   &lt;hash&gt;
               </span>
           </span>
 
     ExpectedFunction of arity
     e.g.  <span class="ExpectedValue:ExpectedFunction">
-              <span class="ExpectedValue:ExpectedFunction.reason">
+              <span class="ExpectedValue:ExpectedFunction.display">
                   &lt;function consuming exactly 1 argument&gt;
               </span>
               <span class="ExpectedValue:ExpectedFunction.arity">
@@ -570,7 +570,7 @@ An ExpectedValue is:
 
     ExpectedSomething of string                    ;; catch-all for other expected types
     e.g.  <span class="ExpectedValue:ExpectedSomething">
-              <span class="ExpectedValue:ExpectedSomething.reason">
+              <span class="ExpectedValue:ExpectedSomething.display">
                   an even number between 0 and 255
               </span>
           </span>
