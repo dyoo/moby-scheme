@@ -2246,10 +2246,11 @@ goog.provide('plt.Kernel');
 	if (typeof(lastLoc) === 'string') {
 	    return lastLoc;
 	}
-	return ("offset=" + lastLoc.offset
-		+ ", line=" + lastLoc.line 
-		+ ", span=" + lastLoc.span 
-		+ ", id=" + lastLoc.id);
+	return ("offset=" + Loc_dash_offset(lastLoc)
+		+ ", line=" + Loc_dash_line(lastLoc) 
+		+ ", column=" + Loc_dash_column(lastLoc) 
+		+ ", span=" + Loc_dash_span(lastLoc)
+		+ ", id=" + Loc_dash_id(lastLoc));
     };
     
 
