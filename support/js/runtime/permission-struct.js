@@ -176,39 +176,37 @@ return (plt.Kernel.string_equal__question_(a_dash_ref,_SHARED[11], []) ?
  construct_dash_permission_slash_1(_SHARED[24],a_dash_ref,(plt.types.liftToplevelToFunctionValue(make_dash_permission_colon_open_dash_image_dash_url,(plt.types.String.makeInstance("make-permission:open-image-url")),1,(plt.types.Rational.makeInstance(1, 1))))) :
  (is_dash_permission_slash_1_question_(_SHARED[25],a_dash_ref) ?
  construct_dash_permission_slash_1(_SHARED[25],a_dash_ref,(plt.types.liftToplevelToFunctionValue(make_dash_permission_colon_universe,(plt.types.String.makeInstance("make-permission:universe")),1,(plt.types.Rational.makeInstance(1, 1))))) :
- plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),_SHARED[26])))))))))));
+ plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),_SHARED[21])))))))))));
               })()); };
 var permission_dash__greaterthan_android_dash_permissions = function(a_dash_permission) { return (permission_colon_location_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[27],_SHARED[28]]) :
+ plt.Kernel.list([_SHARED[26],_SHARED[27]]) :
  (permission_colon_send_dash_sms_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[29]]) :
+ plt.Kernel.list([_SHARED[28]]) :
  (permission_colon_receive_dash_sms_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[30]]) :
+ plt.Kernel.list([_SHARED[29]]) :
  (permission_colon_tilt_question_(a_dash_permission) ?
  plt.Kernel.list([]) :
  (permission_colon_shake_question_(a_dash_permission) ?
  plt.Kernel.list([]) :
  (permission_colon_internet_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[31]]) :
+ plt.Kernel.list([_SHARED[30]]) :
  (permission_colon_telephony_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[32]]) :
+ plt.Kernel.list([_SHARED[31]]) :
  (permission_colon_wake_dash_lock_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[33]]) :
+ plt.Kernel.list([_SHARED[32]]) :
  (permission_colon_open_dash_image_dash_url_question_(a_dash_permission) ?
  plt.Kernel.list([]) :
  (permission_colon_universe_question_(a_dash_permission) ?
- plt.Kernel.list([_SHARED[31]]) :
- plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),_SHARED[34]))))))))))); };_SHARED[15] = (plt.types.String.makeInstance("PERMISSION:SHAKE"));
-_SHARED[27] = (plt.types.String.makeInstance("android.permission.ACCESS_COARSE_LOCATION"));
-_SHARED[21] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=1583 line=44 span=812 id=\\\"compiler/permission.ss\\\"\""));
-_SHARED[26] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=3448 line=86 span=897 id=\\\"compiler/permission.ss\\\"\""));
-_SHARED[34] = (plt.types.String.makeInstance("cond: fell out of cond around \"offset=4573 line=114 span=844 id=\\\"compiler/permission.ss\\\"\""));
-_SHARED[30] = (plt.types.String.makeInstance("android.permission.RECEIVE_SMS"));
-_SHARED[29] = (plt.types.String.makeInstance("android.permission.SEND_SMS"));
-_SHARED[33] = (plt.types.String.makeInstance("android.permission.WAKE_LOCK"));
-_SHARED[28] = (plt.types.String.makeInstance("android.permission.ACCESS_FINE_LOCATION"));
-_SHARED[31] = (plt.types.String.makeInstance("android.permission.INTERNET"));
-_SHARED[32] = (plt.types.String.makeInstance("android.permission.ACCESS_COARSE_UPDATES"));
+ plt.Kernel.list([_SHARED[30]]) :
+ plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),_SHARED[21]))))))))))); };_SHARED[15] = (plt.types.String.makeInstance("PERMISSION:SHAKE"));
+_SHARED[26] = (plt.types.String.makeInstance("android.permission.ACCESS_COARSE_LOCATION"));
+_SHARED[28] = (plt.types.String.makeInstance("android.permission.SEND_SMS"));
+_SHARED[21] = (plt.types.String.makeInstance("cond: fell out of cond"));
+_SHARED[32] = (plt.types.String.makeInstance("android.permission.WAKE_LOCK"));
+_SHARED[30] = (plt.types.String.makeInstance("android.permission.INTERNET"));
+_SHARED[29] = (plt.types.String.makeInstance("android.permission.RECEIVE_SMS"));
+_SHARED[27] = (plt.types.String.makeInstance("android.permission.ACCESS_FINE_LOCATION"));
+_SHARED[31] = (plt.types.String.makeInstance("android.permission.ACCESS_COARSE_UPDATES"));
 _SHARED[20] = (plt.types.String.makeInstance("PERMISSION:UNIVERSE ~a"));
 _SHARED[18] = (plt.types.String.makeInstance("PERMISSION:WAKE-LOCK"));
 _SHARED[14] = (plt.types.String.makeInstance("PERMISSION:TILT"));

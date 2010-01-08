@@ -10,12 +10,6 @@
 
 (define-struct Loc (offset line span id) #:prefab)
 
-(define (Loc->string a-loc)
-  (format "offset=~a line=~a span=~a id=~s" 
-          (Loc-offset a-loc) 
-          (Loc-line a-loc) 
-          (Loc-span a-loc) 
-          (Loc-id a-loc)))
 
 
 ;; stx?: any -> boolean
@@ -88,6 +82,16 @@
   
 
 
+
+#;(define (Loc->string a-loc)
+  (format "offset=~a line=~a span=~a id=~s" 
+          (Loc-offset a-loc) 
+          (Loc-line a-loc) 
+          (Loc-span a-loc) 
+          (Loc-id a-loc)))
+
+
+
 (provide/contract [struct stx:atom ([datum any/c]
                                     [loc any/c])]
                   [struct stx:list ([elts (listof stx?)]
@@ -99,7 +103,7 @@
                   [stx? (any/c . -> . boolean?)]
                   [stx-e (stx? . -> . any)]
                   [stx-loc (stx? . -> . any)]
-                  [Loc->string (Loc? . -> . string?)]
+                  #;[Loc->string (Loc? . -> . string?)]
                   [stx-begins-with? (stx? symbol? . -> . boolean?)]
                   [datum->stx (any/c any/c . -> . stx?)]
                   [stx->datum (stx? . -> . any)])

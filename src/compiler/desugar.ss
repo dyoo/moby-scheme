@@ -412,7 +412,7 @@
           (datum->stx (list 'if question-last 
                             answer-last
                             (list 'error ''cond
-                                  (format "cond: fell out of cond around ~s" (Loc->string (stx-loc an-expr)))))
+                                  (format "cond: fell out of cond" #;(Loc->string (stx-loc an-expr)))))
                       (stx-loc an-expr))]
          
          [else
