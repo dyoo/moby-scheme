@@ -1,8 +1,12 @@
+// Includes the definitions provided by src/compiler/stx-struct.ss and
+// src/compiler/stx.ss.
+
+// It would be nice if we could automatically generate this.  The
+// bootstrapper requires the presence of stx objects to do its job.
+
 
 var stx_colon_atom = function (datum,loc) { 
     plt.types.Struct.call(this, "make-stx:atom", [datum,loc]);
-    this.datum = datum;
-    this.loc = loc; 
 };
 stx_colon_atom.prototype = new plt.types.Struct();
 
@@ -13,7 +17,7 @@ var make_dash_stx_colon_atom = function (id0,id1) {
 
 var stx_colon_atom_dash_datum = function(obj) {
      if (stx_colon_atom_question_ (obj)) {
-        return obj.datum;
+        return obj._fields[0];
      } else {
         throw new plt.Kernel.MobyRuntimeError(           
 	    plt.Kernel.format('stx_colon_atom_dash_datum: not a stx:atom: ~s', [obj]));
@@ -21,31 +25,14 @@ var stx_colon_atom_dash_datum = function(obj) {
 };
 
 var stx_colon_atom_dash_loc = function(obj) {
-     if (stx_colon_atom_question_ (obj)) {
-        return obj.loc;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('stx_colon_atom_dash_loc: not a stx:atom: ~s', [obj]));
-     }
-};
-
-var set_dash_stx_colon_atom_dash_datum_bang_ = function(obj,newVal) {
     if (stx_colon_atom_question_ (obj)) {
-	     obj.datum = newVal;
-     } else {
+        return obj._fields[1];
+    } else {
         throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_stx_colon_atom_dash_datum_bang_: not a stx:atom: ~s', [obj]));
-     }
+             plt.Kernel.format('stx_colon_atom_dash_loc: not a stx:atom: ~s', [obj]));
+    }
 };
 
-var set_dash_stx_colon_atom_dash_loc_bang_ = function(obj,newVal) {
-	 if (stx_colon_atom_question_ (obj)) {
-		obj.loc = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_stx_colon_atom_dash_loc_bang_: not a stx:atom: ~s', [obj]));
-     }
-};
 
 var stx_colon_atom_question_ = function(obj) { 
     return (obj != null && obj != undefined &&
@@ -54,8 +41,7 @@ var stx_colon_atom_question_ = function(obj) {
 
 var stx_colon_list = function (elts,loc) { 
     plt.types.Struct.call(this, "make-stx:list", [elts,loc]);
-    this.elts = elts;
-    this.loc = loc; };
+};
 stx_colon_list.prototype = new plt.types.Struct();
 
 var make_dash_stx_colon_list = function (id0,id1) { 
@@ -63,7 +49,7 @@ var make_dash_stx_colon_list = function (id0,id1) {
 
 var stx_colon_list_dash_elts = function(obj) {
     if (stx_colon_list_question_ (obj)) {
-        return obj.elts;
+        return obj._fields[0];
     } else {
         throw new plt.Kernel.MobyRuntimeError(
             plt.Kernel.format('stx_colon_list_dash_elts: not a stx:list: ~s', [obj]));
@@ -72,47 +58,30 @@ var stx_colon_list_dash_elts = function(obj) {
 
 var stx_colon_list_dash_loc = function(obj) {
      if (stx_colon_list_question_ (obj)) {
-        return obj.loc;
+        return obj._fields[1];
      } else {
         throw new plt.Kernel.MobyRuntimeError(
             plt.Kernel.format('stx_colon_list_dash_loc: not a stx:list: ~s', [obj]));
      }
 };
 
-var set_dash_stx_colon_list_dash_elts_bang_ = function(obj,newVal) {
-	 if (stx_colon_list_question_ (obj)) {
-		obj.elts = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_stx_colon_list_dash_elts_bang_: not a stx:list: ~s', [obj]));
-     }
-};
-
-var set_dash_stx_colon_list_dash_loc_bang_ = function(obj,newVal) {
-	 if (stx_colon_list_question_ (obj)) {
-		obj.loc = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_stx_colon_list_dash_loc_bang_: not a stx:list: ~s', [obj]));
-     }
-};
 
 var stx_colon_list_question_ = function(obj) { 
-              return obj != null && obj != undefined && obj instanceof stx_colon_list; 
+    return obj != null && obj != undefined && obj instanceof stx_colon_list; 
 };
 
-var Loc = function (offset,line,span,id) { 
-    plt.types.Struct.call(this, "make-Loc", [offset,line,span,id]);this.offset = offset;
-    this.line = line;
-    this.span = span;
-    this.id = id; };
+var Loc = function (offset,line,column,span,id) { 
+    plt.types.Struct.call(this, "make-Loc", [offset,line,column,span,id]);
+};
 Loc.prototype = new plt.types.Struct();
 
-var make_dash_Loc = function (id0,id1,id2,id3) { 
-    return new Loc(id0,id1,id2,id3); };
+
+var make_dash_Loc = function (id0,id1,id2,id3,id4) { 
+    return new Loc(id0,id1,id2,id3,id4); };
+
 var Loc_dash_offset = function(obj) {
     if (Loc_question_ (obj)) {
-        return obj.offset;
+        return obj._fields[0];
     } else {
         throw new plt.Kernel.MobyRuntimeError( 
             plt.Kernel.format('Loc_dash_offset: not a Loc: ~s', [obj]));
@@ -121,16 +90,27 @@ var Loc_dash_offset = function(obj) {
 
 var Loc_dash_line = function(obj) {
      if (Loc_question_ (obj)) {
-        return obj.line;
+        return obj._fields[1];
      } else {
         throw new plt.Kernel.MobyRuntimeError(
             plt.Kernel.format('Loc_dash_line: not a Loc: ~s', [obj]));
      }
 };
 
+
+var Loc_dash_column = function(obj) {
+     if (Loc_question_ (obj)) {
+        return obj._fields[2];
+     } else {
+        throw new plt.Kernel.MobyRuntimeError(
+            plt.Kernel.format('Loc_dash_line: not a Loc: ~s', [obj]));
+     }
+};
+
+
 var Loc_dash_span = function(obj) {
      if (Loc_question_ (obj)) {
-        return obj.span;
+        return obj._fields[3];
      } else {
         throw new plt.Kernel.MobyRuntimeError(
             plt.Kernel.format('Loc_dash_span: not a Loc: ~s', [obj]));
@@ -139,48 +119,14 @@ var Loc_dash_span = function(obj) {
 
 var Loc_dash_id = function(obj) {
      if (Loc_question_ (obj)) {
-        return obj.id;
+        return obj._fields[4];
      } else {
         throw new plt.Kernel.MobyRuntimeError( 
             plt.Kernel.format('Loc_dash_id: not a Loc: ~s', [obj]));
      }
 };
 
-var set_dash_Loc_dash_offset_bang_ = function(obj,newVal) {
-	 if (Loc_question_ (obj)) {
-		obj.offset = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_Loc_dash_offset_bang_: not a Loc: ~s', [obj]));
-     }
-};
 
-var set_dash_Loc_dash_line_bang_ = function(obj,newVal) {
-	 if (Loc_question_ (obj)) {
-		obj.line = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_Loc_dash_line_bang_: not a Loc: ~s', [obj]));
-     }
-};
-
-var set_dash_Loc_dash_span_bang_ = function(obj,newVal) {
-	 if (Loc_question_ (obj)) {
-		obj.span = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_Loc_dash_span_bang_: not a Loc: ~s', [obj]));
-     }
-};
-
-var set_dash_Loc_dash_id_bang_ = function(obj,newVal) {
-	 if (Loc_question_ (obj)) {
-		obj.id = newVal;
-     } else {
-        throw new plt.Kernel.MobyRuntimeError(
-            plt.Kernel.format('set_dash_Loc_dash_id_bang_: not a Loc: ~s', [obj]));
-     }
-};
 
 var Loc_question_ = function(obj) { 
               return obj != null && obj != undefined && obj instanceof Loc; };
@@ -188,35 +134,38 @@ var Loc_question_ = function(obj) {
 
 
 
-
-var Loc_dash__greaterthan_string = function(a_dash_loc) { return (plt.Kernel.setLastLoc({offset:284, line:14, span:154, id:"stx.ss"}) && plt.Kernel.format((plt.types.String.makeInstance("offset=~a line=~a span=~a id=~s")), [(plt.Kernel.setLastLoc({offset:337, line:15, span:18, id:"stx.ss"})   && Loc_dash_offset(a_dash_loc)),(plt.Kernel.setLastLoc({offset:367, line:16, span:16, id:"stx.ss"})   && Loc_dash_line(a_dash_loc)),(plt.Kernel.setLastLoc({offset:395, line:17, span:16, id:"stx.ss"})   && Loc_dash_span(a_dash_loc)),(plt.Kernel.setLastLoc({offset:423, line:18, span:14, id:"stx.ss"})   && Loc_dash_id(a_dash_loc))])); };
-
-
-
-
-var stx_question_ = function(x) { return ((plt.Kernel.setLastLoc({offset:489, line:23, span:13, id:"stx.ss"})   && stx_colon_atom_question_(x))||(plt.Kernel.setLastLoc({offset:509, line:24, span:13, id:"stx.ss"})   && stx_colon_list_question_(x))); };
+var stx_question_ = function(x) { 
+    return (stx_colon_atom_question_(x))|| stx_colon_list_question_(x);
+}
 
 
 
 
-
-var stx_dash_e = function(a_dash_stx) { return ((plt.Kernel.setLastLoc({offset:635, line:31, span:17, id:"stx.ss"})   && stx_colon_atom_question_(a_dash_stx)) ?
-						(plt.Kernel.setLastLoc({offset:658, line:32, span:22, id:"stx.ss"})   && stx_colon_atom_dash_datum(a_dash_stx)) :
-						((plt.Kernel.setLastLoc({offset:687, line:33, span:17, id:"stx.ss"})   && stx_colon_list_question_(a_dash_stx)) ?
-						 (plt.Kernel.setLastLoc({offset:710, line:34, span:21, id:"stx.ss"})   && stx_colon_list_dash_elts(a_dash_stx)) :
-						 (plt.Kernel.setLastLoc({offset:624, line:30, span:109, id:"stx.ss"})   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=624 line=30 span=109 id=\\\"stx.ss\\\"\"")))))); };
-
-
-
-
-
-var stx_dash_loc = function(a_dash_stx) { return ((plt.Kernel.setLastLoc({offset:797, line:40, span:17, id:"stx.ss"})   && stx_colon_atom_question_(a_dash_stx)) ?
-						  (plt.Kernel.setLastLoc({offset:820, line:41, span:20, id:"stx.ss"})   && stx_colon_atom_dash_loc(a_dash_stx)) :
-						  ((plt.Kernel.setLastLoc({offset:847, line:42, span:17, id:"stx.ss"})   && stx_colon_list_question_(a_dash_stx)) ?
-						   (plt.Kernel.setLastLoc({offset:870, line:43, span:20, id:"stx.ss"})   && stx_colon_list_dash_loc(a_dash_stx)) :
-						   (plt.Kernel.setLastLoc({offset:786, line:39, span:106, id:"stx.ss"})   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=786 line=39 span=106 id=\\\"stx.ss\\\"\"")))))); };
+var stx_dash_e = function(a_dash_stx) {
+    if (stx_colon_atom_question_(a_dash_stx)) {
+	return stx_colon_atom_dash_datum(a_dash_stx);
+    } else if (stx_colon_list_question_(a_dash_stx)) {
+	return stx_colon_list_dash_elts(a_dash_stx);
+    } else {
+	plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),
+			 (plt.types.String.makeInstance("cond: fell out of cond around \"offset=624 line=30 span=109 id=\\\"stx.ss\\\"\"")));
+    }
+};
 
 
+
+
+
+var stx_dash_loc = function(a_dash_stx) {
+    if (stx_colon_atom_question_(a_dash_stx)) {
+	return stx_colon_atom_dash_loc(a_dash_stx);
+    } else if (stx_colon_list_question_(a_dash_stx)) {
+	return stx_colon_list_dash_loc(a_dash_stx);
+    } else {
+	plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),
+			 (plt.types.String.makeInstance("cond: fell out of cond around \"offset=786 line=39 span=106 id=\\\"stx.ss\\\"\""))); 
+    }
+};
 
 
 
@@ -262,3 +211,4 @@ var stx_dash__greaterthan_datum = function(a_dash_stx) { return ((plt.Kernel.set
                      result.toDisplayedString = function(cache) {return '<function:stx->datum>';}
 																				       return result; })(), [(plt.Kernel.setLastLoc({offset:1878, line:87, span:21, id:"stx.ss"})   && stx_colon_list_dash_elts(a_dash_stx))])) :
 								  (plt.Kernel.setLastLoc({offset:1776, line:83, span:126, id:"stx.ss"})   && plt.Kernel.error((plt.types.Symbol.makeInstance("cond")),(plt.types.String.makeInstance("cond: fell out of cond around \"offset=1776 line=83 span=126 id=\\\"stx.ss\\\"\"")))))); };
+

@@ -13,11 +13,13 @@
        (make-stx:list elts
                       (make-Loc (syntax-position a-syntax)
                                 (syntax-line a-syntax)
+                                (syntax-column a-syntax)
                                 (syntax-span a-syntax)
                                 (format "~a" (syntax-source a-syntax)))))]
     [else
      (make-stx:atom (syntax-e a-syntax)
                     (make-Loc (syntax-position a-syntax)
                               (syntax-line a-syntax)
+                              (syntax-column a-syntax)
                               (syntax-span a-syntax)
                               (format "~a" (syntax-source a-syntax))))]))

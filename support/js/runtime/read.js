@@ -33,6 +33,20 @@ goog.provide('plt.reader');
 	return c;
     }
 
+
+    var computeColumn = function(s, col) {
+	var i;
+	for(i = 0; i < s.length; i++) {
+	    if (s[i] == '\n') { 
+		col = 0; 
+	    } else {
+		col++;
+	    }
+	}
+	return col;
+    }
+
+
     var delimiter = "[\\s\\\(\\\)\\\[\\\]\\\{\\\}\\\"\\\,\\\'\\\`\\\;]";
     var nondelimiter = "[^\\s\\\(\\\)\\\[\\\]\\\{\\\}\\\"\\\,\\\'\\\`\\\;]";
 
@@ -73,6 +87,7 @@ goog.provide('plt.reader');
 
 	var offset = 0;
 	var line = 1;
+	var column = 0;
 	var tokens = [];
 
 	if (! source) { source = ""; }
@@ -98,6 +113,7 @@ goog.provide('plt.reader');
 					     tokenText,
 					     new Loc(offset,
 						     line,
+						     column,
 						     wholeMatch.length, 
 						     source)]);
 				isNumber = true;
@@ -109,6 +125,7 @@ goog.provide('plt.reader');
 					 tokenText,
 					 new Loc(offset,
 						 line,
+						 column,
 						 wholeMatch.length, 
 						 source)]);
 			}
@@ -117,11 +134,13 @@ goog.provide('plt.reader');
 				     tokenText,
 				     new Loc(offset,
 					     line,
+					     column,
 					     wholeMatch.length, 
 					     source)]);
 		    }
 
 		    offset = offset + wholeMatch.length;
+		    column = computeColumn(wholeMatch, column);
 		    line = line + countLines(wholeMatch);
 		    s = s.substring(wholeMatch.length);
 		    shouldContinue = true;
@@ -151,8 +170,8 @@ goog.provide('plt.reader');
 		"Error while tokenizing: the rest of the stream is: " +
 		    tokensAndError[1],
 		new Loc(s.length - tokensAndError[1].length,
-			countLines(s.substring(
-			    0, s.length - tokensAndError[1].length)),
+			countLines(s.substring(0, s.length - tokensAndError[1].length)),
+			computeColumn(s.substring(0, s.length - tokensAndError[1].length), 0),
 			tokensAndError[1].length,
 			source));
 	}
@@ -178,7 +197,11 @@ goog.provide('plt.reader');
 		    throw new plt.types.MobyParserError(
 			"token stream exhausted while trying to eat " +
 			    expectedType,
-			new Loc(0, 0, s.length, source));
+			new Loc(0, 
+				0, 
+				0,
+				s.length, 
+				source));
 		}
 	    }
 	    var t = tokens.shift();
@@ -205,11 +228,12 @@ goog.provide('plt.reader');
 	    return makeList(plt.types.Cons.makeInstance(
 		makeAtom(quoteSymbol, leadingQuote[2]),
 		plt.types.Cons.makeInstance(quoted, empty)),
-			    new Loc(leadingQuote[2].offset,
-				    leadingQuote[2].line,
-				    (quoted.loc.offset -
-				     leadingQuote[2].offset +
-				     quoted.loc.span),
+			    new Loc(Loc_dash_offset(leadingQuote[2]),
+				    Loc_dash_line(leadingQuote[2]),
+				    Loc_dash_column(leadingQuote[2]),
+				    (Loc_dash_offset(stx_dash_loc(quoted)) -
+				     Loc_dash_offset(leadingQuote[2]) +
+				     Loc_dash_span(stx_dash_loc(quoted))),
 				    source));
 	};
 
@@ -282,7 +306,7 @@ goog.provide('plt.reader');
 		} else {
 		    throw new plt.types.MobyParserError(
 			"Parse broke with empty token stream",
-			new Loc(0, 0, s.length, source));
+			new Loc(0, 0, 0, s.length, source));
 		}
 	    }
 
@@ -305,9 +329,10 @@ goog.provide('plt.reader');
 		var rparen = eat(')');
 		return make_dash_stx_colon_list(
 		    result,
-		    new Loc(lparen[2].offset,
-			    lparen[2].line,
-			    rparen[2].offset - lparen[2].offset + 1,
+		    new Loc(Loc_dash_offset(lparen[2]),
+			    Loc_dash_line(lparen[2]),
+			    Loc_dash_column(lparen[2]),
+			    Loc_dash_offset(rparen[2]) - Loc_dash_offset(lparen[2]) + 1,
 			    source));
 
 	    case '#;':
