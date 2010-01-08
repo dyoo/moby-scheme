@@ -1,0 +1,95 @@
+A Program is:
+   (listof Toplevel)
+
+
+A Toplevel is:
+    Definition
+    LibraryRequire    
+    Expression
+
+
+A Definition is:
+
+    FunctionDefinition of symbol * (listof symbol) * Expression
+
+        (define (<fun-name> <args> ...) <body>)
+
+
+    VariableDefinition of symbol * Expression
+
+        (define <id> <body>)
+
+
+    StructureDefinition of symbol * (listof symbol)
+
+        (define-struct <id> (<fields> ...))
+
+ 
+A LibraryRequire is:
+
+    Require of string
+
+        (require <module-path>)
+
+
+
+An Expression is:
+
+    Local of (listof Definition) * Expression
+
+        (local (<defn> ...) <body>)
+
+
+    Begin of (listof Expression)
+  
+        (begin <body> ...)
+
+    SetBang of symbol * Expression
+
+        (set! <id> <value>)
+
+    If of Expression * Expression * Expression
+
+        (if <test> <consequent> <alternative>)
+
+    And of (listof Expression)
+
+        (and <expr> ...)
+
+    Or of (listof Expression)
+
+        (or <expr> ...)
+
+
+    Lambda of (listof symbol) * Expression
+
+        (lambda (<args> ...) <body>)
+
+
+    Number of number
+
+        <number>
+
+    String of string
+
+        <string>
+
+    Boolean of boolean
+
+        <boolean>
+
+    Char of char
+
+        <char>
+
+    Identifier of symbol
+
+        <symbol>
+
+    Quoted of Expression
+
+        (quote <expr>)
+
+    Application of Expression * (listof Expression)
+
+        (<operator> <operands> ...)
