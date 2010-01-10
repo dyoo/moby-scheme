@@ -308,9 +308,12 @@ goog.provide('plt.world.Kernel');
 
     // Produces true if the thing is considered a color object.
     var isColor = function(thing) {
-	return typeof(colorDb.get(thing)) != 'undefined';
+	return (thing !=== undefined &&
+		thing !=== null &&
+		(thing instanceof ColorRecord ||
+		 typeof(colorDb.get(thing)) != 'undefined'));
     };
-
+    
 
 
     // text: string number color -> TextImage
@@ -905,18 +908,35 @@ goog.provide('plt.world.Kernel');
 	return this.colors[name.toString().toUpperCase()];
     };
 
-    var ColorRecord = function(r, g, b) {
-	this.r = r;
-	this.g = g;
-	this.b = b;
+
+    plt.world.Kernel.make_dash_color = function(r, g, b) {
+	var isColorNumber = function(x) {
+	    return (plt.types.NumberTower.lessThanOrEqual
+		    (plt.types.Rational.ZERO, x) &&
+		    plt.types.NumberTower.lessThanOrEqual
+		    (x, plt.types.Rational.makeInstance(255, 1)));
+	}
+	plt.Kernel.check(r, isColorNumber, "make-color", "number between 0 and 255", 1);
+	plt.Kernel.check(g, isColorNumber, "make-color", "number between 0 and 255", 2);
+	plt.Kernel.check(b, isColorNumber, "make-color", "number between 0 and 255", 3);
+
+	return new ColorRecord(r.toFixnum(),
+			       g.toFixnum(),
+			       b.toFixnum());
     };
 
+    var ColorRecord = function(r, g, b) {
+	plt.types.Struct.call(this, "make-color", [r, g, b]);
+	this._eqHashCode = plt.types.makeEqHashCode();
+    };
+    ColorRecord.prototype = heir(plt.types.Struct.prototype);
+
     ColorRecord.prototype.toString = function() {
-	return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
+	return "rgb(" + this._fields[0] + "," + this._fields[1] + "," + this._fields[2] + ")";
     };
 
     ColorRecord.prototype.toRGBAString = function() {
-	return "rgba(" + this.r + "," + this.g + "," + this.b + ", 1)";
+	return "rgba(" + this._fields[0] + "," + this._fields[1] + "," + this._fields[2] + ", 1)";
     }
 
     var colorDb = new ColorDb();

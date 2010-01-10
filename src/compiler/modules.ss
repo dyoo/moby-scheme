@@ -171,6 +171,8 @@
 				     (bf 'image? module-path 1 false "plt.world.Kernel.isImage")
 				     (bf 'image=? module-path 2 false "plt.world.Kernel.image_equal__question__")
 
+				     (bf 'make-color module-path 3 false "plt.world.Kernel.make_dash_color")
+
                                      (bf 'empty-scene module-path 2 false
                                          "plt.world.Kernel.emptyScene")
                                      (bf 'place-image module-path 4 false
