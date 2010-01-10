@@ -611,6 +611,36 @@ goog.provide('plt.world.Kernel');
 
 
 
+    var OverlayImage = function(img1, img2, otherImages) {
+	this.images = [img1, img2].concat(otherImages || []);
+	BaseImage.call(this,
+		       this.getWidth(),
+		       this.getHeight());
+    };
+    OverlayImage.prototype = heir(BaseImage.prototype);
+    OverlayImage.prototype.render = function(ctx, x, y) {
+	var i;
+	for(i = this.images.length- 1; i >= 0; i--) {
+	    this.images[i].render(ctx, x, y);
+	}
+    };
+    OverlayImage.prototype.getWidth = function() {
+	var len = this.images.length, i, m = 0;
+	for(i = 0 ; i< len; i++) {
+	    m = Math.max(m, this.images[i].getWidth());
+	}
+	return m;
+    };
+    OverlayImage.prototype.getHeight = function() {
+	var len = this.images.length, i, m = 0;
+	for(i = 0 ; i< len; i++) {
+	    m = Math.max(m, this.images[i].getHeight());
+	}
+	return m;
+    };
+
+
+
     var RectangleImage = function(width, height, style, color) {
 	BaseImage.call(this, width/2, height/2);
 	this.width = width;
