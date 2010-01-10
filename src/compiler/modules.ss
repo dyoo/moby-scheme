@@ -186,6 +186,11 @@
                                      (bf 'rectangle module-path 4 false
                                          "plt.world.Kernel.rectangle")
                                      
+				     (bf 'overlay module-path 2 true
+					 "plt.world.Kernel.overlay")
+				     (bf 'overlay/xy module-path 4 false
+					 "plt.world.Kernel.overlay_slash_xy")
+
                                      (bf 'key=? module-path 2 false
                                          "plt.world.Kernel.isKeyEqual")
                                      (bf 'text module-path 3 false

@@ -610,35 +610,60 @@ goog.provide('plt.world.Kernel');
     };
 
 
-
-    var OverlayImage = function(img1, img2, otherImages) {
-	this.images = [img1, img2].concat(otherImages || []);
+    // OverlayImage: image (arrayof image) -> image
+    // Creates an image that overlays img1 on top of the
+    // other images.
+    var OverlayImage = function(img1, otherImages) {
 	BaseImage.call(this,
-		       this.getWidth(),
-		       this.getHeight());
+		       img1.pinholeX,
+		       img1.pinholeY);
+	
+	var i, len;
+	this.images = [img1].concat(otherImages);
+	this.width = 0;
+	this.height = 0;
+	len = this.images.length;
+	for(i = 0 ; i< len; i++) {
+	    this.width= Math.max(this.width, this.images[i].getWidth());
+	    this.height= Math.max(this.width, this.images[i].getHeight());
+	}
     };
     OverlayImage.prototype = heir(BaseImage.prototype);
+    
+    
     OverlayImage.prototype.render = function(ctx, x, y) {
 	var i;
 	for(i = this.images.length- 1; i >= 0; i--) {
 	    this.images[i].render(ctx, x, y);
 	}
     };
+    
     OverlayImage.prototype.getWidth = function() {
-	var len = this.images.length, i, m = 0;
-	for(i = 0 ; i< len; i++) {
-	    m = Math.max(m, this.images[i].getWidth());
-	}
-	return m;
+	return this.width;
     };
+    
     OverlayImage.prototype.getHeight = function() {
-	var len = this.images.length, i, m = 0;
-	for(i = 0 ; i< len; i++) {
-	    m = Math.max(m, this.images[i].getHeight());
-	}
-	return m;
+	return this.height;
     };
+    
+    plt.world.Kernel.overlay = function(img1, img2, restImages) {
+	plt.Kernel.check(img1, isImage, "overlay", "image", 1);
+	plt.Kernel.check(img2, isImage, "overlay", "image", 2);	
+	plt.Kernel.arrayEach(restImages, function(x, i) { 
+		plt.Kernel.check(x, isImage, "overlay", "image", i+3) });
+	return new OverlayImage(img1, [img2].concat(restImages));
+    };
+    
+    plt.world.Kernel.overlay_slash_xy = function(img, deltaX, deltaY, other) {
+	plt.Kernel.check(img, isImage, "overlay/xy", "image", 1);
+	plt.Kernel.check(img, plt.Kernel.isNumber, "overlay/xy", "number", 2);
+	plt.Kernel.check(img, plt.Kernel.isNumber, "overlay/xy", "number", 3);
+	plt.Kernel.check(other, isImage, "overlay/xy", "image", 4);
 
+	return new OverlayImage(img,
+				[other.updatePinhole(deltaX.toFixnum(),
+						     deltaY.toFixnum())]);
+    };
 
 
     var RectangleImage = function(width, height, style, color) {
