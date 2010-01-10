@@ -308,8 +308,8 @@ goog.provide('plt.world.Kernel');
 
     // Produces true if the thing is considered a color object.
     var isColor = function(thing) {
-	return (thing !=== undefined &&
-		thing !=== null &&
+	return (thing !== undefined &&
+		thing !== null &&
 		(thing instanceof ColorRecord ||
 		 typeof(colorDb.get(thing)) != 'undefined'));
     };
@@ -332,10 +332,15 @@ goog.provide('plt.world.Kernel');
     };
 
 
+    var isStyle = function(x) {
+	return plt.Kernel.isString(x) || plt.Kernel.isSymbol(x);
+    }
+
+
     // circle: number style color -> TextImage
     plt.world.Kernel.circle = function(aRadius, aStyle, aColor) {
 	plt.Kernel.check(aRadius, plt.Kernel.isNumber, "circle", "number", 1);
-	plt.Kernel.check(aStyle, plt.Kernel.isString, "circle", "string", 2);
+	plt.Kernel.check(aStyle, isStyle, "circle", "style", 2);
 	plt.Kernel.check(aColor, isColor, "circle", "color", 3);
 
 
@@ -358,7 +363,7 @@ goog.provide('plt.world.Kernel');
     plt.world.Kernel.nwRectangle = function(w, h, s, c) {
 	plt.Kernel.check(w, plt.Kernel.isNumber, "nw:rectangle", "number", 1);
 	plt.Kernel.check(h, plt.Kernel.isNumber, "nw:rectangle", "number", 2);
-	plt.Kernel.check(s, plt.Kernel.isString, "nw:rectangle", "string", 3);
+	plt.Kernel.check(s, isStyle, "nw:rectangle", "style", 3);
 	plt.Kernel.check(c, isColor, "nw:rectangle", "color", 4);
 
 	if (colorDb.get(c)) {
@@ -375,7 +380,7 @@ goog.provide('plt.world.Kernel');
     plt.world.Kernel.rectangle = function(w, h, s, c) {
 	plt.Kernel.check(w, plt.Kernel.isNumber, "rectangle", "number", 1);
 	plt.Kernel.check(h, plt.Kernel.isNumber, "rectangle", "number", 2);
-	plt.Kernel.check(s, plt.Kernel.isString, "rectangle", "string", 3);
+	plt.Kernel.check(s, isStyle, "rectangle", "style", 3);
 	plt.Kernel.check(c, isColor, "rectangle", "color", 4);
 
 	if (colorDb.get(c)) {
@@ -628,7 +633,7 @@ goog.provide('plt.world.Kernel');
 	len = this.images.length;
 	for(i = 0 ; i< len; i++) {
 	    this.width= Math.max(this.width, this.images[i].getWidth());
-	    this.height= Math.max(this.width, this.images[i].getHeight());
+	    this.height= Math.max(this.height, this.images[i].getHeight());
 	}
     };
     OverlayImage.prototype = heir(BaseImage.prototype);
@@ -636,7 +641,7 @@ goog.provide('plt.world.Kernel');
     
     OverlayImage.prototype.render = function(ctx, x, y) {
 	var i;
-	for(i = this.images.length- 1; i >= 0; i--) {
+	for(i = this.images.length - 1; i >= 0; i--) {
 	    this.images[i].render(ctx, x, y);
 	}
     };
@@ -659,8 +664,8 @@ goog.provide('plt.world.Kernel');
     
     plt.world.Kernel.overlay_slash_xy = function(img, deltaX, deltaY, other) {
 	plt.Kernel.check(img, isImage, "overlay/xy", "image", 1);
-	plt.Kernel.check(img, plt.Kernel.isNumber, "overlay/xy", "number", 2);
-	plt.Kernel.check(img, plt.Kernel.isNumber, "overlay/xy", "number", 3);
+	plt.Kernel.check(deltaX, plt.Kernel.isNumber, "overlay/xy", "number", 2);
+	plt.Kernel.check(deltaY, plt.Kernel.isNumber, "overlay/xy", "number", 3);
 	plt.Kernel.check(other, isImage, "overlay/xy", "image", 4);
 
 	return new OverlayImage(img,
@@ -924,6 +929,9 @@ goog.provide('plt.world.Kernel');
 			       g.toFixnum(),
 			       b.toFixnum());
     };
+
+    // FIXME: add accessors
+    // FIXME: update toString to handle the primitive field values.
 
     var ColorRecord = function(r, g, b) {
 	plt.types.Struct.call(this, "make-color", [r, g, b]);
