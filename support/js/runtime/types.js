@@ -2,6 +2,31 @@ goog.provide('plt.types');
 
 
 
+
+//////////////////////////////////////////////////////////////////////
+/*
+
+Provided types:
+
+String
+Number (Rational, FloatPoint, Complex)
+Boolean
+Char
+Symbol
+List (Cons, Empty)
+Vector
+Struct
+Hashtable (EqHashTable, EqualHashTable)
+Box
+
+
+*/
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+
 (function() {
     
     
@@ -1725,12 +1750,112 @@ goog.provide('plt.types');
 
     //////////////////////////////////////////////////////////////////////
 
-    // makeEqHashtable: -> hashtable
+    // makeLowLevelEqHash: -> hashtable
     // Constructs an eq hashtable that uses Moby's getEqHashCode function.
-    var makeEqHashtable = function() {
-	return new plt._Hashtable(function(x) { return plt.types.getEqHashCode(x); },
-				  function(x, y) { return x === y; });
+    var makeLowLevelEqHash = function() {
+	return new plt._Hashtable(
+	    function(x) { return plt.types.getEqHashCode(x); },
+	    function(x, y) { return x === y; });
     };
+
+    plt.types.makeLowLevelEqHash = makeLowLevelEqHash;
+
+
+
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    // Hashtables
+    var EqHashTable = function(inputHash) {
+	this.hash = makeLowLevelEqHash();
+	this._eqHashCode = plt.types.makeEqHashCode();
+    };
+    plt.types.EqHashTable = EqHashTable;
+
+    EqHashTable.prototype.toWrittenString = function(cache) {
+	return "<hash>";
+    };
+
+    EqHashTable.prototype.toDisplayedString = function(cache) {
+	return "<hash>";
+    };
+
+    EqHashTable.prototype.isEqual = function(other, aUnionFind) {
+	if (other == undefined || other == null || (! (other instanceof EqHashTable))) {
+	    return false; 
+	}
+
+	if (this.hash.keys().length != other.hash.keys().length) { 
+	    return false;
+	}
+
+	var keys = this.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    if (! (this.hash.get(keys[i]) === other.hash.get(keys[i]))) {
+		return false;
+	    }
+	}
+	return true;
+    };
+
+
+
+    var EqualHashTable = function(inputHash) {
+	this.hash = new plt._Hashtable(function(x) { 
+                                           return plt.types.toWrittenString(x); 
+                                       },
+				       function(x, y) {
+					   return plt.Kernel.equal_question_(x, y); 
+				       });
+	this._eqHashCode = plt.types.makeEqHashCode();
+    };
+
+    plt.types.EqualHashTable = EqualHashTable;
+
+    EqualHashTable.prototype.toWrittenString = function(cache) {
+	return "<hash>";
+    };
+    EqualHashTable.prototype.toDisplayedString = function(cache) {
+	return "<hash>";
+    };
+
+    EqualHashTable.prototype.isEqual = function(other, aUnionFind) {
+	if (other == undefined || other == null || (! (other instanceof EqualHashTable))) {
+	    return false; 
+	}
+
+	if (this.hash.keys().length != other.hash.keys().length) { 
+	    return false;
+	}
+
+	var keys = this.hash.keys();
+	for (var i = 0; i < keys.length; i++){
+	    if (! (plt.Kernel.isEqual(this.hash.get(keys[i]),
+				      other.hash.get(keys[i]),
+				      aUnionFind))) {
+		return false;
+	    }
+	}
+	return true;
+    };
+
+
+
+
+
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
 
 
 
@@ -1738,7 +1863,7 @@ goog.provide('plt.types');
 
     plt.types.toWrittenString = function(x, cache) {
 	if (! cache) { 
-	    cache = makeEqHashtable();
+	    cache = makeLowLevelEqHash();
 	}
 
 	if (x && cache.containsKey(x)) {
@@ -1768,7 +1893,7 @@ goog.provide('plt.types');
 
     plt.types.toDisplayedString = function(x, cache) {
 	if (! cache) {
-	    cache = makeEqHashtable();
+	    cache = makeLowLevelEqHash();
 	}
 	if (x && cache.containsKey(x)) {
 	    return "...";
@@ -1798,7 +1923,7 @@ goog.provide('plt.types');
     // toDomNode: scheme-value -> dom-node
     plt.types.toDomNode = function(x, cache) {
 	if (! cache) {
-	    cache = makeEqHashtable();
+	    cache = makeLowLevelEqHash();
 	}
 	if (x && cache.containsKey(x)) {
 	    return document.createTextNode("...");

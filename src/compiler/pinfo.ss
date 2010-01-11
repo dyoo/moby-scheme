@@ -16,6 +16,7 @@
                       modules                ; (listof module-binding) 
                       used-bindings-hash     ; (hashof symbol binding)
                       gensym-counter         ; number
+                      provided-names         ; (hashof symbol binding)
                       defined-names          ; (hashof symbol binding)
                       shared-expressions     ; (hashof expression labeled-translation)
                       with-location-emits?   ; boolean
@@ -27,8 +28,9 @@
 (define empty-pinfo
   (make-pinfo empty-env
               empty 
-              empty-rbtree
+              empty-rbtree              
               0
+              empty-rbtree
               empty-rbtree
               empty-rbtree
               true))
@@ -43,16 +45,6 @@
 
 
 
-(define (pinfo-clear-defined-names a-pinfo)
-  (make-pinfo (pinfo-env a-pinfo)
-              (pinfo-modules a-pinfo)
-              (pinfo-used-bindings-hash a-pinfo)
-              (pinfo-gensym-counter a-pinfo)
-              empty
-              (pinfo-shared-expressions a-pinfo)
-              (pinfo-with-location-emits? a-pinfo)))
-
-
 ;; pinfo-update-env: pinfo env -> pinfo
 ;; Updates the env of a pinfo.
 (define (pinfo-update-env a-pinfo an-env)
@@ -61,6 +53,21 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
+   (pinfo-provided-names a-pinfo)
+   (pinfo-defined-names a-pinfo)
+   (pinfo-shared-expressions a-pinfo)
+   (pinfo-with-location-emits? a-pinfo)))
+
+
+;; pinfo-update-defined-names: pinfo rbtree -> pinfo
+;; Updates the provided names of a pinfo.
+(define (pinfo-update-provided-names a-pinfo provided-names)
+  (make-pinfo
+   (pinfo-env a-pinfo)
+   (pinfo-modules a-pinfo)
+   (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-gensym-counter a-pinfo)
+   provided-names
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)))
@@ -73,6 +80,7 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
+   (pinfo-provided-names a-pinfo)
    defined-names
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)))
@@ -86,6 +94,7 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
+   (pinfo-provided-names a-pinfo)
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
    with-location-emits?))
@@ -95,6 +104,7 @@
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
               (add1 (pinfo-gensym-counter a-pinfo))
+              (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
               (rbtree-insert expression<? 
                              (pinfo-shared-expressions a-pinfo) 
@@ -113,6 +123,7 @@
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
    (pinfo-gensym-counter a-pinfo)
+   (pinfo-provided-names a-pinfo)
    (rbtree-insert symbol< 
                   (pinfo-defined-names a-pinfo)
                   (binding-id a-binding)
@@ -140,6 +151,7 @@
             (pinfo-modules a-pinfo)
             (pinfo-used-bindings-hash a-pinfo)
             (pinfo-gensym-counter a-pinfo)
+            (pinfo-provided-names a-pinfo)
             (pinfo-defined-names a-pinfo)
             (pinfo-shared-expressions a-pinfo)
             (pinfo-with-location-emits? a-pinfo)))
@@ -154,6 +166,7 @@
               (cons a-module (pinfo-modules a-pinfo))
               (pinfo-used-bindings-hash a-pinfo)
               (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)))
@@ -169,6 +182,7 @@
                              (binding-id a-binding)
                              a-binding)
               (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)))
@@ -181,6 +195,7 @@
                     (pinfo-modules a-pinfo)
                     (pinfo-used-bindings-hash a-pinfo)
                     (add1 (pinfo-gensym-counter a-pinfo))
+                    (pinfo-provided-names a-pinfo)
                     (pinfo-defined-names a-pinfo)
                     (pinfo-shared-expressions a-pinfo)
                     (pinfo-with-location-emits? a-pinfo))
@@ -248,6 +263,7 @@
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash rbtree?]
                                  [gensym-counter number?]
+                                 [provided-names rbtree?]
                                  [defined-names rbtree?]
                                  [shared-expressions rbtree?]
                                  [with-location-emits? boolean?])]
@@ -260,6 +276,7 @@
                   [pinfo-accumulate-defined-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-module-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-shared-expression (expression? string? pinfo? . -> . pinfo?)]
+                  [pinfo-update-provided-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-update-with-location-emits? (pinfo? boolean? . -> . pinfo?)]
