@@ -361,6 +361,7 @@
                                   (stx->datum 1)
                                   (Loc-offset 1)
                                   (Loc-line 1)
+                                  (Loc-column 1)
                                   (Loc-span 1)
                                   (Loc-id 1))))))]
     top-env-3))
