@@ -171,6 +171,8 @@
 				     (bf 'image? module-path 1 false "plt.world.Kernel.isImage")
 				     (bf 'image=? module-path 2 false "plt.world.Kernel.image_equal__question__")
 
+				     (bf 'make-color module-path 3 false "plt.world.Kernel.make_dash_color")
+
                                      (bf 'empty-scene module-path 2 false
                                          "plt.world.Kernel.emptyScene")
                                      (bf 'place-image module-path 4 false
@@ -186,6 +188,11 @@
                                      (bf 'rectangle module-path 4 false
                                          "plt.world.Kernel.rectangle")
                                      
+				     (bf 'overlay module-path 2 true
+					 "plt.world.Kernel.overlay")
+				     (bf 'overlay/xy module-path 4 false
+					 "plt.world.Kernel.overlay_slash_xy")
+
                                      (bf 'key=? module-path 2 false
                                          "plt.world.Kernel.isKeyEqual")
                                      (bf 'text module-path 3 false

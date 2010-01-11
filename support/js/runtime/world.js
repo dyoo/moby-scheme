@@ -308,9 +308,12 @@ goog.provide('plt.world.Kernel');
 
     // Produces true if the thing is considered a color object.
     var isColor = function(thing) {
-	return typeof(colorDb.get(thing)) != 'undefined';
+	return (thing !== undefined &&
+		thing !== null &&
+		(thing instanceof ColorRecord ||
+		 typeof(colorDb.get(thing)) != 'undefined'));
     };
-
+    
 
 
     // text: string number color -> TextImage
@@ -329,10 +332,15 @@ goog.provide('plt.world.Kernel');
     };
 
 
+    var isStyle = function(x) {
+	return plt.Kernel.isString(x) || plt.Kernel.isSymbol(x);
+    }
+
+
     // circle: number style color -> TextImage
     plt.world.Kernel.circle = function(aRadius, aStyle, aColor) {
 	plt.Kernel.check(aRadius, plt.Kernel.isNumber, "circle", "number", 1);
-	plt.Kernel.check(aStyle, plt.Kernel.isString, "circle", "string", 2);
+	plt.Kernel.check(aStyle, isStyle, "circle", "style", 2);
 	plt.Kernel.check(aColor, isColor, "circle", "color", 3);
 
 
@@ -355,7 +363,7 @@ goog.provide('plt.world.Kernel');
     plt.world.Kernel.nwRectangle = function(w, h, s, c) {
 	plt.Kernel.check(w, plt.Kernel.isNumber, "nw:rectangle", "number", 1);
 	plt.Kernel.check(h, plt.Kernel.isNumber, "nw:rectangle", "number", 2);
-	plt.Kernel.check(s, plt.Kernel.isString, "nw:rectangle", "string", 3);
+	plt.Kernel.check(s, isStyle, "nw:rectangle", "style", 3);
 	plt.Kernel.check(c, isColor, "nw:rectangle", "color", 4);
 
 	if (colorDb.get(c)) {
@@ -372,7 +380,7 @@ goog.provide('plt.world.Kernel');
     plt.world.Kernel.rectangle = function(w, h, s, c) {
 	plt.Kernel.check(w, plt.Kernel.isNumber, "rectangle", "number", 1);
 	plt.Kernel.check(h, plt.Kernel.isNumber, "rectangle", "number", 2);
-	plt.Kernel.check(s, plt.Kernel.isString, "rectangle", "string", 3);
+	plt.Kernel.check(s, isStyle, "rectangle", "style", 3);
 	plt.Kernel.check(c, isColor, "rectangle", "color", 4);
 
 	if (colorDb.get(c)) {
@@ -609,6 +617,61 @@ goog.provide('plt.world.Kernel');
 	return this.img.cloneNode(true);
     };
 
+
+    // OverlayImage: image (arrayof image) -> image
+    // Creates an image that overlays img1 on top of the
+    // other images.
+    var OverlayImage = function(img1, otherImages) {
+	BaseImage.call(this,
+		       img1.pinholeX,
+		       img1.pinholeY);
+	
+	var i, len;
+	this.images = [img1].concat(otherImages);
+	this.width = 0;
+	this.height = 0;
+	len = this.images.length;
+	for(i = 0 ; i< len; i++) {
+	    this.width= Math.max(this.width, this.images[i].getWidth());
+	    this.height= Math.max(this.height, this.images[i].getHeight());
+	}
+    };
+    OverlayImage.prototype = heir(BaseImage.prototype);
+    
+    
+    OverlayImage.prototype.render = function(ctx, x, y) {
+	var i;
+	for(i = this.images.length - 1; i >= 0; i--) {
+	    this.images[i].render(ctx, x, y);
+	}
+    };
+    
+    OverlayImage.prototype.getWidth = function() {
+	return this.width;
+    };
+    
+    OverlayImage.prototype.getHeight = function() {
+	return this.height;
+    };
+    
+    plt.world.Kernel.overlay = function(img1, img2, restImages) {
+	plt.Kernel.check(img1, isImage, "overlay", "image", 1);
+	plt.Kernel.check(img2, isImage, "overlay", "image", 2);	
+	plt.Kernel.arrayEach(restImages, function(x, i) { 
+		plt.Kernel.check(x, isImage, "overlay", "image", i+3) });
+	return new OverlayImage(img1, [img2].concat(restImages));
+    };
+    
+    plt.world.Kernel.overlay_slash_xy = function(img, deltaX, deltaY, other) {
+	plt.Kernel.check(img, isImage, "overlay/xy", "image", 1);
+	plt.Kernel.check(deltaX, plt.Kernel.isNumber, "overlay/xy", "number", 2);
+	plt.Kernel.check(deltaY, plt.Kernel.isNumber, "overlay/xy", "number", 3);
+	plt.Kernel.check(other, isImage, "overlay/xy", "image", 4);
+
+	return new OverlayImage(img,
+				[other.updatePinhole(deltaX.toFixnum(),
+						     deltaY.toFixnum())]);
+    };
 
 
     var RectangleImage = function(width, height, style, color) {
@@ -850,18 +913,38 @@ goog.provide('plt.world.Kernel');
 	return this.colors[name.toString().toUpperCase()];
     };
 
-    var ColorRecord = function(r, g, b) {
-	this.r = r;
-	this.g = g;
-	this.b = b;
+
+    plt.world.Kernel.make_dash_color = function(r, g, b) {
+	var isColorNumber = function(x) {
+	    return (plt.types.NumberTower.lessThanOrEqual
+		    (plt.types.Rational.ZERO, x) &&
+		    plt.types.NumberTower.lessThanOrEqual
+		    (x, plt.types.Rational.makeInstance(255, 1)));
+	}
+	plt.Kernel.check(r, isColorNumber, "make-color", "number between 0 and 255", 1);
+	plt.Kernel.check(g, isColorNumber, "make-color", "number between 0 and 255", 2);
+	plt.Kernel.check(b, isColorNumber, "make-color", "number between 0 and 255", 3);
+
+	return new ColorRecord(r.toFixnum(),
+			       g.toFixnum(),
+			       b.toFixnum());
     };
 
+    // FIXME: add accessors
+    // FIXME: update toString to handle the primitive field values.
+
+    var ColorRecord = function(r, g, b) {
+	plt.types.Struct.call(this, "make-color", [r, g, b]);
+	this._eqHashCode = plt.types.makeEqHashCode();
+    };
+    ColorRecord.prototype = heir(plt.types.Struct.prototype);
+
     ColorRecord.prototype.toString = function() {
-	return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
+	return "rgb(" + this._fields[0] + "," + this._fields[1] + "," + this._fields[2] + ")";
     };
 
     ColorRecord.prototype.toRGBAString = function() {
-	return "rgba(" + this.r + "," + this.g + "," + this.b + ", 1)";
+	return "rgba(" + this._fields[0] + "," + this._fields[1] + "," + this._fields[2] + ", 1)";
     }
 
     var colorDb = new ColorDb();
