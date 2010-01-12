@@ -641,9 +641,15 @@ goog.provide('plt.world.Kernel');
     
     OverlayImage.prototype.render = function(ctx, x, y) {
 	var i;
-	for(i = this.images.length - 1; i >= 0; i--) {
-	    this.images[i].render(ctx, x, y);
+
+	// Ask every object to render itself.
+	for(i = 0; i < this.images.length; i++) {
+	    var childImage = this.images[i]
+	    childImage.render(ctx,
+			      x - (childImage.pinholeX - this.pinholeX),
+			      y - (childImage.pinholeY - this.pinholeY));
 	}
+
     };
     
     OverlayImage.prototype.getWidth = function() {
