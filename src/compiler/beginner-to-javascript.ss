@@ -13,6 +13,7 @@
 (require "desugar.ss")
 (require "labeled-translation.ss")
 (require "rbtree.ss")
+(require "version.ss")
 
 
 ;; A compiled program is a:
@@ -24,7 +25,8 @@
 
 
 ;; compiled-program-main: compiled-program ->string
-;; Produces the main output source, given the compiled program.
+;; Produces an output of the compiled program as a Javascript string to be evaluated.
+;; No bindings should be exposed, as the toplevel definitions are wrapped lexically.
 (define (compiled-program-main a-compiled-program)
   (string-append "(function() { "
                  (compiled-program-defns a-compiled-program)
@@ -36,7 +38,8 @@
                  "}); })()"))
 
 
-;; Generates the main output source, exposing all of the definitions to the toplevel.
+;; compiled-program-main/expose: compiled-program -> string
+;; Like compiled-program-main, but exposes all of the provided definitions to the toplevel.
 (define (compiled-program-main/expose a-compiled-program)
   (local [(define defined-names
 
@@ -64,6 +67,37 @@
                                                defined-names))
                      "})();"
                      "})(this);\n"))))
+
+
+
+;; compiled-program-main/expose-as-module: compiled-program string -> string
+;; Like compiled-program-main, but constructs a string that, when evaluated, installs
+;; a module into plt._MODULES.
+(define (compiled-program-main/expose-as-module a-compiled-program module-name)
+  (local [(define defined-names (expose-provided-names a-compiled-program))]
+    (string-append  "if (typeof(plt) == 'undefined') { plt = {}; }\n"
+                    "if (typeof(plt._MODULES) == 'undefined') { plt._MODULES = {}; }\n"
+                    "if (typeof(plt._MODULES[" (format "~s" module-name) "]) == 'undefined') {\n"
+                    "    plt._MODULES[" (format "~s" module-name) "] = "
+                    "        { COMPILER_VERSION: " (format "~s" VERSION) ",\n\tBINDINGS: {},\n\tEXPORTS : {}};\n"
+
+                    "    (function() {\n"
+                    ""       (compiled-program-defns a-compiled-program) "\n"
+                    "        (" (compiled-program-toplevel-exprs a-compiled-program) ")(plt.Kernel.identity);\n"
+                    ;; FIXME: export the BINDINGS value that describes each exported value.
+                    ""       (apply string-append (map (lambda (a-name)
+                                                (local [(define munged-name
+                                                          (identifier->munged-java-identifier a-name))]
+                                                  (format "plt._MODULES[~s].EXPORTS[~s] = ~a;\n"
+                                                          module-name
+                                                          (symbol->string munged-name)
+                                                          munged-name
+                                                          )))
+                                              defined-names))
+                    "     }());\n"
+                    "}\n")))
+
+
 
 
 ;; expose-provided-names: compiled-program -> (listof symbol)
@@ -1103,6 +1137,8 @@
                    (compiled-program? . -> . string?)]
                   [compiled-program-main/expose
                    (compiled-program? . -> . string?)]
+                  [compiled-program-main/expose-as-module
+                   (compiled-program? string? . -> . string?)]
                   
                   [program->compiled-program 
                    (program? . -> . compiled-program?)]
