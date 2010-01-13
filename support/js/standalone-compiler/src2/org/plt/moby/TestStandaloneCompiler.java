@@ -1,15 +1,16 @@
 package org.plt.moby;
+import java.io.IOException;
 
 // FIXME: make these real unit tests.
 public class TestStandaloneCompiler {
-    private static StandaloneCompiler getCompiler() {
+    private static StandaloneCompiler getCompiler() throws IOException {
 	System.out.println("Instantiating a Standalone Compiler");
 	StandaloneCompiler c = new StandaloneCompiler();
 	System.out.println("Done instantiation");
 	return c;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
 	StandaloneCompiler c = getCompiler();
