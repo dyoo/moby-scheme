@@ -263,10 +263,22 @@
 (define-struct provide-binding:id (stx))
 (define-struct provide-binding:struct-id (stx))
 
+
+;; provide-binding?: any -> boolean
+;; Produces true if the input is a provide-binding.
 (define (provide-binding? x)
   (or (provide-binding:id? x)
       (provide-binding:struct-id? x)))
 
+
+;; provide-binding-stx: provide-binding -> stx
+;; Extract the stx where the provide binding was defined.
+(define (provide-binding-stx a-provide-binding)
+  (cond
+    [(provide-binding:id? a-provide-binding)
+     (provide-binding:id-stx a-provide-binding)]
+    [(provide-binding:struct-id? a-provide-binding)
+     (provide-binding:struct-id-stx a-provide-binding)]))
 
 
 
@@ -299,4 +311,5 @@
                   
                   [struct provide-binding:id ([stx stx?])]
                   [struct provide-binding:struct-id ([stx stx?])]
-                  [provide-binding? (any/c . -> . boolean?)])
+                  [provide-binding? (any/c . -> . boolean?)]
+                  [provide-binding-stx (provide-binding? . -> . stx?)])

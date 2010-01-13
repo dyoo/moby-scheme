@@ -35,16 +35,18 @@
                  "  )(arguments[0] || plt.Kernel.identity);\n"
                  "}); })()"))
 
+
 ;; Generates the main output source, exposing all of the definitions to the toplevel.
 (define (compiled-program-main/expose a-compiled-program)
   (local [(define defined-names
-            
+
+            (expose-provided-names a-compiled-program)
             ;; FIXME: must expose only the provided names
-            (rbtree-fold (pinfo-defined-names
-                          (compiled-program-pinfo a-compiled-program))
-                         (lambda (name binding acc)
-                           (cons name acc))
-                         empty))]
+            #;(rbtree-fold (pinfo-defined-names
+                            (compiled-program-pinfo a-compiled-program))
+                           (lambda (name binding acc)
+                             (cons name acc))
+                           empty))]
     (begin
       (string-append "(function(_that) {"
                      (compiled-program-defns a-compiled-program)
@@ -62,6 +64,53 @@
                                                defined-names))
                      "})();"
                      "})(this);\n"))))
+
+
+;; expose-provided-names: compiled-program -> (listof symbol)
+;; Get all the names of the provided identifiers.
+(define (expose-provided-names a-compiled-program)
+  (rbtree-fold (pinfo-provided-names (compiled-program-pinfo a-compiled-program))
+               (lambda (name binding acc)
+                 (append (expose-provided-names/provide-binding binding a-compiled-program)
+                         acc))
+               empty))
+
+
+;; expose-provided-names: provide-binding compiled-program -> (listof symbol)
+;; Get all the names of the identifiers provided by the provide-binding.
+(define (expose-provided-names/provide-binding a-provide-binding a-compiled-program)
+  (cond
+    [(provide-binding:id? a-provide-binding)
+     (list (binding-id (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program)))]
+
+    [(provide-binding:struct-id? a-provide-binding)
+     (local [(define a-binding (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program))]
+       (cond
+         [(binding:structure? a-binding)
+          (append (list (binding:structure-constructor a-binding))
+                  (list (binding:structure-predicate a-binding))
+                  (binding:structure-accessors a-binding)
+                  (binding:structure-mutators a-binding))]
+         [else
+          (syntax-error (format "The provided name ~s was expected to be a structure, but is defined to be something else."
+                                (binding-id a-binding))
+                        (provide-binding-stx a-binding))]))]))
+
+
+;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> binding
+;; Looku
+(define (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program)
+  (local [(define list-or-false
+            (rbtree-lookup symbol<
+                           (pinfo-defined-names (compiled-program-pinfo a-compiled-program))
+                           (stx-e (provide-binding-stx a-provide-binding))))]
+    (cond
+      [(list? list-or-false)
+       (second list-or-false)]
+      [else
+       (syntax-error (format "The provided name ~s has not been defined"
+                             (stx-e (provide-binding-stx a-provide-binding)))
+                     (provide-binding-stx a-provide-binding))])))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

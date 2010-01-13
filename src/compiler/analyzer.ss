@@ -98,9 +98,11 @@
                                                              (stx-e (second (stx-e a-clause)))
                                                              (make-provide-binding:struct-id (second (stx-e a-clause)))))]
                 [else
-                 (syntax-error "" a-clause)])]
+                 (syntax-error (format "provide doesn't recognize the syntax of the clause: ~s" (stx->datum a-clause))
+                               a-clause)])]
              [else
-              (syntax-error "" a-clause)]))
+              (syntax-error (format "provide doesn't recognize the syntax of the clause: ~s" (stx->datum a-clause))
+                            a-clause)]))
          a-pinfo
          clauses))
 
