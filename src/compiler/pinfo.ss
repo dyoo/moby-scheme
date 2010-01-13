@@ -16,7 +16,7 @@
                       modules                ; (listof module-binding) 
                       used-bindings-hash     ; (hashof symbol binding)
                       gensym-counter         ; number
-                      provided-names         ; (hashof symbol binding)
+                      provided-names         ; (hashof symbol provide-binding)
                       defined-names          ; (hashof symbol binding)
                       shared-expressions     ; (hashof expression labeled-translation)
                       with-location-emits?   ; boolean
@@ -259,6 +259,17 @@
 
 
 
+
+(define-struct provide-binding:id (stx))
+(define-struct provide-binding:struct-id (stx))
+
+(define (provide-binding? x)
+  (or (provide-binding:id? x)
+      (provide-binding:struct-id? x)))
+
+
+
+
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash rbtree?]
@@ -267,6 +278,8 @@
                                  [defined-names rbtree?]
                                  [shared-expressions rbtree?]
                                  [with-location-emits? boolean?])]
+                  
+                  
                   [empty-pinfo pinfo?]
                   [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
@@ -281,4 +294,9 @@
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-update-with-location-emits? (pinfo? boolean? . -> . pinfo?)]
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
-                  [pinfo-permissions (pinfo? . -> . (listof permission?))])
+                  [pinfo-permissions (pinfo? . -> . (listof permission?))]
+                  
+                  
+                  [struct provide-binding:id ([stx stx?])]
+                  [struct provide-binding:struct-id ([stx stx?])]
+                  [provide-binding? (any/c . -> . boolean?)])

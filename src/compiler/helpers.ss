@@ -111,6 +111,13 @@
      false]))
 
 
+;; provide-statement?: stx -> boolean
+;; Produces true if the syntax looks like a provide.
+(define (provide-statement? an-sexp)
+  (stx-begins-with? an-sexp 'provide))
+
+
+
 ;; string-join: (listof string) string -> string
 (define (string-join strs delim)
   (cond
@@ -400,6 +407,7 @@
                   [defn? (any/c . -> . boolean?)]
                   [test-case? (any/c . -> . boolean?)]
                   [library-require? (any/c . -> . boolean?)]
+                  [provide-statement? (any/c . -> . boolean?)]
                   [take ((listof any/c) number? . -> . (listof any/c))]
                   [list-tail ((listof any/c) number? . -> . (listof any/c))]
 

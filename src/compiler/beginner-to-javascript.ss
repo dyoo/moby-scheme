@@ -37,7 +37,9 @@
 
 ;; Generates the main output source, exposing all of the definitions to the toplevel.
 (define (compiled-program-main/expose a-compiled-program)
-  (local [(define defined-names 
+  (local [(define defined-names
+            
+            ;; FIXME: must expose only the provided names
             (rbtree-fold (pinfo-defined-names
                           (compiled-program-pinfo a-compiled-program))
                          (lambda (name binding acc)
@@ -149,7 +151,13 @@
                                                "\n"
                                                "// Module require erased\n")
                                 tops
-                                a-pinfo)] 
+                                a-pinfo)]
+
+                         [(provide-statement? (first program))
+                          (loop (rest program)
+                                defns
+                                tops
+                                a-pinfo)]
                          
                          [(or (test-case? (first program))
                               (expression? (first program)))
@@ -772,7 +780,9 @@
                                                           "(" (string-join operand-strings ",") ")")
                                            (stx-loc original-stx)
                                            updated-pinfo)
-                 updated-pinfo)])])]))]
+                 updated-pinfo)])])]
+         [(binding:structure? operator-binding)
+          (syntax-error (format "structure name ~s can not be used as an program expression." (stx-e operator)) original-stx)]))]
     
     ;; General application
     [else
@@ -848,7 +858,11 @@
                              "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
                              "_result_.toDisplayedString = _result_.toWrittenString; "
                              "_result_.procedureArity = " (rational-number->javascript-string (binding:function-min-arity binding)) ";"
-                             "return _result_; })()")])]))]))
+                             "return _result_; })()")])]
+         [(binding:structure? binding)
+          (syntax-error (format "structure name ~s can not be used as an program expression." (stx-e an-id))
+                        an-id)]
+         ))]))
 
 
 

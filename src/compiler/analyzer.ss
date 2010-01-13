@@ -5,6 +5,7 @@
 (require "helpers.ss")
 (require "modules.ss")
 (require "permission.ss")
+(require "rbtree.ss")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -43,7 +44,9 @@
                          [(test-case? (first a-program))
                           pinfo]
                          [(library-require? (first a-program))
-                          (require-analyze (second (stx-e (first a-program))) pinfo)]
+                          (require-analyze-collect-definitions (second (stx-e (first a-program))) pinfo)]
+                         [(provide-statement? (first a-program))
+                          (collect-provided-names (rest (stx-e (first a-program))) pinfo)]
                          [(expression? (first a-program))
                           pinfo]))]
            (program-analyze-collect-definitions (rest a-program)
@@ -64,12 +67,46 @@
                           pinfo]
                          [(library-require? (first a-program))
                           pinfo]
+                         [(provide-statement? (first a-program))
+                          pinfo]
                          [(expression? (first a-program))
                           (expression-analyze-uses (first a-program)
                                                    pinfo 
                                                    (pinfo-env pinfo))]))]
            (program-analyze-uses (rest a-program)
                                  updated-pinfo))]))
+
+
+;; collect-provided-names: (listof stx) pinfo -> pinfo
+;; Collect the provide statements into the pinfo-provided-names.
+(define (collect-provided-names clauses a-pinfo)
+  (foldl (lambda (a-clause a-pinfo)
+           (cond
+             [(symbol? (stx-e a-clause))
+              (pinfo-update-provided-names a-pinfo
+                                           (rbtree-insert symbol<
+                                                          (pinfo-provided-names a-pinfo)
+                                                          (stx-e a-clause)
+                                                          (make-provide-binding:id a-clause)))]
+             [(stx-begins-with? a-clause 'struct-out)
+              (cond
+                [(and (= (length (stx-e a-clause)) 2)
+                      (symbol? (stx-e (second (stx-e a-clause)))))
+                 (pinfo-update-provided-names a-pinfo
+                                              (rbtree-insert symbol<
+                                                             (pinfo-provided-names a-pinfo)
+                                                             (stx-e (second (stx-e a-clause)))
+                                                             (make-provide-binding:struct-id (second (stx-e a-clause)))))]
+                [else
+                 (syntax-error "" a-clause)])]
+             [else
+              (syntax-error "" a-clause)]))
+         a-pinfo
+         clauses))
+
+  
+
+
 
 ;; bf: symbol path number boolean string -> binding:function
 ;; Helper function.
@@ -113,11 +150,7 @@
 ;; struct-definition-bindings: (listof symbol) -> (listof binding)
 ;; Makes the bindings for the identifiers introduced by a structure definition.
 (define (struct-definition-bindings id fields)
-  (local [(define type-id id)
-          (define type-id-binding
-            (make-binding:constant id (symbol->string (identifier->munged-java-identifier id))
-                                   (list)))
-          (define constructor-id 
+  (local [(define constructor-id 
             (string->symbol (string-append "make-" (symbol->string id))))
           (define constructor-binding 
             (bf constructor-id false (length fields) false
@@ -147,11 +180,20 @@
             (map (lambda (mut-id)
                    (bf mut-id false 2 false
                        (symbol->string (identifier->munged-java-identifier mut-id))))
-                 mutator-ids))]
-    (append (list type-id-binding)
+                 mutator-ids))
+          
+          (define structure-binding
+            (make-binding:structure id
+                                    fields
+                                    constructor-id
+                                    predicate-id
+                                    selector-ids
+                                    mutator-ids))]
+    (append (list structure-binding)
             (list constructor-binding)
             (list predicate-binding)
-            selector-bindings mutator-bindings)))
+            selector-bindings 
+            mutator-bindings)))
 
 
 
@@ -350,7 +392,7 @@
 
 
 ;; require-analyze: require-path-stx -> pinfo
-(define (require-analyze require-path pinfo)
+(define (require-analyze-collect-definitions require-path pinfo)
   (local [(define (loop modules)
             (cond
               [(empty? modules)

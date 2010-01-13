@@ -9,6 +9,8 @@ A Toplevel is:
 
     Expression
 
+    ProvideDeclaration
+
 
 
 A Definition is:
@@ -33,6 +35,15 @@ A LibraryRequire is:
     Require of string
 
         (require <module-path>)
+
+
+A ProvideDeclaration is:
+
+    Provide of (listof (symbol | (list 'struct-out symbol)))
+
+        (provide <id1>
+                 <id2> 
+                 (struct-out <id3>))
 
 
 
