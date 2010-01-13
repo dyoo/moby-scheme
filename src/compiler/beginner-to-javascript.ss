@@ -121,7 +121,8 @@
      (local [(define a-binding (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program))]
        (cond
          [(binding:structure? a-binding)
-          (append (list (binding:structure-constructor a-binding))
+          (append (list (binding:structure-name a-binding))
+                  (list (binding:structure-constructor a-binding))
                   (list (binding:structure-predicate a-binding))
                   (binding:structure-accessors a-binding)
                   (binding:structure-mutators a-binding))]

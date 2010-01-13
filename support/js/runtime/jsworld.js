@@ -338,7 +338,10 @@ plt.world.MobyJsworld = {};
 
 	if (config.lookup('tickDelay')) {
 	    var wrappedTick = function(w) {
-		setTimeout(function() {plt.world.stimuli.onTick()}, 0);
+		setTimeout(function() {
+		    plt.world.stimuli.onTick()
+		},
+			   0);
 		return w;
 	    }
 	    var wrappedDelay = config.lookup('tickDelay');

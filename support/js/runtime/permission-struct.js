@@ -245,6 +245,7 @@ PERMISSION_colon_WAKE_dash_LOCK = make_dash_permission_colon_wake_dash_lock();
 
  })  )(arguments[0] || plt.Kernel.identity);
 _that["PERMISSION_colon_TILT"] = PERMISSION_colon_TILT;
+_that["permission_colon_universe"] = permission_colon_universe;
 _that["make_dash_permission_colon_universe"] = make_dash_permission_colon_universe;
 _that["permission_colon_universe_question_"] = permission_colon_universe_question_;
 _that["permission_colon_universe_dash_url"] = permission_colon_universe_dash_url;
@@ -252,6 +253,7 @@ _that["set_dash_permission_colon_universe_dash_url_bang_"] = set_dash_permission
 _that["permission_question_"] = permission_question_;
 _that["string_dash__greaterthan_permission"] = string_dash__greaterthan_permission;
 _that["permission_dash__greaterthan_string"] = permission_dash__greaterthan_string;
+_that["permission_colon_open_dash_image_dash_url"] = permission_colon_open_dash_image_dash_url;
 _that["make_dash_permission_colon_open_dash_image_dash_url"] = make_dash_permission_colon_open_dash_image_dash_url;
 _that["permission_colon_open_dash_image_dash_url_question_"] = permission_colon_open_dash_image_dash_url_question_;
 _that["permission_colon_open_dash_image_dash_url_dash_url"] = permission_colon_open_dash_image_dash_url_dash_url;

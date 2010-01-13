@@ -12,21 +12,25 @@ goog.provide('plt.world.stimuli');
     // computing a new world to replace the old.
     var doStimuli = function(computeEffectF, computeWorldF, restArgs) {
 	var effectUpdaters = [];
-	change(function(w) {
-	    var args = [w].concat(restArgs);
-	    if (computeEffectF) {
-		var effect = computeEffectF(args);
-		effectUpdaters = applyEffect(effect);
-	    }    
-	    if (computeWorldF) {
-		return computeWorldF(args);
-	    } else {
-		return w;
+	try {
+	    change(function(w) {
+		var args = [w].concat(restArgs);
+		if (computeEffectF) {
+		    var effect = computeEffectF(args);
+		    effectUpdaters = applyEffect(effect);
+		}    
+		if (computeWorldF) {
+		    return computeWorldF(args);
+		} else {
+		    return w;
+		}
+	    });
+	    
+	    for (var i = 0; i < effectUpdaters.length; i++) {
+		change(effectUpdaters[i]);
 	    }
-	});
-	
-	for (var i = 0; i < effectUpdaters.length; i++) {
-	    change(effectUpdaters[i]);
+	} catch (e) { 
+	    stimuli.onShutdown();
 	}
     }
 
