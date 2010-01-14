@@ -213,6 +213,14 @@
 
 (provide/contract [permission? (any/c . -> . boolean?)]
                   
+                  [struct permission:location ()]
+                  [struct permission:send-sms ()]
+                  [struct permission:receive-sms ()]
+                  [struct permission:tilt ()]
+                  [struct permission:shake ()]
+                  [struct permission:internet ()]
+                  [struct permission:telephony ()]
+                  [struct permission:wake-lock ()]
                   [struct permission:open-image-url ((url string?))]
                   [struct permission:universe ((url string?))]
                   
