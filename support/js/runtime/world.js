@@ -333,7 +333,9 @@ goog.provide('plt.world.Kernel');
 
 
     var isStyle = function(x) {
-	return plt.Kernel.isString(x) || plt.Kernel.isSymbol(x);
+	return ((plt.Kernel.isString(x) || plt.Kernel.isSymbol(x)) &&
+		(x.toString().toLowerCase() == "solid" ||
+		 x.toString().toLowerCase() == "outline"));
     }
 
 
@@ -352,6 +354,29 @@ goog.provide('plt.world.Kernel');
 	 aStyle,
 	 aColor);
     };
+
+
+
+    plt.world.Kernel.star = function(aPoints, anOuter, anInner, aStyle, aColor) {
+	plt.Kernel.check(aPoints, plt.Kernel.isNumber, "star", "number", 1);
+	plt.Kernel.check(anOuter, plt.Kernel.isNumber, "star", "number", 2);
+	plt.Kernel.check(anInner, plt.Kernel.isNumber, "star", "number", 3);
+	plt.Kernel.check(aStyle, isStyle, "star", "style", 4);
+	plt.Kernel.check(aColor, isColor, "star", "color", 5);
+
+	if (colorDb.get(aColor)) {
+	    aColor = colorDb.get(aColor);
+	}
+	return new StarImage(plt.types.NumberTower.toFixnum(aPoints), 
+			     plt.types.NumberTower.toFixnum(anOuter),
+			     plt.types.NumberTower.toFixnum(anInner),
+			     aStyle,
+			     aColor);
+    };
+
+
+
+
 
 
     plt.world.Kernel.openImageUrl = function(path) {
@@ -471,7 +496,7 @@ goog.provide('plt.world.Kernel');
 	canvas.style.display = 'none';
 	document.body.appendChild(canvas);
  	var ctx = canvas.getContext("2d");
-	that.render(ctx, 0, 0) 
+	that.render(ctx, width/2, height/2) 
 	document.body.removeChild(canvas);
 	canvas.style.display = '';
 
@@ -692,6 +717,7 @@ goog.provide('plt.world.Kernel');
 
     RectangleImage.prototype.render = function(ctx, x, y) {
 	ctx.fillStyle = this.color.toString();
+	ctx.strokeStyle = this.color.toString();
 	if (this.style.toString().toLowerCase() == "outline") {
 	    ctx.strokeRect(x, y, this.width, this.height);
 	} else {
@@ -724,6 +750,7 @@ goog.provide('plt.world.Kernel');
 	if(ctx.fillText) {
 	    ctx.font = this.size +"px Optimer";
 	    ctx.fillStyle = this.color.toRGBAString();
+	    ctx.strokeStyle = this.color.toString();
 	    ctx.fillText(this.msg, x, y);
 	}
 	else if (typeof(ctx.mozDrawText) !== 'undefined') {
@@ -731,7 +758,8 @@ goog.provide('plt.world.Kernel');
 	    // Fix me: I don't quite know how to get the
 	    // baseline right.
 	    ctx.translate(x, y + this.size);
-	    ctx.fillStyle = this.color;
+	    ctx.fillStyle = this.color.toString();
+	    ctx.strokeStyle = this.color.toString();
 	    ctx.mozDrawText(this.msg);
 	} 
 	
@@ -748,6 +776,8 @@ goog.provide('plt.world.Kernel');
     };
 
 
+    //////////////////////////////////////////////////////////////////////
+
     var CircleImage = function(radius, style, color) {
 	BaseImage.call(this, radius, radius);
 	this.radius = radius;
@@ -757,11 +787,12 @@ goog.provide('plt.world.Kernel');
     CircleImage.prototype = heir(BaseImage.prototype);
 
     CircleImage.prototype.render = function(ctx, x, y) {
-	ctx.translate(0, 0);
+	//ctx.translate(0, 0);
 	ctx.beginPath();
 	ctx.fillStyle = this.color.toString();
-	ctx.arc(x + this.radius,
-		y + this.radius, 
+	ctx.strokeStyle = this.color.toString();
+	ctx.arc(x,
+		y,
 		this.radius, 0, 2*Math.PI, false);
 	if (this.style.toString().toLowerCase() == "outline")
 	    ctx.stroke();
@@ -777,6 +808,64 @@ goog.provide('plt.world.Kernel');
     CircleImage.prototype.getHeight = function() {
 	return this.radius * 2;
     };
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+    // StarImage: fixnum fixnum fixnum color -> image
+    var StarImage = function(points, outer, inner, style, color) {
+	BaseImage.call(this,
+		       Math.max(outer, inner),
+		       Math.max(outer, inner));
+	this.points = points;
+	this.outer = outer;
+	this.inner = inner;
+	this.style = style;
+	this.color = color;
+    };
+
+    StarImage.prototype = heir(BaseImage.prototype);
+
+    var oneDegreeAsRadian = Math.PI / 180;
+
+    // render: context fixnum fixnum -> void
+    // Draws a star on the given context.
+    // Most of this code here adapted from the Canvas tutorial at:
+    // http://developer.apple.com/safari/articles/makinggraphicswithcanvas.html
+    StarImage.prototype.render = function(ctx, x, y) {
+	ctx.save();
+	ctx.beginPath();
+	ctx.fillStyle = this.color.toString();
+	ctx.strokeStyle = this.color.toString();
+	//ctx.moveTo( x + ( Math.sin( 0 ) * this.outer ), y + ( Math.cos( 0 ) * this.outer ) );
+	for( var pt = 0; pt < (this.points * 2) + 1; pt++ ) {
+	    var rads = ( ( 360 / (2 * this.points) ) * pt ) * oneDegreeAsRadian - 0.5;
+	    var radius = ( pt % 2 == 1 ) ? this.outer : this.inner;
+	    ctx.lineTo(x + ( Math.sin( rads ) * radius ), 
+		       y + ( Math.cos( rads ) * radius ) );
+	}
+	if (this.style.toString().toLowerCase() == "outline") {
+	    ctx.stroke();
+	} else {
+	    ctx.fill();
+	}
+	ctx.closePath();
+	ctx.restore();
+    };
+    
+    // getWidth: -> fixnum
+    StarImage.prototype.getWidth = function() {
+	return Math.max(this.outer, this.inner) * 2;
+    };
+
+
+    // getHeight: -> fixnum
+    StarImage.prototype.getHeight = function() {
+	return Math.max(this.outer, this.inner) * 2;
+    };
+
 
 
 
