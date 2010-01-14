@@ -115,10 +115,12 @@
 (define (expose-provided-names/provide-binding a-provide-binding a-compiled-program)
   (cond
     [(provide-binding:id? a-provide-binding)
-     (list (binding-id (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program)))]
+     (list (binding-id (lookup-provide-binding-in-definition-bindings a-provide-binding 
+                                                                      a-compiled-program)))]
 
     [(provide-binding:struct-id? a-provide-binding)
-     (local [(define a-binding (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program))]
+     (local [(define a-binding (lookup-provide-binding-in-definition-bindings a-provide-binding 
+                                                                              a-compiled-program))]
        (cond
          [(binding:structure? a-binding)
           (append (list (binding:structure-name a-binding))
@@ -133,7 +135,7 @@
 
 
 ;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> binding
-;; Looku
+;; Lookup the provided bindings.
 (define (lookup-provide-binding-in-definition-bindings a-provide-binding a-compiled-program)
   (local [(define list-or-false
             (rbtree-lookup symbol<

@@ -233,34 +233,64 @@
 
 
 ;; Bootstrap bindings
-(define bootstrap-module
+(define bootstrap-teachpack
   (local [;; bf: symbol path number boolean string -> binding:function
           ;; Helper function.
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string empty false))
           (define module-path
-            "moby/bootstrap")]
+            "moby/bootstrap-teachpack")
+          (define js-module-path
+            "plt._MODULES['bootstrap-teachpack.js']")
+          ]
     (make-module-binding 'world
                          module-path
-                         (append (list 
-                                  (bf 'start module-path 14 false "plt._MODULES['bootstrap-teachpack'].start")
-                                  )
-                                 (module-binding-bindings world-stub-module)))))
+                         (append 
+                          (list 
+                           (bf 'start module-path 14 false (string-append js-module-path ".EXPORTS['start']"))
+                           (make-binding:constant 'test-frame 
+                                                  (string-append js-module-path ".EXPORTS['test-frame']")
+                                                  empty)
+                           (bf 'sq module-path 1 false (string-append js-module-path ".EXPORTS['sq']"))
+                           (bf 'sine module-path 1 false (string-append js-module-path ".EXPORTS['sine']"))
+                           (bf 'cosine module-path 1 false (string-append js-module-path ".EXPORTS['cosine']"))
+                           (bf 'tangent module-path 1 false (string-append js-module-path ".EXPORTS['tangent']")))
+                           (module-binding-bindings world-stub-module)))))
 
-;; Bootstrap bindings
-#;(define bootstrap-module
+;; Cage teachpack
+(define cage-teachpack
   (local [;; bf: symbol path number boolean string -> binding:function
           ;; Helper function.
           (define (bf name module-path arity vararity? java-string)
             (make-binding:function name module-path arity vararity? java-string empty false))
           (define module-path
-            "moby/bootstrap-teachpack")]
+            "moby/cage-teachpack")
+          (define js-module-path
+            "plt._MODULES['cage-teachpack.js']")
+          ]
     (make-module-binding 'world
                          module-path
-                         (append (list 
-                                  (bf 'start module-path 14 false "plt._MODULES['bootstrap-teachpack'].start")
-                                  )
-                                 (module-binding-bindings world-stub-module)))))
+                         (append 
+                          (list 
+                           (bf 'start module-path 1 false (string-append js-module-path ".EXPORTS['start']")))))))
+
+;; Function teachpack
+(define function-teachpack
+  (local [;; bf: symbol path number boolean string -> binding:function
+          ;; Helper function.
+          (define (bf name module-path arity vararity? java-string)
+            (make-binding:function name module-path arity vararity? java-string empty false))
+          (define module-path
+            "moby/function-teachpack")
+          (define js-module-path
+            "plt._MODULES['function-teachpack.js']")
+          ]
+    (make-module-binding 'world
+                         module-path
+                         (append 
+                          (list 
+                           (bf 'start module-path 1 false (string-append js-module-path ".EXPORTS['start']")))))))
+
 
 
 
@@ -450,9 +480,8 @@
                             tilt-module
                             net-module
                             parser-module
-                            bootstrap-module
+                            bootstrap-teachpack
                             telephony-module
-                            
                             moby-module-binding))
 
 
