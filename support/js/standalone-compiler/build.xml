@@ -7,7 +7,7 @@
 
   <target name="init">
     <mkdir dir="${build}"/>
-    <copy file="compressed-standalone-compiler.js" tofile="${build}/org/plt/moby/compiler.js"/>
+<!--     <copy file="compressed-standalone-compiler.js" tofile="${build}/org/plt/moby/compiler.js"/> -->
   </target>
 
   <target name="compile-interface" depends="init">
