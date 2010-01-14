@@ -8,7 +8,7 @@
          (prefix-in error: htdp/error)
          htdp/image
 
-	 (only-in htdp/world nw:rectangle place-image empty-scene scene+line)
+	 (only-in htdp/world nw:rectangle place-image empty-scene scene+line )
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)

@@ -651,39 +651,41 @@ goog.provide('plt.world.Kernel');
     //////////////////////////////////////////////////////////////////////
 
 
-    // OverlayImage: image (arrayof image) -> image
+    // OverlayImage: image image -> image
     // Creates an image that overlays img1 on top of the
-    // other images.
-    var OverlayImage = function(img1, otherImages) {
+    // other image.
+    var OverlayImage = function(img1, img2) {
+	var deltaX = img1.pinholeX - img2.pinholeX;
+	var deltaY = img1.pinholeY - img2.pinholeY;
+	var left = Math.min(0, deltaX);
+	var top = Math.min(0, deltaY);
+	var right = Math.max(deltaX + img2.getWidth(), 
+			     img1.getWidth());
+	var bottom = Math.max(deltaY + img2.getHeight(),
+			      img1.getHeight());
+
 	BaseImage.call(this,
-		       img1.pinholeX,
-		       img1.pinholeY);
-	
-	var i, len;
-	this.images = [img1].concat(otherImages);
-	this.width = 0;
-	this.height = 0;
-	len = this.images.length;
-	for(i = 0 ; i< len; i++) {
-	    this.width= Math.max(this.width, this.images[i].getWidth());
-	    this.height= Math.max(this.height, this.images[i].getHeight());
-	}
+		       img1.pinholeX - left,
+		       img1.pinholeY - top);
+	this.img1 = img1;
+	this.img2 = img2;
+	this.width = right - left;
+	this.height = bottom - top;
+
+	this.img1Dx = -left;
+	this.img1Dy = -top;
+	this.img2Dx = deltaX - left;	
+	this.img2Dy = deltaY - top;
     };
+
     OverlayImage.prototype = heir(BaseImage.prototype);
     
     
     OverlayImage.prototype.render = function(ctx, x, y) {
-	var i;
-
-	// Ask every object to render itself.
-	for(i = 0; i < this.images.length; i++) {
-	    var childImage = this.images[i]
-	    childImage.render(ctx,
-			      x - (childImage.pinholeX - this.pinholeX),
-			      y - (childImage.pinholeY - this.pinholeY));
-	}
-
+	this.img1.render(ctx, x + this.img1Dx, y + this.img1Dy);
+	this.img2.render(ctx, x + this.img2Dx, y + this.img2Dy);
     };
+
     
     OverlayImage.prototype.getWidth = function() {
 	return this.width;
@@ -693,14 +695,21 @@ goog.provide('plt.world.Kernel');
 	return this.height;
     };
     
+
+
     plt.world.Kernel.overlay = function(img1, img2, restImages) {
 	plt.Kernel.check(img1, isImage, "overlay", "image", 1);
 	plt.Kernel.check(img2, isImage, "overlay", "image", 2);	
 	plt.Kernel.arrayEach(restImages, function(x, i) { 
 		plt.Kernel.check(x, isImage, "overlay", "image", i+3) });
-	return new OverlayImage(img1, [img2].concat(restImages));
+	var img = new OverlayImage(img1, img2);
+	for (var i = 0; i < restImages.length; i++) {
+	    img = new OverlayImage(img, restImages[i]);
+	}
+	return img;
     };
     
+
     plt.world.Kernel.overlay_slash_xy = function(img, deltaX, deltaY, other) {
 	plt.Kernel.check(img, isImage, "overlay/xy", "image", 1);
 	plt.Kernel.check(deltaX, plt.Kernel.isNumber, "overlay/xy", "number", 2);
@@ -708,8 +717,8 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(other, isImage, "overlay/xy", "image", 4);
 
 	return new OverlayImage(img,
-				[other.updatePinhole(deltaX.toFixnum(),
-						     deltaY.toFixnum())]);
+				other.updatePinhole(deltaX.toFixnum(),
+						    deltaY.toFixnum()));
     };
 
 
