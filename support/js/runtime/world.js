@@ -455,6 +455,10 @@ goog.provide('plt.world.Kernel');
     };
 
 
+
+    // render: context fixnum fixnum: -> void
+    // Render the image, where the upper-left corner of the image is drawn at
+    // (x, y).
     BaseImage.prototype.render = function(ctx, x, y) {
 	throw new MobyRuntimeError("Unimplemented method render");
     };
@@ -496,7 +500,7 @@ goog.provide('plt.world.Kernel');
 	canvas.style.display = 'none';
 	document.body.appendChild(canvas);
  	var ctx = canvas.getContext("2d");
-	that.render(ctx, width/2, height/2) 
+	that.render(ctx, 0, 0) 
 	document.body.removeChild(canvas);
 	canvas.style.display = '';
 
@@ -540,7 +544,9 @@ goog.provide('plt.world.Kernel');
     SceneImage.prototype.add = function(anImage, x, y) {
 	return new SceneImage(this.width, 
 			      this.height,
-			      this.children.concat([[anImage, x, y]]));
+			      this.children.concat([[anImage, 
+						     x - anImage.pinholeX, 
+						     y - anImage.pinholeY]]));
     };
 
     // render: 2d-context primitive-number primitive-number -> void
@@ -548,17 +554,14 @@ goog.provide('plt.world.Kernel');
 	var i;
 	var childImage, childX, childY;
 	// Clear the scene.
-	ctx.clearRect(x - this.pinholeX, y - this.pinholeY, 
- 		      this.width, this.height);
+	ctx.clearRect(x, y, this.width, this.height);
 	// Then ask every object to render itself.
 	for(i = 0; i < this.children.length; i++) {
 	    childImage = this.children[i][0];
 	    childX = this.children[i][1];
 	    childY = this.children[i][2];
 	    ctx.save();
-	    childImage.render(ctx,
-			      childX + x - childImage.pinholeX,
-			      childY + y - childImage.pinholeY);
+	    childImage.render(ctx, childX + x, childY + y);
 	    ctx.restore();
 	}
     };
@@ -571,6 +574,8 @@ goog.provide('plt.world.Kernel');
 	return this.height;
     };
 
+
+    //////////////////////////////////////////////////////////////////////
 
    
     var FileImage = function(src, rawImage) {
@@ -643,6 +648,9 @@ goog.provide('plt.world.Kernel');
     };
 
 
+    //////////////////////////////////////////////////////////////////////
+
+
     // OverlayImage: image (arrayof image) -> image
     // Creates an image that overlays img1 on top of the
     // other images.
@@ -705,6 +713,9 @@ goog.provide('plt.world.Kernel');
     };
 
 
+    //////////////////////////////////////////////////////////////////////
+
+
     var RectangleImage = function(width, height, style, color) {
 	BaseImage.call(this, width/2, height/2);
 	this.width = width;
@@ -735,44 +746,45 @@ goog.provide('plt.world.Kernel');
     };
 
 
-
+    //////////////////////////////////////////////////////////////////////
     
     var TextImage = function(msg, size, color) {
 	BaseImage.call(this, 0, 0);
 	this.msg = msg;
 	this.size = size;
 	this.color = color;
-	this.font = "Optimer";
+	this.font = this.size + "px Optimer";
+
+	
+	var canvas = plt.world.Kernel.makeCanvas(0, 0);
+ 	var ctx = canvas.getContext("2d");
+	ctx.font = this.font;
+	var metrics = ctx.measureText(msg);
+
+	this.width = metrics.width;
+	// KLUDGE: I don't know how to get at the height.
+	this.height = ctx.measureText("m").width + 20;
+
     }
+
     TextImage.prototype = heir(BaseImage.prototype);
 
     TextImage.prototype.render = function(ctx, x, y) {
-	if(ctx.fillText) {
-	    ctx.font = this.size +"px Optimer";
-	    ctx.fillStyle = this.color.toRGBAString();
-	    ctx.strokeStyle = this.color.toString();
-	    ctx.fillText(this.msg, x, y);
-	}
-	else if (typeof(ctx.mozDrawText) !== 'undefined') {
-	    ctx.mozTextStyle=this.size+"px "+this.font;
-	    // Fix me: I don't quite know how to get the
-	    // baseline right.
-	    ctx.translate(x, y + this.size);
-	    ctx.fillStyle = this.color.toString();
-	    ctx.strokeStyle = this.color.toString();
-	    ctx.mozDrawText(this.msg);
-	} 
-	
+	ctx.font = this.font;
+	ctx.textAlign = 'left';
+	ctx.textBaseline = 'top';
+	ctx.fillStyle = this.color.toString();
+	ctx.strokeStyle = this.color.toString();
+	ctx.fillText(this.msg, x, y);
     };
     
     TextImage.prototype.getWidth = function() {
-	// Fixme: we need the font metrics to do this right...
-	return this.size * this.msg.length;
+	return this.width;
     };
 
+
     TextImage.prototype.getHeight = function() {
-	return 10;
-	// Fixme: we need the font metrics to do this right...
+	return this.height;
     };
 
 
@@ -791,8 +803,8 @@ goog.provide('plt.world.Kernel');
 	ctx.beginPath();
 	ctx.fillStyle = this.color.toString();
 	ctx.strokeStyle = this.color.toString();
-	ctx.arc(x,
-		y,
+	ctx.arc(x + this.radius,
+		y + this.radius,
 		this.radius, 0, 2*Math.PI, false);
 	if (this.style.toString().toLowerCase() == "outline")
 	    ctx.stroke();
@@ -824,6 +836,8 @@ goog.provide('plt.world.Kernel');
 	this.inner = inner;
 	this.style = style;
 	this.color = color;
+
+	this.radius = Math.max(this.inner, this.outer);
     };
 
     StarImage.prototype = heir(BaseImage.prototype);
@@ -843,8 +857,8 @@ goog.provide('plt.world.Kernel');
 	for( var pt = 0; pt < (this.points * 2) + 1; pt++ ) {
 	    var rads = ( ( 360 / (2 * this.points) ) * pt ) * oneDegreeAsRadian - 0.5;
 	    var radius = ( pt % 2 == 1 ) ? this.outer : this.inner;
-	    ctx.lineTo(x + ( Math.sin( rads ) * radius ), 
-		       y + ( Math.cos( rads ) * radius ) );
+	    ctx.lineTo(x + this.radius + ( Math.sin( rads ) * radius ), 
+		       y + this.radius + ( Math.cos( rads ) * radius ) );
 	}
 	if (this.style.toString().toLowerCase() == "outline") {
 	    ctx.stroke();
@@ -857,13 +871,13 @@ goog.provide('plt.world.Kernel');
     
     // getWidth: -> fixnum
     StarImage.prototype.getWidth = function() {
-	return Math.max(this.outer, this.inner) * 2;
+	return this.radius * 2;
     };
 
 
     // getHeight: -> fixnum
     StarImage.prototype.getHeight = function() {
-	return Math.max(this.outer, this.inner) * 2;
+	return this.radius * 2;
     };
 
 
