@@ -2197,6 +2197,9 @@ goog.provide('plt.Kernel');
 	}
     };
 
+    plt.Kernel.EXAMPLE = plt.Kernel.check_dash_expect;
+
+
     plt.Kernel.check_dash_within = function(testThunk, expectedThunk, boundsThunk) {
 	var val = testThunk([]);
 	var expectedVal = expectedThunk([]);

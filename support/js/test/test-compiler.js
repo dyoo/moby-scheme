@@ -72,7 +72,6 @@ function init() {
 	    plt.Kernel.lastLoc = undefined;
 	    this.assertRaise("MobyRuntimeError",
 			     function() { run("   (/ 1 0)")});
-	    this.assert(isEqual("offset=3, line=1, span=7, id=test", plt.Kernel.locToString(plt.Kernel.lastLoc)));
 	},
 
 
@@ -408,6 +407,14 @@ function init() {
 			     function() { run("(check-expect 3 4)"); })
 	    run("(check-expect 3 3)");
 	},
+
+
+	testExample: function() {
+	    this.assertRaise("MobyTestingError",
+			     function() { run("(EXAMPLE 3 4)"); })
+	    run("(EXAMPLE 3 3)");
+	},
+
 
 	testCheckWithin: function() {
 	    run("(check-within 22/7 pi 0.01)");
