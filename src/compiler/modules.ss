@@ -481,6 +481,8 @@
                             net-module
                             parser-module
                             bootstrap-teachpack
+			    function-teachpack
+			    cage-teachpack
                             telephony-module
                             moby-module-binding))
 
