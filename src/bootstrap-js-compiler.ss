@@ -6,10 +6,11 @@
          scheme/port
          scheme/file
          scheme/contract
-         "compiler/stx.ss"
+         "runtime/stx.ss"
          "compiler/pinfo.ss"
          "stx-helpers.ss"
          "compile-helpers.ss"
+         "program-resources.ss"
          "compiler/beginner-to-javascript.ss"
          "compiler/helpers.ss")
 
@@ -113,7 +114,9 @@
 ;; write-bootstrap-module: -> void
 ;; Writes out the bootstrap-teachpack module
 (define (write-runtime-modules)
-  (write-collect-module "bootstrap.js" "collects/bootstrap.ss"))
+  (write-collect-module "bootstrap-teachpack.js" "collects/bootstrap-teachpack.ss")
+  (write-collect-module "cage-teachpack.js" "collects/cage-teachpack.ss")
+  (write-collect-module "function-teachpack.js" "collects/function-teachpack.ss"))
 
 
 
@@ -146,7 +149,7 @@
 ;; Writes out the javascript compiler and other files.
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
-  #;(boot-compile-runtime-library "compiler/stx.ss" syntax-path)
+  (boot-compile-runtime-library "runtime/stx.ss" syntax-path)
   (boot-compile-runtime-library "compiler/permission.ss" permission-struct-path)
   (boot-compile-runtime-library "compiler/effect-struct.ss" effect-struct-path)
   
@@ -267,22 +270,28 @@
 
 ;; read-program: path -> program
 (define (read-program a-path)
-  (call-with-input-file a-path
-    (lambda (ip)
-      (port-count-lines! ip)
-      (check-special-lang-line! a-path (read-line ip)) ;; skip the first language-level line
-      (let loop ()
-        (let ([elt (read-syntax a-path ip)])
-        (cond
-          [(eof-object? elt)
-           empty]
-          [else
-           (cons (syntax->stx elt) (loop))]))))))
+  (call-with-program/resources
+   a-path
+   (lambda (a-program/resources)
+     (program/resources-program a-program/resources)
+     #;(void)))
+  #;(call-with-input-file a-path
+      (lambda (ip)
+        (port-count-lines! ip)
+        (check-special-lang-line! a-path (read-line ip)) ;; skip the first language-level line
+        (let loop ()
+          (let ([elt (read-syntax a-path ip)])
+            (cond
+              [(eof-object? elt)
+               empty]
+              [else
+               (cons (syntax->stx elt) (loop))]))))))
 
 
 ;; make sure the line is a #lang s-exp "lang.ss" line.
-(define (check-special-lang-line! source a-line)
+#;(define (check-special-lang-line! source a-line)
   #;(void)
+  (printf "~s~n" a-line)
   (unless (or (regexp-match #rx"^#lang s-exp \"lang.ss\"$" a-line)
               (regexp-match #rx"^#lang s-exp \"../../moby-lang.ss\"$" a-line))
     (error 'check-special-line! "~s needs to be written in lang.ss language" source)))
@@ -371,6 +380,12 @@
                (let ([fip (open-input-file (build-path moby-runtime-path line))])
                  (bytes-append (file->bytes (build-path moby-runtime-path line))
                                #"\n")))))))
+
+
+
+(define (call-with-program/resources path f)
+  (f (open-program/resources path)))
+
 
 
 

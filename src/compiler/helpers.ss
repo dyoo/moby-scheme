@@ -136,6 +136,7 @@
 ;; test-case?: stx -> boolean
 (define (test-case? an-sexp)
   (or (stx-begins-with? an-sexp 'check-expect)
+      (stx-begins-with? an-sexp 'EXAMPLE)
       (stx-begins-with? an-sexp 'check-within)
       (stx-begins-with? an-sexp 'check-error)))
 

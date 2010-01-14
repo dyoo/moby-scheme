@@ -32,8 +32,8 @@
             (cond
               [(defn? an-element)
                (desugar-defn an-element a-pinfo)]
-              [(stx-begins-with? an-element 'include)
-               (desugar-include an-element a-pinfo)]
+              #;[(stx-begins-with? an-element 'include)
+                 (desugar-include an-element a-pinfo)]
               [(library-require? an-element)
                (list (list an-element) a-pinfo)]
               [(test-case? an-element)
@@ -116,6 +116,10 @@
                 (cond [(stx-begins-with? a-test-case 'check-expect)
                        (check-length! a-test-case 3
                                       "check-expect requires two expressions.  Try (check-expect test expected).")]
+                      [(stx-begins-with? a-test-case 'EXAMPLE)
+                       (check-length! a-test-case 3
+                                      "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
+                      
                       [(stx-begins-with? a-test-case 'check-within)
                        (check-length! a-test-case 4
                                       "check-within requires three expressions.  Try (check-within test expected range).")]

@@ -11,7 +11,7 @@
          scheme/gui/base
          lang/htdp-advanced
          (for-syntax scheme/base)
-         "stx.ss"
+         "../runtime/stx.ss"
          "error-struct.ss")
 
 
@@ -133,7 +133,7 @@
                      
                      )
 
-         (all-from-out "stx.ss")
+         (all-from-out "../runtime/stx.ss")
 
          
          ;; Contract-related stuff: the following will be erased on 

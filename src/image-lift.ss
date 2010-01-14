@@ -4,7 +4,7 @@
          scheme/list
          mrlib/cache-image-snip
          scheme/contract
-         "compiler/stx.ss")
+         "runtime/stx.ss")
 
 (define-struct named-bitmap (name bitmap))
 

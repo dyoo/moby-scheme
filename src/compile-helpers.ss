@@ -11,7 +11,7 @@
          "config.ss"
          "stx-helpers.ss"
          "image-lift.ss"
-         "compiler/stx.ss"
+         "runtime/stx.ss"
          "compiler/pinfo.ss"
          "compiler/env.ss"
          "compiler/permission.ss")
@@ -113,7 +113,9 @@
 ;; Opens up the beginner-level program.
 (define (open-beginner-program path)
   (define text (new text%))
-  (send text insert-file (path->string path))
+  (send text insert-file (if (path? path) 
+                             (path->string path)
+                             path))
   text)
 
 

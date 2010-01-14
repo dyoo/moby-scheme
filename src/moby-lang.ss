@@ -1,7 +1,7 @@
 #lang scheme/base
 (require (except-in "compiler/lang.ss")
          "stub/parser.ss"
-         "compiler/stx.ss"
+         "runtime/stx.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
          "serve.ss"
@@ -76,20 +76,24 @@
 
 
 
-;; require: currently broken
-(define-syntax (broken-require stx)
+;; Require: currently broken.
+(define-syntax (hacky-require stx)
   (syntax-case stx ()
     [(_ path)
      (cond
-       [(and (syntax-e #'path)
-             (string=? (syntax-e #'path) "moby/bootstrap"))
-        (with-syntax ([start (datum->syntax stx 'start)])
-          (syntax/loc stx (base:begin
-                            (define (start title background playerImg targetImgs objectImgs  
-                                           update-player update-target update-object 
-                                           collide? offscreen?)
-                              (void))
-                            (void))))]
+       #;[(and (syntax-e #'path)
+               (string? (syntax-e #'path))
+               (or (string=? (syntax-e #'path) "moby/bootstrap")
+                   (string=? (syntax-e #'path) "moby/bootstrap-teachpack.ss")))
+          (with-syntax ([start (datum->syntax stx 'start)])
+            (syntax/loc stx 
+              (require (file "collects/bootstrap-teachpack.ss"))
+              #;(base:begin
+                 (define (start title background playerImg targetImgs objectImgs  
+                                update-player update-target update-object 
+                                collide? offscreen?)
+                   (void))
+                 (void))))]
        [else
         (raise-syntax-error #f "Not currently implemented" stx)])]
     [else
@@ -99,7 +103,7 @@
 
 (provide (except-out (all-from-out "compiler/lang.ss") #%module-begin provide require)
          (rename-out (-#%module-begin #%module-begin))
-         (rename-out (broken-require require))
+         (rename-out (hacky-require require))
          
          (all-from-out "stub/parser.ss")
          (all-from-out "stub/world.ss")
@@ -113,6 +117,8 @@
          
 	 remove
 
+         provide
+         
          ;; Configuration handlers
          on-key on-key!
          on-tick on-tick!

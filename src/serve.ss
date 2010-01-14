@@ -15,7 +15,7 @@
          "compiler/beginner-to-javascript.ss"
          "compiler/pinfo.ss"
          "image-lift.ss"
-         "compiler/stx.ss"
+         "runtime/stx.ss"
          "generate-application.ss")
 
 

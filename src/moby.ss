@@ -5,7 +5,7 @@
 
 (require "generate-application.ss"
          "utils.ss"
-         "compiler/stx.ss"
+         "runtime/stx.ss"
          "compiler/error-struct.ss"
          scheme/string
          scheme/cmdline

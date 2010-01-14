@@ -15,14 +15,15 @@
          (only-in "compiler/helpers.ss" identifier->munged-java-identifier)
          "utils.ss"
          "template.ss"
-         "config.ss")
+         "config.ss"
+         "program-resources.ss")
 
 
 ;; A program/resources consists of program source, and the set of named bitmaps
 ;; associated to it.
 ;; TODO: We may expand this definition to handle other resource types like music
 ;; and other media.
-(define-struct program/resources (program named-bitmaps))
+#;(define-struct program/resources (program named-bitmaps))
   
   
 
@@ -223,10 +224,7 @@
   (make-javascript-directories dest-dir)
   (let*-values ([(named-bitmaps)
                  (cond [(program/resources? text-or-program/resources)
-                        (let ([named-bitmaps (program/resources-named-bitmaps text-or-program/resources)])
-                          (for ([bm named-bitmaps])
-                            (named-bitmap-save bm dest-dir))
-                          named-bitmaps)]
+                        (program/resources-write-named-bitmaps! text-or-program/resources dest-dir)]
                        [else
                         (lift-images-to-directory text-or-program/resources (build-path dest-dir))])]
                 [(program)
@@ -337,5 +335,5 @@
                   [compiled-program->main.js
                    (javascript:compiled-program? (listof named-bitmap?) . -> . string?)]
 
-                  [struct program/resources ([program program?]
+                  #;[struct program/resources ([program program?]
                                              [named-bitmaps (listof named-bitmap?)])])

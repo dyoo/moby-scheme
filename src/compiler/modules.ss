@@ -1,6 +1,11 @@
 #lang s-exp "lang.ss"
 
 ;; Hardcoded modules known by Moby.
+
+;; FIXME: these bindings should not be hardcoded here; a module should be self-describing
+;; in terms of what bindings it provides.
+
+
 (require "env.ss")
 (require "permission.ss")
 
@@ -183,6 +188,10 @@
 
                                      (bf 'circle module-path 3 false
                                          "plt.world.Kernel.circle")
+                                     
+                                     (bf 'star module-path 5 false
+                                         "plt.world.Kernel.star")
+
                                      (bf 'nw:rectangle module-path 4 false
                                          "plt.world.Kernel.nwRectangle")
                                      (bf 'rectangle module-path 4 false
@@ -234,7 +243,23 @@
     (make-module-binding 'world
                          module-path
                          (append (list 
-                                  (bf 'start module-path 10 false "plt.bootstrap.start"))
+                                  (bf 'start module-path 14 false "plt._MODULES['bootstrap-teachpack'].start")
+                                  )
+                                 (module-binding-bindings world-stub-module)))))
+
+;; Bootstrap bindings
+#;(define bootstrap-module
+  (local [;; bf: symbol path number boolean string -> binding:function
+          ;; Helper function.
+          (define (bf name module-path arity vararity? java-string)
+            (make-binding:function name module-path arity vararity? java-string empty false))
+          (define module-path
+            "moby/bootstrap-teachpack")]
+    (make-module-binding 'world
+                         module-path
+                         (append (list 
+                                  (bf 'start module-path 14 false "plt._MODULES['bootstrap-teachpack'].start")
+                                  )
                                  (module-binding-bindings world-stub-module)))))
 
 

@@ -1,5 +1,5 @@
 #lang scheme/base
-(require "compiler/stx.ss")
+(require "runtime/stx.ss")
 
 (provide (all-defined-out))
 

@@ -323,6 +323,8 @@
                      
                      ;; Testing functions.
                      (check-expect 2)
+                     (EXAMPLE 2)  ;; temporary hack: for emmanuel, since I don't yet have
+                                  ;; extensible macros
                      (check-within 3)
                      (check-error 2)
                      )))
