@@ -8,7 +8,7 @@
          (only-in xml xexpr->string)
          "compile-helpers.ss"
          "image-lift.ss"
-         "compiler/permission.ss"
+         "runtime/permission.ss"
          "compiler/pinfo.ss"
          (only-in "compiler/helpers.ss" program?)
          (prefix-in javascript: "compiler/beginner-to-javascript.ss")

@@ -1,8 +1,7 @@
-#lang s-exp "lang.ss"
+#lang s-exp "private/restricted-runtime-scheme.ss"
 
 ;; Effect structures: will be exported out to the Moby toplevel.
 
-  
   
   
 (define-struct effect:none ())

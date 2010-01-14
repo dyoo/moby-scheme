@@ -3,7 +3,7 @@
 (require "env.ss")
 (require "toplevel.ss")
 (require "helpers.ss")
-(require "permission.ss")
+(require "../runtime/permission.ss")
 (require "modules.ss")
 (require "rbtree.ss")
 (require "labeled-translation.ss")

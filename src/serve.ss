@@ -10,6 +10,7 @@
          web-server/servlet-env
          web-server/dispatch 
          file/zip
+         "program-resources.ss"
          "stub/net.ss"
          "utils.ss"
          "compiler/beginner-to-javascript.ss"

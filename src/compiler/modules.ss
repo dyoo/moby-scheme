@@ -7,7 +7,7 @@
 
 
 (require "env.ss")
-(require "permission.ss")
+(require "../runtime/permission.ss")
 
 (define-struct module-binding (name source bindings))
 

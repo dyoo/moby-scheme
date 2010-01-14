@@ -1,6 +1,6 @@
 #lang s-exp "lang.ss"
 
-(require "permission.ss")
+(require "../runtime/permission.ss")
 (require "rbtree.ss")
 (require "helpers.ss")
 

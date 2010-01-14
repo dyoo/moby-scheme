@@ -16,10 +16,13 @@
 
 (require (for-syntax (only-in scheme/base build-path)))
 
-;; Bootstrap the javascript compiler.
+;; Bootstrap the runtime components of Moby, as well as the
+;; Scheme->Javascript compiler in support/js/compiler.js.
 ;; 
-;; * Ignores all provide/contracts
-;; * Concatenates all the required modules into a single file
+;; * Translates provide/contracts into provides  (FIXME: doesn't preserve the contracts yet)
+;;
+;; * For each library, concatenates all the required modules into a single file.
+;;
 ;; * Compiles the javascript compiler with the javascript compiler.
 
 
@@ -150,8 +153,8 @@
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
   (boot-compile-runtime-library "runtime/stx.ss" syntax-path)
-  (boot-compile-runtime-library "compiler/permission.ss" permission-struct-path)
-  (boot-compile-runtime-library "compiler/effect-struct.ss" effect-struct-path)
+  (boot-compile-runtime-library "runtime/permission.ss" permission-struct-path)
+  (boot-compile-runtime-library "runtime/effect-struct.ss" effect-struct-path)
   
 
   (boot-compile-runtime-library "compiler/beginner-to-javascript.ss" compiler-path)

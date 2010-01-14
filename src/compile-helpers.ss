@@ -14,7 +14,7 @@
          "runtime/stx.ss"
          "compiler/pinfo.ss"
          "compiler/env.ss"
-         "compiler/permission.ss")
+         "runtime/permission.ss")
 
 ;; Common helper functions used in the compiler.
 
