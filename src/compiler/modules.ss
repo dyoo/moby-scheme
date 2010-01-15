@@ -247,7 +247,7 @@
                          module-path
                          (append 
                           (list 
-                           (bf 'start module-path 14 false (string-append js-module-path ".EXPORTS['start']"))
+                           (bf 'START module-path 14 false (string-append js-module-path ".EXPORTS['START']"))
                            (make-binding:constant 'test-frame 
                                                   (string-append js-module-path ".EXPORTS['test-frame']")
                                                   empty)

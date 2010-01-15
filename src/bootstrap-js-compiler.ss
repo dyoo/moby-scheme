@@ -8,7 +8,6 @@
          scheme/contract
          "runtime/stx.ss"
          "compiler/pinfo.ss"
-         "stx-helpers.ss"
          "compile-helpers.ss"
          "program-resources.ss"
          "compiler/beginner-to-javascript.ss"
@@ -155,7 +154,8 @@
   (boot-compile-runtime-library "runtime/stx.ss" syntax-path)
   (boot-compile-runtime-library "runtime/permission.ss" permission-struct-path)
   (boot-compile-runtime-library "runtime/effect-struct.ss" effect-struct-path)
-  
+  (boot-compile-runtime-library "runtime/arity-struct.ss" 
+                                "../support/js/runtime/arity-struct.js")
 
   (boot-compile-runtime-library "compiler/beginner-to-javascript.ss" compiler-path)
 
