@@ -67,18 +67,22 @@ plt.world.MobyJsworld = {};
 
     // getBigBangWindow: -> window
     var getBigBangWindow = function() {
-        if (window.document.getElementById("jsworld-div") != undefined) {
+        if (window.document.getElementById("jsworld-div") !== undefined) {
+	    return window;
+	} else {
+	    var newDiv = window.document.createElement("div");
+	    newDiv.id = 'jsworld-div';
+	    window.document.appendChild(newDiv);
 	    return window;
 	}
+//         var newWindow = window.open(
+// 	    "big-bang.html",
+// 	    "big-bang");
+// 	    //"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
+// 	if (newWindow == null) { 
+//             throw new Error("Error: Not allowed to create a new window."); }
 
-        var newWindow = window.open(
-	    "big-bang.html",
-	    "big-bang");
-	    //"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
-	if (newWindow == null) { 
-            throw new Error("Error: Not allowed to create a new window."); }
-
-	return newWindow;
+// 	return newWindow;
     }
 
 

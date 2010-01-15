@@ -249,46 +249,6 @@
                        (syntax-local-context)
                        (kernel-form-identifier-list)))]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
-#;(require "moby/bootstrap-teachpack")
-
-
-
-(define title "My game")
-(define title-color 'turquoise)
-(define background (empty-scene 500 500))
-(define object-image (star 5 50 30 'solid 'blue))
-(define target-image (rectangle 20 20 'outline 'green))
-(define player-image (circle 20 'solid 'black))
-(define projectile-image (text "bang!" 20 'pink))
-(define direction "left")
-
-(define (update-player x dir)
-  (+ x 42))
-
-(define (update-target x)
-  (+ x 16))
-
-(define (update-object x)
-  (+ x 29))
-
-(define (update-projectile x)
-  (+ x 5))
-
-(define (collide? x1 y1 x2 y2)
-  false)
-
-(define (in-domain? x y)
-  true)
-
-
-(START title title-color background (list object-image) (list target-image) player-image projectile-image direction 
-       update-player update-target update-object update-projectile collide? in-domain?)
-
 
 
 
