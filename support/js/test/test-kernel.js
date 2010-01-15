@@ -1662,10 +1662,18 @@ var getTests;
 		this.assertEqual(42, f1([42, 43, 44]));
 
 
-		var f2 = Kernel.compose([function(args) { return args[0] * args[0]; },
-					 function(args) { return args[0] + 1; } ]);
+		var f2 = Kernel.compose([
+		    plt.types.liftToplevelToFunctionValue(
+			function(v) { return v * v; },
+			"sq",
+			1,
+			plt.types.Rational.makeInstance(1)),
+
+		    plt.types.liftToplevelToFunctionValue(
+			function(v) {  return v + 1; },
+			"add1", 1, plt.types.Rational.makeInstance(1))]);
 		this.assertEqual(36, f2([5]));
-	    }, 
+	    },
 
 	    testIsProcedure: function() {
 		this.assert(! Kernel.procedure_question_(42));
