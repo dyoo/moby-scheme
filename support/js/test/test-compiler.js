@@ -598,6 +598,11 @@ function init() {
 				    run("0+3i")));
 	},
 
+	testCompose: function() {
+	    this.assert(isEqual(run("((compose sqrt sqr) 9)"),
+				run("9")));
+	},
+
 	testHashtables: function() {
 	    this.assert(isEqual(run("(let ([ht (make-hasheq)]) (equal? ht ht))"),
 				run("true")));

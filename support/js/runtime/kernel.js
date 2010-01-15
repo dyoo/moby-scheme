@@ -1125,13 +1125,19 @@ goog.provide('plt.Kernel');
 
 	compose: function(functions) {
 	    // TODO: add contract on higher order argument testF.
-	    return function(args) {
-		var resultArray = args;
-		for (var i = functions.length - 1; i >= 0; i--) {
-		    resultArray = [functions[i](resultArray)];
-		}
-		return resultArray[0];
-	    }
+	    return plt.types.liftToplevelToFunctionValue(
+		function(v) {
+		    for (var i = functions.length - 1; i >= 0; i--) {
+			v = plt.Kernel.apply(functions[i], 
+					     plt.types.Cons.makeInstance(
+						 v, plt.types.Empty.EMPTY),
+					     []);
+		    }
+		    return v;
+		},
+		plt.types.String.makeInstance("composed"),
+		1,
+		plt.types.Rational.makeInstance(1));
 	},
 	
 

@@ -1,10 +1,10 @@
 #lang s-exp "../../moby-lang.ss"
 
 #;(require 2htdp/universe
-         lang/prim
-         lang/posn
-         (except-in htdp/testing test)
-         (for-syntax scheme/base))
+           lang/prim
+           lang/posn
+           (except-in htdp/testing test)
+           (for-syntax scheme/base))
 
 (provide START 
          #;EXAMPLE 
@@ -13,10 +13,10 @@
 
 ; pass all student-defined functions to animate/proc, exposed as START
 #;(define-higher-order-primitive START animate/proc (title title-color
-                                                         background objectImgs targetImgs playerImg projectileImg
-                                                         direction
-                                                         update-player update-target update-object update-projectile
-                                                         collide? in-domain?))
+                                                           background objectImgs targetImgs playerImg projectileImg
+                                                           direction
+                                                           update-player update-target update-object update-projectile
+                                                           collide? in-domain?))
 
 ;;
 ;;SETTINGS 
@@ -140,10 +140,10 @@
 ;              (Being Being -> Boolean) (Being -> Boolean) -> Boolean
 ; takes in World components, updating functions and geometry functions and starts the universe
 (define (START title title-color
-                      background objectImgs targetImgs playerImg projectileImg
-                      direction
-                      update-player* update-target* update-object* update-projectile*
-                      collide*? in-domain*?)
+               background objectImgs targetImgs playerImg projectileImg
+               direction
+               update-player* update-target* update-object* update-projectile*
+               collide*? in-domain*?)
   (begin
     (set! PROJECTILE-IMG projectileImg)
     (set! TITLE-COLOR title-color)
@@ -236,15 +236,60 @@
 ;; errors and pretends that they come from `test'.
 #;(require (for-syntax syntax/kerncase))
 #;(define-syntax (EXAMPLE stx)
-  (syntax-case stx ()
-    [(_ x ...)
-     (with-handlers ([exn? (lambda (e)
-                             (raise (make-exn
-                                     (regexp-replace*
-                                      #rx"check-expect"
-                                      (exn-message e)
-                                      "test")
-                                     (exn-continuation-marks e))))])
-       (local-expand (syntax/loc stx (check-expect x ...))
-                     (syntax-local-context)
-                     (kernel-form-identifier-list)))]))
+    (syntax-case stx ()
+      [(_ x ...)
+       (with-handlers ([exn? (lambda (e)
+                               (raise (make-exn
+                                       (regexp-replace*
+                                        #rx"check-expect"
+                                        (exn-message e)
+                                        "test")
+                                       (exn-continuation-marks e))))])
+         (local-expand (syntax/loc stx (check-expect x ...))
+                       (syntax-local-context)
+                       (kernel-form-identifier-list)))]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+#;(require "moby/bootstrap-teachpack")
+
+
+
+(define title "My game")
+(define title-color 'turquoise)
+(define background (empty-scene 500 500))
+(define object-image (star 5 50 30 'solid 'blue))
+(define target-image (rectangle 20 20 'outline 'green))
+(define player-image (circle 20 'solid 'black))
+(define projectile-image (text "bang!" 20 'pink))
+(define direction "left")
+
+(define (update-player x dir)
+  (+ x 42))
+
+(define (update-target x)
+  (+ x 16))
+
+(define (update-object x)
+  (+ x 29))
+
+(define (update-projectile x)
+  (+ x 5))
+
+(define (collide? x1 y1 x2 y2)
+  false)
+
+(define (in-domain? x y)
+  true)
+
+
+(START title title-color background (list object-image) (list target-image) player-image projectile-image direction 
+       update-player update-target update-object update-projectile collide? in-domain?)
+
+
+
+
+
