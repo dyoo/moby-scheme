@@ -11,6 +11,7 @@
 	 "stub/location.ss"
          scheme/runtime-path
          (for-syntax scheme/base
+                     scheme/list
                      "stx-helpers.ss")
          (prefix-in base: scheme/base))
 
@@ -42,6 +43,13 @@
               form ...
               (compile-and-serve 'source-code module-name)
               )))))]))
+
+
+
+(define-runtime-path moby-collects-path "collects")
+(define-for-syntax my-path
+  (current-load-relative-directory))
+
 
 
 ;; include: textually include content from another module.
@@ -78,16 +86,32 @@
 
 ;; Require: currently broken.
 (define-syntax (hacky-require stx)
+  (define (looks-like-moby-module? a-path-stx)
+    (and (string? (syntax-e a-path-stx))
+         (regexp-match #rx"^moby/(.*)$" (syntax-e a-path-stx))))
+  
+  (define (get-moby-submodule-path a-path-stx)
+    (string-append (second (regexp-match #rx"^moby/(.*)$" (syntax-e a-path-stx)))
+                   ".ss"))
+
+  (printf "~s~n" my-path)
+  
   (syntax-case stx ()
     [(_ path)
      (cond
+       [(and (syntax-e #'path)
+             (looks-like-moby-module? #'path))
+        (with-syntax ([subpath 
+                       (get-moby-submodule-path #'path)])
+          (syntax/loc stx
+            (base:require (file (string-append moby-collects-path subpath)))))]
        #;[(and (syntax-e #'path)
                (string? (syntax-e #'path))
                (or (string=? (syntax-e #'path) "moby/bootstrap")
-                   (string=? (syntax-e #'path) "moby/bootstrap-teachpack.ss")))
+                   (string=? (syntax-e #'path) "moby/bootstrap-teachpack")))
           (with-syntax ([start (datum->syntax stx 'start)])
             (syntax/loc stx 
-              (require (file "collects/bootstrap-teachpack.ss"))
+              (require (file "collects/bootstrap-teachpack"))
               #;(base:begin
                  (define (start title background playerImg targetImgs objectImgs  
                                 update-player update-target update-object 
