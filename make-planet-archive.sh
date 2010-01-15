@@ -1,6 +1,7 @@
 #!/bin/bash
-MAJOR=2
-MINOR=31
+MAJOR=`perl -ne 'if (/define MAJOR \"(.*)\"/) { print $1} ' src/compiler/version.ss`
+MINOR=`perl -ne 'if (/define MINOR \"(.*)\"/) { print $1} ' src/compiler/version.ss`
+
 
 OLDDIR=`pwd`
 mkdir -p tmp
@@ -10,7 +11,7 @@ git archive --format=tar --prefix=moby/ HEAD | (cd tmp && tar xf -)
 cd $OLDDIR/tmp/moby
 rm -rf sandbox
 
-cd $OLDDIR/tmp/moby/src/compiler
+cd $OLDDIR/tmp/moby/src
 mred bootstrap-js-compiler.ss
 
 cd $OLDDIR/tmp
