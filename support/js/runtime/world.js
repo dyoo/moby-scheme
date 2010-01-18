@@ -780,11 +780,11 @@ goog.provide('plt.world.Kernel');
 
 
     RectangleImage.prototype.render = function(ctx, x, y) {
-	ctx.fillStyle = this.color.toString();
-	ctx.strokeStyle = this.color.toString();
 	if (this.style.toString().toLowerCase() == "outline") {
+	    ctx.strokeStyle = this.color.toString();
 	    ctx.strokeRect(x, y, this.width, this.height);
 	} else {
+	    ctx.fillStyle = this.color.toString();
 	    ctx.fillRect(x, y, this.width, this.height);
 	}
     };
@@ -823,12 +823,13 @@ goog.provide('plt.world.Kernel');
     TextImage.prototype = heir(BaseImage.prototype);
 
     TextImage.prototype.render = function(ctx, x, y) {
+	ctx.save();
 	ctx.font = this.font;
 	ctx.textAlign = 'left';
 	ctx.textBaseline = 'top';
 	ctx.fillStyle = this.color.toString();
-	ctx.strokeStyle = this.color.toString();
 	ctx.fillText(this.msg, x, y);
+	ctx.restore();
     };
     
     TextImage.prototype.getWidth = function() {
@@ -852,18 +853,20 @@ goog.provide('plt.world.Kernel');
     CircleImage.prototype = heir(BaseImage.prototype);
 
     CircleImage.prototype.render = function(ctx, x, y) {
-	//ctx.translate(0, 0);
+	ctx.save();
 	ctx.beginPath();
-	ctx.fillStyle = this.color.toString();
-	ctx.strokeStyle = this.color.toString();
 	ctx.arc(x + this.radius,
 		y + this.radius,
 		this.radius, 0, 2*Math.PI, false);
-	if (this.style.toString().toLowerCase() == "outline")
+	if (this.style.toString().toLowerCase() == "outline") {
+	    ctx.strokeStyle = this.color.toString();
 	    ctx.stroke();
-	else
+	} else {
+	    ctx.fillStyle = this.color.toString();
 	    ctx.fill();
+	}
 	ctx.closePath();
+	ctx.restore();
     };
     
     CircleImage.prototype.getWidth = function() {
@@ -904,9 +907,6 @@ goog.provide('plt.world.Kernel');
     StarImage.prototype.render = function(ctx, x, y) {
 	ctx.save();
 	ctx.beginPath();
-	ctx.fillStyle = this.color.toString();
-	ctx.strokeStyle = this.color.toString();
-	//ctx.moveTo( x + ( Math.sin( 0 ) * this.outer ), y + ( Math.cos( 0 ) * this.outer ) );
 	for( var pt = 0; pt < (this.points * 2) + 1; pt++ ) {
 	    var rads = ( ( 360 / (2 * this.points) ) * pt ) * oneDegreeAsRadian - 0.5;
 	    var radius = ( pt % 2 == 1 ) ? this.outer : this.inner;
@@ -914,8 +914,10 @@ goog.provide('plt.world.Kernel');
 		       y + this.radius + ( Math.cos( rads ) * radius ) );
 	}
 	if (this.style.toString().toLowerCase() == "outline") {
+	    ctx.strokeStyle = this.color.toString();
 	    ctx.stroke();
 	} else {
+	    ctx.fillStyle = this.color.toString();
 	    ctx.fill();
 	}
 	ctx.closePath();
@@ -975,7 +977,7 @@ goog.provide('plt.world.Kernel');
     };
 
     TriangleImage.prototype.getHeight = function() {
-	return Math.floor(this.side * Math.sqrt(3) / 2);
+	return Math.ceil(this.side * Math.sqrt(3) / 2);
     };
 
 
