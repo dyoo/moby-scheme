@@ -142,7 +142,7 @@ goog.provide('plt.world.Kernel');
         var newWindow = window.open(
 	    "big-bang.html",
 	    "big-bang");
-	    //"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
+	//"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
 	if (newWindow == null) { 
             throw new Error("Error: Not allowed to create a new window."); }
 
@@ -207,7 +207,7 @@ goog.provide('plt.world.Kernel');
 
 
  	if(config.lookup('onTick')) {
-	  scheduleTimerTick(newWindow, config);
+	    scheduleTimerTick(newWindow, config);
 	}
 
 
@@ -444,7 +444,7 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(h, plt.Kernel.isNumber, "ellipse", "number", 2);
 	plt.Kernel.check(s, plt.Kernel.isString, "ellipse", "string", 3);
 	plt.Kernel.check(c, isColor, "ellipse", "color", 4);
-	    
+	
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
@@ -462,15 +462,15 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(x, plt.Kernel.isNumber, "line", "number", 1);
 	plt.Kernel.check(y, plt.Kernel.isNumber, "line", "number", 2);
 	plt.Kernel.check(c, isColor, "line", "color", 3);
-	    
+	
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
 	
 	var line =  new LineImage(plt.types.NumberTower.toInteger(x),
-				     plt.types.NumberTower.toInteger(y),
-				     s,
-				     c);
+				  plt.types.NumberTower.toInteger(y),
+				  s,
+				  c);
 	return line.updatePinhole(0, 0);
     };
     
@@ -630,7 +630,7 @@ goog.provide('plt.world.Kernel');
 
     //////////////////////////////////////////////////////////////////////
 
-   
+    
     var FileImage = function(src, rawImage) {
 	BaseImage.call(this, 0, 0);
 	var self = this;
@@ -661,7 +661,7 @@ goog.provide('plt.world.Kernel');
     FileImage.prototype = heir(BaseImage.prototype);
     plt.world.Kernel.FileImage = FileImage;
 
- 
+    
     var imageCache = {};
     FileImage.makeInstance = function(path) {
 	if (! (path in imageCache)) {
@@ -754,7 +754,7 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(img1, isImage, "overlay", "image", 1);
 	plt.Kernel.check(img2, isImage, "overlay", "image", 2);	
 	plt.Kernel.arrayEach(restImages, function(x, i) { 
-		plt.Kernel.check(x, isImage, "overlay", "image", i+3) });
+	    plt.Kernel.check(x, isImage, "overlay", "image", i+3) });
 	var img = new OverlayImage(img1, img2);
 	for (var i = 0; i < restImages.length; i++) {
 	    img = new OverlayImage(img, restImages[i]);
@@ -945,7 +945,7 @@ goog.provide('plt.world.Kernel');
 
 
 
-//////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     //Cagdas
     //Triangle
     ///////
@@ -964,7 +964,7 @@ goog.provide('plt.world.Kernel');
 	function shift_x(myx,r,pinx){
 	    return (((r/2) - pinx)+myx);
 	}                                                                                                                                                                                                                                
-                                                                                                                                                                                                                 
+        
 	var y1=(y - this.pinholeY);                                                                                                                                                                         
 	var y2=(y1 + this.get_image_height());                                                                                                                                                          
 	var x2temp=(x + (r/2));                                                                                                                         
@@ -1063,26 +1063,26 @@ goog.provide('plt.world.Kernel');
 
     
     LineImage.prototype.render = function(ctx, xstart, ystart) {
+	ctx.save();
 	ctx.translate(0, 0);
 	ctx.beginPath();
 	ctx.fillStyle = this.color.toString();
-	ctx.moveTo(xstart-this.pinholeX, ystart - this.pinholeY)));
-	ctx.lineTo((this.x + xstart)- this.pinholeX, (this.y + ystart) - this.pinholeY));
-
+	ctx.moveTo(xstart-this.pinholeX, ystart - this.pinholeY);
+	ctx.lineTo((this.x + xstart)- this.pinholeX, 
+		   (this.y + ystart) - this.pinholeY);
 	ctx.closePath();
+	ctx.restore();
     };
     
+
     LineImage.prototype.getWidth = function() {
 	return (this.x + 1);
     };
+    
 
     LineImage.prototype.getHeight = function() {
 	return (this.y + 1);
     };
-
-
-
-
 
 
 
@@ -1103,17 +1103,17 @@ goog.provide('plt.world.Kernel');
 	var results = [];
 	if (plt.Kernel.empty_question_(aCompEffect)) {
     	    // Do Nothing
-    	} else if (plt.Kernel.pair_question_(aCompEffect)) {
+	} else if (plt.Kernel.pair_question_(aCompEffect)) {
     	    results = results.concat(
 		plt.world.Kernel.applyEffect(aCompEffect.first()));
     	    results = results.concat(
 		plt.world.Kernel.applyEffect(aCompEffect.rest()));
-    	} else {
+	} else {
 	    var newResult = aCompEffect.run();
 	    if (newResult) {
 		results = results.concat(newResult);
 	    }
-    	}
+	}
 	return results;
     }
 
@@ -1200,9 +1200,9 @@ goog.provide('plt.world.Kernel');
 	return function(w) { return callback([w, aRandomNumber]) }
     };
 
-    
 
-//////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////
 
 
 
