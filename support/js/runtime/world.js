@@ -420,7 +420,60 @@ goog.provide('plt.world.Kernel');
     };
 
 
-
+    //Cagdas
+    //Triangle number style color --> TextImage
+    plt.world.Kernel.triangle = function(r, s, c) {
+	plt.Kernel.check(r, plt.Kernel.isNumber, "triangle", "number", 1);
+	plt.Kernel.check(s, plt.Kernel.isString, "triangle", "string", 2);
+	plt.Kernel.check(c, isColor, "triangle", "color", 3);
+	
+	if (colorDb.get(c)) {
+	    c = colorDb.get(c);
+	}
+	
+	var tri =  new TriangleImage(plt.types.NumberTower.toInteger(r),
+				     s,
+				     c);
+	return tri.updatePinhole(Math.floor(tri.getWidth()/2), Math.floor(tri.getHeight()/2));
+    };
+    
+    //Cagdas
+    //Ellipse number number style color --> TextImage
+    plt.world.Kernel.ellipse = function(w, h, s, c) {
+	plt.Kernel.check(w, plt.Kernel.isNumber, "ellipse", "number", 1);
+	plt.Kernel.check(h, plt.Kernel.isNumber, "ellipse", "number", 2);
+	plt.Kernel.check(s, plt.Kernel.isString, "ellipse", "string", 3);
+	plt.Kernel.check(c, isColor, "ellipse", "color", 4);
+	    
+	if (colorDb.get(c)) {
+	    c = colorDb.get(c);
+	}
+	
+	var elip =  new EllipseImage(plt.types.NumberTower.toInteger(w),
+				     plt.types.NumberTower.toInteger(h),
+				     s,
+				     c);
+	return elip.updatePinhole(Math.floor(elip.getWidth()/2), Math.floor(elip.getHeight()/2));
+    };
+    
+    //Cagdas
+    //Line number number color
+    plt.world.Kernel.line = function(x, y, c) {
+	plt.Kernel.check(x, plt.Kernel.isNumber, "line", "number", 1);
+	plt.Kernel.check(y, plt.Kernel.isNumber, "line", "number", 2);
+	plt.Kernel.check(c, isColor, "line", "color", 3);
+	    
+	if (colorDb.get(c)) {
+	    c = colorDb.get(c);
+	}
+	
+	var line =  new LineImage(plt.types.NumberTower.toInteger(x),
+				     plt.types.NumberTower.toInteger(y),
+				     s,
+				     c);
+	return line.updatePinhole(0, 0);
+    };
+    
 
 
     // Base class for all images.
@@ -888,6 +941,146 @@ goog.provide('plt.world.Kernel');
     StarImage.prototype.getHeight = function() {
 	return this.radius * 2;
     };
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+    //Cagdas
+    //Triangle
+    ///////
+    var TriangleImage = function(radius, style, color) {
+	BaseImage.call(this, radius, radius);
+	this.radius = radius;
+	this.style = style;
+	this.color = color;
+    }
+    TriangleImage.prototype = heir(BaseImage.prototype);
+
+    TriangleImage.prototype.render = function(ctx, x, y) {
+	ctx.translate(0, 0);
+
+
+	function shift_x(myx,r,pinx){
+	    return (((r/2) - pinx)+myx);
+	}                                                                                                                                                                                                                                
+                                                                                                                                                                                                                 
+	var y1=(y - this.pinholeY);                                                                                                                                                                         
+	var y2=(y1 + this.get_image_height());                                                                                                                                                          
+	var x2temp=(x + (r/2));                                                                                                                         
+	var x3temp=(x - (r/2));                                                                                                                         
+	var x2=shift_x(x2temp,this.r,this.pinholeX);                                                                                                                                                                                        
+	var x3=shift_x(x3temp,this.r,this.pinholeX);                                                                                   
+        var x1=shift_x(x,this.r,this.pinholeX);                                                                                                                                                      
+
+	ctx.beginPath();
+	ctx.fillStyle = this.color.toString();
+	ctx.moveTo(x1,y1);                                                                                                                                                                                                               
+	ctx.lineTo(x2,y2);                                                                                                                                                                                                               
+	ctx.lineTo(x3,y2);                                                
+
+	if (this.style.toString().toLowerCase() == "outline")
+	    ctx.stroke();
+	else
+	    ctx.fill();
+	ctx.closePath();
+    };
+    
+    TriangleImage.prototype.getWidth = function() {
+	return this.radius;
+    };
+
+    TriangleImage.prototype.getHeight = function() {
+	return (Math.ceil((this.radius/2) * Math.sqrt(3))+1);
+    };
+
+    //Ellipse 
+    //Cagdas
+
+    var EllipseImage = function(width, height, style, color) {
+	BaseImage.call(this, 0, 0);
+	this.width = width;
+	this.height = height;
+	this.style = style;
+	this.color = color;
+    }
+
+    EllipseImage.prototype = heir(BaseImage.prototype);
+
+    
+    EllipseImage.prototype.render = function(ctx, x1, y1) {
+	ctx.translate(0, 0);
+	var radiusX = this.getWidth();
+	var radiusY = this.getHeight();
+
+	var diffx = radiusX/2 - this.pinholeX;
+	var diffy = radiusY/2 - this.pinholeY;
+	var x = x1 + diffx;
+	var y = y1 + diffy;
+	
+	//abra kadabra
+	var k = 0.5522847498;
+
+	var krx = k*this.radiusX;
+	var kry = k*this.radiusY;
+	ctx.beginPath();
+
+	ctx.fillStyle = this.color.toString();
+
+	ctx.moveTo(x+this.radiusX, y)
+	ctx.bezierCurveTo(x+this.radiusX, y-kry, x+krx, y-this.radiusY, x, y-this.radiusY);
+	ctx.bezierCurveTo(x-krx, y-this.radiusY, x-this.radiusX, y-kry, x-this.radiusX, y);
+	ctx.bezierCurveTo(x-this.radiusX, y+kry, x-krx, y+this.radiusY, x, y+this.radiusY);
+	ctx.bezierCurveTo(x+krx, y+this.radiusY, x+this.radiusX, y+kry, x+this.radiusX, y);
+
+	if (this.style.toString().toLowerCase() == "outline")
+	    ctx.stroke();
+	else
+	    ctx.fill();
+	ctx.closePath();
+    };
+    
+    EllipseImage.prototype.getWidth = function() {
+	return this.width;
+    };
+
+    EllipseImage.prototype.getHeight = function() {
+	return this.height;
+    };
+
+    //Cagdas
+    //Line
+
+    var LineImage = function(x, y, color) {
+	BaseImage.call(this, 0, 0);
+	this.x = x;
+	this.y = y;
+	this.style = style;
+	this.color = color;
+    }
+
+    LineImage.prototype = heir(BaseImage.prototype);
+
+    
+    LineImage.prototype.render = function(ctx, xstart, ystart) {
+	ctx.translate(0, 0);
+	ctx.beginPath();
+	ctx.fillStyle = this.color.toString();
+	ctx.moveTo(xstart-this.pinholeX, ystart - this.pinholeY)));
+	ctx.lineTo((this.x + xstart)- this.pinholeX, (this.y + ystart) - this.pinholeY));
+
+	ctx.closePath();
+    };
+    
+    LineImage.prototype.getWidth = function() {
+	return (this.x + 1);
+    };
+
+    LineImage.prototype.getHeight = function() {
+	return (this.y + 1);
+    };
+
+
 
 
 

@@ -196,6 +196,12 @@
                                          "plt.world.Kernel.nwRectangle")
                                      (bf 'rectangle module-path 4 false
                                          "plt.world.Kernel.rectangle")
+                                     (bf 'triangle module-path 3 false
+                                         "plt.world.Kernel.triangle")
+                                     (bf 'ellipse module-path 4 false
+                                         "plt.world.Kernel.ellipse")
+                                     (bf 'line module-path 3 false
+                                         "plt.world.Kernel.line")
                                      
 				     (bf 'overlay module-path 2 true
 					 "plt.world.Kernel.overlay")
