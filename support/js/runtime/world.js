@@ -420,24 +420,20 @@ goog.provide('plt.world.Kernel');
     };
 
 
-    //Cagdas
     //Triangle number style color --> TextImage
     plt.world.Kernel.triangle = function(r, s, c) {
 	plt.Kernel.check(r, plt.Kernel.isNumber, "triangle", "number", 1);
 	plt.Kernel.check(s, isStyle, "triangle", "string", 2);
 	plt.Kernel.check(c, isColor, "triangle", "color", 3);
-	
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
-	
-	var tri =  new TriangleImage(plt.types.NumberTower.toFixnum(r),
-				     s,
-				     c);
-	return tri.updatePinhole(Math.floor(tri.getWidth()/2), Math.floor(tri.getHeight()/2));
+	return new TriangleImage(plt.types.NumberTower.toFixnum(r),
+				 s,
+				 c);
     };
+
     
-    //Cagdas
     //Ellipse number number style color --> TextImage
     plt.world.Kernel.ellipse = function(w, h, s, c) {
 	plt.Kernel.check(w, plt.Kernel.isNumber, "ellipse", "number", 1);
@@ -455,7 +451,6 @@ goog.provide('plt.world.Kernel');
     };
     
 
-    //Cagdas
     //Line number number color
     plt.world.Kernel.line = function(x, y, c) {
 	plt.Kernel.check(x, plt.Kernel.isNumber, "line", "number", 1);
@@ -942,37 +937,25 @@ goog.provide('plt.world.Kernel');
 
 
     //////////////////////////////////////////////////////////////////////
-    //Cagdas
     //Triangle
     ///////
-    var TriangleImage = function(radius, style, color) {
-	BaseImage.call(this, radius, radius);
-	this.radius = radius;
+    var TriangleImage = function(side, style, color) {
+	BaseImage.call(this, side, side);
+	this.side = side;
 	this.style = style;
 	this.color = color;
     }
     TriangleImage.prototype = heir(BaseImage.prototype);
 
+
     TriangleImage.prototype.render = function(ctx, x, y) {
-	ctx.translate(0, 0);
+	var width = this.getWidth();
+	var height = this.getHeight();
 
-
-	function shift_x(myx,r,pinx){
-	    return (((r/2) - pinx)+myx);
-	}
-        
-	var y1=(y - this.pinholeY);
-	var y2=(y1 + this.get_image_height());
-	var x2temp=(x + (r/2));                                                                                                                         
-	var x3temp=(x - (r/2));                                                                                                                         
-	var x2=shift_x(x2temp,this.r,this.pinholeX);
-	var x3=shift_x(x3temp,this.r,this.pinholeX);                                                                                   
-        var x1=shift_x(x,this.r,this.pinholeX);
 	ctx.beginPath();
-
-	ctx.moveTo(x1,y1);
-	ctx.lineTo(x2,y2);
-	ctx.lineTo(x3,y2);                                                
+	ctx.moveTo(x + this.side/2, y);
+	ctx.lineTo(x + width, y + height);
+	ctx.lineTo(x, y + height);
 	ctx.closePath();
 
 	if (this.style.toString().toLowerCase() == "outline") {
@@ -983,21 +966,23 @@ goog.provide('plt.world.Kernel');
 	    ctx.fillStyle = this.color.toString();
 	    ctx.fill();
 	}
-
     };
     
+
+
     TriangleImage.prototype.getWidth = function() {
-	return this.radius;
+	return this.side;
     };
 
     TriangleImage.prototype.getHeight = function() {
-	return (Math.ceil((this.radius/2) * Math.sqrt(3))+1);
+	return Math.floor(this.side * Math.sqrt(3) / 2);
     };
 
 
 
+
+    //////////////////////////////////////////////////////////////////////
     //Ellipse 
-    //Cagdas
     var EllipseImage = function(width, height, style, color) {
 	BaseImage.call(this, Math.floor(width/2), Math.floor(height/2));
 	this.width = width;
@@ -1045,8 +1030,7 @@ goog.provide('plt.world.Kernel');
     };
 
 
-
-    //Cagdas
+    //////////////////////////////////////////////////////////////////////
     //Line
     var LineImage = function(x, y, color) {
 	BaseImage.call(this, 0, 0);
@@ -1060,10 +1044,10 @@ goog.provide('plt.world.Kernel');
     
     LineImage.prototype.render = function(ctx, xstart, ystart) {
 	ctx.save();
-	ctx.strokeStyle = this.color.toString();
 	ctx.moveTo(0, 0);
 	ctx.lineTo((this.x + xstart),
 		   (this.y + ystart));
+	ctx.strokeStyle = this.color.toString();
 	ctx.stroke();
 	ctx.restore();
     };
