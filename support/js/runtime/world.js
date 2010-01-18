@@ -959,27 +959,31 @@ goog.provide('plt.world.Kernel');
 
 	function shift_x(myx,r,pinx){
 	    return (((r/2) - pinx)+myx);
-	}                                                                                                                                                                                                                                
+	}
         
-	var y1=(y - this.pinholeY);                                                                                                                                                                         
-	var y2=(y1 + this.get_image_height());                                                                                                                                                          
+	var y1=(y - this.pinholeY);
+	var y2=(y1 + this.get_image_height());
 	var x2temp=(x + (r/2));                                                                                                                         
 	var x3temp=(x - (r/2));                                                                                                                         
-	var x2=shift_x(x2temp,this.r,this.pinholeX);                                                                                                                                                                                        
+	var x2=shift_x(x2temp,this.r,this.pinholeX);
 	var x3=shift_x(x3temp,this.r,this.pinholeX);                                                                                   
-        var x1=shift_x(x,this.r,this.pinholeX);                                                                                                                                                      
-
+        var x1=shift_x(x,this.r,this.pinholeX);
 	ctx.beginPath();
-	ctx.fillStyle = this.color.toString();
-	ctx.moveTo(x1,y1);                                                                                                                                                                                                               
-	ctx.lineTo(x2,y2);                                                                                                                                                                                                               
-	ctx.lineTo(x3,y2);                                                
 
-	if (this.style.toString().toLowerCase() == "outline")
-	    ctx.stroke();
-	else
-	    ctx.fill();
+	ctx.moveTo(x1,y1);
+	ctx.lineTo(x2,y2);
+	ctx.lineTo(x3,y2);                                                
 	ctx.closePath();
+
+	if (this.style.toString().toLowerCase() == "outline") {
+	    ctx.strokeStyle = this.color.toString();
+	    ctx.stroke();
+	}
+	else {
+	    ctx.fillStyle = this.color.toString();
+	    ctx.fill();
+	}
+
     };
     
     TriangleImage.prototype.getWidth = function() {
@@ -990,10 +994,10 @@ goog.provide('plt.world.Kernel');
 	return (Math.ceil((this.radius/2) * Math.sqrt(3))+1);
     };
 
+
+
     //Ellipse 
     //Cagdas
-
-
     var EllipseImage = function(width, height, style, color) {
 	BaseImage.call(this, Math.floor(width/2), Math.floor(height/2));
 	this.width = width;
@@ -1040,9 +1044,10 @@ goog.provide('plt.world.Kernel');
 	return this.height;
     };
 
+
+
     //Cagdas
     //Line
-
     var LineImage = function(x, y, color) {
 	BaseImage.call(this, 0, 0);
 	this.x = x;
@@ -1055,7 +1060,6 @@ goog.provide('plt.world.Kernel');
     
     LineImage.prototype.render = function(ctx, xstart, ystart) {
 	ctx.save();
-	ctx.fillStyle = this.color.toString();
 	ctx.strokeStyle = this.color.toString();
 	ctx.moveTo(0, 0);
 	ctx.lineTo((this.x + xstart),
