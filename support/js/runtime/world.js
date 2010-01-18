@@ -165,8 +165,8 @@ goog.provide('plt.world.Kernel');
 	var newWindow = getBigBangWindow(width, height);
 	var canvas = 
 	    newWindow.document.getElementById("canvas");
-	canvas.width = width.toFixnum();
-	canvas.height = height.toFixnum();
+	canvas.width = plt.types.NumberTower.toFixnum(width);
+	canvas.height = plt.types.NumberTower.toFixnum(height);
 
 	resetWorld();
 
@@ -486,7 +486,8 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(img, isImage, "put-pinhole", "image", 1);
 	plt.Kernel.check(x, plt.Kernel.isNumber, "put-pinhole", "number", 2);
 	plt.Kernel.check(y, plt.Kernel.isNumber, "put-pinhole", "number", 3);
-	return img.updatePinhole(x.toFixnum(), y.toFixnum());
+	return img.updatePinhole(plt.types.NumberTower.toFixnum(x),
+				 plt.types.NumberTower.toFixnum(y));
     };
 
 
@@ -532,8 +533,8 @@ goog.provide('plt.world.Kernel');
 
     BaseImage.prototype.toDomNode = function(cache) {
 	var that = this;
-	var width = plt.world.Kernel.imageWidth(that).toFixnum();
-	var height = plt.world.Kernel.imageHeight(that).toFixnum();
+	var width = plt.types.NumberTower.toFixnum(plt.world.Kernel.imageWidth(that));
+	var height = plt.types.NumberTower.toFixnum(plt.world.Kernel.imageHeight(that));
 	var canvas = plt.world.Kernel.makeCanvas(width, height);
 
 	// KLUDGE: some of the rendering functions depend on a context
@@ -761,8 +762,8 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(other, isImage, "overlay/xy", "image", 4);
 
 	return new OverlayImage(img,
-				other.updatePinhole(deltaX.toFixnum(),
-						    deltaY.toFixnum()));
+				other.updatePinhole(plt.types.NumberTower.toFixnum(deltaX),
+						    plt.types.NumberTower.toFixnum(deltaY)));
     };
 
 
@@ -1106,8 +1107,8 @@ goog.provide('plt.world.Kernel');
     };
     effect_colon_play_dash_dtmf_dash_tone.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService().playDtmfTone(
-	    this._fields[0].toFixnum(),
-	    this._fields[1].toFixnum());
+	    plt.types.NumberTower.toFixnum(this._fields[0]),
+	    plt.types.NumberTower.toFixnum(this._fields[1]));
     };
     effect_colon_send_dash_sms.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSmsService().send(
@@ -1142,7 +1143,7 @@ goog.provide('plt.world.Kernel');
     };
     effect_colon_set_dash_sound_dash_volume.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService().setVolume(
-	    this._fields[0].toFixnum());
+	    plt.types.NumberTower.toFixnum(this._fields[0]));
     };
     effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService.raiseVolume();
@@ -1152,7 +1153,7 @@ goog.provide('plt.world.Kernel');
     };
     effect_colon_set_dash_wake_dash_lock.prototype.run = function() {
 	plt.platform.Platform.getInstance().getPowerService().setWakeLock(
-	    this._fields[0].toFixnum());
+	    plt.types.NumberTower.toFixnum(this._fields[0]));
     };
     effect_colon_release_dash_wake_dash_lock.prototype.run = function() {
 	plt.platform.Platform.getInstance().getPowerService().releaseWakeLock();
@@ -1216,9 +1217,9 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(g, isColorNumber, "make-color", "number between 0 and 255", 2);
 	plt.Kernel.check(b, isColorNumber, "make-color", "number between 0 and 255", 3);
 
-	return new ColorRecord(r.toFixnum(),
-			       g.toFixnum(),
-			       b.toFixnum());
+	return new ColorRecord(plt.types.NumberTower.toFixnum(r),
+			       plt.types.NumberTower.toFixnum(g),
+			       plt.types.NumberTower.ToFixnum(b));
     };
 
     // FIXME: add accessors
