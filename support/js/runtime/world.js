@@ -431,7 +431,7 @@ goog.provide('plt.world.Kernel');
 	    c = colorDb.get(c);
 	}
 	
-	var tri =  new TriangleImage(plt.types.NumberTower.toInteger(r),
+	var tri =  new TriangleImage(plt.types.NumberTower.toFixnum(r),
 				     s,
 				     c);
 	return tri.updatePinhole(Math.floor(tri.getWidth()/2), Math.floor(tri.getHeight()/2));
@@ -449,8 +449,8 @@ goog.provide('plt.world.Kernel');
 	    c = colorDb.get(c);
 	}
 	
-	var elip =  new EllipseImage(plt.types.NumberTower.toInteger(w),
-				     plt.types.NumberTower.toInteger(h),
+	var elip =  new EllipseImage(plt.types.NumberTower.toFixnum(w),
+				     plt.types.NumberTower.toFixnum(h),
 				     s,
 				     c);
 	return elip.updatePinhole(Math.floor(elip.getWidth()/2), Math.floor(elip.getHeight()/2));
@@ -462,14 +462,11 @@ goog.provide('plt.world.Kernel');
 	plt.Kernel.check(x, plt.Kernel.isNumber, "line", "number", 1);
 	plt.Kernel.check(y, plt.Kernel.isNumber, "line", "number", 2);
 	plt.Kernel.check(c, isColor, "line", "color", 3);
-	
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
-	
-	var line =  new LineImage(plt.types.NumberTower.toInteger(x),
-				  plt.types.NumberTower.toInteger(y),
-				  s,
+	var line =  new LineImage(plt.types.NumberTower.toFixnum(x),
+				  plt.types.NumberTower.toFixnum(y),
 				  c);
 	return line.updatePinhole(0, 0);
     };
@@ -1055,7 +1052,6 @@ goog.provide('plt.world.Kernel');
 	BaseImage.call(this, 0, 0);
 	this.x = x;
 	this.y = y;
-	this.style = style;
 	this.color = color;
     }
 
@@ -1064,13 +1060,12 @@ goog.provide('plt.world.Kernel');
     
     LineImage.prototype.render = function(ctx, xstart, ystart) {
 	ctx.save();
-	ctx.translate(0, 0);
-	ctx.beginPath();
 	ctx.fillStyle = this.color.toString();
-	ctx.moveTo(xstart-this.pinholeX, ystart - this.pinholeY);
-	ctx.lineTo((this.x + xstart)- this.pinholeX, 
-		   (this.y + ystart) - this.pinholeY);
-	ctx.closePath();
+	ctx.strokeStyle = this.color.toString();
+	ctx.moveTo(0, 0);
+	ctx.lineTo((this.x + xstart),
+		   (this.y + ystart));
+	ctx.stroke();
 	ctx.restore();
     };
     
