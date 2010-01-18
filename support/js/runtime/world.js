@@ -424,7 +424,7 @@ goog.provide('plt.world.Kernel');
     //Triangle number style color --> TextImage
     plt.world.Kernel.triangle = function(r, s, c) {
 	plt.Kernel.check(r, plt.Kernel.isNumber, "triangle", "number", 1);
-	plt.Kernel.check(s, plt.Kernel.isString, "triangle", "string", 2);
+	plt.Kernel.check(s, isStyle, "triangle", "string", 2);
 	plt.Kernel.check(c, isColor, "triangle", "color", 3);
 	
 	if (colorDb.get(c)) {
@@ -442,20 +442,19 @@ goog.provide('plt.world.Kernel');
     plt.world.Kernel.ellipse = function(w, h, s, c) {
 	plt.Kernel.check(w, plt.Kernel.isNumber, "ellipse", "number", 1);
 	plt.Kernel.check(h, plt.Kernel.isNumber, "ellipse", "number", 2);
-	plt.Kernel.check(s, plt.Kernel.isString, "ellipse", "string", 3);
+	plt.Kernel.check(s, isStyle, "ellipse", "string", 3);
 	plt.Kernel.check(c, isColor, "ellipse", "color", 4);
 	
 	if (colorDb.get(c)) {
 	    c = colorDb.get(c);
 	}
-	
-	var elip =  new EllipseImage(plt.types.NumberTower.toFixnum(w),
-				     plt.types.NumberTower.toFixnum(h),
-				     s,
-				     c);
-	return elip.updatePinhole(Math.floor(elip.getWidth()/2), Math.floor(elip.getHeight()/2));
+	return new EllipseImage(plt.types.NumberTower.toFixnum(w),
+				plt.types.NumberTower.toFixnum(h),
+				s,
+				c);
     };
     
+
     //Cagdas
     //Line number number color
     plt.world.Kernel.line = function(x, y, c) {
@@ -994,8 +993,9 @@ goog.provide('plt.world.Kernel');
     //Ellipse 
     //Cagdas
 
+
     var EllipseImage = function(width, height, style, color) {
-	BaseImage.call(this, 0, 0);
+	BaseImage.call(this, Math.floor(width/2), Math.floor(height/2));
 	this.width = width;
 	this.height = height;
 	this.style = style;
@@ -1005,36 +1005,31 @@ goog.provide('plt.world.Kernel');
     EllipseImage.prototype = heir(BaseImage.prototype);
 
     
-    EllipseImage.prototype.render = function(ctx, x1, y1) {
-	ctx.translate(0, 0);
-	var radiusX = this.getWidth();
-	var radiusY = this.getHeight();
-
-	var diffx = radiusX/2 - this.pinholeX;
-	var diffy = radiusY/2 - this.pinholeY;
-	var x = x1 + diffx;
-	var y = y1 + diffy;
-	
-	//abra kadabra
-	var k = 0.5522847498;
-
-	var krx = k*this.radiusX;
-	var kry = k*this.radiusY;
-	ctx.beginPath();
-
-	ctx.fillStyle = this.color.toString();
-
-	ctx.moveTo(x+this.radiusX, y)
-	ctx.bezierCurveTo(x+this.radiusX, y-kry, x+krx, y-this.radiusY, x, y-this.radiusY);
-	ctx.bezierCurveTo(x-krx, y-this.radiusY, x-this.radiusX, y-kry, x-this.radiusX, y);
-	ctx.bezierCurveTo(x-this.radiusX, y+kry, x-krx, y+this.radiusY, x, y+this.radiusY);
-	ctx.bezierCurveTo(x+krx, y+this.radiusY, x+this.radiusX, y+kry, x+this.radiusX, y);
-
-	if (this.style.toString().toLowerCase() == "outline")
+    EllipseImage.prototype.render = function(ctx, aX, aY) {
+	ctx.save();
+	// Most of this code is taken from:
+	// http://webreflection.blogspot.com/2009/01/ellipse-and-circle-for-canvas-2d.html
+        var hB = (this.width / 2) * .5522848,
+            vB = (this.height / 2) * .5522848,
+            eX = aX + this.width,
+            eY = aY + this.height,
+            mX = aX + this.width / 2,
+            mY = aY + this.height / 2;
+        ctx.moveTo(aX, mY);
+        ctx.bezierCurveTo(aX, mY - vB, mX - hB, aY, mX, aY);
+        ctx.bezierCurveTo(mX + hB, aY, eX, mY - vB, eX, mY);
+        ctx.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
+        ctx.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
+        ctx.closePath();
+	if (this.style.toString().toLowerCase() == "outline") {
+ 	    ctx.strokeStyle = this.color.toString();
 	    ctx.stroke();
-	else
+	}
+	else {
+ 	    ctx.fillStyle = this.color.toString();
 	    ctx.fill();
-	ctx.closePath();
+	}
+	ctx.restore();
     };
     
     EllipseImage.prototype.getWidth = function() {
