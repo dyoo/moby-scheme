@@ -309,7 +309,7 @@
 
 
 ;; desugar-include: stx pinfo -> (list (listof stx) pinfo)
-(define (desugar-include include-expr pinfo)
+#;(define (desugar-include include-expr pinfo)
   (cond
     [(not (= (length (stx-e include-expr)) 2))
      (syntax-error "Usage: (include file-path), where file-path is a string." 

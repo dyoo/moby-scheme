@@ -4,8 +4,10 @@
 (require "pinfo.ss")
 (require "helpers.ss")
 (require "modules.ss")
-(require "../runtime/permission.ss")
 (require "rbtree.ss")
+(require "../runtime/permission.ss")
+(require "../runtime/binding.ss")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

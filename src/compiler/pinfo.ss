@@ -3,10 +3,11 @@
 (require "env.ss")
 (require "toplevel.ss")
 (require "helpers.ss")
-(require "../runtime/permission.ss")
 (require "modules.ss")
 (require "rbtree.ss")
 (require "labeled-translation.ss")
+(require "../runtime/permission.ss")
+(require "../runtime/binding.ss")
 
 
 ;; pinfo (program-info) is the "world" structure for the compilers; 

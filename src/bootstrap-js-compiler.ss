@@ -121,6 +121,21 @@
   (boot-compile-runtime-library "runtime/error-struct.ss"  "../support/js/runtime/error-struct.js"))
 
 
+;; write-runtime-toplevel-bindings-module
+(define (write-runtime-toplevel-bindings-module)
+  (for ([a-path (in-list 
+               (list "runtime/stx.ss"
+                     "runtime/permission.ss"
+                     "runtime/effect-struct.ss"
+                     "runtime/arity-struct.ss"
+                     "runtime/error-struct.ss"))])
+    (let ([compiled-program              
+           (program->compiled-program/pinfo (get-big-program a-path)
+                                            (get-base-pinfo 'base))])
+      (void))))
+
+
+
 ;; write-collect-module: string path-string -> void
 ;; Write out the content of the module into the collects path.
 (define (write-collect-module module-name src-path)

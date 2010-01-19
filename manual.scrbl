@@ -504,13 +504,6 @@ A @scheme[sound] is a:
 
 The following helper functions and forms are provided by Moby.
 
-@defform[(include [a-path string?])]{
-Textually includes content from another file.  The path @scheme[a-path] is resolved
-relative to the path of the program.  @scheme[include] can only be used at the top-level context.
-
-@bold{Note: this feature is experimental and will be replaced in the near
-future.}
-}
 
 
 @defproc[(get-url [url string?]) string?]{

@@ -63,7 +63,7 @@
 
 ;; BIG HACK.
 ;; open-input-stx: string -> (listof stx)
-(define (open-input-stx a-path-string)
+#;(define (open-input-stx a-path-string)
   (local [;; open-beginner-program: path-string -> text%
           ;; Opens up the beginner-level program.
           (define (open-beginner-program path)
@@ -174,8 +174,8 @@
 	 (rename-out (my-hash-ref hash-ref))
          
          ;; To support include and require
-         open-input-stx
-
+         #;open-input-stx
+         
 	 syntax-error
 
 

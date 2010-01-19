@@ -327,6 +327,15 @@
                                   ;; extensible macros
                      (check-within 3)
                      (check-error 2)
+
+                     (make-hasheq 0)
+                     (make-hash 0)
+                     (hash-set! 3 )
+                     (hash-ref 3)
+                     (hash-remove! 2)
+                     (hash-map 2)
+                     (hash-for-each 2)
+                     (hash? 1)
                      )))
           
           
@@ -334,17 +343,8 @@
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
                    top-env-2
-                   (append '((make-hasheq 0 "plt.Kernel.makeHashEq")
-			     (make-hash 0 "plt.Kernel.makeHash")
-                             (hash-set! 3 "plt.Kernel.hashSetBang")
-                             (hash-ref 3 "plt.Kernel.hashRef")
-                             (hash-remove! 2 "plt.Kernel.hashRemoveBang")
-                             (hash-map 2 "plt.Kernel.hashMap")
-                             (hash-for-each 2 "plt.Kernel.hashForEach")
-                             (hash? 1 "plt.Kernel.isHash")
-                             
-                             
-                             (open-input-stx 1 "plt.Kernel.openInputStx"))
+                   (append '(
+                             )
                    
                            (map (lambda (id+arity)
                                   (append id+arity 

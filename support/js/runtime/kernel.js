@@ -1505,40 +1505,32 @@ goog.provide('plt.Kernel');
 
 
 
-    // open-input-stx: string -> (listof stx)
-    plt.Kernel.openInputStx = function(path) {
-	// Doesn't do anything here.
-	throw new MobyRuntimeError("open-input-stx currently unsupported");
-    };
-
-
-
 
     //////////////////////////////////////////////////////////////////////
     // Hashtable functions
 
 
-    // makeHashEq: -> hash
-    plt.Kernel.makeHashEq = function() {
+    // make-hash-eq: -> hash
+    plt.Kernel.make_dash_hash_dash_eq = function() {
 	return new plt.types.EqHashTable();
     };
 
 
-    // makeHash: -> hash
-    plt.Kernel.makeHash = function() {
+    // make-hash: -> hash
+    plt.Kernel.make_dash_hash = function() {
 	return new plt.types.EqualHashTable();
     };
 
 
     // plt.Kernel.hashSet: hash object value -> undefined
     // Mutates the hash with a new key/value binding.
-    plt.Kernel.hashSetBang = function(obj, key, val) {
+    plt.Kernel.hash_dash_set_bang_ = function(obj, key, val) {
 	check(obj, isHash, "hash-set!", "hash", 1);
 	obj.hash.put(key, val);
 	return undefined;
     };
 
-    plt.Kernel.hashRef = function(obj, key, defaultVal) {
+    plt.Kernel.hash_dash_ref = function(obj, key, defaultVal) {
 	check(obj, isHash, "hash-ref", "hash", 1);
 	if (obj.hash.containsKey(key)) {
 	    return obj.hash.get(key);
@@ -1550,13 +1542,13 @@ goog.provide('plt.Kernel');
 	}
     };
     
-    plt.Kernel.hashRemoveBang = function(obj, key) {
+    plt.Kernel.hash_dash_remove_bang_ = function(obj, key) {
 	check(obj, isHash, "hash-remove!", "hash", 1);
 	obj.hash.remove(key);
 	return undefined;
     };
 
-    plt.Kernel.hashMap = function(ht, f) {
+    plt.Kernel.hash_dash_map = function(ht, f) {
 	check(ht, isHash, "hash-map", "hash", 1);
 	var result = plt.types.Empty.EMPTY;
 	var keys = ht.hash.keys();
@@ -1569,8 +1561,8 @@ goog.provide('plt.Kernel');
     };
 
 
-    plt.Kernel.hashForEach = function(ht, f) {
-	check(ht, isHash, "hash-map", "hash", 1);
+    plt.Kernel.hash_dash_for_dash_each = function(ht, f) {
+	check(ht, isHash, "hash-for-each", "hash", 1);
 	var result = plt.types.Empty.EMPTY;
 	var keys = ht.hash.keys();
 	for (var i = 0; i < keys.length; i++){
@@ -1586,7 +1578,7 @@ goog.provide('plt.Kernel');
 		((x instanceof plt.types.EqHashTable) || 
 		 (x instanceof plt.types.EqualHashTable)));
     }
-    plt.Kernel.isHash = isHash;
+    plt.Kernel.hash_question_ = isHash;
 
 
 
