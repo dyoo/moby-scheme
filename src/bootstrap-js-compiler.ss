@@ -55,17 +55,6 @@
   "../support/js/standalone-compiler/compressed-standalone-compiler.js")
 
 
-;; The following are paths to modules that need to be provided to the Moby runtime.
-(define-runtime-path permission-struct-path
-  "../support/js/runtime/permission-struct.js")
-
-(define-runtime-path syntax-path
-  "../support/js/runtime/stx.js")
-
-(define-runtime-path effect-struct-path 
-  "../support/js/runtime/effect-struct.js")
-
-
 
 (define-runtime-path base.js  "../support/js/runtime/base.js")
 (define-runtime-path jshashtable.js  "../support/js/runtime/jshashtable.js")
@@ -113,13 +102,23 @@
   (google-closure-compile bytes #:aggressive? #t))
 
 
-;; write-bootstrap-module: -> void
-;; Writes out the bootstrap-teachpack module
-(define (write-runtime-modules)
+;; write-collection-module: -> void
+;; Writes out the optional teachpack modules
+(define (write-collection-modules)
   (write-collect-module "bootstrap-teachpack.js" "collects/bootstrap-teachpack.ss")
   (write-collect-module "cage-teachpack.js" "collects/cage-teachpack.ss")
   (write-collect-module "function-teachpack.js" "collects/function-teachpack.ss"))
 
+
+
+;; write-runtime-library-modules: -> void
+;; Write out the runtime library.
+(define (write-runtime-library-modules)
+  (boot-compile-runtime-library "runtime/stx.ss" "../support/js/runtime/stx.js")
+  (boot-compile-runtime-library "runtime/permission.ss" "../support/js/runtime/permission-struct.js")
+  (boot-compile-runtime-library "runtime/effect-struct.ss" "../support/js/runtime/effect-struct.js")
+  (boot-compile-runtime-library "runtime/arity-struct.ss"  "../support/js/runtime/arity-struct.js")
+  (boot-compile-runtime-library "runtime/error-struct.ss"  "../support/js/runtime/error-struct.js"))
 
 
 ;; write-collect-module: string path-string -> void
@@ -151,12 +150,8 @@
 ;; Writes out the javascript compiler and other files.
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
-  (boot-compile-runtime-library "runtime/stx.ss" syntax-path)
-  (boot-compile-runtime-library "runtime/permission.ss" permission-struct-path)
-  (boot-compile-runtime-library "runtime/effect-struct.ss" effect-struct-path)
-  (boot-compile-runtime-library "runtime/arity-struct.ss" 
-                                "../support/js/runtime/arity-struct.js")
-
+  (write-runtime-library-modules)
+  
   (boot-compile-runtime-library "compiler/beginner-to-javascript.ss" compiler-path)
 
   (unless (directory-exists? standalone-compiler-parent-path)
@@ -169,7 +164,7 @@
       (copy-path-to-port jshashtable.js op)
       (copy-path-to-port types.js op)
       (copy-path-to-port kernel.js op)
-      (copy-path-to-port syntax-path op)
+      (copy-path-to-port "../support/js/runtime/stx.js" op)
       (copy-path-to-port read.js op)
       (display (bootstrap-compile "compiler/beginner-to-javascript.ss") op)
       
@@ -392,7 +387,7 @@
 
 
 
-(write-runtime-modules)
+(write-collection-modules)
 (write-compressed-runtime)
 
 

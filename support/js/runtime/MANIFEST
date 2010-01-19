@@ -8,6 +8,8 @@ world-config.js
 platform.js
 lib.js
 effect-struct.js
+arity-struct.js
+error-struct.js
 world.js
 jsworld/jsworld.js
 jsworld.js
