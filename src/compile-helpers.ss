@@ -13,7 +13,7 @@
          "image-lift.ss"
          "runtime/stx.ss"
          "compiler/pinfo.ss"
-         "runtime/permission.ss"
+         "runtime/permission-struct.ss"
          "runtime/binding.ss")
 
 ;; Common helper functions used in the compiler.

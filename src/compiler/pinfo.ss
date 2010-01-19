@@ -6,7 +6,7 @@
 (require "modules.ss")
 (require "rbtree.ss")
 (require "labeled-translation.ss")
-(require "../runtime/permission.ss")
+(require "../runtime/permission-struct.ss")
 (require "../runtime/binding.ss")
 
 

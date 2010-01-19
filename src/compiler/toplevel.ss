@@ -7,7 +7,7 @@
 ;; get-toplevel-env: symbol ->env
 (define (get-toplevel-env lang)
   ;; fixme: use the language to limit what symbols get in the toplevel.
-  (local [(define top-env-1
+  (local [(define base-constants-env
             (foldl (lambda (id+name env)
                      (env-extend-constant env (first id+name) (second id+name)))
                    empty-env
@@ -41,7 +41,9 @@
                                  false
                                  java-string))
           
-          (define top-env-2
+          
+          ;; The core environment includes bindings to Javascript-written functions.
+          (define core-env
             (foldl (lambda (name+arity env)
                      (cond
                        [(= (length name+arity) 2)
@@ -55,7 +57,7 @@
                            (second name+arity)
                            (if (symbol=? (third name+arity) 'true) true false))]))
                    
-                   top-env-1
+                   base-constants-env
                    
                    ;; Numerics
                    '((< 2 true)
@@ -339,34 +341,38 @@
                      )))
           
           
-          (define top-env-3 
+          ;; These include bindings for identifiers defined by the runtime modules.
+          ;;
+          ;; WARNING WARNING
+          ;;
+          ;; These definitions actually don't exist in Javascript until they've been generated
+          ;; by the bootstrapper.
+          (define core-plus-env 
             (foldl (lambda (id+arity+name env)
                      (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
-                   top-env-2
-                   (append '(
-                             )
+                   core-env
                    
-                           (map (lambda (id+arity)
-                                  (append id+arity 
-                                          (list 
-                                           (symbol->string
-                                            (identifier->munged-java-identifier (first id+arity))))))
-                                '((stx-begins-with? 2)
-                                  (stx-e 1)
-                                  (stx? 1)
-                                  (stx:list? 1)
-                                  (stx:atom? 1)
-                                  (make-stx:list 2)
-                                  (make-stx:atom 2)
-                                  (stx-loc 1)
-                                  (datum->stx 2)
-                                  (stx->datum 1)
-                                  (Loc-offset 1)
-                                  (Loc-line 1)
-                                  (Loc-column 1)
-                                  (Loc-span 1)
-                                  (Loc-id 1))))))]
-    top-env-3))
+                   (map (lambda (id+arity)
+                          (append id+arity 
+                                  (list 
+                                   (symbol->string
+                                    (identifier->munged-java-identifier (first id+arity))))))
+                        '((stx-begins-with? 2)
+                          (stx-e 1)
+                          (stx? 1)
+                          (stx:list? 1)
+                          (stx:atom? 1)
+                          (make-stx:list 2)
+                          (make-stx:atom 2)
+                          (stx-loc 1)
+                          (datum->stx 2)
+                          (stx->datum 1)
+                          (Loc-offset 1)
+                          (Loc-line 1)
+                          (Loc-column 1)
+                          (Loc-span 1)
+                          (Loc-id 1)))))]
+    core-plus-env))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

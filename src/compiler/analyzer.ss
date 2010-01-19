@@ -5,7 +5,7 @@
 (require "helpers.ss")
 (require "modules.ss")
 (require "rbtree.ss")
-(require "../runtime/permission.ss")
+(require "../runtime/permission-struct.ss")
 (require "../runtime/binding.ss")
 
 

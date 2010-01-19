@@ -4,10 +4,11 @@
 
 ;; FIXME: these bindings should not be hardcoded here; a module should be self-describing
 ;; in terms of what bindings it provides.
+;; This is a complete mess, and I need to rework this so that a module self-describes its bindings.
 
 
 (require "env.ss")
-(require "../runtime/permission.ss")
+(require "../runtime/permission-struct.ss")
 (require "../runtime/binding.ss")
 
 (define-struct module-binding (name source bindings))

@@ -102,6 +102,8 @@
   (google-closure-compile bytes #:aggressive? #t))
 
 
+
+
 ;; write-collection-module: -> void
 ;; Writes out the optional teachpack modules
 (define (write-collection-modules)
@@ -115,7 +117,7 @@
 ;; Write out the runtime library.
 (define (write-runtime-library-modules)
   (boot-compile-runtime-library "runtime/stx.ss" "../support/js/runtime/stx.js")
-  (boot-compile-runtime-library "runtime/permission.ss" "../support/js/runtime/permission-struct.js")
+  (boot-compile-runtime-library "runtime/permission-struct.ss" "../support/js/runtime/permission-struct.js")
   (boot-compile-runtime-library "runtime/effect-struct.ss" "../support/js/runtime/effect-struct.js")
   (boot-compile-runtime-library "runtime/arity-struct.ss"  "../support/js/runtime/arity-struct.js")
   (boot-compile-runtime-library "runtime/error-struct.ss"  "../support/js/runtime/error-struct.js"))
@@ -125,7 +127,7 @@
 (define (write-runtime-toplevel-bindings-module)
   (for ([a-path (in-list 
                (list "runtime/stx.ss"
-                     "runtime/permission.ss"
+                     "runtime/permission-struct.ss"
                      "runtime/effect-struct.ss"
                      "runtime/arity-struct.ss"
                      "runtime/error-struct.ss"))])
@@ -395,7 +397,8 @@
                                #"\n")))))))
 
 
-
+;; call-with-program/resources: path-string (program/resources -> X) -> X
+;; Call f with the program/resources at path f.
 (define (call-with-program/resources path f)
   (f (open-program/resources path)))
 
