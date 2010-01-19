@@ -7,12 +7,10 @@
 
 (require (prefix-in base: scheme/base)
          scheme/contract
-         scheme/class
-         scheme/gui/base
          lang/htdp-advanced
          (for-syntax scheme/base)
          "../runtime/stx.ss"
-         "error-struct.ss")
+         )
 
 
 (provide (except-out (all-from-out lang/htdp-advanced)
@@ -46,7 +44,9 @@
        (base:define-struct id (fields ...)
                            #:prefab 
                            #:mutable))]))
-    
+
+(base:define-struct (exn:fail:moby-syntax-error exn:fail) (stxs))
+
 
 (base:define (syntax-error msg . stx)
   (raise (make-exn:fail:moby-syntax-error 
