@@ -1,12 +1,6 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
-
-;; A binding associates a symbol with some value.
-;; binding?: any -> boolean
-(define (binding? datum)
-  (or (binding:constant? datum)
-      (binding:function? datum)
-      (binding:structure? datum)))
+(require "permission-struct.ss")
 
 
 ;; binding:constant records an id and its associated Java implementation.
@@ -41,6 +35,15 @@
 
 
 
+;; A binding associates a symbol with some value.
+;; binding?: any -> boolean
+(define (binding? datum)
+  (or (binding:constant? datum)
+      (binding:function? datum)
+      (binding:structure? datum)))
+
+
+
 ;; binding-id: binding -> symbol
 ;; Given a binding, produces its identifier.
 (define (binding-id a-binding)
@@ -53,19 +56,45 @@
      (binding:structure-name a-binding)]))
 
 
+;; binding->sexp: binding -> s-expr
+;; Serialize a binding as an s-expression.
+(define (binding->sexp a-binding)
+  (cond
+    [(binding:constant? a-binding)
+     (list 'binding:constant 
+           (binding:constant-name a-binding)
+           (binding:constant-java-string a-binding)
+           (permission->string (binding:constant-permissions a-binding)))]
+    [(binding:function? a-binding)
+     ;; fixme
+     (list 'binding:function)]
+    [(binding:structure? a-binding)
+     ;; fixme
+     (list 'binding:structure? a-binding)]))
+
+
+
+
+;; sexp->binding: sexp -> binding
+;; Thaw out an s-expression back to a binding.
+(define (sexp->binding an-sexp)
+  (void))
+
+
+
+
 (provide/contract
- [binding? (any/c . -> . boolean?)]
  
  [struct binding:constant ([name symbol?]
                            [java-string string?]
-                           [permissions (listof any/c #;permission?)])]
+                           [permissions (listof permission?)])]
  
  [struct binding:function ([name symbol?]
                            [module-source (or/c false/c string?)]
                            [min-arity natural-number/c]
                            [var-arity? boolean?]
                            [java-string string?]
-                           [permissions (listof any/c #;permission?)]
+                           [permissions (listof permission?)]
                            [cps? boolean?])]
 
  [struct binding:structure ([name symbol?]
@@ -75,5 +104,8 @@
                             [accessors (listof symbol?)]
                             [mutators (listof symbol?)])]
  
-                            
- [binding-id (binding? . -> . symbol?)])
+
+  [binding? (any/c . -> . boolean?)] 
+  [binding-id (binding? . -> . symbol?)]
+  [binding->sexp (binding? . -> . any)]
+  [sexp->binding (any/c . -> . binding?)])

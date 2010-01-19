@@ -288,7 +288,9 @@
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
                  (list (make-stx:list (first desugared-exprs+pinfo)
                                       (stx-loc expr))
-                       (second desugared-exprs+pinfo)))]))
+                       (second desugared-exprs+pinfo)))]
+              [else 
+               (error (format "Unable to analyze ~s" (stx->datum expr)))]))
           
           ;; processing-loop: program pinfo -> (list program pinfo)
           (define (processing-loop a-program a-pinfo)
