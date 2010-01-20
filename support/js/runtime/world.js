@@ -1219,7 +1219,7 @@ goog.provide('plt.world.Kernel');
 
 	return new ColorRecord(plt.types.NumberTower.toFixnum(r),
 			       plt.types.NumberTower.toFixnum(g),
-			       plt.types.NumberTower.ToFixnum(b));
+			       plt.types.NumberTower.toFixnum(b));
     };
 
     // FIXME: add accessors
