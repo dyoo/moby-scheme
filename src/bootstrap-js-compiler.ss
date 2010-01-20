@@ -349,7 +349,8 @@
 ;; Rewrites all the provide/contracts to regular provides, since we don't
 ;; yet have a contract system in place.
 (define (replace-provide/contracts a-program)
-  (map (lambda (top-level)
+  a-program
+  #;(map (lambda (top-level)
          (cond [(stx-begins-with? top-level 'provide/contract)
                 (datum->stx `(provide ,@(map convert-provide/contract-clause 
                                              (rest (stx-e top-level)))) 
@@ -417,8 +418,8 @@
 
 
 (write-runtime-toplevel-bindings-descriptions)
-#;(write-collection-modules)
-#;(write-compressed-runtime)
+(write-collection-modules)
+(write-compressed-runtime)
 
 
 

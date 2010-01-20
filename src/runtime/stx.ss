@@ -90,8 +90,7 @@
                   [stx? (any/c . -> . boolean?)]
                   [stx-e (stx? . -> . any)]
                   [stx-loc (stx? . -> . any)]
-
-
- [stx-begins-with? (stx? symbol? . -> . boolean?)]
- [datum->stx (any/c any/c . -> . stx?)]
- [stx->datum (stx? . -> . any)])
+                  
+                  [stx-begins-with? (stx? symbol? . -> . boolean?)]
+                  [datum->stx (any/c any/c . -> . stx?)]
+                  [stx->datum (stx? . -> . any)])

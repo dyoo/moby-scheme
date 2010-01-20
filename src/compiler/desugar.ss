@@ -32,16 +32,19 @@
             (cond
               [(defn? an-element)
                (desugar-defn an-element a-pinfo)]
-              #;[(stx-begins-with? an-element 'include)
-                 (desugar-include an-element a-pinfo)]
               [(library-require? an-element)
+               (list (list an-element) a-pinfo)]
+              [(provide-statement? an-element)
                (list (list an-element) a-pinfo)]
               [(test-case? an-element)
                (desugar-test-case an-element a-pinfo)]
+              [(provide/contract-statement? an-element)
+               (desugar-provide/contract an-element a-pinfo)]
               [(expression? an-element)
                (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
                  (list (list (first expr+pinfo))
                        (second expr+pinfo)))]))
+
           
           
           ;; desugar-defn: defn pinfo -> (list (listof defn) pinfo)
@@ -290,7 +293,7 @@
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               [else 
-               (error (format "Unable to analyze ~s" (stx->datum expr)))]))
+               (error 'desugar (format "Unable to desugar ~s" (stx->datum expr)))]))
           
           ;; processing-loop: program pinfo -> (list program pinfo)
           (define (processing-loop a-program a-pinfo)
@@ -301,7 +304,8 @@
                (local [(define desugared-elts+pinfo
                          (desugar-program-element (first a-program) a-pinfo))
                        (define desugared-rest+pinfo
-                         (processing-loop (rest a-program) (second desugared-elts+pinfo)))]
+                         (processing-loop (rest a-program) 
+                                          (second desugared-elts+pinfo)))]
                  (list (append (first desugared-elts+pinfo)
                                (first desugared-rest+pinfo))
                        (second desugared-rest+pinfo)))]))]
@@ -629,6 +633,42 @@
     
     (list (handle-quoted a-stx 0) 
           pinfo)))
+
+
+
+;; provide/contract-statement: stx -> boolean
+(define (provide/contract-statement? a-stx)
+  (stx-begins-with? a-stx 'provide/contract))
+
+
+;; replace-provide/contracts: stx pinfo -> (list (listof stx) pinfo)
+;; Rewrites all the provide/contracts to regular provides, since we don't
+;; yet have a contract system in place.
+(define (desugar-provide/contract a-provide-contract a-pinfo)
+  (cond [(stx-begins-with? a-provide-contract 'provide/contract)
+         (list (list (datum->stx `(provide ,@(map convert-provide/contract-clause 
+                                                  (rest (stx-e a-provide-contract)))) 
+                                 (stx-loc a-provide-contract)))
+               a-pinfo)]
+        [else
+         (list (list a-provide-contract) 
+               a-pinfo)]))
+
+
+;; convert-provide/contract-clause: stx -> stx
+(define (convert-provide/contract-clause a-clause)
+  (cond
+    [(stx-begins-with? a-clause 'struct)
+     ;; FIXME: Check all syntactic conditions for well-formedness!
+     (datum->stx `(struct-out ,(first (rest (stx-e a-clause))))
+                 (stx-loc a-clause))]
+    [(list? (stx-e a-clause))
+     ;; FIXME: we're ignoring the contract.
+     (first (stx-e a-clause))]
+    [(symbol? (stx-e a-clause))
+       a-clause]
+    [else
+     (syntax-error (format "provide/contract: ~s" a-clause) a-clause)]))
 
 
 

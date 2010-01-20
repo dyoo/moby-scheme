@@ -2266,6 +2266,22 @@ goog.provide('plt.Kernel');
     };
 
 
+
+
+
+    // invokeModule: string -> void
+    // Make sure a module has been invoked.
+    // Modules live in plt._MODULES[name].    
+    plt.Kernel.invokeModule = function(str) {
+	// FIXME!  Do something here!
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+
     // Expose the predicates.
     plt.Kernel.isSymbol = isSymbol;
     plt.Kernel.isChar = isChar;
