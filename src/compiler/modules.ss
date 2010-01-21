@@ -527,11 +527,51 @@
 
 
 
+;; module-path-join: module-path module-path -> module-path
+(define (module-path-join p1 p2)
+  (local [(define (looks-like-relative-path? p)
+            (and (string? p)
+                 (> (string-length p) 0)
+                 (not (char=? (string-ref p 0) #\/))))
+          
+          (define (path-only p)
+            (local [(define (loop i)
+                      (cond [(< i 0)
+                             ""]
+                            [(char=? (string-ref p i) #\/)
+                             (substring p 0 i)]
+                            [else
+                             (loop (sub1 i))]))]
+              (loop (sub1 (string-length p)))))
+
+          (define (path-split p)
+            (local [(define (loop ch acc)
+                      ...)]
+              (foldl ... (string->list p))))
+          
+          (define (path-simplify p)
+            (local [(define (loop current-chunks others)
+                      ...)]
+              (loop (string-split p "/"))))]
+  (cond
+    [(symbol? p2)
+     p2]
+    [(and (string? p1)
+          (looks-like-relative-path? p2))
+     (if (string=? (path-only p1) "")
+         p2
+         (string-join (path-only p1)
+                      "/"
+                      p2))])))
+
+
+
+
 
 (provide/contract [extend-env/module-binding 
                    (env? module-binding? . -> . env?)]
                   [moby-module-binding module-binding?]
                   [default-module-resolver (module-name? . -> . (or/c module-binding? false/c))]
                   [default-module-path-resolver (module-path? module-path? . -> . (or/c module-name? false/c))]
-                  
+                  [module-path-join (module-path? module-path? . -> . module-path?)]
                   #;[known-modules (listof module-binding?)])

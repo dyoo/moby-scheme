@@ -132,6 +132,25 @@
       (string-join (rest strs) delim))]))
 
 
+;; string-split: string char -> (listof string)
+(define (string-split a-str delim)
+  (local [(define (add-word acc)
+            (list (cons (list->string (reverse (second acc)))
+                        (first acc))
+                  empty))
+          (define (accumulate-character acc ch)
+            (list (first acc)
+                  (cons ch (second acc))))]
+    (reverse (first
+              (add-word
+               (foldl (lambda (ch acc)
+                        (cond [(char=? ch delim)
+                               (add-word acc)]
+                              [else
+                               (accumulate-character acc ch)]))
+                      (list empty empty)
+                      (string->list a-str)))))))
+
 
 ;; test-case?: stx -> boolean
 (define (test-case? an-sexp)
@@ -427,4 +446,5 @@
                                             (symbol-stx? any/c . -> . any)
                                             (symbol-stx? (listof symbol-stx?) . -> . any)
                                             . -> . any)]
-                  [string-join ((listof string?) string? . -> . string?)])
+                  [string-join ((listof string?) string? . -> . string?)]
+                  [string-split (string? char? . -> . (listof string?))])
