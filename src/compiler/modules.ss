@@ -452,22 +452,6 @@
   
 
 
-;; The default bindings for moby will include
-;; stuff from regular world
-;; stuff from jsworld
-(define moby-module-binding
-  (make-module-binding 'moby
-                       "moby/moby"
-                       (append 
-                        (module-binding-bindings world-stub-module)
-                        (module-binding-bindings jsworld-module)
-                        (module-binding-bindings telephony-module)
-                        (module-binding-bindings location-module)
-			(module-binding-bindings net-module))))
-
-                               
-                               
-
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
 (define (extend-env/module-binding an-env a-module-binding)
@@ -482,6 +466,22 @@
 
 
 
+
+;; The default bindings for moby will include
+;; stuff from regular world
+;; stuff from jsworld
+(define moby-module-binding
+  (make-module-binding 'moby
+                       "moby/moby"
+                       (append 
+                        (module-binding-bindings world-stub-module)
+                        (module-binding-bindings jsworld-module)
+                        (module-binding-bindings telephony-module)
+                        (module-binding-bindings location-module)
+			(module-binding-bindings net-module))))
+
+
+;; These modules are hardcoded.
 (define known-modules (list world-module
                             world-stub-module
                             location-module
@@ -495,11 +495,26 @@
                             moby-module-binding))
 
 
+;; default-module-resolver: symbol -> (module-binding | false)
+(define (default-module-resolver a-name)
+  (local [(define (loop modules)
+            (cond
+              [(empty? modules)
+               false]
+              [(symbol=? (module-binding-name (first modules))
+                         a-name)
+               (first modules)]
+              [else
+               (loop (rest modules))]))]
+    (loop known-modules)))
+
+
 
 (provide/contract [struct module-binding ([name symbol?]
                                           [source string?]
                                           [bindings (listof binding?)])]
                   [extend-env/module-binding 
                    (env? module-binding? . -> . env?)]
+                  [moby-module-binding module-binding?]
                   [known-modules (listof module-binding?)]
-                  [moby-module-binding module-binding?])
+                  [default-module-resolver (symbol? . -> . (or/c module-binding? false/c))])

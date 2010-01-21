@@ -64,13 +64,24 @@
      (list 'binding:constant 
            (binding:constant-name a-binding)
            (binding:constant-java-string a-binding)
-           (permission->string (binding:constant-permissions a-binding)))]
+           (map permission->string (binding:constant-permissions a-binding)))]
     [(binding:function? a-binding)
-     ;; fixme
-     (list 'binding:function)]
+     (list 'binding:function
+           (binding:function-name a-binding)
+           (binding:function-module-source a-binding)
+           (binding:function-min-arity a-binding)
+           (binding:function-var-arity? a-binding)
+           (binding:function-java-string a-binding)
+           (map permission->string (binding:function-permissions a-binding))
+           (binding:function-cps? a-binding))]
     [(binding:structure? a-binding)
-     ;; fixme
-     (list 'binding:structure? a-binding)]))
+     (list 'binding:structure
+           (binding:structure-name a-binding)
+           (binding:structure-fields a-binding)
+           (binding:structure-constructor a-binding)
+           (binding:structure-predicate a-binding)
+           (binding:structure-accessors a-binding)
+           (binding:structure-mutators a-binding))]))
 
 
 

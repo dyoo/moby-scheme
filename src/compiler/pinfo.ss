@@ -21,6 +21,7 @@
                       defined-names          ; (hashof symbol binding)
                       shared-expressions     ; (hashof expression labeled-translation)
                       with-location-emits?   ; boolean
+                      module-resolver        ; (string -> (module-binding | false))
                       ))
 
 
@@ -34,7 +35,8 @@
               empty-rbtree
               empty-rbtree
               empty-rbtree
-              true))
+              true
+              default-module-resolver))
 
 
 
@@ -57,7 +59,8 @@
    (pinfo-provided-names a-pinfo)
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
-   (pinfo-with-location-emits? a-pinfo)))
+   (pinfo-with-location-emits? a-pinfo)
+   (pinfo-module-resolver a-pinfo)))
 
 
 ;; pinfo-update-defined-names: pinfo rbtree -> pinfo
@@ -71,7 +74,8 @@
    provided-names
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
-   (pinfo-with-location-emits? a-pinfo)))
+   (pinfo-with-location-emits? a-pinfo)
+   (pinfo-module-resolver a-pinfo)))
 
 ;; pinfo-update-defined-names: pinfo rbtree -> pinfo
 ;; Updates the defined names of a pinfo.
@@ -84,21 +88,22 @@
    (pinfo-provided-names a-pinfo)
    defined-names
    (pinfo-shared-expressions a-pinfo)
-   (pinfo-with-location-emits? a-pinfo)))
+   (pinfo-with-location-emits? a-pinfo)
+   (pinfo-module-resolver a-pinfo)))
 
 
 ;; pinfo-update-with-location-emits?: pinfo boolean -> pinfo
 ;; Updates the with-location-emits? field.
 (define (pinfo-update-with-location-emits? a-pinfo with-location-emits?)
-  (make-pinfo
-   (pinfo-env a-pinfo)
-   (pinfo-modules a-pinfo)
-   (pinfo-used-bindings-hash a-pinfo)
-   (pinfo-gensym-counter a-pinfo)
-   (pinfo-provided-names a-pinfo)
-   (pinfo-defined-names a-pinfo)
-   (pinfo-shared-expressions a-pinfo)
-   with-location-emits?))
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              with-location-emits?
+              (pinfo-module-resolver a-pinfo)))
 
 (define (pinfo-accumulate-shared-expression a-shared-expression a-translation a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
@@ -112,25 +117,26 @@
                              a-shared-expression 
                              (make-labeled-translation (pinfo-gensym-counter a-pinfo)
                                                        a-translation))
-              (pinfo-with-location-emits? a-pinfo)))
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-module-resolver a-pinfo)))
 
                                             
 
 ;; pinfo-accumulate-defined-binding: binding pinfo -> pinfo
 ;; Adds a new defined binding to a pinfo's set.
 (define (pinfo-accumulate-defined-binding a-binding a-pinfo)
-  (make-pinfo
-   (env-extend (pinfo-env a-pinfo) a-binding)
-   (pinfo-modules a-pinfo)
-   (pinfo-used-bindings-hash a-pinfo)
-   (pinfo-gensym-counter a-pinfo)
-   (pinfo-provided-names a-pinfo)
-   (rbtree-insert symbol< 
-                  (pinfo-defined-names a-pinfo)
-                  (binding-id a-binding)
-                  a-binding)
-   (pinfo-shared-expressions a-pinfo)
-   (pinfo-with-location-emits? a-pinfo)))
+  (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (rbtree-insert symbol< 
+                             (pinfo-defined-names a-pinfo)
+                             (binding-id a-binding)
+                             a-binding)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-module-resolver a-pinfo)))
 
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
@@ -147,15 +153,15 @@
 ;; including them within the set of defined names.
 (define (pinfo-accumulate-module-bindings bindings a-pinfo)
   (foldl (lambda (a-binding a-pinfo)
-           (make-pinfo
-            (env-extend (pinfo-env a-pinfo) a-binding)
-            (pinfo-modules a-pinfo)
-            (pinfo-used-bindings-hash a-pinfo)
-            (pinfo-gensym-counter a-pinfo)
-            (pinfo-provided-names a-pinfo)
-            (pinfo-defined-names a-pinfo)
-            (pinfo-shared-expressions a-pinfo)
-            (pinfo-with-location-emits? a-pinfo)))
+           (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
+                       (pinfo-modules a-pinfo)
+                       (pinfo-used-bindings-hash a-pinfo)
+                       (pinfo-gensym-counter a-pinfo)
+                       (pinfo-provided-names a-pinfo)
+                       (pinfo-defined-names a-pinfo)
+                       (pinfo-shared-expressions a-pinfo)
+                       (pinfo-with-location-emits? a-pinfo)
+                       (pinfo-module-resolver a-pinfo)))
          a-pinfo
          bindings))
 
@@ -170,7 +176,8 @@
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
-              (pinfo-with-location-emits? a-pinfo)))
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-module-resolver a-pinfo)))
 
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
@@ -186,7 +193,8 @@
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
-              (pinfo-with-location-emits? a-pinfo)))
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-module-resolver a-pinfo)))
 
 
 ;; pinfo-gensym: pinfo symbol -> (list pinfo symbol)
@@ -199,7 +207,8 @@
                     (pinfo-provided-names a-pinfo)
                     (pinfo-defined-names a-pinfo)
                     (pinfo-shared-expressions a-pinfo)
-                    (pinfo-with-location-emits? a-pinfo))
+                    (pinfo-with-location-emits? a-pinfo)
+                    (pinfo-module-resolver a-pinfo))
 
         (string->symbol
          (string-append (symbol->string a-label)
@@ -283,6 +292,49 @@
 
 
 
+
+
+;; pinfo-get-exposed-bindings: pinfo -> (listof pinfo)
+;; Extract the list of the defined bindings that are exposed by provide.
+(define (pinfo-get-exposed-bindings a-pinfo)
+  (local [;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> binding
+          ;; Lookup the provided bindings.
+          (define (lookup-provide-binding-in-definition-bindings a-provide-binding)
+            (local [(define list-or-false
+                      (rbtree-lookup symbol<
+                                     (pinfo-defined-names a-pinfo)
+                                     (stx-e (provide-binding-stx a-provide-binding))))]
+              (cond
+                [(list? list-or-false)
+                 (check-binding-compatibility a-provide-binding
+                                              (second list-or-false))]
+                [else
+                 (syntax-error (format "The provided name ~s has not been defined"
+                                       (stx-e (provide-binding-stx a-provide-binding)))
+                               (provide-binding-stx a-provide-binding))])))
+          
+          ;; Make sure that if the provide says "struct-out ...", that the exported binding
+          ;; is really a structure.
+          (define (check-binding-compatibility a-provide-binding a-binding)
+            (cond
+              [(provide-binding:struct-id? a-provide-binding)
+               (cond [(binding:structure? a-binding)
+                      a-binding]
+                     [else
+                      (syntax-error 
+                       (format "The provided name ~s does not appear to be the name of a defined structure" 
+                               (stx-e (provide-binding-stx a-provide-binding)))
+                       (provide-binding-stx a-provide-binding))])]
+              [else
+               a-binding]))]
+    (rbtree-fold (pinfo-provided-names a-pinfo)
+                 (lambda (id a-provide-binding acc)
+                   (cons (lookup-provide-binding-in-definition-bindings a-provide-binding)
+                         acc))
+                 empty)))
+
+
+
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash rbtree?]
@@ -290,7 +342,8 @@
                                  [provided-names rbtree?]
                                  [defined-names rbtree?]
                                  [shared-expressions rbtree?]
-                                 [with-location-emits? boolean?])]
+                                 [with-location-emits? boolean?]
+                                 [module-resolver (symbol? . -> . (or/c module-binding? false/c))])]
                   
                   
                   [empty-pinfo pinfo?]
@@ -308,6 +361,8 @@
                   [pinfo-update-with-location-emits? (pinfo? boolean? . -> . pinfo?)]
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
                   [pinfo-permissions (pinfo? . -> . (listof permission?))]
+ 
+                  [pinfo-get-exposed-bindings (pinfo? . -> . (listof binding?))]
                   
                   
                   [struct provide-binding:id ([stx stx?])]

@@ -103,6 +103,8 @@
 
 ;; expose-provided-names: compiled-program -> (listof symbol)
 ;; Get all the names of the provided identifiers.
+
+;; FIXME: use pinfo-get-exposed-bindings
 (define (expose-provided-names a-compiled-program)
   (rbtree-fold (pinfo-provided-names (compiled-program-pinfo a-compiled-program))
                (lambda (name binding acc)
