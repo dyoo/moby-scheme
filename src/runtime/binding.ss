@@ -88,8 +88,31 @@
 
 ;; sexp->binding: sexp -> binding
 ;; Thaw out an s-expression back to a binding.
+;;
+;; FIXME: we need to do this defensively, as the bindings are from the outside
+;; world.
 (define (sexp->binding an-sexp)
-  (void))
+  (case (first an-sexp)
+    [(binding:constant)
+     (make-binding:constant (list-ref an-sexp 1)
+                            (list-ref an-sexp 2)
+                            (map string->permission (list-ref an-sexp 3))
+                            )]
+    [(binding:function)
+     (make-binding:function (list-ref an-sexp 1)
+                            (list-ref an-sexp 2)
+                            (list-ref an-sexp 3)
+                            (list-ref an-sexp 4)
+                            (list-ref an-sexp 5)
+                            (map string->permission (list-ref an-sexp 6))
+                            (list-ref an-sexp 7))]
+    [(binding:structure)
+     (make-binding:structure (list-ref an-sexp 1)
+                             (list-ref an-sexp 2)
+                             (list-ref an-sexp 3)
+                             (list-ref an-sexp 4)
+                             (list-ref an-sexp 5)
+                             (list-ref an-sexp 6))]))
 
 
 

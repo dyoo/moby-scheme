@@ -403,14 +403,15 @@
             (syntax-error (format "Moby doesn't know about module ~s yet"
                                   (stx-e require-path))
                           require-path))
+
           (define maybe-module-name ((pinfo-module-path-resolver pinfo)
-                                     (stx-e require-path)))]
+                                     (stx-e require-path)
+                                     (pinfo-current-module-path pinfo)))]
 
   (cond
     [(module-name? maybe-module-name)
      (local [(define maybe-module-binding
-               ((pinfo-module-resolver pinfo) maybe-module-name
-                                              (pinfo-current-module-path pinfo)))]
+               ((pinfo-module-resolver pinfo) maybe-module-name))]
      (cond [(module-binding? maybe-module-binding)
             (pinfo-accumulate-module maybe-module-binding
                                      (pinfo-accumulate-module-bindings

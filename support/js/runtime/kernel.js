@@ -2269,10 +2269,10 @@ goog.provide('plt.Kernel');
 
 
 
-    // invokeModule: string -> void
+    // invokeModule: module-name -> void
     // Make sure a module has been invoked.
     // Modules live in plt._MODULES[name].    
-    plt.Kernel.invokeModule = function(str) {
+    plt.Kernel.invokeModule = function(moduleName) {
 	// FIXME!  Do something here!
     }
 

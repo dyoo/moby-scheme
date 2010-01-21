@@ -236,10 +236,13 @@
                          
                          [(library-require? (first program))
                           (loop (rest program)
-                                (string-append defns
-                                               "\n"
-                                               "// Module require erased\n")
-                                tops
+                                defns
+                                (string-append
+                                 tops
+                                 "\n"
+                                 (module-require->javascript-string (first program)
+                                                                   a-pinfo)
+                                 ";\n")
                                 a-pinfo)]
 
                          [(provide-statement? (first program))
@@ -276,7 +279,12 @@
     (loop (first desugared-program+pinfo) "" "" a-pinfo)))
 
 
-
+(define (module-require->javascript-string a-module-require a-pinfo)
+  (string-join (map (lambda (a-path)
+                      (format "plt.Kernel.invokeModule('~a');"
+                              (pinfo-module-path-resolver (stx-e a-path))))
+                    (rest (stx-e a-module-require)))
+               "\n"))
 
 
 
@@ -600,7 +608,9 @@
     
     ;; Literal booleans
     [(boolean? (stx-e expr))
-     (expression->javascript-string (if (stx-e expr) 
+     (list (boolean->javascript-string (stx-e expr))
+           a-pinfo)
+     #;(expression->javascript-string (if (stx-e expr) 
                                         (make-stx:atom 'true (stx-loc expr))
                                         (make-stx:atom 'false (stx-loc expr)))
                                     env
@@ -626,6 +636,9 @@
      (local [(define operator (first (stx-e expr)))
              (define operands (rest (stx-e expr)))]
        (application-expression->javascript-string expr operator operands env a-pinfo))]))
+
+
+
 
 
 
@@ -739,9 +752,22 @@
     [(char? (stx-e expr))
      (char->javascript-string (stx-e expr))]
     
+    ;; Booleans
+    [(boolean? (stx-e expr))
+     (boolean->javascript-string (stx-e expr))]
+    
     [else
      (syntax-error "Unknown quoted expression encountered"
                    expr)]))
+
+
+;; boolean->javascript-string: boolean -> string
+(define (boolean->javascript-string a-bool)
+  (cond
+    [a-bool
+     "plt.types.Logic.TRUE"]
+    [else
+     "plt.types.Logic.FALSE"]))
 
 
 
