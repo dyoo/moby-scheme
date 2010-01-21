@@ -11,7 +11,6 @@
 (require "../runtime/permission-struct.ss")
 (require "../runtime/binding.ss")
 
-(define-struct module-binding (name source bindings))
 
 
 
@@ -510,10 +509,7 @@
 
 
 
-(provide/contract [struct module-binding ([name symbol?]
-                                          [source string?]
-                                          [bindings (listof binding?)])]
-                  [extend-env/module-binding 
+(provide/contract [extend-env/module-binding 
                    (env? module-binding? . -> . env?)]
                   [moby-module-binding module-binding?]
                   [known-modules (listof module-binding?)]

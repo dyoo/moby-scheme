@@ -105,6 +105,21 @@
               with-location-emits?
               (pinfo-module-resolver a-pinfo)))
 
+
+;; pinfo-update-module-resolver: pinfo module-resolver -> pinfo
+(define (pinfo-update-module-resolver a-pinfo module-resolver)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              module-resolver))
+
+
+;; pinfo-accumulate-shared-expression: expression string pinfo -> pinfo
 (define (pinfo-accumulate-shared-expression a-shared-expression a-translation a-pinfo)
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
@@ -121,7 +136,6 @@
               (pinfo-module-resolver a-pinfo)))
 
                                             
-
 ;; pinfo-accumulate-defined-binding: binding pinfo -> pinfo
 ;; Adds a new defined binding to a pinfo's set.
 (define (pinfo-accumulate-defined-binding a-binding a-pinfo)
@@ -359,6 +373,8 @@
                   [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-update-with-location-emits? (pinfo? boolean? . -> . pinfo?)]
+                  [pinfo-update-module-resolver (pinfo? (symbol? . -> . (or/c module-binding? false/c))
+                                                        . -> . pinfo?)]
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
                   [pinfo-permissions (pinfo? . -> . (listof permission?))]
  

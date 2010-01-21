@@ -94,6 +94,11 @@
 
 
 
+(define-struct module-binding (name source bindings))
+
+
+
+
 (provide/contract
  
  [struct binding:constant ([name symbol?]
@@ -119,4 +124,10 @@
   [binding? (any/c . -> . boolean?)] 
   [binding-id (binding? . -> . symbol?)]
   [binding->sexp (binding? . -> . any)]
-  [sexp->binding (any/c . -> . binding?)])
+  [sexp->binding (any/c . -> . binding?)]
+  
+  
+  
+  [struct module-binding ([name symbol?]
+                          [source string?]
+                          [bindings (listof binding?)])])
