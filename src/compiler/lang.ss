@@ -34,6 +34,8 @@
                      for-each
                      andmap
                      ormap
+                     
+                     error
                      ))
 
 
@@ -130,7 +132,7 @@
                      (base:foldr foldr)
                      (base:map map)
                      (base:for-each for-each)
-                     
+                     (base:error error)
                      )
 
          (all-from-out "../runtime/stx.ss")
