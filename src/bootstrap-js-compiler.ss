@@ -402,8 +402,8 @@
 
 
 (write-runtime-toplevel-bindings-descriptions)
-#;(write-collection-modules)
-#;(write-compressed-runtime)
+(write-collection-modules)
+(write-compressed-runtime)
 
 
 

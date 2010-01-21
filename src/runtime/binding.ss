@@ -97,6 +97,31 @@
 (define-struct module-binding (name source bindings))
 
 
+;; module-name?: any -> boolean
+;; A module name is a symbol.
+(define (module-name? x)
+  (symbol? x))
+
+
+;; module-path?: any -> boolean
+;; A module path is either a symbol or a string.
+(define (module-path? x)
+  (or (symbol? x)
+      (string? x)))
+
+
+
+;; module-path=?: module-path module-path -> boolean
+;; Returns true if the module paths are the same.
+(define (module-path=? p1 p2)
+  (cond
+    [(and (symbol? p1) (symbol? p2))
+     (symbol=? p1 p2)]
+    [(and (string? p1) (string? p2))
+     (string=? p1 p2)]
+    [else
+     false]))
+
 
 
 (provide/contract
@@ -128,6 +153,9 @@
   
   
   
-  [struct module-binding ([name symbol?]
-                          [source string?]
-                          [bindings (listof binding?)])])
+  [struct module-binding ([name module-name?]
+                          [source module-path?]
+                          [bindings (listof binding?)])]
+  [module-name? (any/c . -> . boolean?)]
+  [module-path? (any/c . -> . boolean?)]
+  [module-path=? (module-path? module-path? . -> . boolean?)])

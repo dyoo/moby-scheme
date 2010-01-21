@@ -495,6 +495,7 @@
 
 
 ;; default-module-resolver: symbol -> (module-binding | false)
+;; Provides a default module resolver.
 (define (default-module-resolver a-name)
   (local [(define (loop modules)
             (cond
@@ -509,8 +510,28 @@
 
 
 
+;; default-module-path-resolver: module-path module-path -> module-name
+(define (default-module-path-resolver a-module-path parent-module-path)
+  (local [(define (loop modules)
+            (cond
+              [(empty? modules)
+               (cond
+                 [(symbol? a-module-path)
+                  a-module-path]
+                 [(string? a-module-path)
+                  (string->symbol a-module-path)])]
+              [(module-path=? a-module-path
+                              (module-binding-source (first modules)))
+               (module-binding-name (first modules))]))]
+    (loop known-modules)))
+
+
+
+
 (provide/contract [extend-env/module-binding 
                    (env? module-binding? . -> . env?)]
                   [moby-module-binding module-binding?]
-                  [known-modules (listof module-binding?)]
-                  [default-module-resolver (symbol? . -> . (or/c module-binding? false/c))])
+                  [default-module-resolver (module-name? . -> . (or/c module-binding? false/c))]
+                  [default-module-path-resolver (module-path? module-path? . -> . (or/c module-name? false/c))]
+                  
+                  #;[known-modules (listof module-binding?)])

@@ -19,10 +19,27 @@
                       gensym-counter         ; number
                       provided-names         ; (hashof symbol provide-binding)
                       defined-names          ; (hashof symbol binding)
+
                       shared-expressions     ; (hashof expression labeled-translation)
+                      ;; Maintains a mapping between expressions and a labeled translation.  Acts
+                      ;; as a symbol table to avoid duplicate construction of common literal values.
+                      
                       with-location-emits?   ; boolean
-                      module-resolver        ; (string -> (module-binding | false))
+                      ;; If true, the compiler emits calls to plt.Kernel.setLastLoc to maintain
+                      ;; source position during evaluation.
+
+                      ;; For the module system.
+                      module-resolver        ; (module-name -> (module-binding | false))
+                      module-path-resolver   ; (string module-path -> module-name)
+                      current-module-path    ; module-path
+
                       ))
+
+
+
+
+
+(define default-current-module-path "")
 
 
 ;; empty-pinfo: pinfo
@@ -36,7 +53,9 @@
               empty-rbtree
               empty-rbtree
               true
-              default-module-resolver))
+              default-module-resolver
+              default-module-path-resolver
+              default-current-module-path))
 
 
 
@@ -60,7 +79,9 @@
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)
-   (pinfo-module-resolver a-pinfo)))
+   (pinfo-module-resolver a-pinfo)
+   (pinfo-module-path-resolver a-pinfo)
+   (pinfo-current-module-path a-pinfo)))
 
 
 ;; pinfo-update-defined-names: pinfo rbtree -> pinfo
@@ -75,7 +96,9 @@
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)
-   (pinfo-module-resolver a-pinfo)))
+   (pinfo-module-resolver a-pinfo)
+   (pinfo-module-path-resolver a-pinfo)
+   (pinfo-current-module-path a-pinfo)))
 
 ;; pinfo-update-defined-names: pinfo rbtree -> pinfo
 ;; Updates the defined names of a pinfo.
@@ -89,7 +112,9 @@
    defined-names
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)
-   (pinfo-module-resolver a-pinfo)))
+   (pinfo-module-resolver a-pinfo)
+   (pinfo-module-path-resolver a-pinfo)
+   (pinfo-current-module-path a-pinfo)))
 
 
 ;; pinfo-update-with-location-emits?: pinfo boolean -> pinfo
@@ -103,7 +128,9 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               with-location-emits?
-              (pinfo-module-resolver a-pinfo)))
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
 
 
 ;; pinfo-update-module-resolver: pinfo module-resolver -> pinfo
@@ -116,7 +143,37 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
-              module-resolver))
+              module-resolver
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
+
+;; pinfo-update-module-path-resolver: pinfo module-resolver -> pinfo
+(define (pinfo-update-module-path-resolver a-pinfo module-path-resolver)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-module-resolver a-pinfo)
+              module-path-resolver
+              (pinfo-current-module-path a-pinfo)))
+
+;; pinfo-update-module-resolver: pinfo module-resolver -> pinfo
+(define (pinfo-update-current-module-path a-pinfo current-module-path)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              current-module-path))
 
 
 ;; pinfo-accumulate-shared-expression: expression string pinfo -> pinfo
@@ -133,7 +190,9 @@
                              (make-labeled-translation (pinfo-gensym-counter a-pinfo)
                                                        a-translation))
               (pinfo-with-location-emits? a-pinfo)
-              (pinfo-module-resolver a-pinfo)))
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
 
                                             
 ;; pinfo-accumulate-defined-binding: binding pinfo -> pinfo
@@ -150,7 +209,9 @@
                              a-binding)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
-              (pinfo-module-resolver a-pinfo)))
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
 
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
@@ -175,7 +236,9 @@
                        (pinfo-defined-names a-pinfo)
                        (pinfo-shared-expressions a-pinfo)
                        (pinfo-with-location-emits? a-pinfo)
-                       (pinfo-module-resolver a-pinfo)))
+                       (pinfo-module-resolver a-pinfo)
+                       (pinfo-module-path-resolver a-pinfo)
+                       (pinfo-current-module-path a-pinfo)))
          a-pinfo
          bindings))
 
@@ -191,7 +254,9 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
-              (pinfo-module-resolver a-pinfo)))
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
 
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
@@ -208,7 +273,9 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
-              (pinfo-module-resolver a-pinfo)))
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
 
 
 ;; pinfo-gensym: pinfo symbol -> (list pinfo symbol)
@@ -222,7 +289,9 @@
                     (pinfo-defined-names a-pinfo)
                     (pinfo-shared-expressions a-pinfo)
                     (pinfo-with-location-emits? a-pinfo)
-                    (pinfo-module-resolver a-pinfo))
+                    (pinfo-module-resolver a-pinfo)
+                    (pinfo-module-path-resolver a-pinfo)
+                    (pinfo-current-module-path a-pinfo))
 
         (string->symbol
          (string-append (symbol->string a-label)
@@ -357,7 +426,10 @@
                                  [defined-names rbtree?]
                                  [shared-expressions rbtree?]
                                  [with-location-emits? boolean?]
-                                 [module-resolver (symbol? . -> . (or/c module-binding? false/c))])]
+                                 
+                                 [module-resolver (module-name? . -> . (or/c module-binding? false/c))]
+                                 [module-path-resolver (module-path? module-path? . -> . module-name?)]
+                                 [current-module-path module-path?])]
                   
                   
                   [empty-pinfo pinfo?]
@@ -373,8 +445,14 @@
                   [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-update-with-location-emits? (pinfo? boolean? . -> . pinfo?)]
-                  [pinfo-update-module-resolver (pinfo? (symbol? . -> . (or/c module-binding? false/c))
+
+                  [pinfo-update-module-resolver (pinfo? (module-name? . -> . (or/c module-binding? false/c))
                                                         . -> . pinfo?)]
+                  [pinfo-update-module-path-resolver (pinfo? (module-path? . -> . (or/c module-name? false/c))
+                                                             . -> . pinfo?)]
+                  [pinfo-update-current-module-path (pinfo? module-path? . -> . pinfo?)]
+                  
+                  
                   [pinfo-gensym (pinfo? symbol? . -> . (list/c pinfo? symbol?))]
                   [pinfo-permissions (pinfo? . -> . (listof permission?))]
  

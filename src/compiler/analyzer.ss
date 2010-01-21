@@ -396,8 +396,33 @@
 
 
 ;; require-analyze: require-path-stx -> pinfo
+;; When we hit a require, we have to extend our environment to include the list of module
+;; bindings provided by that module.
 (define (require-analyze-collect-definitions require-path pinfo)
-  (local [(define (loop modules)
+  (local [(define (signal-error)
+            (syntax-error (format "Moby doesn't know about module ~s yet"
+                                  (stx-e require-path))
+                          require-path))
+          (define maybe-module-name ((pinfo-module-path-resolver pinfo)
+                                     (stx-e require-path)))]
+
+  (cond
+    [(module-name? maybe-module-name)
+     (local [(define maybe-module-binding
+               ((pinfo-module-resolver pinfo) maybe-module-name
+                                              (pinfo-current-module-path pinfo)))]
+     (cond [(module-binding? maybe-module-binding)
+            (pinfo-accumulate-module maybe-module-binding
+                                     (pinfo-accumulate-module-bindings
+                                      (module-binding-bindings maybe-module-binding)
+                                      pinfo))]
+           [else
+            (signal-error)]))]
+    [else
+     (signal-error)])
+    
+    
+#;(local [(define (loop modules)
             (cond
               [(empty? modules)
                (syntax-error (format "Moby doesn't know about module ~s yet"
@@ -412,7 +437,10 @@
                  pinfo))]
               [else
                (loop (rest modules))]))]
-    (loop known-modules)))
+    (loop known-modules))
+    ))
+
+  
 
 
 (provide/contract [program-analyze (program?  . -> . pinfo?)]

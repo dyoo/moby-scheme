@@ -5,21 +5,9 @@
    (list
     "runtime/stx.ss"
     '((binding:function stx-e #f 1 #f "stx_dash_e" () #f)
-      (binding:structure
-       stx:list
-       (elts loc)
-       make-stx:list
-       stx:list?
-       (stx:list-elts stx:list-loc)
-       (set-stx:list-elts! set-stx:list-loc!))
+      (binding:structure stx:list (elts loc) make-stx:list stx:list? (stx:list-elts stx:list-loc) (set-stx:list-elts! set-stx:list-loc!))
       (binding:function stx? #f 1 #f "stx_question_" () #f)
-      (binding:structure
-       stx:atom
-       (datum loc)
-       make-stx:atom
-       stx:atom?
-       (stx:atom-datum stx:atom-loc)
-       (set-stx:atom-datum! set-stx:atom-loc!))
+      (binding:structure stx:atom (datum loc) make-stx:atom stx:atom? (stx:atom-datum stx:atom-loc) (set-stx:atom-datum! set-stx:atom-loc!))
       (binding:function stx-loc #f 1 #f "stx_dash_loc" () #f)
       (binding:function datum->stx #f 2 #f "datum_dash__greaterthan_stx" () #f)
       (binding:function stx-begins-with? #f 2 #f "stx_dash_begins_dash_with_question_" () #f)
@@ -60,14 +48,7 @@
       (binding:structure permission:location () make-permission:location permission:location? () ())
       (binding:constant PERMISSION:WAKE-LOCK "PERMISSION_colon_WAKE_dash_LOCK" ())
       (binding:function permission->string #f 1 #f "permission_dash__greaterthan_string" () #f)
-      (binding:function
-       permission->android-permissions
-       #f
-       1
-       #f
-       "permission_dash__greaterthan_android_dash_permissions"
-       ()
-       #f)
+      (binding:function permission->android-permissions #f 1 #f "permission_dash__greaterthan_android_dash_permissions" () #f)
       (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
       (binding:constant PERMISSION:TELEPHONY "PERMISSION_colon_TELEPHONY" ())
       (binding:constant PERMISSION:RECEIVE-SMS "PERMISSION_colon_RECEIVE_dash_SMS" ())
@@ -76,13 +57,7 @@
       (binding:constant PERMISSION:INTERNET "PERMISSION_colon_INTERNET" ())))
    (list
     "runtime/effect-struct.ss"
-    '((binding:structure
-       effect:raise-sound-volume
-       ()
-       make-effect:raise-sound-volume
-       effect:raise-sound-volume?
-       ()
-       ())
+    '((binding:structure effect:raise-sound-volume () make-effect:raise-sound-volume effect:raise-sound-volume? () ())
       (binding:structure
        effect:set-sound-volume
        (volume)
@@ -148,24 +123,12 @@
        effect:pick-random?
        (effect:pick-random-n effect:pick-random-update-f)
        (set-effect:pick-random-n! set-effect:pick-random-update-f!))
-      (binding:structure
-       effect:lower-sound-volume
-       ()
-       make-effect:lower-sound-volume
-       effect:lower-sound-volume?
-       ()
-       ())
+      (binding:structure effect:lower-sound-volume () make-effect:lower-sound-volume effect:lower-sound-volume? () ())
       (binding:structure effect:none () make-effect:none effect:none? () ())
       (binding:structure effect:beep () make-effect:beep effect:beep? () ())))
    (list
     "runtime/arity-struct.ss"
-    '((binding:structure
-       arity:mixed
-       (arities)
-       make-arity:mixed
-       arity:mixed?
-       (arity:mixed-arities)
-       (set-arity:mixed-arities!))
+    '((binding:structure arity:mixed (arities) make-arity:mixed arity:mixed? (arity:mixed-arities) (set-arity:mixed-arities!))
       (binding:structure
        arity:variable
        (min max)
@@ -224,9 +187,7 @@
        (minimum maximum observed)
        make-moby-error-type:index-out-of-bounds
        moby-error-type:index-out-of-bounds?
-       (moby-error-type:index-out-of-bounds-minimum
-        moby-error-type:index-out-of-bounds-maximum
-        moby-error-type:index-out-of-bounds-observed)
+       (moby-error-type:index-out-of-bounds-minimum moby-error-type:index-out-of-bounds-maximum moby-error-type:index-out-of-bounds-observed)
        (set-moby-error-type:index-out-of-bounds-minimum!
         set-moby-error-type:index-out-of-bounds-maximum!
         set-moby-error-type:index-out-of-bounds-observed!))
