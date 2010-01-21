@@ -8,6 +8,7 @@
 
 
 (require "env.ss")
+(require "helpers.ss")
 (require "../runtime/permission-struct.ss")
 (require "../runtime/binding.ss")
 
@@ -534,25 +535,32 @@
                  (> (string-length p) 0)
                  (not (char=? (string-ref p 0) #\/))))
           
+          ;; take all but the last element of the list.
+          (define (butlast l)
+            (reverse (rest (reverse l))))
+          
           (define (path-only p)
-            (local [(define (loop i)
-                      (cond [(< i 0)
-                             ""]
-                            [(char=? (string-ref p i) #\/)
-                             (substring p 0 i)]
-                            [else
-                             (loop (sub1 i))]))]
-              (loop (sub1 (string-length p)))))
+            (string-join (butlast (path-split p))
+                         "/"))
 
           (define (path-split p)
-            (local [(define (loop ch acc)
-                      ...)]
-              (foldl ... (string->list p))))
+            (string-split p #\/))
           
           (define (path-simplify p)
-            (local [(define (loop current-chunks others)
-                      ...)]
-              (loop (string-split p "/"))))]
+            (local [(define (loop current-chunks pieces)
+                      (cond
+                        [(empty? pieces)
+                         (string-join (reverse current-chunks) "/")]
+                        [(string=? (first pieces) "..")
+                         (cond
+                           [(empty? current-chunks)
+                            (error 'module-path-join "Tried to go up beyond the root.")]
+                           [else
+                            (loop (rest current-chunks) (rest pieces))])]
+                        [else
+                         (loop (cons (first pieces) current-chunks)
+                               (rest pieces))]))]
+              (loop empty (path-split p))))]
   (cond
     [(symbol? p2)
      p2]
@@ -560,9 +568,10 @@
           (looks-like-relative-path? p2))
      (if (string=? (path-only p1) "")
          p2
-         (string-join (path-only p1)
-                      "/"
-                      p2))])))
+         (path-simplify
+          (string-append (path-only p1)
+                         "/"
+                         p2)))])))
 
 
 
