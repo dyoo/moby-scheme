@@ -11,8 +11,10 @@
 (define-struct permission:internet ())
 (define-struct permission:telephony ())
 (define-struct permission:wake-lock ())
+(define-struct permission:foreign-function-interface ())
 (define-struct permission:open-image-url (url))
 (define-struct permission:universe (url))
+
 
 (define (permission? datum)
   (or (permission:location? datum)
@@ -23,6 +25,7 @@
       (permission:internet? datum)
       (permission:telephony? datum)
       (permission:wake-lock? datum)
+      (permission:foreign-function-interface? datum)
       (permission:open-image-url? datum)
       (permission:universe? datum)))
 
@@ -35,6 +38,7 @@
 (define PERMISSION:INTERNET (make-permission:internet))
 (define PERMISSION:TELEPHONY (make-permission:telephony))
 (define PERMISSION:WAKE-LOCK (make-permission:wake-lock))
+(define PERMISSION:FOREIGN-FUNCTION-INTERFACE (make-permission:foreign-function-interface))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -58,6 +62,8 @@
      "PERMISSION:TELEPHONY"]
     [(permission:wake-lock? a-permission)
      "PERMISSION:WAKE-LOCK"]
+    [(permission:foreign-function-interface? a-permission)
+     "PERMISSION:FOREIGN-FUNCTION-INTERFACE"]
     [(permission:open-image-url? a-permission)
      (format "PERMISSION:OPEN-IMAGE-URL ~a" (permission:open-image-url-url a-permission))]
     [(permission:universe? a-permission)
@@ -100,6 +106,8 @@
        PERMISSION:TELEPHONY]
       [(string=? a-ref "PERMISSION:WAKE-LOCK")
        PERMISSION:WAKE-LOCK]
+      [(string=? a-ref "PERMISSION:FOREIGN-FUNCTION-INTERFACE")
+       PERMISSION:FOREIGN-FUNCTION-INTERFACE]
       [(is-permission/1? "PERMISSION:OPEN-IMAGE-URL" a-ref)
        (construct-permission/1 "PERMISSION:OPEN-IMAGE-URL" a-ref make-permission:open-image-url)]
       [(is-permission/1? "PERMISSION:UNIVERSE" a-ref)
@@ -129,86 +137,12 @@
      (list "android.permission.ACCESS_COARSE_UPDATES")]
     [(permission:wake-lock? a-permission)
      (list "android.permission.WAKE_LOCK")]
+    [(permission:foreign-function-interface? a-permission)
+     (list)]
     [(permission:open-image-url? a-permission)
      (list)]
     [(permission:universe? a-permission)
      (list "android.permission.INTERNET")]))
-
-
-;; permission->on-start-code: permission -> string
-#;(define (permission->on-start-code a-permission)
-  (cond
-    [(permission:location? a-permission)
-     "plt.platform.Platform.getInstance().getLocationService().startService();
-      plt.platform.Platform.getInstance().getLocationService().addLocationChangeListener(listener);"]
-    [(permission:send-sms? a-permission)
-     ""]
-    [(permission:receive-sms? a-permission)
-     ""]
-    [(permission:tilt? a-permission)
-     "plt.platform.Platform.getInstance().getTiltService().startService();
-      plt.platform.Platform.getInstance().getTiltService().addOrientationChangeListener(listener);
-      plt.platform.Platform.getInstance().getTiltService().addAccelerationChangeListener(listener);
-      plt.platform.Platform.getInstance().getTiltService().addShakeListener(listener);"
-     ]
-   [(permission:shake? a-permission)
-     ""
-     ] 
-    [(permission:internet? a-permission)
-     ""]
-    [(permission:telephony? a-permission)
-     ""]
-    [(permission:wake-lock? a-permission)
-     ""]
-    [(permission:open-image-url? a-permission)
-     ""]))
-
-
-;; permission->on-pause-code: permission -> string
-#;(define (permission->on-pause-code a-permission)
-  (cond
-    [(permission:location? a-permission)
-     "plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
-    [(permission:send-sms? a-permission)
-     ""]
-    [(permission:receive-sms? a-permission)
-     ""]
-    [(permission:tilt? a-permission)
-     "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
-    [(permission:shake? a-permission)
-     ""]
-    [(permission:internet? a-permission)
-     ""]
-    [(permission:telephony? a-permission)
-     ""]
-    [(permission:wake-lock? a-permission)
-     ""]
-    [(permission:open-image-url? a-permission)
-     ""]))
-
-
-;; permission->on-destroy-code: permission -> string
-#;(define (permission->on-destroy-code a-permission)
-  (cond
-    [(permission:location? a-permission)
-     "plt.platform.Platform.getInstance().getLocationService().shutdownService();"]
-    [(permission:send-sms? a-permission)
-     ""]
-    [(permission:receive-sms? a-permission)
-     ""]
-    [(permission:tilt? a-permission)
-     "plt.platform.Platform.getInstance().getTiltService().shutdownService();"]
-    [(permission:shake? a-permission)
-     ""]
-    [(permission:internet? a-permission)
-     ""]
-    [(permission:telephony? a-permission)
-     ""]
-    [(permission:wake-lock? a-permission)
-     ""]
-    [(permission:open-image-url? a-permission)
-     ""]))
-
 
 
 (provide/contract [permission? (any/c . -> . boolean?)]
@@ -221,6 +155,7 @@
                   [struct permission:internet ()]
                   [struct permission:telephony ()]
                   [struct permission:wake-lock ()]
+                  [struct permission:foreign-function-interface ()]
                   [struct permission:open-image-url ((url string?))]
                   [struct permission:universe ((url string?))]
                   
@@ -232,6 +167,7 @@
                   [PERMISSION:INTERNET permission?]
                   [PERMISSION:TELEPHONY permission?]
                   [PERMISSION:WAKE-LOCK permission?]
+                  [PERMISSION:FOREIGN-FUNCTION-INTERFACE permission?]
 
 		  [permission->string
 		   (permission? . -> . string?)]
@@ -239,15 +175,4 @@
 		   (permission? . -> . string?)]
 
                   [permission->android-permissions 
-                   (permission? . -> . (listof string?))]
-                  
-                  #;[permission->on-start-code
-                   (permission? . -> . string?)]
-                  
-                  #;[permission->on-pause-code
-                   (permission? . -> . string?)]
-                  
-                  #;[permission->on-destroy-code
-                   (permission? . -> . string?)]
-                  
-                  )
+                   (permission? . -> . (listof string?))])

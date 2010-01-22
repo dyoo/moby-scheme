@@ -40,7 +40,9 @@
                        [module-name name])
            (syntax/loc stx 
              (base:#%module-begin
-              form ...
+              ;; We hide all the forms
+              ;; form ...
+              (base:printf "Your program is being compiled...~n")
               (compile-and-serve 'source-code module-name)
               )))))]))
 

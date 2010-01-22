@@ -112,7 +112,14 @@
        ()
        ())
       (binding:function permission? #f 1 #f "permission_question_" () #f)
-      (binding:function string->permission #f 1 #f "string_dash__greaterthan_permission" () #f)
+      (binding:function
+       string->permission
+       #f
+       1
+       #f
+       "string_dash__greaterthan_permission"
+       ()
+       #f)
       (binding:structure
        permission:universe
        (url)
@@ -120,7 +127,13 @@
        permission:universe?
        (permission:universe-url)
        (set-permission:universe-url!))
-      (binding:structure permission:send-sms () make-permission:send-sms permission:send-sms? () ())
+      (binding:structure
+       permission:send-sms
+       ()
+       make-permission:send-sms
+       permission:send-sms?
+       ()
+       ())
       (binding:structure permission:shake () make-permission:shake permission:shake? () ())
       (binding:structure
        permission:telephony
@@ -136,11 +149,37 @@
        permission:receive-sms?
        ()
        ())
-      (binding:constant PERMISSION:SHAKE "PERMISSION_colon_SHAKE" ())
-      (binding:structure permission:internet () make-permission:internet permission:internet? () ())
-      (binding:structure permission:location () make-permission:location permission:location? () ())
+      (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
+      (binding:structure
+       permission:internet
+       ()
+       make-permission:internet
+       permission:internet?
+       ()
+       ())
+      (binding:structure
+       permission:location
+       ()
+       make-permission:location
+       permission:location?
+       ()
+       ())
+      (binding:function
+       permission->string
+       #f
+       1
+       #f
+       "permission_dash__greaterthan_string"
+       ()
+       #f)
+      (binding:structure
+       permission:foreign-function-interface
+       ()
+       make-permission:foreign-function-interface
+       permission:foreign-function-interface?
+       ()
+       ())
       (binding:constant PERMISSION:WAKE-LOCK "PERMISSION_colon_WAKE_dash_LOCK" ())
-      (binding:function permission->string #f 1 #f "permission_dash__greaterthan_string" () #f)
       (binding:function
        permission->android-permissions
        #f
@@ -149,12 +188,16 @@
        "permission_dash__greaterthan_android_dash_permissions"
        ()
        #f)
-      (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
-      (binding:constant PERMISSION:TELEPHONY "PERMISSION_colon_TELEPHONY" ())
-      (binding:constant PERMISSION:RECEIVE-SMS "PERMISSION_colon_RECEIVE_dash_SMS" ())
       (binding:constant PERMISSION:SEND-SMS "PERMISSION_colon_SEND_dash_SMS" ())
+      (binding:constant PERMISSION:SHAKE "PERMISSION_colon_SHAKE" ())
+      (binding:constant PERMISSION:TELEPHONY "PERMISSION_colon_TELEPHONY" ())
+      (binding:constant PERMISSION:INTERNET "PERMISSION_colon_INTERNET" ())
       (binding:constant PERMISSION:LOCATION "PERMISSION_colon_LOCATION" ())
-      (binding:constant PERMISSION:INTERNET "PERMISSION_colon_INTERNET" ())))
+      (binding:constant PERMISSION:RECEIVE-SMS "PERMISSION_colon_RECEIVE_dash_SMS" ())
+      (binding:constant
+       PERMISSION:FOREIGN-FUNCTION-INTERFACE
+       "PERMISSION_colon_FOREIGN_dash_FUNCTION_dash_INTERFACE"
+       ())))
    '(moby/runtime/effect-struct
      "runtime/effect-struct.ss"
      ((binding:structure
@@ -275,7 +318,8 @@
        (id other-location)
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
-       (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-other-location)
+       (moby-error-type:duplicate-identifier-id
+        moby-error-type:duplicate-identifier-other-location)
        (set-moby-error-type:duplicate-identifier-id!
         set-moby-error-type:duplicate-identifier-other-location!))
       (binding:structure
@@ -363,7 +407,8 @@
        (expected observed)
        make-moby-error-type:application-arity
        moby-error-type:application-arity?
-       (moby-error-type:application-arity-expected moby-error-type:application-arity-observed)
+       (moby-error-type:application-arity-expected
+        moby-error-type:application-arity-observed)
        (set-moby-error-type:application-arity-expected!
         set-moby-error-type:application-arity-observed!))
       (binding:structure

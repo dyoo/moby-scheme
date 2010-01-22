@@ -40,6 +40,10 @@ goog.provide('plt.permission');
 	return permission_colon_wake_dash_lock_question_(p);
     };
 
+    var isForeignFunctionInterfaceP = function(p) {
+	return permission_colon_foreign_dash_function_dash_interface_question_(p);
+    };
+
     var isOpenImageUrlP = function(p) {
 	return permission_colon_open_dash_image_dash_url_question_(p);
     };
@@ -130,6 +134,13 @@ goog.provide('plt.permission');
 	    keepGoing();
 	}
 
+	else if (isForeignFunctionInterfaceP(p)) {
+	    // FIXME:
+	    // We should pop up a warning about this, or check
+	    // if the user will permit?
+	    keepGoing();
+	}
+
 	else if (isOpenImageUrlP(p)) {
 	    var path = permission_colon_open_dash_image_dash_url_dash_url(p);
 	    var img = new Image();
@@ -187,6 +198,9 @@ goog.provide('plt.permission');
 	}
 	
 	if (isWakeLockP(p)){
+	}
+	
+	if (isForeignFunctionInterfaceP(p)) {
 	}
 
 	if (isOpenImageUrlP(p)) {

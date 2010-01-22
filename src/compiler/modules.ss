@@ -451,6 +451,27 @@
 			       (bf 'js-select 2 "plt.world.MobyJsworld.select")))))
   
 
+(define foreign-module
+  (local [(define module-path
+            "moby/foreign")
+
+          (define (bf name arity java-string)
+            (make-binding:function name module-path arity true java-string empty false))]
+    (make-module-binding 'moby/foreign
+                         module-path
+                         (list (make-binding:function 
+                                'get-js-object
+                                module-path
+                                2
+                                false
+                                "plt.foreign.get_dash_js_dash_object"
+                                (list PERMISSION:FOREIGN-FUNCTION-INTERFACE)
+                                false)))))
+
+
+
+
+
 
 ;; extend-env/module-binding: env module-binding -> env
 ;; Extends an environment with the bindings associated to a module.
@@ -518,6 +539,7 @@
                              telephony-module
                              moby-module-binding
                              
+                             foreign-module
                              
                              MOBY-RUNTIME-MODULES))
 
