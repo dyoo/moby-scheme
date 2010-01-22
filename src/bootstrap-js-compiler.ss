@@ -306,6 +306,7 @@
          [big-program (apply append (map (lambda (p)
                                            (remove-requires
                                             (read-program/forget-resources p)
+                                            a-path
                                             p
                                             a-pinfo))
                                          modules))])
@@ -378,17 +379,33 @@
 ;; remove-requires: program -> program
 ;; Removes the requires for a program.  However, leaves the ones
 ;; that are known to the compiler.
-(define (remove-requires a-program a-path a-pinfo)
-  (filter (lambda (top-level)
-            (cond [(stx-begins-with? top-level 'require)
-                   (cond
-                     [(module-needs-inclusion? a-path a-pinfo)
-                      false]
-                     [else
-                      true])]
-                  [else
-                   true]))
-          a-program))
+(define (remove-requires a-program parent-path a-subpath a-pinfo)
+  (apply 
+   append
+   (map (lambda (top-level)
+          (cond [(stx-begins-with? top-level 'require)
+                 (cond
+                   [(module-needs-inclusion? (module-path-join 
+                                              parent-path
+                                              (second (stx->datum top-level))) 
+                                             a-pinfo)
+                    (printf "erasing the require statement ~s in ~s~n"
+                            (stx->datum top-level)
+                            a-subpath)
+                    (list)]
+                   [else
+                    (printf "preserving the require statement ~s in ~s~n"
+                            (stx->datum top-level)
+                            a-subpath)
+                    (list top-level)
+                    #;(let ([result
+                           (list (datum->stx `(require ,(second (stx->datum top-level)))
+                                             (stx-loc top-level)))])
+                      (printf "Rewritten to ~s~n" (stx->datum (first result)))
+                      result)])]
+                [else
+                 (list top-level)]))
+        a-program)))
 
 
 ;; unique: (listof X) -> (listof X)
