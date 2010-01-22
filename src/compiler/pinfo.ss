@@ -380,21 +380,37 @@
 ;; pinfo-get-exposed-bindings: pinfo -> (listof pinfo)
 ;; Extract the list of the defined bindings that are exposed by provide.
 (define (pinfo-get-exposed-bindings a-pinfo)
-  (local [;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> binding
+  (local [;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> (listof binding)
           ;; Lookup the provided bindings.
           (define (lookup-provide-binding-in-definition-bindings a-provide-binding)
             (local [(define list-or-false
                       (rbtree-lookup symbol<
                                      (pinfo-defined-names a-pinfo)
-                                     (stx-e (provide-binding-stx a-provide-binding))))]
+                                     (stx-e (provide-binding-stx a-provide-binding))))
+                    
+                    (define the-binding
+                      (cond
+                        [(list? list-or-false)
+                         (check-binding-compatibility a-provide-binding
+                                                      (second list-or-false))]
+                        [else
+                         (syntax-error (format "The provided name ~s has not been defined"
+                                               (stx-e (provide-binding-stx a-provide-binding)))
+                                       (provide-binding-stx a-provide-binding))]))
+
+                    ;; ref: symbol -> binding
+                    ;; Lookup the binding, given the symbolic identifier.
+                    (define (ref id)
+                      (second (rbtree-lookup symbol< (pinfo-defined-names a-pinfo) id)))]
               (cond
-                [(list? list-or-false)
-                 (check-binding-compatibility a-provide-binding
-                                              (second list-or-false))]
+                [(provide-binding:struct-id? a-provide-binding)
+                 (append (list the-binding
+                               (ref (binding:structure-constructor the-binding))
+                               (ref (binding:structure-predicate the-binding)))
+                         (map ref (binding:structure-accessors the-binding))
+                         (map ref (binding:structure-mutators the-binding)))]
                 [else
-                 (syntax-error (format "The provided name ~s has not been defined"
-                                       (stx-e (provide-binding-stx a-provide-binding)))
-                               (provide-binding-stx a-provide-binding))])))
+                 (list the-binding)])))
           
           ;; Make sure that if the provide says "struct-out ...", that the exported binding
           ;; is really a structure.
@@ -412,7 +428,7 @@
                a-binding]))]
     (rbtree-fold (pinfo-provided-names a-pinfo)
                  (lambda (id a-provide-binding acc)
-                   (cons (lookup-provide-binding-in-definition-bindings a-provide-binding)
+                   (append (lookup-provide-binding-in-definition-bindings a-provide-binding)
                          acc))
                  empty)))
 

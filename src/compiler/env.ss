@@ -14,7 +14,22 @@
 
 ;; env-extend: env binding -> env
 (define (env-extend an-env new-binding)
-  (make-env (rbtree-insert symbol< (env-bindings an-env) (binding-id new-binding) new-binding)))
+  (cond
+    [(binding:constant? new-binding)
+     (make-env (rbtree-insert symbol< 
+                              (env-bindings an-env) 
+                              (binding-id new-binding)
+                              new-binding))]
+    [(binding:function? new-binding)
+     (make-env (rbtree-insert symbol< 
+                              (env-bindings an-env) 
+                              (binding-id new-binding)
+                              new-binding))]
+    [(binding:structure? new-binding)
+     (make-env (rbtree-insert symbol< 
+                              (env-bindings an-env) 
+                              (binding-id new-binding)
+                              new-binding))]))
 
 
 

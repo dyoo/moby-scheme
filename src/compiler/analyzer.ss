@@ -412,13 +412,13 @@
     [(module-name? maybe-module-name)
      (local [(define maybe-module-binding
                ((pinfo-module-resolver pinfo) maybe-module-name))]
-     (cond [(module-binding? maybe-module-binding)
-            (pinfo-accumulate-module maybe-module-binding
-                                     (pinfo-accumulate-module-bindings
-                                      (module-binding-bindings maybe-module-binding)
-                                      pinfo))]
-           [else
-            (signal-error)]))]
+       (cond [(module-binding? maybe-module-binding)
+              (pinfo-accumulate-module maybe-module-binding
+                                       (pinfo-accumulate-module-bindings
+                                        (module-binding-bindings maybe-module-binding)
+                                        pinfo))]
+             [else
+              (signal-error)]))]
     [else
      (signal-error)])
     

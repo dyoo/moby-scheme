@@ -48,7 +48,8 @@
         (make-module-record 'moby/runtime/permission-struct (build-path RUNTIME-SRC-PATH "permission-struct.ss"))
         (make-module-record 'moby/runtime/effect-struct (build-path RUNTIME-SRC-PATH "effect-struct.ss"))
         (make-module-record 'moby/runtime/arity-struct (build-path RUNTIME-SRC-PATH "arity-struct.ss"))
-        (make-module-record 'moby/runtime/error-struct (build-path RUNTIME-SRC-PATH "error-struct.ss"))))
+        (make-module-record 'moby/runtime/error-struct (build-path RUNTIME-SRC-PATH "error-struct.ss"))
+        (make-module-record 'moby/runtime/error-struct-to-dom (build-path RUNTIME-SRC-PATH "error-struct-to-dom.ss"))))
 
 
 
@@ -143,6 +144,9 @@
 
 ;; FIXME: we need to export permission information here too!
 (define (write-runtime-toplevel-bindings-descriptions)
+  (printf "Writing out the toplevel binding descriptions.~n")
+  (printf "Warning: if gen/runtime-module.ss does get changed, you may see an exception during the bootstrap.  You will~n")
+  (printf "need to run the bootstrapper one more time to use the refreshed bindings.~n")
   (let ([moby-runtime-module-bindings-description
           `(define MOBY-RUNTIME-MODULE-BINDINGS
                   (list ,@
@@ -269,6 +273,7 @@
                            3))
              ".js"))]
   (for ([a-runtime-module (in-list RUNTIME-MODULES)])
+    (printf "Booting the runtime module ~s~n" (module-record-name a-runtime-module))
     (boot-compile-runtime-library (path->string (module-record-path a-runtime-module))
                                   (get-js-target (path->string (module-record-path a-runtime-module)))))))
 

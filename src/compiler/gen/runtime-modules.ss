@@ -7,32 +7,38 @@
    '(moby/runtime/stx
      "runtime/stx.ss"
      ((binding:function stx-e #f 1 #f "stx_dash_e" () #f)
-      (binding:structure
-       stx:list
-       (elts loc)
-       make-stx:list
-       stx:list?
-       (stx:list-elts stx:list-loc)
-       (set-stx:list-elts! set-stx:list-loc!))
+      (binding:structure stx:list (elts loc) make-stx:list stx:list? (stx:list-elts stx:list-loc) (set-stx:list-elts! set-stx:list-loc!))
+      (binding:function make-stx:list #f 2 #f "make_dash_stx_colon_list" () #f)
+      (binding:function stx:list? #f 1 #f "stx_colon_list_question_" () #f)
+      (binding:function stx:list-elts #f 1 #f "stx_colon_list_dash_elts" () #f)
+      (binding:function stx:list-loc #f 1 #f "stx_colon_list_dash_loc" () #f)
+      (binding:function set-stx:list-elts! #f 2 #f "set_dash_stx_colon_list_dash_elts_bang_" () #f)
+      (binding:function set-stx:list-loc! #f 2 #f "set_dash_stx_colon_list_dash_loc_bang_" () #f)
       (binding:function stx? #f 1 #f "stx_question_" () #f)
-      (binding:structure
-       stx:atom
-       (datum loc)
-       make-stx:atom
-       stx:atom?
-       (stx:atom-datum stx:atom-loc)
-       (set-stx:atom-datum! set-stx:atom-loc!))
+      (binding:structure stx:atom (datum loc) make-stx:atom stx:atom? (stx:atom-datum stx:atom-loc) (set-stx:atom-datum! set-stx:atom-loc!))
+      (binding:function make-stx:atom #f 2 #f "make_dash_stx_colon_atom" () #f)
+      (binding:function stx:atom? #f 1 #f "stx_colon_atom_question_" () #f)
+      (binding:function stx:atom-datum #f 1 #f "stx_colon_atom_dash_datum" () #f)
+      (binding:function stx:atom-loc #f 1 #f "stx_colon_atom_dash_loc" () #f)
+      (binding:function set-stx:atom-datum! #f 2 #f "set_dash_stx_colon_atom_dash_datum_bang_" () #f)
+      (binding:function set-stx:atom-loc! #f 2 #f "set_dash_stx_colon_atom_dash_loc_bang_" () #f)
       (binding:function stx-loc #f 1 #f "stx_dash_loc" () #f)
       (binding:function datum->stx #f 2 #f "datum_dash__greaterthan_stx" () #f)
       (binding:function stx-begins-with? #f 2 #f "stx_dash_begins_dash_with_question_" () #f)
       (binding:function stx->datum #f 1 #f "stx_dash__greaterthan_datum" () #f)
-      (binding:structure
-       Loc
-       (offset line column span id)
-       make-Loc
-       Loc?
-       (Loc-offset Loc-line Loc-column Loc-span Loc-id)
-       (set-Loc-offset! set-Loc-line! set-Loc-column! set-Loc-span! set-Loc-id!))))
+      (binding:structure Loc (offset line column span id) make-Loc Loc? (Loc-offset Loc-line Loc-column Loc-span Loc-id) (set-Loc-offset! set-Loc-line! set-Loc-column! set-Loc-span! set-Loc-id!))
+      (binding:function make-Loc #f 5 #f "make_dash_Loc" () #f)
+      (binding:function Loc? #f 1 #f "Loc_question_" () #f)
+      (binding:function Loc-offset #f 1 #f "Loc_dash_offset" () #f)
+      (binding:function Loc-line #f 1 #f "Loc_dash_line" () #f)
+      (binding:function Loc-column #f 1 #f "Loc_dash_column" () #f)
+      (binding:function Loc-span #f 1 #f "Loc_dash_span" () #f)
+      (binding:function Loc-id #f 1 #f "Loc_dash_id" () #f)
+      (binding:function set-Loc-offset! #f 2 #f "set_dash_Loc_dash_offset_bang_" () #f)
+      (binding:function set-Loc-line! #f 2 #f "set_dash_Loc_dash_line_bang_" () #f)
+      (binding:function set-Loc-column! #f 2 #f "set_dash_Loc_dash_column_bang_" () #f)
+      (binding:function set-Loc-span! #f 2 #f "set_dash_Loc_dash_span_bang_" () #f)
+      (binding:function set-Loc-id! #f 2 #f "set_dash_Loc_dash_id_bang_" () #f)))
    '(moby/runtime/binding
      "runtime/binding.ss"
      ((binding:function binding? #f 1 #f "binding_question_" () #f)
@@ -47,18 +53,20 @@
        module-binding?
        (module-binding-name module-binding-source module-binding-bindings)
        (set-module-binding-name! set-module-binding-source! set-module-binding-bindings!))
+      (binding:function make-module-binding #f 3 #f "make_dash_module_dash_binding" () #f)
+      (binding:function module-binding? #f 1 #f "module_dash_binding_question_" () #f)
+      (binding:function module-binding-name #f 1 #f "module_dash_binding_dash_name" () #f)
+      (binding:function module-binding-source #f 1 #f "module_dash_binding_dash_source" () #f)
+      (binding:function module-binding-bindings #f 1 #f "module_dash_binding_dash_bindings" () #f)
+      (binding:function set-module-binding-name! #f 2 #f "set_dash_module_dash_binding_dash_name_bang_" () #f)
+      (binding:function set-module-binding-source! #f 2 #f "set_dash_module_dash_binding_dash_source_bang_" () #f)
+      (binding:function set-module-binding-bindings! #f 2 #f "set_dash_module_dash_binding_dash_bindings_bang_" () #f)
       (binding:structure
        binding:function
        (name module-source min-arity var-arity? java-string permissions cps?)
        make-binding:function
        binding:function?
-       (binding:function-name
-        binding:function-module-source
-        binding:function-min-arity
-        binding:function-var-arity?
-        binding:function-java-string
-        binding:function-permissions
-        binding:function-cps?)
+       (binding:function-name binding:function-module-source binding:function-min-arity binding:function-var-arity? binding:function-java-string binding:function-permissions binding:function-cps?)
        (set-binding:function-name!
         set-binding:function-module-source!
         set-binding:function-min-arity!
@@ -66,23 +74,43 @@
         set-binding:function-java-string!
         set-binding:function-permissions!
         set-binding:function-cps?!))
+      (binding:function make-binding:function #f 7 #f "make_dash_binding_colon_function" () #f)
+      (binding:function binding:function? #f 1 #f "binding_colon_function_question_" () #f)
+      (binding:function binding:function-name #f 1 #f "binding_colon_function_dash_name" () #f)
+      (binding:function binding:function-module-source #f 1 #f "binding_colon_function_dash_module_dash_source" () #f)
+      (binding:function binding:function-min-arity #f 1 #f "binding_colon_function_dash_min_dash_arity" () #f)
+      (binding:function binding:function-var-arity? #f 1 #f "binding_colon_function_dash_var_dash_arity_question_" () #f)
+      (binding:function binding:function-java-string #f 1 #f "binding_colon_function_dash_java_dash_string" () #f)
+      (binding:function binding:function-permissions #f 1 #f "binding_colon_function_dash_permissions" () #f)
+      (binding:function binding:function-cps? #f 1 #f "binding_colon_function_dash_cps_question_" () #f)
+      (binding:function set-binding:function-name! #f 2 #f "set_dash_binding_colon_function_dash_name_bang_" () #f)
+      (binding:function set-binding:function-module-source! #f 2 #f "set_dash_binding_colon_function_dash_module_dash_source_bang_" () #f)
+      (binding:function set-binding:function-min-arity! #f 2 #f "set_dash_binding_colon_function_dash_min_dash_arity_bang_" () #f)
+      (binding:function set-binding:function-var-arity?! #f 2 #f "set_dash_binding_colon_function_dash_var_dash_arity_question__bang_" () #f)
+      (binding:function set-binding:function-java-string! #f 2 #f "set_dash_binding_colon_function_dash_java_dash_string_bang_" () #f)
+      (binding:function set-binding:function-permissions! #f 2 #f "set_dash_binding_colon_function_dash_permissions_bang_" () #f)
+      (binding:function set-binding:function-cps?! #f 2 #f "set_dash_binding_colon_function_dash_cps_question__bang_" () #f)
       (binding:structure
        binding:structure
        (name fields constructor predicate accessors mutators)
        make-binding:structure
        binding:structure?
-       (binding:structure-name
-        binding:structure-fields
-        binding:structure-constructor
-        binding:structure-predicate
-        binding:structure-accessors
-        binding:structure-mutators)
-       (set-binding:structure-name!
-        set-binding:structure-fields!
-        set-binding:structure-constructor!
-        set-binding:structure-predicate!
-        set-binding:structure-accessors!
-        set-binding:structure-mutators!))
+       (binding:structure-name binding:structure-fields binding:structure-constructor binding:structure-predicate binding:structure-accessors binding:structure-mutators)
+       (set-binding:structure-name! set-binding:structure-fields! set-binding:structure-constructor! set-binding:structure-predicate! set-binding:structure-accessors! set-binding:structure-mutators!))
+      (binding:function make-binding:structure #f 6 #f "make_dash_binding_colon_structure" () #f)
+      (binding:function binding:structure? #f 1 #f "binding_colon_structure_question_" () #f)
+      (binding:function binding:structure-name #f 1 #f "binding_colon_structure_dash_name" () #f)
+      (binding:function binding:structure-fields #f 1 #f "binding_colon_structure_dash_fields" () #f)
+      (binding:function binding:structure-constructor #f 1 #f "binding_colon_structure_dash_constructor" () #f)
+      (binding:function binding:structure-predicate #f 1 #f "binding_colon_structure_dash_predicate" () #f)
+      (binding:function binding:structure-accessors #f 1 #f "binding_colon_structure_dash_accessors" () #f)
+      (binding:function binding:structure-mutators #f 1 #f "binding_colon_structure_dash_mutators" () #f)
+      (binding:function set-binding:structure-name! #f 2 #f "set_dash_binding_colon_structure_dash_name_bang_" () #f)
+      (binding:function set-binding:structure-fields! #f 2 #f "set_dash_binding_colon_structure_dash_fields_bang_" () #f)
+      (binding:function set-binding:structure-constructor! #f 2 #f "set_dash_binding_colon_structure_dash_constructor_bang_" () #f)
+      (binding:function set-binding:structure-predicate! #f 2 #f "set_dash_binding_colon_structure_dash_predicate_bang_" () #f)
+      (binding:function set-binding:structure-accessors! #f 2 #f "set_dash_binding_colon_structure_dash_accessors_bang_" () #f)
+      (binding:function set-binding:structure-mutators! #f 2 #f "set_dash_binding_colon_structure_dash_mutators_bang_" () #f)
       (binding:function binding-id #f 1 #f "binding_dash_id" () #f)
       (binding:structure
        binding:constant
@@ -90,166 +118,104 @@
        make-binding:constant
        binding:constant?
        (binding:constant-name binding:constant-java-string binding:constant-permissions)
-       (set-binding:constant-name!
-        set-binding:constant-java-string!
-        set-binding:constant-permissions!))
+       (set-binding:constant-name! set-binding:constant-java-string! set-binding:constant-permissions!))
+      (binding:function make-binding:constant #f 3 #f "make_dash_binding_colon_constant" () #f)
+      (binding:function binding:constant? #f 1 #f "binding_colon_constant_question_" () #f)
+      (binding:function binding:constant-name #f 1 #f "binding_colon_constant_dash_name" () #f)
+      (binding:function binding:constant-java-string #f 1 #f "binding_colon_constant_dash_java_dash_string" () #f)
+      (binding:function binding:constant-permissions #f 1 #f "binding_colon_constant_dash_permissions" () #f)
+      (binding:function set-binding:constant-name! #f 2 #f "set_dash_binding_colon_constant_dash_name_bang_" () #f)
+      (binding:function set-binding:constant-java-string! #f 2 #f "set_dash_binding_colon_constant_dash_java_dash_string_bang_" () #f)
+      (binding:function set-binding:constant-permissions! #f 2 #f "set_dash_binding_colon_constant_dash_permissions_bang_" () #f)
       (binding:function binding->sexp #f 1 #f "binding_dash__greaterthan_sexp" () #f)))
    '(moby/runtime/permission-struct
      "runtime/permission-struct.ss"
-     ((binding:structure
-       permission:open-image-url
-       (url)
-       make-permission:open-image-url
-       permission:open-image-url?
-       (permission:open-image-url-url)
-       (set-permission:open-image-url-url!))
+     ((binding:structure permission:open-image-url (url) make-permission:open-image-url permission:open-image-url? (permission:open-image-url-url) (set-permission:open-image-url-url!))
+      (binding:function make-permission:open-image-url #f 1 #f "make_dash_permission_colon_open_dash_image_dash_url" () #f)
+      (binding:function permission:open-image-url? #f 1 #f "permission_colon_open_dash_image_dash_url_question_" () #f)
+      (binding:function permission:open-image-url-url #f 1 #f "permission_colon_open_dash_image_dash_url_dash_url" () #f)
+      (binding:function set-permission:open-image-url-url! #f 2 #f "set_dash_permission_colon_open_dash_image_dash_url_dash_url_bang_" () #f)
       (binding:structure permission:tilt () make-permission:tilt permission:tilt? () ())
-      (binding:structure
-       permission:wake-lock
-       ()
-       make-permission:wake-lock
-       permission:wake-lock?
-       ()
-       ())
+      (binding:function make-permission:tilt #f 0 #f "make_dash_permission_colon_tilt" () #f)
+      (binding:function permission:tilt? #f 1 #f "permission_colon_tilt_question_" () #f)
+      (binding:structure permission:wake-lock () make-permission:wake-lock permission:wake-lock? () ())
+      (binding:function make-permission:wake-lock #f 0 #f "make_dash_permission_colon_wake_dash_lock" () #f)
+      (binding:function permission:wake-lock? #f 1 #f "permission_colon_wake_dash_lock_question_" () #f)
       (binding:function permission? #f 1 #f "permission_question_" () #f)
-      (binding:function
-       string->permission
-       #f
-       1
-       #f
-       "string_dash__greaterthan_permission"
-       ()
-       #f)
-      (binding:structure
-       permission:universe
-       (url)
-       make-permission:universe
-       permission:universe?
-       (permission:universe-url)
-       (set-permission:universe-url!))
-      (binding:structure
-       permission:send-sms
-       ()
-       make-permission:send-sms
-       permission:send-sms?
-       ()
-       ())
+      (binding:function string->permission #f 1 #f "string_dash__greaterthan_permission" () #f)
+      (binding:structure permission:universe (url) make-permission:universe permission:universe? (permission:universe-url) (set-permission:universe-url!))
+      (binding:function make-permission:universe #f 1 #f "make_dash_permission_colon_universe" () #f)
+      (binding:function permission:universe? #f 1 #f "permission_colon_universe_question_" () #f)
+      (binding:function permission:universe-url #f 1 #f "permission_colon_universe_dash_url" () #f)
+      (binding:function set-permission:universe-url! #f 2 #f "set_dash_permission_colon_universe_dash_url_bang_" () #f)
+      (binding:structure permission:send-sms () make-permission:send-sms permission:send-sms? () ())
+      (binding:function make-permission:send-sms #f 0 #f "make_dash_permission_colon_send_dash_sms" () #f)
+      (binding:function permission:send-sms? #f 1 #f "permission_colon_send_dash_sms_question_" () #f)
       (binding:structure permission:shake () make-permission:shake permission:shake? () ())
-      (binding:structure
-       permission:telephony
-       ()
-       make-permission:telephony
-       permission:telephony?
-       ()
-       ())
-      (binding:structure
-       permission:receive-sms
-       ()
-       make-permission:receive-sms
-       permission:receive-sms?
-       ()
-       ())
+      (binding:function make-permission:shake #f 0 #f "make_dash_permission_colon_shake" () #f)
+      (binding:function permission:shake? #f 1 #f "permission_colon_shake_question_" () #f)
+      (binding:structure permission:telephony () make-permission:telephony permission:telephony? () ())
+      (binding:function make-permission:telephony #f 0 #f "make_dash_permission_colon_telephony" () #f)
+      (binding:function permission:telephony? #f 1 #f "permission_colon_telephony_question_" () #f)
+      (binding:structure permission:receive-sms () make-permission:receive-sms permission:receive-sms? () ())
+      (binding:function make-permission:receive-sms #f 0 #f "make_dash_permission_colon_receive_dash_sms" () #f)
+      (binding:function permission:receive-sms? #f 1 #f "permission_colon_receive_dash_sms_question_" () #f)
       (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
-      (binding:structure
-       permission:internet
-       ()
-       make-permission:internet
-       permission:internet?
-       ()
-       ())
-      (binding:structure
-       permission:location
-       ()
-       make-permission:location
-       permission:location?
-       ()
-       ())
-      (binding:function
-       permission->string
-       #f
-       1
-       #f
-       "permission_dash__greaterthan_string"
-       ()
-       #f)
-      (binding:structure
-       permission:foreign-function-interface
-       ()
-       make-permission:foreign-function-interface
-       permission:foreign-function-interface?
-       ()
-       ())
+      (binding:structure permission:internet () make-permission:internet permission:internet? () ())
+      (binding:function make-permission:internet #f 0 #f "make_dash_permission_colon_internet" () #f)
+      (binding:function permission:internet? #f 1 #f "permission_colon_internet_question_" () #f)
+      (binding:structure permission:location () make-permission:location permission:location? () ())
+      (binding:function make-permission:location #f 0 #f "make_dash_permission_colon_location" () #f)
+      (binding:function permission:location? #f 1 #f "permission_colon_location_question_" () #f)
+      (binding:function permission->string #f 1 #f "permission_dash__greaterthan_string" () #f)
+      (binding:structure permission:foreign-function-interface () make-permission:foreign-function-interface permission:foreign-function-interface? () ())
+      (binding:function make-permission:foreign-function-interface #f 0 #f "make_dash_permission_colon_foreign_dash_function_dash_interface" () #f)
+      (binding:function permission:foreign-function-interface? #f 1 #f "permission_colon_foreign_dash_function_dash_interface_question_" () #f)
       (binding:constant PERMISSION:WAKE-LOCK "PERMISSION_colon_WAKE_dash_LOCK" ())
-      (binding:function
-       permission->android-permissions
-       #f
-       1
-       #f
-       "permission_dash__greaterthan_android_dash_permissions"
-       ()
-       #f)
+      (binding:function permission->android-permissions #f 1 #f "permission_dash__greaterthan_android_dash_permissions" () #f)
       (binding:constant PERMISSION:SEND-SMS "PERMISSION_colon_SEND_dash_SMS" ())
       (binding:constant PERMISSION:SHAKE "PERMISSION_colon_SHAKE" ())
       (binding:constant PERMISSION:TELEPHONY "PERMISSION_colon_TELEPHONY" ())
       (binding:constant PERMISSION:INTERNET "PERMISSION_colon_INTERNET" ())
       (binding:constant PERMISSION:LOCATION "PERMISSION_colon_LOCATION" ())
       (binding:constant PERMISSION:RECEIVE-SMS "PERMISSION_colon_RECEIVE_dash_SMS" ())
-      (binding:constant
-       PERMISSION:FOREIGN-FUNCTION-INTERFACE
-       "PERMISSION_colon_FOREIGN_dash_FUNCTION_dash_INTERFACE"
-       ())))
+      (binding:constant PERMISSION:FOREIGN-FUNCTION-INTERFACE "PERMISSION_colon_FOREIGN_dash_FUNCTION_dash_INTERFACE" ())))
    '(moby/runtime/effect-struct
      "runtime/effect-struct.ss"
-     ((binding:structure
-       effect:raise-sound-volume
-       ()
-       make-effect:raise-sound-volume
-       effect:raise-sound-volume?
-       ()
-       ())
-      (binding:structure
-       effect:set-sound-volume
-       (volume)
-       make-effect:set-sound-volume
-       effect:set-sound-volume?
-       (effect:set-sound-volume-volume)
-       (set-effect:set-sound-volume-volume!))
-      (binding:structure
-       effect:stop-sound
-       (sound)
-       make-effect:stop-sound
-       effect:stop-sound?
-       (effect:stop-sound-sound)
-       (set-effect:stop-sound-sound!))
+     ((binding:structure effect:raise-sound-volume () make-effect:raise-sound-volume effect:raise-sound-volume? () ())
+      (binding:function make-effect:raise-sound-volume #f 0 #f "make_dash_effect_colon_raise_dash_sound_dash_volume" () #f)
+      (binding:function effect:raise-sound-volume? #f 1 #f "effect_colon_raise_dash_sound_dash_volume_question_" () #f)
+      (binding:structure effect:set-sound-volume (volume) make-effect:set-sound-volume effect:set-sound-volume? (effect:set-sound-volume-volume) (set-effect:set-sound-volume-volume!))
+      (binding:function make-effect:set-sound-volume #f 1 #f "make_dash_effect_colon_set_dash_sound_dash_volume" () #f)
+      (binding:function effect:set-sound-volume? #f 1 #f "effect_colon_set_dash_sound_dash_volume_question_" () #f)
+      (binding:function effect:set-sound-volume-volume #f 1 #f "effect_colon_set_dash_sound_dash_volume_dash_volume" () #f)
+      (binding:function set-effect:set-sound-volume-volume! #f 2 #f "set_dash_effect_colon_set_dash_sound_dash_volume_dash_volume_bang_" () #f)
+      (binding:structure effect:stop-sound (sound) make-effect:stop-sound effect:stop-sound? (effect:stop-sound-sound) (set-effect:stop-sound-sound!))
+      (binding:function make-effect:stop-sound #f 1 #f "make_dash_effect_colon_stop_dash_sound" () #f)
+      (binding:function effect:stop-sound? #f 1 #f "effect_colon_stop_dash_sound_question_" () #f)
+      (binding:function effect:stop-sound-sound #f 1 #f "effect_colon_stop_dash_sound_dash_sound" () #f)
+      (binding:function set-effect:stop-sound-sound! #f 2 #f "set_dash_effect_colon_stop_dash_sound_dash_sound_bang_" () #f)
       (binding:function effect? #f 1 #f "effect_question_" () #f)
-      (binding:structure
-       effect:set-wake-lock
-       (locks)
-       make-effect:set-wake-lock
-       effect:set-wake-lock?
-       (effect:set-wake-lock-locks)
-       (set-effect:set-wake-lock-locks!))
-      (binding:structure
-       effect:send-sms
-       (address msg)
-       make-effect:send-sms
-       effect:send-sms?
-       (effect:send-sms-address effect:send-sms-msg)
-       (set-effect:send-sms-address! set-effect:send-sms-msg!))
-      (binding:structure
-       effect:release-wake-lock
-       ()
-       make-effect:release-wake-lock
-       effect:release-wake-lock?
-       ()
-       ())
-      (binding:structure
-       effect:pause-sound
-       (sound)
-       make-effect:pause-sound
-       effect:pause-sound?
-       (effect:pause-sound-sound)
-       (set-effect:pause-sound-sound!))
+      (binding:structure effect:set-wake-lock (locks) make-effect:set-wake-lock effect:set-wake-lock? (effect:set-wake-lock-locks) (set-effect:set-wake-lock-locks!))
+      (binding:function make-effect:set-wake-lock #f 1 #f "make_dash_effect_colon_set_dash_wake_dash_lock" () #f)
+      (binding:function effect:set-wake-lock? #f 1 #f "effect_colon_set_dash_wake_dash_lock_question_" () #f)
+      (binding:function effect:set-wake-lock-locks #f 1 #f "effect_colon_set_dash_wake_dash_lock_dash_locks" () #f)
+      (binding:function set-effect:set-wake-lock-locks! #f 2 #f "set_dash_effect_colon_set_dash_wake_dash_lock_dash_locks_bang_" () #f)
+      (binding:structure effect:send-sms (address msg) make-effect:send-sms effect:send-sms? (effect:send-sms-address effect:send-sms-msg) (set-effect:send-sms-address! set-effect:send-sms-msg!))
+      (binding:function make-effect:send-sms #f 2 #f "make_dash_effect_colon_send_dash_sms" () #f)
+      (binding:function effect:send-sms? #f 1 #f "effect_colon_send_dash_sms_question_" () #f)
+      (binding:function effect:send-sms-address #f 1 #f "effect_colon_send_dash_sms_dash_address" () #f)
+      (binding:function effect:send-sms-msg #f 1 #f "effect_colon_send_dash_sms_dash_msg" () #f)
+      (binding:function set-effect:send-sms-address! #f 2 #f "set_dash_effect_colon_send_dash_sms_dash_address_bang_" () #f)
+      (binding:function set-effect:send-sms-msg! #f 2 #f "set_dash_effect_colon_send_dash_sms_dash_msg_bang_" () #f)
+      (binding:structure effect:release-wake-lock () make-effect:release-wake-lock effect:release-wake-lock? () ())
+      (binding:function make-effect:release-wake-lock #f 0 #f "make_dash_effect_colon_release_dash_wake_dash_lock" () #f)
+      (binding:function effect:release-wake-lock? #f 1 #f "effect_colon_release_dash_wake_dash_lock_question_" () #f)
+      (binding:structure effect:pause-sound (sound) make-effect:pause-sound effect:pause-sound? (effect:pause-sound-sound) (set-effect:pause-sound-sound!))
+      (binding:function make-effect:pause-sound #f 1 #f "make_dash_effect_colon_pause_dash_sound" () #f)
+      (binding:function effect:pause-sound? #f 1 #f "effect_colon_pause_dash_sound_question_" () #f)
+      (binding:function effect:pause-sound-sound #f 1 #f "effect_colon_pause_dash_sound_dash_sound" () #f)
+      (binding:function set-effect:pause-sound-sound! #f 2 #f "set_dash_effect_colon_pause_dash_sound_dash_sound_bang_" () #f)
       (binding:structure
        effect:play-dtmf-tone
        (tone duration)
@@ -257,20 +223,22 @@
        effect:play-dtmf-tone?
        (effect:play-dtmf-tone-tone effect:play-dtmf-tone-duration)
        (set-effect:play-dtmf-tone-tone! set-effect:play-dtmf-tone-duration!))
-      (binding:structure
-       effect:play-sound
-       (sound)
-       make-effect:play-sound
-       effect:play-sound?
-       (effect:play-sound-sound)
-       (set-effect:play-sound-sound!))
-      (binding:structure
-       effect:pick-playlist
-       (update-f)
-       make-effect:pick-playlist
-       effect:pick-playlist?
-       (effect:pick-playlist-update-f)
-       (set-effect:pick-playlist-update-f!))
+      (binding:function make-effect:play-dtmf-tone #f 2 #f "make_dash_effect_colon_play_dash_dtmf_dash_tone" () #f)
+      (binding:function effect:play-dtmf-tone? #f 1 #f "effect_colon_play_dash_dtmf_dash_tone_question_" () #f)
+      (binding:function effect:play-dtmf-tone-tone #f 1 #f "effect_colon_play_dash_dtmf_dash_tone_dash_tone" () #f)
+      (binding:function effect:play-dtmf-tone-duration #f 1 #f "effect_colon_play_dash_dtmf_dash_tone_dash_duration" () #f)
+      (binding:function set-effect:play-dtmf-tone-tone! #f 2 #f "set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_tone_bang_" () #f)
+      (binding:function set-effect:play-dtmf-tone-duration! #f 2 #f "set_dash_effect_colon_play_dash_dtmf_dash_tone_dash_duration_bang_" () #f)
+      (binding:structure effect:play-sound (sound) make-effect:play-sound effect:play-sound? (effect:play-sound-sound) (set-effect:play-sound-sound!))
+      (binding:function make-effect:play-sound #f 1 #f "make_dash_effect_colon_play_dash_sound" () #f)
+      (binding:function effect:play-sound? #f 1 #f "effect_colon_play_dash_sound_question_" () #f)
+      (binding:function effect:play-sound-sound #f 1 #f "effect_colon_play_dash_sound_dash_sound" () #f)
+      (binding:function set-effect:play-sound-sound! #f 2 #f "set_dash_effect_colon_play_dash_sound_dash_sound_bang_" () #f)
+      (binding:structure effect:pick-playlist (update-f) make-effect:pick-playlist effect:pick-playlist? (effect:pick-playlist-update-f) (set-effect:pick-playlist-update-f!))
+      (binding:function make-effect:pick-playlist #f 1 #f "make_dash_effect_colon_pick_dash_playlist" () #f)
+      (binding:function effect:pick-playlist? #f 1 #f "effect_colon_pick_dash_playlist_question_" () #f)
+      (binding:function effect:pick-playlist-update-f #f 1 #f "effect_colon_pick_dash_playlist_dash_update_dash_f" () #f)
+      (binding:function set-effect:pick-playlist-update-f! #f 2 #f "set_dash_effect_colon_pick_dash_playlist_dash_update_dash_f_bang_" () #f)
       (binding:structure
        effect:pick-random
        (n update-f)
@@ -278,39 +246,41 @@
        effect:pick-random?
        (effect:pick-random-n effect:pick-random-update-f)
        (set-effect:pick-random-n! set-effect:pick-random-update-f!))
-      (binding:structure
-       effect:lower-sound-volume
-       ()
-       make-effect:lower-sound-volume
-       effect:lower-sound-volume?
-       ()
-       ())
+      (binding:function make-effect:pick-random #f 2 #f "make_dash_effect_colon_pick_dash_random" () #f)
+      (binding:function effect:pick-random? #f 1 #f "effect_colon_pick_dash_random_question_" () #f)
+      (binding:function effect:pick-random-n #f 1 #f "effect_colon_pick_dash_random_dash_n" () #f)
+      (binding:function effect:pick-random-update-f #f 1 #f "effect_colon_pick_dash_random_dash_update_dash_f" () #f)
+      (binding:function set-effect:pick-random-n! #f 2 #f "set_dash_effect_colon_pick_dash_random_dash_n_bang_" () #f)
+      (binding:function set-effect:pick-random-update-f! #f 2 #f "set_dash_effect_colon_pick_dash_random_dash_update_dash_f_bang_" () #f)
+      (binding:structure effect:lower-sound-volume () make-effect:lower-sound-volume effect:lower-sound-volume? () ())
+      (binding:function make-effect:lower-sound-volume #f 0 #f "make_dash_effect_colon_lower_dash_sound_dash_volume" () #f)
+      (binding:function effect:lower-sound-volume? #f 1 #f "effect_colon_lower_dash_sound_dash_volume_question_" () #f)
       (binding:structure effect:none () make-effect:none effect:none? () ())
-      (binding:structure effect:beep () make-effect:beep effect:beep? () ())))
+      (binding:function make-effect:none #f 0 #f "make_dash_effect_colon_none" () #f)
+      (binding:function effect:none? #f 1 #f "effect_colon_none_question_" () #f)
+      (binding:structure effect:beep () make-effect:beep effect:beep? () ())
+      (binding:function make-effect:beep #f 0 #f "make_dash_effect_colon_beep" () #f)
+      (binding:function effect:beep? #f 1 #f "effect_colon_beep_question_" () #f)))
    '(moby/runtime/arity-struct
      "runtime/arity-struct.ss"
-     ((binding:structure
-       arity:mixed
-       (arities)
-       make-arity:mixed
-       arity:mixed?
-       (arity:mixed-arities)
-       (set-arity:mixed-arities!))
-      (binding:structure
-       arity:variable
-       (min max)
-       make-arity:variable
-       arity:variable?
-       (arity:variable-min arity:variable-max)
-       (set-arity:variable-min! set-arity:variable-max!))
+     ((binding:structure arity:mixed (arities) make-arity:mixed arity:mixed? (arity:mixed-arities) (set-arity:mixed-arities!))
+      (binding:function make-arity:mixed #f 1 #f "make_dash_arity_colon_mixed" () #f)
+      (binding:function arity:mixed? #f 1 #f "arity_colon_mixed_question_" () #f)
+      (binding:function arity:mixed-arities #f 1 #f "arity_colon_mixed_dash_arities" () #f)
+      (binding:function set-arity:mixed-arities! #f 2 #f "set_dash_arity_colon_mixed_dash_arities_bang_" () #f)
+      (binding:structure arity:variable (min max) make-arity:variable arity:variable? (arity:variable-min arity:variable-max) (set-arity:variable-min! set-arity:variable-max!))
+      (binding:function make-arity:variable #f 2 #f "make_dash_arity_colon_variable" () #f)
+      (binding:function arity:variable? #f 1 #f "arity_colon_variable_question_" () #f)
+      (binding:function arity:variable-min #f 1 #f "arity_colon_variable_dash_min" () #f)
+      (binding:function arity:variable-max #f 1 #f "arity_colon_variable_dash_max" () #f)
+      (binding:function set-arity:variable-min! #f 2 #f "set_dash_arity_colon_variable_dash_min_bang_" () #f)
+      (binding:function set-arity:variable-max! #f 2 #f "set_dash_arity_colon_variable_dash_max_bang_" () #f)
       (binding:function arity? #f 1 #f "arity_question_" () #f)
-      (binding:structure
-       arity:fixed
-       (n)
-       make-arity:fixed
-       arity:fixed?
-       (arity:fixed-n)
-       (set-arity:fixed-n!))))
+      (binding:structure arity:fixed (n) make-arity:fixed arity:fixed? (arity:fixed-n) (set-arity:fixed-n!))
+      (binding:function make-arity:fixed #f 1 #f "make_dash_arity_colon_fixed" () #f)
+      (binding:function arity:fixed? #f 1 #f "arity_colon_fixed_question_" () #f)
+      (binding:function arity:fixed-n #f 1 #f "arity_colon_fixed_dash_n" () #f)
+      (binding:function set-arity:fixed-n! #f 2 #f "set_dash_arity_colon_fixed_dash_n_bang_" () #f)))
    '(moby/runtime/error-struct
      "runtime/error-struct.ss"
      ((binding:structure
@@ -318,83 +288,67 @@
        (id other-location)
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
-       (moby-error-type:duplicate-identifier-id
-        moby-error-type:duplicate-identifier-other-location)
-       (set-moby-error-type:duplicate-identifier-id!
-        set-moby-error-type:duplicate-identifier-other-location!))
-      (binding:structure
-       moby-error-type:unclosed-lexical-token
-       ()
-       make-moby-error-type:unclosed-lexical-token
-       moby-error-type:unclosed-lexical-token?
-       ()
-       ())
-      (binding:structure
-       moby-error-type:undefined-identifier
-       ()
-       make-moby-error-type:undefined-identifier
-       moby-error-type:undefined-identifier?
-       ()
-       ())
-      (binding:structure
-       moby-error-type:unrecognized-lexical-token
-       ()
-       make-moby-error-type:unrecognized-lexical-token
-       moby-error-type:unrecognized-lexical-token?
-       ()
-       ())
-      (binding:structure
-       moby-error-type:unsupported-lexical-token
-       ()
-       make-moby-error-type:unsupported-lexical-token
-       moby-error-type:unsupported-lexical-token?
-       ()
-       ())
-      (binding:structure
-       moby-error-type:unclosed-parentheses
-       ()
-       make-moby-error-type:unclosed-parentheses
-       moby-error-type:unclosed-parentheses?
-       ()
-       ())
+       (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-other-location)
+       (set-moby-error-type:duplicate-identifier-id! set-moby-error-type:duplicate-identifier-other-location!))
+      (binding:function make-moby-error-type:duplicate-identifier #f 2 #f "make_dash_moby_dash_error_dash_type_colon_duplicate_dash_identifier" () #f)
+      (binding:function moby-error-type:duplicate-identifier? #f 1 #f "moby_dash_error_dash_type_colon_duplicate_dash_identifier_question_" () #f)
+      (binding:function moby-error-type:duplicate-identifier-id #f 1 #f "moby_dash_error_dash_type_colon_duplicate_dash_identifier_dash_id" () #f)
+      (binding:function moby-error-type:duplicate-identifier-other-location #f 1 #f "moby_dash_error_dash_type_colon_duplicate_dash_identifier_dash_other_dash_location" () #f)
+      (binding:function set-moby-error-type:duplicate-identifier-id! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_duplicate_dash_identifier_dash_id_bang_" () #f)
+      (binding:function set-moby-error-type:duplicate-identifier-other-location! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_duplicate_dash_identifier_dash_other_dash_location_bang_" () #f)
+      (binding:structure moby-error-type:unclosed-lexical-token () make-moby-error-type:unclosed-lexical-token moby-error-type:unclosed-lexical-token? () ())
+      (binding:function make-moby-error-type:unclosed-lexical-token #f 0 #f "make_dash_moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token" () #f)
+      (binding:function moby-error-type:unclosed-lexical-token? #f 1 #f "moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token_question_" () #f)
+      (binding:structure moby-error-type:undefined-identifier () make-moby-error-type:undefined-identifier moby-error-type:undefined-identifier? () ())
+      (binding:function make-moby-error-type:undefined-identifier #f 0 #f "make_dash_moby_dash_error_dash_type_colon_undefined_dash_identifier" () #f)
+      (binding:function moby-error-type:undefined-identifier? #f 1 #f "moby_dash_error_dash_type_colon_undefined_dash_identifier_question_" () #f)
+      (binding:structure moby-error-type:unrecognized-lexical-token () make-moby-error-type:unrecognized-lexical-token moby-error-type:unrecognized-lexical-token? () ())
+      (binding:function make-moby-error-type:unrecognized-lexical-token #f 0 #f "make_dash_moby_dash_error_dash_type_colon_unrecognized_dash_lexical_dash_token" () #f)
+      (binding:function moby-error-type:unrecognized-lexical-token? #f 1 #f "moby_dash_error_dash_type_colon_unrecognized_dash_lexical_dash_token_question_" () #f)
+      (binding:structure moby-error-type:unsupported-lexical-token () make-moby-error-type:unsupported-lexical-token moby-error-type:unsupported-lexical-token? () ())
+      (binding:function make-moby-error-type:unsupported-lexical-token #f 0 #f "make_dash_moby_dash_error_dash_type_colon_unsupported_dash_lexical_dash_token" () #f)
+      (binding:function moby-error-type:unsupported-lexical-token? #f 1 #f "moby_dash_error_dash_type_colon_unsupported_dash_lexical_dash_token_question_" () #f)
+      (binding:structure moby-error-type:unclosed-parentheses () make-moby-error-type:unclosed-parentheses moby-error-type:unclosed-parentheses? () ())
+      (binding:function make-moby-error-type:unclosed-parentheses #f 0 #f "make_dash_moby_dash_error_dash_type_colon_unclosed_dash_parentheses" () #f)
+      (binding:function moby-error-type:unclosed-parentheses? #f 1 #f "moby_dash_error_dash_type_colon_unclosed_dash_parentheses_question_" () #f)
       (binding:structure
        moby-error-type:index-out-of-bounds
        (minimum maximum observed)
        make-moby-error-type:index-out-of-bounds
        moby-error-type:index-out-of-bounds?
-       (moby-error-type:index-out-of-bounds-minimum
-        moby-error-type:index-out-of-bounds-maximum
-        moby-error-type:index-out-of-bounds-observed)
-       (set-moby-error-type:index-out-of-bounds-minimum!
-        set-moby-error-type:index-out-of-bounds-maximum!
-        set-moby-error-type:index-out-of-bounds-observed!))
-      (binding:structure
-       moby-error-type:missing-expression
-       ()
-       make-moby-error-type:missing-expression
-       moby-error-type:missing-expression?
-       ()
-       ())
+       (moby-error-type:index-out-of-bounds-minimum moby-error-type:index-out-of-bounds-maximum moby-error-type:index-out-of-bounds-observed)
+       (set-moby-error-type:index-out-of-bounds-minimum! set-moby-error-type:index-out-of-bounds-maximum! set-moby-error-type:index-out-of-bounds-observed!))
+      (binding:function make-moby-error-type:index-out-of-bounds #f 3 #f "make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds" () #f)
+      (binding:function moby-error-type:index-out-of-bounds? #f 1 #f "moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_question_" () #f)
+      (binding:function moby-error-type:index-out-of-bounds-minimum #f 1 #f "moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_dash_minimum" () #f)
+      (binding:function moby-error-type:index-out-of-bounds-maximum #f 1 #f "moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_dash_maximum" () #f)
+      (binding:function moby-error-type:index-out-of-bounds-observed #f 1 #f "moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_dash_observed" () #f)
+      (binding:function set-moby-error-type:index-out-of-bounds-minimum! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_dash_minimum_bang_" () #f)
+      (binding:function set-moby-error-type:index-out-of-bounds-maximum! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_dash_maximum_bang_" () #f)
+      (binding:function set-moby-error-type:index-out-of-bounds-observed! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds_dash_observed_bang_" () #f)
+      (binding:structure moby-error-type:missing-expression () make-moby-error-type:missing-expression moby-error-type:missing-expression? () ())
+      (binding:function make-moby-error-type:missing-expression #f 0 #f "make_dash_moby_dash_error_dash_type_colon_missing_dash_expression" () #f)
+      (binding:function moby-error-type:missing-expression? #f 1 #f "moby_dash_error_dash_type_colon_missing_dash_expression_question_" () #f)
       (binding:structure
        moby-error-type:type-mismatch
        (who position expected observed)
        make-moby-error-type:type-mismatch
        moby-error-type:type-mismatch?
-       (moby-error-type:type-mismatch-who
-        moby-error-type:type-mismatch-position
-        moby-error-type:type-mismatch-expected
-        moby-error-type:type-mismatch-observed)
-       (set-moby-error-type:type-mismatch-who!
-        set-moby-error-type:type-mismatch-position!
-        set-moby-error-type:type-mismatch-expected!
-        set-moby-error-type:type-mismatch-observed!))
-      (binding:structure
-       moby-error-type:generic-runtime-error
-       ()
-       make-moby-error-type:generic-runtime-error
-       moby-error-type:generic-runtime-error?
-       ()
-       ())
+       (moby-error-type:type-mismatch-who moby-error-type:type-mismatch-position moby-error-type:type-mismatch-expected moby-error-type:type-mismatch-observed)
+       (set-moby-error-type:type-mismatch-who! set-moby-error-type:type-mismatch-position! set-moby-error-type:type-mismatch-expected! set-moby-error-type:type-mismatch-observed!))
+      (binding:function make-moby-error-type:type-mismatch #f 4 #f "make_dash_moby_dash_error_dash_type_colon_type_dash_mismatch" () #f)
+      (binding:function moby-error-type:type-mismatch? #f 1 #f "moby_dash_error_dash_type_colon_type_dash_mismatch_question_" () #f)
+      (binding:function moby-error-type:type-mismatch-who #f 1 #f "moby_dash_error_dash_type_colon_type_dash_mismatch_dash_who" () #f)
+      (binding:function moby-error-type:type-mismatch-position #f 1 #f "moby_dash_error_dash_type_colon_type_dash_mismatch_dash_position" () #f)
+      (binding:function moby-error-type:type-mismatch-expected #f 1 #f "moby_dash_error_dash_type_colon_type_dash_mismatch_dash_expected" () #f)
+      (binding:function moby-error-type:type-mismatch-observed #f 1 #f "moby_dash_error_dash_type_colon_type_dash_mismatch_dash_observed" () #f)
+      (binding:function set-moby-error-type:type-mismatch-who! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_type_dash_mismatch_dash_who_bang_" () #f)
+      (binding:function set-moby-error-type:type-mismatch-position! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_type_dash_mismatch_dash_position_bang_" () #f)
+      (binding:function set-moby-error-type:type-mismatch-expected! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_type_dash_mismatch_dash_expected_bang_" () #f)
+      (binding:function set-moby-error-type:type-mismatch-observed! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_type_dash_mismatch_dash_observed_bang_" () #f)
+      (binding:structure moby-error-type:generic-runtime-error () make-moby-error-type:generic-runtime-error moby-error-type:generic-runtime-error? () ())
+      (binding:function make-moby-error-type:generic-runtime-error #f 0 #f "make_dash_moby_dash_error_dash_type_colon_generic_dash_runtime_dash_error" () #f)
+      (binding:function moby-error-type:generic-runtime-error? #f 1 #f "moby_dash_error_dash_type_colon_generic_dash_runtime_dash_error_question_" () #f)
       (binding:structure
        moby-error-type:generic-syntactic-error
        (other-locations)
@@ -402,28 +356,48 @@
        moby-error-type:generic-syntactic-error?
        (moby-error-type:generic-syntactic-error-other-locations)
        (set-moby-error-type:generic-syntactic-error-other-locations!))
+      (binding:function make-moby-error-type:generic-syntactic-error #f 1 #f "make_dash_moby_dash_error_dash_type_colon_generic_dash_syntactic_dash_error" () #f)
+      (binding:function moby-error-type:generic-syntactic-error? #f 1 #f "moby_dash_error_dash_type_colon_generic_dash_syntactic_dash_error_question_" () #f)
+      (binding:function moby-error-type:generic-syntactic-error-other-locations #f 1 #f "moby_dash_error_dash_type_colon_generic_dash_syntactic_dash_error_dash_other_dash_locations" () #f)
+      (binding:function
+       set-moby-error-type:generic-syntactic-error-other-locations!
+       #f
+       2
+       #f
+       "set_dash_moby_dash_error_dash_type_colon_generic_dash_syntactic_dash_error_dash_other_dash_locations_bang_"
+       ()
+       #f)
       (binding:structure
        moby-error-type:application-arity
        (expected observed)
        make-moby-error-type:application-arity
        moby-error-type:application-arity?
-       (moby-error-type:application-arity-expected
-        moby-error-type:application-arity-observed)
-       (set-moby-error-type:application-arity-expected!
-        set-moby-error-type:application-arity-observed!))
-      (binding:structure
-       moby-error-type:conditional-exhausted
-       ()
-       make-moby-error-type:conditional-exhausted
-       moby-error-type:conditional-exhausted?
-       ()
-       ())
+       (moby-error-type:application-arity-expected moby-error-type:application-arity-observed)
+       (set-moby-error-type:application-arity-expected! set-moby-error-type:application-arity-observed!))
+      (binding:function make-moby-error-type:application-arity #f 2 #f "make_dash_moby_dash_error_dash_type_colon_application_dash_arity" () #f)
+      (binding:function moby-error-type:application-arity? #f 1 #f "moby_dash_error_dash_type_colon_application_dash_arity_question_" () #f)
+      (binding:function moby-error-type:application-arity-expected #f 1 #f "moby_dash_error_dash_type_colon_application_dash_arity_dash_expected" () #f)
+      (binding:function moby-error-type:application-arity-observed #f 1 #f "moby_dash_error_dash_type_colon_application_dash_arity_dash_observed" () #f)
+      (binding:function set-moby-error-type:application-arity-expected! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_application_dash_arity_dash_expected_bang_" () #f)
+      (binding:function set-moby-error-type:application-arity-observed! #f 2 #f "set_dash_moby_dash_error_dash_type_colon_application_dash_arity_dash_observed_bang_" () #f)
+      (binding:structure moby-error-type:conditional-exhausted () make-moby-error-type:conditional-exhausted moby-error-type:conditional-exhausted? () ())
+      (binding:function make-moby-error-type:conditional-exhausted #f 0 #f "make_dash_moby_dash_error_dash_type_colon_conditional_dash_exhausted" () #f)
+      (binding:function moby-error-type:conditional-exhausted? #f 1 #f "moby_dash_error_dash_type_colon_conditional_dash_exhausted_question_" () #f)
       (binding:structure
        moby-error
        (reason location error-type)
        make-moby-error
        moby-error?
        (moby-error-reason moby-error-location moby-error-error-type)
-       (set-moby-error-reason! set-moby-error-location! set-moby-error-error-type!))))))
+       (set-moby-error-reason! set-moby-error-location! set-moby-error-error-type!))
+      (binding:function make-moby-error #f 3 #f "make_dash_moby_dash_error" () #f)
+      (binding:function moby-error? #f 1 #f "moby_dash_error_question_" () #f)
+      (binding:function moby-error-reason #f 1 #f "moby_dash_error_dash_reason" () #f)
+      (binding:function moby-error-location #f 1 #f "moby_dash_error_dash_location" () #f)
+      (binding:function moby-error-error-type #f 1 #f "moby_dash_error_dash_error_dash_type" () #f)
+      (binding:function set-moby-error-reason! #f 2 #f "set_dash_moby_dash_error_dash_reason_bang_" () #f)
+      (binding:function set-moby-error-location! #f 2 #f "set_dash_moby_dash_error_dash_location_bang_" () #f)
+      (binding:function set-moby-error-error-type! #f 2 #f "set_dash_moby_dash_error_dash_error_dash_type_bang_" () #f)))
+   '(moby/runtime/error-struct-to-dom "runtime/error-struct-to-dom.ss" ((binding:function moby-error-struct-to-dom #f 1 #f "moby_dash_error_dash_struct_dash_to_dash_dom" () #f)))))
 
 (provide MOBY-RUNTIME-MODULE-BINDINGS)
