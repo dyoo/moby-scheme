@@ -8,16 +8,18 @@
          scheme/contract
          scheme/pretty
          scheme/local
+         scheme/bool
          (only-in scheme/list second)
-         "runtime/stx.ss"
-         "runtime/binding.ss"
-         "compiler/pinfo.ss"
          "compile-helpers.ss"
          "program-resources.ss"
+         "runtime/stx.ss"
+         "runtime/binding.ss"
          "compiler/beginner-to-javascript.ss"
          "compiler/desugar.ss"
          "compiler/analyzer.ss"
-         "compiler/helpers.ss")
+         "compiler/helpers.ss"
+         "compiler/pinfo.ss"
+         "compiler/modules.ss")
 
 (require (for-syntax (only-in scheme/base build-path)))
 
@@ -138,6 +140,8 @@
 ;; write-runtime-toplevel-bindings-descriptions: -> void
 ;; Write out compiler/gen/runtime-modules.ss, which describes the module binding
 ;; for the runtime modules listed in RUNTIME-MODULE-PATHS.
+
+;; FIXME: we need to export permission information here too!
 (define (write-runtime-toplevel-bindings-descriptions)
   (let ([moby-runtime-module-bindings-description
           `(define MOBY-RUNTIME-MODULE-BINDINGS
@@ -290,40 +294,53 @@
          (pinfo-update-with-location-emits? (get-base-pinfo 'base)
                                             #f)])
     (compiled-program-main/expose
-     (program->compiled-program/pinfo (get-big-program a-path-string)
+     (program->compiled-program/pinfo (get-big-program a-path-string pinfo-without-debugging-location-emits)
                                       (pinfo-update-current-module-path
                                        pinfo-without-debugging-location-emits
                                        a-path-string)))))
 
 
-;; get-big-program: path -> program
-(define (get-big-program a-path)
-  (let* ([modules (find-transitive-required-modules a-path)]
+;; get-big-program: path pinfo -> program
+(define (get-big-program a-path a-pinfo)
+  (let* ([modules (find-transitive-required-modules a-path a-pinfo)]
          [big-program (apply append (map (lambda (p)
                                            (remove-requires
-                                            (read-program/forget-resources p)))
+                                            (read-program/forget-resources p)
+                                            p
+                                            a-pinfo))
                                          modules))])
     big-program))
   
 
 
 
+;; module-needs-inclusion?: path pinfo -> boolean
+(define (module-needs-inclusion? a-path a-pinfo)
+  (let ([path-resolver (pinfo-module-path-resolver a-pinfo)]
+        [module-resolver (pinfo-module-resolver a-pinfo)])
+    (not
+     (and (module-name? (path-resolver a-path ""))
+          (module-binding? (module-resolver (path-resolver a-path "")))))))
+
+
 ;; find-transitive-required-modules: path -> (listof path)
-(define (find-transitive-required-modules a-path)
-  (unique
-   (let loop ([a-path a-path])
-     (let ([new-paths 
-            (get-require-paths (read-program/forget-resources a-path)
-                               (path-only a-path))])
-       (cond
-         [(empty? new-paths)
-          (list a-path)]
-         [else
-          (append
-           (apply append
-                  (map loop new-paths))
-           (list a-path))])))))
-     
+(define (find-transitive-required-modules a-path a-pinfo)
+  (let ()
+    (unique
+     (let loop ([a-path a-path])
+       (let ([new-paths 
+              (filter (lambda (a-subpath)
+                        (module-needs-inclusion? a-subpath a-pinfo))
+                      (get-require-paths (read-program/forget-resources a-path)
+                                         (path-only a-path)))])
+         (cond
+           [(empty? new-paths)
+            (list a-path)]
+           [else
+            (append
+             (apply append
+                    (map loop new-paths))
+             (list a-path))]))))))
 
 
 ;; read-program: path -> program
@@ -359,9 +376,18 @@
 
 
 ;; remove-requires: program -> program
-(define (remove-requires a-program)
+;; Removes the requires for a program.  However, leaves the ones
+;; that are known to the compiler.
+(define (remove-requires a-program a-path a-pinfo)
   (filter (lambda (top-level)
-            (not (stx-begins-with? top-level 'require)))
+            (cond [(stx-begins-with? top-level 'require)
+                   (cond
+                     [(module-needs-inclusion? a-path a-pinfo)
+                      false]
+                     [else
+                      true])]
+                  [else
+                   true]))
           a-program))
 
 

@@ -282,7 +282,8 @@
 (define (module-require->javascript-string a-module-require a-pinfo)
   (string-join (map (lambda (a-path)
                       (format "plt.Kernel.invokeModule('~a');"
-                              (pinfo-module-path-resolver (stx-e a-path))))
+                              ((pinfo-module-path-resolver a-pinfo) (stx-e a-path)
+                                                                    (pinfo-current-module-path a-pinfo))))
                     (rest (stx-e a-module-require)))
                "\n"))
 

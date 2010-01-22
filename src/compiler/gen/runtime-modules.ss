@@ -7,7 +7,13 @@
    '(moby/runtime/stx
      "runtime/stx.ss"
      ((binding:function stx-e #f 1 #f "stx_dash_e" () #f)
-      (binding:structure stx:list (elts loc) make-stx:list stx:list? (stx:list-elts stx:list-loc) (set-stx:list-elts! set-stx:list-loc!))
+      (binding:structure
+       stx:list
+       (elts loc)
+       make-stx:list
+       stx:list?
+       (stx:list-elts stx:list-loc)
+       (set-stx:list-elts! set-stx:list-loc!))
       (binding:function stx? #f 1 #f "stx_question_" () #f)
       (binding:structure
        stx:atom
@@ -27,6 +33,67 @@
        Loc?
        (Loc-offset Loc-line Loc-column Loc-span Loc-id)
        (set-Loc-offset! set-Loc-line! set-Loc-column! set-Loc-span! set-Loc-id!))))
+   '(moby/runtime/binding
+     "runtime/binding.ss"
+     ((binding:function binding? #f 1 #f "binding_question_" () #f)
+      (binding:function module-name? #f 1 #f "module_dash_name_question_" () #f)
+      (binding:function module-path? #f 1 #f "module_dash_path_question_" () #f)
+      (binding:function sexp->binding #f 1 #f "sexp_dash__greaterthan_binding" () #f)
+      (binding:function module-path=? #f 2 #f "module_dash_path_equal__question_" () #f)
+      (binding:structure
+       module-binding
+       (name source bindings)
+       make-module-binding
+       module-binding?
+       (module-binding-name module-binding-source module-binding-bindings)
+       (set-module-binding-name! set-module-binding-source! set-module-binding-bindings!))
+      (binding:structure
+       binding:function
+       (name module-source min-arity var-arity? java-string permissions cps?)
+       make-binding:function
+       binding:function?
+       (binding:function-name
+        binding:function-module-source
+        binding:function-min-arity
+        binding:function-var-arity?
+        binding:function-java-string
+        binding:function-permissions
+        binding:function-cps?)
+       (set-binding:function-name!
+        set-binding:function-module-source!
+        set-binding:function-min-arity!
+        set-binding:function-var-arity?!
+        set-binding:function-java-string!
+        set-binding:function-permissions!
+        set-binding:function-cps?!))
+      (binding:structure
+       binding:structure
+       (name fields constructor predicate accessors mutators)
+       make-binding:structure
+       binding:structure?
+       (binding:structure-name
+        binding:structure-fields
+        binding:structure-constructor
+        binding:structure-predicate
+        binding:structure-accessors
+        binding:structure-mutators)
+       (set-binding:structure-name!
+        set-binding:structure-fields!
+        set-binding:structure-constructor!
+        set-binding:structure-predicate!
+        set-binding:structure-accessors!
+        set-binding:structure-mutators!))
+      (binding:function binding-id #f 1 #f "binding_dash_id" () #f)
+      (binding:structure
+       binding:constant
+       (name java-string permissions)
+       make-binding:constant
+       binding:constant?
+       (binding:constant-name binding:constant-java-string binding:constant-permissions)
+       (set-binding:constant-name!
+        set-binding:constant-java-string!
+        set-binding:constant-permissions!))
+      (binding:function binding->sexp #f 1 #f "binding_dash__greaterthan_sexp" () #f)))
    '(moby/runtime/permission-struct
      "runtime/permission-struct.ss"
      ((binding:structure
@@ -37,7 +104,13 @@
        (permission:open-image-url-url)
        (set-permission:open-image-url-url!))
       (binding:structure permission:tilt () make-permission:tilt permission:tilt? () ())
-      (binding:structure permission:wake-lock () make-permission:wake-lock permission:wake-lock? () ())
+      (binding:structure
+       permission:wake-lock
+       ()
+       make-permission:wake-lock
+       permission:wake-lock?
+       ()
+       ())
       (binding:function permission? #f 1 #f "permission_question_" () #f)
       (binding:function string->permission #f 1 #f "string_dash__greaterthan_permission" () #f)
       (binding:structure
@@ -49,14 +122,33 @@
        (set-permission:universe-url!))
       (binding:structure permission:send-sms () make-permission:send-sms permission:send-sms? () ())
       (binding:structure permission:shake () make-permission:shake permission:shake? () ())
-      (binding:structure permission:telephony () make-permission:telephony permission:telephony? () ())
-      (binding:structure permission:receive-sms () make-permission:receive-sms permission:receive-sms? () ())
+      (binding:structure
+       permission:telephony
+       ()
+       make-permission:telephony
+       permission:telephony?
+       ()
+       ())
+      (binding:structure
+       permission:receive-sms
+       ()
+       make-permission:receive-sms
+       permission:receive-sms?
+       ()
+       ())
       (binding:constant PERMISSION:SHAKE "PERMISSION_colon_SHAKE" ())
       (binding:structure permission:internet () make-permission:internet permission:internet? () ())
       (binding:structure permission:location () make-permission:location permission:location? () ())
       (binding:constant PERMISSION:WAKE-LOCK "PERMISSION_colon_WAKE_dash_LOCK" ())
       (binding:function permission->string #f 1 #f "permission_dash__greaterthan_string" () #f)
-      (binding:function permission->android-permissions #f 1 #f "permission_dash__greaterthan_android_dash_permissions" () #f)
+      (binding:function
+       permission->android-permissions
+       #f
+       1
+       #f
+       "permission_dash__greaterthan_android_dash_permissions"
+       ()
+       #f)
       (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
       (binding:constant PERMISSION:TELEPHONY "PERMISSION_colon_TELEPHONY" ())
       (binding:constant PERMISSION:RECEIVE-SMS "PERMISSION_colon_RECEIVE_dash_SMS" ())
@@ -65,7 +157,13 @@
       (binding:constant PERMISSION:INTERNET "PERMISSION_colon_INTERNET" ())))
    '(moby/runtime/effect-struct
      "runtime/effect-struct.ss"
-     ((binding:structure effect:raise-sound-volume () make-effect:raise-sound-volume effect:raise-sound-volume? () ())
+     ((binding:structure
+       effect:raise-sound-volume
+       ()
+       make-effect:raise-sound-volume
+       effect:raise-sound-volume?
+       ()
+       ())
       (binding:structure
        effect:set-sound-volume
        (volume)
@@ -95,7 +193,13 @@
        effect:send-sms?
        (effect:send-sms-address effect:send-sms-msg)
        (set-effect:send-sms-address! set-effect:send-sms-msg!))
-      (binding:structure effect:release-wake-lock () make-effect:release-wake-lock effect:release-wake-lock? () ())
+      (binding:structure
+       effect:release-wake-lock
+       ()
+       make-effect:release-wake-lock
+       effect:release-wake-lock?
+       ()
+       ())
       (binding:structure
        effect:pause-sound
        (sound)
@@ -131,12 +235,24 @@
        effect:pick-random?
        (effect:pick-random-n effect:pick-random-update-f)
        (set-effect:pick-random-n! set-effect:pick-random-update-f!))
-      (binding:structure effect:lower-sound-volume () make-effect:lower-sound-volume effect:lower-sound-volume? () ())
+      (binding:structure
+       effect:lower-sound-volume
+       ()
+       make-effect:lower-sound-volume
+       effect:lower-sound-volume?
+       ()
+       ())
       (binding:structure effect:none () make-effect:none effect:none? () ())
       (binding:structure effect:beep () make-effect:beep effect:beep? () ())))
    '(moby/runtime/arity-struct
      "runtime/arity-struct.ss"
-     ((binding:structure arity:mixed (arities) make-arity:mixed arity:mixed? (arity:mixed-arities) (set-arity:mixed-arities!))
+     ((binding:structure
+       arity:mixed
+       (arities)
+       make-arity:mixed
+       arity:mixed?
+       (arity:mixed-arities)
+       (set-arity:mixed-arities!))
       (binding:structure
        arity:variable
        (min max)
@@ -145,7 +261,13 @@
        (arity:variable-min arity:variable-max)
        (set-arity:variable-min! set-arity:variable-max!))
       (binding:function arity? #f 1 #f "arity_question_" () #f)
-      (binding:structure arity:fixed (n) make-arity:fixed arity:fixed? (arity:fixed-n) (set-arity:fixed-n!))))
+      (binding:structure
+       arity:fixed
+       (n)
+       make-arity:fixed
+       arity:fixed?
+       (arity:fixed-n)
+       (set-arity:fixed-n!))))
    '(moby/runtime/error-struct
      "runtime/error-struct.ss"
      ((binding:structure
@@ -154,7 +276,8 @@
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
        (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-other-location)
-       (set-moby-error-type:duplicate-identifier-id! set-moby-error-type:duplicate-identifier-other-location!))
+       (set-moby-error-type:duplicate-identifier-id!
+        set-moby-error-type:duplicate-identifier-other-location!))
       (binding:structure
        moby-error-type:unclosed-lexical-token
        ()
@@ -241,7 +364,8 @@
        make-moby-error-type:application-arity
        moby-error-type:application-arity?
        (moby-error-type:application-arity-expected moby-error-type:application-arity-observed)
-       (set-moby-error-type:application-arity-expected! set-moby-error-type:application-arity-observed!))
+       (set-moby-error-type:application-arity-expected!
+        set-moby-error-type:application-arity-observed!))
       (binding:structure
        moby-error-type:conditional-exhausted
        ()

@@ -467,6 +467,19 @@
 
 
 
+
+(define MOBY-RUNTIME-MODULES
+  (map (lambda (sexp)
+         (local [(define name (list-ref sexp 0))
+                 (define path (list-ref sexp 1))
+                 (define bindings (map sexp->binding (list-ref sexp 2)))]
+           (make-module-binding name
+                                path
+                                bindings)))
+       MOBY-RUNTIME-MODULE-BINDINGS))
+
+
+
 ;; The default bindings for moby will include
 ;; stuff from regular world
 ;; stuff from jsworld
@@ -482,15 +495,6 @@
 
 
 
-(define MOBY-RUNTIME-MODULES
-  (map (lambda (sexp)
-         (local [(define name (list-ref sexp 0))
-                 (define path (list-ref sexp 1))
-                 (define bindings (map sexp->binding (list-ref sexp 2)))]
-           (make-module-binding name
-                                path
-                                bindings)))
-       MOBY-RUNTIME-MODULE-BINDINGS))
 
 
 
@@ -502,17 +506,20 @@
 
 
 ;; These modules are hardcoded.
-(define known-modules (list world-module
-                            world-stub-module
-                            location-module
-                            tilt-module
-                            net-module
-                            parser-module
-                            bootstrap-teachpack
-			    function-teachpack
-			    cage-teachpack
-                            telephony-module
-                            moby-module-binding))
+(define known-modules (list* world-module
+                             world-stub-module
+                             location-module
+                             tilt-module
+                             net-module
+                             parser-module
+                             bootstrap-teachpack
+                             function-teachpack
+                             cage-teachpack
+                             telephony-module
+                             moby-module-binding
+                             
+                             
+                             MOBY-RUNTIME-MODULES))
 
 
 ;; default-module-resolver: symbol -> (module-binding | false)
@@ -534,21 +541,19 @@
 ;; default-module-path-resolver: module-path module-path -> module-name
 (define (default-module-path-resolver a-module-path parent-module-path)
   (local [(define (loop modules)
-            (begin
-              (printf "I might be looking at ~s~n" (module-path-join parent-module-path a-module-path))
-              (cond
-                [(empty? modules)
-                 (cond
-                   [(symbol? a-module-path)
-                    a-module-path]
-                   [(string? a-module-path)
-                    (string->symbol 
-                     (module-path-join parent-module-path a-module-path))])]
-                [(module-path=? (module-path-join parent-module-path a-module-path)
-                                (module-binding-source (first modules)))
-                 (module-binding-name (first modules))]
-                [else
-                 (loop (rest modules))])))]
+            (cond
+              [(empty? modules)
+               (cond
+                 [(symbol? a-module-path)
+                  a-module-path]
+                 [(string? a-module-path)
+                  (string->symbol 
+                   (module-path-join parent-module-path a-module-path))])]
+              [(module-path=? (module-path-join parent-module-path a-module-path)
+                              (module-binding-source (first modules)))
+               (module-binding-name (first modules))]
+              [else
+               (loop (rest modules))]))]
     (loop known-modules)))
 
 
