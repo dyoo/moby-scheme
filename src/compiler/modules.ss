@@ -251,7 +251,7 @@
           (define js-module-path
             "plt._MODULES['bootstrap-teachpack.js']")
           ]
-    (make-module-binding 'world
+    (make-module-binding 'moby/bootstrap-teachpack
                          module-path
                          (append 
                           (list 
@@ -276,7 +276,7 @@
           (define js-module-path
             "plt._MODULES['cage-teachpack.js']")
           ]
-    (make-module-binding 'world
+    (make-module-binding 'moby/cage-teachpack
                          module-path
                          (append 
                           (list 
@@ -293,7 +293,7 @@
           (define js-module-path
             "plt._MODULES['function-teachpack.js']")
           ]
-    (make-module-binding 'world
+    (make-module-binding 'moby/function-teachpack
                          module-path
                          (append 
                           (list 
