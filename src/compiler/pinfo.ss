@@ -408,7 +408,11 @@
                                (ref (binding:structure-constructor the-binding))
                                (ref (binding:structure-predicate the-binding)))
                          (map ref (binding:structure-accessors the-binding))
-                         (map ref (binding:structure-mutators the-binding)))]
+                         ;; KLUDGE!
+                         ;; Temporarly disable the exposure of the mutators.
+                         ;; The standalone compiler isn't compiling with it.
+                         #;(map ref (binding:structure-mutators the-binding))
+                         )]
                 [else
                  (list the-binding)])))
           

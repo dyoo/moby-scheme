@@ -133,9 +133,9 @@
 ;; write-collection-module: -> void
 ;; Writes out the optional teachpack modules
 (define (write-collection-modules)
-  (write-collect-module "bootstrap-teachpack.js" "collects/bootstrap-teachpack.ss")
-  (write-collect-module "cage-teachpack.js" "collects/cage-teachpack.ss")
-  (write-collect-module "function-teachpack.js" "collects/function-teachpack.ss"))
+  (write-collect-module 'moby/bootstrap-teachpack "collects/bootstrap-teachpack.ss")
+  (write-collect-module 'moby/cage-teachpack "collects/cage-teachpack.ss")
+  (write-collect-module 'moby/function-teachpack "collects/function-teachpack.ss"))
 
 
 ;; write-runtime-toplevel-bindings-descriptions: -> void
@@ -185,13 +185,20 @@
 
 
 
-;; write-collect-module: string path-string -> void
+;; write-collect-module: symbol path-string -> void
 ;; Write out the content of the module into the collects path.
 (define (write-collect-module module-name src-path)
   (unless (directory-exists? (build-path moby-runtime-path "collects"))
     (make-directory (build-path moby-runtime-path "collects")))
                              
-  (call-with-output-file (build-path moby-runtime-path "collects" module-name)
+  (printf "Booting the collection module ~s~n" module-name)
+  (call-with-output-file (build-path moby-runtime-path "collects" 
+                                     (string-append
+                                      (substring (path->string (file-name-from-path src-path))
+                                                 0
+                                                 (- (string-length (path->string (file-name-from-path src-path))) 
+                                                    3))
+                                      ".js"))
     (lambda (op)
       (display (compiled-program-main/expose-as-module
                 (program->compiled-program/pinfo (read-program/forget-resources src-path)
@@ -209,8 +216,10 @@
 ;; Writes out the javascript compiler and other files.
 ;; Generates: compiler.js, standalone-compiler.js, permission-struct.js
 (define (write-compiler)
+  (printf "Writing out the compiler~n")
   (boot-compile-runtime-library "compiler/beginner-to-javascript.ss" compiler-path)
 
+ 
   (unless (directory-exists? standalone-compiler-parent-path)
     (make-directory standalone-compiler-parent-path))
   (call-with-output-file standalone-compiler-path
@@ -224,8 +233,7 @@
       (copy-path-to-port "../support/js/runtime/stx.js" op)
       (copy-path-to-port read.js op)
       (display (phase-1-bootstrap-compile "compiler/beginner-to-javascript.ss") op)
-      
-      
+       
       (display "function listToArray(aList) {
            var anArray = [];
            while (!aList.isEmpty()) {     
@@ -394,19 +402,19 @@
                                               parent-path
                                               (second (stx->datum top-level))) 
                                              a-pinfo)
-                    (printf "erasing the require statement ~s in ~s~n"
+                    #;(printf "erasing the require statement ~s in ~s~n"
                             (stx->datum top-level)
                             a-subpath)
                     (list)]
                    [else
-                    (printf "preserving the require statement ~s in ~s~n"
+                    #;(printf "preserving the require statement ~s in ~s~n"
                             (stx->datum top-level)
                             a-subpath)
                     (list top-level)
                     #;(let ([result
                            (list (datum->stx `(require ,(second (stx->datum top-level)))
                                              (stx-loc top-level)))])
-                      (printf "Rewritten to ~s~n" (stx->datum (first result)))
+                      #;(printf "Rewritten to ~s~n" (stx->datum (first result)))
                       result)])]
                 [else
                  (list top-level)]))

@@ -71,15 +71,16 @@
 
 
 
-;; compiled-program-main/expose-as-module: compiled-program string -> string
+;; compiled-program-main/expose-as-module: compiled-program symbol -> string
 ;; Like compiled-program-main, but constructs a string that, when evaluated, installs
 ;; a module into plt._MODULES.
 (define (compiled-program-main/expose-as-module a-compiled-program module-name)
-  (local [(define defined-names (expose-provided-names a-compiled-program))]
+  (local [(define module-name-string (symbol->string module-name))
+          (define defined-names (expose-provided-names a-compiled-program))]
     (string-append  "if (typeof(plt) == 'undefined') { plt = {}; }\n"
                     "if (typeof(plt._MODULES) == 'undefined') { plt._MODULES = {}; }\n"
-                    "if (typeof(plt._MODULES[" (format "~s" module-name) "]) == 'undefined') {\n"
-                    "    plt._MODULES[" (format "~s" module-name) "] = "
+                    "if (typeof(plt._MODULES[" (format "~s" module-name-string) "]) == 'undefined') {\n"
+                    "    plt._MODULES[" (format "~s" module-name-string) "] = "
                     "        { COMPILER_VERSION: " (format "~s" VERSION) ",\n\tBINDINGS: {},\n\tEXPORTS : {}};\n"
 
                     "    (function() {\n"
@@ -90,7 +91,7 @@
                                                 (local [(define munged-name
                                                           (identifier->munged-java-identifier a-name))]
                                                   (format "plt._MODULES[~s].EXPORTS[~s] = ~a;\n"
-                                                          module-name
+                                                          module-name-string
                                                           (symbol->string munged-name)
                                                           munged-name
                                                           )))
@@ -1171,7 +1172,7 @@
                   [compiled-program-main/expose
                    (compiled-program? . -> . string?)]
                   [compiled-program-main/expose-as-module
-                   (compiled-program? string? . -> . string?)]
+                   (compiled-program? module-name? . -> . string?)]
                   
                   [program->compiled-program 
                    (program? . -> . compiled-program?)]
