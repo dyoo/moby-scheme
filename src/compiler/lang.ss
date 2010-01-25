@@ -9,7 +9,7 @@
          scheme/contract
          lang/htdp-advanced
          (for-syntax scheme/base)
-         "../runtime/stx.ss"
+         "../collects/runtime/stx.ss"
          )
 
 
@@ -135,7 +135,7 @@
                      (base:error error)
                      )
 
-         (all-from-out "../runtime/stx.ss")
+         (all-from-out "../collects/runtime/stx.ss")
 
          
          ;; Contract-related stuff: the following will be erased on 

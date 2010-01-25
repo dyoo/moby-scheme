@@ -14,7 +14,7 @@
 (require "labeled-translation.ss")
 (require "rbtree.ss")
 (require "version.ss")
-(require "../runtime/binding.ss")
+(require "../collects/runtime/binding.ss")
 
 
 ;; A compiled program is a:

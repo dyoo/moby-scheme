@@ -6,8 +6,8 @@
 (require "modules.ss")
 (require "rbtree.ss")
 (require "labeled-translation.ss")
-(require "../runtime/permission-struct.ss")
-(require "../runtime/binding.ss")
+(require "../collects/runtime/permission-struct.ss")
+(require "../collects/runtime/binding.ss")
 
 
 ;; pinfo (program-info) is the "world" structure for the compilers; 

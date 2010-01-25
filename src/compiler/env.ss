@@ -1,7 +1,6 @@
 #lang s-exp "lang.ss"
 
-(require "../runtime/permission-struct.ss")
-(require "../runtime/binding.ss")
+(require "../collects/runtime/binding.ss")
 (require "rbtree.ss")
 (require "helpers.ss")
 

@@ -11,10 +11,10 @@
          "config.ss"
          "stx-helpers.ss"
          "image-lift.ss"
-         "runtime/stx.ss"
+         "collects/runtime/stx.ss"
          "compiler/pinfo.ss"
-         "runtime/permission-struct.ss"
-         "runtime/binding.ss")
+         "collects/runtime/permission-struct.ss"
+         "collects/runtime/binding.ss")
 
 ;; Common helper functions used in the compiler.
 
