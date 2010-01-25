@@ -89,10 +89,31 @@
       (binding:function make-binding:function #f 7 #f "make_dash_binding_colon_function" () #f)
       (binding:function binding:function? #f 1 #f "binding_colon_function_question_" () #f)
       (binding:function binding:function-name #f 1 #f "binding_colon_function_dash_name" () #f)
-      (binding:function binding:function-module-source #f 1 #f "binding_colon_function_dash_module_dash_source" () #f)
+      (binding:function
+       binding:function-module-source
+       #f
+       1
+       #f
+       "binding_colon_function_dash_module_dash_source"
+       ()
+       #f)
       (binding:function binding:function-min-arity #f 1 #f "binding_colon_function_dash_min_dash_arity" () #f)
-      (binding:function binding:function-var-arity? #f 1 #f "binding_colon_function_dash_var_dash_arity_question_" () #f)
-      (binding:function binding:function-java-string #f 1 #f "binding_colon_function_dash_java_dash_string" () #f)
+      (binding:function
+       binding:function-var-arity?
+       #f
+       1
+       #f
+       "binding_colon_function_dash_var_dash_arity_question_"
+       ()
+       #f)
+      (binding:function
+       binding:function-java-string
+       #f
+       1
+       #f
+       "binding_colon_function_dash_java_dash_string"
+       ()
+       #f)
       (binding:function binding:function-permissions #f 1 #f "binding_colon_function_dash_permissions" () #f)
       (binding:function binding:function-cps? #f 1 #f "binding_colon_function_dash_cps_question_" () #f)
       (binding:structure
@@ -116,7 +137,14 @@
       (binding:function binding:structure? #f 1 #f "binding_colon_structure_question_" () #f)
       (binding:function binding:structure-name #f 1 #f "binding_colon_structure_dash_name" () #f)
       (binding:function binding:structure-fields #f 1 #f "binding_colon_structure_dash_fields" () #f)
-      (binding:function binding:structure-constructor #f 1 #f "binding_colon_structure_dash_constructor" () #f)
+      (binding:function
+       binding:structure-constructor
+       #f
+       1
+       #f
+       "binding_colon_structure_dash_constructor"
+       ()
+       #f)
       (binding:function binding:structure-predicate #f 1 #f "binding_colon_structure_dash_predicate" () #f)
       (binding:function binding:structure-accessors #f 1 #f "binding_colon_structure_dash_accessors" () #f)
       (binding:function binding:structure-mutators #f 1 #f "binding_colon_structure_dash_mutators" () #f)
@@ -131,7 +159,14 @@
       (binding:function make-binding:constant #f 3 #f "make_dash_binding_colon_constant" () #f)
       (binding:function binding:constant? #f 1 #f "binding_colon_constant_question_" () #f)
       (binding:function binding:constant-name #f 1 #f "binding_colon_constant_dash_name" () #f)
-      (binding:function binding:constant-java-string #f 1 #f "binding_colon_constant_dash_java_dash_string" () #f)
+      (binding:function
+       binding:constant-java-string
+       #f
+       1
+       #f
+       "binding_colon_constant_dash_java_dash_string"
+       ()
+       #f)
       (binding:function binding:constant-permissions #f 1 #f "binding_colon_constant_dash_permissions" () #f)
       (binding:function binding->sexp #f 1 #f "binding_dash__greaterthan_sexp" () #f)))
    '(moby/runtime/permission-struct
@@ -143,9 +178,30 @@
        permission:open-image-url?
        (permission:open-image-url-url)
        (set-permission:open-image-url-url!))
-      (binding:function make-permission:open-image-url #f 1 #f "make_dash_permission_colon_open_dash_image_dash_url" () #f)
-      (binding:function permission:open-image-url? #f 1 #f "permission_colon_open_dash_image_dash_url_question_" () #f)
-      (binding:function permission:open-image-url-url #f 1 #f "permission_colon_open_dash_image_dash_url_dash_url" () #f)
+      (binding:function
+       make-permission:open-image-url
+       #f
+       1
+       #f
+       "make_dash_permission_colon_open_dash_image_dash_url"
+       ()
+       #f)
+      (binding:function
+       permission:open-image-url?
+       #f
+       1
+       #f
+       "permission_colon_open_dash_image_dash_url_question_"
+       ()
+       #f)
+      (binding:function
+       permission:open-image-url-url
+       #f
+       1
+       #f
+       "permission_colon_open_dash_image_dash_url_dash_url"
+       ()
+       #f)
       (binding:structure permission:tilt () make-permission:tilt permission:tilt? () ())
       (binding:function make-permission:tilt #f 0 #f "make_dash_permission_colon_tilt" () #f)
       (binding:function permission:tilt? #f 1 #f "permission_colon_tilt_question_" () #f)
@@ -174,7 +230,14 @@
       (binding:function make-permission:telephony #f 0 #f "make_dash_permission_colon_telephony" () #f)
       (binding:function permission:telephony? #f 1 #f "permission_colon_telephony_question_" () #f)
       (binding:structure permission:receive-sms () make-permission:receive-sms permission:receive-sms? () ())
-      (binding:function make-permission:receive-sms #f 0 #f "make_dash_permission_colon_receive_dash_sms" () #f)
+      (binding:function
+       make-permission:receive-sms
+       #f
+       0
+       #f
+       "make_dash_permission_colon_receive_dash_sms"
+       ()
+       #f)
       (binding:function permission:receive-sms? #f 1 #f "permission_colon_receive_dash_sms_question_" () #f)
       (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
       (binding:structure permission:internet () make-permission:internet permission:internet? () ())
@@ -208,19 +271,49 @@
        ()
        #f)
       (binding:constant PERMISSION:WAKE-LOCK "PERMISSION_colon_WAKE_dash_LOCK" ())
-      (binding:function permission->android-permissions #f 1 #f "permission_dash__greaterthan_android_dash_permissions" () #f)
+      (binding:function
+       permission->android-permissions
+       #f
+       1
+       #f
+       "permission_dash__greaterthan_android_dash_permissions"
+       ()
+       #f)
       (binding:constant PERMISSION:SEND-SMS "PERMISSION_colon_SEND_dash_SMS" ())
       (binding:constant PERMISSION:SHAKE "PERMISSION_colon_SHAKE" ())
       (binding:constant PERMISSION:TELEPHONY "PERMISSION_colon_TELEPHONY" ())
       (binding:constant PERMISSION:INTERNET "PERMISSION_colon_INTERNET" ())
       (binding:constant PERMISSION:LOCATION "PERMISSION_colon_LOCATION" ())
       (binding:constant PERMISSION:RECEIVE-SMS "PERMISSION_colon_RECEIVE_dash_SMS" ())
-      (binding:constant PERMISSION:FOREIGN-FUNCTION-INTERFACE "PERMISSION_colon_FOREIGN_dash_FUNCTION_dash_INTERFACE" ())))
+      (binding:constant
+       PERMISSION:FOREIGN-FUNCTION-INTERFACE
+       "PERMISSION_colon_FOREIGN_dash_FUNCTION_dash_INTERFACE"
+       ())))
    '(moby/runtime/effect-struct
      "runtime/effect-struct.ss"
-     ((binding:structure effect:raise-sound-volume () make-effect:raise-sound-volume effect:raise-sound-volume? () ())
-      (binding:function make-effect:raise-sound-volume #f 0 #f "make_dash_effect_colon_raise_dash_sound_dash_volume" () #f)
-      (binding:function effect:raise-sound-volume? #f 1 #f "effect_colon_raise_dash_sound_dash_volume_question_" () #f)
+     ((binding:structure
+       effect:raise-sound-volume
+       ()
+       make-effect:raise-sound-volume
+       effect:raise-sound-volume?
+       ()
+       ())
+      (binding:function
+       make-effect:raise-sound-volume
+       #f
+       0
+       #f
+       "make_dash_effect_colon_raise_dash_sound_dash_volume"
+       ()
+       #f)
+      (binding:function
+       effect:raise-sound-volume?
+       #f
+       1
+       #f
+       "effect_colon_raise_dash_sound_dash_volume_question_"
+       ()
+       #f)
       (binding:structure
        effect:set-sound-volume
        (volume)
@@ -228,9 +321,30 @@
        effect:set-sound-volume?
        (effect:set-sound-volume-volume)
        (set-effect:set-sound-volume-volume!))
-      (binding:function make-effect:set-sound-volume #f 1 #f "make_dash_effect_colon_set_dash_sound_dash_volume" () #f)
-      (binding:function effect:set-sound-volume? #f 1 #f "effect_colon_set_dash_sound_dash_volume_question_" () #f)
-      (binding:function effect:set-sound-volume-volume #f 1 #f "effect_colon_set_dash_sound_dash_volume_dash_volume" () #f)
+      (binding:function
+       make-effect:set-sound-volume
+       #f
+       1
+       #f
+       "make_dash_effect_colon_set_dash_sound_dash_volume"
+       ()
+       #f)
+      (binding:function
+       effect:set-sound-volume?
+       #f
+       1
+       #f
+       "effect_colon_set_dash_sound_dash_volume_question_"
+       ()
+       #f)
+      (binding:function
+       effect:set-sound-volume-volume
+       #f
+       1
+       #f
+       "effect_colon_set_dash_sound_dash_volume_dash_volume"
+       ()
+       #f)
       (binding:structure
        effect:stop-sound
        (sound)
@@ -249,9 +363,23 @@
        effect:set-wake-lock?
        (effect:set-wake-lock-locks)
        (set-effect:set-wake-lock-locks!))
-      (binding:function make-effect:set-wake-lock #f 1 #f "make_dash_effect_colon_set_dash_wake_dash_lock" () #f)
+      (binding:function
+       make-effect:set-wake-lock
+       #f
+       1
+       #f
+       "make_dash_effect_colon_set_dash_wake_dash_lock"
+       ()
+       #f)
       (binding:function effect:set-wake-lock? #f 1 #f "effect_colon_set_dash_wake_dash_lock_question_" () #f)
-      (binding:function effect:set-wake-lock-locks #f 1 #f "effect_colon_set_dash_wake_dash_lock_dash_locks" () #f)
+      (binding:function
+       effect:set-wake-lock-locks
+       #f
+       1
+       #f
+       "effect_colon_set_dash_wake_dash_lock_dash_locks"
+       ()
+       #f)
       (binding:structure
        effect:send-sms
        (address msg)
@@ -263,9 +391,29 @@
       (binding:function effect:send-sms? #f 1 #f "effect_colon_send_dash_sms_question_" () #f)
       (binding:function effect:send-sms-address #f 1 #f "effect_colon_send_dash_sms_dash_address" () #f)
       (binding:function effect:send-sms-msg #f 1 #f "effect_colon_send_dash_sms_dash_msg" () #f)
-      (binding:structure effect:release-wake-lock () make-effect:release-wake-lock effect:release-wake-lock? () ())
-      (binding:function make-effect:release-wake-lock #f 0 #f "make_dash_effect_colon_release_dash_wake_dash_lock" () #f)
-      (binding:function effect:release-wake-lock? #f 1 #f "effect_colon_release_dash_wake_dash_lock_question_" () #f)
+      (binding:structure
+       effect:release-wake-lock
+       ()
+       make-effect:release-wake-lock
+       effect:release-wake-lock?
+       ()
+       ())
+      (binding:function
+       make-effect:release-wake-lock
+       #f
+       0
+       #f
+       "make_dash_effect_colon_release_dash_wake_dash_lock"
+       ()
+       #f)
+      (binding:function
+       effect:release-wake-lock?
+       #f
+       1
+       #f
+       "effect_colon_release_dash_wake_dash_lock_question_"
+       ()
+       #f)
       (binding:structure
        effect:pause-sound
        (sound)
@@ -283,10 +431,38 @@
        effect:play-dtmf-tone?
        (effect:play-dtmf-tone-tone effect:play-dtmf-tone-duration)
        (set-effect:play-dtmf-tone-tone! set-effect:play-dtmf-tone-duration!))
-      (binding:function make-effect:play-dtmf-tone #f 2 #f "make_dash_effect_colon_play_dash_dtmf_dash_tone" () #f)
-      (binding:function effect:play-dtmf-tone? #f 1 #f "effect_colon_play_dash_dtmf_dash_tone_question_" () #f)
-      (binding:function effect:play-dtmf-tone-tone #f 1 #f "effect_colon_play_dash_dtmf_dash_tone_dash_tone" () #f)
-      (binding:function effect:play-dtmf-tone-duration #f 1 #f "effect_colon_play_dash_dtmf_dash_tone_dash_duration" () #f)
+      (binding:function
+       make-effect:play-dtmf-tone
+       #f
+       2
+       #f
+       "make_dash_effect_colon_play_dash_dtmf_dash_tone"
+       ()
+       #f)
+      (binding:function
+       effect:play-dtmf-tone?
+       #f
+       1
+       #f
+       "effect_colon_play_dash_dtmf_dash_tone_question_"
+       ()
+       #f)
+      (binding:function
+       effect:play-dtmf-tone-tone
+       #f
+       1
+       #f
+       "effect_colon_play_dash_dtmf_dash_tone_dash_tone"
+       ()
+       #f)
+      (binding:function
+       effect:play-dtmf-tone-duration
+       #f
+       1
+       #f
+       "effect_colon_play_dash_dtmf_dash_tone_dash_duration"
+       ()
+       #f)
       (binding:structure
        effect:play-sound
        (sound)
@@ -306,7 +482,14 @@
        (set-effect:pick-playlist-update-f!))
       (binding:function make-effect:pick-playlist #f 1 #f "make_dash_effect_colon_pick_dash_playlist" () #f)
       (binding:function effect:pick-playlist? #f 1 #f "effect_colon_pick_dash_playlist_question_" () #f)
-      (binding:function effect:pick-playlist-update-f #f 1 #f "effect_colon_pick_dash_playlist_dash_update_dash_f" () #f)
+      (binding:function
+       effect:pick-playlist-update-f
+       #f
+       1
+       #f
+       "effect_colon_pick_dash_playlist_dash_update_dash_f"
+       ()
+       #f)
       (binding:structure
        effect:pick-random
        (n update-f)
@@ -317,10 +500,37 @@
       (binding:function make-effect:pick-random #f 2 #f "make_dash_effect_colon_pick_dash_random" () #f)
       (binding:function effect:pick-random? #f 1 #f "effect_colon_pick_dash_random_question_" () #f)
       (binding:function effect:pick-random-n #f 1 #f "effect_colon_pick_dash_random_dash_n" () #f)
-      (binding:function effect:pick-random-update-f #f 1 #f "effect_colon_pick_dash_random_dash_update_dash_f" () #f)
-      (binding:structure effect:lower-sound-volume () make-effect:lower-sound-volume effect:lower-sound-volume? () ())
-      (binding:function make-effect:lower-sound-volume #f 0 #f "make_dash_effect_colon_lower_dash_sound_dash_volume" () #f)
-      (binding:function effect:lower-sound-volume? #f 1 #f "effect_colon_lower_dash_sound_dash_volume_question_" () #f)
+      (binding:function
+       effect:pick-random-update-f
+       #f
+       1
+       #f
+       "effect_colon_pick_dash_random_dash_update_dash_f"
+       ()
+       #f)
+      (binding:structure
+       effect:lower-sound-volume
+       ()
+       make-effect:lower-sound-volume
+       effect:lower-sound-volume?
+       ()
+       ())
+      (binding:function
+       make-effect:lower-sound-volume
+       #f
+       0
+       #f
+       "make_dash_effect_colon_lower_dash_sound_dash_volume"
+       ()
+       #f)
+      (binding:function
+       effect:lower-sound-volume?
+       #f
+       1
+       #f
+       "effect_colon_lower_dash_sound_dash_volume_question_"
+       ()
+       #f)
       (binding:structure effect:none () make-effect:none effect:none? () ())
       (binding:function make-effect:none #f 0 #f "make_dash_effect_colon_none" () #f)
       (binding:function effect:none? #f 1 #f "effect_colon_none_question_" () #f)
@@ -329,7 +539,13 @@
       (binding:function effect:beep? #f 1 #f "effect_colon_beep_question_" () #f)))
    '(moby/runtime/arity-struct
      "runtime/arity-struct.ss"
-     ((binding:structure arity:mixed (arities) make-arity:mixed arity:mixed? (arity:mixed-arities) (set-arity:mixed-arities!))
+     ((binding:structure
+       arity:mixed
+       (arities)
+       make-arity:mixed
+       arity:mixed?
+       (arity:mixed-arities)
+       (set-arity:mixed-arities!))
       (binding:function make-arity:mixed #f 1 #f "make_dash_arity_colon_mixed" () #f)
       (binding:function arity:mixed? #f 1 #f "arity_colon_mixed_question_" () #f)
       (binding:function arity:mixed-arities #f 1 #f "arity_colon_mixed_dash_arities" () #f)
@@ -371,13 +587,33 @@
       (binding:function make-moby-expected:struct #f 0 #f "make_dash_moby_dash_expected_colon_struct" () #f)
       (binding:function moby-expected:struct? #f 1 #f "moby_dash_expected_colon_struct_question_" () #f)
       (binding:structure moby-expected:rational () make-moby-expected:rational moby-expected:rational? () ())
-      (binding:function make-moby-expected:rational #f 0 #f "make_dash_moby_dash_expected_colon_rational" () #f)
+      (binding:function
+       make-moby-expected:rational
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_rational"
+       ()
+       #f)
       (binding:function moby-expected:rational? #f 1 #f "moby_dash_expected_colon_rational_question_" () #f)
       (binding:structure moby-expected:real () make-moby-expected:real moby-expected:real? () ())
       (binding:function make-moby-expected:real #f 0 #f "make_dash_moby_dash_expected_colon_real" () #f)
       (binding:function moby-expected:real? #f 1 #f "moby_dash_expected_colon_real_question_" () #f)
-      (binding:structure moby-expected:something () make-moby-expected:something moby-expected:something? () ())
-      (binding:function make-moby-expected:something #f 0 #f "make_dash_moby_dash_expected_colon_something" () #f)
+      (binding:structure
+       moby-expected:something
+       ()
+       make-moby-expected:something
+       moby-expected:something?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:something
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_something"
+       ()
+       #f)
       (binding:function moby-expected:something? #f 1 #f "moby_dash_expected_colon_something_question_" () #f)
       (binding:structure moby-expected:natural () make-moby-expected:natural moby-expected:natural? () ())
       (binding:function make-moby-expected:natural #f 0 #f "make_dash_moby_dash_expected_colon_natural" () #f)
@@ -392,7 +628,14 @@
       (binding:function make-moby-expected:char #f 0 #f "make_dash_moby_dash_expected_colon_char" () #f)
       (binding:function moby-expected:char? #f 1 #f "moby_dash_expected_colon_char_question_" () #f)
       (binding:structure moby-expected:function () make-moby-expected:function moby-expected:function? () ())
-      (binding:function make-moby-expected:function #f 0 #f "make_dash_moby_dash_expected_colon_function" () #f)
+      (binding:function
+       make-moby-expected:function
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_function"
+       ()
+       #f)
       (binding:function moby-expected:function? #f 1 #f "moby_dash_expected_colon_function_question_" () #f)
       (binding:structure moby-expected:hash () make-moby-expected:hash moby-expected:hash? () ())
       (binding:function make-moby-expected:hash #f 0 #f "make_dash_moby_dash_expected_colon_hash" () #f)
@@ -479,7 +722,8 @@
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
        (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-other-location)
-       (set-moby-error-type:duplicate-identifier-id! set-moby-error-type:duplicate-identifier-other-location!))
+       (set-moby-error-type:duplicate-identifier-id!
+        set-moby-error-type:duplicate-identifier-other-location!))
       (binding:function
        make-moby-error-type:duplicate-identifier
        #f
