@@ -11,96 +11,155 @@
 
 ;; error-struct-to-dom-sexp: dom -> sexp
 (define (moby-error-struct-to-dom-sexp an-error)
-  (local [(define embedded-reason (moby-error-reason an-error))
-          (define embedded-location (moby-error-location an-error))
-          (define error-type (moby-error-error-type an-error))]
+  (local [(define embedded-location (moby-error-location an-error))
+          (define error-type (moby-error-error-type an-error))
+          (define (add-toplevel-dom-error-wrapper a-dom)
+            `(span ((class "Error"))
+                   ,a-dom
+                   (span ((class "Error.location"))
+                         ,(Loc->dom-sexp embedded-location)
+                   )))]
+    
+    (add-toplevel-dom-error-wrapper
+     (cond
+       [(moby-error-type:unclosed-lexical-token? error-type)
+        `(span ((class "Error:UnclosedLexicalToken"))
+               (span ((class "Error.reason"))
+                     "I saw "
+                     ,(symbol->string 
+                       (moby-error-type:unclosed-lexical-token-opener error-type))
+                     " to start a "
+                     ,(moby-error-type:unclosed-lexical-token-type error-type)
+                     ", but no "
+                     (span ((class "MobyLexicalToken"))
+                           ,(symbol->string 
+                             (moby-error-type:unclosed-lexical-token-closer error-type)))
+                     "to close it.")
+               
+               (span ((class "Error:UnclosedLexicalToken.type"))
+                     ,(symbol->string (moby-error-type:unclosed-lexical-token-type error-type)))
+               (span ((class "Error:UnclosedLexicalToken.opener"))
+                     ,(symbol->string (moby-error-type:unclosed-lexical-token-opener error-type)))
+               (span ((class "Error:UnclosedLexicalToken.closer"))
+                     ,(symbol->string (moby-error-type:unclosed-lexical-token-closer error-type))))]
+       
+       
+       [(moby-error-type:unrecognized-lexical-token? error-type)
+        `(span ((class "Error:UnrecognizedLexicalToken"))
+               (span ((class "Error.reason"))
+                     "I saw "
+                     ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))
+                     " which I don't recognize as a program element.")
+               (span ((class "Error:UnrecognizedLexicalToken.token"))
+                     (symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))))]
+       
+       [(moby-error-type:unsupported-lexical-token? error-type)
+        `(span ((class "Error:UnsupportedLexicalToken"))
+               (span ((class "Error.reason"))
+                     ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))
+                     " is currently not supported.")
+               (span ((class "Error:UnsupportedLexicalToken.token"))
+                     ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))))]
+       
+       
+       [(moby-error-type:unclosed-parentheses? error-type)
+        `(span ((class "Error:UnclosedParentheses"))
+               (span ((class "Error.reason"))
+                     "I saw "
+                     (symbol->string (moby-error-type:unclosed-parentheses error-type))
+                     " to start an expression, but no "
+                     (symbol->string (moby-error-type:unclosed-parentheses error-type))
+                     "to close it.")
+               (span ((class "Error:UnclosedParentheses.opener"))
+                     (symbol->string (moby-error-type:unclosed-parentheses-opener error-type)))
+               (span ((class "Error:UnclosedParentheses.closer"))
+                     (symbol->string (moby-error-type:unclosed-parentheses-closer error-type))))]
+       
+       [(moby-error-type:missing-expression? error-type)
+        `(span ((class "Error:MissingExpression"))
+               (span ((class "Error.reason"))
+                     "I expected an expression following "
+                     ,(symbol->string (moby-error-type:missing-expression-token error-type))
+                     " but did not find one."))]
+       
+       [(moby-error-type:duplicate-identifier? error-type)
+        `(span ((class "Error:DuplicateIdentifier"))
+               (span ((class "Error.reason"))
+                     "The identifier "
+                     ,(symbol->string (moby-error-type:duplicate-identifier-id error-type))
+                     " has been duplicated.")
+               (span ((class "Error:DuplicateIdentifier.secondLocation"))
+                     ,(Loc->dom-sexp (moby-error-type:duplicate-identifier-second-location error-type))))]
+       
+       [(moby-error-type:undefined-identifier? error-type)
+        `(span ((class "Error:UndefinedIdentifier"))
+               (span ((class "Error.reason"))
+                     "I don't know what "
+                     ,(symbol->string (moby-error-type:undefined-identifier-id error-type))
+                     " is; it's not defined as an input or a primitive."))]
+       
+       
+       [(moby-error-type:application-arity? error-type)
+        `(span ((class "Error:ApplicationArity"))
+               (span ((class "Error.reason"))
+                     "The function "
+                     ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-who error-type))
+                     " expects "
+                     ,(arity-to-dom-sexp (moby-error-type:application-arity-expected error-type))
+                     " but instead I see "
+                     ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-observed error-type))
+                     ))]
+       
+       [(moby-error-type:type-mismatch? error-type)
+        `(span ((class "Error:TypeMismatch"))
+               (span ((class "Error.reason"))
+                     "The function "
+                     ,(scheme-value-to-dom-sexp 
+                       (moby-error-type:type-mismatch-who error-type))
+                     " expects"
+                     ,(expected-value-to-dom-sexp
+                       (moby-error-type:type-mismatch-expected error-type))
+                     "as its "
+                     ,(scheme-value-to-dom-sexp
+                       (moby-error-type:type-mismatch-position error-type))
+                     " argument, but instead I see "
+                     ,(scheme-value-to-dom-sexp 
+                       (moby-error-type:type-mismatch-observed error-type))
+                     "."))]
 
-    (cond
-      [(moby-error-type:unclosed-lexical-token? error-type)
-       `(span ((class "Error:UnclosedLexicalToken"))
-              (span ((class "Error:UnclosedLexicalToken.reason"))
-                    "I saw "
-                    ,(symbol->string 
-                      (moby-error-type:unclosed-lexical-token-opener error-type))
-                    " to start a "
-                    ,(moby-error-type:unclosed-lexical-token-type error-type)
-                    ", but no "
-                    (span ((class "MobyLexicalToken"))
-                          ,(symbol->string 
-                            (moby-error-type:unclosed-lexical-token-closer error-type)))
-                    "to close it.")
-              
-              (span ((class "Error:UnclosedLexicalToken.type"))
-                    ,(symbol->string (moby-error-type:unclosed-lexical-token-type error-type)))
-              (span ((class "Error:UnclosedLexicalToken.opener"))
-                    ,(symbol->string (moby-error-type:unclosed-lexical-token-opener error-type)))
-              (span ((class "Error:UnclosedLexicalToken.closer"))
-                    ,(symbol->string (moby-error-type:unclosed-lexical-token-closer error-type)))
-              (span ((class "Error:UnclosedLexicalToken.location"))
-                    ,(Loc->dom-sexp embedded-location)))]
+       [(moby-error-type:index-out-of-bounds? error-type)
+        `(span ((class "Error:IndexOutOfBounds"))
+               (span ((class "Error.reason"))
+                     "The index "
+                     ,(scheme-value-to-dom-sexp
+                       (moby-error-type:index-out-of-bounds-observed error-type))
+                     " is not within the expected boundary ["
+                     ,(scheme-value-to-dom-sexp 
+                       (moby-error-type:index-out-of-bounds-minimum error-type))
+                     ", "
+                     ,(scheme-value-to-dom-sexp 
+                       (moby-error-type:index-out-of-bounds-maximum error-type))
+                     "]"
+                     ))]
+       
+       [(moby-error-type:conditional-exhausted? error-type)
+        `(span ((class "Error:ConditionalExhausted"))
+               (span ((class "Error.reason"))
+                     "All of the questions inside a cond were false, "
+                     "and at least one of them has to be true."))]
+       
+       [(moby-error-type:generic-runtime-error? error-type)
+        `(span ((class "Error:GenericRuntimeError"))
+               (span ((class "Error.reason"))
+                     ,(moby-error-type:generic-runtime-error-reason error-type)))]
 
-      [(moby-error-type:unrecognized-lexical-token? error-type)
-       `(span ((class "Error:UnrecognizedLexicalToken"))
-              (span ((class "Error:UnrecognizedLexicalToken.reason"))
-                    "I saw "
-                    ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))
-                    " which I don't recognize as a program element.")
-              (span ((class "Error:UnrecognizedLexicalToken.token"))
-                    (symbol->string (moby-error-type:unrecognized-lexical-token-token error-type)))
-              (span ((class "Error:UnrecognizedLexicalToken.location"))
-                    ,(Loc->dom-sexp embedded-location)))]
-      
-      [(moby-error-type:unsupported-lexical-token? error-type)
-       `(span ((class "Error:UnsupportedLexicalToken"))
-              (span ((class "Error:UnsupportedLexicalToken.reason"))
-                    ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))
-                    " is currently not supported.")
-              (span ((class "Error:UnsupportedLexicalToken.token"))
-                    ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type)))
-              (span ((class "Error:UnsupportedLexicalToken.location"))
-                    ,(Loc->dom-sexp embedded-location)))]
-      
-
-      [(moby-error-type:unclosed-parentheses? error-type)
-       `(span ((class "Error:UnclosedParentheses"))
-              (span ((class "Error:UnclosedParentheses.reason"))
-                    "I saw "
-                    (symbol->string (moby-error-type:unclosed-parentheses error-type))
-                    " to start an expression, but no "
-                    (symbol->string (moby-error-type:unclosed-parentheses error-type))
-                    "to close it.")
-              (span ((class "Error:UnclosedParentheses.opener"))
-                    (symbol->string (moby-error-type:unclosed-parentheses-opener error-type)))
-              (span ((class "Error:UnclosedParentheses.closer"))
-                    (symbol->string (moby-error-type:unclosed-parentheses-closer error-type)))
-              (span ((class "Error:UnclosedParentheses.location"))
-                    ,(Loc->dom-sexp embedded-location)))]
-      
-      [(moby-error-type:missing-expression? error-type)
-       `(span ((class "Error:MissingExpression"))
-              (span ((class "Error:MissingExpression.reason"))
-                    "I expected an expression following "
-                    ,(symbol->string (moby-error-type:missing-expression-token error-type))
-                    " but did not find one.")
-              (span ((class "Error:MissingExpression.location"))
-                    ,(Loc->dom-sexp embedded-location)))]
-
-      [(moby-error-type:duplicate-identifier? error-type)
-       "fixme"]
-      [(moby-error-type:undefined-identifier? error-type)
-       "fixme"]
-      [(moby-error-type:application-arity? error-type)
-       "fixme"]
-      [(moby-error-type:type-mismatch? error-type)
-       "fixme"]
-      [(moby-error-type:index-out-of-bounds? error-type)
-       "fixme"]
-      [(moby-error-type:conditional-exhausted? error-type)
-       "fixme"]
-      [(moby-error-type:generic-runtime-error? error-type)
-       "fixme"]
-      [(moby-error-type:generic-syntactic-error? error-type)
-       "fixme"])))
+       [(moby-error-type:generic-syntactic-error? error-type)
+        `(span ((class "Error:GenericSyntacticError"))
+               (span ((class "Error.reason"))
+                     ,(moby-error-type:generic-syntactic-error-reason error-type))
+               (span ((class "Error:GenericSyntacticError.otherLocations"))
+                     ,@(map Loc->dom-sexp 
+                            (moby-error-type:generic-syntactic-error-other-locations error-type))))]))))
   
 
 
@@ -119,6 +178,67 @@
 (define (scheme-value-to-dom-sexp a-scheme-value)
   "fixme")
     
+
+(define (expected-value-to-dom-sexp expected)
+  (cond 
+    [(moby-expected:string? expected)
+     `(span ((class "Expected:String"))
+            "<string>")]
+    [(moby-expected:integer? expected)
+     `(span ((class "Expected:Integer"))
+            "<integer>")]
+    [(moby-expected:natural? expected)
+     `(span ((class "Expected:Natural"))
+            "<natural>")]
+    [(moby-expected:rational? expected)
+     `(span ((class "Expected:Rational"))
+            "<rational>")]
+    [(moby-expected:real? expected)
+     `(span ((class "Expected:Real"))
+            "<real>")]
+    [(moby-expected:complex? expected)
+    `(span ((class "Expected:Complex"))
+           "<complex>")]
+    [(moby-expected:number? expected)
+     `(span ((class "Expected:Number"))
+            "<number>")]
+    [(moby-expected:boolean? expected)
+     `(span ((class "Expected:Boolean"))
+            "<boolean>")]
+    [(moby-expected:char? expected)
+     `(span ((class "Expected:Char"))
+            "<char>")]
+    [(moby-expected:symbol? expected)
+     `(span ((class "Expected:Symbol"))
+            "<symbol>")]
+    [(moby-expected:list? expected)
+     `(span ((class "Expected:List"))
+            "<list>")]
+    [(moby-expected:vector? expected)
+     `(span ((class "Expected:Vector"))
+            "<vector>")]
+    [(moby-expected:struct? expected)
+     `(span ((class "Expected:Struct"))
+            "<struct>")]
+    [(moby-expected:box? expected)
+     `(span ((class "Expected:Box"))
+            "<box>")]
+    [(moby-expected:hash? expected)
+     `(span ((class "Expected:Hash"))
+            "<hash>")]
+    [(moby-expected:function? expected)
+     `(span ((class "Expected:Function"))
+            "<function>")]
+    [(moby-expected:something? expected)
+     `(span ((class "Expected:Something"))
+            "<something>")]))
+
+
+
+
+(define (arity-to-dom-sexp an-arity)
+  "fixme")
+
     
   
 

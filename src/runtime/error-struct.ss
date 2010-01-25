@@ -1,7 +1,7 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
 
-(define-struct moby-error (reason location error-type))
+(define-struct moby-error (location error-type))
 
 
 (define-struct moby-error-type:unclosed-lexical-token (type opener closer))
@@ -9,14 +9,14 @@
 (define-struct moby-error-type:unsupported-lexical-token (token))
 (define-struct moby-error-type:unclosed-parentheses (opener closer))
 (define-struct moby-error-type:missing-expression (token))
-(define-struct moby-error-type:duplicate-identifier (id other-location))
-(define-struct moby-error-type:undefined-identifier ())
-(define-struct moby-error-type:application-arity (expected observed))
+(define-struct moby-error-type:duplicate-identifier (id second-location))
+(define-struct moby-error-type:undefined-identifier (id))
+(define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
 (define-struct moby-error-type:index-out-of-bounds (minimum maximum observed))
 (define-struct moby-error-type:conditional-exhausted ())
-(define-struct moby-error-type:generic-runtime-error ())
-(define-struct moby-error-type:generic-syntactic-error (other-locations))
+(define-struct moby-error-type:generic-runtime-error (reason))
+(define-struct moby-error-type:generic-syntactic-error (reason other-locations))
 
 
 
@@ -89,8 +89,7 @@
 
 
 (provide/contract
- [struct moby-error ([reason string?]
-                     [location any/c]
+ [struct moby-error ([location any/c]
                      [error-type moby-error-type?])]
 
  [moby-error-type? (any/c . -> . boolean?)]
@@ -103,9 +102,10 @@
                                                [closer symbol?])]
  [struct moby-error-type:missing-expression ([token symbol?])]
  [struct moby-error-type:duplicate-identifier ([id symbol?]
-                                               [other-location any/c])]
- [struct moby-error-type:undefined-identifier ()]
- [struct moby-error-type:application-arity ([expected any/c]
+                                               [second-location any/c])]
+ [struct moby-error-type:undefined-identifier ([id symbol?])]
+ [struct moby-error-type:application-arity ([who any/c]
+                                            [expected any/c]
                                             [observed any/c])]
  [struct moby-error-type:type-mismatch ([who any/c]
                                         [position number?]
@@ -115,8 +115,9 @@
                                               [maximum number?]
                                               [observed number?])]
  [struct moby-error-type:conditional-exhausted ()]
- [struct moby-error-type:generic-runtime-error ()]
- [struct moby-error-type:generic-syntactic-error ([other-locations (listof any/c)])]
+ [struct moby-error-type:generic-runtime-error ([reason string?])]
+ [struct moby-error-type:generic-syntactic-error ([reason string?]
+                                                  [other-locations (listof any/c)])]
  
  
  [moby-expected? (any/c . -> . boolean?)]
