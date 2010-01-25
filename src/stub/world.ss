@@ -13,7 +13,7 @@
          lang/prim
          (for-syntax scheme/base)
 	 "../version-case.ss"
-         "../runtime/effect-struct.ss"
+         "../collects/runtime/effect-struct.ss"
          "world-effects.ss")
 
 (version-case 

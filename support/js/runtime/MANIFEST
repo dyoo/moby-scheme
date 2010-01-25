@@ -11,12 +11,13 @@ collects/runtime/effect-struct.js
 collects/runtime/arity-struct.js
 collects/runtime/error-struct.js
 collects/runtime/error-struct-to-dom.js
+world-effects.js
 world-config.js
+world-stimuli.js
 platform.js
 lib.js
 world.js
 jsworld/jsworld.js
 jsworld.js
-world-stimuli.js
 permission.js
 foreign.js

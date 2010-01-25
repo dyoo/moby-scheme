@@ -5,51 +5,53 @@ goog.provide('plt.permission');
 
     plt.permission = {};
 
+    plt.Kernel.invokeModule("moby/runtime/permission-struct");
+    var PEXPORTS = plt._MODULES('/moby/runtime/permission-struct').EXPORTS;
 
 
 
     var isLocationP = function(p) {
-	return permission_colon_location_question_(p);
+	return PEXPORTS["permission_colon_location_question_"](p);
     };
 
     var isSendSmsP = function(p) {
-	return permission_colon_send_dash_sms_question_(p);
+	return PEXPORTS["permission_colon_send_dash_sms_question_"](p);
     };
 
     var isReceiveSmsP = function(p) {
-	return permission_colon_receive_dash_sms_question_(p);
+	return PEXPORTS["permission_colon_receive_dash_sms_question_"](p);
     };
 
     var isTiltP = function(p) {
-	return permission_colon_tilt_question_(p);
+	return PEXPORTS["permission_colon_tilt_question_"](p);
     };
 
     var isShakeP = function(p) {
-	return permission_colon_shake_question_(p);
+	return PEXPORTS["permission_colon_shake_question_"](p);
     };
 
     var isInternetP = function(p) {
-	return permission_colon_internet_question_(p);
+	return PEXPORTS["permission_colon_internet_question_"](p);
     };
 
     var isTelephonyP = function(p) {
-	return permission_colon_telephony_question_(p);
+	return PEXPORTS["permission_colon_telephony_question_"](p);
     };
 
     var isWakeLockP = function(p) {
-	return permission_colon_wake_dash_lock_question_(p);
+	return PEXPORTS["permission_colon_wake_dash_lock_question_"](p);
     };
 
     var isForeignFunctionInterfaceP = function(p) {
-	return permission_colon_foreign_dash_function_dash_interface_question_(p);
+	return PEXPORTS["permission_colon_foreign_dash_function_dash_interface_question_"](p);
     };
 
     var isOpenImageUrlP = function(p) {
-	return permission_colon_open_dash_image_dash_url_question_(p);
+	return PEXPORTS["permission_colon_open_dash_image_dash_url_question_"](p);
     };
 
     var isUniverseP = function(p) {
-	return permission_colon_universe_question_(p);
+	return PEXPORTS["permission_colon_universe_question_"](p);
     };
 
 

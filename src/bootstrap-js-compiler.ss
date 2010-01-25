@@ -256,7 +256,7 @@
       (copy-path-to-port jshashtable.js op)
       (copy-path-to-port types.js op)
       (copy-path-to-port kernel.js op)
-      (copy-path-to-port "../support/js/runtime/stx.js" op)
+      (copy-path-to-port "../support/js/runtime/collects/runtime/stx.js" op)
       (copy-path-to-port read.js op)
       (copy-path-to-port compiler-path op)
       #;(display (phase-1-bootstrap-compile "compiler/beginner-to-javascript.ss") op)
@@ -274,6 +274,7 @@
       (display "// compileScheme: string -> (array string (arrayof string))\n" op)
       (display "
    function compileScheme(s) {
+       plt.Kernel.invokeModule('moby/runtime/permission-struct');
        var exprs = plt.reader.readSchemeExpressions(s, 'standalone');
        var compiledProgram =
            program_dash__greaterthan_compiled_dash_program_slash_pinfo(exprs, aPinfo);
@@ -281,9 +282,9 @@
        var compiledSrc = compiled_dash_program_dash_main(compiledProgram);
        var permList = pinfo_dash_permissions(compiled_dash_program_dash_pinfo(compiledProgram));
        var perms = [];
+       var E = plt._MODULES['moby/runtime/permission-struct'].EXPORTS;
        while (!permList.isEmpty()) {     
-           perms.push(
-               permission_dash__greaterthan_string(permList.first()));
+           perms.push(E.permission_dash__greaterthan_string(permList.first()));
            permList = permList.rest();
        }
        return [compiledSrc, perms];
@@ -474,8 +475,8 @@
 (write-runtime-toplevel-bindings-descriptions)
 (write-runtime-library-modules)
 (write-compressed-runtime)
-#;(write-compiler)
-#;(write-compressed-compilers)
+(write-compiler)
+(write-compressed-compilers)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

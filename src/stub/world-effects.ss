@@ -1,6 +1,6 @@
 #lang scheme/base
 
-(require "../runtime/effect-struct.ss"
+(require "../collects/runtime/effect-struct.ss"
          scheme/contract
          scheme/port
          scheme/file
