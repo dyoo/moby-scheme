@@ -115,6 +115,39 @@
                              (list-ref an-sexp 6))]))
 
 
+;; localize-binding-to-module: binding module-name -> binding
+;; Rename all the javastring references so they're module-scoped.
+(define (localize-binding-to-module a-binding a-module-name)
+  (cond
+    [(binding:constant? a-binding)
+     (make-binding:constant 
+      (binding:constant-name a-binding)
+      (format "plt._MODULES[~s].EXPORTS[~s]"
+              (symbol->string a-module-name)
+              (binding:constant-java-string a-binding))
+      (binding:constant-permissions a-binding))]
+    [(binding:function? a-binding)
+     (make-binding:function
+      (binding:function-name a-binding)
+      (binding:function-module-source a-binding)
+      (binding:function-min-arity a-binding)
+      (binding:function-var-arity? a-binding)
+      (format "plt._MODULES[~s].EXPORTS[~s]"
+              (symbol->string a-module-name)
+              (binding:function-java-string a-binding))
+      (binding:function-permissions a-binding)
+      (binding:function-cps? a-binding))]
+    [(binding:structure? a-binding)
+     (make-binding:structure
+      (binding:structure-name a-binding)
+      (binding:structure-fields a-binding)
+      (binding:structure-constructor a-binding)
+      (binding:structure-predicate a-binding)
+      (binding:structure-accessors a-binding)
+      (binding:structure-mutators a-binding))]))
+
+    
+
 
 
 (define-struct module-binding (name source bindings))
@@ -173,6 +206,8 @@
   [binding-id (binding? . -> . symbol?)]
   [binding->sexp (binding? . -> . any)]
   [sexp->binding (any/c . -> . binding?)]
+
+  [localize-binding-to-module (binding? module-name? . -> . binding?)]
   
   
   
