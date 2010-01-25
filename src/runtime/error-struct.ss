@@ -8,7 +8,7 @@
 (define-struct moby-error-type:unrecognized-lexical-token (token))
 (define-struct moby-error-type:unsupported-lexical-token (token))
 (define-struct moby-error-type:unclosed-parentheses (opener closer))
-(define-struct moby-error-type:missing-expression ())
+(define-struct moby-error-type:missing-expression (token))
 (define-struct moby-error-type:duplicate-identifier (id other-location))
 (define-struct moby-error-type:undefined-identifier ())
 (define-struct moby-error-type:application-arity (expected observed))
@@ -101,7 +101,7 @@
  [struct moby-error-type:unsupported-lexical-token ([token symbol?])]
  [struct moby-error-type:unclosed-parentheses ([opener symbol?]
                                                [closer symbol?])]
- [struct moby-error-type:missing-expression ()]
+ [struct moby-error-type:missing-expression ([token symbol?])]
  [struct moby-error-type:duplicate-identifier ([id symbol?]
                                                [other-location any/c])]
  [struct moby-error-type:undefined-identifier ()]

@@ -65,8 +65,22 @@
       (binding:function make-module-binding #f 3 #f "make_dash_module_dash_binding" () #f)
       (binding:function module-binding? #f 1 #f "module_dash_binding_question_" () #f)
       (binding:function module-binding-name #f 1 #f "module_dash_binding_dash_name" () #f)
-      (binding:function module-binding-source #f 1 #f "module_dash_binding_dash_source" () #f)
-      (binding:function module-binding-bindings #f 1 #f "module_dash_binding_dash_bindings" () #f)
+      (binding:function
+       module-binding-source
+       #f
+       1
+       #f
+       "module_dash_binding_dash_source"
+       ()
+       #f)
+      (binding:function
+       module-binding-bindings
+       #f
+       1
+       #f
+       "module_dash_binding_dash_bindings"
+       ()
+       #f)
       (binding:structure
        binding:function
        (name module-source min-arity var-arity? java-string permissions cps?)
@@ -86,9 +100,23 @@
         set-binding:function-java-string!
         set-binding:function-permissions!
         set-binding:function-cps?!))
-      (binding:function make-binding:function #f 7 #f "make_dash_binding_colon_function" () #f)
+      (binding:function
+       make-binding:function
+       #f
+       7
+       #f
+       "make_dash_binding_colon_function"
+       ()
+       #f)
       (binding:function binding:function? #f 1 #f "binding_colon_function_question_" () #f)
-      (binding:function binding:function-name #f 1 #f "binding_colon_function_dash_name" () #f)
+      (binding:function
+       binding:function-name
+       #f
+       1
+       #f
+       "binding_colon_function_dash_name"
+       ()
+       #f)
       (binding:function
        binding:function-module-source
        #f
@@ -97,7 +125,14 @@
        "binding_colon_function_dash_module_dash_source"
        ()
        #f)
-      (binding:function binding:function-min-arity #f 1 #f "binding_colon_function_dash_min_dash_arity" () #f)
+      (binding:function
+       binding:function-min-arity
+       #f
+       1
+       #f
+       "binding_colon_function_dash_min_dash_arity"
+       ()
+       #f)
       (binding:function
        binding:function-var-arity?
        #f
@@ -114,8 +149,22 @@
        "binding_colon_function_dash_java_dash_string"
        ()
        #f)
-      (binding:function binding:function-permissions #f 1 #f "binding_colon_function_dash_permissions" () #f)
-      (binding:function binding:function-cps? #f 1 #f "binding_colon_function_dash_cps_question_" () #f)
+      (binding:function
+       binding:function-permissions
+       #f
+       1
+       #f
+       "binding_colon_function_dash_permissions"
+       ()
+       #f)
+      (binding:function
+       binding:function-cps?
+       #f
+       1
+       #f
+       "binding_colon_function_dash_cps_question_"
+       ()
+       #f)
       (binding:structure
        binding:structure
        (name fields constructor predicate accessors mutators)
@@ -133,10 +182,31 @@
         set-binding:structure-predicate!
         set-binding:structure-accessors!
         set-binding:structure-mutators!))
-      (binding:function make-binding:structure #f 6 #f "make_dash_binding_colon_structure" () #f)
+      (binding:function
+       make-binding:structure
+       #f
+       6
+       #f
+       "make_dash_binding_colon_structure"
+       ()
+       #f)
       (binding:function binding:structure? #f 1 #f "binding_colon_structure_question_" () #f)
-      (binding:function binding:structure-name #f 1 #f "binding_colon_structure_dash_name" () #f)
-      (binding:function binding:structure-fields #f 1 #f "binding_colon_structure_dash_fields" () #f)
+      (binding:function
+       binding:structure-name
+       #f
+       1
+       #f
+       "binding_colon_structure_dash_name"
+       ()
+       #f)
+      (binding:function
+       binding:structure-fields
+       #f
+       1
+       #f
+       "binding_colon_structure_dash_fields"
+       ()
+       #f)
       (binding:function
        binding:structure-constructor
        #f
@@ -145,9 +215,30 @@
        "binding_colon_structure_dash_constructor"
        ()
        #f)
-      (binding:function binding:structure-predicate #f 1 #f "binding_colon_structure_dash_predicate" () #f)
-      (binding:function binding:structure-accessors #f 1 #f "binding_colon_structure_dash_accessors" () #f)
-      (binding:function binding:structure-mutators #f 1 #f "binding_colon_structure_dash_mutators" () #f)
+      (binding:function
+       binding:structure-predicate
+       #f
+       1
+       #f
+       "binding_colon_structure_dash_predicate"
+       ()
+       #f)
+      (binding:function
+       binding:structure-accessors
+       #f
+       1
+       #f
+       "binding_colon_structure_dash_accessors"
+       ()
+       #f)
+      (binding:function
+       binding:structure-mutators
+       #f
+       1
+       #f
+       "binding_colon_structure_dash_mutators"
+       ()
+       #f)
       (binding:function binding-id #f 1 #f "binding_dash_id" () #f)
       (binding:structure
        binding:constant
@@ -155,10 +246,26 @@
        make-binding:constant
        binding:constant?
        (binding:constant-name binding:constant-java-string binding:constant-permissions)
-       (set-binding:constant-name! set-binding:constant-java-string! set-binding:constant-permissions!))
-      (binding:function make-binding:constant #f 3 #f "make_dash_binding_colon_constant" () #f)
+       (set-binding:constant-name!
+        set-binding:constant-java-string!
+        set-binding:constant-permissions!))
+      (binding:function
+       make-binding:constant
+       #f
+       3
+       #f
+       "make_dash_binding_colon_constant"
+       ()
+       #f)
       (binding:function binding:constant? #f 1 #f "binding_colon_constant_question_" () #f)
-      (binding:function binding:constant-name #f 1 #f "binding_colon_constant_dash_name" () #f)
+      (binding:function
+       binding:constant-name
+       #f
+       1
+       #f
+       "binding_colon_constant_dash_name"
+       ()
+       #f)
       (binding:function
        binding:constant-java-string
        #f
@@ -167,7 +274,14 @@
        "binding_colon_constant_dash_java_dash_string"
        ()
        #f)
-      (binding:function binding:constant-permissions #f 1 #f "binding_colon_constant_dash_permissions" () #f)
+      (binding:function
+       binding:constant-permissions
+       #f
+       1
+       #f
+       "binding_colon_constant_dash_permissions"
+       ()
+       #f)
       (binding:function binding->sexp #f 1 #f "binding_dash__greaterthan_sexp" () #f)))
    '(moby/runtime/permission-struct
      "runtime/permission-struct.ss"
@@ -205,11 +319,38 @@
       (binding:structure permission:tilt () make-permission:tilt permission:tilt? () ())
       (binding:function make-permission:tilt #f 0 #f "make_dash_permission_colon_tilt" () #f)
       (binding:function permission:tilt? #f 1 #f "permission_colon_tilt_question_" () #f)
-      (binding:structure permission:wake-lock () make-permission:wake-lock permission:wake-lock? () ())
-      (binding:function make-permission:wake-lock #f 0 #f "make_dash_permission_colon_wake_dash_lock" () #f)
-      (binding:function permission:wake-lock? #f 1 #f "permission_colon_wake_dash_lock_question_" () #f)
+      (binding:structure
+       permission:wake-lock
+       ()
+       make-permission:wake-lock
+       permission:wake-lock?
+       ()
+       ())
+      (binding:function
+       make-permission:wake-lock
+       #f
+       0
+       #f
+       "make_dash_permission_colon_wake_dash_lock"
+       ()
+       #f)
+      (binding:function
+       permission:wake-lock?
+       #f
+       1
+       #f
+       "permission_colon_wake_dash_lock_question_"
+       ()
+       #f)
       (binding:function permission? #f 1 #f "permission_question_" () #f)
-      (binding:function string->permission #f 1 #f "string_dash__greaterthan_permission" () #f)
+      (binding:function
+       string->permission
+       #f
+       1
+       #f
+       "string_dash__greaterthan_permission"
+       ()
+       #f)
       (binding:structure
        permission:universe
        (url)
@@ -217,19 +358,93 @@
        permission:universe?
        (permission:universe-url)
        (set-permission:universe-url!))
-      (binding:function make-permission:universe #f 1 #f "make_dash_permission_colon_universe" () #f)
-      (binding:function permission:universe? #f 1 #f "permission_colon_universe_question_" () #f)
-      (binding:function permission:universe-url #f 1 #f "permission_colon_universe_dash_url" () #f)
-      (binding:structure permission:send-sms () make-permission:send-sms permission:send-sms? () ())
-      (binding:function make-permission:send-sms #f 0 #f "make_dash_permission_colon_send_dash_sms" () #f)
-      (binding:function permission:send-sms? #f 1 #f "permission_colon_send_dash_sms_question_" () #f)
+      (binding:function
+       make-permission:universe
+       #f
+       1
+       #f
+       "make_dash_permission_colon_universe"
+       ()
+       #f)
+      (binding:function
+       permission:universe?
+       #f
+       1
+       #f
+       "permission_colon_universe_question_"
+       ()
+       #f)
+      (binding:function
+       permission:universe-url
+       #f
+       1
+       #f
+       "permission_colon_universe_dash_url"
+       ()
+       #f)
+      (binding:structure
+       permission:send-sms
+       ()
+       make-permission:send-sms
+       permission:send-sms?
+       ()
+       ())
+      (binding:function
+       make-permission:send-sms
+       #f
+       0
+       #f
+       "make_dash_permission_colon_send_dash_sms"
+       ()
+       #f)
+      (binding:function
+       permission:send-sms?
+       #f
+       1
+       #f
+       "permission_colon_send_dash_sms_question_"
+       ()
+       #f)
       (binding:structure permission:shake () make-permission:shake permission:shake? () ())
-      (binding:function make-permission:shake #f 0 #f "make_dash_permission_colon_shake" () #f)
+      (binding:function
+       make-permission:shake
+       #f
+       0
+       #f
+       "make_dash_permission_colon_shake"
+       ()
+       #f)
       (binding:function permission:shake? #f 1 #f "permission_colon_shake_question_" () #f)
-      (binding:structure permission:telephony () make-permission:telephony permission:telephony? () ())
-      (binding:function make-permission:telephony #f 0 #f "make_dash_permission_colon_telephony" () #f)
-      (binding:function permission:telephony? #f 1 #f "permission_colon_telephony_question_" () #f)
-      (binding:structure permission:receive-sms () make-permission:receive-sms permission:receive-sms? () ())
+      (binding:structure
+       permission:telephony
+       ()
+       make-permission:telephony
+       permission:telephony?
+       ()
+       ())
+      (binding:function
+       make-permission:telephony
+       #f
+       0
+       #f
+       "make_dash_permission_colon_telephony"
+       ()
+       #f)
+      (binding:function
+       permission:telephony?
+       #f
+       1
+       #f
+       "permission_colon_telephony_question_"
+       ()
+       #f)
+      (binding:structure
+       permission:receive-sms
+       ()
+       make-permission:receive-sms
+       permission:receive-sms?
+       ()
+       ())
       (binding:function
        make-permission:receive-sms
        #f
@@ -238,15 +453,69 @@
        "make_dash_permission_colon_receive_dash_sms"
        ()
        #f)
-      (binding:function permission:receive-sms? #f 1 #f "permission_colon_receive_dash_sms_question_" () #f)
+      (binding:function
+       permission:receive-sms?
+       #f
+       1
+       #f
+       "permission_colon_receive_dash_sms_question_"
+       ()
+       #f)
       (binding:constant PERMISSION:TILT "PERMISSION_colon_TILT" ())
-      (binding:structure permission:internet () make-permission:internet permission:internet? () ())
-      (binding:function make-permission:internet #f 0 #f "make_dash_permission_colon_internet" () #f)
-      (binding:function permission:internet? #f 1 #f "permission_colon_internet_question_" () #f)
-      (binding:structure permission:location () make-permission:location permission:location? () ())
-      (binding:function make-permission:location #f 0 #f "make_dash_permission_colon_location" () #f)
-      (binding:function permission:location? #f 1 #f "permission_colon_location_question_" () #f)
-      (binding:function permission->string #f 1 #f "permission_dash__greaterthan_string" () #f)
+      (binding:structure
+       permission:internet
+       ()
+       make-permission:internet
+       permission:internet?
+       ()
+       ())
+      (binding:function
+       make-permission:internet
+       #f
+       0
+       #f
+       "make_dash_permission_colon_internet"
+       ()
+       #f)
+      (binding:function
+       permission:internet?
+       #f
+       1
+       #f
+       "permission_colon_internet_question_"
+       ()
+       #f)
+      (binding:structure
+       permission:location
+       ()
+       make-permission:location
+       permission:location?
+       ()
+       ())
+      (binding:function
+       make-permission:location
+       #f
+       0
+       #f
+       "make_dash_permission_colon_location"
+       ()
+       #f)
+      (binding:function
+       permission:location?
+       #f
+       1
+       #f
+       "permission_colon_location_question_"
+       ()
+       #f)
+      (binding:function
+       permission->string
+       #f
+       1
+       #f
+       "permission_dash__greaterthan_string"
+       ()
+       #f)
       (binding:structure
        permission:foreign-function-interface
        ()
@@ -352,9 +621,30 @@
        effect:stop-sound?
        (effect:stop-sound-sound)
        (set-effect:stop-sound-sound!))
-      (binding:function make-effect:stop-sound #f 1 #f "make_dash_effect_colon_stop_dash_sound" () #f)
-      (binding:function effect:stop-sound? #f 1 #f "effect_colon_stop_dash_sound_question_" () #f)
-      (binding:function effect:stop-sound-sound #f 1 #f "effect_colon_stop_dash_sound_dash_sound" () #f)
+      (binding:function
+       make-effect:stop-sound
+       #f
+       1
+       #f
+       "make_dash_effect_colon_stop_dash_sound"
+       ()
+       #f)
+      (binding:function
+       effect:stop-sound?
+       #f
+       1
+       #f
+       "effect_colon_stop_dash_sound_question_"
+       ()
+       #f)
+      (binding:function
+       effect:stop-sound-sound
+       #f
+       1
+       #f
+       "effect_colon_stop_dash_sound_dash_sound"
+       ()
+       #f)
       (binding:function effect? #f 1 #f "effect_question_" () #f)
       (binding:structure
        effect:set-wake-lock
@@ -371,7 +661,14 @@
        "make_dash_effect_colon_set_dash_wake_dash_lock"
        ()
        #f)
-      (binding:function effect:set-wake-lock? #f 1 #f "effect_colon_set_dash_wake_dash_lock_question_" () #f)
+      (binding:function
+       effect:set-wake-lock?
+       #f
+       1
+       #f
+       "effect_colon_set_dash_wake_dash_lock_question_"
+       ()
+       #f)
       (binding:function
        effect:set-wake-lock-locks
        #f
@@ -387,10 +684,38 @@
        effect:send-sms?
        (effect:send-sms-address effect:send-sms-msg)
        (set-effect:send-sms-address! set-effect:send-sms-msg!))
-      (binding:function make-effect:send-sms #f 2 #f "make_dash_effect_colon_send_dash_sms" () #f)
-      (binding:function effect:send-sms? #f 1 #f "effect_colon_send_dash_sms_question_" () #f)
-      (binding:function effect:send-sms-address #f 1 #f "effect_colon_send_dash_sms_dash_address" () #f)
-      (binding:function effect:send-sms-msg #f 1 #f "effect_colon_send_dash_sms_dash_msg" () #f)
+      (binding:function
+       make-effect:send-sms
+       #f
+       2
+       #f
+       "make_dash_effect_colon_send_dash_sms"
+       ()
+       #f)
+      (binding:function
+       effect:send-sms?
+       #f
+       1
+       #f
+       "effect_colon_send_dash_sms_question_"
+       ()
+       #f)
+      (binding:function
+       effect:send-sms-address
+       #f
+       1
+       #f
+       "effect_colon_send_dash_sms_dash_address"
+       ()
+       #f)
+      (binding:function
+       effect:send-sms-msg
+       #f
+       1
+       #f
+       "effect_colon_send_dash_sms_dash_msg"
+       ()
+       #f)
       (binding:structure
        effect:release-wake-lock
        ()
@@ -421,9 +746,30 @@
        effect:pause-sound?
        (effect:pause-sound-sound)
        (set-effect:pause-sound-sound!))
-      (binding:function make-effect:pause-sound #f 1 #f "make_dash_effect_colon_pause_dash_sound" () #f)
-      (binding:function effect:pause-sound? #f 1 #f "effect_colon_pause_dash_sound_question_" () #f)
-      (binding:function effect:pause-sound-sound #f 1 #f "effect_colon_pause_dash_sound_dash_sound" () #f)
+      (binding:function
+       make-effect:pause-sound
+       #f
+       1
+       #f
+       "make_dash_effect_colon_pause_dash_sound"
+       ()
+       #f)
+      (binding:function
+       effect:pause-sound?
+       #f
+       1
+       #f
+       "effect_colon_pause_dash_sound_question_"
+       ()
+       #f)
+      (binding:function
+       effect:pause-sound-sound
+       #f
+       1
+       #f
+       "effect_colon_pause_dash_sound_dash_sound"
+       ()
+       #f)
       (binding:structure
        effect:play-dtmf-tone
        (tone duration)
@@ -470,9 +816,30 @@
        effect:play-sound?
        (effect:play-sound-sound)
        (set-effect:play-sound-sound!))
-      (binding:function make-effect:play-sound #f 1 #f "make_dash_effect_colon_play_dash_sound" () #f)
-      (binding:function effect:play-sound? #f 1 #f "effect_colon_play_dash_sound_question_" () #f)
-      (binding:function effect:play-sound-sound #f 1 #f "effect_colon_play_dash_sound_dash_sound" () #f)
+      (binding:function
+       make-effect:play-sound
+       #f
+       1
+       #f
+       "make_dash_effect_colon_play_dash_sound"
+       ()
+       #f)
+      (binding:function
+       effect:play-sound?
+       #f
+       1
+       #f
+       "effect_colon_play_dash_sound_question_"
+       ()
+       #f)
+      (binding:function
+       effect:play-sound-sound
+       #f
+       1
+       #f
+       "effect_colon_play_dash_sound_dash_sound"
+       ()
+       #f)
       (binding:structure
        effect:pick-playlist
        (update-f)
@@ -480,8 +847,22 @@
        effect:pick-playlist?
        (effect:pick-playlist-update-f)
        (set-effect:pick-playlist-update-f!))
-      (binding:function make-effect:pick-playlist #f 1 #f "make_dash_effect_colon_pick_dash_playlist" () #f)
-      (binding:function effect:pick-playlist? #f 1 #f "effect_colon_pick_dash_playlist_question_" () #f)
+      (binding:function
+       make-effect:pick-playlist
+       #f
+       1
+       #f
+       "make_dash_effect_colon_pick_dash_playlist"
+       ()
+       #f)
+      (binding:function
+       effect:pick-playlist?
+       #f
+       1
+       #f
+       "effect_colon_pick_dash_playlist_question_"
+       ()
+       #f)
       (binding:function
        effect:pick-playlist-update-f
        #f
@@ -497,9 +878,30 @@
        effect:pick-random?
        (effect:pick-random-n effect:pick-random-update-f)
        (set-effect:pick-random-n! set-effect:pick-random-update-f!))
-      (binding:function make-effect:pick-random #f 2 #f "make_dash_effect_colon_pick_dash_random" () #f)
-      (binding:function effect:pick-random? #f 1 #f "effect_colon_pick_dash_random_question_" () #f)
-      (binding:function effect:pick-random-n #f 1 #f "effect_colon_pick_dash_random_dash_n" () #f)
+      (binding:function
+       make-effect:pick-random
+       #f
+       2
+       #f
+       "make_dash_effect_colon_pick_dash_random"
+       ()
+       #f)
+      (binding:function
+       effect:pick-random?
+       #f
+       1
+       #f
+       "effect_colon_pick_dash_random_question_"
+       ()
+       #f)
+      (binding:function
+       effect:pick-random-n
+       #f
+       1
+       #f
+       "effect_colon_pick_dash_random_dash_n"
+       ()
+       #f)
       (binding:function
        effect:pick-random-update-f
        #f
@@ -561,32 +963,164 @@
       (binding:function arity:variable-min #f 1 #f "arity_colon_variable_dash_min" () #f)
       (binding:function arity:variable-max #f 1 #f "arity_colon_variable_dash_max" () #f)
       (binding:function arity? #f 1 #f "arity_question_" () #f)
-      (binding:structure arity:fixed (n) make-arity:fixed arity:fixed? (arity:fixed-n) (set-arity:fixed-n!))
+      (binding:structure
+       arity:fixed
+       (n)
+       make-arity:fixed
+       arity:fixed?
+       (arity:fixed-n)
+       (set-arity:fixed-n!))
       (binding:function make-arity:fixed #f 1 #f "make_dash_arity_colon_fixed" () #f)
       (binding:function arity:fixed? #f 1 #f "arity_colon_fixed_question_" () #f)
       (binding:function arity:fixed-n #f 1 #f "arity_colon_fixed_dash_n" () #f)))
    '(moby/runtime/error-struct
      "runtime/error-struct.ss"
-     ((binding:structure moby-expected:boolean () make-moby-expected:boolean moby-expected:boolean? () ())
-      (binding:function make-moby-expected:boolean #f 0 #f "make_dash_moby_dash_expected_colon_boolean" () #f)
-      (binding:function moby-expected:boolean? #f 1 #f "moby_dash_expected_colon_boolean_question_" () #f)
-      (binding:structure moby-expected:integer () make-moby-expected:integer moby-expected:integer? () ())
-      (binding:function make-moby-expected:integer #f 0 #f "make_dash_moby_dash_expected_colon_integer" () #f)
-      (binding:function moby-expected:integer? #f 1 #f "moby_dash_expected_colon_integer_question_" () #f)
-      (binding:structure moby-expected:string () make-moby-expected:string moby-expected:string? () ())
-      (binding:function make-moby-expected:string #f 0 #f "make_dash_moby_dash_expected_colon_string" () #f)
-      (binding:function moby-expected:string? #f 1 #f "moby_dash_expected_colon_string_question_" () #f)
-      (binding:structure moby-expected:vector () make-moby-expected:vector moby-expected:vector? () ())
-      (binding:function make-moby-expected:vector #f 0 #f "make_dash_moby_dash_expected_colon_vector" () #f)
-      (binding:function moby-expected:vector? #f 1 #f "moby_dash_expected_colon_vector_question_" () #f)
+     ((binding:structure
+       moby-expected:boolean
+       ()
+       make-moby-expected:boolean
+       moby-expected:boolean?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:boolean
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_boolean"
+       ()
+       #f)
+      (binding:function
+       moby-expected:boolean?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_boolean_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:integer
+       ()
+       make-moby-expected:integer
+       moby-expected:integer?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:integer
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_integer"
+       ()
+       #f)
+      (binding:function
+       moby-expected:integer?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_integer_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:string
+       ()
+       make-moby-expected:string
+       moby-expected:string?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:string
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_string"
+       ()
+       #f)
+      (binding:function
+       moby-expected:string?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_string_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:vector
+       ()
+       make-moby-expected:vector
+       moby-expected:vector?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:vector
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_vector"
+       ()
+       #f)
+      (binding:function
+       moby-expected:vector?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_vector_question_"
+       ()
+       #f)
       (binding:function moby-expected? #f 1 #f "moby_dash_expected_question_" () #f)
-      (binding:structure moby-expected:symbol () make-moby-expected:symbol moby-expected:symbol? () ())
-      (binding:function make-moby-expected:symbol #f 0 #f "make_dash_moby_dash_expected_colon_symbol" () #f)
-      (binding:function moby-expected:symbol? #f 1 #f "moby_dash_expected_colon_symbol_question_" () #f)
-      (binding:structure moby-expected:struct () make-moby-expected:struct moby-expected:struct? () ())
-      (binding:function make-moby-expected:struct #f 0 #f "make_dash_moby_dash_expected_colon_struct" () #f)
-      (binding:function moby-expected:struct? #f 1 #f "moby_dash_expected_colon_struct_question_" () #f)
-      (binding:structure moby-expected:rational () make-moby-expected:rational moby-expected:rational? () ())
+      (binding:structure
+       moby-expected:symbol
+       ()
+       make-moby-expected:symbol
+       moby-expected:symbol?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:symbol
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_symbol"
+       ()
+       #f)
+      (binding:function
+       moby-expected:symbol?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_symbol_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:struct
+       ()
+       make-moby-expected:struct
+       moby-expected:struct?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:struct
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_struct"
+       ()
+       #f)
+      (binding:function
+       moby-expected:struct?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_struct_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:rational
+       ()
+       make-moby-expected:rational
+       moby-expected:rational?
+       ()
+       ())
       (binding:function
        make-moby-expected:rational
        #f
@@ -595,10 +1129,37 @@
        "make_dash_moby_dash_expected_colon_rational"
        ()
        #f)
-      (binding:function moby-expected:rational? #f 1 #f "moby_dash_expected_colon_rational_question_" () #f)
-      (binding:structure moby-expected:real () make-moby-expected:real moby-expected:real? () ())
-      (binding:function make-moby-expected:real #f 0 #f "make_dash_moby_dash_expected_colon_real" () #f)
-      (binding:function moby-expected:real? #f 1 #f "moby_dash_expected_colon_real_question_" () #f)
+      (binding:function
+       moby-expected:rational?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_rational_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:real
+       ()
+       make-moby-expected:real
+       moby-expected:real?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:real
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_real"
+       ()
+       #f)
+      (binding:function
+       moby-expected:real?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_real_question_"
+       ()
+       #f)
       (binding:structure
        moby-expected:something
        ()
@@ -614,20 +1175,113 @@
        "make_dash_moby_dash_expected_colon_something"
        ()
        #f)
-      (binding:function moby-expected:something? #f 1 #f "moby_dash_expected_colon_something_question_" () #f)
-      (binding:structure moby-expected:natural () make-moby-expected:natural moby-expected:natural? () ())
-      (binding:function make-moby-expected:natural #f 0 #f "make_dash_moby_dash_expected_colon_natural" () #f)
-      (binding:function moby-expected:natural? #f 1 #f "moby_dash_expected_colon_natural_question_" () #f)
-      (binding:structure moby-expected:number () make-moby-expected:number moby-expected:number? () ())
-      (binding:function make-moby-expected:number #f 0 #f "make_dash_moby_dash_expected_colon_number" () #f)
-      (binding:function moby-expected:number? #f 1 #f "moby_dash_expected_colon_number_question_" () #f)
-      (binding:structure moby-expected:list () make-moby-expected:list moby-expected:list? () ())
-      (binding:function make-moby-expected:list #f 0 #f "make_dash_moby_dash_expected_colon_list" () #f)
-      (binding:function moby-expected:list? #f 1 #f "moby_dash_expected_colon_list_question_" () #f)
-      (binding:structure moby-expected:char () make-moby-expected:char moby-expected:char? () ())
-      (binding:function make-moby-expected:char #f 0 #f "make_dash_moby_dash_expected_colon_char" () #f)
-      (binding:function moby-expected:char? #f 1 #f "moby_dash_expected_colon_char_question_" () #f)
-      (binding:structure moby-expected:function () make-moby-expected:function moby-expected:function? () ())
+      (binding:function
+       moby-expected:something?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_something_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:natural
+       ()
+       make-moby-expected:natural
+       moby-expected:natural?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:natural
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_natural"
+       ()
+       #f)
+      (binding:function
+       moby-expected:natural?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_natural_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:number
+       ()
+       make-moby-expected:number
+       moby-expected:number?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:number
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_number"
+       ()
+       #f)
+      (binding:function
+       moby-expected:number?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_number_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:list
+       ()
+       make-moby-expected:list
+       moby-expected:list?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:list
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_list"
+       ()
+       #f)
+      (binding:function
+       moby-expected:list?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_list_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:char
+       ()
+       make-moby-expected:char
+       moby-expected:char?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:char
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_char"
+       ()
+       #f)
+      (binding:function
+       moby-expected:char?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_char_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:function
+       ()
+       make-moby-expected:function
+       moby-expected:function?
+       ()
+       ())
       (binding:function
        make-moby-expected:function
        #f
@@ -636,16 +1290,83 @@
        "make_dash_moby_dash_expected_colon_function"
        ()
        #f)
-      (binding:function moby-expected:function? #f 1 #f "moby_dash_expected_colon_function_question_" () #f)
-      (binding:structure moby-expected:hash () make-moby-expected:hash moby-expected:hash? () ())
-      (binding:function make-moby-expected:hash #f 0 #f "make_dash_moby_dash_expected_colon_hash" () #f)
-      (binding:function moby-expected:hash? #f 1 #f "moby_dash_expected_colon_hash_question_" () #f)
-      (binding:structure moby-expected:complex () make-moby-expected:complex moby-expected:complex? () ())
-      (binding:function make-moby-expected:complex #f 0 #f "make_dash_moby_dash_expected_colon_complex" () #f)
-      (binding:function moby-expected:complex? #f 1 #f "moby_dash_expected_colon_complex_question_" () #f)
-      (binding:structure moby-expected:box () make-moby-expected:box moby-expected:box? () ())
-      (binding:function make-moby-expected:box #f 0 #f "make_dash_moby_dash_expected_colon_box" () #f)
-      (binding:function moby-expected:box? #f 1 #f "moby_dash_expected_colon_box_question_" () #f)
+      (binding:function
+       moby-expected:function?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_function_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:hash
+       ()
+       make-moby-expected:hash
+       moby-expected:hash?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:hash
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_hash"
+       ()
+       #f)
+      (binding:function
+       moby-expected:hash?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_hash_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:complex
+       ()
+       make-moby-expected:complex
+       moby-expected:complex?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:complex
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_complex"
+       ()
+       #f)
+      (binding:function
+       moby-expected:complex?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_complex_question_"
+       ()
+       #f)
+      (binding:structure
+       moby-expected:box
+       ()
+       make-moby-expected:box
+       moby-expected:box?
+       ()
+       ())
+      (binding:function
+       make-moby-expected:box
+       #f
+       0
+       #f
+       "make_dash_moby_dash_expected_colon_box"
+       ()
+       #f)
+      (binding:function
+       moby-expected:box?
+       #f
+       1
+       #f
+       "moby_dash_expected_colon_box_question_"
+       ()
+       #f)
       (binding:structure
        moby-error-type:undefined-identifier
        ()
@@ -671,15 +1392,15 @@
        #f)
       (binding:structure
        moby-error-type:unsupported-lexical-token
-       ()
+       (token)
        make-moby-error-type:unsupported-lexical-token
        moby-error-type:unsupported-lexical-token?
-       ()
-       ())
+       (moby-error-type:unsupported-lexical-token-token)
+       (set-moby-error-type:unsupported-lexical-token-token!))
       (binding:function
        make-moby-error-type:unsupported-lexical-token
        #f
-       0
+       1
        #f
        "make_dash_moby_dash_error_dash_type_colon_unsupported_dash_lexical_dash_token"
        ()
@@ -692,18 +1413,26 @@
        "moby_dash_error_dash_type_colon_unsupported_dash_lexical_dash_token_question_"
        ()
        #f)
+      (binding:function
+       moby-error-type:unsupported-lexical-token-token
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unsupported_dash_lexical_dash_token_dash_token"
+       ()
+       #f)
       (binding:function moby-error-type? #f 1 #f "moby_dash_error_dash_type_question_" () #f)
       (binding:structure
        moby-error-type:unrecognized-lexical-token
-       ()
+       (token)
        make-moby-error-type:unrecognized-lexical-token
        moby-error-type:unrecognized-lexical-token?
-       ()
-       ())
+       (moby-error-type:unrecognized-lexical-token-token)
+       (set-moby-error-type:unrecognized-lexical-token-token!))
       (binding:function
        make-moby-error-type:unrecognized-lexical-token
        #f
-       0
+       1
        #f
        "make_dash_moby_dash_error_dash_type_colon_unrecognized_dash_lexical_dash_token"
        ()
@@ -716,12 +1445,21 @@
        "moby_dash_error_dash_type_colon_unrecognized_dash_lexical_dash_token_question_"
        ()
        #f)
+      (binding:function
+       moby-error-type:unrecognized-lexical-token-token
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unrecognized_dash_lexical_dash_token_dash_token"
+       ()
+       #f)
       (binding:structure
        moby-error-type:duplicate-identifier
        (id other-location)
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
-       (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-other-location)
+       (moby-error-type:duplicate-identifier-id
+        moby-error-type:duplicate-identifier-other-location)
        (set-moby-error-type:duplicate-identifier-id!
         set-moby-error-type:duplicate-identifier-other-location!))
       (binding:function
@@ -758,15 +1496,19 @@
        #f)
       (binding:structure
        moby-error-type:unclosed-lexical-token
-       ()
+       (type opener closer)
        make-moby-error-type:unclosed-lexical-token
        moby-error-type:unclosed-lexical-token?
-       ()
-       ())
+       (moby-error-type:unclosed-lexical-token-type
+        moby-error-type:unclosed-lexical-token-opener
+        moby-error-type:unclosed-lexical-token-closer)
+       (set-moby-error-type:unclosed-lexical-token-type!
+        set-moby-error-type:unclosed-lexical-token-opener!
+        set-moby-error-type:unclosed-lexical-token-closer!))
       (binding:function
        make-moby-error-type:unclosed-lexical-token
        #f
-       0
+       3
        #f
        "make_dash_moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token"
        ()
@@ -779,17 +1521,43 @@
        "moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token_question_"
        ()
        #f)
+      (binding:function
+       moby-error-type:unclosed-lexical-token-type
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token_dash_type"
+       ()
+       #f)
+      (binding:function
+       moby-error-type:unclosed-lexical-token-opener
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token_dash_opener"
+       ()
+       #f)
+      (binding:function
+       moby-error-type:unclosed-lexical-token-closer
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unclosed_dash_lexical_dash_token_dash_closer"
+       ()
+       #f)
       (binding:structure
        moby-error-type:unclosed-parentheses
-       ()
+       (opener closer)
        make-moby-error-type:unclosed-parentheses
        moby-error-type:unclosed-parentheses?
-       ()
-       ())
+       (moby-error-type:unclosed-parentheses-opener
+        moby-error-type:unclosed-parentheses-closer)
+       (set-moby-error-type:unclosed-parentheses-opener!
+        set-moby-error-type:unclosed-parentheses-closer!))
       (binding:function
        make-moby-error-type:unclosed-parentheses
        #f
-       0
+       2
        #f
        "make_dash_moby_dash_error_dash_type_colon_unclosed_dash_parentheses"
        ()
@@ -800,6 +1568,22 @@
        1
        #f
        "moby_dash_error_dash_type_colon_unclosed_dash_parentheses_question_"
+       ()
+       #f)
+      (binding:function
+       moby-error-type:unclosed-parentheses-opener
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unclosed_dash_parentheses_dash_opener"
+       ()
+       #f)
+      (binding:function
+       moby-error-type:unclosed-parentheses-closer
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_unclosed_dash_parentheses_dash_closer"
        ()
        #f)
       (binding:structure
@@ -855,15 +1639,15 @@
        #f)
       (binding:structure
        moby-error-type:missing-expression
-       ()
+       (token)
        make-moby-error-type:missing-expression
        moby-error-type:missing-expression?
-       ()
-       ())
+       (moby-error-type:missing-expression-token)
+       (set-moby-error-type:missing-expression-token!))
       (binding:function
        make-moby-error-type:missing-expression
        #f
-       0
+       1
        #f
        "make_dash_moby_dash_error_dash_type_colon_missing_dash_expression"
        ()
@@ -874,6 +1658,14 @@
        1
        #f
        "moby_dash_error_dash_type_colon_missing_dash_expression_question_"
+       ()
+       #f)
+      (binding:function
+       moby-error-type:missing-expression-token
+       #f
+       1
+       #f
+       "moby_dash_error_dash_type_colon_missing_dash_expression_dash_token"
        ()
        #f)
       (binding:structure
@@ -996,8 +1788,10 @@
        (expected observed)
        make-moby-error-type:application-arity
        moby-error-type:application-arity?
-       (moby-error-type:application-arity-expected moby-error-type:application-arity-observed)
-       (set-moby-error-type:application-arity-expected! set-moby-error-type:application-arity-observed!))
+       (moby-error-type:application-arity-expected
+        moby-error-type:application-arity-observed)
+       (set-moby-error-type:application-arity-expected!
+        set-moby-error-type:application-arity-observed!))
       (binding:function
        make-moby-error-type:application-arity
        #f
@@ -1064,7 +1858,14 @@
       (binding:function moby-error? #f 1 #f "moby_dash_error_question_" () #f)
       (binding:function moby-error-reason #f 1 #f "moby_dash_error_dash_reason" () #f)
       (binding:function moby-error-location #f 1 #f "moby_dash_error_dash_location" () #f)
-      (binding:function moby-error-error-type #f 1 #f "moby_dash_error_dash_error_dash_type" () #f)))
+      (binding:function
+       moby-error-error-type
+       #f
+       1
+       #f
+       "moby_dash_error_dash_error_dash_type"
+       ()
+       #f)))
    '(moby/runtime/error-struct-to-dom
      "runtime/error-struct-to-dom.ss"
      ((binding:function

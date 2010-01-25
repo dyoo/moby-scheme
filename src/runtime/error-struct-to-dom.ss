@@ -15,7 +15,6 @@
           (define embedded-location (moby-error-location an-error))
           (define error-type (moby-error-error-type an-error))]
 
-
     (cond
       [(moby-error-type:unclosed-lexical-token? error-type)
        `(span ((class "Error:UnclosedLexicalToken"))
@@ -24,7 +23,7 @@
                     ,(symbol->string 
                       (moby-error-type:unclosed-lexical-token-opener error-type))
                     " to start a "
-                    ,(moby-error-type:unclosed-lexical-token-type)
+                    ,(moby-error-type:unclosed-lexical-token-type error-type)
                     ", but no "
                     (span ((class "MobyLexicalToken"))
                           ,(symbol->string 
@@ -38,7 +37,6 @@
               (span ((class "Error:UnclosedLexicalToken.closer"))
                     ,(symbol->string (moby-error-type:unclosed-lexical-token-closer error-type)))
               (span ((class "Error:UnclosedLexicalToken.location"))
-                    
                     ,(Loc->dom-sexp embedded-location)))]
 
       [(moby-error-type:unrecognized-lexical-token? error-type)
@@ -79,7 +77,14 @@
                     ,(Loc->dom-sexp embedded-location)))]
       
       [(moby-error-type:missing-expression? error-type)
-       "fixme"]
+       `(span ((class "Error:MissingExpression"))
+              (span ((class "Error:MissingExpression.reason"))
+                    "I expected an expression following "
+                    ,(symbol->string (moby-error-type:missing-expression-token error-type))
+                    " but did not find one.")
+              (span ((class "Error:MissingExpression.location"))
+                    ,(Loc->dom-sexp embedded-location)))]
+
       [(moby-error-type:duplicate-identifier? error-type)
        "fixme"]
       [(moby-error-type:undefined-identifier? error-type)
