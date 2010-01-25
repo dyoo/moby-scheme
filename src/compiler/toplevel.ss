@@ -338,6 +338,12 @@
                      (hash-map 2)
                      (hash-for-each 2)
                      (hash? 1)
+                     
+                     
+                     ;; Exception raising
+                     (raise 1)
+                     
+                     
                      )))
           
           

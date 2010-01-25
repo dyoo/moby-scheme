@@ -2267,13 +2267,23 @@ goog.provide('plt.Kernel');
 
 
 
+    // Throws an exception upward.
+    plt.Kernel.raise = function(thing) {
+	throw thing;
+    }
 
 
-    // invokeModule: module-name -> void
+
+
+    // invokeModule: module-name -> module
     // Make sure a module has been invoked.
-    // Modules live in plt._MODULES[name].    
+    // Modules live in plt._MODULES[name].
+    // Returns the invoked module.
     plt.Kernel.invokeModule = function(moduleName) {
-	// FIXME!  Do something here!
+	// FIXME!  Do something here to load the module, if it hasn't
+	// already been loaded.  (Look at how goog.require and
+	// goog.writeScriptTags work.)
+	return plt._MODULES[moduleName];
     }
 
 

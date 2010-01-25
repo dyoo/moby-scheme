@@ -133,6 +133,7 @@
                      (base:map map)
                      (base:for-each for-each)
                      (base:error error)
+                     (base:raise raise)
                      )
 
          (all-from-out "../collects/runtime/stx.ss")
