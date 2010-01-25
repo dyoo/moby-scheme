@@ -15,6 +15,7 @@
 (require "rbtree.ss")
 (require "version.ss")
 (require "../collects/runtime/binding.ss")
+(require "../collects/runtime/stx.ss")
 
 
 ;; A compiled program is a:

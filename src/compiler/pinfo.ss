@@ -8,6 +8,7 @@
 (require "labeled-translation.ss")
 (require "../collects/runtime/permission-struct.ss")
 (require "../collects/runtime/binding.ss")
+(require "../collects/runtime/stx.ss")
 
 
 ;; pinfo (program-info) is the "world" structure for the compilers; 

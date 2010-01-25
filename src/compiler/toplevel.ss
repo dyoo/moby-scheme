@@ -31,17 +31,6 @@
                                   (symbol->string (identifier->munged-java-identifier 
                                                    a-name)))))
           
-          
-          ;; A special registration function that doesn't munge the kernel function name.
-          (define (r* env a-name arity java-string)
-            (env-extend-function env
-                                 a-name 
-                                 "moby/toplevel"
-                                 arity 
-                                 false
-                                 java-string))
-          
-          
           ;; The core environment includes bindings to Javascript-written functions.
           (define core-env
             (foldl (lambda (name+arity env)
@@ -344,41 +333,8 @@
                      (raise 1)
                      
                      
-                     )))
-          
-          
-          ;; These include bindings for identifiers defined by the runtime modules.
-          ;;
-          ;; WARNING WARNING
-          ;;
-          ;; These definitions actually don't exist in Javascript until they've been generated
-          ;; by the bootstrapper.
-          (define core-plus-env 
-            (foldl (lambda (id+arity+name env)
-                     (r* env (first id+arity+name) (second id+arity+name) (third id+arity+name)))
-                   core-env
-                   
-                   (map (lambda (id+arity)
-                          (append id+arity 
-                                  (list 
-                                   (symbol->string
-                                    (identifier->munged-java-identifier (first id+arity))))))
-                        '((stx-begins-with? 2)
-                          (stx-e 1)
-                          (stx? 1)
-                          (stx:list? 1)
-                          (stx:atom? 1)
-                          (make-stx:list 2)
-                          (make-stx:atom 2)
-                          (stx-loc 1)
-                          (datum->stx 2)
-                          (stx->datum 1)
-                          (Loc-offset 1)
-                          (Loc-line 1)
-                          (Loc-column 1)
-                          (Loc-span 1)
-                          (Loc-id 1)))))]
-    core-plus-env))
+                     )))]
+    core-env))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

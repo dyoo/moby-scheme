@@ -3,10 +3,10 @@
 (require "env.ss")
 (require "pinfo.ss")
 (require "helpers.ss")
-(require "modules.ss")
 (require "rbtree.ss")
 (require "../collects/runtime/permission-struct.ss")
 (require "../collects/runtime/binding.ss")
+(require "../collects/runtime/stx.ss")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,6 +1,7 @@
 #lang s-exp "lang.ss"
 
 (require "rbtree.ss")
+(require "../collects/runtime/stx.ss")
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 

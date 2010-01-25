@@ -27,7 +27,7 @@ function init() {
 	var compiledProgram = (compilerModule.EXPORTS.program_dash__greaterthan_compiled_dash_program_slash_pinfo
 			       (program, pinfo));
 	var defns = compilerModule.EXPORTS.compiled_dash_program_dash_defns(compiledProgram);
-	var interFunc = compilerModules.EXPORTS.compiled_dash_program_dash_toplevel_dash_exprs(compiledProgram);
+	var interFunc = compilerModule.EXPORTS.compiled_dash_program_dash_toplevel_dash_exprs(compiledProgram);
 	var runToplevel = namespace.eval(defns, interFunc);
 	
 	var result;				  

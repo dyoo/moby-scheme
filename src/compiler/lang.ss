@@ -136,7 +136,7 @@
                      (base:raise raise)
                      )
 
-         (all-from-out "../collects/runtime/stx.ss")
+         ;;(all-from-out "../collects/runtime/stx.ss")
 
          
          ;; Contract-related stuff: the following will be erased on 
