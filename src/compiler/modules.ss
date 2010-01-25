@@ -11,7 +11,7 @@
 (require "helpers.ss")
 (require "../collects/runtime/permission-struct.ss")
 (require "../collects/runtime/binding.ss")
-(require "../collects/runtime-modules.ss")
+(require "../collects/runtime/runtime-modules.ss")
 
 
 
