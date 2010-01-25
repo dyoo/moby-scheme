@@ -4,6 +4,19 @@ goog.provide('plt.reader');
 
 (function(){
 
+    var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
+    var Loc = stxModule.EXPORTS.Loc;
+    var make_dash_stx_colon_list = stxModule.EXPORTS.make_dash_stx_colon_list;
+    var make_dash_stx_colon_atom = stxModule.EXPORTS.make_dash_stx_colon_atom;
+    var stx_dash_loc = stxModule.EXPORTS.stx_dash_loc;
+
+    var Loc_dash_offset = stxModule.EXPORTS.Loc_dash_offset;
+    var Loc_dash_line = stxModule.EXPORTS.Loc_dash_line;
+    var Loc_dash_column = stxModule.EXPORTS.Loc_dash_column;
+    var Loc_dash_offset = stxModule.EXPORTS.Loc_dash_offset;
+    var Loc_dash_span = stxModule.EXPORTS.Loc_dash_span;
+
+
 
     // replaceEscapes: string -> string
     var replaceEscapes = function(s) {
@@ -159,6 +172,7 @@ goog.provide('plt.reader');
     var readSchemeExpressions = function(s, source) {
 	var makeList = make_dash_stx_colon_list;
 	var makeAtom = make_dash_stx_colon_atom;
+	var stxLoc = stx_dash_loc;
 
 	var tokensAndError = tokenize(s, source);
 	var tokens = tokensAndError[0];
@@ -231,9 +245,9 @@ goog.provide('plt.reader');
 			    new Loc(Loc_dash_offset(leadingQuote[2]),
 				    Loc_dash_line(leadingQuote[2]),
 				    Loc_dash_column(leadingQuote[2]),
-				    (Loc_dash_offset(stx_dash_loc(quoted)) -
+				    (Loc_dash_offset(stxLoc(quoted)) -
 				     Loc_dash_offset(leadingQuote[2]) +
-				     Loc_dash_span(stx_dash_loc(quoted))),
+				     Loc_dash_span(stxLoc(quoted))),
 				    source));
 	};
 
@@ -327,7 +341,7 @@ goog.provide('plt.reader');
 			tokens[0][2]);
 		}
 		var rparen = eat(')');
-		return make_dash_stx_colon_list(
+		return makeList(
 		    result,
 		    new Loc(Loc_dash_offset(lparen[2]),
 			    Loc_dash_line(lparen[2]),

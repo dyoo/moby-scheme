@@ -2,7 +2,6 @@ gears_init.js
 types.js
 jshashtable.js
 kernel.js
-read.js
 collects/runtime/runtime-modules.js
 collects/runtime/stx.js
 collects/runtime/binding.js
@@ -11,6 +10,7 @@ collects/runtime/effect-struct.js
 collects/runtime/arity-struct.js
 collects/runtime/error-struct.js
 collects/runtime/error-struct-to-dom.js
+read.js
 world-effects.js
 world-config.js
 world-stimuli.js

@@ -16,17 +16,18 @@ function init() {
     var TRUE = plt.types.Logic.TRUE;
     var FALSE = plt.types.Logic.FALSE;
 
-    var pinfo = get_dash_base_dash_pinfo(symbol("moby"));
+    var compilerModule = plt.Kernel.invokeModule("moby/compiler");
+    var pinfo = compilerModule.EXPORTS.get_dash_base_dash_pinfo(symbol("moby"));
 
     // run: string -> scheme-value
     // Evaluates the string and produces the evaluated scheme value.
     var run = function(aSource) {
 	var namespace = new Namespace();
 	var program = plt.reader.readSchemeExpressions(aSource, "test");
-	var compiledProgram = (program_dash__greaterthan_compiled_dash_program_slash_pinfo
+	var compiledProgram = (compilerModule.EXPORTS.program_dash__greaterthan_compiled_dash_program_slash_pinfo
 			       (program, pinfo));
-	var defns = compiled_dash_program_dash_defns(compiledProgram);
-	var interFunc = compiled_dash_program_dash_toplevel_dash_exprs(compiledProgram);
+	var defns = compilerModule.EXPORTS.compiled_dash_program_dash_defns(compiledProgram);
+	var interFunc = compilerModules.EXPORTS.compiled_dash_program_dash_toplevel_dash_exprs(compiledProgram);
 	var runToplevel = namespace.eval(defns, interFunc);
 	
 	var result;				  
@@ -92,6 +93,18 @@ function init() {
 	},
 
 
+	testRaise: function() {
+	    try {
+		run("(raise 42)");
+		this.fail();
+	    } catch (e) {
+		this.assert(isEqual(number(42),
+				    e));
+	    }
+	},
+
+
+
 	// Bug reported by Alex Kruckman
 	testLambdaDefinition: function() {
 	    this.assert(isEqual(number(43),
@@ -99,6 +112,9 @@ function init() {
 				    "(add1 42)")));
 	},
 	
+
+
+
 	// Bug reported by David Treijo
 	testIdentifierWithLeadingNumber: function() {
 		this.assert(isEqual("first",
