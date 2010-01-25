@@ -119,7 +119,8 @@ goog.provide('plt.Kernel');
     }
 
     var isStx = function(x) {
-	return stx_question_(x);
+	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
+	return stxModule.EXPORTS.stx_question_(x);
     }
 
     var isString = function(x) {
@@ -1510,8 +1511,8 @@ goog.provide('plt.Kernel');
     // Hashtable functions
 
 
-    // make-hash-eq: -> hash
-    plt.Kernel.make_dash_hash_dash_eq = function() {
+    // make-hasheq: -> hash
+    plt.Kernel.make_dash_hasheq = function() {
 	return new plt.types.EqHashTable();
     };
 
