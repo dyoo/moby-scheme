@@ -655,7 +655,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_universe_dash_url\"]"
        ()
        #f)
-      (binding:structure permission:send-sms () make-permission:send-sms permission:send-sms? () ())
+      (binding:structure
+       permission:send-sms
+       ()
+       make-permission:send-sms
+       permission:send-sms?
+       ()
+       ())
       (binding:function
        make-permission:send-sms
        #f
@@ -739,7 +745,13 @@
        PERMISSION:TILT
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"PERMISSION_colon_TILT\"]"
        ())
-      (binding:structure permission:internet () make-permission:internet permission:internet? () ())
+      (binding:structure
+       permission:internet
+       ()
+       make-permission:internet
+       permission:internet?
+       ()
+       ())
       (binding:function
        make-permission:internet
        #f
@@ -756,7 +768,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_internet_question_\"]"
        ()
        #f)
-      (binding:structure permission:location () make-permission:location permission:location? () ())
+      (binding:structure
+       permission:location
+       ()
+       make-permission:location
+       permission:location?
+       ()
+       ())
       (binding:function
        make-permission:location
        #f
@@ -1542,7 +1560,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_rational_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:real () make-moby-expected:real moby-expected:real? () ())
+      (binding:structure
+       moby-expected:real
+       ()
+       make-moby-expected:real
+       moby-expected:real?
+       ()
+       ())
       (binding:function
        make-moby-expected:real
        #f
@@ -1628,7 +1652,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_number_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:list () make-moby-expected:list moby-expected:list? () ())
+      (binding:structure
+       moby-expected:list
+       ()
+       make-moby-expected:list
+       moby-expected:list?
+       ()
+       ())
       (binding:function
        make-moby-expected:list
        #f
@@ -1645,7 +1675,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_list_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:char () make-moby-expected:char moby-expected:char? () ())
+      (binding:structure
+       moby-expected:char
+       ()
+       make-moby-expected:char
+       moby-expected:char?
+       ()
+       ())
       (binding:function
        make-moby-expected:char
        #f
@@ -1685,7 +1721,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_function_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:hash () make-moby-expected:hash moby-expected:hash? () ())
+      (binding:structure
+       moby-expected:hash
+       ()
+       make-moby-expected:hash
+       moby-expected:hash?
+       ()
+       ())
       (binding:function
        make-moby-expected:hash
        #f
@@ -1725,7 +1767,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_complex_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:box () make-moby-expected:box moby-expected:box? () ())
+      (binding:structure
+       moby-expected:box
+       ()
+       make-moby-expected:box
+       moby-expected:box?
+       ()
+       ())
       (binding:function
        make-moby-expected:box
        #f
@@ -1848,7 +1896,8 @@
        (id second-location)
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
-       (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-second-location)
+       (moby-error-type:duplicate-identifier-id
+        moby-error-type:duplicate-identifier-second-location)
        (set-moby-error-type:duplicate-identifier-id!
         set-moby-error-type:duplicate-identifier-second-location!))
       (binding:function
@@ -1939,7 +1988,8 @@
        (opener closer)
        make-moby-error-type:unclosed-parentheses
        moby-error-type:unclosed-parentheses?
-       (moby-error-type:unclosed-parentheses-opener moby-error-type:unclosed-parentheses-closer)
+       (moby-error-type:unclosed-parentheses-opener
+        moby-error-type:unclosed-parentheses-closer)
        (set-moby-error-type:unclosed-parentheses-opener!
         set-moby-error-type:unclosed-parentheses-closer!))
       (binding:function

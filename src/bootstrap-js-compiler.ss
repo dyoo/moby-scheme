@@ -104,18 +104,23 @@
 (define-runtime-path read.js "../support/js/runtime/read.js")
 
 (define-runtime-path compressed-runtime.js "../support/js/runtime/compressed-runtime.js")
+(define-runtime-path whole-runtime.js "../support/js/runtime/whole-runtime.js")
 
 
-
-  
 ;; write-compressed-runtime: -> void
 ;; Write out a runtime of all of the files in the MANIFEST, compressed by the YUI compressor.
 (define (write-compressed-runtime)
   (let* ([runtime-source (get-runtime-source)]
          [compressed-runtime-source (compress-and-optimize-source runtime-source)])
+    
+    (call-with-output-file whole-runtime.js
+      (lambda (op) (write-bytes runtime-source op))
+      #:exists 'replace)
+    
     (call-with-output-file compressed-runtime.js
       (lambda (op) (write-bytes compressed-runtime-source op))
-      #:exists 'replace))
+      #:exists 'replace)
+    )
   (void))
 
 

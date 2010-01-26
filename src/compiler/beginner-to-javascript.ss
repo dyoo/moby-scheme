@@ -1050,9 +1050,10 @@
 ;; Loc->javascript-string: Loc -> string
 ;; Produces a hashtable literal.
 (define (Loc->javascript-string a-loc)
-  (format "{offset:~a, line:~a, span:~a, id:~s}" 
+  (format "{offset:~a,line:~a,column:~a,span:~a,id:~s}" 
           (Loc-offset a-loc) 
           (Loc-line a-loc) 
+          (Loc-column a-loc)
           (Loc-span a-loc) 
           ;; DEFENSIVE: make sure this is a string.
           (format "~a" (Loc-id a-loc))))

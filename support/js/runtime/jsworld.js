@@ -487,8 +487,9 @@ plt.world.MobyJsworld = {};
 
     // button: (world -> world) assoc -> node
     Jsworld.button = function(f, args) {
+	var effectModule = plt.Kernel.invokeModule("moby/runtime/effect-struct");
 	var noneF = function(world) {
-	    return make_dash_effect_colon_none();
+	    return effectModule.EXPORTS.make_dash_effect_colon_none();
 	};
 	var node = Jsworld.buttonStar(f, 
 				      noneF,

@@ -2241,6 +2241,11 @@ goog.provide('plt.Kernel');
     // we've evaluated in the program.
     plt.Kernel.lastLoc = undefined;
     plt.Kernel.setLastLoc = function(locHash) {
+	if (locHash === undefined) {
+	    plt.Kernel.lastLoc = undefined;
+	    return true;
+	}
+
 	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
 	plt.Kernel.lastLoc = stxModule.EXPORTS.make_dash_Loc(
 	    plt.types.Rational.makeInstance(locHash.offset),
@@ -2255,12 +2260,15 @@ goog.provide('plt.Kernel');
 	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
 	if (typeof(lastLoc) === 'string') {
 	    return lastLoc;
+	} else if (typeof(lastLoc) === 'undefined') {
+	    return "undefined";
+	} else {
+	    return ("offset=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_offset(lastLoc))
+		    + ", line=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_line(lastLoc)) 
+		    + ", column=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_column(lastLoc)) 
+		    + ", span=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_span(lastLoc))
+		    + ", id=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_id(lastLoc)));
 	}
-	return ("offset=" + stxModule.EXPORTS.Loc_dash_offset(lastLoc)
-		+ ", line=" + stxModule.EXPORTS.Loc_dash_line(lastLoc) 
-		+ ", column=" + stxModule.EXPORTS.Loc_dash_column(lastLoc) 
-		+ ", span=" + stxModule.EXPORTS.Loc_dash_span(lastLoc)
-		+ ", id=" + stxModule.EXPORTS.Loc_dash_id(lastLoc));
     };
     
 
