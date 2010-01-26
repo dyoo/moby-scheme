@@ -7,7 +7,7 @@
 (require "../collects/runtime/permission-struct.ss")
 (require "../collects/runtime/binding.ss")
 (require "../collects/runtime/stx.ss")
-
+(require "../collects/runtime/error-struct.ss")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -100,11 +100,15 @@
                                                              (stx-e (second (stx-e a-clause)))
                                                              (make-provide-binding:struct-id (second (stx-e a-clause)))))]
                 [else
-                 (syntax-error (format "provide doesn't recognize the syntax of the clause: ~s" (stx->datum a-clause))
-                               a-clause)])]
+                 (raise (make-moby-error (stx-loc a-clause))
+                        (make-moby-error-type:generic-syntactic-error
+                         (format "provide doesn't recognize the syntax of the clause: ~s" 
+                                 (stx->datum a-clause))))])]
              [else
-              (syntax-error (format "provide doesn't recognize the syntax of the clause: ~s" (stx->datum a-clause))
-                            a-clause)]))
+              (raise (make-moby-error (stx-loc a-clause))
+                        (make-moby-error-type:generic-syntactic-error
+                         (format "provide doesn't recognize the syntax of the clause: ~s" 
+                                 (stx->datum a-clause))))]))
          a-pinfo
          clauses))
 
@@ -400,9 +404,8 @@
 ;; bindings provided by that module.
 (define (require-analyze-collect-definitions require-path pinfo)
   (local [(define (signal-error)
-            (syntax-error (format "Moby doesn't know about module ~s yet"
-                                  (stx-e require-path))
-                          require-path))
+            (raise (make-moby-error (stx-loc require-path))
+                   (make-moby-error-type:unknown-module (stx-e require-path))))
 
           (define maybe-module-name ((pinfo-module-path-resolver pinfo)
                                      (stx-e require-path)
@@ -420,26 +423,7 @@
              [else
               (signal-error)]))]
     [else
-     (signal-error)])
-    
-    
-#;(local [(define (loop modules)
-            (cond
-              [(empty? modules)
-               (syntax-error (format "Moby doesn't know about module ~s yet"
-                                     (stx-e require-path))
-                             require-path)]
-              [(string=? (stx-e require-path)
-                         (module-binding-source (first modules)))
-               (pinfo-accumulate-module 
-                (first modules)
-                (pinfo-accumulate-module-bindings
-                 (module-binding-bindings (first modules))
-                 pinfo))]
-              [else
-               (loop (rest modules))]))]
-    (loop known-modules))
-    ))
+     (signal-error)])))
 
   
 

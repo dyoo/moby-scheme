@@ -90,6 +90,11 @@
                      " has been duplicated.")
                (span ((class "Error:DuplicateIdentifier.secondLocation"))
                      ,(Loc->dom-sexp (moby-error-type:duplicate-identifier-second-location error-type))))]
+
+       [(moby-error-type:expected-identifier? error-type)
+        `(span ((class "Error:ExpectedIdentifier"))
+               (span ((class "Error.reason"))
+                     "I expected an identifier but did not receive one."))]
        
        [(moby-error-type:undefined-identifier? error-type)
         `(span ((class "Error:UndefinedIdentifier"))
@@ -98,6 +103,27 @@
                      ,(symbol->string (moby-error-type:undefined-identifier-id error-type))
                      " is; it's not defined as an input or a primitive."))]
        
+       [(moby-error-type:provided-name-not-defined? error-type)
+        `(span ((class "Error:ProvidedNameNotDefined"))
+               (span ((class "Error.reason"))
+                     "The provided name "
+                     ,(scheme-value-to-dom-sexp (moby-error-type:provided-name-not-defined-id error-type))
+                     "is not defined in the program."))]
+
+       [(moby-error-type:provided-structure-not-structure? error-type)
+        `(span ((class "Error:ProvidedStructureNotStructure"))
+               (span ((class "Error.reason"))
+                     "The provided name "
+                     ,(scheme-value-to-dom-sexp 
+                       (moby-error-type:provided-structure-not-structure-id error-type))
+                     "is defined in the program, but is not the name of a structure."))]
+
+       [(moby-error-type:unknown-module? error-type)
+        `(span ((class "Error:UnknownModule"))
+               (span ((class "Error.reason"))
+                     "I see a require of the module "
+                     `(scheme-value-to-dom-sexp (moby-error-type:unknown-module-path error-type))
+                     ", but I don't yet know what this module is."))]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error:ApplicationArity"))

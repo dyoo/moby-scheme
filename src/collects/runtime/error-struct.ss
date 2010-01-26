@@ -1,5 +1,6 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
+(require "stx.ss")
 
 (define-struct moby-error (location error-type))
 
@@ -10,13 +11,23 @@
 (define-struct moby-error-type:unclosed-parentheses (opener closer))
 (define-struct moby-error-type:missing-expression (token))
 (define-struct moby-error-type:duplicate-identifier (id second-location))
+(define-struct moby-error-type:expected-identifier (observed))
 (define-struct moby-error-type:undefined-identifier (id))
+(define-struct moby-error-type:provided-name-not-defined (id))
+(define-struct moby-error-type:provided-structure-not-structure (id))
+(define-struct moby-error-type:unknown-module (path))
+
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
 (define-struct moby-error-type:index-out-of-bounds (minimum maximum observed))
 (define-struct moby-error-type:conditional-exhausted ())
+
+
 (define-struct moby-error-type:generic-runtime-error (reason))
+;; FIXME: the generic-syntactic-error class should die as soon as I fully enumerate
+;; the errors.
 (define-struct moby-error-type:generic-syntactic-error (reason other-locations))
+
 
 
 
@@ -29,7 +40,11 @@
       (moby-error-type:unclosed-parentheses? x)
       (moby-error-type:missing-expression? x)
       (moby-error-type:duplicate-identifier? x)
+      (moby-error-type:expected-identifier? x)
       (moby-error-type:undefined-identifier? x)
+      (moby-error-type:provided-name-not-defined? x)
+      (moby-error-type:provided-structure-not-structure? x)
+      (moby-error-type:unknown-module? x)
       (moby-error-type:application-arity? x)
       (moby-error-type:type-mismatch? x)
       (moby-error-type:index-out-of-bounds? x)
@@ -89,7 +104,7 @@
 
 
 (provide/contract
- [struct moby-error ([location any/c]
+ [struct moby-error ([location Loc?]
                      [error-type moby-error-type?])]
 
  [moby-error-type? (any/c . -> . boolean?)]
@@ -102,8 +117,15 @@
                                                [closer symbol?])]
  [struct moby-error-type:missing-expression ([token symbol?])]
  [struct moby-error-type:duplicate-identifier ([id symbol?]
-                                               [second-location any/c])]
+                                               [second-location Loc?])]
+ [struct moby-error-type:expected-identifier ([observed stx?])]
  [struct moby-error-type:undefined-identifier ([id symbol?])]
+ [struct moby-error-type:provided-name-not-defined ([id symbol?])]
+ [struct moby-error-type:provided-structure-not-structure ([id symbol?])]
+ 
+ [struct moby-error-type:unknown-module ([path module-path?])]
+ 
+ 
  [struct moby-error-type:application-arity ([who any/c]
                                             [expected any/c]
                                             [observed any/c])]
@@ -117,7 +139,7 @@
  [struct moby-error-type:conditional-exhausted ()]
  [struct moby-error-type:generic-runtime-error ([reason string?])]
  [struct moby-error-type:generic-syntactic-error ([reason string?]
-                                                  [other-locations (listof any/c)])]
+                                                  [other-locations (listof Loc?)])]
  
  
  [moby-expected? (any/c . -> . boolean?)]

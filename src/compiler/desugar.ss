@@ -3,6 +3,10 @@
 (require "helpers.ss")
 (require "pinfo.ss")
 (require "../collects/runtime/stx.ss")
+(require "../collects/runtime/error-struct.ss")
+
+(define (syntax-error x y)
+  "fixme")
 
 
 
@@ -100,9 +104,12 @@
           
           
           ;; check-length!: stx -> void
-          (define (check-length! stx n error-msg)
+          (define (check-test-case-length! stx n error-msg)
             (cond [(not (= n (length (stx-e stx))))
-                   (syntax-error error-msg stx)]
+                   (raise (make-moby-error 
+                           (stx-loc stx)
+                           (make-moby-error-type:generic-syntactic-error
+                            error-msg)))]
                   [else
                    (void)]))
           
@@ -118,17 +125,17 @@
                     (define desugared-exprs+pinfo (desugar-expressions test-exprs a-pinfo))]
               (begin
                 (cond [(stx-begins-with? a-test-case 'check-expect)
-                       (check-length! a-test-case 3
+                       (check-test-case-length! a-test-case 3
                                       "check-expect requires two expressions.  Try (check-expect test expected).")]
                       [(stx-begins-with? a-test-case 'EXAMPLE)
-                       (check-length! a-test-case 3
+                       (check-test-case-length! a-test-case 3
                                       "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
                       
                       [(stx-begins-with? a-test-case 'check-within)
-                       (check-length! a-test-case 4
+                       (check-test-case-length! a-test-case 4
                                       "check-within requires three expressions.  Try (check-within test expected range).")]
                       [(stx-begins-with? a-test-case 'check-error)
-                       (check-length! a-test-case 3
+                       (check-test-case-length! a-test-case 3
                                       "check-error requires two expressions.  Try (check-error test message).")]
                       [else
                        (void)])
@@ -315,27 +322,6 @@
                      a-pinfo)))
 
 
-;; desugar-include: stx pinfo -> (list (listof stx) pinfo)
-#;(define (desugar-include include-expr pinfo)
-  (cond
-    [(not (= (length (stx-e include-expr)) 2))
-     (syntax-error "Usage: (include file-path), where file-path is a string." 
-                   include-expr)]
-    [(not (string? (stx-e (second (stx-e include-expr)))))
-     (syntax-error "file-path must be a string" (second (stx-e include-expr)))]
-    [else
-     
-     (local [(define file-path (stx-e (second (stx-e include-expr))))
-             (define stxs (open-input-stx file-path))]
-       (cond 
-         [(and (= (length stxs) 1)
-               (stx-begins-with? (first stxs) 'module))
-          ;; If's it's a module, skip over
-          (desugar-program (rest (rest (rest (stx-e (first stxs)))))
-                           pinfo)]
-         [else
-          (desugar-program stxs pinfo)]))]))
-
 
 
 
@@ -458,7 +444,8 @@
        (cond
          [(stx-begins-with? (first clauses) 'else)
           (if (not (empty? (rest clauses)))
-              (syntax-error "else clause should be the last, but there's another clause after it" (first clauses))
+              (syntax-error "else clause should be the last, but there's another clause after it" 
+                            (first clauses))
               (f (reverse questions/rev) 
                  (reverse answers/rev) 
                  (else-replacement-f (first (stx-e (first clauses))))

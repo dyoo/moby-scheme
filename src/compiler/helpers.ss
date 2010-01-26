@@ -2,6 +2,7 @@
 
 (require "rbtree.ss")
 (require "../collects/runtime/stx.ss")
+(require "../collects/runtime/error-struct.ss")
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 
@@ -298,6 +299,13 @@
              (list (sub1 n)))]))
 
 
+;; stx-list-of-symbols?: stx -> boolean
+;; Produces true if an-stx is a syntax containing a list of symbols.
+(define (stx-list-of-symbols? an-stx)
+  (and (stx:list? an-stx)
+       (andmap (lambda (elt) (symbol? (stx-e elt)))
+               (stx-e an-stx))))
+
 
 ;; Helper to help with the destructuring and case analysis of functions.
 (define (case-analyze-definition a-definition 
@@ -308,7 +316,7 @@
     ;; (define (id args ...) body)
     [(and (stx-begins-with? a-definition 'define)
           (= (length (stx-e a-definition)) 3)
-          (stx:list? (second (stx-e a-definition))))
+          (stx-list-of-symbols? (second (stx-e a-definition))))
      (local [(define id (first (stx-e (second (stx-e a-definition)))))
              (define args (rest (stx-e (second (stx-e a-definition)))))
              (define body (third (stx-e a-definition)))]
@@ -349,16 +357,21 @@
        (f-define-struct id fields))]
     
     
+
     ;; FIXME: add more error productions as necessary to get
     ;; reasonable error messages.
     [(stx-begins-with? a-definition 'define)
-     (syntax-error 
-      "define expects an identifier and a body.  e.g. (define answer 42)"
-      a-definition)]
+     (raise (make-moby-error 
+             (stx-loc a-definition)
+             (make-moby-error-type:generic-syntactic-error
+              "define expects an identifier and a body.  e.g. (define answer 42)")))]
+
     [(stx-begins-with? a-definition 'define-struct)
-     (syntax-error
-      "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))"
-      a-definition)]))
+     (raise (make-moby-error
+             (stx-loc a-definition)
+             (make-moby-error-type:generic-syntactic-error
+              "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")))]))
+
 
 
 
@@ -375,22 +388,25 @@
 ;; Return a list of the identifiers that are duplicated.
 ;; Also check to see that each of the ids is really a symbolic identifier.
 (define (check-duplicate-identifiers! ids)
-  (local [(define (loop ids known-ids)
+  (local [(define seen-ids (make-hash))
+          
+          (define (loop ids)
             (cond
               [(empty? ids)
                (void)]
               [else
-               (cond [(member (stx-e (first ids)) known-ids)
-                      (syntax-error (format "found a name that's used more than once: ~s"
-                                            (stx->datum (first ids)))
-                                    (first ids))]
+               (cond [(stx? (hash-ref seen-ids (stx-e (first ids)) #f))
+                      (raise (make-moby-error (stx-loc (first ids))
+                                              (make-moby-error-type:duplicate-identifier
+                                               (stx-e (first ids))
+                                               (hash-ref seen-ids (stx-e (first ids)) #f))))]
                      [(not (symbol? (stx-e (first ids))))
-                      (syntax-error (format "not an identifier: ~s" (stx->datum (first ids)))
-                                    (first ids))]
+                      (raise (make-moby-error (stx-loc (first ids))
+                                              (make-moby-error-type:expected-identifier (first ids))))]
                      [else
-                      (loop (rest ids) 
-                            (cons (stx-e (first ids)) 
-                                  known-ids))])]))]
+                      (begin
+                        (hash-set! seen-ids (stx-e (first ids)) (first ids))
+                        (loop (rest ids)))])]))]
     (loop ids empty)))
 
 
@@ -399,11 +415,13 @@
 (define (check-single-body-stx! stxs original-stx)
   (cond
     [(empty? stxs)
-     (syntax-error "There must be a single body expression"
-		   original-stx)]
+     (make-moby-error (stx-loc original-stx)
+                      (make-moby-error-type:generic-syntactic-error
+                       "I expected a single body in this expression, but I didn't find any."))]
     [(not (empty? (rest stxs)))
-     (syntax-error "There must be a single body expression"
-		   original-stx)]
+     (make-moby-error (stx-loc original-stx)
+                      (make-moby-error-type:generic-syntactic-error
+                       "I expected a single body in this expression, but I found more than one."))]
     [else
      (void)]))
 

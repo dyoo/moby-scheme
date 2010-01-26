@@ -50,11 +50,11 @@
 (base:define-struct (exn:fail:moby-syntax-error exn:fail) (stxs))
 
 
-(base:define (syntax-error msg . stx)
-  (raise (make-exn:fail:moby-syntax-error 
-          (format "~a: ~s" msg (map stx->datum stx))
-          (current-continuation-marks)
-          stx)))
+#;(base:define (syntax-error msg . stx)
+               (raise (make-exn:fail:moby-syntax-error 
+                       (format "~a: ~s" msg (map stx->datum stx))
+                       (current-continuation-marks)
+                       stx)))
 
 
 
@@ -179,7 +179,7 @@
          ;; To support include and require
          #;open-input-stx
          
-	 syntax-error
+         ;; syntax-error
 
 
 

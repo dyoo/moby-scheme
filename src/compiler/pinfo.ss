@@ -6,6 +6,7 @@
 (require "modules.ss")
 (require "rbtree.ss")
 (require "labeled-translation.ss")
+(require "../collects/runtime/error-struct.ss")
 (require "../collects/runtime/permission-struct.ss")
 (require "../collects/runtime/binding.ss")
 (require "../collects/runtime/stx.ss")
@@ -395,9 +396,9 @@
                          (check-binding-compatibility a-provide-binding
                                                       (second list-or-false))]
                         [else
-                         (syntax-error (format "The provided name ~s has not been defined"
-                                               (stx-e (provide-binding-stx a-provide-binding)))
-                                       (provide-binding-stx a-provide-binding))]))
+                         (raise (make-moby-error (stx-loc (provide-binding-stx a-provide-binding))
+                                                 (make-moby-error-type:provided-name-not-defined
+                                                  (stx-e (provide-binding-stx a-provide-binding)))))]))
 
                     ;; ref: symbol -> binding
                     ;; Lookup the binding, given the symbolic identifier.
@@ -409,10 +410,7 @@
                                (ref (binding:structure-constructor the-binding))
                                (ref (binding:structure-predicate the-binding)))
                          (map ref (binding:structure-accessors the-binding))
-                         ;; KLUDGE!
-                         ;; Temporarly disable the exposure of the mutators.
-                         ;; The standalone compiler isn't compiling with it.
-                         #;(map ref (binding:structure-mutators the-binding))
+                         (map ref (binding:structure-mutators the-binding))
                          )]
                 [else
                  (list the-binding)])))
@@ -425,10 +423,10 @@
                (cond [(binding:structure? a-binding)
                       a-binding]
                      [else
-                      (syntax-error 
-                       (format "The provided name ~s does not appear to be the name of a defined structure" 
-                               (stx-e (provide-binding-stx a-provide-binding)))
-                       (provide-binding-stx a-provide-binding))])]
+                      (raise (make-moby-error 
+                              (stx-loc (provide-binding-stx a-provide-binding))
+                              (make-moby-error-type:provided-structure-not-structure
+                               (stx-e (provide-binding-stx a-provide-binding)))))])]
               [else
                a-binding]))]
     (rbtree-fold (pinfo-provided-names a-pinfo)
