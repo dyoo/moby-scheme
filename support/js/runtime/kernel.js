@@ -1143,12 +1143,13 @@ goog.provide('plt.Kernel');
 	
 
 	string_dash__greaterthan_number : function(str){
+	    var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
 	    check(str, isString, "string->number", "string", 1);
 	    try {
 		var stxList = plt.reader.readSchemeExpressions(str, "");
 		if (NumberTower.equal(plt.Kernel.length(stxList),
 						plt.types.Rational.ONE)) {
-		    var result = stx_dash_e(stxList.first());
+		    var result = stxModule.EXPORTS.stx_dash_e(stxList.first());
 		    if (isNumber(result)) {
 			return result;
 		    } else {
@@ -2239,20 +2240,27 @@ goog.provide('plt.Kernel');
     // As a program runs, the lastLoc will be assigned to the last location
     // we've evaluated in the program.
     plt.Kernel.lastLoc = undefined;
-    plt.Kernel.setLastLoc = function(loc) {
-	plt.Kernel.lastLoc = loc;
+    plt.Kernel.setLastLoc = function(locHash) {
+	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
+	plt.Kernel.lastLoc = stxModule.EXPORTS.make_dash_Loc(
+	    plt.types.Rational.makeInstance(locHash.offset),
+	    plt.types.Rational.makeInstance(locHash.line),
+	    plt.types.Rational.makeInstance(locHash.column),
+	    plt.types.Rational.makeInstance(locHash.span),
+	    plt.types.Rational.makeInstance(locHash.id));
 	return true;
     }
 
     plt.Kernel.locToString = function(lastLoc) {
+	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
 	if (typeof(lastLoc) === 'string') {
 	    return lastLoc;
 	}
-	return ("offset=" + Loc_dash_offset(lastLoc)
-		+ ", line=" + Loc_dash_line(lastLoc) 
-		+ ", column=" + Loc_dash_column(lastLoc) 
-		+ ", span=" + Loc_dash_span(lastLoc)
-		+ ", id=" + Loc_dash_id(lastLoc));
+	return ("offset=" + stxModule.EXPORTS.Loc_dash_offset(lastLoc)
+		+ ", line=" + stxModule.EXPORTS.Loc_dash_line(lastLoc) 
+		+ ", column=" + stxModule.EXPORTS.Loc_dash_column(lastLoc) 
+		+ ", span=" + stxModule.EXPORTS.Loc_dash_span(lastLoc)
+		+ ", id=" + stxModule.EXPORTS.Loc_dash_id(lastLoc));
     };
     
 
