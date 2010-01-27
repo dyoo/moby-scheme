@@ -1,8 +1,10 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
+(require "arity-struct.ss")
 (require "error-struct.ss")
 (require "stx.ss")
 (require "scheme-value-to-dom.ss")
+
 
 ;; Error structure to dom code.
 ;; These functions produce DOMs out of the values in error-struct,
@@ -300,9 +302,25 @@
 
 
 
-
+;; Converts an arity to a dom sexpression.
 (define (arity-to-dom-sexp an-arity)
-  "fixme")
+  (cond
+    [(arity:fixed? an-arity)
+     `(span ((class "Arity:Fixed"))
+            ,(number->string (arity:fixed-n an-arity)))]
+
+    [(arity:variable? an-arity)
+     `(span ((class "Arity:Variable"))
+            (span ((class "Arity.Variable.minimum"))
+                  ,(number->string (arity:variable-min an-arity)))
+            (span ((class "Arity.Variable.maximum"))
+                  ,(number->string (arity:variable-max an-arity))))]
+
+    [(arity:mixed? an-arity)
+     `(span ((class "Arity:Mixed"))
+            ,@(map (lambda (a)
+                     `(span ((class "Arity:Mixed.item"))
+                            ,(arity-to-dom-sexp a)))))]))
 
     
   
