@@ -332,6 +332,9 @@
                      ;; Exception raising
                      (raise 1)
                      
+
+                     ;; Checking for undefined
+                     (undefined? 1)
                      
                      )))]
     core-env))

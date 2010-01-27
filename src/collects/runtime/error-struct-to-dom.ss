@@ -231,8 +231,48 @@
          
 
 
-(define (scheme-value-to-dom-sexp a-scheme-value)
-  "fixme")
+;; scheme-value-to-dom-sexp: any -> dom
+(define (scheme-value-to-dom-sexp val)
+  (cond
+    [(string? val)
+     `(span ((class "SchemeValue:String"))
+            ,val)]
+    [(number? val)
+     `(span ((class "SchemeValue:Number"))
+            ,(number->string val))]
+    [(boolean? val)
+     `(span ((class "SchemeValue:Boolean"))
+            ,(if val "true" "false"))]
+    [(char? val)
+     `(span ((class "SchemeValue:Character"))
+            (string val))]
+    [(symbol? val)
+     `(span ((class "SchemeValue:Symbol"))
+            (symbol->string val))]
+    [(list? val)
+     `(span ((class "SchemeValue:List"))
+            (span ((class "SchemeValue:List.lparen")) "(")
+            ,@(map (lambda (x)
+                     `(span ((class "SchemeValue:List.item"))
+                            ,(scheme-value-to-dom-sexp x))
+                     )
+                   val)
+            (span ((class "SchemeValue:List.rparen")) ")")
+            )]
+    [(vector? val)
+     ...]
+    [(struct? val)
+     ...]
+    [(box? val)
+     ...]
+    [(hash? val)
+     ...]
+    [(function? val)
+     ...]
+    #;[(undefined? val)
+       ...]
+    [else
+     ...]))
     
 
 

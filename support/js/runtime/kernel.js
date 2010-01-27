@@ -2235,6 +2235,10 @@ goog.provide('plt.Kernel');
 
 
 
+    plt.Kernel.undefined_question_ = function(x) {
+	return x === undefined;
+    };
+
 
 
     // As a program runs, the lastLoc will be assigned to the last location
