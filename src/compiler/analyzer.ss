@@ -100,15 +100,15 @@
                                                              (stx-e (second (stx-e a-clause)))
                                                              (make-provide-binding:struct-id (second (stx-e a-clause)))))]
                 [else
-                 (raise (make-moby-error (stx-loc a-clause))
-                        (make-moby-error-type:generic-syntactic-error
-                         (format "provide doesn't recognize the syntax of the clause: ~s" 
-                                 (stx->datum a-clause))))])]
+                 (raise (make-moby-error (stx-loc a-clause)
+                                         (make-moby-error-type:generic-syntactic-error
+                                          (format "provide doesn't recognize the syntax of the clause: ~s" 
+                                                  (stx->datum a-clause)))))])]
              [else
-              (raise (make-moby-error (stx-loc a-clause))
-                        (make-moby-error-type:generic-syntactic-error
-                         (format "provide doesn't recognize the syntax of the clause: ~s" 
-                                 (stx->datum a-clause))))]))
+              (raise (make-moby-error (stx-loc a-clause)
+                                      (make-moby-error-type:generic-syntactic-error
+                                       (format "provide doesn't recognize the syntax of the clause: ~s" 
+                                               (stx->datum a-clause)))))]))
          a-pinfo
          clauses))
 
@@ -404,8 +404,8 @@
 ;; bindings provided by that module.
 (define (require-analyze-collect-definitions require-path pinfo)
   (local [(define (signal-error)
-            (raise (make-moby-error (stx-loc require-path))
-                   (make-moby-error-type:unknown-module (stx-e require-path))))
+            (raise (make-moby-error (stx-loc require-path)
+                                    (make-moby-error-type:unknown-module (stx-e require-path)))))
 
           (define maybe-module-name ((pinfo-module-path-resolver pinfo)
                                      (stx-e require-path)

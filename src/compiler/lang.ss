@@ -110,6 +110,17 @@
                            a-path-string)))
 
 
+(base:define-struct (moby-failure exn:fail) (val))
+
+(define-syntax (my-raise stx)
+  (syntax-case stx ()
+    [(_ val)
+     (syntax/loc stx
+       (base:raise (make-moby-failure (base:format "~s" val)
+                                      (base:current-continuation-marks) 
+                                      val)))]))
+
+
 
 (define (my-hash-ref a-hash key default-val)
   (base:hash-ref a-hash key default-val))
@@ -133,7 +144,7 @@
                      (base:map map)
                      (base:for-each for-each)
                      (base:error error)
-                     (base:raise raise)
+                     (my-raise raise)
                      )
 
          ;;(all-from-out "../collects/runtime/stx.ss")

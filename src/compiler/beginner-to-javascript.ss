@@ -668,8 +668,8 @@
 (define (set!-expression->javascript-string id-stx newVal-stx env a-pinfo)
   (cond
     [(not (symbol? (stx-e id-stx))) 
-     (raise (make-moby-error (stx-loc id-stx))
-            (make-moby-error-type:expected-identifier id-stx))]
+     (raise (make-moby-error (stx-loc id-stx)
+                             (make-moby-error-type:expected-identifier id-stx)))]
     [else
      (local [(define es+p
                (expressions->javascript-strings (list id-stx newVal-stx)

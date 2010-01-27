@@ -407,7 +407,7 @@
                       (begin
                         (hash-set! seen-ids (stx-e (first ids)) (first ids))
                         (loop (rest ids)))])]))]
-    (loop ids empty)))
+    (loop ids)))
 
 
 

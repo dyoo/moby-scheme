@@ -30,6 +30,10 @@
                       ;; If true, the compiler emits calls to plt.Kernel.setLastLoc to maintain
                       ;; source position during evaluation.
 
+
+                      allow-redefinition?     ; boolean
+                      ;; If true, redefinition of a value that's already defined will not raise an error.
+                      
                       ;; For the module system.
                       module-resolver        ; (module-name -> (module-binding | false))
                       module-path-resolver   ; (string module-path -> module-name)
@@ -54,6 +58,7 @@
               empty-rbtree
               empty-rbtree
               empty-rbtree
+              true
               true
               default-module-resolver
               default-module-path-resolver
@@ -81,6 +86,7 @@
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)
+   (pinfo-allow-redefinition? a-pinfo)
    (pinfo-module-resolver a-pinfo)
    (pinfo-module-path-resolver a-pinfo)
    (pinfo-current-module-path a-pinfo)))
@@ -98,6 +104,7 @@
    (pinfo-defined-names a-pinfo)
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)
+   (pinfo-allow-redefinition? a-pinfo)
    (pinfo-module-resolver a-pinfo)
    (pinfo-module-path-resolver a-pinfo)
    (pinfo-current-module-path a-pinfo)))
@@ -114,6 +121,7 @@
    defined-names
    (pinfo-shared-expressions a-pinfo)
    (pinfo-with-location-emits? a-pinfo)
+   (pinfo-allow-redefinition? a-pinfo)
    (pinfo-module-resolver a-pinfo)
    (pinfo-module-path-resolver a-pinfo)
    (pinfo-current-module-path a-pinfo)))
@@ -130,6 +138,7 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               with-location-emits?
+              (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
               (pinfo-current-module-path a-pinfo)))
@@ -145,6 +154,7 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
               module-resolver
               (pinfo-module-path-resolver a-pinfo)
               (pinfo-current-module-path a-pinfo)))
@@ -159,6 +169,7 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               module-path-resolver
               (pinfo-current-module-path a-pinfo)))
@@ -173,6 +184,7 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
               current-module-path))
@@ -192,6 +204,7 @@
                              (make-labeled-translation (pinfo-gensym-counter a-pinfo)
                                                        a-translation))
               (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
               (pinfo-current-module-path a-pinfo)))
@@ -200,20 +213,39 @@
 ;; pinfo-accumulate-defined-binding: binding pinfo -> pinfo
 ;; Adds a new defined binding to a pinfo's set.
 (define (pinfo-accumulate-defined-binding a-binding a-pinfo)
-  (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
-              (pinfo-modules a-pinfo)
-              (pinfo-used-bindings-hash a-pinfo)
-              (pinfo-gensym-counter a-pinfo)
-              (pinfo-provided-names a-pinfo)
-              (rbtree-insert symbol< 
-                             (pinfo-defined-names a-pinfo)
-                             (binding-id a-binding)
-                             a-binding)
-              (pinfo-shared-expressions a-pinfo)
-              (pinfo-with-location-emits? a-pinfo)
-              (pinfo-module-resolver a-pinfo)
-              (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+  (cond
+    [(pinfo-allow-redefinition? a-pinfo)
+     (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
+                 (pinfo-modules a-pinfo)
+                 (pinfo-used-bindings-hash a-pinfo)
+                 (pinfo-gensym-counter a-pinfo)
+                 (pinfo-provided-names a-pinfo)
+                 (rbtree-insert symbol< 
+                                (pinfo-defined-names a-pinfo)
+                                (binding-id a-binding)
+                                a-binding)
+                 (pinfo-shared-expressions a-pinfo)
+                 (pinfo-with-location-emits? a-pinfo)
+                 (pinfo-allow-redefinition? a-pinfo)
+                 (pinfo-module-resolver a-pinfo)
+                 (pinfo-module-path-resolver a-pinfo)
+                 (pinfo-current-module-path a-pinfo))]
+    [else
+     (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
+                 (pinfo-modules a-pinfo)
+                 (pinfo-used-bindings-hash a-pinfo)
+                 (pinfo-gensym-counter a-pinfo)
+                 (pinfo-provided-names a-pinfo)
+                 (rbtree-insert symbol< 
+                                (pinfo-defined-names a-pinfo)
+                                (binding-id a-binding)
+                                a-binding)
+                 (pinfo-shared-expressions a-pinfo)
+                 (pinfo-with-location-emits? a-pinfo)
+                 (pinfo-allow-redefinition? a-pinfo)
+                 (pinfo-module-resolver a-pinfo)
+                 (pinfo-module-path-resolver a-pinfo)
+                 (pinfo-current-module-path a-pinfo))]))
 
 
 ;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
@@ -238,6 +270,7 @@
                        (pinfo-defined-names a-pinfo)
                        (pinfo-shared-expressions a-pinfo)
                        (pinfo-with-location-emits? a-pinfo)
+                       (pinfo-allow-redefinition? a-pinfo)
                        (pinfo-module-resolver a-pinfo)
                        (pinfo-module-path-resolver a-pinfo)
                        (pinfo-current-module-path a-pinfo)))
@@ -256,6 +289,7 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
               (pinfo-current-module-path a-pinfo)))
@@ -275,6 +309,7 @@
               (pinfo-defined-names a-pinfo)
               (pinfo-shared-expressions a-pinfo)
               (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
               (pinfo-current-module-path a-pinfo)))
@@ -291,6 +326,7 @@
                     (pinfo-defined-names a-pinfo)
                     (pinfo-shared-expressions a-pinfo)
                     (pinfo-with-location-emits? a-pinfo)
+                    (pinfo-allow-redefinition? a-pinfo)
                     (pinfo-module-resolver a-pinfo)
                     (pinfo-module-path-resolver a-pinfo)
                     (pinfo-current-module-path a-pinfo))
@@ -444,7 +480,9 @@
                                  [provided-names rbtree?]
                                  [defined-names rbtree?]
                                  [shared-expressions rbtree?]
+                                 
                                  [with-location-emits? boolean?]
+                                 [allow-redefinition? boolean?]
                                  
                                  [module-resolver (module-name? . -> . (or/c module-binding? false/c))]
                                  [module-path-resolver (module-path? module-path? . -> . module-name?)]
