@@ -5,8 +5,7 @@
 (require "../collects/runtime/stx.ss")
 (require "../collects/runtime/error-struct.ss")
 
-(define (syntax-error x y)
-  "fixme")
+
 
 
 
@@ -302,8 +301,11 @@
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               [else
-               (raise (make-moby-error))
-               #;(error 'desugar (format "Unable to desugar ~s" (stx->datum expr)))]))
+               (raise 
+                (make-moby-error (stx-loc expr)
+                                 (make-moby-error-type:generic-syntactic-error
+                                  (format "Unable to desugar ~s" (stx->datum expr))
+                                  (list))))]))
           
           ;; processing-loop: program pinfo -> (list program pinfo)
           (define (processing-loop a-program a-pinfo)
@@ -395,8 +397,10 @@
                                                           (stx-loc an-expr))
                                               updated-pinfo-2)))]
       [else
-       (syntax-error (format "Not a case clause: ~s" (stx-e an-expr))
-                     an-expr)])))
+       (raise (make-moby-error (stx-loc an-expr)
+                               (make-moby-error-type:generic-syntactic-error
+                                (format "Not a case clause: ~s" (stx->datum an-expr))
+                                (list))))])))
 
 
 
@@ -432,8 +436,10 @@
                                         (list (loop questions answers question-last answer-last)
                                               pinfo)))]
       [else
-       (syntax-error (format "Not a cond clause: ~s" (stx-e an-expr))
-                     an-expr)])))
+       (raise (make-moby-error (stx-loc an-expr)
+                               (make-moby-error-type:generic-syntactic-error
+                                (format "Not a cond clause: ~s" (stx->datum an-expr))
+                                (list))))])))
 
 
 ;; deconstruct-clauses-with-else: (listof stx) (stx -> stx) ((listof stx) (listof stx) stx stx -> X) -> X
@@ -446,8 +452,11 @@
        (cond
          [(stx-begins-with? (first clauses) 'else)
           (if (not (empty? (rest clauses)))
-              (syntax-error "else clause should be the last, but there's another clause after it" 
-                            (first clauses))
+              (raise (make-moby-error (stx-loc (first clauses))
+                                      (make-moby-error-type:generic-syntactic-error
+                                       "else clause should be the last, but there's another clause after it" 
+                                       (list)
+                                       )))
               (f (reverse questions/rev) 
                  (reverse answers/rev) 
                  (else-replacement-f (first (stx-e (first clauses))))
@@ -571,7 +580,11 @@
                           [(= depth 1)
                            (second (stx-e a-stx))]
                           [else
-                           (syntax-error "misuse of a comma or 'unquote, not under a quasiquoting backquote" a-stx)]))]
+                           (raise (make-moby-error (stx-loc a-stx)
+                                                   (make-moby-error-type:generic-syntactic-error
+                                                    "misuse of a comma or 'unquote, not under a quasiquoting backquote" 
+                                                    (list)
+                                                    )))]))]
                      
                      [(stx-begins-with? a-stx 'unquote-splicing)
                       (cond
@@ -581,10 +594,16 @@
                                                           (sub1 depth)))
                                      (stx-loc a-stx))]
                         [(= depth 1)
-                         (syntax-error "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)]
+                         (raise (make-moby-error (stx-loc a-stx)
+                                                 (make-moby-error-type:generic-syntactic-error
+                                                  "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
+                                                  (list))))]
                         
                         [else
-                         (syntax-error "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote" a-stx)])]
+                         (raise (make-moby-error (stx-loc a-stx)
+                                                 (make-moby-error-type:generic-syntactic-error
+                                                  "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote"
+                                                  (list))))])]
                      
                      [else
                       (datum->stx (cons 'append 
@@ -607,8 +626,11 @@
                                                    (check-single-body-stx! (rest (stx-e s)) s)
                                                    (second (stx-e s)))]
                                                 [else
-                                                 (syntax-error 
-                                                  "misuse of ,@ or unquote-splicing within a quasiquoting backquote" a-stx)])]
+                                                 (make-moby-error 
+                                                  (stx-loc a-stx)
+                                                  (make-moby-error-type:generic-syntactic-error
+                                                   "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
+                                                   (list)))])]
                                              
                                              [else
                                               (list 'list (handle-quoted s depth))]))
@@ -658,7 +680,10 @@
     [(symbol? (stx-e a-clause))
        a-clause]
     [else
-     (syntax-error (format "provide/contract: ~s" a-clause) a-clause)]))
+     (raise (make-moby-error (stx-loc a-clause)
+                             (make-moby-error-type:generic-syntactic-error 
+                              (format "provide/contract: ~s" a-clause)
+                              (list))))]))
 
 
 

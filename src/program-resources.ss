@@ -19,7 +19,10 @@
 (define (open-program/resources a-path)
   (local [(define source-code (open-beginner-program a-path))
           (define named-bitmaps (lift-images! source-code))]
-    (make-program/resources (parse-text-as-program source-code)
+    (make-program/resources (parse-text-as-program source-code 
+                                                   (if (string? a-path)
+                                                       a-path
+                                                       (path->string a-path)))
                             named-bitmaps)))
                
 
