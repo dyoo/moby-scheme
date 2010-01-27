@@ -437,7 +437,15 @@ Box
 	} else {
 	    return false;
 	}
-    }
+    };
+
+    plt.types.Vector.prototype.toList = function() {
+	var ret = plt.types.Empty.EMPTY;
+	for (var i = this.length() - 1; i >= 0; i--) {
+	    ret = plt.types.Cons.makeInstance(this.elts[i], ret);	    
+	}	
+	return ret;
+    };
 
     plt.types.Vector.prototype.toWrittenString = function(cache) {
 	cache.put(this, true);

@@ -305,6 +305,7 @@
                      (vector-length 1)
                      (vector-ref 2)
                      (vector-set! 3)
+                     (vector->list 1)
                      (vector? 1)
 
 		     (printf 1 true)

@@ -2169,6 +2169,12 @@ goog.provide('plt.Kernel');
 	return plt.types.Rational.makeInstance(vec.length());
     };
 
+    plt.Kernel.vector_dash__greaterthan_list = function(vec) {
+	check(vec, isVector, "vector->list", "vector", 1);
+	return vec.toList();
+    };
+
+
     plt.Kernel.vector_dash_ref = function(vec, k) {
 	check(vec, isVector, "vector-ref", "vector", 1);
 	check(k, function(x) { return isNatural(x) && x.toFixnum() < vec.length()}, "vector-ref", "natural < vector length", 2);

@@ -55,9 +55,10 @@
                             (build-path COLLECTS-PATH "runtime" "arity-struct.ss"))
         (make-module-record 'moby/runtime/error-struct 
                             (build-path COLLECTS-PATH "runtime" "error-struct.ss"))
+        (make-module-record 'moby/runtime/scheme-value-to-dom 
+                            (build-path COLLECTS-PATH "runtime" "scheme-value-to-dom.ss"))
         (make-module-record 'moby/runtime/error-struct-to-dom 
                             (build-path COLLECTS-PATH "runtime" "error-struct-to-dom.ss"))
-        
         
         (make-module-record 'bootstrap/bootstrap-teachpack 
                             (build-path COLLECTS-PATH "bootstrap" "bootstrap-teachpack.ss"))
@@ -172,6 +173,9 @@
           `(define MOBY-RUNTIME-MODULE-BINDINGS
                   (list ,@
                   (for/list ([a-runtime-module (in-list RUNTIME-MODULES)])
+                    ;; FIXME: we need to topologically sort the runtime modules and rerun,
+                    ;; because some modules expect others to exist up.
+                    ;; (printf "looking at ~s~n" (module-record-path a-runtime-module))
                     (let* ([a-program+resources
                             (open-program/resources (module-record-path a-runtime-module))]
                            [desugared-program+pinfo 
