@@ -100,8 +100,18 @@
         `(span ((class "Error:UndefinedIdentifier"))
                (span ((class "Error.reason"))
                      "I don't know what "
-                     ,(symbol->string (moby-error-type:undefined-identifier-id error-type))
+                     ,(scheme-value-to-dom-sexp (moby-error-type:undefined-identifier-id error-type))
                      " is; it's not defined as an input or a primitive."))]
+
+       
+       [(moby-error-type:structure-identifier-not-expression? error-type)
+        `(span ((class "Error:StructureIdentifierNotExpression"))
+               (span ((class "Error.reason"))
+                     "The structure name "
+                     ,(scheme-value-to-dom-sexp (moby-error-type:structure-identifier-not-expression-id
+                                                 error-type))
+                     " can't be used as an expression."))]
+
        
        [(moby-error-type:provided-name-not-defined? error-type)
         `(span ((class "Error:ProvidedNameNotDefined"))
@@ -135,6 +145,14 @@
                      " but instead I see "
                      ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-observed error-type))
                      ))]
+
+       [(moby-error-type:application-operator-not-a-function? error-type)
+        `(span ((class "Error:ApplicationOperatorNotAFunction"))
+               (span ((class "Error.reason"))
+                     "The operator "
+                     ,(scheme-value-to-dom-sexp (moby-error-type:application-operator-not-a-function-who error-type))
+                     " is a value, but it isn't a function."))]
+
        
        [(moby-error-type:type-mismatch? error-type)
         `(span ((class "Error:TypeMismatch"))

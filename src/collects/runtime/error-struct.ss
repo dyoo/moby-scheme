@@ -1,6 +1,7 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
 (require "stx.ss")
+(require "arity-struct.ss")
 
 (define-struct moby-error (location error-type))
 
@@ -13,11 +14,13 @@
 (define-struct moby-error-type:duplicate-identifier (id second-location))
 (define-struct moby-error-type:expected-identifier (observed))
 (define-struct moby-error-type:undefined-identifier (id))
+(define-struct moby-error-type:structure-identifier-not-expression (id))
 (define-struct moby-error-type:provided-name-not-defined (id))
 (define-struct moby-error-type:provided-structure-not-structure (id))
 (define-struct moby-error-type:unknown-module (path))
 
 (define-struct moby-error-type:application-arity (who expected observed))
+(define-struct moby-error-type:application-operator-not-a-function (who))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
 (define-struct moby-error-type:index-out-of-bounds (minimum maximum observed))
 (define-struct moby-error-type:conditional-exhausted ())
@@ -42,10 +45,12 @@
       (moby-error-type:duplicate-identifier? x)
       (moby-error-type:expected-identifier? x)
       (moby-error-type:undefined-identifier? x)
+      (moby-error-type:structure-identifier-not-expression? x)
       (moby-error-type:provided-name-not-defined? x)
       (moby-error-type:provided-structure-not-structure? x)
       (moby-error-type:unknown-module? x)
       (moby-error-type:application-arity? x)
+      (moby-error-type:application-operator-not-a-function? x)
       (moby-error-type:type-mismatch? x)
       (moby-error-type:index-out-of-bounds? x)
       (moby-error-type:conditional-exhausted? x)
@@ -120,6 +125,7 @@
                                                [second-location Loc?])]
  [struct moby-error-type:expected-identifier ([observed stx?])]
  [struct moby-error-type:undefined-identifier ([id symbol?])]
+ [struct moby-error-type:structure-identifier-not-expression ([id symbol?])]
  [struct moby-error-type:provided-name-not-defined ([id symbol?])]
  [struct moby-error-type:provided-structure-not-structure ([id symbol?])]
  
@@ -127,8 +133,9 @@
  
  
  [struct moby-error-type:application-arity ([who any/c]
-                                            [expected any/c]
+                                            [expected arity?]
                                             [observed any/c])]
+ [struct moby-error-type:application-operator-not-a-function ([who any/c])]
  [struct moby-error-type:type-mismatch ([who any/c]
                                         [position number?]
                                         [expected any/c]

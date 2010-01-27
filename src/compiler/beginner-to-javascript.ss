@@ -16,6 +16,8 @@
 (require "version.ss")
 (require "../collects/runtime/binding.ss")
 (require "../collects/runtime/stx.ss")
+(require "../collects/runtime/error-struct.ss")
+(require "../collects/runtime/arity-struct.ss")
 
 
 ;; A compiled program is a:
@@ -134,9 +136,8 @@
                   (binding:structure-accessors a-binding)
                   (binding:structure-mutators a-binding))]
          [else
-          (syntax-error (format "The provided name ~s was expected to be a structure, but is defined to be something else."
-                                (binding-id a-binding))
-                        (provide-binding-stx a-binding))]))]))
+          (raise (make-moby-error (stx-loc (provide-binding-stx a-binding))
+                                  (make-moby-error-type:provided-structure-not-structure (stx-e (provide-binding-stx a-binding)))))]))]))
 
 
 ;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> binding
@@ -150,9 +151,10 @@
       [(list? list-or-false)
        (second list-or-false)]
       [else
-       (syntax-error (format "The provided name ~s has not been defined"
-                             (stx-e (provide-binding-stx a-provide-binding)))
-                     (provide-binding-stx a-provide-binding))])))
+       (raise (make-moby-error (stx-loc (provide-binding-stx a-provide-binding))
+                               (make-moby-error-type:provided-name-not-defined 
+                                (stx-e (provide-binding-stx a-provide-binding)))))])))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -666,7 +668,8 @@
 (define (set!-expression->javascript-string id-stx newVal-stx env a-pinfo)
   (cond
     [(not (symbol? (stx-e id-stx))) 
-     (syntax-error "expected an identifier in the first argument of 'set!', got: " id-stx)]
+     (raise (make-moby-error (stx-loc id-stx))
+            (make-moby-error-type:expected-identifier id-stx))]
     [else
      (local [(define es+p
                (expressions->javascript-strings (list id-stx newVal-stx)
@@ -687,8 +690,8 @@
 (define (begin-sequence->javascript-string original-stx exprs env a-pinfo)
   (cond
     [(empty? exprs)
-     (syntax-error "expected a sequence of expressions after `begin', but nothing's there"
-                   original-stx)]
+     (raise (make-moby-error (stx-loc original-stx))
+            (make-moby-error-type:missing-expression 'begin))]
     [else
      (local [;; split-last-element: (listof any) -> (listof (listof any) any)
              ;; (split-last-element (list x y z)) --> (list (list x y) z)
@@ -760,8 +763,10 @@
      (boolean->javascript-string (stx-e expr))]
     
     [else
-     (syntax-error "Unknown quoted expression encountered"
-                   expr)]))
+     (raise (make-moby-error (stx-loc expr))
+            (make-moby-error-type:generic-syntactic-error 
+             (format "Unknown quoted expression encountered: ~s" (stx->datum expr))))]))
+
 
 
 ;; boolean->javascript-string: boolean -> string
@@ -831,8 +836,8 @@
     ;; Special case: when the operator is named
     [(and (symbol? (stx-e operator))
           (not (env-contains? env (stx-e operator))))
-     (syntax-error (format "name ~s is not defined, not a parameter, and not a primitive name" (stx-e operator))
-                   operator)]
+     (raise (make-moby-error (stx-loc operator)
+                             (make-moby-error-type:undefined-identifier (stx-e operator))))]
     
     [(symbol? (stx-e operator))
      (local [(define operator-binding (env-lookup env (stx-e operator)))
@@ -856,11 +861,10 @@
           (cond
             [(< (length operands)
                 (binding:function-min-arity operator-binding))
-             (syntax-error (format "Too few arguments passed to ~s.  Expects at least ~a arguments, given ~a."
-                                   (stx-e operator)
-                                   (binding:function-min-arity operator-binding)
-                                   (length operands))
-                           original-stx)]
+             (raise (make-moby-error (stx-loc original-stx)
+                                     (make-moby-error-type:application-arity (stx-e operator)
+                                                                             (make-arity:fixed (binding:function-min-arity operator-binding))
+                                                                             (length operands))))]
             [(binding:function-var-arity? operator-binding)
              (cond [(> (binding:function-min-arity operator-binding) 0)
                     (list 
@@ -887,11 +891,11 @@
              (cond
                [(> (length operands)
                    (binding:function-min-arity operator-binding))
-                (syntax-error (format "Too many arguments passed to ~s.  Expects at most ~a arguments, given ~a."
-                                      (stx-e operator)
-                                      (binding:function-min-arity operator-binding)
-                                      (length operands))
-                              original-stx)]
+                (raise (make-moby-error (stx-loc original-stx)
+                                        (make-moby-error-type:application-arity (stx-e operator)
+                                                                                (make-arity:fixed 
+                                                                                 (binding:function-min-arity operator-binding))
+                                                                                (length operands))))]
                [else
                 (list 
                  (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding)
@@ -900,7 +904,9 @@
                                            updated-pinfo)
                  updated-pinfo)])])]
          [(binding:structure? operator-binding)
-          (syntax-error (format "structure name ~s can not be used as an program expression." (stx-e operator)) original-stx)]))]
+          (raise (make-moby-error (stx-loc original-stx)
+                                  (make-moby-error-type:application-operator-not-a-function 
+                                   (stx-e operator))))]))]
     
     ;; General application
     [else
@@ -927,8 +933,9 @@
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
     [(not (env-contains? an-env (stx-e an-id)))
-     (syntax-error (format "name ~s is not defined, not a parameter, and not a primitive name." (stx-e an-id))
-                   an-id)]
+     (raise (make-moby-error (stx-loc an-id)
+                             (make-moby-error-type:undefined-identifier 
+                              (stx-e an-id))))]
     [else     
      (local [(define binding (env-lookup an-env (stx-e an-id)))]
        (cond
@@ -978,9 +985,8 @@
                              "_result_.procedureArity = " (rational-number->javascript-string (binding:function-min-arity binding)) ";"
                              "return _result_; })()")])]
          [(binding:structure? binding)
-          (syntax-error (format "structure name ~s can not be used as an program expression." (stx-e an-id))
-                        an-id)]
-         ))]))
+          (raise (make-moby-error (stx-loc an-id)
+                                  (make-moby-error-type:structure-identifier-not-expression (stx-e an-id))))]))]))
 
 
 
@@ -1098,11 +1104,7 @@
                     (number->javascript-string (real-part a-num) original-stx)
                     ", "
                     (number->javascript-string (imag-part a-num) original-stx)
-                    "))")]
-    
-    [else
-     (syntax-error (format "Don't know how to handle ~s yet" a-num)
-                   original-stx)]))
+                    "))")]))
 
 
 
