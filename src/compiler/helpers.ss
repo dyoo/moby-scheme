@@ -364,13 +364,15 @@
      (raise (make-moby-error 
              (stx-loc a-definition)
              (make-moby-error-type:generic-syntactic-error
-              "define expects an identifier and a body.  e.g. (define answer 42)")))]
+              "define expects an identifier and a body.  e.g. (define answer 42)"
+              (list))))]
 
     [(stx-begins-with? a-definition 'define-struct)
      (raise (make-moby-error
              (stx-loc a-definition)
              (make-moby-error-type:generic-syntactic-error
-              "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))")))]))
+              "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))"
+              (list))))]))
 
 
 
@@ -417,11 +419,13 @@
     [(empty? stxs)
      (make-moby-error (stx-loc original-stx)
                       (make-moby-error-type:generic-syntactic-error
-                       "I expected a single body in this expression, but I didn't find any."))]
+                       "I expected a single body in this expression, but I didn't find any."
+                       (list)))]
     [(not (empty? (rest stxs)))
      (make-moby-error (stx-loc original-stx)
                       (make-moby-error-type:generic-syntactic-error
-                       "I expected a single body in this expression, but I found more than one."))]
+                       "I expected a single body in this expression, but I found more than one."
+                       (list)))]
     [else
      (void)]))
 

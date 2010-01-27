@@ -61,6 +61,16 @@
                (span ((class "Error:UnsupportedLexicalToken.token"))
                      ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))))]
        
+       [(moby-error-type:unsupported-expression-form? error-type)
+        `(span ((class "Error:UnsupportedExpressionForm"))
+               (span ((class "Error.reason"))
+                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type))
+                     " is currently not supported.")
+               (span ((class "Error:UnsupportedExpressionForm.expr"))
+                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type))))]
+       
+
+       
        
        [(moby-error-type:unclosed-parentheses? error-type)
         `(span ((class "Error:UnclosedParentheses"))
@@ -94,7 +104,9 @@
        [(moby-error-type:expected-identifier? error-type)
         `(span ((class "Error:ExpectedIdentifier"))
                (span ((class "Error.reason"))
-                     "I expected an identifier but did not receive one."))]
+                     "I expected an identifier but received "
+                     ,(stx-to-dom-sexp (moby-error-type:expected-identifier-observed error-type))
+                     " instead."))]
        
        [(moby-error-type:undefined-identifier? error-type)
         `(span ((class "Error:UndefinedIdentifier"))
@@ -222,6 +234,15 @@
 (define (scheme-value-to-dom-sexp a-scheme-value)
   "fixme")
     
+
+
+;; stx-to-dom-sexp: stx -> dom
+(define (stx-to-dom-sexp a-stx)
+  (scheme-value-to-dom-sexp 
+   (stx->datum a-stx)))
+
+
+
 
 (define (expected-value-to-dom-sexp expected)
   (cond 

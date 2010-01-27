@@ -690,8 +690,8 @@
 (define (begin-sequence->javascript-string original-stx exprs env a-pinfo)
   (cond
     [(empty? exprs)
-     (raise (make-moby-error (stx-loc original-stx))
-            (make-moby-error-type:missing-expression 'begin))]
+     (raise (make-moby-error (stx-loc original-stx)
+                             (make-moby-error-type:missing-expression 'begin)))]
     [else
      (local [;; split-last-element: (listof any) -> (listof (listof any) any)
              ;; (split-last-element (list x y z)) --> (list (list x y) z)
@@ -763,9 +763,11 @@
      (boolean->javascript-string (stx-e expr))]
     
     [else
-     (raise (make-moby-error (stx-loc expr))
-            (make-moby-error-type:generic-syntactic-error 
-             (format "Unknown quoted expression encountered: ~s" (stx->datum expr))))]))
+     ;; FIXME: This should never happen; all program values should be quotable.
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:generic-syntactic-error 
+                              (format "Unknown unquotable expression encountered: ~s" (stx->datum expr))
+                              (list))))]))
 
 
 

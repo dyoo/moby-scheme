@@ -9,8 +9,8 @@
          scheme/contract
          lang/htdp-advanced
          (for-syntax scheme/base)
-         "../collects/runtime/stx.ss"
-         )
+         "../collects/runtime/error-struct.ss"
+         "../collects/runtime/error-struct-to-dom.ss")
 
 
 (provide (except-out (all-from-out lang/htdp-advanced)
@@ -116,7 +116,9 @@
   (syntax-case stx ()
     [(_ val)
      (syntax/loc stx
-       (base:raise (make-moby-failure (base:format "~s" val)
+       (base:raise (make-moby-failure (base:format "~s" (if (moby-error? val)
+                                                            (moby-error-struct-to-dom-sexp val)
+                                                            val))
                                       (base:current-continuation-marks) 
                                       val)))]))
 

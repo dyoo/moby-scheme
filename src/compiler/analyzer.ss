@@ -103,12 +103,14 @@
                  (raise (make-moby-error (stx-loc a-clause)
                                          (make-moby-error-type:generic-syntactic-error
                                           (format "provide doesn't recognize the syntax of the clause: ~s" 
-                                                  (stx->datum a-clause)))))])]
+                                                  (stx->datum a-clause))
+                                          (list))))])]
              [else
               (raise (make-moby-error (stx-loc a-clause)
                                       (make-moby-error-type:generic-syntactic-error
                                        (format "provide doesn't recognize the syntax of the clause: ~s" 
-                                               (stx->datum a-clause)))))]))
+                                               (stx->datum a-clause))
+                                       (list))))]))
          a-pinfo
          clauses))
 

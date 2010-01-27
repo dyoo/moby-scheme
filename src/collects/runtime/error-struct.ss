@@ -9,6 +9,7 @@
 (define-struct moby-error-type:unclosed-lexical-token (type opener closer))
 (define-struct moby-error-type:unrecognized-lexical-token (token))
 (define-struct moby-error-type:unsupported-lexical-token (token))
+(define-struct moby-error-type:unsupported-expression-form (expr))
 (define-struct moby-error-type:unclosed-parentheses (opener closer))
 (define-struct moby-error-type:missing-expression (token))
 (define-struct moby-error-type:duplicate-identifier (id second-location))
@@ -40,6 +41,7 @@
   (or (moby-error-type:unclosed-lexical-token? x)
       (moby-error-type:unrecognized-lexical-token? x)
       (moby-error-type:unsupported-lexical-token? x)
+      (moby-error-type:unsupported-expression-form? x)
       (moby-error-type:unclosed-parentheses? x)
       (moby-error-type:missing-expression? x)
       (moby-error-type:duplicate-identifier? x)
@@ -118,6 +120,7 @@
                                                  [closer symbol?])]
  [struct moby-error-type:unrecognized-lexical-token ([token symbol?])]
  [struct moby-error-type:unsupported-lexical-token ([token symbol?])]
+ [struct moby-error-type:unsupported-expression-form ([expr stx?])]
  [struct moby-error-type:unclosed-parentheses ([opener symbol?]
                                                [closer symbol?])]
  [struct moby-error-type:missing-expression ([token symbol?])]
