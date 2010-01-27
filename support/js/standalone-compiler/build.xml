@@ -7,133 +7,131 @@
 
   <target name="init">
     <mkdir dir="${build}"/>
-    <!-- <copy file="compressed-standalone-compiler.js" tofile="${build}/org/plt/moby/compiler.js"/>  -->
+    <copy file="compressed-standalone-compiler.js" tofile="${build}/org/plt/moby/compiler.js"/>
   </target>
 
   <target name="compile-interface" depends="init">
     <javac srcdir="${src}" destdir="${build}"/>
   </target>
 
-  <target name="run-rhino" depends="compile-interface">
 
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="base.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/base.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
-
-
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="jshashtable.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/jshashtable.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
+<!--   <target name="run-rhino" depends="compile-interface"> -->
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="base.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/base.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
 
 
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="types.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/types.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="jshashtable.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/jshashtable.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
 
 
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="kernel.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/kernel.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="types.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/types.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
 
 
-
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="stx.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/stx.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
-
-
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="read.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/read.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
-
-
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="compiler.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-      <arg value="-nosource"/>
-      <arg value="../runtime/compressed-compiler.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="kernel.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/kernel.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
 
 
 
-    <java classname="org.mozilla.javascript.tools.jsc.Main">
-      <arg value="-package"/> <arg value="org.plt.moby"/>
-      <arg value="-o"/> <arg value="_StandaloneCompiler.class"/>
-      <arg value="-d"/> <arg path="${build}"/>
-      <arg value="-opt"/> <arg value="9"/>
-<!--       <arg value="-implements"/> <arg value="org.plt.moby.CompilerI"/> -->
-      <arg value="-nosource"/>
-      <arg value="standalone-compiler.js"/>
-      <classpath>
-	<pathelement location="../../js.jar"/>
-	<pathelement path="${build}"/>
-      </classpath>
-    </java>
-  </target>
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="stx.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/stx.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
+
+
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="read.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/read.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
+
+
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="compiler.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="../runtime/compressed-compiler.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
+
+<!--     <java classname="org.mozilla.javascript.tools.jsc.Main"> -->
+<!--       <arg value="-package"/> <arg value="org.plt.moby"/> -->
+<!--       <arg value="-o"/> <arg value="_StandaloneCompiler.class"/> -->
+<!--       <arg value="-d"/> <arg path="${build}"/> -->
+<!--       <arg value="-opt"/> <arg value="9"/> -->
+<!-- <\!--       <arg value="-implements"/> <arg value="org.plt.moby.CompilerI"/> -\-> -->
+<!--       <arg value="-nosource"/> -->
+<!--       <arg value="standalone-compiler.js"/> -->
+<!--       <classpath> -->
+<!-- 	<pathelement location="../../js.jar"/> -->
+<!-- 	<pathelement path="${build}"/> -->
+<!--       </classpath> -->
+<!--     </java> -->
+<!--   </target> -->
 
 
 
-  <target name="compile-stage-2" depends="run-rhino">
+  <target name="compile-stage-2">
     <javac srcdir="${src2}" destdir="${build}">
       <classpath>
 	<pathelement location="../../js.jar"/>

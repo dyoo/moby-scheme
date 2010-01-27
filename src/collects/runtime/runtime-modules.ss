@@ -28,7 +28,14 @@
        "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_stx_colon_list\"]"
        ()
        #f)
-      (binding:function stx:list? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_question_\"]" () #f)
+      (binding:function
+       stx:list?
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_question_\"]"
+       ()
+       #f)
       (binding:function
        stx:list-elts
        #f
@@ -77,7 +84,14 @@
        "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_stx_colon_atom\"]"
        ()
        #f)
-      (binding:function stx:atom? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_question_\"]" () #f)
+      (binding:function
+       stx:atom?
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_question_\"]"
+       ()
+       #f)
       (binding:function
        stx:atom-datum
        #f
@@ -1063,7 +1077,14 @@
        "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"set_dash_effect_colon_stop_dash_sound_dash_sound_bang_\"]"
        ()
        #f)
-      (binding:function effect? #f 1 #f "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"effect_question_\"]" () #f)
+      (binding:function
+       effect?
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"effect_question_\"]"
+       ()
+       #f)
       (binding:structure
        effect:set-wake-lock
        (locks)
@@ -2584,7 +2605,8 @@
        make-moby-error-type:generic-syntactic-error
        moby-error-type:generic-syntactic-error?
        (moby-error-type:generic-syntactic-error-reason moby-error-type:generic-syntactic-error-other-locations)
-       (set-moby-error-type:generic-syntactic-error-reason! set-moby-error-type:generic-syntactic-error-other-locations!))
+       (set-moby-error-type:generic-syntactic-error-reason!
+        set-moby-error-type:generic-syntactic-error-other-locations!))
       (binding:function
        make-moby-error-type:generic-syntactic-error
        #f

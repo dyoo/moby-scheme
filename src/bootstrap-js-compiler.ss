@@ -485,8 +485,8 @@
 (write-runtime-toplevel-bindings-descriptions)
 (write-runtime-library-modules)
 (write-compressed-runtime)
-(write-compiler)
-(write-compressed-compilers)
+;(write-compiler)
+;(write-compressed-compilers)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

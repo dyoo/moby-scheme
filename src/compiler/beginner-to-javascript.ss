@@ -88,7 +88,7 @@
 
                     "    (function() {\n"
                     ""       (compiled-program-defns a-compiled-program) "\n"
-                    "        (" (compiled-program-toplevel-exprs a-compiled-program) ")(plt.Kernel.identity);\n"
+                    "        (" (compiled-program-toplevel-exprs a-compiled-program) ")(function(x){return x;});\n"
                     ;; FIXME: export the BINDINGS value that describes each exported value.
                     ""       (apply string-append (map (lambda (a-name)
                                                 (local [(define munged-name
