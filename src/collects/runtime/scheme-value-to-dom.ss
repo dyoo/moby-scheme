@@ -98,7 +98,7 @@
               
               [(string? val)
                `(span ((class "SchemeValue:String"))
-                      ,val)]
+                      (string-append "\"" ,val "\""))]
               
               [(number? val)
                `(span ((class "SchemeValue:Number"))
