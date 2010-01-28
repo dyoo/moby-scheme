@@ -6,7 +6,7 @@ goog.provide('plt.permission');
     plt.permission = {};
 
     plt.Kernel.invokeModule("moby/runtime/permission-struct");
-    var PEXPORTS = plt._MODULES['moby/runtime/permission-struct'].EXPORTS;
+    var PEXPORTS = plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS;
 
 
 

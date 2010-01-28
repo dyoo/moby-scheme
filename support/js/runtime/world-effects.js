@@ -7,10 +7,7 @@ goog.provide('plt.world.effects');
 
 (function() {
 
-    // Make sure effect-struct has been invoked.
-    plt.Kernel.invokeModule("moby/runtime/effect-struct");
-
-    var E = plt._MODULES['moby/runtime/effect-struct'].EXPORTS;
+    var E = plt.Kernel.invokeModule("moby/runtime/effect-struct").EXPORTS;
 
     var effect_colon_none =
 	E['effect_colon_none'];

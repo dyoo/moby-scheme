@@ -6,10 +6,8 @@ goog.require('plt.Kernel');
 
 (function() {
 
-    plt.Kernel.invokeModule("moby/runtime/effect-struct");
-
     var make_dash_effect_colon_none =
-	(plt._MODULES["moby/runtime/effect-struct"]
+	(plt.Kernel.invokeModule("moby/runtime/effect-struct")
 	 .EXPORTS.make_dash_effect_colon_none);
 
 

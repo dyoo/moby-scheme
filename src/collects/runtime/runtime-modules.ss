@@ -12,7 +12,14 @@
        ())))
    '(moby/runtime/stx
      "collects/runtime/stx.ss"
-     ((binding:function stx-e #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash_e\"]" () #f)
+     ((binding:function
+       stx-e
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash_e\"]"
+       ()
+       #f)
       (binding:structure
        stx:list
        (elts loc)
@@ -68,7 +75,14 @@
        "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"set_dash_stx_colon_list_dash_loc_bang_\"]"
        ()
        #f)
-      (binding:function stx? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_question_\"]" () #f)
+      (binding:function
+       stx?
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_question_\"]"
+       ()
+       #f)
       (binding:structure
        stx:atom
        (datum loc)
@@ -124,7 +138,14 @@
        "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"set_dash_stx_colon_atom_dash_loc_bang_\"]"
        ()
        #f)
-      (binding:function stx-loc #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash_loc\"]" () #f)
+      (binding:function
+       stx-loc
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash_loc\"]"
+       ()
+       #f)
       (binding:function
        datum->stx
        #f
@@ -155,14 +176,67 @@
        make-Loc
        Loc?
        (Loc-offset Loc-line Loc-column Loc-span Loc-id)
-       (set-Loc-offset! set-Loc-line! set-Loc-column! set-Loc-span! set-Loc-id!))
-      (binding:function make-Loc #f 5 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_Loc\"]" () #f)
-      (binding:function Loc? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_question_\"]" () #f)
-      (binding:function Loc-offset #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_offset\"]" () #f)
-      (binding:function Loc-line #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_line\"]" () #f)
-      (binding:function Loc-column #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_column\"]" () #f)
-      (binding:function Loc-span #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_span\"]" () #f)
-      (binding:function Loc-id #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_id\"]" () #f)
+       (set-Loc-offset!
+        set-Loc-line!
+        set-Loc-column!
+        set-Loc-span!
+        set-Loc-id!))
+      (binding:function
+       make-Loc
+       #f
+       5
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_Loc\"]"
+       ()
+       #f)
+      (binding:function
+       Loc?
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_question_\"]"
+       ()
+       #f)
+      (binding:function
+       Loc-offset
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_offset\"]"
+       ()
+       #f)
+      (binding:function
+       Loc-line
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_line\"]"
+       ()
+       #f)
+      (binding:function
+       Loc-column
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_column\"]"
+       ()
+       #f)
+      (binding:function
+       Loc-span
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_span\"]"
+       ()
+       #f)
+      (binding:function
+       Loc-id
+       #f
+       1
+       #f
+       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_id\"]"
+       ()
+       #f)
       (binding:function
        set-Loc-offset!
        #f
@@ -219,7 +293,9 @@
        make-module-binding
        module-binding?
        (module-binding-name module-binding-source module-binding-bindings)
-       (set-module-binding-name! set-module-binding-source! set-module-binding-bindings!))
+       (set-module-binding-name!
+        set-module-binding-source!
+        set-module-binding-bindings!))
       (binding:function
        make-module-binding
        #f
@@ -613,8 +689,12 @@
        (name java-string permissions)
        make-binding:constant
        binding:constant?
-       (binding:constant-name binding:constant-java-string binding:constant-permissions)
-       (set-binding:constant-name! set-binding:constant-java-string! set-binding:constant-permissions!))
+       (binding:constant-name
+        binding:constant-java-string
+        binding:constant-permissions)
+       (set-binding:constant-name!
+        set-binding:constant-java-string!
+        set-binding:constant-permissions!))
       (binding:function
        make-binding:constant
        #f
@@ -728,7 +808,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"set_dash_permission_colon_open_dash_image_dash_url_dash_url_bang_\"]"
        ()
        #f)
-      (binding:structure permission:tilt () make-permission:tilt permission:tilt? () ())
+      (binding:structure
+       permission:tilt
+       ()
+       make-permission:tilt
+       permission:tilt?
+       ()
+       ())
       (binding:function
        make-permission:tilt
        #f
@@ -745,7 +831,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_tilt_question_\"]"
        ()
        #f)
-      (binding:structure permission:wake-lock () make-permission:wake-lock permission:wake-lock? () ())
+      (binding:structure
+       permission:wake-lock
+       ()
+       make-permission:wake-lock
+       permission:wake-lock?
+       ()
+       ())
       (binding:function
        make-permission:wake-lock
        #f
@@ -817,7 +909,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"set_dash_permission_colon_universe_dash_url_bang_\"]"
        ()
        #f)
-      (binding:structure permission:send-sms () make-permission:send-sms permission:send-sms? () ())
+      (binding:structure
+       permission:send-sms
+       ()
+       make-permission:send-sms
+       permission:send-sms?
+       ()
+       ())
       (binding:function
        make-permission:send-sms
        #f
@@ -834,7 +932,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_send_dash_sms_question_\"]"
        ()
        #f)
-      (binding:structure permission:shake () make-permission:shake permission:shake? () ())
+      (binding:structure
+       permission:shake
+       ()
+       make-permission:shake
+       permission:shake?
+       ()
+       ())
       (binding:function
        make-permission:shake
        #f
@@ -851,7 +955,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_shake_question_\"]"
        ()
        #f)
-      (binding:structure permission:telephony () make-permission:telephony permission:telephony? () ())
+      (binding:structure
+       permission:telephony
+       ()
+       make-permission:telephony
+       permission:telephony?
+       ()
+       ())
       (binding:function
        make-permission:telephony
        #f
@@ -868,7 +978,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_telephony_question_\"]"
        ()
        #f)
-      (binding:structure permission:receive-sms () make-permission:receive-sms permission:receive-sms? () ())
+      (binding:structure
+       permission:receive-sms
+       ()
+       make-permission:receive-sms
+       permission:receive-sms?
+       ()
+       ())
       (binding:function
        make-permission:receive-sms
        #f
@@ -889,7 +1005,13 @@
        PERMISSION:TILT
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"PERMISSION_colon_TILT\"]"
        ())
-      (binding:structure permission:internet () make-permission:internet permission:internet? () ())
+      (binding:structure
+       permission:internet
+       ()
+       make-permission:internet
+       permission:internet?
+       ()
+       ())
       (binding:function
        make-permission:internet
        #f
@@ -906,7 +1028,13 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_internet_question_\"]"
        ()
        #f)
-      (binding:structure permission:location () make-permission:location permission:location? () ())
+      (binding:structure
+       permission:location
+       ()
+       make-permission:location
+       permission:location?
+       ()
+       ())
       (binding:function
        make-permission:location
        #f
@@ -1199,7 +1327,13 @@
        "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"set_dash_effect_colon_send_dash_sms_dash_msg_bang_\"]"
        ()
        #f)
-      (binding:structure effect:release-wake-lock () make-effect:release-wake-lock effect:release-wake-lock? () ())
+      (binding:structure
+       effect:release-wake-lock
+       ()
+       make-effect:release-wake-lock
+       effect:release-wake-lock?
+       ()
+       ())
       (binding:function
        make-effect:release-wake-lock
        #f
@@ -1604,7 +1738,13 @@
        "plt._MODULES[\"moby/runtime/arity-struct\"].EXPORTS[\"arity_question_\"]"
        ()
        #f)
-      (binding:structure arity:fixed (n) make-arity:fixed arity:fixed? (arity:fixed-n) (set-arity:fixed-n!))
+      (binding:structure
+       arity:fixed
+       (n)
+       make-arity:fixed
+       arity:fixed?
+       (arity:fixed-n)
+       (set-arity:fixed-n!))
       (binding:function
        make-arity:fixed
        #f
@@ -1678,7 +1818,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"set_dash_moby_dash_error_dash_type_colon_provided_dash_name_dash_not_dash_defined_dash_id_bang_\"]"
        ()
        #f)
-      (binding:structure moby-expected:boolean () make-moby-expected:boolean moby-expected:boolean? () ())
+      (binding:structure
+       moby-expected:boolean
+       ()
+       make-moby-expected:boolean
+       moby-expected:boolean?
+       ()
+       ())
       (binding:function
        make-moby-expected:boolean
        #f
@@ -1695,7 +1841,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_boolean_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:integer () make-moby-expected:integer moby-expected:integer? () ())
+      (binding:structure
+       moby-expected:integer
+       ()
+       make-moby-expected:integer
+       moby-expected:integer?
+       ()
+       ())
       (binding:function
        make-moby-expected:integer
        #f
@@ -1712,7 +1864,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_integer_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:string () make-moby-expected:string moby-expected:string? () ())
+      (binding:structure
+       moby-expected:string
+       ()
+       make-moby-expected:string
+       moby-expected:string?
+       ()
+       ())
       (binding:function
        make-moby-expected:string
        #f
@@ -1729,7 +1887,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_string_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:vector () make-moby-expected:vector moby-expected:vector? () ())
+      (binding:structure
+       moby-expected:vector
+       ()
+       make-moby-expected:vector
+       moby-expected:vector?
+       ()
+       ())
       (binding:function
        make-moby-expected:vector
        #f
@@ -1754,7 +1918,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:symbol () make-moby-expected:symbol moby-expected:symbol? () ())
+      (binding:structure
+       moby-expected:symbol
+       ()
+       make-moby-expected:symbol
+       moby-expected:symbol?
+       ()
+       ())
       (binding:function
        make-moby-expected:symbol
        #f
@@ -1771,7 +1941,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_symbol_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:struct () make-moby-expected:struct moby-expected:struct? () ())
+      (binding:structure
+       moby-expected:struct
+       ()
+       make-moby-expected:struct
+       moby-expected:struct?
+       ()
+       ())
       (binding:function
        make-moby-expected:struct
        #f
@@ -1788,7 +1964,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_struct_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:rational () make-moby-expected:rational moby-expected:rational? () ())
+      (binding:structure
+       moby-expected:rational
+       ()
+       make-moby-expected:rational
+       moby-expected:rational?
+       ()
+       ())
       (binding:function
        make-moby-expected:rational
        #f
@@ -1805,7 +1987,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_rational_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:real () make-moby-expected:real moby-expected:real? () ())
+      (binding:structure
+       moby-expected:real
+       ()
+       make-moby-expected:real
+       moby-expected:real?
+       ()
+       ())
       (binding:function
        make-moby-expected:real
        #f
@@ -1822,7 +2010,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_real_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:something () make-moby-expected:something moby-expected:something? () ())
+      (binding:structure
+       moby-expected:something
+       ()
+       make-moby-expected:something
+       moby-expected:something?
+       ()
+       ())
       (binding:function
        make-moby-expected:something
        #f
@@ -1839,7 +2033,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_something_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:natural () make-moby-expected:natural moby-expected:natural? () ())
+      (binding:structure
+       moby-expected:natural
+       ()
+       make-moby-expected:natural
+       moby-expected:natural?
+       ()
+       ())
       (binding:function
        make-moby-expected:natural
        #f
@@ -1856,7 +2056,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_natural_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:number () make-moby-expected:number moby-expected:number? () ())
+      (binding:structure
+       moby-expected:number
+       ()
+       make-moby-expected:number
+       moby-expected:number?
+       ()
+       ())
       (binding:function
        make-moby-expected:number
        #f
@@ -1873,7 +2079,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_number_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:list () make-moby-expected:list moby-expected:list? () ())
+      (binding:structure
+       moby-expected:list
+       ()
+       make-moby-expected:list
+       moby-expected:list?
+       ()
+       ())
       (binding:function
        make-moby-expected:list
        #f
@@ -1890,7 +2102,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_list_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:char () make-moby-expected:char moby-expected:char? () ())
+      (binding:structure
+       moby-expected:char
+       ()
+       make-moby-expected:char
+       moby-expected:char?
+       ()
+       ())
       (binding:function
        make-moby-expected:char
        #f
@@ -1907,7 +2125,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_char_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:function () make-moby-expected:function moby-expected:function? () ())
+      (binding:structure
+       moby-expected:function
+       ()
+       make-moby-expected:function
+       moby-expected:function?
+       ()
+       ())
       (binding:function
        make-moby-expected:function
        #f
@@ -1924,7 +2148,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_function_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:hash () make-moby-expected:hash moby-expected:hash? () ())
+      (binding:structure
+       moby-expected:hash
+       ()
+       make-moby-expected:hash
+       moby-expected:hash?
+       ()
+       ())
       (binding:function
        make-moby-expected:hash
        #f
@@ -1941,7 +2171,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_hash_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:complex () make-moby-expected:complex moby-expected:complex? () ())
+      (binding:structure
+       moby-expected:complex
+       ()
+       make-moby-expected:complex
+       moby-expected:complex?
+       ()
+       ())
       (binding:function
        make-moby-expected:complex
        #f
@@ -1958,7 +2194,13 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_complex_question_\"]"
        ()
        #f)
-      (binding:structure moby-expected:box () make-moby-expected:box moby-expected:box? () ())
+      (binding:structure
+       moby-expected:box
+       ()
+       make-moby-expected:box
+       moby-expected:box?
+       ()
+       ())
       (binding:function
        make-moby-expected:box
        #f
@@ -2258,8 +2500,10 @@
        (opener closer)
        make-moby-error-type:unclosed-parentheses
        moby-error-type:unclosed-parentheses?
-       (moby-error-type:unclosed-parentheses-opener moby-error-type:unclosed-parentheses-closer)
-       (set-moby-error-type:unclosed-parentheses-opener! set-moby-error-type:unclosed-parentheses-closer!))
+       (moby-error-type:unclosed-parentheses-opener
+        moby-error-type:unclosed-parentheses-closer)
+       (set-moby-error-type:unclosed-parentheses-opener!
+        set-moby-error-type:unclosed-parentheses-closer!))
       (binding:function
        make-moby-error-type:unclosed-parentheses
        #f
@@ -2637,7 +2881,8 @@
        (reason other-locations)
        make-moby-error-type:generic-syntactic-error
        moby-error-type:generic-syntactic-error?
-       (moby-error-type:generic-syntactic-error-reason moby-error-type:generic-syntactic-error-other-locations)
+       (moby-error-type:generic-syntactic-error-reason
+        moby-error-type:generic-syntactic-error-other-locations)
        (set-moby-error-type:generic-syntactic-error-reason!
         set-moby-error-type:generic-syntactic-error-other-locations!))
       (binding:function
@@ -2693,8 +2938,10 @@
        (id second-location)
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
-       (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-second-location)
-       (set-moby-error-type:duplicate-identifier-id! set-moby-error-type:duplicate-identifier-second-location!))
+       (moby-error-type:duplicate-identifier-id
+        moby-error-type:duplicate-identifier-second-location)
+       (set-moby-error-type:duplicate-identifier-id!
+        set-moby-error-type:duplicate-identifier-second-location!))
       (binding:function
        make-moby-error-type:duplicate-identifier
        #f
@@ -2996,8 +3243,18 @@
        #f)))
    '(bootstrap/bootstrap-teachpack
      "collects/bootstrap/bootstrap-teachpack.ss"
-     ((binding:constant score "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"score\"]" ())
-      (binding:function sq #f 1 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sq\"]" () #f)
+     ((binding:constant
+       score
+       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"score\"]"
+       ())
+      (binding:function
+       sq
+       #f
+       1
+       #f
+       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sq\"]"
+       ()
+       #f)
       (binding:function
        test-frame
        #f
@@ -3014,8 +3271,22 @@
        "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"tangent\"]"
        ()
        #f)
-      (binding:function sine #f 1 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sine\"]" () #f)
-      (binding:function START #f 14 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"START\"]" () #f)
+      (binding:function
+       sine
+       #f
+       1
+       #f
+       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sine\"]"
+       ()
+       #f)
+      (binding:function
+       START
+       #f
+       14
+       #f
+       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"START\"]"
+       ()
+       #f)
       (binding:function
        cosine
        #f
@@ -3026,9 +3297,23 @@
        #f)))
    '(bootstrap/cage-teachpack
      "collects/bootstrap/cage-teachpack.ss"
-     ((binding:function start #f 1 #f "plt._MODULES[\"bootstrap/cage-teachpack\"].EXPORTS[\"start\"]" () #f)))
+     ((binding:function
+       start
+       #f
+       1
+       #f
+       "plt._MODULES[\"bootstrap/cage-teachpack\"].EXPORTS[\"start\"]"
+       ()
+       #f)))
    '(bootstrap/function-teachpack
      "collects/bootstrap/function-teachpack.ss"
-     ((binding:function start #f 1 #f "plt._MODULES[\"bootstrap/function-teachpack\"].EXPORTS[\"start\"]" () #f)))))
+     ((binding:function
+       start
+       #f
+       1
+       #f
+       "plt._MODULES[\"bootstrap/function-teachpack\"].EXPORTS[\"start\"]"
+       ()
+       #f)))))
 
 (provide MOBY-RUNTIME-MODULE-BINDINGS)
