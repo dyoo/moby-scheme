@@ -39,11 +39,14 @@
                              (moby-error-type:unclosed-lexical-token-closer error-type)))
                      "to close it.")
                
-               (span ((class "Error:UnclosedLexicalToken.type"))
+               (span ((class "Error:UnclosedLexicalToken.type")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-lexical-token-type error-type)))
-               (span ((class "Error:UnclosedLexicalToken.opener"))
+               (span ((class "Error:UnclosedLexicalToken.opener")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-lexical-token-opener error-type)))
-               (span ((class "Error:UnclosedLexicalToken.closer"))
+               (span ((class "Error:UnclosedLexicalToken.closer")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-lexical-token-closer error-type))))]
        
        
@@ -53,7 +56,8 @@
                      "I saw "
                      ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))
                      " which I don't recognize as a program element.")
-               (span ((class "Error:UnrecognizedLexicalToken.token"))
+               (span ((class "Error:UnrecognizedLexicalToken.token")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))))]
        
        [(moby-error-type:unsupported-lexical-token? error-type)
@@ -61,7 +65,8 @@
                (span ((class "Error.reason"))
                      ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))
                      " is currently not supported.")
-               (span ((class "Error:UnsupportedLexicalToken.token"))
+               (span ((class "Error:UnsupportedLexicalToken.token")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))))]
        
        [(moby-error-type:unsupported-expression-form? error-type)
@@ -69,7 +74,8 @@
                (span ((class "Error.reason"))
                      ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type))
                      " is currently not supported.")
-               (span ((class "Error:UnsupportedExpressionForm.expr"))
+               (span ((class "Error:UnsupportedExpressionForm.expr")
+                      (style "display:none"))
                      ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type))))]
        
 
@@ -83,9 +89,11 @@
                      " to start an expression, but no "
                      ,(symbol->string (moby-error-type:unclosed-parentheses-closer error-type))
                      "to close it.")
-               (span ((class "Error:UnclosedParentheses.opener"))
+               (span ((class "Error:UnclosedParentheses.opener")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-parentheses-opener error-type)))
-               (span ((class "Error:UnclosedParentheses.closer"))
+               (span ((class "Error:UnclosedParentheses.closer")
+                      (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-parentheses-closer error-type))))]
        
        [(moby-error-type:missing-expression? error-type)
@@ -101,7 +109,8 @@
                      "The identifier "
                      ,(scheme-value-to-dom-sexp (moby-error-type:duplicate-identifier-id error-type))
                      " has been duplicated.")
-               (span ((class "Error:DuplicateIdentifier.secondLocation"))
+               (span ((class "Error:DuplicateIdentifier.secondLocation")
+                      (style "display:none"))
                      ,(Loc->dom-sexp (moby-error-type:duplicate-identifier-second-location error-type))))]
 
        [(moby-error-type:expected-identifier? error-type)
@@ -225,7 +234,8 @@
 ;; Loc->dom-sexp: loc -> sexp
 ;; Given a location, produce a dom representation of that location.
 (define (Loc->dom-sexp a-loc)
-  `(span ((class "Location"))
+  `(span ((class "Location")
+          (style "display:none"))
          (span ((class "Location.offset")) ,(number->string (Loc-offset a-loc)))
          (span ((class "Location.line")) ,(number->string (Loc-line a-loc)))
          (span ((class "Location.column")) ,(number->string (Loc-column a-loc)))
