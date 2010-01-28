@@ -36,6 +36,17 @@ function init() {
     }
 
 
+    try {
+	run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))");
+    } catch(e) {
+	var errorStructModule = 
+	    plt.Kernel.invokeModule("moby/runtime/error-struct");
+	var errorStructToDomModule = 
+	    plt.Kernel.invokeModule("moby/runtime/error-struct-to-dom");
+	console.log(e._fields[1]._constructorName);
+	console.log(errorStructToDomModule.EXPORTS.moby_dash_error_dash_struct_dash_to_dash_dom_dash_sexp(e));
+    }
+
 
     
 

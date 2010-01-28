@@ -17,6 +17,8 @@ goog.provide('plt.reader');
     var Loc_dash_span = stxModule.EXPORTS.Loc_dash_span;
 
 
+    var num = plt.types.Rational.makeInstance;
+
 
     // replaceEscapes: string -> string
     var replaceEscapes = function(s) {
@@ -124,10 +126,10 @@ goog.provide('plt.reader');
 			    if (numberMatch) {
 				tokens.push([numberPatterns[j][0], 
 					     tokenText,
-					     new Loc(offset,
-						     line,
-						     column,
-						     wholeMatch.length, 
+					     new Loc(num(offset),
+						     num(line),
+						     num(column),
+						     num(wholeMatch.length), 
 						     source)]);
 				isNumber = true;
 				break;
@@ -136,19 +138,19 @@ goog.provide('plt.reader');
 			if (! isNumber) {
 			    tokens.push(["symbol", 
 					 tokenText,
-					 new Loc(offset,
-						 line,
-						 column,
-						 wholeMatch.length, 
+					 new Loc(num(offset),
+						 num(line),
+						 num(column),
+						 num(wholeMatch.length), 
 						 source)]);
 			}
 		    } else if (patternName != 'whitespace' && patternName != 'comment') {
 			tokens.push([patternName, 
 				     tokenText,
-				     new Loc(offset,
-					     line,
-					     column,
-					     wholeMatch.length, 
+				     new Loc(num(offset),
+					     num(line),
+					     num(column),
+					     num(wholeMatch.length), 
 					     source)]);
 		    }
 
@@ -183,10 +185,10 @@ goog.provide('plt.reader');
 	    throw new plt.types.MobyParserError(
 		"Error while tokenizing: the rest of the stream is: " +
 		    tokensAndError[1],
-		new Loc(s.length - tokensAndError[1].length,
-			countLines(s.substring(0, s.length - tokensAndError[1].length)),
-			computeColumn(s.substring(0, s.length - tokensAndError[1].length), 0),
-			tokensAndError[1].length,
+		new Loc(num(s.length - tokensAndError[1].length),
+			num(countLines(s.substring(0, s.length - tokensAndError[1].length))),
+			num(computeColumn(s.substring(0, s.length - tokensAndError[1].length), 0)),
+			num(tokensAndError[1].length),
 			source));
 	}
 	
@@ -211,10 +213,10 @@ goog.provide('plt.reader');
 		    throw new plt.types.MobyParserError(
 			"token stream exhausted while trying to eat " +
 			    expectedType,
-			new Loc(0, 
-				0, 
-				0,
-				s.length, 
+			new Loc(num(0), 
+				num(0), 
+				num(0),
+				num(s.length), 
 				source));
 		}
 	    }
@@ -245,9 +247,9 @@ goog.provide('plt.reader');
 			    new Loc(Loc_dash_offset(leadingQuote[2]),
 				    Loc_dash_line(leadingQuote[2]),
 				    Loc_dash_column(leadingQuote[2]),
-				    (Loc_dash_offset(stxLoc(quoted)) -
-				     Loc_dash_offset(leadingQuote[2]) +
-				     Loc_dash_span(stxLoc(quoted))),
+				    (plt.types.NumberTower.add(plt.types.NumberTower.subtract(Loc_dash_offset(stxLoc(quoted)),
+											      Loc_dash_offset(leadingQuote[2])),
+							       Loc_dash_span(stxLoc(quoted)))),
 				    source));
 	};
 
@@ -320,7 +322,7 @@ goog.provide('plt.reader');
 		} else {
 		    throw new plt.types.MobyParserError(
 			"Parse broke with empty token stream",
-			new Loc(0, 0, 0, s.length, source));
+			new Loc(num(0), num(0), num(0), num(s.length), source));
 		}
 	    }
 
@@ -346,7 +348,7 @@ goog.provide('plt.reader');
 		    new Loc(Loc_dash_offset(lparen[2]),
 			    Loc_dash_line(lparen[2]),
 			    Loc_dash_column(lparen[2]),
-			    Loc_dash_offset(rparen[2]) - Loc_dash_offset(lparen[2]) + 1,
+			    plt.types.NumberTower.add(plt.types.NumberTower.subtract(Loc_dash_offset(rparen[2]), Loc_dash_offset(lparen[2])), plt.types.Rational.ONE),
 			    source));
 
 	    case '#;':
