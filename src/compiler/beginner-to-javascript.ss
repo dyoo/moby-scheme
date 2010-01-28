@@ -962,7 +962,6 @@
                     return " (binding:function-java-string binding)
                              "    .apply(null, _args_.slice(0, " (number->string (binding:function-min-arity binding)) 
                              "                        ).concat([_args_.slice("(number->string (binding:function-min-arity binding))")])); });"
-                             "_result_._eqHashCode = plt.types.makeEqHashCode();"                      
                              "_result_.isEqual = function(other, cache) { return this === other; };"
                              "_result_.toWrittenString = function(cache) {return '<function:" (symbol->string (binding-id binding)) ">'; };"
                              "_result_.toDisplayedString = _result_.toWrittenString;"
@@ -985,7 +984,6 @@
                                                (range (binding:function-min-arity binding)))
                                           ", ")
                              ");});"
-                             "_result_._eqHashCode = plt.types.makeEqHashCode();"
                              "_result_.isEqual = function(other, cache) { return this === other; };"
                              "_result_.toWrittenString = function(cache) {return '<function:"(symbol->string (binding-id binding))">'; };"
                              "_result_.toDisplayedString = _result_.toWrittenString; "
@@ -1051,7 +1049,6 @@
                                          munged-arg-ids)
                                    "\n")
                       "  return " body-string "; });"
-                      "_result_._eqHashCode = plt.types.makeEqHashCode();"
                       "_result_.toWrittenString = function (cache) { return '<function:lambda>'; };"
                       "_result_.isEqual = function(other, cache) { return this === other; };"
                       "_result_.procedureArity = " (rational-number->javascript-string (length args)) ";"

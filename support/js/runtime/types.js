@@ -64,6 +64,9 @@ Box
     // plt.types.getHashCode: any -> (or fixnum string)
     // Produces a hashcode appropriate for eq.
     plt.types.getEqHashCode = function(x) {
+	if (x && !x._eqHashCode) {
+	    x._eqHashCode = plt.types.makeEqHashCode();
+	}
 	if (x && x._eqHashCode) {
 	    return x._eqHashCode;
 	}
@@ -82,7 +85,6 @@ Box
     var Struct = function (constructorName, fields) {
 	this._constructorName = constructorName; 
 	this._fields = fields;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     plt.types.Struct = Struct;
@@ -155,7 +157,6 @@ Box
     
     var Box = function(x) { 
 	plt.types.Struct.call(this, "box", [x]);
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     Box.prototype = heir(plt.types.Struct.prototype);
@@ -203,7 +204,6 @@ Box
     // Char: string -> Char
     plt.types.Char = function(val){
 	this.val = val;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
     
     plt.types.Char.makeInstance = function(val){
@@ -231,7 +231,6 @@ Box
 
     plt.types.Symbol = function(val) {
 	this.val = val;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     var symbolCache = {};
@@ -268,7 +267,6 @@ Box
     
     
     plt.types.Empty = function() {
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
     plt.types.Empty.EMPTY = new plt.types.Empty();
 
@@ -300,7 +298,6 @@ Box
     plt.types.Cons = function(f, r) {
 	this.f = f;
 	this.r = r;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     plt.types.Cons.reverse = function(lst) {
@@ -408,7 +405,6 @@ Box
 		this.elts[i] = undefined;
 	    }
 	}
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
     plt.types.Vector.makeInstance = function(n, elts) {
 	return new plt.types.Vector(n, elts);
@@ -529,7 +525,6 @@ Box
 	var divisor = gcd(Math.abs(n), Math.abs(d));
 	this.n = n / divisor;
 	this.d = d / divisor;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     
@@ -836,7 +831,6 @@ Box
     
     var FloatPoint = function(n) {
 	this.n = n;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
     plt.types.FloatPoint = FloatPoint;
 
@@ -1186,7 +1180,6 @@ Box
     plt.types.Complex = function(r, i){
 	this.r = r;
 	this.i = i;
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
     
     // Constructs a complex number from two basic number r and i.  r and i can
@@ -1780,7 +1773,7 @@ Box
     // Hashtables
     var EqHashTable = function(inputHash) {
 	this.hash = makeLowLevelEqHash();
-	this._eqHashCode = plt.types.makeEqHashCode();
+
     };
     plt.types.EqHashTable = EqHashTable;
 
@@ -1819,7 +1812,6 @@ Box
 				       function(x, y) {
 					   return plt.Kernel.equal_question_(x, y); 
 				       });
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
 
     plt.types.EqualHashTable = EqualHashTable;
@@ -2019,7 +2011,6 @@ Box
 	    var lifted = function(args) {
 		return primitiveF.apply(null, args.slice(0, minArity).concat([args.slice(minArity)]));
 	    };
-	    lifted._eqHashCode = plt.types.makeEqHashCode();
 	    lifted.isEqual = function(other, cache) { 
 		return this === other; 
 	    }

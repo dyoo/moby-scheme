@@ -2041,7 +2041,6 @@ goog.provide('plt.Kernel');
     
     var posn = function(x,y) { 
 	plt.types.Struct.call(this, "make-posn", [x, y]);
-	this._eqHashCode = plt.types.makeEqHashCode();
     }
 
     posn.prototype = heir(plt.types.Struct.prototype);

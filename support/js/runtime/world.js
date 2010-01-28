@@ -1138,7 +1138,6 @@ goog.provide('plt.world.Kernel');
 
     var ColorRecord = function(r, g, b) {
 	plt.types.Struct.call(this, "make-color", [r, g, b]);
-	this._eqHashCode = plt.types.makeEqHashCode();
     };
     ColorRecord.prototype = heir(plt.types.Struct.prototype);
 
