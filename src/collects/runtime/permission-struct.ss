@@ -79,10 +79,10 @@
           ;; name
           (define (is-permission/1? permission-name a-ref)
             (and (> (string-length a-ref)
-                     (string-length permission-name))
-                  (string=? (substring a-ref 0 (string-length permission-name))
-                            permission-name)))
-
+                    (string-length permission-name))
+                 (string=? (substring a-ref 0 (string-length permission-name))
+                           permission-name)))
+          
           ;; construct-permission: string string (string -> permission) -> permission
           ;; Constructs a permission out of a permission string reference.
           (define (construct-permission/1 permission-name a-ref make-permission:*)
@@ -168,11 +168,11 @@
                   [PERMISSION:TELEPHONY permission?]
                   [PERMISSION:WAKE-LOCK permission?]
                   [PERMISSION:FOREIGN-FUNCTION-INTERFACE permission?]
-
-		  [permission->string
-		   (permission? . -> . string?)]
+                  
+                  [permission->string
+                   (permission? . -> . string?)]
                   [string->permission
-		   (permission? . -> . string?)]
-
+                   (permission? . -> . string?)]
+                  
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))])

@@ -56,13 +56,13 @@
                    (lift-images/stxs (stx-e a-stx))])
        (values (datum->stx #f lifted-elts (stx-loc a-stx))
                named-bitmaps))]
-     
+    
     [(stx:atom? a-stx)
      (cond [(image-snip? (stx-e a-stx))
             (let* ([filename (make-image-name)]
                    [bitmap (send (stx-e a-stx) get-bitmap)]
                    [replacement-stx (datum->stx #f `(open-image-url ,filename)
-                                                   (stx-loc a-stx))])
+                                                (stx-loc a-stx))])
               (values replacement-stx (list (make-named-bitmap filename bitmap))))]
            [else
             (values a-stx empty)])]))
@@ -80,7 +80,7 @@
                    (lift-images/stxs (rest stxs))])
        (values (cons lifted-stx rest-lifted-stxs)
                (append named-bitmaps rest-named-bitmaps)))]))
-       
+
 
 
 ;; named-bitmap-save: named-bitmap path-string -> void

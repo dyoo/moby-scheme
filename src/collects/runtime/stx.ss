@@ -78,12 +78,12 @@
 
 
 (provide/contract #;[struct stx:atom ([datum any/c]
-                                    [loc any/c]
-                                    [binding (or/c false? binding?)])]
+                                      [loc any/c]
+                                      [binding (or/c false? binding?)])]
                   #;[struct stx:list ([elts (listof stx?)]
-                                    [loc any/c]
-                                    [binding (or/c false? binding?)])]
-
+                                      [loc any/c]
+                                      [binding (or/c false? binding?)])]
+                  
                   [stx:atom? (any/c . -> . boolean?)]
                   [stx:list? (any/c . -> . boolean?)]
                   

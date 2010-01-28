@@ -48,7 +48,7 @@
                (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
                  (list (list (first expr+pinfo))
                        (second expr+pinfo)))]))
-
+          
           
           
           ;; desugar-defn: defn pinfo -> (list (listof defn) pinfo)
@@ -61,7 +61,7 @@
                                            (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
                                              (list (list (datum->stx #f (list define-stx
                                                                               (datum->stx #f (cons id args)
-                                                                                             (stx-loc a-defn))
+                                                                                          (stx-loc a-defn))
                                                                               (first subexpr+pinfo))
                                                                      (stx-loc a-defn)))
                                                    (second subexpr+pinfo)))))
@@ -70,7 +70,7 @@
                                            (list (list (datum->stx #f (list define-stx
                                                                             id
                                                                             (first subexpr+pinfo))
-                                                                      (stx-loc a-defn)))
+                                                                   (stx-loc a-defn)))
                                                  (second subexpr+pinfo))))
                                        (lambda (id fields) 
                                          ;; FIXME: extend the environment with the
@@ -127,23 +127,23 @@
               (begin
                 (cond [(stx-begins-with? a-test-case 'check-expect)
                        (check-test-case-length! a-test-case 3
-                                      "check-expect requires two expressions.  Try (check-expect test expected).")]
+                                                "check-expect requires two expressions.  Try (check-expect test expected).")]
                       [(stx-begins-with? a-test-case 'EXAMPLE)
                        (check-test-case-length! a-test-case 3
-                                      "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
+                                                "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
                       
                       [(stx-begins-with? a-test-case 'check-within)
                        (check-test-case-length! a-test-case 4
-                                      "check-within requires three expressions.  Try (check-within test expected range).")]
+                                                "check-within requires three expressions.  Try (check-within test expected range).")]
                       [(stx-begins-with? a-test-case 'check-error)
                        (check-test-case-length! a-test-case 3
-                                      "check-error requires two expressions.  Try (check-error test message).")]
+                                                "check-error requires two expressions.  Try (check-error test message).")]
                       [else
                        (void)])
                 
                 (list (list (datum->stx #f (cons test-symbol-stx
                                                  (first desugared-exprs+pinfo))
-                                           (stx-loc a-test-case)))
+                                        (stx-loc a-test-case)))
                       (second desugared-exprs+pinfo)))))
           
           
@@ -195,7 +195,7 @@
                          (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
                    (list (datum->stx #f (list local-symbol-stx
                                               (datum->stx #f (first desugared-defns+pinfo)
-                                                             (stx-loc (second (stx-e expr))))
+                                                          (stx-loc (second (stx-e expr))))
                                               (first desugared-body+pinfo))
                                      (stx-loc expr))
                          (pinfo-update-env (second desugared-body+pinfo)
@@ -208,7 +208,7 @@
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
                  (list (datum->stx #f (cons begin-symbol-stx
                                             (first desugared-exprs+pinfo))
-                                      (stx-loc expr))
+                                   (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               
               ;; (set! identifier value)
@@ -220,7 +220,7 @@
                  (list (datum->stx #f (list set-symbol-stx
                                             id
                                             (first desugared-value+pinfo))
-                                      (stx-loc expr))
+                                   (stx-loc expr))
                        (second desugared-value+pinfo)))]
               
               
@@ -231,7 +231,7 @@
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
                  (list (datum->stx #f (cons if-symbol-stx
                                             (first desugared-exprs+pinfo))
-                                      (stx-loc expr))
+                                   (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               
               
@@ -242,7 +242,7 @@
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
                  (list (datum->stx #f (cons and-symbol-stx
                                             (first desugared-exprs+pinfo))
-                                      (stx-loc expr))
+                                   (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               
               ;; (or exprs ...)
@@ -252,7 +252,7 @@
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
                  (list (datum->stx #f (cons or-symbol-stx
                                             (first desugared-exprs+pinfo))
-                                      (stx-loc expr))
+                                   (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               
               ;; (lambda (args ...) body)
@@ -266,7 +266,7 @@
                    (list (datum->stx #f (list lambda-symbol-stx
                                               args
                                               (first desugared-body+pinfo))
-                                        (stx-loc expr))
+                                     (stx-loc expr))
                          ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
                          (second desugared-body+pinfo))))]
               
@@ -299,7 +299,7 @@
                (local [(define exprs (stx-e expr))
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
                  (list (datum->stx #f (first desugared-exprs+pinfo)
-                                      (stx-loc expr))
+                                   (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               [else
                (raise 
@@ -368,12 +368,12 @@
                                                         predicate
                                                         (datum->stx #f (list (datum->stx #f 'quote (stx-loc an-expr))
                                                                              datum-last)
-                                                                       (stx-loc an-expr)))
-                                                  (stx-loc an-expr))
+                                                                    (stx-loc an-expr)))
+                                               (stx-loc an-expr))
                                    answer-last
                                    (datum->stx #f (list (datum->stx #f 'void (stx-loc an-expr)))
-                                                  (stx-loc an-expr)))
-                             (stx-loc an-expr)))]
+                                               (stx-loc an-expr)))
+                          (stx-loc an-expr)))]
          [else
           (cond
             [(not (list? (stx-e (first list-of-datum))))
@@ -388,14 +388,14 @@
                                                        predicate
                                                        (datum->stx #f (list (datum->stx #f 'quote (stx-loc an-expr))
                                                                             (first list-of-datum))
-                                                                      (stx-loc an-expr)))
-                                                 (stx-loc an-expr))
+                                                                   (stx-loc an-expr)))
+                                              (stx-loc an-expr))
                                   (first answers)
                                   (loop (rest list-of-datum)
                                         (rest answers)
                                         datum-last
                                         answer-last))
-                            (stx-loc an-expr))])]))]
+                         (stx-loc an-expr))])]))]
     (cond
       [(stx-begins-with? an-expr 'case)
        (deconstruct-clauses-with-else (rest (rest (stx-e an-expr)))
@@ -424,9 +424,9 @@
        (cond
          [(empty? questions)
           (datum->stx #f (list 'if question-last 
-                            answer-last
-                            (list 'error ''cond
-                                  (format "cond: fell out of cond" #;(Loc->string (stx-loc an-expr)))))
+                               answer-last
+                               (list 'error ''cond
+                                     (format "cond: fell out of cond" #;(Loc->string (stx-loc an-expr)))))
                       (stx-loc an-expr))]
          
          [else
@@ -437,7 +437,7 @@
                                      (rest answers)
                                      question-last
                                      answer-last))
-                         (stx-loc an-expr))]))]
+                      (stx-loc an-expr))]))]
     (cond
       [(stx-begins-with? an-expr 'cond)
        (deconstruct-clauses-with-else (rest (stx-e an-expr))
@@ -504,14 +504,14 @@
             (datum->stx #f (list (datum->stx #f 'lambda (stx-loc a-stx))
                                  (datum->stx #f ids (stx-loc a-stx))
                                  body-stx)
-                           (stx-loc a-stx)))]    
+                        (stx-loc a-stx)))]    
     (begin
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (check-duplicate-identifiers! (map (lambda (a-clause)
                                            (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))      
       (list (datum->stx #f (cons new-lambda-stx vals)
-                           (stx-loc a-stx))
+                        (stx-loc a-stx))
             pinfo))))
 
 
@@ -529,9 +529,9 @@
               [else
                (datum->stx #f (list (datum->stx #f 'let (stx-loc (first clauses)))
                                     (datum->stx #f (list (first clauses))
-                                                   (stx-loc (first clauses)))
+                                                (stx-loc (first clauses)))
                                     (loop (rest clauses)))
-                              (stx-loc (first clauses)))]))]    
+                           (stx-loc (first clauses)))]))]    
     (begin
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (list (loop (stx-e clauses-stx))
@@ -572,12 +572,12 @@
                         (cond
                           [(> depth 0)
                            (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
-                                             (handle-quoted (second (stx-e a-stx))
-                                                            (add1 depth)))
+                                                (handle-quoted (second (stx-e a-stx))
+                                                               (add1 depth)))
                                        (stx-loc a-stx))]
                           [else
                            (datum->stx #f (handle-quoted (second (stx-e a-stx))
-                                                      (add1 depth))
+                                                         (add1 depth))
                                        (stx-loc a-stx))]))]
                      
                      [(stx-begins-with? a-stx 'unquote)
@@ -586,8 +586,8 @@
                         (cond
                           [(> depth 1)
                            (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
-                                             (handle-quoted (second (stx-e a-stx)) 
-                                                            (sub1 depth)))
+                                                (handle-quoted (second (stx-e a-stx)) 
+                                                               (sub1 depth)))
                                        (stx-loc a-stx))]
                           [(= depth 1)
                            (second (stx-e a-stx))]
@@ -602,8 +602,8 @@
                       (cond
                         [(> depth 1)
                          (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
-                                           (handle-quoted (second (stx-e a-stx)) 
-                                                          (sub1 depth)))
+                                              (handle-quoted (second (stx-e a-stx)) 
+                                                             (sub1 depth)))
                                      (stx-loc a-stx))]
                         [(= depth 1)
                          (raise (make-moby-error (stx-loc a-stx)
@@ -619,34 +619,34 @@
                      
                      [else
                       (datum->stx #f (cons 'append 
-                                        (map 
-                                         ;; (stx -> (listof stx))
-                                         (lambda (s) 
-                                           (cond
-                                             [(stx-begins-with? s 'quasiquote)
-                                              (list 'list (handle-quoted s depth))]
-                                             
-                                             [(stx-begins-with? s 'unquote)
-                                              (list 'list (handle-quoted s depth))]
-                                             
-                                             [(stx-begins-with? s 'unquote-splicing)
+                                           (map 
+                                            ;; (stx -> (listof stx))
+                                            (lambda (s) 
                                               (cond
-                                                [(> depth 1)
+                                                [(stx-begins-with? s 'quasiquote)
                                                  (list 'list (handle-quoted s depth))]
-                                                [(= depth 1)
-                                                 (begin
-                                                   (check-single-body-stx! (rest (stx-e s)) s)
-                                                   (second (stx-e s)))]
+                                                
+                                                [(stx-begins-with? s 'unquote)
+                                                 (list 'list (handle-quoted s depth))]
+                                                
+                                                [(stx-begins-with? s 'unquote-splicing)
+                                                 (cond
+                                                   [(> depth 1)
+                                                    (list 'list (handle-quoted s depth))]
+                                                   [(= depth 1)
+                                                    (begin
+                                                      (check-single-body-stx! (rest (stx-e s)) s)
+                                                      (second (stx-e s)))]
+                                                   [else
+                                                    (make-moby-error 
+                                                     (stx-loc a-stx)
+                                                     (make-moby-error-type:generic-syntactic-error
+                                                      "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
+                                                      (list)))])]
+                                                
                                                 [else
-                                                 (make-moby-error 
-                                                  (stx-loc a-stx)
-                                                  (make-moby-error-type:generic-syntactic-error
-                                                   "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
-                                                   (list)))])]
-                                             
-                                             [else
-                                              (list 'list (handle-quoted s depth))]))
-                                         (stx-e a-stx)))
+                                                 (list 'list (handle-quoted s depth))]))
+                                            (stx-e a-stx)))
                                   (stx-loc a-stx))])]
               [else
                (cond
@@ -692,7 +692,7 @@
      ;; FIXME: we're ignoring the contract.
      (first (stx-e a-clause))]
     [(symbol? (stx-e a-clause))
-       a-clause]
+     a-clause]
     [else
      (raise (make-moby-error (stx-loc a-clause)
                              (make-moby-error-type:generic-syntactic-error 

@@ -15,7 +15,7 @@
           (define shared (make-hasheq))
           
           (define counter 0)
-            
+          
           (define (initialize-shared-hash! x)
             (local [(define h (make-hasheq))
                     (define (loop x)
@@ -65,7 +65,7 @@
                         [else
                          (void)]))]
               (loop x)))
-
+          
           
           
           (define (->dom val)
@@ -85,7 +85,7 @@
                               ,(->dom* val false))))]
               [else
                (->dom* val true)]))
-      
+          
           
           (define (->dom* val allow-labeling?)
             (cond

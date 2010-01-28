@@ -11,7 +11,7 @@
 ;; Function bindings try to record more information about the toplevel-bound
 ;; function
 (define-struct binding:function
-
+  
   (name           ;; name of the function
    module-source  ;; source where the function's really defined
    min-arity      ;; minimal arity to call
@@ -26,7 +26,7 @@
 (define-struct binding:structure
   (name        ;; symbol
    fields      ;; (listof symbol)
-
+   
    constructor ;; symbol
    predicate   ;; symbol
    accessors   ;; (listof symbol)
@@ -146,7 +146,7 @@
       (binding:structure-accessors a-binding)
       (binding:structure-mutators a-binding))]))
 
-    
+
 
 
 
@@ -193,7 +193,7 @@
                            [java-string string?]
                            [permissions (listof permission?)]
                            [cps? boolean?])]
-
+ 
  [struct binding:structure ([name symbol?]
                             [fields (listof symbol?)]
                             [constructor symbol?]
@@ -201,19 +201,19 @@
                             [accessors (listof symbol?)]
                             [mutators (listof symbol?)])]
  
-
-  [binding? (any/c . -> . boolean?)] 
-  [binding-id (binding? . -> . symbol?)]
-  [binding->sexp (binding? . -> . any)]
-  [sexp->binding (any/c . -> . binding?)]
-
-  [localize-binding-to-module (binding? module-name? . -> . binding?)]
-  
-  
-  
-  [struct module-binding ([name module-name?]
-                          [source module-path?]
-                          [bindings (listof binding?)])]
-  [module-name? (any/c . -> . boolean?)]
-  [module-path? (any/c . -> . boolean?)]
-  [module-path=? (module-path? module-path? . -> . boolean?)])
+ 
+ [binding? (any/c . -> . boolean?)] 
+ [binding-id (binding? . -> . symbol?)]
+ [binding->sexp (binding? . -> . any)]
+ [sexp->binding (any/c . -> . binding?)]
+ 
+ [localize-binding-to-module (binding? module-name? . -> . binding?)]
+ 
+ 
+ 
+ [struct module-binding ([name module-name?]
+                         [source module-path?]
+                         [bindings (listof binding?)])]
+ [module-name? (any/c . -> . boolean?)]
+ [module-path? (any/c . -> . boolean?)]
+ [module-path=? (module-path? module-path? . -> . boolean?)])
