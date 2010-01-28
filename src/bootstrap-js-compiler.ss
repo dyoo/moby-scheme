@@ -188,7 +188,10 @@
                       (list 'quote
                             (list
                              (module-record-name a-runtime-module)
-                             (path->string (module-record-path a-runtime-module))
+                             (path->string (find-relative-path (normalize-path
+                                                                "collects")
+                                                               (normalize-path 
+                                                                (module-record-path a-runtime-module))))
                              (map (lambda (a-binding) 
                                     (binding->sexp 
                                      (localize-binding-to-module 
@@ -344,7 +347,7 @@
   (let ([path-resolver (pinfo-module-path-resolver a-pinfo)]
         [module-resolver (pinfo-module-resolver a-pinfo)])
     (not
-     (and (module-name? (path-resolver a-path ""))
+     (and (module-name? (path-resolver a-path (pinfo-current-module-path a-pinfo)))
           (module-binding? (module-resolver (path-resolver a-path "")))))))
 
 
@@ -355,7 +358,8 @@
      (let loop ([a-path a-path])
        (let ([new-paths 
               (filter (lambda (a-subpath)
-                        (module-needs-inclusion? a-subpath a-pinfo))
+                        (module-needs-inclusion? a-subpath 
+                                                 (pinfo-update-current-module-path a-pinfo a-path)))
                       (get-require-paths (read-program/forget-resources a-path)
                                          (path-only a-path)))])
          (cond
@@ -364,7 +368,9 @@
            [else
             (append
              (apply append
-                    (map loop new-paths))
+                    (map (lambda (a-subpath) 
+                           (loop (path->string (build-path (path-only a-path) a-subpath))))
+                         new-paths))
              (list a-path))]))))))
 
 
@@ -381,6 +387,7 @@
 
 ;; get-require-paths: program path -> (listof module-path)
 ;; Produces the module paths that are required in the program.
+;; The produced paths are relative to the base path.
 (define (get-require-paths a-program base-path)
   (cond
     [(empty? a-program)
@@ -388,10 +395,11 @@
     [(library-require? (first a-program))
      (append (map (lambda (x)
                     (let ([a-path (stx-e x)])
-                      (cond [(string? a-path)
-                             (path->string (build-path base-path a-path))]
-                            [else
-                             a-path])))
+                      a-path
+                      #;(cond [(string? a-path)
+                               (path->string (build-path base-path a-path))]
+                              [else
+                               a-path])))
                   (rest (stx-e (first a-program))))
              (get-require-paths (rest a-program) base-path))]
     [else
