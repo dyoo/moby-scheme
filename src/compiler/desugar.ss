@@ -59,15 +59,15 @@
                                          (begin
                                            (check-duplicate-identifiers! (cons id args))   
                                            (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
-                                             (list (list (make-stx:list (list define-stx
-                                                                              (make-stx:list (cons id args)
+                                             (list (list (datum->stx #f (list define-stx
+                                                                              (datum->stx #f (cons id args)
                                                                                              (stx-loc a-defn))
                                                                               (first subexpr+pinfo))
-                                                                        (stx-loc a-defn)))
+                                                                     (stx-loc a-defn)))
                                                    (second subexpr+pinfo)))))
                                        (lambda (id body) 
                                          (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
-                                           (list (list (make-stx:list (list define-stx
+                                           (list (list (datum->stx #f (list define-stx
                                                                             id
                                                                             (first subexpr+pinfo))
                                                                       (stx-loc a-defn)))
@@ -97,7 +97,8 @@
           ;; thunkify-stx: stx -> stx
           ;; Wraps a thunk around a syntax.
           (define (thunkify-stx an-stx)
-            (datum->stx (list 'lambda (list)
+            (datum->stx #f 
+                        (list 'lambda (list)
                               an-stx)
                         (stx-loc an-stx)))
           
@@ -140,7 +141,7 @@
                       [else
                        (void)])
                 
-                (list (list (make-stx:list (cons test-symbol-stx
+                (list (list (datum->stx #f (cons test-symbol-stx
                                                  (first desugared-exprs+pinfo))
                                            (stx-loc a-test-case)))
                       (second desugared-exprs+pinfo)))))
@@ -192,11 +193,11 @@
                          
                          (define desugared-defns+pinfo (desugar-program defns pinfo))
                          (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
-                   (list (make-stx:list (list local-symbol-stx
-                                              (make-stx:list (first desugared-defns+pinfo)
+                   (list (datum->stx #f (list local-symbol-stx
+                                              (datum->stx #f (first desugared-defns+pinfo)
                                                              (stx-loc (second (stx-e expr))))
                                               (first desugared-body+pinfo))
-                                        (stx-loc expr))
+                                     (stx-loc expr))
                          (pinfo-update-env (second desugared-body+pinfo)
                                            (pinfo-env pinfo)))))]
               
@@ -205,7 +206,7 @@
                (local [(define begin-symbol-stx (first (stx-e expr)))
                        (define exprs (rest (stx-e expr)))
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (make-stx:list (cons begin-symbol-stx
+                 (list (datum->stx #f (cons begin-symbol-stx
                                             (first desugared-exprs+pinfo))
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
@@ -216,7 +217,7 @@
                        (define id (second (stx-e expr)))
                        (define value (third (stx-e expr)))
                        (define desugared-value+pinfo (desugar-expression value pinfo))]
-                 (list (make-stx:list (list set-symbol-stx
+                 (list (datum->stx #f (list set-symbol-stx
                                             id
                                             (first desugared-value+pinfo))
                                       (stx-loc expr))
@@ -228,7 +229,7 @@
                (local [(define if-symbol-stx (first (stx-e expr)))
                        (define exprs (rest (stx-e expr)))
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (make-stx:list (cons if-symbol-stx
+                 (list (datum->stx #f (cons if-symbol-stx
                                             (first desugared-exprs+pinfo))
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
@@ -239,7 +240,7 @@
                (local [(define and-symbol-stx (first (stx-e expr)))
                        (define exprs (rest (stx-e expr)))
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (make-stx:list (cons and-symbol-stx
+                 (list (datum->stx #f (cons and-symbol-stx
                                             (first desugared-exprs+pinfo))
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
@@ -249,7 +250,7 @@
                (local [(define or-symbol-stx (first (stx-e expr)))
                        (define exprs (rest (stx-e expr)))
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (make-stx:list (cons or-symbol-stx
+                 (list (datum->stx #f (cons or-symbol-stx
                                             (first desugared-exprs+pinfo))
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
@@ -262,7 +263,7 @@
                          (define args (second (stx-e expr)))
                          (define body (third (stx-e expr)))
                          (define desugared-body+pinfo (desugar-expression body pinfo))]
-                   (list (make-stx:list (list lambda-symbol-stx
+                   (list (datum->stx #f (list lambda-symbol-stx
                                               args
                                               (first desugared-body+pinfo))
                                         (stx-loc expr))
@@ -297,7 +298,7 @@
               [(pair? (stx-e expr))
                (local [(define exprs (stx-e expr))
                        (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (make-stx:list (first desugared-exprs+pinfo)
+                 (list (datum->stx #f (first desugared-exprs+pinfo)
                                       (stx-loc expr))
                        (second desugared-exprs+pinfo)))]
               [else
@@ -342,15 +343,16 @@
   (local
     [(define pinfo+val-sym (pinfo-gensym pinfo 'val))
      (define updated-pinfo-1 (first pinfo+val-sym))
-     (define val-stx (make-stx:atom (second pinfo+val-sym) (stx-loc an-expr)))
+     (define val-stx (datum->stx #f (second pinfo+val-sym) (stx-loc an-expr)))
      
      (define pinfo+x-sym (pinfo-gensym updated-pinfo-1 'x))
      (define updated-pinfo-2 (first pinfo+x-sym))
-     (define x-stx (make-stx:atom (second pinfo+x-sym) (stx-loc an-expr)))     
+     (define x-stx (datum->stx #f (second pinfo+x-sym) (stx-loc an-expr)))     
      
      ;; predicate: stx
      (define predicate
-       (datum->stx (list 'lambda (list x-stx)
+       (datum->stx #f 
+                   (list 'lambda (list x-stx)
                          (list 'equal? x-stx val-stx))
                    (stx-loc an-expr)))
      
@@ -361,15 +363,15 @@
          [(empty? list-of-datum)
           (if (and (symbol? (stx-e datum-last)) (symbol=? 'else (stx-e datum-last)))
               answer-last
-              (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
-                                   (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
+              (datum->stx #f (list (datum->stx #f 'if (stx-loc an-expr))
+                                   (datum->stx #f (list (datum->stx #f 'ormap (stx-loc an-expr))
                                                         predicate
-                                                        (make-stx:list (list (make-stx:atom 'quote (stx-loc an-expr))
+                                                        (datum->stx #f (list (datum->stx #f 'quote (stx-loc an-expr))
                                                                              datum-last)
                                                                        (stx-loc an-expr)))
                                                   (stx-loc an-expr))
                                    answer-last
-                                   (make-stx:list (list (make-stx:atom 'void (stx-loc an-expr)))
+                                   (datum->stx #f (list (datum->stx #f 'void (stx-loc an-expr)))
                                                   (stx-loc an-expr)))
                              (stx-loc an-expr)))]
          [else
@@ -381,10 +383,10 @@
                                               (stx->datum (first list-of-datum)))
                                       (list))))]
             [else
-             (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
-                                  (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
+             (datum->stx #f (list (datum->stx #f 'if (stx-loc an-expr))
+                                  (datum->stx #f (list (datum->stx #f 'ormap (stx-loc an-expr))
                                                        predicate
-                                                       (make-stx:list (list (make-stx:atom 'quote (stx-loc an-expr))
+                                                       (datum->stx #f (list (datum->stx #f 'quote (stx-loc an-expr))
                                                                             (first list-of-datum))
                                                                       (stx-loc an-expr)))
                                                  (stx-loc an-expr))
@@ -400,7 +402,8 @@
                                       (lambda (else-stx)
                                         else-stx)
                                       (lambda (questions answers question-last answer-last)
-                                        (list (datum->stx (list 'let (list (list val-stx (second (stx-e an-expr))))
+                                        (list (datum->stx #f 
+                                                          (list 'let (list (list val-stx (second (stx-e an-expr))))
                                                                 (loop questions answers question-last answer-last))
                                                           (stx-loc an-expr))
                                               updated-pinfo-2)))]
@@ -420,14 +423,14 @@
      (define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          (datum->stx (list 'if question-last 
+          (datum->stx #f (list 'if question-last 
                             answer-last
                             (list 'error ''cond
                                   (format "cond: fell out of cond" #;(Loc->string (stx-loc an-expr)))))
                       (stx-loc an-expr))]
          
          [else
-          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
+          (datum->stx #f (list (datum->stx #f 'if (stx-loc an-expr))
                                (first questions)
                                (first answers)
                                (loop (rest questions)
@@ -439,7 +442,7 @@
       [(stx-begins-with? an-expr 'cond)
        (deconstruct-clauses-with-else (rest (stx-e an-expr))
                                       (lambda (else-stx)
-                                        (make-stx:atom 'true (stx-loc else-stx)))
+                                        (datum->stx #f 'true (stx-loc else-stx)))
                                       (lambda (questions answers question-last answer-last)
                                         (list (loop questions answers question-last answer-last)
                                               pinfo)))]
@@ -498,8 +501,8 @@
                             (stx-e clauses-stx)))
           
           (define new-lambda-stx
-            (make-stx:list (list (make-stx:atom 'lambda (stx-loc a-stx))
-                                 (make-stx:list ids (stx-loc a-stx))
+            (datum->stx #f (list (datum->stx #f 'lambda (stx-loc a-stx))
+                                 (datum->stx #f ids (stx-loc a-stx))
                                  body-stx)
                            (stx-loc a-stx)))]    
     (begin
@@ -507,7 +510,7 @@
       (check-duplicate-identifiers! (map (lambda (a-clause)
                                            (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))      
-      (list (make-stx:list (cons new-lambda-stx vals)
+      (list (datum->stx #f (cons new-lambda-stx vals)
                            (stx-loc a-stx))
             pinfo))))
 
@@ -524,8 +527,8 @@
               [(empty? clauses)
                body-stx]
               [else
-               (make-stx:list (list (make-stx:atom 'let (stx-loc (first clauses)))
-                                    (make-stx:list (list (first clauses))
+               (datum->stx #f (list (datum->stx #f 'let (stx-loc (first clauses)))
+                                    (datum->stx #f (list (first clauses))
                                                    (stx-loc (first clauses)))
                                     (loop (rest clauses)))
                               (stx-loc (first clauses)))]))]    
@@ -544,14 +547,15 @@
             (map (lambda (a-clause)
                    (local [(define name (first (stx-e a-clause)))
                            (define val (second (stx-e a-clause)))]
-                     (datum->stx (list 'define name val)
+                     (datum->stx #f (list 'define name val)
                                  (stx-loc a-clause))))
                  (stx-e clauses-stx)))]
     (begin
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))
-      (list (datum->stx (list 'local define-clauses body-stx)
+      (list (datum->stx #f 
+                        (list 'local define-clauses body-stx)
                         (stx-loc a-stx))
             pinfo))))
 
@@ -567,12 +571,12 @@
                         (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
                         (cond
                           [(> depth 0)
-                           (datum->stx (list 'list (list 'quote (first (stx-e a-stx)))
+                           (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
                                              (handle-quoted (second (stx-e a-stx))
                                                             (add1 depth)))
                                        (stx-loc a-stx))]
                           [else
-                           (datum->stx (handle-quoted (second (stx-e a-stx))
+                           (datum->stx #f (handle-quoted (second (stx-e a-stx))
                                                       (add1 depth))
                                        (stx-loc a-stx))]))]
                      
@@ -581,7 +585,7 @@
                         (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
                         (cond
                           [(> depth 1)
-                           (datum->stx (list 'list (list 'quote (first (stx-e a-stx)))
+                           (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
                                              (handle-quoted (second (stx-e a-stx)) 
                                                             (sub1 depth)))
                                        (stx-loc a-stx))]
@@ -597,7 +601,7 @@
                      [(stx-begins-with? a-stx 'unquote-splicing)
                       (cond
                         [(> depth 1)
-                         (datum->stx (list 'list (list 'quote (first (stx-e a-stx)))
+                         (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
                                            (handle-quoted (second (stx-e a-stx)) 
                                                           (sub1 depth)))
                                      (stx-loc a-stx))]
@@ -614,7 +618,7 @@
                                                   (list))))])]
                      
                      [else
-                      (datum->stx (cons 'append 
+                      (datum->stx #f (cons 'append 
                                         (map 
                                          ;; (stx -> (listof stx))
                                          (lambda (s) 
@@ -647,7 +651,7 @@
               [else
                (cond
                  [(> depth 0)
-                  (datum->stx (list 'quote a-stx) (stx-loc a-stx))]
+                  (datum->stx #f (list 'quote a-stx) (stx-loc a-stx))]
                  [else
                   a-stx])]))]
     
@@ -666,7 +670,8 @@
 ;; yet have a contract system in place.
 (define (desugar-provide/contract a-provide-contract a-pinfo)
   (cond [(stx-begins-with? a-provide-contract 'provide/contract)
-         (list (list (datum->stx `(provide ,@(map convert-provide/contract-clause 
+         (list (list (datum->stx #f 
+                                 `(provide ,@(map convert-provide/contract-clause 
                                                   (rest (stx-e a-provide-contract)))) 
                                  (stx-loc a-provide-contract)))
                a-pinfo)]
@@ -680,7 +685,8 @@
   (cond
     [(stx-begins-with? a-clause 'struct)
      ;; FIXME: Check all syntactic conditions for well-formedness!
-     (datum->stx `(struct-out ,(first (rest (stx-e a-clause))))
+     (datum->stx #f 
+                 `(struct-out ,(first (rest (stx-e a-clause))))
                  (stx-loc a-clause))]
     [(list? (stx-e a-clause))
      ;; FIXME: we're ignoring the contract.

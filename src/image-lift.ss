@@ -54,17 +54,14 @@
     [(stx:list? a-stx)
      (let-values ([(lifted-elts named-bitmaps)
                    (lift-images/stxs (stx-e a-stx))])
-       (values (make-stx:list lifted-elts (stx-loc a-stx))
+       (values (datum->stx #f lifted-elts (stx-loc a-stx))
                named-bitmaps))]
      
     [(stx:atom? a-stx)
      (cond [(image-snip? (stx-e a-stx))
             (let* ([filename (make-image-name)]
                    [bitmap (send (stx-e a-stx) get-bitmap)]
-                   [replacement-stx (make-stx:list (list (make-stx:atom 'open-image-url
-                                                                        (stx-loc a-stx))
-                                                         (make-stx:atom filename
-                                                                        (stx-loc a-stx)))
+                   [replacement-stx (datum->stx #f `(open-image-url ,filename)
                                                    (stx-loc a-stx))])
               (values replacement-stx (list (make-named-bitmap filename bitmap))))]
            [else

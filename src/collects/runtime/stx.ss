@@ -1,10 +1,9 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
 
-
 ;; Syntax objects
-(define-struct stx:atom (datum loc))
-(define-struct stx:list (elts loc))
+(define-struct stx:atom (datum loc binding))
+(define-struct stx:list (elts loc binding))
 
 (define-struct Loc (offset line column span id))
 
@@ -54,15 +53,16 @@
 ;; Converts a datum into a syntax object deeply.  Every stx will
 ;; share the same loc value.  Pre-existing datum objects will
 ;; be left alone.
-(define (datum->stx a-datum a-loc)
+(define (datum->stx context a-datum a-loc)
   (cond
     [(stx? a-datum)
      a-datum]
     [(or (pair? a-datum) (empty? a-datum))
-     (make-stx:list (map (lambda (x) (datum->stx x a-loc)) a-datum)
-                    a-loc)]
+     (make-stx:list (map (lambda (x) (datum->stx context x a-loc)) a-datum)
+                    a-loc
+                    context)]
     [else
-     (make-stx:atom a-datum a-loc)]))
+     (make-stx:atom a-datum a-loc context)]))
 
 
 ;; stx->datum: stx -> any
@@ -77,10 +77,16 @@
 
 
 
-(provide/contract [struct stx:atom ([datum any/c]
-                                    [loc any/c])]
-                  [struct stx:list ([elts (listof stx?)]
-                                    [loc any/c])]
+(provide/contract #;[struct stx:atom ([datum any/c]
+                                    [loc any/c]
+                                    [binding (or/c false? binding?)])]
+                  #;[struct stx:list ([elts (listof stx?)]
+                                    [loc any/c]
+                                    [binding (or/c false? binding?)])]
+
+                  [stx:atom? (any/c . -> . boolean?)]
+                  [stx:list? (any/c . -> . boolean?)]
+                  
                   [struct Loc ([offset number?]
                                [line number?]
                                [column number?]
@@ -92,5 +98,5 @@
                   [stx-loc (stx? . -> . any)]
                   
                   [stx-begins-with? (stx? symbol? . -> . boolean?)]
-                  [datum->stx (any/c any/c . -> . stx?)]
+                  [datum->stx ((or/c false? syntax?) any/c Loc? . -> . stx?)]
                   [stx->datum (stx? . -> . any)])

@@ -6,6 +6,12 @@ goog.provide('plt.reader');
 
     var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
     var Loc = stxModule.EXPORTS.Loc;
+    var datumToStx = function(thing, loc) {
+	var context = false;
+	return stxModule.EXPORTS.datum_dash__greaterthan_stx(context, 
+							     thing, 
+							     loc);
+    };
     var make_dash_stx_colon_list = stxModule.EXPORTS.make_dash_stx_colon_list;
     var make_dash_stx_colon_atom = stxModule.EXPORTS.make_dash_stx_colon_atom;
     var stx_dash_loc = stxModule.EXPORTS.stx_dash_loc;
@@ -172,8 +178,6 @@ goog.provide('plt.reader');
 
     // readSchemeExpressions: string string -> (listof stx)
     var readSchemeExpressions = function(s, source) {
-	var makeList = make_dash_stx_colon_list;
-	var makeAtom = make_dash_stx_colon_atom;
 	var stxLoc = stx_dash_loc;
 
 	var tokensAndError = tokenize(s, source);
@@ -241,8 +245,8 @@ goog.provide('plt.reader');
 	readQuoted = function(quoteChar, quoteSymbol) {
 	    var leadingQuote = eat(quoteChar);
 	    var quoted = readExpr();
-	    return makeList(plt.types.Cons.makeInstance(
-		makeAtom(quoteSymbol, leadingQuote[2]),
+	    return datumToStx(plt.types.Cons.makeInstance(
+		datumToStx(quoteSymbol, leadingQuote[2]),
 		plt.types.Cons.makeInstance(quoted, empty)),
 			    new Loc(Loc_dash_offset(leadingQuote[2]),
 				    Loc_dash_line(leadingQuote[2]),
@@ -343,7 +347,7 @@ goog.provide('plt.reader');
 			tokens[0][2]);
 		}
 		var rparen = eat(')');
-		return makeList(
+		return datumToStx(
 		    result,
 		    new Loc(Loc_dash_offset(lparen[2]),
 			    Loc_dash_line(lparen[2]),
@@ -374,14 +378,14 @@ goog.provide('plt.reader');
 		var exactnessMatch = t[1].match(/^(\#[ie])(.+)$/);
 		if (exactnessMatch) {
 		    if (exactnessMatch[1] == "#i") {
-			return makeAtom(parseBasicNumber(exactnessMatch[2], false),
+			return datumToStx(parseBasicNumber(exactnessMatch[2], false),
 					t[2]);
 		    } else {
-			return makeAtom(parseBasicNumber(exactnessMatch[2], true),
+			return datumToStx(parseBasicNumber(exactnessMatch[2], true),
 					t[2]);
 		    }
 		} else {
-		    return makeAtom(parseBasicNumber(t[1], true),
+		    return datumToStx(parseBasicNumber(t[1], true),
 				    t[2]);
 		}
 
@@ -395,23 +399,23 @@ goog.provide('plt.reader');
 		var b = parseBasicNumber(complexMatch[3], exactness);
 		// FIXME: Complex needs to be changed so it takes in either
 		// exact or inexact basic values.
-	        var newAtom = makeAtom(plt.types.Complex.makeInstance(a, b));
+	        var newAtom = datumToStx(plt.types.Complex.makeInstance(a, b));
   	        return newAtom;
 
 	    case 'string':
 		var t = eat('string');
-		return makeAtom(plt.types.String.makeInstance(t[1]),
+		return datumToStx(plt.types.String.makeInstance(t[1]),
 				t[2]);
 	    case 'char':
 		var t = eat('char');
 		if (t[1] == 'newline') {
-		    return makeAtom(plt.types.Char.makeInstance('\n'), t[2]);
+		    return datumToStx(plt.types.Char.makeInstance('\n'), t[2]);
 		} else if (t[1] == 'backspace') {
 		    // FIXME: add more character constants.
 		    // See: http://docs.plt-scheme.org/reference/reader.html#%28idx._%28gentag._172._%28lib._scribblings/reference/reference..scrbl%29%29%29
-		    return makeAtom(plt.types.Char.makeInstance(String.fromCharCode(8)), t[2]);
+		    return datumToStx(plt.types.Char.makeInstance(String.fromCharCode(8)), t[2]);
 		} else {
-		    return makeAtom(plt.types.Char.makeInstance(t[1]), t[2]);
+		    return datumToStx(plt.types.Char.makeInstance(t[1]), t[2]);
 		}
 
 	    case 'symbol':
@@ -420,7 +424,7 @@ goog.provide('plt.reader');
 		    throw new plt.types.MobyParserError
 		    ("Dotted pairs are not currently accepted by Moby", t[2]);
 		}
-		return makeAtom(plt.types.Symbol.makeInstance(t[1]), t[2]);
+		return datumToStx(plt.types.Symbol.makeInstance(t[1]), t[2]);
 
 	    default:
 		throw new plt.types.MobyParserError
