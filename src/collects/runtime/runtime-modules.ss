@@ -20,38 +20,10 @@
        stx:list?
        (stx:list-elts stx:list-loc)
        (set-stx:list-elts! set-stx:list-loc!))
-      (binding:function
-       make-stx:list
-       #f
-       2
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_stx_colon_list\"]"
-       ()
-       #f)
-      (binding:function
-       stx:list?
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_question_\"]"
-       ()
-       #f)
-      (binding:function
-       stx:list-elts
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_dash_elts\"]"
-       ()
-       #f)
-      (binding:function
-       stx:list-loc
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_dash_loc\"]"
-       ()
-       #f)
+      (binding:function make-stx:list #f 2 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_stx_colon_list\"]" () #f)
+      (binding:function stx:list? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_question_\"]" () #f)
+      (binding:function stx:list-elts #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_dash_elts\"]" () #f)
+      (binding:function stx:list-loc #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_list_dash_loc\"]" () #f)
       (binding:function
        set-stx:list-elts!
        #f
@@ -76,38 +48,10 @@
        stx:atom?
        (stx:atom-datum stx:atom-loc)
        (set-stx:atom-datum! set-stx:atom-loc!))
-      (binding:function
-       make-stx:atom
-       #f
-       2
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_stx_colon_atom\"]"
-       ()
-       #f)
-      (binding:function
-       stx:atom?
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_question_\"]"
-       ()
-       #f)
-      (binding:function
-       stx:atom-datum
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_dash_datum\"]"
-       ()
-       #f)
-      (binding:function
-       stx:atom-loc
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_dash_loc\"]"
-       ()
-       #f)
+      (binding:function make-stx:atom #f 2 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_stx_colon_atom\"]" () #f)
+      (binding:function stx:atom? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_question_\"]" () #f)
+      (binding:function stx:atom-datum #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_dash_datum\"]" () #f)
+      (binding:function stx:atom-loc #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_colon_atom_dash_loc\"]" () #f)
       (binding:function
        set-stx:atom-datum!
        #f
@@ -125,14 +69,7 @@
        ()
        #f)
       (binding:function stx-loc #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash_loc\"]" () #f)
-      (binding:function
-       datum->stx
-       #f
-       2
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"datum_dash__greaterthan_stx\"]"
-       ()
-       #f)
+      (binding:function datum->stx #f 2 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"datum_dash__greaterthan_stx\"]" () #f)
       (binding:function
        stx-begins-with?
        #f
@@ -141,14 +78,7 @@
        "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash_begins_dash_with_question_\"]"
        ()
        #f)
-      (binding:function
-       stx->datum
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash__greaterthan_datum\"]"
-       ()
-       #f)
+      (binding:function stx->datum #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"stx_dash__greaterthan_datum\"]" () #f)
       (binding:structure
        Loc
        (offset line column span id)
@@ -195,14 +125,7 @@
        "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"set_dash_Loc_dash_span_bang_\"]"
        ()
        #f)
-      (binding:function
-       set-Loc-id!
-       #f
-       2
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"set_dash_Loc_dash_id_bang_\"]"
-       ()
-       #f)))
+      (binding:function set-Loc-id! #f 2 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"set_dash_Loc_dash_id_bang_\"]" () #f)))
    '(moby/runtime/binding
      "collects/runtime/binding.ss"
      ((binding:function binding? #f 1 #f "plt._MODULES[\"moby/runtime/binding\"].EXPORTS[\"binding_question_\"]" () #f)
@@ -871,10 +794,7 @@
        "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"permission_colon_receive_dash_sms_question_\"]"
        ()
        #f)
-      (binding:constant
-       PERMISSION:TILT
-       "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"PERMISSION_colon_TILT\"]"
-       ())
+      (binding:constant PERMISSION:TILT "plt._MODULES[\"moby/runtime/permission-struct\"].EXPORTS[\"PERMISSION_colon_TILT\"]" ())
       (binding:structure permission:internet () make-permission:internet permission:internet? () ())
       (binding:function
        make-permission:internet
@@ -1077,14 +997,7 @@
        "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"set_dash_effect_colon_stop_dash_sound_dash_sound_bang_\"]"
        ()
        #f)
-      (binding:function
-       effect?
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"effect_question_\"]"
-       ()
-       #f)
+      (binding:function effect? #f 1 #f "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"effect_question_\"]" () #f)
       (binding:structure
        effect:set-wake-lock
        (locks)
@@ -1476,13 +1389,7 @@
        #f)))
    '(moby/runtime/arity-struct
      "collects/runtime/arity-struct.ss"
-     ((binding:structure
-       arity:mixed
-       (arities)
-       make-arity:mixed
-       arity:mixed?
-       (arity:mixed-arities)
-       (set-arity:mixed-arities!))
+     ((binding:structure arity:mixed (arities) make-arity:mixed arity:mixed? (arity:mixed-arities) (set-arity:mixed-arities!))
       (binding:function
        make-arity:mixed
        #f
@@ -2605,8 +2512,7 @@
        make-moby-error-type:generic-syntactic-error
        moby-error-type:generic-syntactic-error?
        (moby-error-type:generic-syntactic-error-reason moby-error-type:generic-syntactic-error-other-locations)
-       (set-moby-error-type:generic-syntactic-error-reason!
-        set-moby-error-type:generic-syntactic-error-other-locations!))
+       (set-moby-error-type:generic-syntactic-error-reason! set-moby-error-type:generic-syntactic-error-other-locations!))
       (binding:function
        make-moby-error-type:generic-syntactic-error
        #f
@@ -2965,14 +2871,7 @@
      "collects/bootstrap/bootstrap-teachpack.ss"
      ((binding:constant score "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"score\"]" ())
       (binding:function sq #f 1 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sq\"]" () #f)
-      (binding:function
-       test-frame
-       #f
-       6
-       #f
-       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"test_dash_frame\"]"
-       ()
-       #f)
+      (binding:function test-frame #f 6 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"test_dash_frame\"]" () #f)
       (binding:function tangent #f 1 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"tangent\"]" () #f)
       (binding:function sine #f 1 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sine\"]" () #f)
       (binding:function START #f 14 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"START\"]" () #f)

@@ -84,11 +84,14 @@
                     "if (typeof(plt._MODULES) == 'undefined') { plt._MODULES = {}; }\n"
                     "if (typeof(plt._MODULES[" (format "~s" module-name-string) "]) == 'undefined') {\n"
                     "    plt._MODULES[" (format "~s" module-name-string) "] = "
-                    "        { COMPILER_VERSION: " (format "~s" VERSION) ",\n\tBINDINGS: {},\n\tEXPORTS : {}};\n"
+                    "        { COMPILER_VERSION: " (format "~s" VERSION) ","
+                    "\n\tBINDINGS: {},\n\tEXPORTS : {},\n\tisInvoked: false};\n"
 
                     "    (function() {\n"
                     ""       (compiled-program-defns a-compiled-program) "\n"
-                    "        (" (compiled-program-toplevel-exprs a-compiled-program) ")(function(x){return x;});\n"
+                    (format "        plt._MODULES[~s].invoke = function() { " module-name-string)
+                    "            (" (compiled-program-toplevel-exprs a-compiled-program) ")( function(x){return x;} );\n"
+                    "        };\n"
                     ;; FIXME: export the BINDINGS value that describes each exported value.
                     ""       (apply string-append (map (lambda (a-name)
                                                 (local [(define munged-name

@@ -118,10 +118,6 @@ goog.provide('plt.Kernel');
 	return x != null && x != undefined && x instanceof plt.types.Char;
     }
 
-    var isStx = function(x) {
-	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
-	return stxModule.EXPORTS.stx_question_(x);
-    }
 
     var isString = function(x) {
 	return typeof(x) == 'string';
@@ -2081,15 +2077,6 @@ goog.provide('plt.Kernel');
 	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
     };
 
-    plt.Kernel.syntax_dash_error = function(msg, stx) {
-	check(msg, isString, "syntax-error", "string", 1);
-	check(stx, isStx, "syntax-error", "stx", 2);
-	throw new MobySyntaxError(msg, stx);
-    };
-
-
-
-
 
 
 
@@ -2255,29 +2242,21 @@ goog.provide('plt.Kernel');
 	    plt.Kernel.lastLoc = undefined;
 	    return true;
 	}
-
-	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
-	plt.Kernel.lastLoc = stxModule.EXPORTS.make_dash_Loc(
-	    plt.types.Rational.makeInstance(locHash.offset),
-	    plt.types.Rational.makeInstance(locHash.line),
-	    plt.types.Rational.makeInstance(locHash.column),
-	    plt.types.Rational.makeInstance(locHash.span),
-	    plt.types.Rational.makeInstance(locHash.id));
+	plt.Kernel.lastLoc = locHash;
 	return true;
     }
 
     plt.Kernel.locToString = function(lastLoc) {
-	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
 	if (typeof(lastLoc) === 'string') {
 	    return lastLoc;
 	} else if (typeof(lastLoc) === 'undefined') {
 	    return "undefined";
 	} else {
-	    return ("offset=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_offset(lastLoc))
-		    + ", line=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_line(lastLoc)) 
-		    + ", column=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_column(lastLoc)) 
-		    + ", span=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_span(lastLoc))
-		    + ", id=" + plt.Kernel.toWrittenString(stxModule.EXPORTS.Loc_dash_id(lastLoc)));
+	    return ("offset=" + lastLoc.offset
+		    + ", line=" + lastLoc.line
+		    + ", column=" + lastLoc.column
+		    + ", span=" + lastLoc.span
+		    + ", id=" + lastLoc.id);
 	}
     };
     
@@ -2310,7 +2289,12 @@ goog.provide('plt.Kernel');
 	// FIXME!  Do something here to load the module, if it hasn't
 	// already been loaded.  (Look at how goog.require and
 	// goog.writeScriptTags work.)
-	return plt._MODULES[moduleName];
+	var aModule = plt._MODULES[moduleName];
+	if (! aModule.isInvoked) {
+	    aModule.isInvoked = true;
+	    aModule.invoke();
+	}
+	return aModule;
     }
 
 
