@@ -212,10 +212,12 @@ function init() {
 				run("(begin (+ 1 2) (+ 3 4) true)")));
 
 
+
+	    run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))");
 	    // non top-level definition
-	    this.assertRaise("MobySyntaxError",
-			     function () {
-				 run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))")});
+// 	    this.assertRaise("MobySyntaxError",
+// 			     function () {
+// 				 );
 
 	    // sequencial evaluation
 	    this.assert(isEqual(number(3),

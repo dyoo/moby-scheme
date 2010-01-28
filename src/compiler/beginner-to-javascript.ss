@@ -91,9 +91,9 @@
                     ""       (compiled-program-defns a-compiled-program) "\n"
                     (format "        plt._MODULES[~s].invoke = function() { " module-name-string)
                     "            (" (compiled-program-toplevel-exprs a-compiled-program) ")( function(x){return x;} );\n"
-                    "        };\n"
-                    ;; FIXME: export the BINDINGS value that describes each exported value.
-                    ""       (apply string-append (map (lambda (a-name)
+                    ;;              FIXME: export the BINDINGS value that describes each exported value.
+                    ""            (apply string-append 
+                                         (map (lambda (a-name)
                                                 (local [(define munged-name
                                                           (identifier->munged-java-identifier a-name))]
                                                   (format "plt._MODULES[~s].EXPORTS[~s] = ~a;\n"
@@ -102,7 +102,9 @@
                                                           munged-name
                                                           )))
                                               defined-names))
+                    "  };\n"               ;; end of invoke() definition
                     "     }());\n"
+
                     "}\n")))
 
 
