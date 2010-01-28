@@ -98,7 +98,7 @@
               
               [(string? val)
                `(span ((class "SchemeValue:String"))
-                      (string-append "\"" ,val "\""))]
+                      ,(string-append "\"" val "\""))]
               
               [(number? val)
                `(span ((class "SchemeValue:Number"))
@@ -110,7 +110,7 @@
               
               [(char? val)
                `(span ((class "SchemeValue:Character"))
-                      ,(string val))]
+                      ,(string #\# #\\ val))]
               
               [(symbol? val)
                `(span ((class "SchemeValue:Symbol"))
@@ -171,7 +171,7 @@
               
               [else
                `(span ((class "SchemeValue:DisplayedObject"))
-                      (format "~a" val))]))]
+                      ,(format "~a" val))]))]
     (begin
       (initialize-shared-hash! val)
       (->dom val))))

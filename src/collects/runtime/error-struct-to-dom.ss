@@ -54,7 +54,7 @@
                      ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))
                      " which I don't recognize as a program element.")
                (span ((class "Error:UnrecognizedLexicalToken.token"))
-                     (symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))))]
+                     ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))))]
        
        [(moby-error-type:unsupported-lexical-token? error-type)
         `(span ((class "Error:UnsupportedLexicalToken"))
@@ -79,14 +79,14 @@
         `(span ((class "Error:UnclosedParentheses"))
                (span ((class "Error.reason"))
                      "I saw "
-                     (symbol->string (moby-error-type:unclosed-parentheses error-type))
+                     ,(symbol->string (moby-error-type:unclosed-parentheses-opener error-type))
                      " to start an expression, but no "
-                     (symbol->string (moby-error-type:unclosed-parentheses error-type))
+                     ,(symbol->string (moby-error-type:unclosed-parentheses-closer error-type))
                      "to close it.")
                (span ((class "Error:UnclosedParentheses.opener"))
-                     (symbol->string (moby-error-type:unclosed-parentheses-opener error-type)))
+                     ,(symbol->string (moby-error-type:unclosed-parentheses-opener error-type)))
                (span ((class "Error:UnclosedParentheses.closer"))
-                     (symbol->string (moby-error-type:unclosed-parentheses-closer error-type))))]
+                     ,(symbol->string (moby-error-type:unclosed-parentheses-closer error-type))))]
        
        [(moby-error-type:missing-expression? error-type)
         `(span ((class "Error:MissingExpression"))
@@ -99,7 +99,7 @@
         `(span ((class "Error:DuplicateIdentifier"))
                (span ((class "Error.reason"))
                      "The identifier "
-                     ,(symbol->string (moby-error-type:duplicate-identifier-id error-type))
+                     ,(scheme-value-to-dom-sexp (moby-error-type:duplicate-identifier-id error-type))
                      " has been duplicated.")
                (span ((class "Error:DuplicateIdentifier.secondLocation"))
                      ,(Loc->dom-sexp (moby-error-type:duplicate-identifier-second-location error-type))))]
@@ -147,7 +147,7 @@
         `(span ((class "Error:UnknownModule"))
                (span ((class "Error.reason"))
                      "I see a require of the module "
-                     `(scheme-value-to-dom-sexp (moby-error-type:unknown-module-path error-type))
+                     ,(scheme-value-to-dom-sexp (moby-error-type:unknown-module-path error-type))
                      ", but I don't yet know what this module is."))]
        
        [(moby-error-type:application-arity? error-type)
