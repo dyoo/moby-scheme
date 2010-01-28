@@ -489,11 +489,11 @@ function init() {
 
 	    // no quoted expression
  	    this.assertMobyRaise(isGenericSyntacticError,
- 			     function(){
- 				 run("(case (* 7 5)" +
- 				     "[2 'small]" +
- 				     "[(10 11 12) 'big])" +
-				     "3")});
+ 				 function(){
+ 				     run("(case (* 7 5)" +
+ 					 "[2 'small]" +
+ 					 "[(10 11 12) 'big])" +
+					 "3")});
 
 	    // symbols
  	    this.assert(isEqual(symbol("big"),

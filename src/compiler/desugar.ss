@@ -373,19 +373,27 @@
                                                   (stx-loc an-expr)))
                              (stx-loc an-expr)))]
          [else
-          (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
-                               (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
-                                                    predicate
-                                                    (make-stx:list (list (make-stx:atom 'quote (stx-loc an-expr))
-                                                                         (first list-of-datum))
-                                                                   (stx-loc an-expr)))
-                                              (stx-loc an-expr))
-                               (first answers)
-                               (loop (rest list-of-datum)
-                                     (rest answers)
-                                     datum-last
-                                     answer-last))
-                         (stx-loc an-expr))]))]
+          (cond
+            [(not (list? (stx-e (first list-of-datum))))
+             (raise (make-moby-error (stx-loc (first list-of-datum))
+                                     (make-moby-error-type:generic-syntactic-error
+                                      (format "case needs a list of values for each clause, but sees ~s instead"
+                                              (stx->datum (first list-of-datum)))
+                                      (list))))]
+            [else
+             (make-stx:list (list (make-stx:atom 'if (stx-loc an-expr))
+                                  (make-stx:list (list (make-stx:atom 'ormap (stx-loc an-expr))
+                                                       predicate
+                                                       (make-stx:list (list (make-stx:atom 'quote (stx-loc an-expr))
+                                                                            (first list-of-datum))
+                                                                      (stx-loc an-expr)))
+                                                 (stx-loc an-expr))
+                                  (first answers)
+                                  (loop (rest list-of-datum)
+                                        (rest answers)
+                                        datum-last
+                                        answer-last))
+                            (stx-loc an-expr))])]))]
     (cond
       [(stx-begins-with? an-expr 'case)
        (deconstruct-clauses-with-else (rest (rest (stx-e an-expr)))

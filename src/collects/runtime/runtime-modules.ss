@@ -156,47 +156,12 @@
        Loc?
        (Loc-offset Loc-line Loc-column Loc-span Loc-id)
        (set-Loc-offset! set-Loc-line! set-Loc-column! set-Loc-span! set-Loc-id!))
-      (binding:function
-       make-Loc
-       #f
-       5
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_Loc\"]"
-       ()
-       #f)
+      (binding:function make-Loc #f 5 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"make_dash_Loc\"]" () #f)
       (binding:function Loc? #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_question_\"]" () #f)
-      (binding:function
-       Loc-offset
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_offset\"]"
-       ()
-       #f)
-      (binding:function
-       Loc-line
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_line\"]"
-       ()
-       #f)
-      (binding:function
-       Loc-column
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_column\"]"
-       ()
-       #f)
-      (binding:function
-       Loc-span
-       #f
-       1
-       #f
-       "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_span\"]"
-       ()
-       #f)
+      (binding:function Loc-offset #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_offset\"]" () #f)
+      (binding:function Loc-line #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_line\"]" () #f)
+      (binding:function Loc-column #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_column\"]" () #f)
+      (binding:function Loc-span #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_span\"]" () #f)
       (binding:function Loc-id #f 1 #f "plt._MODULES[\"moby/runtime/stx\"].EXPORTS[\"Loc_dash_id\"]" () #f)
       (binding:function
        set-Loc-offset!
@@ -1234,13 +1199,7 @@
        "plt._MODULES[\"moby/runtime/effect-struct\"].EXPORTS[\"set_dash_effect_colon_send_dash_sms_dash_msg_bang_\"]"
        ()
        #f)
-      (binding:structure
-       effect:release-wake-lock
-       ()
-       make-effect:release-wake-lock
-       effect:release-wake-lock?
-       ()
-       ())
+      (binding:structure effect:release-wake-lock () make-effect:release-wake-lock effect:release-wake-lock? () ())
       (binding:function
        make-effect:release-wake-lock
        #f
@@ -1863,13 +1822,7 @@
        "plt._MODULES[\"moby/runtime/error-struct\"].EXPORTS[\"moby_dash_expected_colon_real_question_\"]"
        ()
        #f)
-      (binding:structure
-       moby-expected:something
-       ()
-       make-moby-expected:something
-       moby-expected:something?
-       ()
-       ())
+      (binding:structure moby-expected:something () make-moby-expected:something moby-expected:something? () ())
       (binding:function
        make-moby-expected:something
        #f
@@ -2684,8 +2637,7 @@
        (reason other-locations)
        make-moby-error-type:generic-syntactic-error
        moby-error-type:generic-syntactic-error?
-       (moby-error-type:generic-syntactic-error-reason
-        moby-error-type:generic-syntactic-error-other-locations)
+       (moby-error-type:generic-syntactic-error-reason moby-error-type:generic-syntactic-error-other-locations)
        (set-moby-error-type:generic-syntactic-error-reason!
         set-moby-error-type:generic-syntactic-error-other-locations!))
       (binding:function
@@ -2742,8 +2694,7 @@
        make-moby-error-type:duplicate-identifier
        moby-error-type:duplicate-identifier?
        (moby-error-type:duplicate-identifier-id moby-error-type:duplicate-identifier-second-location)
-       (set-moby-error-type:duplicate-identifier-id!
-        set-moby-error-type:duplicate-identifier-second-location!))
+       (set-moby-error-type:duplicate-identifier-id! set-moby-error-type:duplicate-identifier-second-location!))
       (binding:function
        make-moby-error-type:duplicate-identifier
        #f
@@ -3063,22 +3014,8 @@
        "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"tangent\"]"
        ()
        #f)
-      (binding:function
-       sine
-       #f
-       1
-       #f
-       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sine\"]"
-       ()
-       #f)
-      (binding:function
-       START
-       #f
-       14
-       #f
-       "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"START\"]"
-       ()
-       #f)
+      (binding:function sine #f 1 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"sine\"]" () #f)
+      (binding:function START #f 14 #f "plt._MODULES[\"bootstrap/bootstrap-teachpack\"].EXPORTS[\"START\"]" () #f)
       (binding:function
        cosine
        #f
@@ -3092,13 +3029,6 @@
      ((binding:function start #f 1 #f "plt._MODULES[\"bootstrap/cage-teachpack\"].EXPORTS[\"start\"]" () #f)))
    '(bootstrap/function-teachpack
      "collects/bootstrap/function-teachpack.ss"
-     ((binding:function
-       start
-       #f
-       1
-       #f
-       "plt._MODULES[\"bootstrap/function-teachpack\"].EXPORTS[\"start\"]"
-       ()
-       #f)))))
+     ((binding:function start #f 1 #f "plt._MODULES[\"bootstrap/function-teachpack\"].EXPORTS[\"start\"]" () #f)))))
 
 (provide MOBY-RUNTIME-MODULE-BINDINGS)
