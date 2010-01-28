@@ -153,22 +153,35 @@ function init() {
 	return errorStructModule.EXPORTS.moby_dash_error_dash_type_colon_conditional_dash_exhausted_question_(x);
     }
 
+
+    // errorType -> boolean
+    var isGenericRuntimeError = function(x) {
+	return errorStructModule.EXPORTS.moby_dash_error_dash_type_colon_generic_dash_runtime_dash_error_question_(x);
+    }
+
+    // errorType -> boolean
+    var isGenericSyntacticError = function(x) {
+	return errorStructModule.EXPORTS.moby_dash_error_dash_type_colon_generic_dash_syntactic_dash_error_question_(x);
+    }
+
     
 
 
     //////////////////////////////////////////////////////////////////////
 
 
+    // Monkey patch an assertMobyRaise function.
+    JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk) {
+	try {
+	    thunk();
+	    this.fail();
+	} catch(e) {
+	    this.assert(isMobyError(e));
+	    this.assert(predicate(mobyErrorType(e)));
+	}
+    };
 
-    try {
-	run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))");
-    } catch(e) {
-	console.log(isMobyError(e));
-	console.log(isUndefinedIdentifier(mobyErrorType(e)));
-    }
 
-
-    
 
     return new Test.Unit.Runner({
 	setup: function() {},
@@ -342,8 +355,11 @@ function init() {
 				run("(begin (+ 1 2) (+ 3 4) true)")));
 
 
+	    this.assertMobyRaise(isUndefinedIdentifier,
+				 function() {
+				     run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))");
+				 });
 
-	    run("(begin (+ 1 2) (- 3 4) (define j 5) (* 2 3))");
 	    // non top-level definition
 // 	    this.assertRaise("MobySyntaxError",
 // 			     function () {
@@ -383,21 +399,21 @@ function init() {
 				     "(set-str-b! 9 a-str)" +
 				     "(str-b a-str)")});
 
-	    // posns are immutable
-	    this.assertRaise("MobySyntaxError",
-			     function () {
-			    	 run("(define a-posn (make-posn 1 3))" +
-				     "(set-posn-x! a-posn 6)" +
-				     "(posn-x a-posn)")});
+	    // posns are immutable, so set-posn-x! should not exist.
+	    this.assertMobyRaise(isUndefinedIdentifier,
+				 function () {
+			    	     run("(define a-posn (make-posn 1 3))" +
+					 "(set-posn-x! a-posn 6)" +
+					 "(posn-x a-posn)")});
 	},
 
 	testSetWithNonIdentifier: function() {
-	    this.assertRaise("MobySyntaxError",
-			     function() {
-				 run("(set! \"a string\" 17)")});
-	    this.assertRaise("MobySyntaxError",
-			     function() {
-				 run("(set! 'a-quoted-id 17)")});
+	    this.assertMobyRaise(isExpectedIdentifier,
+				 function() {
+				     run("(set! \"a string\" 17)")});
+	    this.assertMobyRaise(isExpectedIdentifier,
+				 function() {
+				     run("(set! 'a-quoted-id 17)")});
 	},
 
 	testSet: function() {
@@ -408,9 +424,9 @@ function init() {
 				    "x")));
 	    
 	    // undefined top-level variable
-	    this.assertRaise("MobySyntaxError",
-			     function () {
-				 run("(set! c 42)")});
+	    this.assertMobyRaise(isUndefinedIdentifier,
+				 function () {
+				     run("(set! c 42)")});
 	    
 	    // function arguments are mutable
 	    this.assert(isEqual(number(3),
@@ -449,13 +465,13 @@ function init() {
 				    "[else 'dummy])")));
 
  	    // clause with else should be the last one
- 	    this.assertRaise("MobySyntaxError",
- 			     function(){
- 				 run("(case (* 7 5)" +
- 				     "[(1 2 3) 'small]" +
- 				     "[(10 11 12) 'big]" +
- 				     "[else 'dummy]" +
- 				     "[(1 2 3) 'shouldBeError])")});
+ 	    this.assertMobyRaise(isGenericSyntacticError,
+ 				 function(){
+ 				     run("(case (* 7 5)" +
+ 					 "[(1 2 3) 'small]" +
+ 					 "[(10 11 12) 'big]" +
+ 					 "[else 'dummy]" +
+ 					 "[(1 2 3) 'shouldBeError])")});
 
 	    // no else caluse - void output
 	    this.assert(isEqual(number(3),
@@ -472,7 +488,7 @@ function init() {
 				    "[(12 13 14) 'bigger])")));
 
 	    // no quoted expression
- 	    this.assertRaise("MobyTypeError",
+ 	    this.assertMobyRaise(isGenericSyntacticError,
  			     function(){
  				 run("(case (* 7 5)" +
  				     "[2 'small]" +
@@ -526,8 +542,8 @@ function init() {
                                     "    x))")));
 
 	    // Check for binding symbol more than once.
-	    this.assertRaise("MobySyntaxError",
-			     function() { run("(let ((x 42) (x 43)) x)") });
+	    this.assertMobyRaise(isDuplicateIdentifier,
+				 function() { run("(let ((x 42) (x 43)) x)") });
             
 	},
 
@@ -543,7 +559,7 @@ function init() {
 	    this.assert(isEqual(plt.types.Logic.FALSE, 
 				run("(letrec ([myeven? (lambda (x) (if (= x 0) true (myodd? (sub1 x))))] [myodd? (lambda (x) (if (= x 0) false (myeven? (sub1 x))))]) (even? 7))")));
 
-	    this.assertRaise("MobySyntaxError",
+	    this.assertMobyRaise(isDuplicateIdentifier,
 			     function() { run("(letrec ((x 42)(x 43)) x)") });
 
 

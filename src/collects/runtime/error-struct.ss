@@ -5,10 +5,16 @@
 
 (define-struct moby-error (location error-type))
 
-
+;; A lexical token hasn't been closed (e.g. a string literal without closing quote)
 (define-struct moby-error-type:unclosed-lexical-token (type opener closer))
+
+;; A lexical token has been seen that we don't know how to lex.
 (define-struct moby-error-type:unrecognized-lexical-token (token))
+
+;; A lexical token has been seen that we don't support (e.g. dotted pairs)
 (define-struct moby-error-type:unsupported-lexical-token (token))
+
+;; An unsupported expression form has shown up
 (define-struct moby-error-type:unsupported-expression-form (expr))
 (define-struct moby-error-type:unclosed-parentheses (opener closer))
 (define-struct moby-error-type:missing-expression (token))
