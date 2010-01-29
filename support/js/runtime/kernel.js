@@ -19,7 +19,6 @@ goog.provide('plt.Kernel');
     var MobyError = plt.types.MobyError;
     var MobyParserError = plt.types.MobyParserError;
     var MobySyntaxError = plt.types.MobySyntaxError;
-    var MobyTypeError = plt.types.MobyTypeError;
     var MobyRuntimeError = plt.types.MobyRuntimeError;
     var MobyTestingError = plt.types.MobyTestingError;
 
@@ -266,7 +265,7 @@ goog.provide('plt.Kernel');
 //     }
 
 
-    // Checks if x satisfies f.  If not, a MobyTypeError of msg is thrown.
+    // Checks if x satisfies f.  If not, a type error of msg is thrown.
     var check = function(x, f, functionName, typeName, position) {
 	if (! f(x)) {
 	    plt.Kernel.throwTypeError(functionName, position, typeName, x);
@@ -2443,7 +2442,6 @@ goog.provide('plt.Kernel');
     plt.Kernel.MobyError = plt.types.MobyError;
     plt.Kernel.MobyParserError = plt.types.MobyParserError;
     plt.Kernel.MobySyntaxError = plt.types.MobySyntaxError;
-    plt.Kernel.MobyTypeError = plt.types.MobyTypeError;
     plt.Kernel.MobyRuntimeError = plt.types.MobyRuntimeError;
     plt.Kernel.MobyTestingError = plt.types.MobyTestingError;
 

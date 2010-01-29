@@ -2054,11 +2054,6 @@ Box
     MobySyntaxError.prototype.name= 'MobySyntaxError';
 
 
-    var MobyTypeError = function(msg) {
-	MobyError.call(this, msg);
-    }
-    MobyTypeError.prototype = heir(MobyError.prototype);
-    MobyTypeError.prototype.name= 'MobyTypeError';
 
 
 
@@ -2082,7 +2077,6 @@ Box
     plt.types.MobyError = MobyError;
     plt.types.MobyParserError = MobyParserError;
     plt.types.MobySyntaxError = MobySyntaxError;
-    plt.types.MobyTypeError = MobyTypeError;
     plt.types.MobyRuntimeError = MobyRuntimeError;
     plt.types.MobyTestingError = MobyTestingError;
 
