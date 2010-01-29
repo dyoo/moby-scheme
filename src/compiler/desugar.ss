@@ -2,6 +2,8 @@
 
 (require "helpers.ss")
 (require "pinfo.ss")
+(require "env.ss")
+(require "modules.ss")
 (require "../collects/runtime/stx.ss")
 (require "../collects/runtime/error-struct.ss")
 
@@ -415,18 +417,39 @@
 
 
 
+;; make-cond-exhausted-expression: loc -> stx
+(define (make-cond-exhausted-expression a-loc)
+  (tag-application-operator/module
+   (datum->stx #f `(throw-cond-exhausted-error (quote ,(Loc->sexp a-loc))) a-loc)
+   'moby/runtime/kernel/misc))
+
+
+;; tag-application-operator/module: stx module-name -> stx
+;; Adjust the lexical context of the operator so it refers to the environment of a particular module.
+(define (tag-application-operator/module an-application-stx a-module-name)
+  (local [(define an-id-stx (first (stx-e an-application-stx)))
+          (define operands (rest (stx-e an-application-stx)))]
+    (datum->stx an-application-stx
+                `(,(stx-update-context 
+                    an-id-stx
+                    (extend-env/module-binding empty-env
+                                               (default-module-resolver a-module-name)))
+                  ,@operands)
+                (stx-loc an-application-stx))))
+
+
 ;; desugar-cond: stx:list -> (list stx:list pinfo)
 ;; Translates conds to ifs.
 (define (desugar-cond an-expr pinfo)
   (local
-    [;; loop: (listof stx) (listof stx) stx stx -> stx
+    [
+     ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop questions answers question-last answer-last)
        (cond
          [(empty? questions)
-          (datum->stx #f (list 'if question-last 
-                               answer-last
-                               (list 'error ''cond
-                                     (format "cond: fell out of cond ~s" (stx-loc an-expr))))
+          (datum->stx #f `(if ,question-last 
+                              ,answer-last
+                              ,(make-cond-exhausted-expression (stx-loc an-expr)))
                       (stx-loc an-expr))]
          
          [else

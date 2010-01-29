@@ -4,9 +4,11 @@ goog.provide('plt.kernel.misc');
 
 (function() {
 
+    // munge: string -> string
     var munge = function(name) {
 	var C = plt.Kernel.invokeModule("moby/compiler").EXPORTS;
-	return C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(name);
+	return (C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(
+	    plt.types.Symbol.makeInstance(name))).toString();
     }
 
     // getModule: string -> module
@@ -17,8 +19,8 @@ goog.provide('plt.kernel.misc');
 	var exports = theModule.EXPORTS;
 	return {
 	    theModule: theModule,
-	    getFunction: function(name) {
-		return exports[munge(name)];
+	    getFunction: function(n) {
+		return exports[munge(n)];
 	    }};
     }
 
@@ -46,15 +48,17 @@ goog.provide('plt.kernel.misc');
     };
 
 
-    // throwCondExhaustedError: hash -> void
+    // throwCondExhaustedError: sexp -> void
     // Throws a cond exhausted error
-    plt.kernel.misc.throwCondExhaustedError = function(locHash) {
+    plt.kernel.misc.throwCondExhaustedError = function(locSexp) {
+	var stxStruct = getModule("moby/runtime/stx");
 	var errorStruct = getModule("moby/runtime/error-struct");
 	var makeMobyError = errorStruct.getFunction(
 	    "make-moby-error");
 	var makeCondExhaustedType = errorStruct.getFunction(
-	    "conditional-exhausted");
-	throw makeMobyError(locHashToLoc(plt.Kernel.lastLoc),
-			    makeCondExhaustedType());
+	    "make-moby-error-type:conditional-exhausted");
+	var aLoc = stxStruct.getFunction("sexp->Loc")(locSexp);
+	var err = makeMobyError(aLoc, makeCondExhaustedType());
+	throw err;
     };
 }());

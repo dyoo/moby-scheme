@@ -56,6 +56,32 @@
      (stx:list-loc a-stx)]))
 
 
+;; Loc->sexp: Loc -> sexp
+(define (Loc->sexp a-loc)
+  `(make-Loc ,(Loc-offset a-loc)
+             ,(Loc-line a-loc)
+             ,(Loc-column a-loc)
+             ,(Loc-span a-loc)
+             ,(Loc-id a-loc)))
+
+
+;; sexp->Loc: sexp -> Loc
+(define (sexp->Loc an-sexp)
+  (cond [(and (= 6 (length an-sexp))
+              (symbol? (list-ref an-sexp 0))
+              (number? (list-ref an-sexp 1))
+              (number? (list-ref an-sexp 2))
+              (number? (list-ref an-sexp 3))
+              (number? (list-ref an-sexp 4))
+              (string? (list-ref an-sexp 5)))
+         (make-Loc (list-ref an-sexp 1)
+                   (list-ref an-sexp 2)
+                   (list-ref an-sexp 3)
+                   (list-ref an-sexp 4)
+                   (list-ref an-sexp 5))]))
+
+
+
 
 
 
@@ -114,6 +140,8 @@
                                [column number?]
                                [span number?]
                                [id string?])]
+                  [Loc->sexp (Loc? . -> . any/c)]
+                  [sexp->Loc (any/c . -> . Loc?)]
                   
                   [stx? (any/c . -> . boolean?)]
                   [stx-e (stx? . -> . any)]
@@ -121,7 +149,7 @@
                   [stx-context (stx? . -> . (or/c false/c any/c))]
                   
                   [stx-begins-with? (stx? symbol? . -> . boolean?)]
-                  [datum->stx ((or/c false? syntax?) any/c Loc? . -> . stx?)]
+                  [datum->stx ((or/c false? stx?) any/c Loc? . -> . stx?)]
                   [stx->datum (stx? . -> . any)]
                   
                   

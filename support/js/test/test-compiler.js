@@ -200,6 +200,15 @@ function init() {
 				run("(if false \"foo\" \"bar\")")));
 	},
 
+
+	testCondExhausted: function() {
+	    this.assertMobyRaise(isConditionalExhausted,
+				 function() {
+				     run("(cond [(= 1 0) 'huh?])");
+				 });
+	},
+
+
 	testSimpleFunctionDefinition: function() {
 	    this.assert(isEqual(number(9),
 				run("(define (f x) (* x x))" +
