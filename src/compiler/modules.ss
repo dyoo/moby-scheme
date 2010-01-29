@@ -606,7 +606,8 @@
                         [(string=? (first pieces) "..")
                          (cond
                            [(empty? current-chunks)
-                            (error 'module-path-join "Tried to go up beyond the root.")]
+                            (loop (cons (first pieces) current-chunks)
+                                  (rest pieces))]
                            [else
                             (loop (rest current-chunks) (rest pieces))])]
                         [else

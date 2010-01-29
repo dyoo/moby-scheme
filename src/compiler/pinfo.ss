@@ -505,7 +505,7 @@
 
                   [pinfo-update-module-resolver (pinfo? (module-name? . -> . (or/c module-binding? false/c))
                                                         . -> . pinfo?)]
-                  [pinfo-update-module-path-resolver (pinfo? (module-path? . -> . (or/c module-name? false/c))
+                  [pinfo-update-module-path-resolver (pinfo? (module-path? module-path? . -> . (or/c module-name? false/c))
                                                              . -> . pinfo?)]
                   [pinfo-update-current-module-path (pinfo? module-path? . -> . pinfo?)]
                   
