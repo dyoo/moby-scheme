@@ -25,15 +25,19 @@
 (define-struct moby-error-type:provided-name-not-defined (id))
 (define-struct moby-error-type:provided-structure-not-structure (id))
 (define-struct moby-error-type:unknown-module (path))
-(define-struct moby-error-type:conditional-missing-question-answer ())
 
+(define-struct moby-error-type:conditional-missing-question-answer ())
+(define-struct moby-error-type:conditional-malformed-clause ())
+(define-struct moby-error-type:conditional-clause-too-few-elements ())
+(define-struct moby-error-type:conditional-clause-too-many-elements ())
+(define-struct moby-error-type:conditional-exhausted ())
 
 
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:application-operator-not-a-function (who))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
 (define-struct moby-error-type:index-out-of-bounds (minimum maximum observed))
-(define-struct moby-error-type:conditional-exhausted ())
+
 
 
 (define-struct moby-error-type:generic-runtime-error (reason))
@@ -144,7 +148,12 @@
  [struct moby-error-type:provided-structure-not-structure ([id symbol?])]
  
  [struct moby-error-type:unknown-module ([path module-path?])]
- [struct moby-error-type:conditional-missing-question-answer ()]
+
+ [struct moby-error-type:conditional-missing-question-answer ()] ;; missing clauses
+ [struct moby-error-type:conditional-malformed-clause ()]           ;; a clause which isn't an [question answer]
+ [struct moby-error-type:conditional-clause-too-few-elements ()]  ;; a clause without a question or an answer
+ [struct moby-error-type:conditional-clause-too-many-elements ()] ;; a clause with too many answer values
+ [struct moby-error-type:conditional-exhausted ()]             ;; runtime: no answer was true
  
  [struct moby-error-type:application-arity ([who any/c]
                                             [expected arity?]
@@ -157,7 +166,7 @@
  [struct moby-error-type:index-out-of-bounds ([minimum number?]
                                               [maximum number?]
                                               [observed number?])]
- [struct moby-error-type:conditional-exhausted ()]
+
  [struct moby-error-type:generic-runtime-error ([reason string?])]
  [struct moby-error-type:generic-syntactic-error ([reason string?]
                                                   [other-locations (listof Loc?)])]

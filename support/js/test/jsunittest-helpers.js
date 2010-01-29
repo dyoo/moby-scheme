@@ -37,144 +37,68 @@ var mobyErrorType = function(x) {
     return result;
 }
 
+var extract = function(functionName) {
+    return errorStructModule.getFunction(functionName);
+} 
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 
 
-// errorType -> boolean
-var isUnclosedLexicalToken = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:unclosed-lexical-token?")(x);
-}
-
-// errorType -> boolean
-var isUnrecognizedLexicalToken = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:unrecognized-lexical-token?")(x);
-}
+var isUnclosedLexicalToken = 
+    extract("moby-error-type:unclosed-lexical-token?");
 
 
-// errorType -> boolean
-var isUnsupportedLexicalToken = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:unsupported-lexical-token?")(x);
-}
-
-
-// errorType -> boolean
-var isUnsupportedExpressionForm = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:unsupported-expression-form?")(x);
-}
-
-// errorType -> boolean
-var isUnclosedParentheses = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:unclosed-parentheses?")(x);
-}
-
-// errorType -> boolean
-var isMissingExpression = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:missing-expression?")(x);
-}
-
-// errorType -> boolean
-var isDuplicateIdentifier = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:duplicate-identifier?")(x);
-}
-
-// errorType -> boolean
-var isExpectedIdentifier = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:expected-identifier?")(x);
-}
-
-// errorType -> boolean
-var isUndefinedIdentifier = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:undefined-identifier?")(x);
-}
-
-// errorType -> boolean
-var isStructureIdentifierNotExpression = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:structure-identifier-not-expression?")(x);
-}
-
-// errorType -> boolean
-var isProvidedNameNotDefined = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:provided-name-not-defined?")(x);
-}
-
-// errorType -> boolean
-var isProvidedStructureNotStructure = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:provided-structure-not-structure?")(x);
-}
-
-// errorType -> boolean
-var isUnknownModule = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:unknown-module?")(x);
-}
-
-
-
-// errorType -> boolean
-var isApplicationArity = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:application-arity?")(x);
-}
-
-
-// errorType -> boolean
-var isApplicationOperatorNotAFunction = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:application-operator-not-a-function?")(x);
-}
-
-
-// errorType -> boolean
-var isTypeMismatch = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:type-mismatch?")(x);
-}
-
-
-// errorType -> boolean
-var isIndexOutOfBounds = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:index-out-of-bounds?")(x);
-}
-
-
-// errorType -> boolean
-var isConditionalExhausted = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:conditional-exhausted?")(x);
-}
-
-// errorType -> boolean
-var isConditionalMissingQuestionAnswer = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:conditional-missing-question-answer")(x);
-}
-
-
-// errorType -> boolean
-var isGenericRuntimeError = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:generic-runtime-error?")(x);
-}
-
-// errorType -> boolean
-var isGenericSyntacticError = function(x) {
-    return errorStructModule.getFunction(
-	"moby-error-type:generic-syntactic-error?")(x);
-}
+var isUnrecognizedLexicalToken = 
+    extract("moby-error-type:unrecognized-lexical-token?");
+var isUnsupportedLexicalToken =
+    extract("moby-error-type:unsupported-lexical-token?");
+var isUnsupportedExpressionForm =
+    extract("moby-error-type:unsupported-expression-form?");
+var isUnclosedParentheses =
+    extract("moby-error-type:unclosed-parentheses?");
+var isMissingExpression =
+    extract("moby-error-type:missing-expression?");
+var isDuplicateIdentifier = 
+    extract("moby-error-type:duplicate-identifier?");
+var isExpectedIdentifier =
+    extract("moby-error-type:expected-identifier?");
+var isUndefinedIdentifier =
+    extract("moby-error-type:undefined-identifier?");
+var isStructureIdentifierNotExpression = 
+    extract("moby-error-type:structure-identifier-not-expression?");
+var isProvidedNameNotDefined =
+    extract("moby-error-type:provided-name-not-defined?");
+var isProvidedStructureNotStructure =
+    extract("moby-error-type:provided-structure-not-structure?");
+var isUnknownModule =
+    extract("moby-error-type:unknown-module?");
+var isApplicationArity = 
+    extract("moby-error-type:application-arity?");
+var isApplicationOperatorNotAFunction =
+    extract("moby-error-type:application-operator-not-a-function?");
+var isTypeMismatch = 
+    extract("moby-error-type:type-mismatch?");
+var isIndexOutOfBounds = 
+    extract("moby-error-type:index-out-of-bounds?");
+var isConditionalExhausted = 
+    extract("moby-error-type:conditional-exhausted?");
+var isConditionalMissingQuestionAnswer = 
+    extract("moby-error-type:conditional-missing-question-answer?");
+var isConditionalMalformedClause = 
+    extract("moby-error-type:conditional-malformed-clause?");
+var isConditionalClauseTooFewElements = 
+    extract("moby-error-type:conditional-clause-too-few-elements?");
+var isConditionalClauseTooManyElements = 
+    extract("moby-error-type:conditional-clause-too-many-elements?");
+var isGenericRuntimeError = 
+    extract("moby-error-type:generic-runtime-error?");
+var isGenericSyntacticError = 
+    extract("moby-error-type:generic-syntactic-error?");
 
 
 

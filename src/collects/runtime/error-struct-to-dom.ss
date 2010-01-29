@@ -163,6 +163,22 @@
         `(span ((class "Error:ConditionalMissingQuestionAnswer"))
                "After cond, I expect at least one question-answer branch, but I don't see anything.")]       
        
+       [(moby-error-type:conditional-malformed-clause? error-type)
+        `(span ((class "Error:ConditionalMalformedClause"))
+               "Inside a cond branch, I expect a question and answer pair [question answer] "
+               "but I see something else.")]
+       
+       [(moby-error-type:conditional-clause-too-few-elements? error-type)
+        `(span ((class "Error:ConditionalClauseTooFewElements"))
+               "Inside a cond branch, I expect a question and an answer, but I only see one.")]
+
+       [(moby-error-type:conditional-clause-too-many-elements? error-type)
+        `(span ((class "Error:ConditionalClauseTooManyElements"))
+               "Inside a cond branch, I expect to see a question and a single answer, "
+               "but I see too many.")]
+       
+       
+       
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error:ApplicationArity"))
                (span ((class "Error.reason"))

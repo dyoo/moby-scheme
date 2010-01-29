@@ -417,6 +417,7 @@
 
 
 
+
 ;; make-cond-exhausted-expression: loc -> stx
 (define (make-cond-exhausted-expression a-loc)
   (tag-application-operator/module
@@ -445,6 +446,21 @@
     [
      (define cond-clauses (rest (stx-e an-expr)))
      
+     (define (check-clause-structures!)
+       (for-each (lambda (a-clause)
+                   (cond [(not (pair? (stx-e a-clause)))
+                          (raise (make-moby-error (stx-loc a-clause)
+                                                  (make-moby-error-type:conditional-malformed-clause)))]
+                         [(< (length (stx-e a-clause)) 2)
+                          (raise (make-moby-error (stx-loc a-clause)
+                                                  (make-moby-error-type:conditional-clause-too-few-elements)))]
+                         [(> (length (stx-e a-clause)) 2)
+                          (raise (make-moby-error (stx-loc a-clause)
+                                                  (make-moby-error-type:conditional-clause-too-many-elements)))]
+                         [else
+                          (void)]))
+                 cond-clauses))
+     
      
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop questions answers question-last answer-last)
@@ -468,12 +484,14 @@
        (raise (make-moby-error (stx-loc an-expr)
                                (make-moby-error-type:conditional-missing-question-answer)))]
       [else
-       (deconstruct-clauses-with-else cond-clauses
-                                      (lambda (else-stx)
-                                        (datum->stx #f 'true (stx-loc else-stx)))
-                                      (lambda (questions answers question-last answer-last)
-                                        (list (loop questions answers question-last answer-last)
-                                              pinfo)))])))
+       (begin
+         (check-clause-structures!)
+         (deconstruct-clauses-with-else cond-clauses
+                                        (lambda (else-stx)
+                                          (datum->stx #f 'true (stx-loc else-stx)))
+                                        (lambda (questions answers question-last answer-last)
+                                          (list (loop questions answers question-last answer-last)
+                                                pinfo))))])))
 
 
 
