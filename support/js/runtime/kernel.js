@@ -693,11 +693,11 @@ goog.provide('plt.Kernel');
 		    Math.atan2(NumberTower.toFloat(x),
 			       NumberTower.toFloat(args[0])));
 	    } else {
-		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+		var E = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		var A = plt.Kernel.invokeModule("moby/runtime/arity-struct").EXPORTS;
-		throw S.make_dash_moby_dash_error(
+		throw E.make_dash_moby_dash_error(
 		    locHashToLoc(plt.Kernel.lastLoc),
-		    S.make_dash_moby_dash_error_dash_type_colon_application_dash_arity(
+		    E.make_dash_moby_dash_error_dash_type_colon_application_dash_arity(
 			"atan",
 			A.make_dash_arity_colon_mixed(
 			    plt.types.Cons.makeInstance(
