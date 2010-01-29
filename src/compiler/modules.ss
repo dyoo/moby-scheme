@@ -2,16 +2,51 @@
 
 ;; Hardcoded modules known by Moby.
 
-;; FIXME: these bindings should not be hardcoded here; a module should be self-describing
+
+
+;; FIXME: many of these bindings should not be hardcoded here; a module should be self-describing
 ;; in terms of what bindings it provides.
 ;; This is a complete mess, and I need to rework this so that a module self-describes its bindings.
+;;
+;; Part of this is start in the use of the runtime-modules module and the 
+;; definition of MOBY-RUNTIME-MODULES.  We just have to continue this work.
 
 
 (require "env.ss")
 (require "helpers.ss")
+
 (require "../collects/runtime/permission-struct.ss")
 (require "../collects/runtime/binding.ss")
 (require "../collects/runtime/runtime-modules.ss")
+
+
+
+
+(define kernel-misc-module
+  (make-module-binding 'moby/runtime/kernel/misc
+                       "moby/runtime/kernel/misc"
+                       (list (make-binding:function
+                              'throw-cond-exhausted-error
+                              "moby/runtime/kernel/misc"
+                              1
+                              false
+                              "plt.kernel.misc.throwCondExhaustedError"
+                              (list)
+                              false))))
+
+
+(define foreign-module
+  (make-module-binding 'moby/foreign
+                       "moby/foreign"
+                       (list (make-binding:function 
+                              'get-js-object
+                              "moby/foreign"
+                              2
+                              false
+                              "plt.foreign.get_dash_js_dash_object"
+                              (list PERMISSION:FOREIGN-FUNCTION-INTERFACE)
+                              false))))
+
 
 
 
@@ -451,22 +486,7 @@
 			       (bf 'js-select 2 "plt.world.MobyJsworld.select")))))
   
 
-(define foreign-module
-  (local [(define module-path
-            "moby/foreign")
 
-          (define (bf name arity java-string)
-            (make-binding:function name module-path arity true java-string empty false))]
-    (make-module-binding 'moby/foreign
-                         module-path
-                         (list (make-binding:function 
-                                'get-js-object
-                                module-path
-                                2
-                                false
-                                "plt.foreign.get_dash_js_dash_object"
-                                (list PERMISSION:FOREIGN-FUNCTION-INTERFACE)
-                                false)))))
 
 
 
@@ -540,7 +560,7 @@
                              moby-module-binding
                              
                              foreign-module
-                             
+                             kernel-misc-module
                              MOBY-RUNTIME-MODULES))
 
 

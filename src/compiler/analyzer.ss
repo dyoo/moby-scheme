@@ -302,7 +302,7 @@
     [(symbol? (stx-e an-expression))
      (cond
        [(env-contains? env (stx-e an-expression))
-        (pinfo-accumulate-binding-use (env-lookup env (stx-e an-expression)) pinfo)]
+        (pinfo-accumulate-binding-use (env-lookup/context env an-expression) pinfo)]
        [else
         pinfo])]
     

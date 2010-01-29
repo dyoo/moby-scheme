@@ -2,8 +2,8 @@
 
 
 ;; Syntax objects
-(define-struct stx:atom (datum loc binding))
-(define-struct stx:list (elts loc binding))
+(define-struct stx:atom (datum loc context))
+(define-struct stx:list (elts loc context))
 
 (define-struct Loc (offset line column span id))
 
@@ -23,6 +23,28 @@
      (stx:atom-datum a-stx)]
     [(stx:list? a-stx)
      (stx:list-elts a-stx)]))
+
+
+;; stx-context: stx -> env
+(define (stx-context a-stx)
+  (cond
+    [(stx:atom? a-stx)
+     (stx:atom-context a-stx)]
+    [(stx:list? a-stx)
+     (stx:list-context a-stx)]))
+
+
+;; stx-update-context: stx env -> stx
+(define (stx-update-context a-stx a-ctx)
+  (cond
+    [(stx:atom? a-stx)
+     (make-stx:atom (stx:atom-datum a-stx)
+                    (stx:atom-loc a-stx)
+                    a-ctx)]
+    [(stx:list? a-stx)
+     (make-stx:list (stx:list-elts a-stx)
+                    (stx:list-loc a-stx)
+                    a-ctx)]))
 
 
 ;; stx-loc: stx -> loc
@@ -53,16 +75,21 @@
 ;; Converts a datum into a syntax object deeply.  Every stx will
 ;; share the same loc value.  Pre-existing datum objects will
 ;; be left alone.
-(define (datum->stx context a-datum a-loc)
+(define (datum->stx context-stx a-datum a-loc)
   (cond
     [(stx? a-datum)
      a-datum]
     [(or (pair? a-datum) (empty? a-datum))
-     (make-stx:list (map (lambda (x) (datum->stx context x a-loc)) a-datum)
+     (make-stx:list (map (lambda (x) (datum->stx context-stx x a-loc)) a-datum)
                     a-loc
-                    context)]
+                    (if (stx? context-stx)
+                        (stx-context context-stx)
+                        #f))]
     [else
-     (make-stx:atom a-datum a-loc context)]))
+     (make-stx:atom a-datum a-loc 
+                    (if (stx? context-stx)
+                        (stx-context context-stx)
+                        context-stx))]))
 
 
 ;; stx->datum: stx -> any
@@ -75,16 +102,11 @@
      (map stx->datum (stx:list-elts a-stx))]))
 
 
+  
 
 
-(provide/contract #;[struct stx:atom ([datum any/c]
-                                      [loc any/c]
-                                      [binding (or/c false? binding?)])]
-                  #;[struct stx:list ([elts (listof stx?)]
-                                      [loc any/c]
-                                      [binding (or/c false? binding?)])]
-                  
-                  [stx:atom? (any/c . -> . boolean?)]
+
+(provide/contract [stx:atom? (any/c . -> . boolean?)]
                   [stx:list? (any/c . -> . boolean?)]
                   
                   [struct Loc ([offset number?]
@@ -96,7 +118,11 @@
                   [stx? (any/c . -> . boolean?)]
                   [stx-e (stx? . -> . any)]
                   [stx-loc (stx? . -> . any)]
+                  [stx-context (stx? . -> . (or/c false/c any/c))]
                   
                   [stx-begins-with? (stx? symbol? . -> . boolean?)]
                   [datum->stx ((or/c false? syntax?) any/c Loc? . -> . stx?)]
-                  [stx->datum (stx? . -> . any)])
+                  [stx->datum (stx? . -> . any)]
+                  
+                  
+                  [stx-update-context (stx? any/c . -> . stx?)])

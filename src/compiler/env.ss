@@ -1,8 +1,10 @@
 #lang s-exp "lang.ss"
 
-(require "../collects/runtime/binding.ss")
 (require "rbtree.ss")
 (require "helpers.ss")
+(require "../collects/runtime/stx.ss")
+(require "../collects/runtime/error-struct.ss")
+(require "../collects/runtime/binding.ss")
 
 
 ;; An env collects a set of bindings.
@@ -75,12 +77,31 @@
                                      false)))
 
 
+;; env-lookup/context: identifier-stx -> (binding | false)
+;; Lookup an identifier, taking into account the context of the identifier.  If it has no existing
+;; context, look at the given an-env.
+;; In either case, either return a binding, or false.
+(define (env-lookup/context an-env an-id-stx)
+  (cond
+    [(env? (stx-context an-id-stx))
+     (cond [(not (env-contains? (stx-context an-id-stx) (stx-e an-id-stx)))
+            false]
+           [else
+            (env-lookup (stx-context an-id-stx) (stx-e an-id-stx))])]
+    [else
+     (cond [(not (env-contains? an-env (stx-e an-id-stx)))
+            false]
+           [else
+            (env-lookup an-env (stx-e an-id-stx))])]))
+
+
 
 (provide/contract  
  [struct env ([bindings (listof binding?)])]
  [empty-env env?]
  [env-extend (env? binding? . -> . env?)]
  [env-lookup (env? symbol? . -> . (or/c false/c binding?))]
+ [env-lookup/context (env? stx? . -> . (or/c false/c binding?))]
  [env-contains? (env? symbol? . -> . boolean?)]
  [env-keys (env? . -> . (listof symbol?))]
  

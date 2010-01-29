@@ -11,6 +11,7 @@ collects/runtime/error-struct.js
 collects/runtime/scheme-value-to-dom.js
 collects/runtime/error-struct-to-dom.js
 kernel.js
+kernel-misc.js
 read.js
 world-effects.js
 world-config.js

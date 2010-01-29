@@ -187,6 +187,7 @@
                            [permissions (listof permission?)])]
  
  [struct binding:function ([name symbol?]
+                           ;; fixme: module-source should be a module-name, not a module-path
                            [module-source (or/c false/c string?)]
                            [min-arity natural-number/c]
                            [var-arity? boolean?]

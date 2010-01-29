@@ -842,12 +842,12 @@
   (cond 
     ;; Special case: when the operator is named
     [(and (symbol? (stx-e operator))
-          (not (env-contains? env (stx-e operator))))
+          (not (binding? (env-lookup/context env operator))))
      (raise (make-moby-error (stx-loc operator)
                              (make-moby-error-type:undefined-identifier (stx-e operator))))]
     
     [(symbol? (stx-e operator))
-     (local [(define operator-binding (env-lookup env (stx-e operator)))
+     (local [(define operator-binding (env-lookup/context env operator))
              (define operand-strings+pinfo
                (expressions->javascript-strings operands env a-pinfo))
              
@@ -934,17 +934,19 @@
 
 
 
+
+
 ;; identifier-expression->javascript-string: symbol-stx env -> string
 ;; Translates the use of a toplevel identifier to the appropriate
 ;; Java code.
 (define (identifier-expression->javascript-string an-id an-env)
   (cond
-    [(not (env-contains? an-env (stx-e an-id)))
+    [(not (binding? (env-lookup/context an-env an-id)))
      (raise (make-moby-error (stx-loc an-id)
                              (make-moby-error-type:undefined-identifier 
                               (stx-e an-id))))]
     [else     
-     (local [(define binding (env-lookup an-env (stx-e an-id)))]
+     (local [(define binding (env-lookup/context an-env an-id))]
        (cond
          [(binding:constant? binding)
           (binding:constant-java-string binding)]
