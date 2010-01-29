@@ -443,6 +443,9 @@
 (define (desugar-cond an-expr pinfo)
   (local
     [
+     (define cond-clauses (rest (stx-e an-expr)))
+     
+     
      ;; loop: (listof stx) (listof stx) stx stx -> stx
      (define (loop questions answers question-last answer-last)
        (cond
@@ -453,27 +456,25 @@
                       (stx-loc an-expr))]
          
          [else
-          (datum->stx #f (list (datum->stx #f 'if (stx-loc an-expr))
-                               (first questions)
-                               (first answers)
-                               (loop (rest questions)
+          (datum->stx #f `(if ,(first questions)
+                              ,(first answers)
+                              ,(loop (rest questions)
                                      (rest answers)
                                      question-last
                                      answer-last))
                       (stx-loc an-expr))]))]
     (cond
-      [(stx-begins-with? an-expr 'cond)
-       (deconstruct-clauses-with-else (rest (stx-e an-expr))
+      [(empty? cond-clauses)
+       (raise (make-moby-error (stx-loc an-expr)
+                               (make-moby-error-type:conditional-missing-question-answer)))]
+      [else
+       (deconstruct-clauses-with-else cond-clauses
                                       (lambda (else-stx)
                                         (datum->stx #f 'true (stx-loc else-stx)))
                                       (lambda (questions answers question-last answer-last)
                                         (list (loop questions answers question-last answer-last)
-                                              pinfo)))]
-      [else
-       (raise (make-moby-error (stx-loc an-expr)
-                               (make-moby-error-type:generic-syntactic-error
-                                (format "Not a cond clause: ~s" (stx->datum an-expr))
-                                (list))))])))
+                                              pinfo)))])))
+
 
 
 ;; deconstruct-clauses-with-else: (listof stx) (stx -> stx) ((listof stx) (listof stx) stx stx -> X) -> X

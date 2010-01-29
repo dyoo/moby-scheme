@@ -159,6 +159,10 @@
                      ,(scheme-value-to-dom-sexp (moby-error-type:unknown-module-path error-type))
                      ", but I don't yet know what this module is."))]
        
+       [(moby-error-type:conditional-missing-question-answer? error-type)
+        `(span ((class "Error:ConditionalMissingQuestionAnswer"))
+               "After cond, I expect at least one question-answer branch, but I don't see anything.")]       
+       
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error:ApplicationArity"))
                (span ((class "Error.reason"))

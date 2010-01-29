@@ -37,6 +37,7 @@ function init() {
 
 
 
+
     return new Test.Unit.Runner({
 	setup: function() {},
 	
@@ -61,6 +62,24 @@ function init() {
 				     run("(cond [(= 1 0) 'huh?])");
 				 });
 	},
+
+	testCondBadForm: function() {
+	    this.assertMobyRaise(isConditionalMissingQuestionAnswer,
+				 function() {
+				     run("(cond)");
+				 });
+
+	    this.assertMobyRaise(isConditionalMissingQuestionAnswer,
+				 function() {
+				     run("(cond 'foo)");
+				 });
+	    
+	    this.assertMobyRaise(isConditionalMissingQuestionAnswer,
+				 function() {
+				     run("(cond [foo bar] baz)");
+				 });
+	},
+
 
 
 	testSimpleFunctionDefinition: function() {

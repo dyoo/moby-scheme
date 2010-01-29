@@ -25,6 +25,9 @@
 (define-struct moby-error-type:provided-name-not-defined (id))
 (define-struct moby-error-type:provided-structure-not-structure (id))
 (define-struct moby-error-type:unknown-module (path))
+(define-struct moby-error-type:conditional-missing-question-answer ())
+
+
 
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:application-operator-not-a-function (who))
@@ -57,6 +60,7 @@
       (moby-error-type:provided-name-not-defined? x)
       (moby-error-type:provided-structure-not-structure? x)
       (moby-error-type:unknown-module? x)
+      (moby-error-type:conditional-missing-question-answer? x)
       (moby-error-type:application-arity? x)
       (moby-error-type:application-operator-not-a-function? x)
       (moby-error-type:type-mismatch? x)
@@ -140,7 +144,7 @@
  [struct moby-error-type:provided-structure-not-structure ([id symbol?])]
  
  [struct moby-error-type:unknown-module ([path module-path?])]
- 
+ [struct moby-error-type:conditional-missing-question-answer ()]
  
  [struct moby-error-type:application-arity ([who any/c]
                                             [expected arity?]
