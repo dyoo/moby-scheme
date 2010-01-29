@@ -13,7 +13,9 @@ plt.world.MobyJsworld = {};
 
 
 
-    var MobyTypeError = plt.Kernel.MobyTypeError;
+    
+
+
 
 
 
@@ -75,14 +77,6 @@ plt.world.MobyJsworld = {};
 	    window.document.appendChild(newDiv);
 	    return window;
 	}
-//         var newWindow = window.open(
-// 	    "big-bang.html",
-// 	    "big-bang");
-// 	    //"toolbar=false,location=false,directories=false,status=false,menubar=false,width="+width+",height="+height);
-// 	if (newWindow == null) { 
-//             throw new Error("Error: Not allowed to create a new window."); }
-
-// 	return newWindow;
     }
 
 
@@ -144,6 +138,7 @@ plt.world.MobyJsworld = {};
     }
 
 
+
     // checkWellFormedDomTree: X X (or number undefined) -> void
     // Check to see if the tree is well formed.  If it isn't,
     // we need to raise a meaningful error so the user can repair
@@ -160,18 +155,26 @@ plt.world.MobyJsworld = {};
 	    var restElts = plt.Kernel.rest(x)
 
 	    if (! isNode(firstElt)) {
-		throw new MobyTypeError(
-		    plt.Kernel.format(
-		         "on-draw: expected a dom-element, but received ~s instead, the first element within ~s",
-			 [firstElt, top]));
+		plt.Kernel.throwTypeError("on-draw",
+					  1,
+					  "dom element",
+					  firstElt)
+// 		throw new MobyTypeError(
+// 		    plt.Kernel.format(
+// 		         "on-draw: expected a dom-element, but received ~s instead, the first element within ~s",
+// 			 [firstElt, top]));
 	    }
 
 	    if (firstElt.nodeType == Node.TEXT_NODE &&
 		! plt.Kernel.empty_question_(restElts)) {
-		throw new MobyTypeError(
-		    plt.Kernel.format(
-			"on-draw: the text node ~s must not have children.  It has ~s", 
-			[firstElt, restElts]));
+		plt.Kernel.throwTypeError("on-draw",
+					  1,
+					  "text node without children",
+					  firstElt);
+// 		throw new MobyTypeError(
+// 		    plt.Kernel.format(
+// 			"on-draw: the text node ~s must not have children.  It has ~s", 
+// 			[firstElt, restElts]));
 	    }
 
 	    var i = 2;
@@ -183,14 +186,18 @@ plt.world.MobyJsworld = {};
 		i++;
 	    }
 	} else {
-	    throw new MobyTypeError(
-		plt.Kernel.format(
-		    "on-draw: expected a dom-s-expression, but received ~s instead~a",
-		    [x,
-		     (index != undefined ? 
-		      plt.Kernel.format(", the ~a element within ~s.", [plt.Kernel.ordinalize(index), top])
-		      : 
-		      ".")]));
+	    plt.Kernel.throwTypeError("on-draw",
+				      1,
+				      "dom s-expression",
+				      x);
+//	    throw new MobyTypeError(
+// 		plt.Kernel.format(
+// 		    "on-draw: expected a dom-s-expression, but received ~s instead~a",
+// 		    [x,
+// 		     (index != undefined ? 
+// 		      plt.Kernel.format(", the ~a element within ~s.", [plt.Kernel.ordinalize(index), top])
+// 		      : 
+// 		      ".")]));
 	}
     };
 
@@ -455,7 +462,8 @@ plt.world.MobyJsworld = {};
 	if (args.length == 1) {
 	    return assocListToAssocArray(args[0]);
 	} else {
-	    throw new Error();
+	    throw new Error("getAttribs recevied unexpected value for args: "
+			    + args);
 	}
     }
 

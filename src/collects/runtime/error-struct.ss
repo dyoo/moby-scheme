@@ -80,12 +80,13 @@
 (define-struct moby-expected:char ())
 (define-struct moby-expected:symbol ())
 (define-struct moby-expected:list ())
+(define-struct moby-expected:listof (thing))
 (define-struct moby-expected:vector ())
 (define-struct moby-expected:struct ())
 (define-struct moby-expected:box ())
 (define-struct moby-expected:hash ())
 (define-struct moby-expected:function ())
-(define-struct moby-expected:something ())
+(define-struct moby-expected:something (description))
 
 
 ;; moby-expected?: any -> boolean
@@ -170,9 +171,10 @@
  [struct moby-expected:char ()]
  [struct moby-expected:symbol ()]
  [struct moby-expected:list ()]
+ [struct moby-expected:listof ([thing moby-expected?])]
  [struct moby-expected:vector ()]
  [struct moby-expected:struct ()]
  [struct moby-expected:box ()]
  [struct moby-expected:hash ()]
  [struct moby-expected:function ()]
- [struct moby-expected:something ()])
+ [struct moby-expected:something ([description string?])])

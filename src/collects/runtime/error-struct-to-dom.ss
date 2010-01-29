@@ -291,6 +291,11 @@
     [(moby-expected:list? expected)
      `(span ((class "Expected:List"))
             "<list>")]
+    [(moby-expected:listof? expected)
+     `(span ((class "Expected:Listof"))
+            "<listof "
+            (expected-value-to-dom-sexp (moby-expected:listof-thing expected))
+            ">" )]
     [(moby-expected:vector? expected)
      `(span ((class "Expected:Vector"))
             "<vector>")]
@@ -308,7 +313,7 @@
             "<function>")]
     [(moby-expected:something? expected)
      `(span ((class "Expected:Something"))
-            "<something>")]))
+            (moby-expected:something-description expected))]))
 
 
 
