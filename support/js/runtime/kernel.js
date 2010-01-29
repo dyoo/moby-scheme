@@ -277,7 +277,7 @@ goog.provide('plt.Kernel');
     // Throws exception if x is not a list.
     var checkList = function(x, functionName, position) {
 	if (! isList(x)) {
-	    var E = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+	    var E = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 	    plt.Kernel.throwTypeError(functionName, 
 				      position, 
 				      E.make_dash_moby_dash_expected_colon_list(), 
@@ -289,7 +289,7 @@ goog.provide('plt.Kernel');
 
     // Checks if x is a list of f.  If not, throws a MobyTypeError of msg.
     var checkListof = function(x, f, functionName, typeName, position) {
-	var E = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+	var E = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 	if (! isList(x)) {
 	    plt.Kernel.throwTypeError(functionName, 
 				      position, 
@@ -2377,12 +2377,21 @@ goog.provide('plt.Kernel');
 
     var locHashToLoc = function(locHash) {
 	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
-	return stxModule.EXPORTS.make_dash_Loc(
-	    plt.types.Rational.makeInstance(locHash.offset),
-	    plt.types.Rational.makeInstance(locHash.line),
-	    plt.types.Rational.makeInstance(locHash.column),
-	    plt.types.Rational.makeInstance(locHash.span),
-	    locHash.id);
+	if (locHash === undefined){
+	    return stxModule.EXPORTS.make_dash_Loc(
+		plt.types.Rational.ZERO,
+		plt.types.Rational.ZERO,
+		plt.types.Rational.ZERO,
+		plt.types.Rational.ZERO,
+		"<undefined>");
+	} else {
+	    return stxModule.EXPORTS.make_dash_Loc(
+		plt.types.Rational.makeInstance(locHash.offset),
+		plt.types.Rational.makeInstance(locHash.line),
+		plt.types.Rational.makeInstance(locHash.column),
+		plt.types.Rational.makeInstance(locHash.span),
+		locHash.id);
+	}
     };
 
     // throwTypeError: string fixnum (string | ExpectedValue)  schemevalue -> MobyError value

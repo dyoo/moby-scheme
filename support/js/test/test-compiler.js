@@ -607,8 +607,8 @@ function init() {
 				    run("1.1071487177940904")));
 		// Current deficiency in binding expressions prevent us from
 		// catching the arity error at compile time.
-		this.assertRaise("MobyRuntimeError",
-				 function() { run("(atan 1 2 3)") });
+		this.assertMobyRaise(isApplicationArity,
+				     function() { run("(atan 1 2 3)") });
 	    },
 
 	testNan: function() {
