@@ -224,6 +224,7 @@
                      " as its "
                      ,(scheme-value-to-dom-sexp
                        (moby-error-type:type-mismatch-position error-type))
+                     ,(ordinal-ending (moby-error-type:type-mismatch-position error-type))
                      " argument, but instead I see "
                      ,(scheme-value-to-dom-sexp 
                        (moby-error-type:type-mismatch-observed error-type))
@@ -276,6 +277,17 @@
          (span ((class "Location.span")) ,(number->string (Loc-span a-loc)))
          (span ((class "Location.id")) ,(Loc-id a-loc))))
          
+
+
+;; ordinal-ending: natural-number -> string
+(define (ordinal-ending n)
+  (cond
+    [(= (modulo (quotient n 10) 10) 1)
+     "th"]
+    [else
+     (list-ref '("th" "st" "nd" "rd" "th" 
+                      "th" "th" "th" "th" "th")
+               (modulo n 10))]))
 
           
 
