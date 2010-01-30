@@ -218,10 +218,10 @@
                      "The function "
                      ,(scheme-value-to-dom-sexp 
                        (moby-error-type:type-mismatch-who error-type))
-                     " expects"
+                     " expects "
                      ,(expected-value-to-dom-sexp
                        (moby-error-type:type-mismatch-expected error-type))
-                     "as its "
+                     " as its "
                      ,(scheme-value-to-dom-sexp
                        (moby-error-type:type-mismatch-position error-type))
                      " argument, but instead I see "
