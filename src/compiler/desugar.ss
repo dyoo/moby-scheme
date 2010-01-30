@@ -15,302 +15,7 @@
 ;;
 ;; FIX BUG: user must not be allowed to rebind any of the primitive keyword names
 (define (desugar-program a-program a-pinfo)
-  (local [
-          
-          ;; reorder-tests-to-end: program (listof program-element) (listof program-element) -> program
-          ;; Helper to reorder the test case special forms to the end of the program.
-          (define (reorder-tests-to-end a-program program/rev tests/rev)
-            (cond
-              [(empty? a-program)
-               (append (reverse program/rev) (reverse tests/rev))]
-              [(test-case? (first a-program))
-               (reorder-tests-to-end (rest a-program) 
-                                     program/rev
-                                     (cons (first a-program)
-                                           tests/rev))]
-              [else
-               (reorder-tests-to-end (rest a-program)
-                                     (cons (first a-program) program/rev)
-                                     tests/rev)]))
-          
-          ;; desugar-program-element: program-element pinfo -> (list (listof program-element) pinfo)
-          (define (desugar-program-element an-element a-pinfo)
-            (cond
-              [(defn? an-element)
-               (desugar-defn an-element a-pinfo)]
-              [(library-require? an-element)
-               (list (list an-element) a-pinfo)]
-              [(provide-statement? an-element)
-               (list (list an-element) a-pinfo)]
-              [(test-case? an-element)
-               (desugar-test-case an-element a-pinfo)]
-              [(provide/contract-statement? an-element)
-               (desugar-provide/contract an-element a-pinfo)]
-              [(expression? an-element)
-               (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
-                 (list (list (first expr+pinfo))
-                       (second expr+pinfo)))]))
-          
-          
-          
-          ;; desugar-defn: defn pinfo -> (list (listof defn) pinfo)
-          (define (desugar-defn a-defn a-pinfo)
-            (local [(define define-stx (first (stx-e a-defn)))]
-              (case-analyze-definition a-defn
-                                       (lambda (id args body) 
-                                         (begin
-                                           (check-duplicate-identifiers! (cons id args))   
-                                           (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
-                                             (list (list (datum->stx #f (list define-stx
-                                                                              (datum->stx #f (cons id args)
-                                                                                          (stx-loc a-defn))
-                                                                              (first subexpr+pinfo))
-                                                                     (stx-loc a-defn)))
-                                                   (second subexpr+pinfo)))))
-                                       (lambda (id body) 
-                                         (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
-                                           (list (list (datum->stx #f (list define-stx
-                                                                            id
-                                                                            (first subexpr+pinfo))
-                                                                   (stx-loc a-defn)))
-                                                 (second subexpr+pinfo))))
-                                       (lambda (id fields) 
-                                         ;; FIXME: extend the environment with the
-                                         ;; structure identifiers here!
-                                         (list (list a-defn) a-pinfo)))))
-          
-          
-          ;; desugar-expressions: (listof expr) pinfo -> (list (listof expr) pinfo)
-          (define (desugar-expressions exprs pinfo)
-            (cond
-              [(empty? exprs)
-               (list empty pinfo)]
-              [else
-               (local [(define first-desugared+pinfo 
-                         (desugar-expression (first exprs) pinfo))
-                       (define rest-desugared+pinfo 
-                         (desugar-expressions (rest exprs) 
-                                              (second first-desugared+pinfo)))]
-                 (list (cons (first first-desugared+pinfo)
-                             (first rest-desugared+pinfo))
-                       (second rest-desugared+pinfo)))]))
-          
-          
-          ;; thunkify-stx: stx -> stx
-          ;; Wraps a thunk around a syntax.
-          (define (thunkify-stx an-stx)
-            (datum->stx #f 
-                        (list 'lambda (list)
-                              an-stx)
-                        (stx-loc an-stx)))
-          
-          
-          ;; check-length!: stx -> void
-          (define (check-test-case-length! stx n error-msg)
-            (cond [(not (= n (length (stx-e stx))))
-                   (raise (make-moby-error 
-                           (stx-loc stx)
-                           (make-moby-error-type:generic-syntactic-error
-                            error-msg
-                            (list))))]
-                  [else
-                   (void)]))
-          
-          
-          ;; desugar-test-case: test-case-stx pinfo -> (list (listof test-case-stx) pinfo)
-          ;; Translates use of a test case form to use of the test case toplevel functions.
-          ;; We transform each expression to a thunk, and provide the test case function
-          ;; the locations of all expressions as another argument.
-          (define (desugar-test-case a-test-case a-pinfo)
-            (local [(define test-symbol-stx (first (stx-e a-test-case)))
-                    (define test-exprs (map thunkify-stx (rest (stx-e a-test-case))))
-                    
-                    (define desugared-exprs+pinfo (desugar-expressions test-exprs a-pinfo))]
-              (begin
-                (cond [(stx-begins-with? a-test-case 'check-expect)
-                       (check-test-case-length! a-test-case 3
-                                                "check-expect requires two expressions.  Try (check-expect test expected).")]
-                      [(stx-begins-with? a-test-case 'EXAMPLE)
-                       (check-test-case-length! a-test-case 3
-                                                "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
-                      
-                      [(stx-begins-with? a-test-case 'check-within)
-                       (check-test-case-length! a-test-case 4
-                                                "check-within requires three expressions.  Try (check-within test expected range).")]
-                      [(stx-begins-with? a-test-case 'check-error)
-                       (check-test-case-length! a-test-case 3
-                                                "check-error requires two expressions.  Try (check-error test message).")]
-                      [else
-                       (void)])
-                
-                (list (list (datum->stx #f (cons test-symbol-stx
-                                                 (first desugared-exprs+pinfo))
-                                        (stx-loc a-test-case)))
-                      (second desugared-exprs+pinfo)))))
-          
-          
-          ;; desugar-expression/expr+pinfo: (list expr pinfo) -> (list expr pinfo)
-          (define (desugar-expression/expr+pinfo expr+pinfo)
-            (desugar-expression (first expr+pinfo)
-                                (second expr+pinfo)))
-          
-          
-          ;; desugar-expression: expr pinfo -> (list expr pinfo)
-          (define (desugar-expression expr pinfo)
-            (cond
-              
-              ;; (cond ...)
-              [(stx-begins-with? expr 'cond)
-               (desugar-expression/expr+pinfo (desugar-cond expr pinfo))]
-              
-              ;; (case val-expr [quoted-expr expr] ...)
-              [(stx-begins-with? expr 'case)
-               (desugar-expression/expr+pinfo (desugar-case expr pinfo))]
-              
-              ;; (let ([id val] ...) ...)
-              [(stx-begins-with? expr 'let)
-               (desugar-expression/expr+pinfo (desugar-let expr pinfo))]
-              
-              ;; (let* ([id val] ...) ...)
-              [(stx-begins-with? expr 'let*)
-               (desugar-expression/expr+pinfo (desugar-let* expr pinfo))]
-              
-              ;; (let* ([id val] ...) ...)
-              [(stx-begins-with? expr 'letrec)
-               (desugar-expression/expr+pinfo (desugar-letrec expr pinfo))]
-              
-              ;; (quasiquote x)
-              [(or (stx-begins-with? expr 'quasiquote)
-                   (stx-begins-with? expr 'unquote)
-                   (stx-begins-with? expr 'quasiquote))
-               (desugar-expression/expr+pinfo (desugar-quasiquote expr pinfo))]
-              
-              ;; (local ([define ...] ...) body)
-              [(stx-begins-with? expr 'local)
-               (begin
-                 (check-single-body-stx! (rest (rest (stx-e expr))) expr)
-                 (local [(define local-symbol-stx (first (stx-e expr)))
-                         (define defns (stx-e (second (stx-e expr))))
-                         (define body (third (stx-e expr)))
-                         
-                         (define desugared-defns+pinfo (desugar-program defns pinfo))
-                         (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
-                   (list (datum->stx #f (list local-symbol-stx
-                                              (datum->stx #f (first desugared-defns+pinfo)
-                                                          (stx-loc (second (stx-e expr))))
-                                              (first desugared-body+pinfo))
-                                     (stx-loc expr))
-                         (pinfo-update-env (second desugared-body+pinfo)
-                                           (pinfo-env pinfo)))))]
-              
-              ;; (begin ...)
-              [(stx-begins-with? expr 'begin)
-               (local [(define begin-symbol-stx (first (stx-e expr)))
-                       (define exprs (rest (stx-e expr)))
-                       (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (datum->stx #f (cons begin-symbol-stx
-                                            (first desugared-exprs+pinfo))
-                                   (stx-loc expr))
-                       (second desugared-exprs+pinfo)))]
-              
-              ;; (set! identifier value)
-              [(stx-begins-with? expr 'set!)
-               (local [(define set-symbol-stx (first (stx-e expr)))
-                       (define id (second (stx-e expr)))
-                       (define value (third (stx-e expr)))
-                       (define desugared-value+pinfo (desugar-expression value pinfo))]
-                 (list (datum->stx #f (list set-symbol-stx
-                                            id
-                                            (first desugared-value+pinfo))
-                                   (stx-loc expr))
-                       (second desugared-value+pinfo)))]
-              
-              
-              ;; (if test consequent alternative)
-              [(stx-begins-with? expr 'if)
-               (local [(define if-symbol-stx (first (stx-e expr)))
-                       (define exprs (rest (stx-e expr)))
-                       (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (datum->stx #f (cons if-symbol-stx
-                                            (first desugared-exprs+pinfo))
-                                   (stx-loc expr))
-                       (second desugared-exprs+pinfo)))]
-              
-              
-              ;; (and exprs ...)
-              [(stx-begins-with? expr 'and)
-               (local [(define and-symbol-stx (first (stx-e expr)))
-                       (define exprs (rest (stx-e expr)))
-                       (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (datum->stx #f (cons and-symbol-stx
-                                            (first desugared-exprs+pinfo))
-                                   (stx-loc expr))
-                       (second desugared-exprs+pinfo)))]
-              
-              ;; (or exprs ...)
-              [(stx-begins-with? expr 'or)
-               (local [(define or-symbol-stx (first (stx-e expr)))
-                       (define exprs (rest (stx-e expr)))
-                       (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (datum->stx #f (cons or-symbol-stx
-                                            (first desugared-exprs+pinfo))
-                                   (stx-loc expr))
-                       (second desugared-exprs+pinfo)))]
-              
-              ;; (lambda (args ...) body)
-              [(stx-begins-with? expr 'lambda)
-               (begin
-                 (check-single-body-stx! (rest (rest (stx-e expr))) expr)
-                 (local [(define lambda-symbol-stx (first (stx-e expr)))
-                         (define args (second (stx-e expr)))
-                         (define body (third (stx-e expr)))
-                         (define desugared-body+pinfo (desugar-expression body pinfo))]
-                   (list (datum->stx #f (list lambda-symbol-stx
-                                              args
-                                              (first desugared-body+pinfo))
-                                     (stx-loc expr))
-                         ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
-                         (second desugared-body+pinfo))))]
-              
-              ;; Numbers
-              [(number? (stx-e expr))
-               (list expr pinfo)]
-              
-              ;; Strings
-              [(string? (stx-e expr))
-               (list expr pinfo)]
-              
-              ;; Literal booleans
-              [(boolean? (stx-e expr))
-               (list expr pinfo)]
-              
-              ;; Characters
-              [(char? (stx-e expr))
-               (list expr pinfo)]
-              
-              ;; Identifiers
-              [(symbol? (stx-e expr))
-               (list expr pinfo)]
-              
-              ;; Quoted datums
-              [(stx-begins-with? expr 'quote)
-               (list expr pinfo)]
-              
-              ;; Function call/primitive operation call
-              [(pair? (stx-e expr))
-               (local [(define exprs (stx-e expr))
-                       (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-                 (list (datum->stx #f (first desugared-exprs+pinfo)
-                                   (stx-loc expr))
-                       (second desugared-exprs+pinfo)))]
-              [else
-               (raise 
-                (make-moby-error (stx-loc expr)
-                                 (make-moby-error-type:generic-syntactic-error
-                                  (format "Unable to desugar ~s" (stx->datum expr))
-                                  (list))))]))
-          
-          ;; processing-loop: program pinfo -> (list program pinfo)
+  (local [;; processing-loop: program pinfo -> (list program pinfo)
           (define (processing-loop a-program a-pinfo)
             (cond 
               [(empty? a-program)
@@ -328,6 +33,326 @@
     (processing-loop (reorder-tests-to-end a-program empty empty)
                      a-pinfo)))
 
+
+
+;; reorder-tests-to-end: program (listof program-element) (listof program-element) -> program
+;; Helper to reorder the test case special forms to the end of the program.
+(define (reorder-tests-to-end a-program program/rev tests/rev)
+  (cond
+    [(empty? a-program)
+     (append (reverse program/rev) (reverse tests/rev))]
+    [(test-case? (first a-program))
+     (reorder-tests-to-end (rest a-program) 
+                           program/rev
+                           (cons (first a-program)
+                                 tests/rev))]
+    [else
+     (reorder-tests-to-end (rest a-program)
+                           (cons (first a-program) program/rev)
+                           tests/rev)]))
+
+;; desugar-program-element: program-element pinfo -> (list (listof program-element) pinfo)
+(define (desugar-program-element an-element a-pinfo)
+  (cond
+    [(defn? an-element)
+     (desugar-defn an-element a-pinfo)]
+    [(library-require? an-element)
+     (list (list an-element) a-pinfo)]
+    [(provide-statement? an-element)
+     (list (list an-element) a-pinfo)]
+    [(test-case? an-element)
+     (desugar-test-case an-element a-pinfo)]
+    [(provide/contract-statement? an-element)
+     (desugar-provide/contract an-element a-pinfo)]
+    [(expression? an-element)
+     (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
+       (list (list (first expr+pinfo))
+             (second expr+pinfo)))]))
+
+
+
+;; desugar-defn: defn pinfo -> (list (listof defn) pinfo)
+(define (desugar-defn a-defn a-pinfo)
+  (local [(define define-stx (first (stx-e a-defn)))]
+    (case-analyze-definition a-defn
+                             (lambda (id args body) 
+                               (begin
+                                 (check-duplicate-identifiers! (cons id args))   
+                                 (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
+                                   (list (list (datum->stx #f (list define-stx
+                                                                    (datum->stx #f (cons id args)
+                                                                                (stx-loc a-defn))
+                                                                    (first subexpr+pinfo))
+                                                           (stx-loc a-defn)))
+                                         (second subexpr+pinfo)))))
+                             (lambda (id body) 
+                               (local [(define subexpr+pinfo (desugar-expression body a-pinfo))]
+                                 (list (list (datum->stx #f (list define-stx
+                                                                  id
+                                                                  (first subexpr+pinfo))
+                                                         (stx-loc a-defn)))
+                                       (second subexpr+pinfo))))
+                             (lambda (id fields) 
+                               ;; FIXME: extend the environment with the
+                               ;; structure identifiers here!
+                               (list (list a-defn) a-pinfo)))))
+
+
+;; desugar-expressions: (listof expr) pinfo -> (list (listof expr) pinfo)
+(define (desugar-expressions exprs pinfo)
+  (cond
+    [(empty? exprs)
+     (list empty pinfo)]
+    [else
+     (local [(define first-desugared+pinfo 
+               (desugar-expression (first exprs) pinfo))
+             (define rest-desugared+pinfo 
+               (desugar-expressions (rest exprs) 
+                                    (second first-desugared+pinfo)))]
+       (list (cons (first first-desugared+pinfo)
+                   (first rest-desugared+pinfo))
+             (second rest-desugared+pinfo)))]))
+
+
+;; thunkify-stx: stx -> stx
+;; Wraps a thunk around a syntax.
+(define (thunkify-stx an-stx)
+  (datum->stx #f 
+              (list 'lambda (list)
+                    an-stx)
+              (stx-loc an-stx)))
+
+
+;; check-length!: stx -> void
+(define (check-test-case-length! stx n error-msg)
+  (cond [(not (= n (length (stx-e stx))))
+         (raise (make-moby-error 
+                 (stx-loc stx)
+                 (make-moby-error-type:generic-syntactic-error
+                  error-msg
+                  (list))))]
+        [else
+         (void)]))
+
+
+;; desugar-test-case: test-case-stx pinfo -> (list (listof test-case-stx) pinfo)
+;; Translates use of a test case form to use of the test case toplevel functions.
+;; We transform each expression to a thunk, and provide the test case function
+;; the locations of all expressions as another argument.
+(define (desugar-test-case a-test-case a-pinfo)
+  (local [(define test-symbol-stx (first (stx-e a-test-case)))
+          (define test-exprs (map thunkify-stx (rest (stx-e a-test-case))))
+          
+          (define desugared-exprs+pinfo (desugar-expressions test-exprs a-pinfo))]
+    (begin
+      (cond [(stx-begins-with? a-test-case 'check-expect)
+             (check-test-case-length! a-test-case 3
+                                      "check-expect requires two expressions.  Try (check-expect test expected).")]
+            [(stx-begins-with? a-test-case 'EXAMPLE)
+             (check-test-case-length! a-test-case 3
+                                      "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
+            
+            [(stx-begins-with? a-test-case 'check-within)
+             (check-test-case-length! a-test-case 4
+                                      "check-within requires three expressions.  Try (check-within test expected range).")]
+            [(stx-begins-with? a-test-case 'check-error)
+             (check-test-case-length! a-test-case 3
+                                      "check-error requires two expressions.  Try (check-error test message).")]
+            [else
+             (void)])
+      
+      (list (list (datum->stx #f (cons test-symbol-stx
+                                       (first desugared-exprs+pinfo))
+                              (stx-loc a-test-case)))
+            (second desugared-exprs+pinfo)))))
+
+
+;; desugar-expression/expr+pinfo: (list expr pinfo) -> (list expr pinfo)
+(define (desugar-expression/expr+pinfo expr+pinfo)
+  (desugar-expression (first expr+pinfo)
+                      (second expr+pinfo)))
+
+
+;; desugar-expression: expr pinfo -> (list expr pinfo)
+(define (desugar-expression expr pinfo)
+  (cond
+    
+    ;; (cond ...)
+    [(stx-begins-with? expr 'cond)
+     (desugar-expression/expr+pinfo (desugar-cond expr pinfo))]
+    
+    ;; (case val-expr [quoted-expr expr] ...)
+    [(stx-begins-with? expr 'case)
+     (desugar-expression/expr+pinfo (desugar-case expr pinfo))]
+    
+    ;; (let ([id val] ...) ...)
+    [(stx-begins-with? expr 'let)
+     (desugar-expression/expr+pinfo (desugar-let expr pinfo))]
+    
+    ;; (let* ([id val] ...) ...)
+    [(stx-begins-with? expr 'let*)
+     (desugar-expression/expr+pinfo (desugar-let* expr pinfo))]
+    
+    ;; (let* ([id val] ...) ...)
+    [(stx-begins-with? expr 'letrec)
+     (desugar-expression/expr+pinfo (desugar-letrec expr pinfo))]
+    
+    ;; (quasiquote x)
+    [(or (stx-begins-with? expr 'quasiquote)
+         (stx-begins-with? expr 'unquote)
+         (stx-begins-with? expr 'quasiquote))
+     (desugar-expression/expr+pinfo (desugar-quasiquote expr pinfo))]
+    
+    ;; (local ([define ...] ...) body)
+    [(stx-begins-with? expr 'local)
+     (begin
+       (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+       (local [(define local-symbol-stx (first (stx-e expr)))
+               (define defns (stx-e (second (stx-e expr))))
+               (define body (third (stx-e expr)))
+               
+               (define desugared-defns+pinfo (desugar-program defns pinfo))
+               (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
+         (list (datum->stx #f (list local-symbol-stx
+                                    (datum->stx #f (first desugared-defns+pinfo)
+                                                (stx-loc (second (stx-e expr))))
+                                    (first desugared-body+pinfo))
+                           (stx-loc expr))
+               (pinfo-update-env (second desugared-body+pinfo)
+                                 (pinfo-env pinfo)))))]
+    
+    ;; (begin ...)
+    [(stx-begins-with? expr 'begin)
+     (local [(define begin-symbol-stx (first (stx-e expr)))
+             (define exprs (rest (stx-e expr)))
+             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+       (list (datum->stx #f (cons begin-symbol-stx
+                                  (first desugared-exprs+pinfo))
+                         (stx-loc expr))
+             (second desugared-exprs+pinfo)))]
+    
+    ;; (set! identifier value)
+    [(stx-begins-with? expr 'set!)
+     (local [(define set-symbol-stx (first (stx-e expr)))
+             (define id (second (stx-e expr)))
+             (define value (third (stx-e expr)))
+             (define desugared-value+pinfo (desugar-expression value pinfo))]
+       (list (datum->stx #f (list set-symbol-stx
+                                  id
+                                  (first desugared-value+pinfo))
+                         (stx-loc expr))
+             (second desugared-value+pinfo)))]
+    
+    
+    ;; (if test consequent alternative)
+    [(stx-begins-with? expr 'if)
+     (desugar-if expr pinfo)]
+    
+    
+    ;; (and exprs ...)
+    [(stx-begins-with? expr 'and)
+     (local [(define and-symbol-stx (first (stx-e expr)))
+             (define exprs (rest (stx-e expr)))
+             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+       (list (datum->stx #f (cons and-symbol-stx
+                                  (first desugared-exprs+pinfo))
+                         (stx-loc expr))
+             (second desugared-exprs+pinfo)))]
+    
+    ;; (or exprs ...)
+    [(stx-begins-with? expr 'or)
+     (local [(define or-symbol-stx (first (stx-e expr)))
+             (define exprs (rest (stx-e expr)))
+             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+       (list (datum->stx #f (cons or-symbol-stx
+                                  (first desugared-exprs+pinfo))
+                         (stx-loc expr))
+             (second desugared-exprs+pinfo)))]
+    
+    ;; (lambda (args ...) body)
+    [(stx-begins-with? expr 'lambda)
+     (begin
+       (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+       (local [(define lambda-symbol-stx (first (stx-e expr)))
+               (define args (second (stx-e expr)))
+               (define body (third (stx-e expr)))
+               (define desugared-body+pinfo (desugar-expression body pinfo))]
+         (list (datum->stx #f (list lambda-symbol-stx
+                                    args
+                                    (first desugared-body+pinfo))
+                           (stx-loc expr))
+               ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
+               (second desugared-body+pinfo))))]
+    
+    ;; Numbers
+    [(number? (stx-e expr))
+     (list expr pinfo)]
+    
+    ;; Strings
+    [(string? (stx-e expr))
+     (list expr pinfo)]
+    
+    ;; Literal booleans
+    [(boolean? (stx-e expr))
+     (list expr pinfo)]
+    
+    ;; Characters
+    [(char? (stx-e expr))
+     (list expr pinfo)]
+    
+    ;; Identifiers
+    [(symbol? (stx-e expr))
+     (list expr pinfo)]
+    
+    ;; Quoted datums
+    [(stx-begins-with? expr 'quote)
+     (list expr pinfo)]
+    
+    ;; Function call/primitive operation call
+    [(pair? (stx-e expr))
+     (local [(define exprs (stx-e expr))
+             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+       (list (datum->stx #f (first desugared-exprs+pinfo)
+                         (stx-loc expr))
+             (second desugared-exprs+pinfo)))]
+    [else
+     (raise 
+      (make-moby-error (stx-loc expr)
+                       (make-moby-error-type:generic-syntactic-error
+                        (format "Unable to desugar ~s" (stx->datum expr))
+                        (list))))]))
+
+
+
+;; (if test-expr then-expr else-expr)
+;; desugar-if: stx pinfo -> (list stx pinfo)
+(define (desugar-if expr pinfo)
+  (cond
+    [(= 4 (length (stx-e expr)))
+     (local [(define if-symbol-stx (first (stx-e expr)))
+             (define exprs (rest (stx-e expr)))
+             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))
+             (define test-expr (first (first desugared-exprs+pinfo)))
+             (define then-expr (second (first desugared-exprs+pinfo)))
+             (define else-expr (third (first desugared-exprs+pinfo)))]
+       (list (datum->stx #f 
+                         `(,if-symbol-stx ,(tag-application-operator/module 
+                                            (datum->stx #f 
+                                                        `(verify-boolean-branch-value 
+                                                          ,test-expr
+                                                          (quote ,(Loc->sexp (stx-loc test-expr))))
+                                                        (stx-loc test-expr))
+                                            'moby/runtime/kernel/misc)
+                                          ,then-expr
+                                          ,else-expr)
+                         (stx-loc expr))
+             (second desugared-exprs+pinfo)))]
+    [(< (length (stx-e expr)) 4)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:if-too-few-elements)))]
+    [(> (length (stx-e expr)) 4)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:if-too-many-elements)))]))
 
 
 

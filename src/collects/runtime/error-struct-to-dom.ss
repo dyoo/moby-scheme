@@ -177,7 +177,20 @@
                "Inside a cond branch, I expect to see a question and a single answer, "
                "but I see too many.")]
        
+       [(moby-error-type:branch-value-not-boolean? error-type)
+        `(span ((class "Error:BranchValueNotBoolean"))
+               "I expected the answer's value to be a boolean, but instead I see "
+               ,(scheme-value-to-dom-sexp (moby-error-type:branch-value-not-boolean-observed error-type)))]
        
+       [(moby-error-type:if-too-few-elements? error-type)
+        `(span ((class "Error:IfTooFewElements"))
+               "I expected a test, a consequent, and an alternative, "
+               "but I don't see all three of these.")]
+       
+       [(moby-error-type:if-too-many-elements? error-type)
+        `(span ((class "Error:IfTooFewElements"))
+               "I expected only a test, a consequent, and an alternative, "
+               "but I see more than three of these.")]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error:ApplicationArity"))

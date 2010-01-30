@@ -100,8 +100,7 @@ var isGenericRuntimeError =
 var isGenericSyntacticError = 
     extract("moby-error-type:generic-syntactic-error?");
 var isBranchValueNotBoolean = 
-    extract("moby-error-type:branch-value-not-boolean");
-
+    extract("moby-error-type:branch-value-not-boolean?");
 
 
 //////////////////////////////////////////////////////////////////////
@@ -111,7 +110,7 @@ var isBranchValueNotBoolean =
 JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk) {
     try {
 	thunk();
-	this.fail();
+	this.fail("assertMobyRaise: expected exception hasn't been raised");
     } catch(e) {
 	this.assert(isMobyError(e));
 	this.assert(predicate(mobyErrorType(e)));

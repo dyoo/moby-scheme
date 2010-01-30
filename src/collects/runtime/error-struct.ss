@@ -32,6 +32,10 @@
 (define-struct moby-error-type:conditional-clause-too-many-elements ())
 (define-struct moby-error-type:conditional-exhausted ())
 
+(define-struct moby-error-type:branch-value-not-boolean (observed))
+
+(define-struct moby-error-type:if-too-few-elements ())
+(define-struct moby-error-type:if-too-many-elements ())
 
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:application-operator-not-a-function (who))
@@ -65,11 +69,18 @@
       (moby-error-type:provided-structure-not-structure? x)
       (moby-error-type:unknown-module? x)
       (moby-error-type:conditional-missing-question-answer? x)
+      (moby-error-type:conditional-exhausted? x)
+      (moby-error-type:conditional-missing-question-answer? x)
+      (moby-error-type:conditional-malformed-clause? x)
+      (moby-error-type:conditional-clause-too-few-elements? x)
+      (moby-error-type:conditional-clause-too-many-elements? x)
+      (moby-error-type:branch-value-not-boolean? x)
+      (moby-error-type:if-too-few-elements? x)
+      (moby-error-type:if-too-many-elements? x)
       (moby-error-type:application-arity? x)
       (moby-error-type:application-operator-not-a-function? x)
       (moby-error-type:type-mismatch? x)
       (moby-error-type:index-out-of-bounds? x)
-      (moby-error-type:conditional-exhausted? x)
       (moby-error-type:generic-runtime-error? x)
       (moby-error-type:generic-syntactic-error? x)))
 
@@ -154,6 +165,13 @@
  [struct moby-error-type:conditional-clause-too-few-elements ()]  ;; a clause without a question or an answer
  [struct moby-error-type:conditional-clause-too-many-elements ()] ;; a clause with too many answer values
  [struct moby-error-type:conditional-exhausted ()]             ;; runtime: no answer was true
+ 
+ [struct moby-error-type:branch-value-not-boolean ([observed any/c])]
+ 
+ [struct moby-error-type:if-too-few-elements ()]   ;; e.g. (if x)
+ [struct moby-error-type:if-too-many-elements ()]  ;; (if x y z w)
+
+ 
  
  [struct moby-error-type:application-arity ([who any/c]
                                             [expected arity?]
