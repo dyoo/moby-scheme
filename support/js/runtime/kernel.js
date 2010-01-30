@@ -2406,11 +2406,12 @@ goog.provide('plt.Kernel');
 	     E.make_dash_moby_dash_expected_colon_something(expected) : 
 	     expected);
 
-	throw new makeMobyError(locHashToLoc(plt.Kernel.lastLoc),
-	 makeTypeMismatchType(plt.types.Symbol.makeInstance(who),
-			      plt.types.Rational.makeInstance(argumentPosition),
-			      coersedExpectedValue,
-			      observed));
+	throw makeMobyError(
+	    locHashToLoc(plt.Kernel.lastLoc),
+	    makeTypeMismatchType(plt.types.Symbol.makeInstance(who),
+				 plt.types.Rational.makeInstance(argumentPosition),
+				 coersedExpectedValue,
+				 observed));
     };
 
     

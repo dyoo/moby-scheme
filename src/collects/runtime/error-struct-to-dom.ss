@@ -345,7 +345,7 @@
             "<function>")]
     [(moby-expected:something? expected)
      `(span ((class "Expected:Something"))
-            (moby-expected:something-description expected))]))
+            ,(moby-expected:something-description expected))]))
 
 
 

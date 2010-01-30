@@ -113,6 +113,13 @@ function init() {
 	},
 
 
+	testTypeMismatching: function() {
+	    this.assertMobyRaise(isTypeMismatch,
+				 function() {
+				     run("(+ 'three 'four)");
+				 });
+	},
+
 
 	testSimpleFunctionDefinition: function() {
 	    this.assert(isEqual(number(9),
