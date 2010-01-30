@@ -4,6 +4,26 @@
 (define-struct label (n ;; number
                       ))
 
+
+
+
+
+;; separate-with-spaces: (listof dom) -> (listof dom)
+;; Introduces string space elements between the elts.
+(define (separate-with-spaces elts)
+  (cond
+    [(empty? elts)
+     empty]
+    [else
+     (reverse
+      (rest
+       (foldl (lambda (x acc)
+                (cons " "
+                      (cons x acc)))
+              empty
+              elts)))]))
+
+
 ;; scheme-value-to-dom-sexp: any -> dom
 ;; Converts a value to a DOM.
 ;; FIXME: make this extensible so structures can define how they'd like to be DOMified.
@@ -121,10 +141,10 @@
                  `(span ((class "SchemeValue:List"))
                         (span ((class "SchemeValue:List.lparen")) "(")
                         (span ((class "SchemeValue:List.keyword")) "list")
-                        ,@(map (lambda (x)
-                                 `(span ((class "SchemeValue:List.item"))
-                                        ,(->dom x)))
-                               val)
+                        ,@(separate-with-spaces (map (lambda (x)
+                                                       `(span ((class "SchemeValue:List.item"))
+                                                              ,(->dom x)))
+                                                     val))
                         (span ((class "SchemeValue:List.rparen")) ")")))]
               
               [(vector? val)
@@ -132,10 +152,10 @@
                  `(span ((class "SchemeValue:Vector"))
                         (span ((class "SchemeValue:Vector.lparen")) "(")
                         (span ((class "SchemeValue.Vector.keyword")) "vector")
-                        ,@(map (lambda (x)
-                                 `(span ((class "SchemeValue:Vector.item"))
-                                        ,(->dom x)))
-                               (vector->list val))
+                        ,@(separate-with-spaces (map (lambda (x)
+                                                       `(span ((class "SchemeValue:Vector.item"))
+                                                              ,(->dom x)))
+                                                     (vector->list val)))
                         (span ((class "SchemeValue:Vector.rparen")) ")")))]
               
               [(struct? val)

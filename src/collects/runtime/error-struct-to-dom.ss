@@ -276,8 +276,6 @@
          (span ((class "Location.id")) ,(Loc-id a-loc))))
          
 
-
-
           
 
 
