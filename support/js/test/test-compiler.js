@@ -100,6 +100,18 @@ function init() {
 				 });
 	},
 
+	testBadIfs: function() {
+	    this.assertMobyRaise(isIfTooManyElements,
+				 function() {
+				     run("(if 3 4 5 6)")
+				 });
+
+	    this.assertMobyRaise(isIfTooFewElements,
+				 function() {
+				     run("(if 3)")
+				 });
+	},
+
 
 
 	testSimpleFunctionDefinition: function() {

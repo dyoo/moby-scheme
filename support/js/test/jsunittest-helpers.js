@@ -101,6 +101,10 @@ var isGenericSyntacticError =
     extract("moby-error-type:generic-syntactic-error?");
 var isBranchValueNotBoolean = 
     extract("moby-error-type:branch-value-not-boolean?");
+var isIfTooFewElements = 
+    extract("moby-error-type:if-too-few-elements?");
+var isIfTooManyElements = 
+    extract("moby-error-type:if-too-many-elements?");
 
 
 //////////////////////////////////////////////////////////////////////
