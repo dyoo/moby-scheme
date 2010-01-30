@@ -56,7 +56,7 @@ goog.provide('plt.kernel.misc');
 	var makeErrorType = errorStruct.getFunction(
 	    "make-moby-error-type:branch-value-not-boolean");
 	var aLoc = stxStruct.getFunction("sexp->Loc")(locSexp);
-	var err = makeMobyError(aLoc, makeErrorType());
+	var err = makeMobyError(aLoc, makeErrorType(aVal));
 	throw err;
     };
 
