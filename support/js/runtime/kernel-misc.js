@@ -25,28 +25,6 @@ goog.provide('plt.kernel.misc');
     }
 
 
-    // locHashToLoc: (hash | undefined) -> Loc
-    // Converts the location hashes that are constructed by compiled
-    // code and translates them back into Loc structures.
-    var locHashToLoc = function(locHash) {
-	var stxModule = getModule("moby/runtime/stx");
-	var makeLoc = stxModule.getFunction('make-Loc');
-
-	if (locHash === undefined) {
-	    return makeLoc(plt.types.Rational.makeInstance(0),
-			   plt.types.Rational.makeInstance(0),
-			   plt.types.Rational.makeInstance(0),
-			   plt.types.Rational.makeInstance(0),
-			   "<undefined>");
-	} else {
-	    return makeLoc(plt.types.Rational.makeInstance(locHash.offset),
-			   plt.types.Rational.makeInstance(locHash.line),
-			   plt.types.Rational.makeInstance(locHash.column),
-			   plt.types.Rational.makeInstance(locHash.span),
-			   locHash.id);
-	}
-    };
-
 
     // throwCondExhaustedError: sexp -> void
     // Throws a cond exhausted error
@@ -61,4 +39,27 @@ goog.provide('plt.kernel.misc');
 	var err = makeMobyError(aLoc, makeCondExhaustedType());
 	throw err;
     };
+
+
+    // verifyBooleanBranchValue: any loc-sexp -> boolean
+    // Verifies that aVal is a boolean.
+    // If not, throws branch-value-not-boolean.
+    plt.kernel.misc.verifyBooleanBranchValue = function(aVal, locSexp) {
+	if (aVal === plt.types.Logic.TRUE || 
+	    aVal === plt.types.Logic.FALSE) {
+	    return aVal;
+	}
+	var stxStruct = getModule("moby/runtime/stx");
+	var errorStruct = getModule("moby/runtime/error-struct");
+	var makeMobyError = errorStruct.getFunction(
+	    "make-moby-error");
+	var makeErrorType = errorStruct.getFunction(
+	    "make-moby-error:->branch-value-not-boolean");
+	var aLoc = stxStruct.getFunction("sexp->Loc")(locSexp);
+	var err = makeMobyError(aLoc, makeErrorType());
+	throw err;
+    };
+
+
+
 }());

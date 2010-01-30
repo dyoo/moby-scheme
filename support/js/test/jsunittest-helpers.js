@@ -99,7 +99,8 @@ var isGenericRuntimeError =
     extract("moby-error-type:generic-runtime-error?");
 var isGenericSyntacticError = 
     extract("moby-error-type:generic-syntactic-error?");
-
+var isBranchValueNotBoolean = 
+    extract("moby-error-type:branch-value-not-boolean");
 
 
 

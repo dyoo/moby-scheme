@@ -32,6 +32,16 @@
                               false
                               "plt.kernel.misc.throwCondExhaustedError"
                               (list)
+                              false)
+                             
+                             
+                             (make-binding:function
+                              'verify-boolean-branch-value
+                              "moby/runtime/kernel/misc"
+                              2
+                              false
+                              "plt.kernel.misc.verifyBooleanBranchValue"
+                              (list)
                               false))))
 
 

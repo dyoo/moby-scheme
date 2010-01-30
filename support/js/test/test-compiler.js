@@ -93,6 +93,11 @@ function init() {
  				 function() {
  				     run("(cond [a b c])");
  				 });
+
+	    this.assertMobyRaise(isBranchValueNotBoolean,
+				 function() {
+				     run("(cond [(+ 1 2) \"oh no!\"])")
+				 });
 	},
 
 
