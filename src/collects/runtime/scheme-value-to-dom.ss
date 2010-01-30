@@ -140,22 +140,24 @@
                (begin
                  `(span ((class "SchemeValue:List"))
                         (span ((class "SchemeValue:List.lparen")) "(")
-                        (span ((class "SchemeValue:List.keyword")) "list")
-                        ,@(separate-with-spaces (map (lambda (x)
-                                                       `(span ((class "SchemeValue:List.item"))
-                                                              ,(->dom x)))
-                                                     val))
+                        ,@(separate-with-spaces (cons 
+                                                 `(span ((class "SchemeValue:List.keyword")) "list")
+                                                 (map (lambda (x)
+                                                        `(span ((class "SchemeValue:List.item"))
+                                                               ,(->dom x)))
+                                                      val)))
                         (span ((class "SchemeValue:List.rparen")) ")")))]
-              
+
               [(vector? val)
                (begin
                  `(span ((class "SchemeValue:Vector"))
                         (span ((class "SchemeValue:Vector.lparen")) "(")
-                        (span ((class "SchemeValue.Vector.keyword")) "vector")
-                        ,@(separate-with-spaces (map (lambda (x)
-                                                       `(span ((class "SchemeValue:Vector.item"))
+                        ,@(separate-with-spaces (cons
+                                                 `(span ((class "SchemeValue.Vector.keyword")) "vector")
+                                                 (map (lambda (x)
+                                                        `(span ((class "SchemeValue:Vector.item"))
                                                               ,(->dom x)))
-                                                     (vector->list val)))
+                                                      (vector->list val))))
                         (span ((class "SchemeValue:Vector.rparen")) ")")))]
               
               [(struct? val)
@@ -169,6 +171,7 @@
                  `(span ((class "SchemeValue:Box"))
                         (span ((class "SchemeValue:Box.lparen")) "(")
                         (span ((class "SchemeValue:Box.keyword")) "box")
+                        " "
                         (span ((class "SchemeValue:Box.item")) 
                               ,(->dom (unbox val)))
                         (span ((class "SchemeValue:Box.rparen")) ")")))]
