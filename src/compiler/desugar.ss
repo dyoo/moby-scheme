@@ -448,7 +448,7 @@
      
      (define (check-clause-structures!)
        (for-each (lambda (a-clause)
-                   (cond [(not (pair? (stx-e a-clause)))
+                   (cond [(not (list? (stx-e a-clause)))
                           (raise (make-moby-error (stx-loc a-clause)
                                                   (make-moby-error-type:conditional-malformed-clause)))]
                          [(< (length (stx-e a-clause)) 2)

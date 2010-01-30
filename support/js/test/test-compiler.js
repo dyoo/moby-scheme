@@ -69,15 +69,30 @@ function init() {
 				     run("(cond)");
 				 });
 
-	    this.assertMobyRaise(isConditionalMissingQuestionAnswer,
+	    this.assertMobyRaise(isConditionalMalformedClause,
 				 function() {
-				     run("(cond 'foo)");
+				     run("(cond 42)");
+				 });
+
+	    this.assertMobyRaise(isConditionalMalformedClause,
+				 function() {
+				     run("(cond true)");
 				 });
 	    
-	    this.assertMobyRaise(isConditionalMissingQuestionAnswer,
-				 function() {
-				     run("(cond [foo bar] baz)");
-				 });
+ 	    this.assertMobyRaise(isConditionalClauseTooFewElements,
+ 				 function() {
+ 				     run("(cond [foo])");
+ 				 });
+
+ 	    this.assertMobyRaise(isConditionalClauseTooFewElements,
+ 				 function() {
+ 				     run("(cond [])");
+ 				 });
+
+ 	    this.assertMobyRaise(isConditionalClauseTooManyElements,
+ 				 function() {
+ 				     run("(cond [a b c])");
+ 				 });
 	},
 
 

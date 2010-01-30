@@ -170,7 +170,7 @@
        
        [(moby-error-type:conditional-clause-too-few-elements? error-type)
         `(span ((class "Error:ConditionalClauseTooFewElements"))
-               "Inside a cond branch, I expect a question and an answer, but I only see one.")]
+               "Inside a cond branch, I expect a question and an answer, but I don't see both.")]
 
        [(moby-error-type:conditional-clause-too-many-elements? error-type)
         `(span ((class "Error:ConditionalClauseTooManyElements"))
