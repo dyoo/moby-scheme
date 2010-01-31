@@ -14,4 +14,13 @@
          #:mutable))]))
 
 
-(provide (rename-out (my-define-struct define-struct)))
+(define THE-UNDEFINED-VALUE
+  (letrec ([x x])
+    x))
+
+(define (undefined? x)
+  (eq? x THE-UNDEFINED-VALUE))
+
+
+(provide (rename-out (my-define-struct define-struct))
+         undefined?)

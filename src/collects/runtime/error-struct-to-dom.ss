@@ -180,7 +180,11 @@
        [(moby-error-type:branch-value-not-boolean? error-type)
         `(span ((class "Error-BranchValueNotBoolean"))
                "I expected the answer's value to be a boolean expression, "
-               "(" (scheme-value-to-dom-sexp true) " or " (scheme-value-to-dom-sexp false) "), "
+               "(" 
+               ,(scheme-value-to-dom-sexp true)
+               " or " 
+               ,(scheme-value-to-dom-sexp false)
+               "), "
                "but instead I see "
                ,(scheme-value-to-dom-sexp 
                  (moby-error-type:branch-value-not-boolean-observed error-type))
@@ -204,7 +208,7 @@
                      " expects "
                      ,(arity-to-dom-sexp (moby-error-type:application-arity-expected error-type))
                      " inputs, but instead I see "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-observed error-type))
+                     ,(number->string (moby-error-type:application-arity-observed error-type))
                      " inputs."))]
 
        [(moby-error-type:application-operator-not-a-function? error-type)
@@ -226,7 +230,7 @@
                         (expected-value-to-dom-sexp
                          (moby-error-type:type-mismatch-expected error-type)))
                      " as its "
-                     ,(scheme-value-to-dom-sexp
+                     ,(number->string
                        (moby-error-type:type-mismatch-position error-type))
                      ,(ordinal-ending (moby-error-type:type-mismatch-position error-type))
                      " argument, but instead I see "
@@ -300,6 +304,7 @@
 ;; Produces a list containting the appropriate indefinite article and the dom.
 (define (prepend-indefinite-article a-dom)
   (list (indefinite-article (dom-string-content a-dom))
+        " "
         a-dom))
 
 

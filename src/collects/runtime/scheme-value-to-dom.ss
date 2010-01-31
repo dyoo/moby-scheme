@@ -40,6 +40,9 @@
             (local [(define h (make-hasheq))
                     (define (loop x)
                       (cond
+                        [(undefined? x)
+                         (void)]
+                        
                         [(hash-ref h x false)
                          (begin
                            (hash-set! shared x true)
@@ -90,6 +93,10 @@
           
           (define (->dom val)
             (cond
+              [(undefined? val)
+               `(span ((class "SchemeValue-Undefined"))
+                      "<undefined>")]
+              
               [;; If this is the first time we're encountering the shared value,
                ;; label it.
                (and (hash-ref shared val false)
@@ -188,10 +195,7 @@
                       ;; We also would like inspectors for the arity and
                       ;; the location the function's defined.
                       "<function>")]
-              
-              #;[(undefined? val)
-                 ...]
-              
+                            
               [else
                `(span ((class "SchemeValue-DisplayedObject"))
                       ,(format "~a" val))]))]
