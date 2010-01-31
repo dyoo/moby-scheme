@@ -165,8 +165,8 @@
        
        [(moby-error-type:conditional-malformed-clause? error-type)
         `(span ((class "Error-ConditionalMalformedClause"))
-               "Inside a cond branch, I expect a question and answer pair [question answer] "
-               "but I see something else.")]
+               "Inside a cond branch, I expect a question and an answer, but I don't "
+               "see both things here.")]
        
        [(moby-error-type:conditional-clause-too-few-elements? error-type)
         `(span ((class "Error-ConditionalClauseTooFewElements"))
@@ -174,13 +174,16 @@
 
        [(moby-error-type:conditional-clause-too-many-elements? error-type)
         `(span ((class "Error-ConditionalClauseTooManyElements"))
-               "Inside a cond branch, I expect to see a question and a single answer, "
-               "but I see too many.")]
+               "Inside a cond branch, I expect to see a question and an answer, "
+               "but I see more than two things here.")]
        
        [(moby-error-type:branch-value-not-boolean? error-type)
         `(span ((class "Error-BranchValueNotBoolean"))
-               "I expected the answer's value to be a boolean, but instead I see "
-               ,(scheme-value-to-dom-sexp (moby-error-type:branch-value-not-boolean-observed error-type))
+               "I expected the answer's value to be a boolean expression, "
+               "(" (scheme-value-to-dom-sexp true) " or " (scheme-value-to-dom-sexp false) "), "
+               "but instead I see "
+               ,(scheme-value-to-dom-sexp 
+                 (moby-error-type:branch-value-not-boolean-observed error-type))
                ".")]
        
        [(moby-error-type:if-too-few-elements? error-type)
@@ -200,9 +203,9 @@
                      ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-who error-type))
                      " expects "
                      ,(arity-to-dom-sexp (moby-error-type:application-arity-expected error-type))
-                     " but instead I see "
+                     " inputs, but instead I see "
                      ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-observed error-type))
-                     ))]
+                     " inputs."))]
 
        [(moby-error-type:application-operator-not-a-function? error-type)
         `(span ((class "Error-ApplicationOperatorNotAFunction"))
@@ -219,8 +222,9 @@
                      ,(scheme-value-to-dom-sexp 
                        (moby-error-type:type-mismatch-who error-type))
                      " expects "
-                     ,(expected-value-to-dom-sexp
-                       (moby-error-type:type-mismatch-expected error-type))
+                     ,@(prepend-indefinite-article   
+                        (expected-value-to-dom-sexp
+                         (moby-error-type:type-mismatch-expected error-type)))
                      " as its "
                      ,(scheme-value-to-dom-sexp
                        (moby-error-type:type-mismatch-position error-type))
@@ -280,6 +284,7 @@
 
 
 ;; ordinal-ending: natural-number -> string
+;; Produces the ordinal ending of a number.  For example, 1 => st, 4 => th.
 (define (ordinal-ending n)
   (cond
     [(= (modulo (quotient n 10) 10) 1)
@@ -289,72 +294,131 @@
                       "th" "th" "th" "th" "th")
                (modulo n 10))]))
 
-          
+
+
+;; prepend-indefinite-article: dom -> (listof dom)
+;; Produces a list containting the appropriate indefinite article and the dom.
+(define (prepend-indefinite-article a-dom)
+  (list (indefinite-article (dom-string-content a-dom))
+        a-dom))
+
+
+;; indefinite-article: string -> string
+;; Tries to get the indefinite article of a word.
+(define (indefinite-article a-word)
+  (cond
+    [(begins-with-vowel-sound? a-word)
+     "an"]
+    [else 
+     "a"]))
+
+
+;; begins-with-vowel-sound?: string -> boolean
+;; Tries to produces true if there's a vowel sound at the beginning of the
+;; word.
+;; This is not quite right because it doesn't use a dictionary.
+(define (begins-with-vowel-sound? a-word)
+  (cond
+    [(= 0 (string-length a-word))
+     false]
+    [(vowel-character? (string-ref a-word 0))
+     true]
+    ;; Check to see if it's a "y" vowel sound
+    [(and (> (string-length a-word) 2)
+          (char=? (string-ref a-word 0) #\y)
+          (not (vowel-character? (string-ref a-word 1))))
+     true]
+    [else
+     false]))
+  
+
+;; vowel-character?: char -> boolean
+;; Produces true if the given character is a vowel character.
+(define (vowel-character? a-char)
+  (member a-char '(#\a #\e #\i #\o #\u)))
+    
+
 
 
 ;; stx-to-dom-sexp: stx -> dom
+;; Converts a stx to a dom s-expression.
 (define (stx-to-dom-sexp a-stx)
   (scheme-value-to-dom-sexp 
    (stx->datum a-stx)))
 
 
 
+;; dom-string-content: dom -> string
+;; Gets the string content of the dom.
+(define (dom-string-content a-dom)
+  (cond
+    [(string? a-dom)
+     a-dom]
+    [else
+     (foldl (lambda (a-dom rest)
+              (string-append rest (dom-string-content a-dom)))
+            ""
+            (rest (rest a-dom)))]))
 
+
+
+;; expected-value-to-dom-sexp: moby-expected -> dom
+;; Translates an expectation to a dom.
 (define (expected-value-to-dom-sexp expected)
   (cond 
     [(moby-expected:string? expected)
      `(span ((class "Expected-String"))
-            "<string>")]
+            "string")]
     [(moby-expected:integer? expected)
      `(span ((class "Expected-Integer"))
-            "<integer>")]
+            "integer")]
     [(moby-expected:natural? expected)
      `(span ((class "Expected-Natural"))
-            "<natural>")]
+            "natural")]
     [(moby-expected:rational? expected)
      `(span ((class "Expected-Rational"))
-            "<rational>")]
+            "rational")]
     [(moby-expected:real? expected)
      `(span ((class "Expected-Real"))
-            "<real>")]
+            "real")]
     [(moby-expected:complex? expected)
     `(span ((class "Expected-Complex"))
-           "<complex>")]
+           "complex")]
     [(moby-expected:number? expected)
      `(span ((class "Expected-Number"))
-            "<number>")]
+            "number")]
     [(moby-expected:boolean? expected)
      `(span ((class "Expected-Boolean"))
-            "<boolean>")]
+            "boolean")]
     [(moby-expected:char? expected)
      `(span ((class "Expected-Char"))
-            "<char>")]
+            "char")]
     [(moby-expected:symbol? expected)
      `(span ((class "Expected-Symbol"))
-            "<symbol>")]
+            "symbol")]
     [(moby-expected:list? expected)
      `(span ((class "Expected-List"))
-            "<list>")]
+            "list")]
     [(moby-expected:listof? expected)
      `(span ((class "Expected-Listof"))
-            "<listof "
+            "list of "
             (expected-value-to-dom-sexp (moby-expected:listof-thing expected))
-            ">" )]
+            "" )]
     [(moby-expected:vector? expected)
      `(span ((class "Expected-Vector"))
-            "<vector>")]
+            "vector")]
     [(moby-expected:struct? expected)
      `(span ((class "Expected-Struct"))
-            "<struct>")]
+            "struct")]
     [(moby-expected:box? expected)
      `(span ((class "Expected-Box"))
-            "<box>")]
+            "box")]
     [(moby-expected:hash? expected)
      `(span ((class "Expected-Hash"))
-            "<hash>")]
+            "hash")]
     [(moby-expected:function? expected)
      `(span ((class "Expected-Function"))
-            "<function>")]
+            "function")]
     [(moby-expected:something? expected)
      `(span ((class "Expected-Something"))
             ,(moby-expected:something-description expected))]))
