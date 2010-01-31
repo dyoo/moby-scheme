@@ -97,11 +97,11 @@
                (begin
                  (set! counter (add1 counter))
                  (hash-set! labeled-vals val (make-label counter))
-                 `(span ((class "SchemeValue:SharedLabel"))
-                        (span ((class "SchemeValue:SharedLabel.label")) 
+                 `(span ((class "SchemeValue-SharedLabel"))
+                        (span ((class "SchemeValue-SharedLabel.label")) 
                               ,(string-append "#" (number->string counter) "=")
                               )
-                        (span ((class "SchemeValue:SharedLabel.item"))
+                        (span ((class "SchemeValue-SharedLabel.item"))
                               ,(->dom* val false))))]
               [else
                (->dom* val true)]))
@@ -112,77 +112,77 @@
               [(and allow-labeling? 
                     (label? (hash-ref labeled-vals val #f)))
                (local [(define a-label (hash-ref labeled-vals val #f))]
-                 `(span ((class "SchemeValue:SharedReference"))
+                 `(span ((class "SchemeValue-SharedReference"))
                         ,(string-append "#" (number->string (label-n a-label)))))]
               ;;;;
               
               [(string? val)
-               `(span ((class "SchemeValue:String"))
+               `(span ((class "SchemeValue-String"))
                       ,(string-append "\"" val "\""))]
               
               [(number? val)
-               `(span ((class "SchemeValue:Number"))
+               `(span ((class "SchemeValue-Number"))
                       ,(number->string val))]
               
               [(boolean? val)
-               `(span ((class "SchemeValue:Boolean"))
+               `(span ((class "SchemeValue-Boolean"))
                       ,(if val "true" "false"))]
               
               [(char? val)
-               `(span ((class "SchemeValue:Character"))
+               `(span ((class "SchemeValue-Character"))
                       ,(string #\# #\\ val))]
               
               [(symbol? val)
-               `(span ((class "SchemeValue:Symbol"))
+               `(span ((class "SchemeValue-Symbol"))
                       ,(symbol->string val))]
               
               [(list? val)
                (begin
-                 `(span ((class "SchemeValue:List"))
-                        (span ((class "SchemeValue:List.lparen")) "(")
+                 `(span ((class "SchemeValue-List"))
+                        (span ((class "SchemeValue-List.lparen")) "(")
                         ,@(separate-with-spaces (cons 
-                                                 `(span ((class "SchemeValue:List.keyword")) "list")
+                                                 `(span ((class "SchemeValue-List.keyword")) "list")
                                                  (map (lambda (x)
-                                                        `(span ((class "SchemeValue:List.item"))
+                                                        `(span ((class "SchemeValue-List.item"))
                                                                ,(->dom x)))
                                                       val)))
-                        (span ((class "SchemeValue:List.rparen")) ")")))]
+                        (span ((class "SchemeValue-List.rparen")) ")")))]
 
               [(vector? val)
                (begin
-                 `(span ((class "SchemeValue:Vector"))
-                        (span ((class "SchemeValue:Vector.lparen")) "(")
+                 `(span ((class "SchemeValue-Vector"))
+                        (span ((class "SchemeValue-Vector.lparen")) "(")
                         ,@(separate-with-spaces (cons
                                                  `(span ((class "SchemeValue.Vector.keyword")) "vector")
                                                  (map (lambda (x)
-                                                        `(span ((class "SchemeValue:Vector.item"))
+                                                        `(span ((class "SchemeValue-Vector.item"))
                                                               ,(->dom x)))
                                                       (vector->list val))))
-                        (span ((class "SchemeValue:Vector.rparen")) ")")))]
+                        (span ((class "SchemeValue-Vector.rparen")) ")")))]
               
               [(struct? val)
-               `(span ((class "SchemeValue:Structure"))
+               `(span ((class "SchemeValue-Structure"))
                       ;; FIXME: we need primitives to get at structure contents.
                       "<struct>"
                       )]
               
               [(box? val)
                (begin
-                 `(span ((class "SchemeValue:Box"))
-                        (span ((class "SchemeValue:Box.lparen")) "(")
-                        (span ((class "SchemeValue:Box.keyword")) "box")
+                 `(span ((class "SchemeValue-Box"))
+                        (span ((class "SchemeValue-Box.lparen")) "(")
+                        (span ((class "SchemeValue-Box.keyword")) "box")
                         " "
-                        (span ((class "SchemeValue:Box.item")) 
+                        (span ((class "SchemeValue-Box.item")) 
                               ,(->dom (unbox val)))
-                        (span ((class "SchemeValue:Box.rparen")) ")")))]
+                        (span ((class "SchemeValue-Box.rparen")) ")")))]
               
               [(hash? val)
-               `(span ((class "SchemeValue:Hash"))
+               `(span ((class "SchemeValue-Hash"))
                       ;; FIXME: we should show contents.
                       "<hash>")]
               
               [(procedure? val)
-               `(span ((class "SchemeValue:Function"))
+               `(span ((class "SchemeValue-Function"))
                       ;; FIXME
                       ;; We need to get at the function name, if we can get at it.
                       ;; We also would like inspectors for the arity and
@@ -193,7 +193,7 @@
                  ...]
               
               [else
-               `(span ((class "SchemeValue:DisplayedObject"))
+               `(span ((class "SchemeValue-DisplayedObject"))
                       ,(format "~a" val))]))]
     (begin
       (initialize-shared-hash! val)
