@@ -293,6 +293,13 @@ function init() {
 	    
 	},
 
+	testBeginEmptyBody: function() {
+	    this.assertMobyRaise(isBeginBodyEmpty,
+				 function(){
+				     run("(begin)")
+				 });
+	},
+	
 	testBoxMutation: function() {
 	    this.assert(isEqual(number(2),
 			    	run("(define bx (box 5))" +

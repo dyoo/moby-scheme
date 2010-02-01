@@ -223,13 +223,7 @@
     
     ;; (begin ...)
     [(stx-begins-with? expr 'begin)
-     (local [(define begin-symbol-stx (first (stx-e expr)))
-             (define exprs (rest (stx-e expr)))
-             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-       (list (datum->stx #f (cons begin-symbol-stx
-                                  (first desugared-exprs+pinfo))
-                         (stx-loc expr))
-             (second desugared-exprs+pinfo)))]
+     (desugar-begin expr pinfo)]
     
     ;; (set! identifier value)
     [(stx-begins-with? expr 'set!)
@@ -322,6 +316,21 @@
                         (format "Unable to desugar ~s" (stx->datum expr))
                         (list))))]))
 
+
+;; desugar-begin: expr pinfo -> (list expr pinfo)
+;; desugars the use of begin.
+(define (desugar-begin expr pinfo)
+  (cond [(= 1 (length (stx-e expr)))
+         (raise (make-moby-error (stx-loc expr)
+                                 (make-moby-error-type:begin-body-empty)))]
+        [else
+         (local [(define begin-symbol-stx (first (stx-e expr)))
+                 (define exprs (rest (stx-e expr)))
+                 (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+           (list (datum->stx #f (cons begin-symbol-stx
+                                      (first desugared-exprs+pinfo))
+                             (stx-loc expr))
+                 (second desugared-exprs+pinfo)))]))
 
 
 ;; (if test-expr then-expr else-expr)

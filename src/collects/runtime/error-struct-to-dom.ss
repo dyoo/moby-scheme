@@ -200,6 +200,10 @@
                "I expected only a test, a consequent, and an alternative, "
                "but I see more than three of these.")]
        
+       [(moby-error-type:begin-body-empty? error-type)
+        `(span ((class "Error-BeginBodyEmpty"))
+               "Inside a begin, I expect to see a body, but I don't see anything.")]
+       
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error-ApplicationArity"))
                (span ((class "Error.reason"))

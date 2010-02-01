@@ -105,6 +105,8 @@ var isIfTooFewElements =
     extract("moby-error-type:if-too-few-elements?");
 var isIfTooManyElements = 
     extract("moby-error-type:if-too-many-elements?");
+var isBeginBodyEmpty = 
+    extract("moby-error-type:begin-body-empty?");
 
 
 //////////////////////////////////////////////////////////////////////
