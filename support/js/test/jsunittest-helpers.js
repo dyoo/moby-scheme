@@ -117,10 +117,27 @@ var isBooleanChainTooFewElements =
     extract("moby-error-type:boolean-chain-too-few-elements?");
 var isExpectedListOfIdentifiers =
     extract("moby-error-type:expected-list-of-identifiers?");
+
 var isLambdaTooFewElements =
     extract("moby-error-type:lambda-too-few-elements?");
+
 var isLambdaTooManyElements =
     extract("moby-error-type:lambda-too-many-elements?");
+
+
+var isQuoteTooFewElements = 
+    extract("moby-error-type:quote-too-few-elements?");
+var isQuoteTooManyElements = 
+    extract("moby-error-type:quote-too-many-elements?");
+var isUnquoteTooFewElements = 
+    extract("moby-error-type:unquote-too-few-elements?");
+var isUnquoteTooFewElements = 
+    extract("moby-error-type:unquote-too-many-elements?");
+var isQuasiquoteTooFewElements = 
+    extract("moby-error-type:quasiquote-too-few-elements?");
+var isQuasiquoteTooFewElements = 
+    extract("moby-error-type:quasiquote-too-many-elements?");
+
 
 
 
@@ -135,7 +152,7 @@ JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk) 
     } catch(e) {
 	this.assert(isMobyError(e), "not a moby error");
 	this.assert(isMobyErrorType(mobyErrorType(e)));
-	this.assert(predicate(mobyErrorType(e)), "not a mobyErrorType");
+	this.assert(predicate(mobyErrorType(e)), "predicate fails");
     }
 };
 

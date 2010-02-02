@@ -244,8 +244,6 @@ function init() {
 
 	
 	testAnd: function() {
-// 	    this.assert(isEqual(FALSE, run("(and false)")));
-// 	    this.assert(isEqual(TRUE, run("(and true)")));
 	    this.assert(isEqual(FALSE, run("(and true false)")));
 	    this.assert(isEqual(TRUE, run("(and true true)")));
 	    this.assert(isEqual(FALSE, run("(and false true)")));
@@ -261,8 +259,6 @@ function init() {
 
 
 	testOr: function() {
-// 	    this.assert(isEqual(TRUE, run("(or true)")))
-// 	    this.assert(isEqual(FALSE, run("(or false)")))
 	    this.assert(isEqual(TRUE, run("(or true false)")));
 	    this.assert(isEqual(TRUE, run("(or true true)")));
 	    this.assert(isEqual(TRUE, run("(or false true)")));
@@ -570,24 +566,41 @@ function init() {
 	},
 	
 	testQuoteMissingExpression: function() {
-	    this.assertMobyRaise(isMissingExpression,
+	    this.assertMobyRaise(isQuoteTooFewElements,
 				 function() { run("(quote)"); });
 	    this.assert(isEqual(run("(list 'quote)"),
 				run("(quote (quote))")));
 	},
 
+	testQuoteTooManyElements: function() {
+	    this.assertMobyRaise(isQuoteTooManyElements,
+				 function() { run("(quote a b)"); });
+	},
+
 
 	testQuasiquoteMissingExpression: function() {
-	    this.assertMobyRaise(isMissingExpression,
+	    this.assertMobyRaise(isQuasiquoteTooFewElements,
 				 function() { run("(quasiquote)"); });
 	    this.assert(isEqual(run("(list 'quasiquote)"),
 				run("(quasiquote (quasiquote))")));
 	},
 
+	testQuasiquoteTooManyElements: function() {
+	    this.assertMobyRaise(isQuasiquoteTooManyElements,
+				 function() { run("(quasiquote 1 2)"); });
+	},
+
+
 	testUnquoteMissingExpression: function() {
-	    this.assertMobyRaise(isMissingExpression,
+	    this.assertMobyRaise(isUnquoteTooFewElements,
 				 function() { run("(quote (unquote))"); });
 	},
+
+	testUnquoteTooManyElements: function() {
+	    this.assertMobyRaise(isUnquoteTooManyElements,
+				 function() { run("(quasiquote (unquote x y))"); });
+	},
+
 
 
 	testUnquote: function() {

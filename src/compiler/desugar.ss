@@ -284,7 +284,7 @@
     
     ;; Quoted datums
     [(stx-begins-with? expr 'quote)
-     (list expr pinfo)]
+     (desugar-quote expr pinfo)]
     
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
@@ -809,6 +809,20 @@
     
     (list (handle-quoted a-stx 0) 
           pinfo)))
+
+
+
+;; desugar-quote: expr pinfo -> (list expr pinfo)
+(define (desugar-quote expr pinfo)
+  (cond
+    [(< (length (stx-e expr)) 2)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:quote-too-few-elements)))]
+    [(> (length (stx-e expr)) 2)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:quote-too-many-elements)))]
+    [else
+     (list expr pinfo)]))
 
 
 

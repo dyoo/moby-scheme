@@ -229,6 +229,14 @@
         `(span ((class "Error-LambdaTooManyElements"))
                "Inside a lambda, I expect to see a list of arguments and a single body, "
                "but I see more than these two.")]
+
+       [(moby-error-type:quote-too-few-elements? error-type)
+        `(span ((class "Error-QuoteTooFewElements"))
+               "Inside a quote, I expect to see a single argument, but I don't see one.")]
+       
+       [(moby-error-type:quote-too-many-elements? error-type)
+        `(span ((class "Error-quoteTooManyElements"))
+               "Inside a quote, I expect to single a single element, but I see more than one.")]
        
        [(moby-error-type:when-no-body? error-type)
         `(span ((class "Error-WhenNoBody"))

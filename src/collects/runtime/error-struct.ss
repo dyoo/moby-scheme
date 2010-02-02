@@ -38,6 +38,9 @@
 (define-struct moby-error-type:if-too-few-elements ())
 (define-struct moby-error-type:if-too-many-elements ())
 
+(define-struct moby-error-type:quote-too-few-elements ())
+(define-struct moby-error-type:quote-too-many-elements ())
+
 (define-struct moby-error-type:begin-body-empty ())
 
 (define-struct moby-error-type:boolean-chain-too-few-elements (id))
@@ -95,6 +98,10 @@
 
       (moby-error-type:lambda-too-many-elements? x)
       (moby-error-type:lambda-too-few-elements? x)
+
+      (moby-error-type:quote-too-few-elements? x)
+      (moby-error-type:quote-too-many-elements? x)
+      
       (moby-error-type:when-no-body? x)
       (moby-error-type:unless-no-body? x)
 
@@ -201,6 +208,9 @@
 
  [struct moby-error-type:lambda-too-many-elements ()]
  [struct moby-error-type:lambda-too-few-elements ()]
+
+ [struct moby-error-type:quote-too-few-elements ()]
+ [struct moby-error-type:quote-too-many-elements ()]
  
  [struct moby-error-type:when-no-body ()]
  [struct moby-error-type:unless-no-body ()]
