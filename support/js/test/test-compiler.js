@@ -297,6 +297,10 @@ function init() {
 	},
 
 
+	testRequire: function() {
+	    run("(require moby/runtime/error-struct)");
+	},
+
 
 	testBegin: function() {
 	    // normal behaviour
