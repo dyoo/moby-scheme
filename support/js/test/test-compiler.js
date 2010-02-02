@@ -537,6 +537,36 @@ function init() {
 	    run("(check-error (/ 1 0) \"division by zero\")");
 	},
 	
+	testQuoteMissingExpression: function() {
+	    this.assertMobyRaise(isMissingExpression,
+				 function() { run("(quote)"); });
+	    this.assert(isEqual(run("(list 'quote)"),
+				run("(quote (quote))")));
+	},
+
+
+	testQuasiquoteMissingExpression: function() {
+	    this.assertMobyRaise(isMissingExpression,
+				 function() { run("(quasiquote)"); });
+	    this.assert(isEqual(run("(list 'quasiquote)"),
+				run("(quasiquote (quasiquote))")));
+	},
+
+	testUnquoteMissingExpression: function() {
+	    this.assertMobyRaise(isMissingExpression,
+				 function() { run("(quote (unquote))"); });
+	},
+
+
+	testUnquote: function() {
+	    this.assert(isEqual(run("(list 'unquote 'pi)"),
+				run("(quote (unquote pi))")));
+
+	    this.assert(isEqual(run("pi"),
+				run("(quasiquote (unquote pi))")));
+
+	},
+
 
 	testQuasiquotation: function() {
 	    this.assert(isEqual(run("'(unquote x)"),
