@@ -32,6 +32,12 @@ var isMobyError = function(x) {
     var result = errorStructModule.getFunction("moby-error?")(x);
     return result;
 }
+
+var isMobyErrorType = function(x) {
+    var result = errorStructModule.getFunction("moby-error-type?")(x);
+    return result;
+}
+
 var mobyErrorType = function(x) {
     var result = errorStructModule.getFunction("moby-error-error-type")(x);
     return result;
@@ -107,6 +113,9 @@ var isIfTooManyElements =
     extract("moby-error-type:if-too-many-elements?");
 var isBeginBodyEmpty = 
     extract("moby-error-type:begin-body-empty?");
+var isBooleanChainTooFewElements = 
+    extract("moby-error-type:boolean-chain-too-few-elements?");
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -118,8 +127,9 @@ JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk) 
 	thunk();
 	this.fail("assertMobyRaise: expected exception hasn't been raised");
     } catch(e) {
-	this.assert(isMobyError(e));
-	this.assert(predicate(mobyErrorType(e)));
+	this.assert(isMobyError(e), "not a moby error");
+	this.assert(isMobyErrorType(mobyErrorType(e)));
+	this.assert(predicate(mobyErrorType(e)), "not a mobyErrorType");
     }
 };
 

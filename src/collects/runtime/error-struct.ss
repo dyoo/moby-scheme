@@ -39,6 +39,8 @@
 
 (define-struct moby-error-type:begin-body-empty ())
 
+(define-struct moby-error-type:boolean-chain-too-few-elements (id))
+
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:application-operator-not-a-function (who))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
@@ -79,6 +81,7 @@
       (moby-error-type:branch-value-not-boolean? x)
       (moby-error-type:if-too-few-elements? x)
       (moby-error-type:if-too-many-elements? x)
+      (moby-error-type:boolean-chain-too-few-elements? x)
       (moby-error-type:begin-body-empty? x)
       (moby-error-type:application-arity? x)
       (moby-error-type:application-operator-not-a-function? x)
@@ -175,6 +178,8 @@
  [struct moby-error-type:if-too-many-elements ()]  ;; (if x y z w)
 
  [struct moby-error-type:begin-body-empty ()]      ;; e.g. (begin)
+ 
+ [struct moby-error-type:boolean-chain-too-few-elements ([id symbol?])]
  
  [struct moby-error-type:application-arity ([who any/c]
                                             [expected arity?]

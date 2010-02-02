@@ -203,6 +203,12 @@
        [(moby-error-type:begin-body-empty? error-type)
         `(span ((class "Error-BeginBodyEmpty"))
                "Inside a begin, I expect to see a body, but I don't see anything.")]
+
+       [(moby-error-type:boolean-chain-too-few-elements? error-type)
+        `(span ((class "Error-BooleanChainTooFewElements"))
+               "Inside a " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:boolean-chain-too-few-elements-id error-type))
+               ", I expect to see at least two expressions, but I don't see them both.")]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error-ApplicationArity"))

@@ -242,26 +242,13 @@
     [(stx-begins-with? expr 'if)
      (desugar-if expr pinfo)]
     
-    
     ;; (and exprs ...)
     [(stx-begins-with? expr 'and)
-     (local [(define and-symbol-stx (first (stx-e expr)))
-             (define exprs (rest (stx-e expr)))
-             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-       (list (datum->stx #f (cons and-symbol-stx
-                                  (first desugared-exprs+pinfo))
-                         (stx-loc expr))
-             (second desugared-exprs+pinfo)))]
+     (desugar-boolean-chain expr pinfo)]
     
     ;; (or exprs ...)
     [(stx-begins-with? expr 'or)
-     (local [(define or-symbol-stx (first (stx-e expr)))
-             (define exprs (rest (stx-e expr)))
-             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-       (list (datum->stx #f (cons or-symbol-stx
-                                  (first desugared-exprs+pinfo))
-                         (stx-loc expr))
-             (second desugared-exprs+pinfo)))]
+     (desugar-boolean-chain expr pinfo)]
     
     ;; (lambda (args ...) body)
     [(stx-begins-with? expr 'lambda)
@@ -362,6 +349,24 @@
     [(> (length (stx-e expr)) 4)
      (raise (make-moby-error (stx-loc expr)
                              (make-moby-error-type:if-too-many-elements)))]))
+
+
+;; desugar-boolean-chain: expr pinfo -> (list expr pinfo)
+;; Desugars AND and OR.
+(define (desugar-boolean-chain expr pinfo)
+  (cond
+    [(< (length (stx-e expr)) 3)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:boolean-chain-too-few-elements
+                              (stx-e (first (stx-e expr))))))]
+    [else
+     (local [(define boolean-chain-stx (first (stx-e expr)))
+             (define exprs (rest (stx-e expr)))
+             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+       (list (datum->stx #f (cons boolean-chain-stx
+                                  (first desugared-exprs+pinfo))
+                         (stx-loc expr))
+             (second desugared-exprs+pinfo)))]))
 
 
 
