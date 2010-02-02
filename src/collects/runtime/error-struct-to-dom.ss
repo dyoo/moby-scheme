@@ -120,6 +120,16 @@
                      ,(stx-to-dom-sexp (moby-error-type:expected-identifier-observed error-type))
                      " instead."))]
        
+       [(moby-error-type:expected-list-of-identifiers? error-type)
+        `(span ((class "Error-ExpectedListOfIdentifiers"))
+               (span ((class "Error.reason"))
+                     "Within " ,@(prepend-indefinite-article 
+                                  (stx-to-dom-sexp 
+                                   (moby-error-type:expected-list-of-identifiers-who error-type)))
+                     ", I expected a list of identifiers but received "
+                     ,(stx-to-dom-sexp (moby-error-type:expected-list-of-identifiers-observed error-type))
+                     " instead."))]
+       
        [(moby-error-type:undefined-identifier? error-type)
         `(span ((class "Error-UndefinedIdentifier"))
                (span ((class "Error.reason"))
@@ -209,6 +219,26 @@
                "Inside a " 
                ,(scheme-value-to-dom-sexp (moby-error-type:boolean-chain-too-few-elements-id error-type))
                ", I expect to see at least two expressions, but I don't see them both.")]
+
+       [(moby-error-type:lambda-too-few-elements? error-type)
+        `(span ((class "Error-LambdaTooFewElements"))
+               "Inside a lambda, I expect to see a list of arguments and a single body, "
+               "but I don't see both of these.")]
+       
+       [(moby-error-type:lambda-too-many-elements? error-type)
+        `(span ((class "Error-LambdaTooManyElements"))
+               "Inside a lambda, I expect to see a list of arguments and a single body, "
+               "but I see more than these two.")]
+       
+       [(moby-error-type:when-no-body? error-type)
+        `(span ((class "Error-WhenNoBody"))
+               "Inside a " (scheme-value-to-dom-sexp 'when)
+               ", I expect to see a body, but I don't see one.")]
+       
+       [(moby-error-type:unless-no-body? error-type)
+        `(span ((class "Error-WhenNoBody"))
+               "Inside an " (scheme-value-to-dom-sexp 'unless) 
+               ", I expect to see a body, but I don't see one.")]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error-ApplicationArity"))

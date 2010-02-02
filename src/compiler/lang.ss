@@ -112,12 +112,29 @@
 
 (base:define-struct (moby-failure exn:fail) (val))
 
+
+
+
+  
+;; dom-string-content: dom -> string
+;; Gets the string content of the dom.
+(define (dom-string-content a-dom)
+  (cond
+    [(string? a-dom)
+     a-dom]
+    [else
+     (foldl (lambda (a-dom rest)
+              (string-append rest (dom-string-content a-dom)))
+            ""
+            (cdr (cdr a-dom)))]))
+
+
 (define-syntax (my-raise stx)
   (syntax-case stx ()
     [(_ val)
      (syntax/loc stx
        (base:raise (make-moby-failure (base:format "~s" (if (moby-error? val)
-                                                            (moby-error-struct-to-dom-sexp val)
+                                                            (dom-string-content (moby-error-struct-to-dom-sexp val))
                                                             val))
                                       (base:current-continuation-marks) 
                                       val)))]))

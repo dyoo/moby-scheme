@@ -115,6 +115,12 @@ var isBeginBodyEmpty =
     extract("moby-error-type:begin-body-empty?");
 var isBooleanChainTooFewElements = 
     extract("moby-error-type:boolean-chain-too-few-elements?");
+var isExpectedListOfIdentifiers =
+    extract("moby-error-type:expected-list-of-identifiers?");
+var isLambdaTooFewElements =
+    extract("moby-error-type:lambda-too-few-elements?");
+var isLambdaTooManyElements =
+    extract("moby-error-type:lambda-too-many-elements?");
 
 
 
