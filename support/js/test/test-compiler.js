@@ -131,6 +131,8 @@ function init() {
 	testLambda: function() {
 	    this.assert(isEqual(number(25),
 				run("((lambda (x) (* x x)) 5)")));
+	    this.assert(isEqual(number(42),
+				run("((lambda () 42))")));
 	},
 
 
@@ -147,6 +149,9 @@ function init() {
 	},
 
 	testLambdaNotSingleBody: function() {
+ 	    this.assertMobyRaise(isLambdaTooFewElements,
+ 				 function() { run("(lambda)")});
+
  	    this.assertMobyRaise(isLambdaTooFewElements,
  				 function() { run("(lambda ())")});
 

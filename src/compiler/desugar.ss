@@ -359,6 +359,12 @@
 ;; desugar-lambda: expr pinfo -> (list expr pinfo)
 (define (desugar-lambda expr pinfo)
   (begin
+    (when (< (length (stx-e expr)) 3)
+      (raise (make-moby-error (stx-loc expr)
+                              (make-moby-error-type:lambda-too-few-elements))))
+    (when (> (length (stx-e expr)) 3)
+      (raise (make-moby-error (stx-loc expr)
+                              (make-moby-error-type:lambda-too-many-elements))))
     ;; Check number of elements in the lambda
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
     
