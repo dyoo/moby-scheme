@@ -223,13 +223,7 @@
     
     ;; (begin ...)
     [(stx-begins-with? expr 'begin)
-     (local [(define begin-symbol-stx (first (stx-e expr)))
-             (define exprs (rest (stx-e expr)))
-             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-       (list (datum->stx #f (cons begin-symbol-stx
-                                  (first desugared-exprs+pinfo))
-                         (stx-loc expr))
-             (second desugared-exprs+pinfo)))]
+     (desugar-begin expr pinfo)]
     
     ;; (set! identifier value)
     [(stx-begins-with? expr 'set!)
@@ -269,20 +263,17 @@
                          (stx-loc expr))
              (second desugared-exprs+pinfo)))]
     
+    ;; (when test body ...)
+    [(stx-begins-with? expr 'when)
+     (desugar-when expr pinfo)]
+    
+    ;; (unless test body ...)
+    [(stx-begins-with? expr 'unless)
+     (desugar-unless expr pinfo)]
+    
     ;; (lambda (args ...) body)
     [(stx-begins-with? expr 'lambda)
-     (begin
-       (check-single-body-stx! (rest (rest (stx-e expr))) expr)
-       (local [(define lambda-symbol-stx (first (stx-e expr)))
-               (define args (second (stx-e expr)))
-               (define body (third (stx-e expr)))
-               (define desugared-body+pinfo (desugar-expression body pinfo))]
-         (list (datum->stx #f (list lambda-symbol-stx
-                                    args
-                                    (first desugared-body+pinfo))
-                           (stx-loc expr))
-               ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
-               (second desugared-body+pinfo))))]
+     (desugar-lambda expr pinfo)]
     
     ;; Numbers
     [(number? (stx-e expr))
@@ -322,6 +313,16 @@
                         (format "Unable to desugar ~s" (stx->datum expr))
                         (list))))]))
 
+(define (desugar-begin expr pinfo)
+  (local [(define begin-symbol-stx (first (stx-e expr)))
+          (define exprs (rest (stx-e expr)))
+          (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+    (list (datum->stx #f (cons begin-symbol-stx
+                               (first desugared-exprs+pinfo))
+                      (stx-loc expr))
+          (second desugared-exprs+pinfo))))
+
+
 
 
 ;; (if test-expr then-expr else-expr)
@@ -353,6 +354,74 @@
     [(> (length (stx-e expr)) 4)
      (raise (make-moby-error (stx-loc expr)
                              (make-moby-error-type:if-too-many-elements)))]))
+
+
+;; desugar-lambda: expr pinfo -> (list expr pinfo)
+(define (desugar-lambda expr pinfo)
+  (begin
+    ;; Check number of elements in the lambda
+    (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+    
+    ;; Check for list of identifiers 
+    (when (not (list? (stx-e (second (stx-e expr)))))
+      (raise (make-moby-error (stx-loc expr)
+                              (make-moby-error-type:expected-list-of-identifiers 
+                               (first (stx-e expr))
+                               (second (stx-e expr))))))
+    (check-duplicate-identifiers! (stx-e (second (stx-e expr))))
+
+    (local [(define lambda-symbol-stx (first (stx-e expr)))
+            (define args (second (stx-e expr)))
+            (define body (third (stx-e expr)))
+            (define desugared-body+pinfo (desugar-expression body pinfo))]
+      (list (datum->stx #f (list lambda-symbol-stx
+                                 args
+                                 (first desugared-body+pinfo))
+                        (stx-loc expr))
+            ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
+            (second desugared-body+pinfo)))))
+
+
+;; desugar-when: expr pinfo -> (list expr pinfo)
+(define (desugar-when expr pinfo)
+  (cond 
+    [(< (length (stx-e expr)) 3)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:when-no-body)))]
+    [else
+     (local [(define test-stx (second (stx-e expr)))
+             (define desugared-body+pinfo (desugar-expressions (rest (stx-e expr)) pinfo))
+             (define body-stx (datum->stx #f 
+                                          `(begin ,@(first desugared-body+pinfo))
+                                          (stx-loc expr)))]
+       (list (datum->stx #f
+                   `(if ,test-stx
+                        ,body-stx
+                        (void))
+                   (stx-loc expr))
+             (second desugared-body+pinfo)))]))
+
+
+;; desugar-unless: expr pinfo -> (list expr pinfo)
+(define (desugar-unless expr pinfo)
+  (cond 
+    [(< (length (stx-e expr)) 3)
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:unless-no-body)))]
+    [else
+     (local [(define test-stx (second (stx-e expr)))
+             (define desugared-body+pinfo (desugar-expressions (rest (stx-e expr)) pinfo))
+             (define body-stx (datum->stx #f 
+                                          `(begin ,@(first desugared-body+pinfo))
+                                          (stx-loc expr)))]
+       (list (datum->stx #f
+                   `(if ,test-stx
+                        (void)
+                        ,body-stx)
+                   (stx-loc expr))
+             (second desugared-body+pinfo)))]))
+
+
 
 
 
@@ -439,7 +508,6 @@
                                (make-moby-error-type:generic-syntactic-error
                                 (format "Not a case clause: ~s" (stx->datum an-expr))
                                 (list))))])))
-
 
 
 

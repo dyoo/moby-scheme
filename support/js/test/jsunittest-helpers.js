@@ -105,6 +105,13 @@ var isIfTooFewElements =
     extract("moby-error-type:if-too-few-elements?");
 var isIfTooManyElements = 
     extract("moby-error-type:if-too-many-elements?");
+var isExpectedListOfIdentifiers =
+    extract("moby-error-type:expected-list-of-identifiers?");
+var isLambdaTooFewElements =
+    extract("moby-error-type:lambda-too-few-elements?");
+var isLambdaTooManyElements =
+    extract("moby-error-type:lambda-too-many-elements?");
+
 
 
 //////////////////////////////////////////////////////////////////////

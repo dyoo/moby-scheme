@@ -20,6 +20,7 @@
 (define-struct moby-error-type:missing-expression (token))
 (define-struct moby-error-type:duplicate-identifier (id second-location))
 (define-struct moby-error-type:expected-identifier (observed))
+(define-struct moby-error-type:expected-list-of-identifiers (who observed))
 (define-struct moby-error-type:undefined-identifier (id))
 (define-struct moby-error-type:structure-identifier-not-expression (id))
 (define-struct moby-error-type:provided-name-not-defined (id))
@@ -36,6 +37,12 @@
 
 (define-struct moby-error-type:if-too-few-elements ())
 (define-struct moby-error-type:if-too-many-elements ())
+
+(define-struct moby-error-type:lambda-too-few-elements ())
+(define-struct moby-error-type:lambda-too-many-elements ())
+
+(define-struct moby-error-type:when-no-body ())
+(define-struct moby-error-type:unless-no-body ())
 
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:application-operator-not-a-function (who))
@@ -63,6 +70,7 @@
       (moby-error-type:missing-expression? x)
       (moby-error-type:duplicate-identifier? x)
       (moby-error-type:expected-identifier? x)
+      (moby-error-type:expected-list-of-identifiers? x)
       (moby-error-type:undefined-identifier? x)
       (moby-error-type:structure-identifier-not-expression? x)
       (moby-error-type:provided-name-not-defined? x)
@@ -77,6 +85,10 @@
       (moby-error-type:branch-value-not-boolean? x)
       (moby-error-type:if-too-few-elements? x)
       (moby-error-type:if-too-many-elements? x)
+      (moby-error-type:lambda-too-many-elements? x)
+      (moby-error-type:lambda-too-few-elements? x)
+      (moby-error-type:when-no-body? x)
+      (moby-error-type:unless-no-body? x)
       (moby-error-type:application-arity? x)
       (moby-error-type:application-operator-not-a-function? x)
       (moby-error-type:type-mismatch? x)
@@ -153,6 +165,8 @@
  [struct moby-error-type:duplicate-identifier ([id symbol?]
                                                [second-location Loc?])]
  [struct moby-error-type:expected-identifier ([observed stx?])]
+ [struct moby-error-type:expected-list-of-identifiers ([who stx?]
+                                                       [observed stx?])]
  [struct moby-error-type:undefined-identifier ([id symbol?])]
  [struct moby-error-type:structure-identifier-not-expression ([id symbol?])]
  [struct moby-error-type:provided-name-not-defined ([id symbol?])]
@@ -171,6 +185,12 @@
  [struct moby-error-type:if-too-few-elements ()]   ;; e.g. (if x)
  [struct moby-error-type:if-too-many-elements ()]  ;; (if x y z w)
 
+ 
+ [struct moby-error-type:lambda-too-many-elements ()]
+ [struct moby-error-type:lambda-too-few-elements ()]
+ 
+ [struct moby-error-type:when-no-body ()]
+ [struct moby-error-type:unless-no-body ()]
  
  
  [struct moby-error-type:application-arity ([who any/c]

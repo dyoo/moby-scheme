@@ -127,10 +127,33 @@ function init() {
 				    "(f 3)")));
 	    
 	},
+
 	testLambda: function() {
 	    this.assert(isEqual(number(25),
 				run("((lambda (x) (* x x)) 5)")));
 	},
+
+
+	testLambdaBadListOfArguments: function() {
+	    this.assertMobyRaise(isDuplicateIdentifier,
+				 function() { run("(lambda (x x) (* x x))")});
+
+	    this.assertMobyRaise(isExpectedIdentifier,
+				 function() { run("(lambda (x 1) (* x x))")});
+
+ 	    this.assertMobyRaise(isExpectedListOfIdentifiers,
+ 				 function() { run("(lambda 42 (* x x))")});
+
+	},
+
+	testLambdaNotSingleBody: function() {
+ 	    this.assertMobyRaise(isLambdaTooFewElements,
+ 				 function() { run("(lambda ())")});
+
+ 	    this.assertMobyRaise(isLambdaTooManyElements,
+ 				 function() { run("(lambda () 1 2 3)")});
+	},
+
 
 
 	testDivisionByZero: function() {
