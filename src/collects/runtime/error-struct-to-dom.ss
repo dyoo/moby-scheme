@@ -235,8 +235,33 @@
                "Inside a quote, I expect to see a single argument, but I don't see one.")]
        
        [(moby-error-type:quote-too-many-elements? error-type)
-        `(span ((class "Error-quoteTooManyElements"))
+        `(span ((class "Error-QuoteTooManyElements"))
                "Inside a quote, I expect to single a single element, but I see more than one.")]
+
+       [(moby-error-type:quasiquote-too-few-elements? error-type)
+        `(span ((class "Error-QuasiquoteTooFewElements"))
+               "Inside a quasiquote, I expect to see a single argument, but I don't see one.")]
+       
+       [(moby-error-type:quasiquote-too-many-elements? error-type)
+        `(span ((class "Error-QuasiquoteTooManyElements"))
+               "Inside a quasiquote, I expect to single a single element, but I see more than one.")]
+
+       [(moby-error-type:unquote-too-few-elements? error-type)
+        `(span ((class "Error-UnquoteTooFewElements"))
+               "Inside an unquote, I expect to see a single argument, but I don't see one.")]
+       
+       [(moby-error-type:unquote-too-many-elements? error-type)
+        `(span ((class "Error-UnquoteTooManyElements"))
+               "Inside a unquote, I expect to single a single element, but I see more than one.")]
+
+       [(moby-error-type:unquote-splicing-too-few-elements? error-type)
+        `(span ((class "Error-UnquoteTooFewElements"))
+               "Inside an unquote-splicing, I expect to see a single argument, but I don't see one.")]
+       
+       [(moby-error-type:unquote-splicing-too-many-elements? error-type)
+        `(span ((class "Error-UnquoteTooManyElements"))
+               "Inside a unquote-splicing, I expect to single a single element, but I see more than one.")]
+
        
        [(moby-error-type:when-no-body? error-type)
         `(span ((class "Error-WhenNoBody"))

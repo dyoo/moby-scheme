@@ -386,7 +386,7 @@
                                (first (stx-e expr))
                                (second (stx-e expr))))))
     (check-duplicate-identifiers! (stx-e (second (stx-e expr))))
-
+    
     (local [(define lambda-symbol-stx (first (stx-e expr)))
             (define args (second (stx-e expr)))
             (define body (third (stx-e expr)))
@@ -412,10 +412,10 @@
                                           `(begin ,@(first desugared-body+pinfo))
                                           (stx-loc expr)))]
        (list (datum->stx #f
-                   `(if ,test-stx
-                        ,body-stx
-                        (void))
-                   (stx-loc expr))
+                         `(if ,test-stx
+                              ,body-stx
+                              (void))
+                         (stx-loc expr))
              (second desugared-body+pinfo)))]))
 
 
@@ -432,10 +432,10 @@
                                           `(begin ,@(first desugared-body+pinfo))
                                           (stx-loc expr)))]
        (list (datum->stx #f
-                   `(if ,test-stx
-                        (void)
-                        ,body-stx)
-                   (stx-loc expr))
+                         `(if ,test-stx
+                              (void)
+                              ,body-stx)
+                         (stx-loc expr))
              (second desugared-body+pinfo)))]))
 
 
@@ -712,6 +712,21 @@
             pinfo))))
 
 
+;; check-single-argument-form!: stx (-> moby-error-type) (-> moby-error-type) -> void
+(define (check-single-argument-form! a-stx 
+                                     make-error-type:too-few-elements 
+                                     make-error-type:too-many-elements)
+  (cond [(< (length (stx-e a-stx)) 2)
+         (raise (make-moby-error (stx-loc a-stx)
+                                 (make-error-type:too-few-elements)))]
+        [(> (length (stx-e a-stx)) 2)
+         (raise (make-moby-error (stx-loc a-stx)
+                                 (make-error-type:too-many-elements)))]
+        [else
+         (void)]))
+
+
+
 ;; desugar-quasiquote: stx pinfo -> (list stx pinfo)
 (define (desugar-quasiquote a-stx pinfo)
   (local [;; handle-quoted: stx depth -> stx
@@ -720,7 +735,9 @@
               [(stx:list? a-stx)
                (cond [(stx-begins-with? a-stx 'quasiquote)
                       (begin 
-                        (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
+                        (check-single-argument-form! a-stx 
+                                                     make-moby-error-type:quasiquote-too-few-elements
+                                                     make-moby-error-type:quasiquote-too-many-elements)
                         (cond
                           [(> depth 0)
                            (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
@@ -734,7 +751,9 @@
                      
                      [(stx-begins-with? a-stx 'unquote)
                       (begin
-                        (check-single-body-stx! (rest (stx-e a-stx)) a-stx)
+                        (check-single-argument-form! a-stx 
+                                                     make-moby-error-type:unquote-too-few-elements
+                                                     make-moby-error-type:unquote-too-many-elements)
                         (cond
                           [(> depth 1)
                            (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
@@ -751,23 +770,27 @@
                                                     )))]))]
                      
                      [(stx-begins-with? a-stx 'unquote-splicing)
-                      (cond
-                        [(> depth 1)
-                         (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
-                                              (handle-quoted (second (stx-e a-stx)) 
-                                                             (sub1 depth)))
-                                     (stx-loc a-stx))]
-                        [(= depth 1)
-                         (raise (make-moby-error (stx-loc a-stx)
-                                                 (make-moby-error-type:generic-syntactic-error
-                                                  "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
-                                                  (list))))]
-                        
-                        [else
-                         (raise (make-moby-error (stx-loc a-stx)
-                                                 (make-moby-error-type:generic-syntactic-error
-                                                  "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote"
-                                                  (list))))])]
+                      (begin                        
+                        (check-single-argument-form! a-stx
+                                                     make-moby-error-type:unquote-splicing-too-few-elements
+                                                     make-moby-error-type:unquote-splicing-too-many-elements)
+                        (cond
+                          [(> depth 1)
+                           (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
+                                                (handle-quoted (second (stx-e a-stx)) 
+                                                               (sub1 depth)))
+                                       (stx-loc a-stx))]
+                          [(= depth 1)
+                           (raise (make-moby-error (stx-loc a-stx)
+                                                   (make-moby-error-type:generic-syntactic-error
+                                                    "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
+                                                    (list))))]
+                          
+                          [else
+                           (raise (make-moby-error (stx-loc a-stx)
+                                                   (make-moby-error-type:generic-syntactic-error
+                                                    "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote"
+                                                    (list))))]))]
                      
                      [else
                       (datum->stx #f (cons 'append 

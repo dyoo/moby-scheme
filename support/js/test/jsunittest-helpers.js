@@ -129,14 +129,19 @@ var isQuoteTooFewElements =
     extract("moby-error-type:quote-too-few-elements?");
 var isQuoteTooManyElements = 
     extract("moby-error-type:quote-too-many-elements?");
-var isUnquoteTooFewElements = 
-    extract("moby-error-type:unquote-too-few-elements?");
-var isUnquoteTooFewElements = 
-    extract("moby-error-type:unquote-too-many-elements?");
 var isQuasiquoteTooFewElements = 
     extract("moby-error-type:quasiquote-too-few-elements?");
-var isQuasiquoteTooFewElements = 
+var isQuasiquoteTooManyElements = 
     extract("moby-error-type:quasiquote-too-many-elements?");
+var isUnquoteTooFewElements = 
+    extract("moby-error-type:unquote-too-few-elements?");
+var isUnquoteTooManyElements = 
+    extract("moby-error-type:unquote-too-many-elements?");
+var isUnquoteSplicingTooFewElements = 
+    extract("moby-error-type:unquote-splicing-too-few-elements?");
+var isUnquoteSplicingTooManyElements = 
+    extract("moby-error-type:unquote-splicing-too-many-elements?");
+
 
 
 

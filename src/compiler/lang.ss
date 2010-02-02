@@ -114,7 +114,6 @@
 
 
 
-
   
 ;; dom-string-content: dom -> string
 ;; Gets the string content of the dom.
@@ -122,6 +121,13 @@
   (cond
     [(string? a-dom)
      a-dom]
+    [(ormap (lambda (an-attrib)
+              (and (symbol=? (first an-attrib)
+                             'class)
+                   (string=? (second an-attrib)
+                             "display:none")))
+            (second a-dom))
+     ""]
     [else
      (foldl (lambda (a-dom rest)
               (string-append rest (dom-string-content a-dom)))

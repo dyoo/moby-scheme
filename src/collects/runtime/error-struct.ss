@@ -40,6 +40,13 @@
 
 (define-struct moby-error-type:quote-too-few-elements ())
 (define-struct moby-error-type:quote-too-many-elements ())
+(define-struct moby-error-type:quasiquote-too-few-elements ())
+(define-struct moby-error-type:quasiquote-too-many-elements ())
+(define-struct moby-error-type:unquote-too-few-elements ())
+(define-struct moby-error-type:unquote-too-many-elements ())
+(define-struct moby-error-type:unquote-splicing-too-few-elements ())
+(define-struct moby-error-type:unquote-splicing-too-many-elements ())
+
 
 (define-struct moby-error-type:begin-body-empty ())
 
@@ -101,6 +108,12 @@
 
       (moby-error-type:quote-too-few-elements? x)
       (moby-error-type:quote-too-many-elements? x)
+      (moby-error-type:quasiquote-too-few-elements? x)
+      (moby-error-type:quasiquote-too-many-elements? x)
+      (moby-error-type:unquote-too-few-elements? x)
+      (moby-error-type:unquote-too-many-elements? x)
+      (moby-error-type:unquote-splicing-too-few-elements? x)
+      (moby-error-type:unquote-splicing-too-many-elements? x)
       
       (moby-error-type:when-no-body? x)
       (moby-error-type:unless-no-body? x)
@@ -211,6 +224,12 @@
 
  [struct moby-error-type:quote-too-few-elements ()]
  [struct moby-error-type:quote-too-many-elements ()]
+ [struct moby-error-type:quasiquote-too-few-elements ()]
+ [struct moby-error-type:quasiquote-too-many-elements ()]
+ [struct moby-error-type:unquote-too-few-elements ()]
+ [struct moby-error-type:unquote-too-many-elements ()]
+ [struct moby-error-type:unquote-splicing-too-few-elements ()]
+ [struct moby-error-type:unquote-splicing-too-many-elements ()]
  
  [struct moby-error-type:when-no-body ()]
  [struct moby-error-type:unless-no-body ()]
