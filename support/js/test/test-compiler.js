@@ -593,7 +593,7 @@ function init() {
 
 	testUnquoteMissingExpression: function() {
 	    this.assertMobyRaise(isUnquoteTooFewElements,
-				 function() { run("(quote (unquote))"); });
+				 function() { run("(quasiquote (unquote))"); });
 	},
 
 	testUnquoteTooManyElements: function() {

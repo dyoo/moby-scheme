@@ -735,62 +735,65 @@
               [(stx:list? a-stx)
                (cond [(stx-begins-with? a-stx 'quasiquote)
                       (begin 
-                        (check-single-argument-form! a-stx 
-                                                     make-moby-error-type:quasiquote-too-few-elements
-                                                     make-moby-error-type:quasiquote-too-many-elements)
                         (cond
                           [(> depth 0)
-                           (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
+                           (datum->stx #f (list 'list (list 'quasiquote (first (stx-e a-stx)))
                                                 (handle-quoted (second (stx-e a-stx))
                                                                (add1 depth)))
                                        (stx-loc a-stx))]
                           [else
-                           (datum->stx #f (handle-quoted (second (stx-e a-stx))
-                                                         (add1 depth))
-                                       (stx-loc a-stx))]))]
+                           (begin
+                             (check-single-argument-form! a-stx 
+                                                          make-moby-error-type:quasiquote-too-few-elements
+                                                          make-moby-error-type:quasiquote-too-many-elements)
+                             (datum->stx #f (handle-quoted (second (stx-e a-stx))
+                                                           (add1 depth))
+                                         (stx-loc a-stx)))]))]
                      
                      [(stx-begins-with? a-stx 'unquote)
                       (begin
-                        (check-single-argument-form! a-stx 
-                                                     make-moby-error-type:unquote-too-few-elements
-                                                     make-moby-error-type:unquote-too-many-elements)
                         (cond
                           [(> depth 1)
-                           (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
+                           (datum->stx #f (list 'list (list 'unquote (first (stx-e a-stx)))
                                                 (handle-quoted (second (stx-e a-stx)) 
                                                                (sub1 depth)))
                                        (stx-loc a-stx))]
                           [(= depth 1)
-                           (second (stx-e a-stx))]
+                           (begin
+                             (check-single-argument-form! a-stx 
+                                                          make-moby-error-type:unquote-too-few-elements
+                                                          make-moby-error-type:unquote-too-many-elements)
+                             
+                             (second (stx-e a-stx)))]
                           [else
                            (raise (make-moby-error (stx-loc a-stx)
                                                    (make-moby-error-type:generic-syntactic-error
                                                     "misuse of a comma or 'unquote, not under a quasiquoting backquote" 
                                                     (list)
                                                     )))]))]
-                     
+
                      [(stx-begins-with? a-stx 'unquote-splicing)
-                      (begin                        
-                        (check-single-argument-form! a-stx
-                                                     make-moby-error-type:unquote-splicing-too-few-elements
-                                                     make-moby-error-type:unquote-splicing-too-many-elements)
-                        (cond
-                          [(> depth 1)
-                           (datum->stx #f (list 'list (list 'quote (first (stx-e a-stx)))
+                      (cond
+                        [(> depth 1)
+                         (begin
+                           (check-single-argument-form! a-stx
+                                                        make-moby-error-type:unquote-splicing-too-few-elements
+                                                        make-moby-error-type:unquote-splicing-too-many-elements)
+                           (datum->stx #f (list 'list (list 'unquote-splicing (first (stx-e a-stx)))
                                                 (handle-quoted (second (stx-e a-stx)) 
                                                                (sub1 depth)))
-                                       (stx-loc a-stx))]
-                          [(= depth 1)
-                           (raise (make-moby-error (stx-loc a-stx)
-                                                   (make-moby-error-type:generic-syntactic-error
-                                                    "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
-                                                    (list))))]
-                          
-                          [else
-                           (raise (make-moby-error (stx-loc a-stx)
-                                                   (make-moby-error-type:generic-syntactic-error
-                                                    "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote"
-                                                    (list))))]))]
+                                       (stx-loc a-stx)))]
+                        [(= depth 1)
+                         (raise (make-moby-error (stx-loc a-stx)
+                                                 (make-moby-error-type:generic-syntactic-error
+                                                  "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
+                                                  (list))))]
+                        
+                        [else
+                         (raise (make-moby-error (stx-loc a-stx)
+                                                 (make-moby-error-type:generic-syntactic-error
+                                                  "misuse of a ,@ or unquote-splicing, not under a quasiquoting backquote"
+                                                  (list))))])]
                      
                      [else
                       (datum->stx #f (cons 'append 
