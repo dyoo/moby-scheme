@@ -606,7 +606,7 @@ Moby supports the building of Android @filepath{.apk} packages;
 programs built as Android packages can take advantage of native
 features of the device.
 
-@subsection{Dependencies}
+@subsection{Android Dependencies}
 
 If you wish to generate programs for the Android+Phonegap backend,
 you'll need the following:
@@ -652,7 +652,7 @@ of code reuse.  Moby handles the other libraries (tilt, location, sms,
 music), though with support only for the Android platforms for now.
 
 
-@subsection{Dependencies}
+@subsection{Developer Dependencies}
 
 Moby is mostly written in PLT Scheme, and the project sources are
 hosted by github.com.  To develop with Moby, you will need the
