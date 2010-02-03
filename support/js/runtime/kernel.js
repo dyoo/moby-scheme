@@ -738,12 +738,12 @@ goog.provide('plt.Kernel');
 	
 	positive_question_ : function(x){
 	    check(x, isNumber, "positive?", "number", 1);
-	    return this._greaterthan_(x, plt.types.Rational.ZERO, []);
+	    return NumberTower.greaterThan(x, plt.types.Rational.ZERO);
 	},
 	
 	negative_question_ : function(x){
 	    check(x, isNumber, "negative?", "number", 1);
-	    return this._lessthan_(x, plt.types.Rational.ZERO, []);
+	    return NumberTower.lessThan(x, plt.types.Rational.ZERO);
 	},
 	
 	imag_dash_part : function(x){
