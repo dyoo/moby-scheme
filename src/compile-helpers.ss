@@ -34,6 +34,8 @@
 		   [read-decimal-as-inexact #f])
       (let ([stx (read-syntax source-name ip)])
         (syntax-case stx ()
+          [(module name lang (#%module-begin body ...))
+           (map syntax->stx (syntax->list #'(body ...)))]
           [(module name lang body ...)
            (map syntax->stx (syntax->list #'(body ...)))]
           [else

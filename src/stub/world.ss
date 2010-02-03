@@ -4,15 +4,15 @@
 (require scheme/class
          scheme/local
          scheme/bool
-         mred
+         scheme/gui/base
          (prefix-in error: htdp/error)
          htdp/image
-
+         
 	 (only-in htdp/world nw:rectangle place-image empty-scene scene+line )
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
-	 "../version-case.ss"
+	 (planet dyoo/version-case:1:8)
          "../collects/runtime/effect-struct.ss"
          "world-effects.ss")
 
@@ -262,7 +262,13 @@
                (pinhole-x i) (pinhole-y i)))
       (error:check-arg tag #f "image" rank i)))
 
-(define (scene? i) (and (= 0 (pinhole-x i)) (= 0 (pinhole-y i))))
+
+(version-case 
+ [(version< (version) "4.2.4")
+  (define (scene? i) (and (= 0 (pinhole-x i)) (= 0 (pinhole-y i))))]
+ [else
+  (void)])
+
 
 ;; Symbol Any String -> Void
 (define (check-color tag width rank)

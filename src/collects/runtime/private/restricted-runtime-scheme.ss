@@ -1,6 +1,8 @@
 #lang scheme
 
-(require (prefix-in base: scheme/base))
+(require (prefix-in base: scheme/base)
+         (for-syntax scheme/base))
+
 (provide (except-out (all-from-out scheme)
                      define-struct))
 
