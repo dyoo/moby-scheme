@@ -36,8 +36,6 @@ function init() {
     }
 
 
-
-
     return new Test.Unit.Runner({
 	setup: function() {},
 	
@@ -539,15 +537,15 @@ function init() {
 
 
 	testCheckExpect: function() {
+	    run("(check-expect 3 3)");
 	    this.assertMobyRaise(
 		isCheckExpect,
 		function() { run("(check-expect 3 4)"); })
-	    run("(check-expect 3 3)");
 	},
 	
 	
 	testExample: function() {
-	    this.assertRaise(isCheckExpect,
+	    this.assertMobyRaise(isCheckExpect,
 			     function() { run("(EXAMPLE 3 4)"); })
 	    run("(EXAMPLE 3 3)");
 	},

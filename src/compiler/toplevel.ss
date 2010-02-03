@@ -314,11 +314,13 @@
                      
                      
                      ;; Testing functions.
-                     (check-expect 2)
-                     (EXAMPLE 2)  ;; temporary hack: for emmanuel, since I don't yet have
+                     ;; NOTE: the desugar.ss module converts use of check-expect into ones that
+                     ;; thunk its arguments, and pass an additional location argument.
+                     (check-expect 3)
+                     (EXAMPLE 3)  ;; temporary hack: for emmanuel, since I don't yet have
                                   ;; extensible macros
-                     (check-within 3)
-                     (check-error 2)
+                     (check-within 4)
+                     (check-error 3)
 
                      (make-hasheq 0)
                      (make-hash 0)

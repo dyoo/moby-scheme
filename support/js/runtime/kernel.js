@@ -111,6 +111,35 @@ goog.provide('plt.Kernel');
 
 
 
+    var getExternalModuleValue = function(module, name) {
+
+	// munge: string -> string
+	var munge = function(name) {
+	    var C = plt.Kernel.invokeModule("moby/compiler").EXPORTS;
+	    return (C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(
+		plt.types.Symbol.makeInstance(name))).toString();
+	}
+	
+	// getModule: string -> module
+	// Returns a module that knows how to map scheme names to javascript
+	// names.
+	var getModule = function(name) {
+	    var theModule = plt.Kernel.invokeModule(name);
+	    var exports = theModule.EXPORTS;
+	    return {
+		theModule: theModule,
+		getFunction: function(n) {
+		    return exports[munge(n)];
+		}};
+	}
+	return getModule(module).getFunction(name);
+    }
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+
     // Returns true if x is a number.
     var isNumber = plt.types.isNumber;
 
@@ -2255,15 +2284,30 @@ goog.provide('plt.Kernel');
 
 
 
+    var throwMobyError = function(locSexp, errorTypeName, args) {
+	var makeMobyError = 
+	    getExternalModuleValue("moby/runtime/error-struct",
+				   "make-moby-error");
+	var makeErrorType = 
+	    getExternalModuleValue("moby/runtime/error-struct",
+				   errorTypeName);
+	var sexpToLoc =
+	    getExternalModuleValue("moby/runtime/stx",
+				  "sexp->Loc");
+	throw makeMobyError(sexpToLoc(locSexp),
+			    makeErrorType.apply(null, args));
+    };
+
+
     plt.Kernel.check_dash_expect = function(testThunk, expectedThunk, locSexp) {
 	var val = testThunk([]);
 	var expectedVal = expectedThunk([]);
 	if (! plt.Kernel.equal_question_(val, expectedVal)) {
-	    throw new MobyTestingError(
-		plt.Kernel.format("~s doesn't match the expected value ~s",
-				  [val, expectedVal]));
+	    throwMobyError(locSexp, "make-moby-error-type:check-expect",
+			   [expectedVal, val]);
 	}
     };
+
 
     plt.Kernel.EXAMPLE = plt.Kernel.check_dash_expect;
 
@@ -2273,9 +2317,15 @@ goog.provide('plt.Kernel');
 	var expectedVal = expectedThunk([]);
 	var boundsVal = boundsThunk([]);
 	if (! plt.Kernel._equal__tilde_(val, expectedVal, boundsVal)) {
-	    throw new MobyTestingError(
-		plt.Kernel.format("~s doesn't match the expected value ~s within ~s",
-				  [val, expectedVal, boundsVal]));
+	    throwMobyError(locSexp, 
+			   "make-moby-error-type:check-within",
+			   [expectedVal,
+			    val,
+			    boundsVal]);
+	    // 	    throw makeMobyError(makeCheckExpect);
+	    // 	    throw new MobyTestingError(
+	    // 		plt.Kernel.format("~s doesn't match the expected value ~s within ~s",
+	    // 				  [val, expectedVal, boundsVal]));
 	}
     };
 
@@ -2286,10 +2336,13 @@ goog.provide('plt.Kernel');
 	    val = testThunk([]);
 	} catch (e) {
 	    if (! plt.Kernel.equal_question_(e.msg, msg)) {
-		throw new MobyTestingError(
-		    plt.Kernel.format(
-			"check-error encountered the error ~s instead of the expected error ~s.",
-			[e.msg, msg]));
+		throwMobyError(locSexp,
+			       "make-moby-error-type:check-error",
+			       [msg, e.msg])
+// 		throw new MobyTestingError(
+// 		    plt.Kernel.format(
+// 			"check-error encountered the error ~s instead of the expected error ~s.",
+// 			[e.msg, msg]));
 	    } else {
 		return;
 	    }
