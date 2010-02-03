@@ -6,6 +6,7 @@
 ;; syntax->stx: syntax -> stx
 ;; Go from Scheme's syntax objects to our own.
 (define (syntax->stx a-syntax)
+  (fprintf (current-error-port) "*** I see: ~s~n" a-syntax)
   (cond
     [(pair? (syntax-e a-syntax))
      (let ([elts
