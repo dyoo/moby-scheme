@@ -847,6 +847,20 @@ function init() {
 	},
 
 
+	testSgn: function() {
+	    this.assert(isEqual(run("1"),
+				run("(sgn 42)")));
+
+	    this.assert(isEqual(run("-1"),
+				run("(sgn -42)")));
+
+	    this.assert(isEqual(run("0"),
+				run("(sgn 0)")));
+	},
+
+
+
+
 	testCircularity: function() {
 	    this.assert(isEqual(run("true"),
 				run("(local [(define-struct p (f r)) " +

@@ -74,7 +74,12 @@
                      (error 'moby "Syntax error: ~a\nAt:\n~a"
                             (exn-message exn)
                             (string-join (for/list ([stx (exn:fail:moby-syntax-error-stxs exn)])
-                                           (Loc->string (stx-loc stx)))
+                                           (format "line ~s, column ~s, span ~s, offset ~s, id ~s~n" 
+                                                   (Loc-line (stx-loc stx))
+                                                   (Loc-column (stx-loc stx))
+                                                   (Loc-span (stx-loc stx))
+                                                   (Loc-offset (stx-loc stx))
+                                                   (Loc-id (stx-loc stx))))
                                          "\n")))])
     (parameterize ([current-directory
                     (let-values ([(base name dir?)

@@ -1,3 +1,3 @@
 #lang setup/infotab
 
-(define compile-omit-paths (list "test"))
+(define compile-omit-paths (list "test" "collects"))
