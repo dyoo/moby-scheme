@@ -20,7 +20,6 @@ goog.provide('plt.Kernel');
     var MobyParserError = plt.types.MobyParserError;
     var MobySyntaxError = plt.types.MobySyntaxError;
     var MobyRuntimeError = plt.types.MobyRuntimeError;
-    var MobyTestingError = plt.types.MobyTestingError;
 
 
 
@@ -2256,7 +2255,7 @@ goog.provide('plt.Kernel');
 
 
 
-    plt.Kernel.check_dash_expect = function(testThunk, expectedThunk) {
+    plt.Kernel.check_dash_expect = function(testThunk, expectedThunk, locSexp) {
 	var val = testThunk([]);
 	var expectedVal = expectedThunk([]);
 	if (! plt.Kernel.equal_question_(val, expectedVal)) {
@@ -2269,7 +2268,7 @@ goog.provide('plt.Kernel');
     plt.Kernel.EXAMPLE = plt.Kernel.check_dash_expect;
 
 
-    plt.Kernel.check_dash_within = function(testThunk, expectedThunk, boundsThunk) {
+    plt.Kernel.check_dash_within = function(testThunk, expectedThunk, boundsThunk, locSexp) {
 	var val = testThunk([]);
 	var expectedVal = expectedThunk([]);
 	var boundsVal = boundsThunk([]);
@@ -2280,7 +2279,7 @@ goog.provide('plt.Kernel');
 	}
     };
 
-    plt.Kernel.check_dash_error = function(testThunk, msgThunk) {
+    plt.Kernel.check_dash_error = function(testThunk, msgThunk, locSexp) {
 	var msg = msgThunk([]);
 	var val;
 	try {
@@ -2455,7 +2454,6 @@ goog.provide('plt.Kernel');
     plt.Kernel.MobyParserError = plt.types.MobyParserError;
     plt.Kernel.MobySyntaxError = plt.types.MobySyntaxError;
     plt.Kernel.MobyRuntimeError = plt.types.MobyRuntimeError;
-    plt.Kernel.MobyTestingError = plt.types.MobyTestingError;
 
 
 

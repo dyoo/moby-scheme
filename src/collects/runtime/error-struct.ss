@@ -58,6 +58,11 @@
 (define-struct moby-error-type:when-no-body ())
 (define-struct moby-error-type:unless-no-body ())
 
+(define-struct moby-error-type:check-expect (expected observed))
+(define-struct moby-error-type:check-within (expected observed within))
+(define-struct moby-error-type:check-error (expected observed))
+
+
 (define-struct moby-error-type:application-arity (who expected observed))
 (define-struct moby-error-type:application-operator-not-a-function (who))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
@@ -118,6 +123,10 @@
       (moby-error-type:when-no-body? x)
       (moby-error-type:unless-no-body? x)
 
+      (moby-error-type:check-expect? x)
+      (moby-error-type:check-within? x)
+      (moby-error-type:check-error? x)
+      
       (moby-error-type:application-arity? x)
       (moby-error-type:application-operator-not-a-function? x)
       (moby-error-type:type-mismatch? x)
@@ -233,6 +242,18 @@
  
  [struct moby-error-type:when-no-body ()]
  [struct moby-error-type:unless-no-body ()]
+ 
+ 
+ [struct moby-error-type:check-expect ([expected any/c]
+                                       [observed any/c])]
+ 
+ [struct moby-error-type:check-within ([expected any/c]
+                                       [observed any/c]
+                                       [within any/c])]
+ 
+ [struct moby-error-type:check-error ([expected string?] ;; the expected string of the error message
+                                      [observed string?])] ;; the observed string
+ 
  
  
  [struct moby-error-type:application-arity ([who any/c]

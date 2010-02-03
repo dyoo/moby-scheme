@@ -539,14 +539,15 @@ function init() {
 
 
 	testCheckExpect: function() {
-	    this.assertRaise("MobyTestingError",
-			     function() { run("(check-expect 3 4)"); })
+	    this.assertMobyRaise(
+		isCheckExpect,
+		function() { run("(check-expect 3 4)"); })
 	    run("(check-expect 3 3)");
 	},
-
-
+	
+	
 	testExample: function() {
-	    this.assertRaise("MobyTestingError",
+	    this.assertRaise(isCheckExpect,
 			     function() { run("(EXAMPLE 3 4)"); })
 	    run("(EXAMPLE 3 3)");
 	},
@@ -554,14 +555,15 @@ function init() {
 
 	testCheckWithin: function() {
 	    run("(check-within 22/7 pi 0.01)");
-	    this.assertRaise("MobyTestingError",
+	    this.assertMobyRaise(isCheckWithin,
 			     function() { run("(check-within 22/7 pi 0.00001)"); })
 
 	},
 
 	testCheckError: function() {
-	    this.assertRaise("MobyTestingError",
-			     function() { run("(check-error 42 \"blah\")")})
+	    this.assertMobyRaise(
+		isCheckError,
+		function() { run("(check-error 42 \"blah\")")})
 	    run("(check-error (/ 1 0) \"division by zero\")");
 	},
 	

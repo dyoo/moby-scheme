@@ -117,14 +117,10 @@ var isBooleanChainTooFewElements =
     extract("moby-error-type:boolean-chain-too-few-elements?");
 var isExpectedListOfIdentifiers =
     extract("moby-error-type:expected-list-of-identifiers?");
-
 var isLambdaTooFewElements =
     extract("moby-error-type:lambda-too-few-elements?");
-
 var isLambdaTooManyElements =
     extract("moby-error-type:lambda-too-many-elements?");
-
-
 var isQuoteTooFewElements = 
     extract("moby-error-type:quote-too-few-elements?");
 var isQuoteTooManyElements = 
@@ -141,6 +137,12 @@ var isUnquoteSplicingTooFewElements =
     extract("moby-error-type:unquote-splicing-too-few-elements?");
 var isUnquoteSplicingTooManyElements = 
     extract("moby-error-type:unquote-splicing-too-many-elements?");
+var isCheckExpect = 
+    extract("moby-error-type:check-expect?");
+var isCheckWithin = 
+    extract("moby-error-type:check-within?");
+var isCheckError = 
+    extract("moby-error-type:check-error?");
 
 
 

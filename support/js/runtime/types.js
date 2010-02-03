@@ -2080,11 +2080,6 @@ Box
 
 
     
-    var MobyTestingError = function(msg) {
-	MobyError.call(this, msg);
-    }
-    MobyTestingError.prototype = heir(MobyRuntimeError.prototype);
-    MobyTestingError.prototype.name= 'MobyTestingError';
 
 
 
@@ -2093,7 +2088,6 @@ Box
     plt.types.MobyParserError = MobyParserError;
     plt.types.MobySyntaxError = MobySyntaxError;
     plt.types.MobyRuntimeError = MobyRuntimeError;
-    plt.types.MobyTestingError = MobyTestingError;
 
 
 

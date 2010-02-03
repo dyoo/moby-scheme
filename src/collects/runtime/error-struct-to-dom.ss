@@ -272,6 +272,39 @@
         `(span ((class "Error-WhenNoBody"))
                "Inside an " (scheme-value-to-dom-sexp 'unless) 
                ", I expect to see a body, but I don't see one.")]
+
+       
+       [(moby-error-type:check-expect? error-type)
+        `(span ((class "Error-CheckExpect"))
+               "Inside a " 
+               ,(scheme-value-to-dom-sexp 'check-expect)
+               ", the observed value " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-expect-observed error-type))
+               " does not match the expected value " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-expect-expected error-type))
+               ".")]
+
+       [(moby-error-type:check-within? error-type)
+        `(span ((class "Error-CheckWithin"))
+               "Inside a " 
+               ,(scheme-value-to-dom-sexp 'check-within)
+               ", the observed value " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-within-observed error-type))
+               " does not match the expected value " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-within-expected error-type))
+               " within the bounds "
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-within-within error-type))
+               ".")]
+       
+       [(moby-error-type:check-error? error-type)
+        `(span ((class "Error-CheckError"))
+               "Inside a " 
+               ,(scheme-value-to-dom-sexp 'check-expect)
+               ", the observed error " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-observed error-type))
+               " does not match the expected error " 
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-expected error-type))
+               ".")]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error-ApplicationArity"))

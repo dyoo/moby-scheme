@@ -161,8 +161,9 @@
             [else
              (void)])
       
-      (list (list (datum->stx #f (cons test-symbol-stx
-                                       (first desugared-exprs+pinfo))
+      (list (list (datum->stx #f `(,test-symbol-stx
+                                   ,@(first desugared-exprs+pinfo)
+                                   '(quote ,(Loc->sexp (stx-loc a-test-case))))
                               (stx-loc a-test-case)))
             (second desugared-exprs+pinfo)))))
 
