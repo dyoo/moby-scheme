@@ -708,12 +708,14 @@ goog.provide('plt.Kernel');
 	
 	cosh : function(x) {
 	    check(x, isNumber, "cosh", "number", 1);
-	    return this._plus_([this.exp(x), this.exp(x.minus())]).half();
+	    return NumberTower.half(NumberTower.add(NumberTower.exp(x), 
+						    NumberTower.exp(NumberTower.minus(x))));
 	},
 	
 	sinh : function(x) {
 	    check(x, isNumber, "sinh", "number", 1);
-	    return NumberTower.subtract(this.exp(x), this.exp(x.minus())).half();
+	    return NumberTower.half(NumberTower.subtract(NumberTower.exp(x),
+							 NumberTower.exp(NumberTower.minus(x))));
 	},
 	
 	denominator : function(x) {
@@ -808,9 +810,9 @@ goog.provide('plt.Kernel');
 	
 	sgn : function(x){
 	    check(x, isNumber, "sgn", "number", 1);
-	    if (this.positive_question_(x).valueOf())
+	    if (NumberTower.greaterThan(x, plt.types.Rational.ZERO))
 		return plt.types.Rational.ONE;
-	    if (this.negative_question_(x).valueOf())
+	    if (NumberTower.lessThan(x, plt.types.Rational.ZERO))
 		return plt.types.Rational.NEGATIVE_ONE;
 	    else
 		return plt.types.Rational.ZERO;

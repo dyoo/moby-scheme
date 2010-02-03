@@ -1687,6 +1687,21 @@ Box
     NumberTower.sqr = function(x) {
 	return NumberTower.multiply(x, x);
     };
+
+
+    // FIXME: rename to negate
+    NumberTower.minus = function(x) {
+	return x.minus();
+    };
+
+    NumberTower.half = function(x) {
+	return x.half();
+    };
+
+
+    NumberTower.exp = function(x) {
+	return x.exp();
+    };
     
     NumberTower.expt = function(x, y){
 	if (x.level() < y.level()) x = x.lift(y);
