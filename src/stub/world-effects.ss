@@ -3,7 +3,6 @@
 (require "../runtime/effect-struct.ss"
          scheme/contract
          scheme/port
-         scheme/file
          scheme/path
          scheme/list
          (only-in scheme/gui/base play-sound)
