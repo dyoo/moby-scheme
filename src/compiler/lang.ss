@@ -9,6 +9,7 @@
          scheme/contract
          lang/htdp-advanced
          (for-syntax scheme/base)
+         "../collects/runtime/stx.ss"
          "../collects/runtime/error-struct.ss"
          "../collects/runtime/error-struct-to-dom.ss")
 
@@ -121,10 +122,10 @@
   (cond
     [(string? a-dom)
      a-dom]
-    [(ormap (lambda (an-attrib)
-              (and (symbol=? (first an-attrib)
-                             'class)
-                   (string=? (second an-attrib)
+    [(ormap (lambda (an-attrib-pair)
+              (and (symbol=? (first an-attrib-pair)
+                             'style)
+                   (string=? (second an-attrib-pair)
                              "display:none")))
             (second a-dom))
      ""]
@@ -135,13 +136,26 @@
             (cdr (cdr a-dom)))]))
 
 
+
+(define (Loc->string a-loc)
+  (format "Location: line ~a, column ~a, span ~a, offset ~a, id ~s" 
+          (Loc-line a-loc)
+          (Loc-column a-loc)
+          (Loc-span a-loc)
+          (Loc-offset a-loc)
+          (Loc-id a-loc)))
+
+
 (define-syntax (my-raise stx)
   (syntax-case stx ()
     [(_ val)
      (syntax/loc stx
-       (base:raise (make-moby-failure (base:format "~s" (if (moby-error? val)
-                                                            (dom-string-content (moby-error-struct-to-dom-sexp val))
-                                                            val))
+       (base:raise (make-moby-failure (base:format "~a" 
+                                                   (if (moby-error? val)
+                                                       (string-append (dom-string-content (moby-error-struct-to-dom-sexp val))
+                                                                      "\n"
+                                                                      (Loc->string (moby-error-location val)))
+                                                       val))
                                       (base:current-continuation-marks) 
                                       val)))]))
 
