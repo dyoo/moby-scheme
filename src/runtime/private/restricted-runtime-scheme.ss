@@ -1,12 +1,10 @@
-#lang scheme/base
+#lang scheme
 
 (require (prefix-in base: scheme/base)
-         (for-syntax scheme/base)
-         scheme/contract)
+         (for-syntax scheme/base))
 
-(provide (except-out (all-from-out scheme/base)
-                     define-struct)
-         (all-from-out scheme/contract))
+(provide (except-out (all-from-out scheme)
+                     define-struct))
 
 
 (define-syntax (my-define-struct stx)

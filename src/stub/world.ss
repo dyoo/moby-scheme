@@ -12,7 +12,7 @@
          mrlib/cache-image-snip
          lang/prim
          (for-syntax scheme/base)
-	 "../version-case.ss"
+	 (planet dyoo/version-case:1:8)
          "../runtime/effect-struct.ss"
          "world-effects.ss")
 

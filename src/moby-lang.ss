@@ -124,8 +124,7 @@
      (raise-syntax-error #f "Not currently implemented" stx)]))
 
 
-
-(provide (except-out (all-from-out "compiler/lang.ss") #%module-begin provide require)
+(provide (except-out (all-from-out "compiler/lang.ss") provide require #%module-begin)
          (rename-out (-#%module-begin #%module-begin))
          (rename-out (hacky-require require))
          
