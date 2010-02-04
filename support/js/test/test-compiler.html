@@ -15,7 +15,7 @@
 
 
   <script type="text/javascript">
-  if (! plt || ! plt.Kernel) {
+  if (typeof(plt) === 'undefined' || ! plt.Kernel) {
       alert("Moby runtime libraries can't be loaded.\n"+
             "Has the boostrapper in src/bootstrap-js-compiler.ss been run?");
   }

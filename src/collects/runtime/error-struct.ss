@@ -5,18 +5,32 @@
 
 (define-struct moby-error (location error-type))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The parser errors:
 ;; A lexical token hasn't been closed (e.g. a string literal without closing quote)
 (define-struct moby-error-type:unclosed-lexical-token (type opener closer))
-
 ;; A lexical token has been seen that we don't know how to lex.
 (define-struct moby-error-type:unrecognized-lexical-token (token))
-
 ;; A lexical token has been seen that we don't support (e.g. dotted pairs)
 (define-struct moby-error-type:unsupported-lexical-token (token))
 
 ;; An unsupported expression form has shown up
 (define-struct moby-error-type:unsupported-expression-form (expr))
+
+;; e.g. "("
 (define-struct moby-error-type:unclosed-parentheses (opener closer))
+
+;; e.g. ")", 
+(define-struct moby-error-type:closing-parenthesis-before-opening (closer))
+
+;; If the parentheses are closed by a paren of unexpected shape, we raise
+;; unbalanced-parentheses. 
+;; e.g. "( ]"
+(define-struct moby-error-type:unbalanced-parentheses (opener closer other-location))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
 (define-struct moby-error-type:missing-expression (token))
 (define-struct moby-error-type:duplicate-identifier (id second-location))
 (define-struct moby-error-type:expected-identifier (observed))
@@ -198,8 +212,14 @@
  [struct moby-error-type:unrecognized-lexical-token ([token symbol?])]
  [struct moby-error-type:unsupported-lexical-token ([token symbol?])]
  [struct moby-error-type:unsupported-expression-form ([expr stx?])]
+ 
  [struct moby-error-type:unclosed-parentheses ([opener symbol?]
                                                [closer symbol?])]
+ [struct moby-error-type:unbalanced-parentheses ([opener symbol?]
+                                                 [closer symbol?])]
+ [struct moby-error-type:closing-parenthesis-before-opener ([closer symbol?])]
+ 
+ 
  [struct moby-error-type:missing-expression ([token symbol?])]
  [struct moby-error-type:duplicate-identifier ([id symbol?]
                                                [second-location Loc?])]
