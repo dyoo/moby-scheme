@@ -1,5 +1,5 @@
 // Depends on types.js, stx.js
-goog.provide('plt.reader');
+// goog.provide('plt.reader');
 
 
 (function(){
@@ -120,8 +120,8 @@ goog.provide('plt.reader');
 	while (true) {
 	    var shouldContinue = false;
 	    for (var i = 0; i < PATTERNS.length; i++) {
-		var patternName = PATTERNS[i].type;
-		var pattern = PATTERNS[i].text
+		var patternName = PATTERNS[i][0];
+		var pattern = PATTERNS[i][1];
 		var result = s.match(pattern);
 		if (result != null) {
 		    var wholeMatch = result[0];
@@ -134,7 +134,7 @@ goog.provide('plt.reader');
 			for (var j = 0; j < numberPatterns.length; j++) {
 			    var numberMatch = tokenText.match(numberPatterns[j][1]);
 			    if (numberMatch) {
-				tokens.push({type: numberPatterns[j].type, 
+				tokens.push({type: numberPatterns[j][0],
 					     text: tokenText,
 					     loc: new Loc(num(offset),
 						     num(line),
