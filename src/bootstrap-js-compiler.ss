@@ -56,6 +56,8 @@
                             (build-path COLLECTS-PATH "runtime" "error-struct.ss"))
         (make-module-record 'moby/runtime/scheme-value-to-dom 
                             (build-path COLLECTS-PATH "runtime" "scheme-value-to-dom.ss"))
+        (make-module-record 'moby/runtime/dom-helpers
+                            (build-path COLLECTS-PATH "runtime" "dom-helpers.ss"))
         (make-module-record 'moby/runtime/error-struct-to-dom 
                             (build-path COLLECTS-PATH "runtime" "error-struct-to-dom.ss"))
         
@@ -520,8 +522,8 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;(write-runtime-toplevel-bindings-descriptions)
-;(write-runtime-library-modules)
+(write-runtime-toplevel-bindings-descriptions)
+(write-runtime-library-modules)
 (write-compressed-runtime)
 (write-compiler)
 ;(write-compressed-compilers)

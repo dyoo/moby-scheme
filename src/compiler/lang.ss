@@ -11,7 +11,8 @@
          (for-syntax scheme/base)
          "../collects/runtime/stx.ss"
          "../collects/runtime/error-struct.ss"
-         "../collects/runtime/error-struct-to-dom.ss")
+         "../collects/runtime/error-struct-to-dom.ss"
+         "../collects/runtime/dom-helpers.ss")
 
 
 (provide (except-out (all-from-out lang/htdp-advanced)
@@ -113,27 +114,6 @@
 
 (base:define-struct (moby-failure exn:fail) (val))
 
-
-
-  
-;; dom-string-content: dom -> string
-;; Gets the string content of the dom.
-(define (dom-string-content a-dom)
-  (cond
-    [(string? a-dom)
-     a-dom]
-    [(ormap (lambda (an-attrib-pair)
-              (and (symbol=? (first an-attrib-pair)
-                             'style)
-                   (string=? (second an-attrib-pair)
-                             "display:none")))
-            (second a-dom))
-     ""]
-    [else
-     (foldl (lambda (a-dom rest)
-              (string-append rest (dom-string-content a-dom)))
-            ""
-            (cdr (cdr a-dom)))]))
 
 
 

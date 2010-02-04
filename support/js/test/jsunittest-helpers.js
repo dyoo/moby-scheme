@@ -143,6 +143,8 @@ var isCheckWithin =
     extract("moby-error-type:check-within?");
 var isCheckError = 
     extract("moby-error-type:check-error?");
+var isCheckErrorNoError = 
+    extract("moby-error-type:check-error-no-error?");
 
 
 

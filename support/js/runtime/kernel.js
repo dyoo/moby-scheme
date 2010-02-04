@@ -2322,35 +2322,38 @@ goog.provide('plt.Kernel');
 			   [expectedVal,
 			    val,
 			    boundsVal]);
-	    // 	    throw makeMobyError(makeCheckExpect);
-	    // 	    throw new MobyTestingError(
-	    // 		plt.Kernel.format("~s doesn't match the expected value ~s within ~s",
-	    // 				  [val, expectedVal, boundsVal]));
 	}
     };
 
     plt.Kernel.check_dash_error = function(testThunk, msgThunk, locSexp) {
-	var msg = msgThunk([]);
+	var msg = msgThunk();
 	var val;
 	try {
-	    val = testThunk([]);
+	    val = testThunk();
 	} catch (e) {
-	    if (! plt.Kernel.equal_question_(e.msg, msg)) {
+	    var isMobyError = getExternalModuleValue("moby/runtime/error-struct",
+						     "moby-error?");
+	    var getDom = getExternalModuleValue("moby/runtime/error-struct-to-dom",
+						"moby-error-struct-to-dom-sexp");
+	    var getDomContent = getExternalModuleValue("moby/runtime/dom-helpers",
+						       "dom-string-content");
+	    
+	    if ((isMobyError(e) && 
+		 getDomContent(getDom(e)) == msg)) {
+		throwMobyError(locSexp,
+			       "make-moby-error-type:check-error",
+			       [msg, getDomContent(getDom(e))]);
+	    } else if (e.msg && (e.msg != msg)) {
 		throwMobyError(locSexp,
 			       "make-moby-error-type:check-error",
 			       [msg, e.msg])
-// 		throw new MobyTestingError(
-// 		    plt.Kernel.format(
-// 			"check-error encountered the error ~s instead of the expected error ~s.",
-// 			[e.msg, msg]));
 	    } else {
 		return;
 	    }
 	}
-	throw new MobyTestingError(
-	    plt.Kernel.format(
-		"check-error expected the error ~s, but instead received the value ~s.",
-		[msg, val]))
+	throwMobyError(locSexp, 
+		       "make-moby-error-type:check-error-no-error",
+		       [msg, val]);
     };
 
 

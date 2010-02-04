@@ -7,6 +7,7 @@ collects/runtime/permission-struct.js
 collects/runtime/binding.js
 collects/runtime/effect-struct.js
 collects/runtime/arity-struct.js
+collects/runtime/dom-helpers.js
 collects/runtime/error-struct.js
 collects/runtime/scheme-value-to-dom.js
 collects/runtime/error-struct-to-dom.js

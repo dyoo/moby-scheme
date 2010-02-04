@@ -4,6 +4,8 @@
 (require "error-struct.ss")
 (require "stx.ss")
 (require "scheme-value-to-dom.ss")
+(require "dom-helpers.ss")
+
 
 
 ;; Error structure to dom code.
@@ -152,7 +154,7 @@
                (span ((class "Error.reason"))
                      "The provided name "
                      ,(scheme-value-to-dom-sexp (moby-error-type:provided-name-not-defined-id error-type))
-                     "is not defined in the program."))]
+                     " is not defined in the program."))]
 
        [(moby-error-type:provided-structure-not-structure? error-type)
         `(span ((class "Error-ProvidedStructureNotStructure"))
@@ -305,6 +307,13 @@
                " does not match the expected error " 
                ,(scheme-value-to-dom-sexp (moby-error-type:check-error-expected error-type))
                ".")]
+       
+       [(moby-error-type:check-error-no-error? error-type)
+        `(span ((class "Error-CheckErrorNoError"))
+               "I expected an the expected error "
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-no-error-expected error-type))
+               " but instead I received the value "
+               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-no-error-observed error-type)))]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error-ApplicationArity"))
@@ -459,20 +468,6 @@
 
 
 
-;; dom-string-content: dom -> string
-;; Gets the string content of the dom.
-(define (dom-string-content a-dom)
-  (cond
-    [(string? a-dom)
-     a-dom]
-    [else
-     (foldl (lambda (a-dom rest)
-              (string-append rest (dom-string-content a-dom)))
-            ""
-            (rest (rest a-dom)))]))
-
-
-
 ;; expected-value-to-dom-sexp: moby-expected -> dom
 ;; Translates an expectation to a dom.
 (define (expected-value-to-dom-sexp expected)
@@ -557,6 +552,5 @@
                             ,(arity-to-dom-sexp a)))))]))
 
     
-  
 
 (provide moby-error-struct-to-dom-sexp)
