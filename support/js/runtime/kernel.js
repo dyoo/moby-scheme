@@ -17,8 +17,6 @@ goog.provide('plt.Kernel');
     var NumberTower = plt.types.NumberTower;
 
     var MobyError = plt.types.MobyError;
-    var MobyParserError = plt.types.MobyParserError;
-    var MobySyntaxError = plt.types.MobySyntaxError;
 
 
 
@@ -2506,8 +2504,6 @@ goog.provide('plt.Kernel');
 
     // Expose the error classes.
     plt.Kernel.MobyError = plt.types.MobyError;
-    plt.Kernel.MobyParserError = plt.types.MobyParserError;
-    plt.Kernel.MobySyntaxError = plt.types.MobySyntaxError;
 
 
 

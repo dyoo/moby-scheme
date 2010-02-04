@@ -2111,30 +2111,7 @@ Box
     MobyError.prototype.toString = function () { return this.name + ": " + this.msg }
 
 
-    var MobyParserError = function(msg, loc) {
-	MobyError.call(this, msg);
-	this.loc = loc;
-    }
-    MobyParserError.prototype = heir(MobyError.prototype);
-    MobyParserError.prototype.name= 'MobyParserError';
-
-    
-    var MobySyntaxError = function(msg, stx) {
-	MobyError.call(this, msg);
-	this.stx = stx;
-    }
-    MobySyntaxError.prototype = heir(MobyError.prototype);
-    MobySyntaxError.prototype.name= 'MobySyntaxError';
-
-
-
-
-
-
-
     plt.types.MobyError = MobyError;
-    plt.types.MobyParserError = MobyParserError;
-    plt.types.MobySyntaxError = MobySyntaxError;
 
 
 
