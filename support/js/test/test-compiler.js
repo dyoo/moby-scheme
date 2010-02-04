@@ -37,6 +37,7 @@ function init() {
 
 
 
+
     return new Test.Unit.Runner({
 	setup: function() {},
 	
@@ -364,7 +365,7 @@ function init() {
 				    "(str-b a-str)")));
 
 	    this.assertMobyRaise(
-		isTypeMismatch,
+		isGenericRuntimeError,
 		function () {
 		    run("(define-struct str (a b c))" +
 			"(define a-str (make-str 1 2 3))" +
@@ -564,9 +565,9 @@ function init() {
  	    this.assertMobyRaise(
  		isCheckError,
  		function() { run("(check-error (/ 1 0) \"blah\")")})
-// 	    this.assertMobyRaise(
-// 		isCheckErrorNoError,
-// 		function() { run("(check-error 42 \"blah\")")})
+ 	    this.assertMobyRaise(
+ 		isCheckErrorNoError,
+ 		function() { run("(check-error 42 \"blah\")")})
 	    run("(check-error (/ 1 0) \"division by zero\")");
 	},
 	

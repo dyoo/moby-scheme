@@ -67,6 +67,30 @@ goog.provide('plt.Kernel');
 
 
 
+    //////////////////////////////////////////////////////////////////////
+    var getExternalModuleValue = function(module, name) {
+
+	// munge: string -> string
+	var munge = function(name) {
+	    var C = plt.Kernel.invokeModule("moby/compiler").EXPORTS;
+	    return (C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(
+		plt.types.Symbol.makeInstance(name))).toString();
+	}
+	
+	// getModule: string -> module
+	// Returns a module that knows how to map scheme names to javascript
+	// names.
+	var getModule = function(name) {
+	    var theModule = plt.Kernel.invokeModule(name);
+	    var exports = theModule.EXPORTS;
+	    return {
+		theModule: theModule,
+		getFunction: function(n) {
+		    return exports[munge(n)];
+		}};
+	}
+	return getModule(module).getFunction(name);
+    };
 
 
 
@@ -2315,7 +2339,7 @@ goog.provide('plt.Kernel');
 						       "dom-string-content");
 	    
 	    if ((isMobyError(e) && 
-		 getDomContent(getDom(e)) == msg)) {
+		 getDomContent(getDom(e)) != msg)) {
 		throwMobyError(locSexp,
 			       "make-moby-error-type:check-error",
 			       [msg, getDomContent(getDom(e))]);
