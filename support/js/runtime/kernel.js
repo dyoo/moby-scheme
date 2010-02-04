@@ -19,7 +19,6 @@ goog.provide('plt.Kernel');
     var MobyError = plt.types.MobyError;
     var MobyParserError = plt.types.MobyParserError;
     var MobySyntaxError = plt.types.MobySyntaxError;
-    var MobyRuntimeError = plt.types.MobyRuntimeError;
 
 
 
@@ -110,30 +109,7 @@ goog.provide('plt.Kernel');
 
 
 
-
-    var getExternalModuleValue = function(module, name) {
-
-	// munge: string -> string
-	var munge = function(name) {
-	    var C = plt.Kernel.invokeModule("moby/compiler").EXPORTS;
-	    return (C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(
-		plt.types.Symbol.makeInstance(name))).toString();
-	}
-	
-	// getModule: string -> module
-	// Returns a module that knows how to map scheme names to javascript
-	// names.
-	var getModule = function(name) {
-	    var theModule = plt.Kernel.invokeModule(name);
-	    var exports = theModule.EXPORTS;
-	    return {
-		theModule: theModule,
-		getFunction: function(n) {
-		    return exports[munge(n)];
-		}};
-	}
-	return getModule(module).getFunction(name);
-    }
+    var throwMobyError = plt.types.throwMobyError;
 
 
     //////////////////////////////////////////////////////////////////////
@@ -1371,7 +1347,6 @@ goog.provide('plt.Kernel');
 			begin,
 			plt.types.Rational.makeInstance(str.length),
 			end));
-		//		throw new MobyRuntimeError("substring: begin > end");
 	    }
 	    if (end.toFixnum() > str.length) {
 		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
@@ -1381,7 +1356,6 @@ goog.provide('plt.Kernel');
 			begin,
 			plt.types.Rational.makeInstance(str.length),
 			end));
-		//              throw new MobyRuntimeError("substring: end > length");
 	    }
 	    return String.makeInstance(str.substring(begin.toFixnum(), end.toFixnum()));
 	},
@@ -1719,13 +1693,15 @@ goog.provide('plt.Kernel');
 	if (procedureArityIncludes(f, argArray.length)) {
 	    return f(argArray);
 	} else {
-	    throw new MobyRuntimeError(
-		plt.Kernel.format(
+	    throwMobyError(
+		false,
+		"make-moby-error-type:generic-runtime-error",
+		[plt.Kernel.format(
 		    "~a: expects ~a, given ~a: ~s", 
 		    [f,
 		     procedureArityDescription(f),
 		     argArray.length,
-		     plt.Kernel.list(argArray)]));
+		     plt.Kernel.list(argArray)])]);
 	}
     };
 
@@ -1969,23 +1945,30 @@ goog.provide('plt.Kernel');
 		return "\n";
 	    } else if (s == '~s' || s == "~S") {
 		if (buffer.length == 0) {
-		    throw new MobyRuntimeError(
-			"format: fewer arguments passed than expected");
+		    throwMobyError(false,
+				   "make-moby-error-type:generic-runtime-error",
+				   
+				   ["format: fewer arguments passed than expected"]);
 		}
 		return plt.types.toWrittenString(buffer.shift());
 	    } else if (s == '~a' || s == "~A") {
 		if (buffer.length == 0) {
-		    throw new MobyRuntimeError(
-			"format: fewer arguments passed than expected");
+		    throwMobyError(false,
+				   "make-moby-error-type:generic-runtime-error",
+				   ["format: fewer arguments passed than expected"]);
 		}
 		return plt.types.toDisplayedString(buffer.shift());
 	    } else {
-		throw new MobyRuntimeError("Unimplemented format " + s);
+		throwMobyError(false,
+			       "make-moby-error-type:generic-runtime-error",
+			       ["Unimplemented format " + s]);
 	    }
 	}
 	var result = plt.types.String.makeInstance(formatStr.replace(pattern, f));
 	if (buffer.length > 0) {
-	    throw new MobyRuntimeError("format: More arguments passed than expected");
+	    throwMobyError(false,
+			   "make-moby-error-type:generic-runtime-error",
+			   ["format: More arguments passed than expected"]);
 	}
 	return result;
     }
@@ -2178,7 +2161,9 @@ goog.provide('plt.Kernel');
     plt.Kernel.error = function(name, msg) {
 	check(name, isSymbol, "error", "symbol", 1);
 	check(msg, isString, "error", "string", 2);
-	throw new MobyRuntimeError(plt.Kernel.format("~a: ~a", [name, msg]).toString());
+	throwMobyError(false, 
+		       "make-moby-error-type:generic-runtime-error",
+		       [plt.Kernel.format("~a: ~a", [name, msg]).toString()]);
     };
 
 
@@ -2284,26 +2269,17 @@ goog.provide('plt.Kernel');
 
 
 
-    var throwMobyError = function(locSexp, errorTypeName, args) {
-	var makeMobyError = 
-	    getExternalModuleValue("moby/runtime/error-struct",
-				   "make-moby-error");
-	var makeErrorType = 
-	    getExternalModuleValue("moby/runtime/error-struct",
-				   errorTypeName);
-	var sexpToLoc =
-	    getExternalModuleValue("moby/runtime/stx",
-				  "sexp->Loc");
-	throw makeMobyError(sexpToLoc(locSexp),
-			    makeErrorType.apply(null, args));
-    };
+
+
+
 
 
     plt.Kernel.check_dash_expect = function(testThunk, expectedThunk, locSexp) {
 	var val = testThunk([]);
 	var expectedVal = expectedThunk([]);
 	if (! plt.Kernel.equal_question_(val, expectedVal)) {
-	    throwMobyError(locSexp, "make-moby-error-type:check-expect",
+	    throwMobyError(locSexp, 
+			   "make-moby-error-type:check-expect",
 			   [expectedVal, val]);
 	}
     };
@@ -2450,6 +2426,8 @@ goog.provide('plt.Kernel');
 		locHash.id);
 	}
     };
+    plt.Kernel.locHashToLoc = locHashToLoc;
+
 
     // throwTypeError: string fixnum (string | ExpectedValue)  schemevalue -> MobyError value
     // Helper function to throw a type error.
@@ -2509,7 +2487,6 @@ goog.provide('plt.Kernel');
     plt.Kernel.MobyError = plt.types.MobyError;
     plt.Kernel.MobyParserError = plt.types.MobyParserError;
     plt.Kernel.MobySyntaxError = plt.types.MobySyntaxError;
-    plt.Kernel.MobyRuntimeError = plt.types.MobyRuntimeError;
 
 
 

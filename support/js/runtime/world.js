@@ -505,7 +505,10 @@ goog.provide('plt.world.Kernel');
     // Render the image, where the upper-left corner of the image is drawn at
     // (x, y).
     BaseImage.prototype.render = function(ctx, x, y) {
-	throw new MobyRuntimeError("Unimplemented method render");
+	plt.Kernel.throwMobyError(
+	    false, 
+	    "make-moby-error-type:generic-runtime-error", 
+	    "Unimplemented method render");
     };
 
 

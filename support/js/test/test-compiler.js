@@ -162,8 +162,8 @@ function init() {
 
 	testDivisionByZero: function() {
 	    plt.Kernel.lastLoc = undefined;
-	    this.assertRaise("MobyRuntimeError",
-			     function() { run("   (/ 1 0)")});
+	    this.assertMobyRaise(isGenericRuntimeError,
+				 function() { run("   (/ 1 0)")});
 	},
 
 
@@ -363,12 +363,13 @@ function init() {
 				    "(set-str-b! a-str 9)" +
 				    "(str-b a-str)")));
 
-	    this.assertRaise("MobyRuntimeError",
-			     function () {
-			    	 run("(define-struct str (a b c))" +
-				     "(define a-str (make-str 1 2 3))" +
-				     "(set-str-b! 9 a-str)" +
-				     "(str-b a-str)")});
+	    this.assertMobyRaise(
+		isTypeMismatch,
+		function () {
+		    run("(define-struct str (a b c))" +
+			"(define a-str (make-str 1 2 3))" +
+			"(set-str-b! 9 a-str)" +
+			"(str-b a-str)")});
 
 	    // posns are immutable, so set-posn-x! should not exist.
 	    this.assertMobyRaise(isUndefinedIdentifier,

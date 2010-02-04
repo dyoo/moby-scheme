@@ -1063,7 +1063,7 @@ goog.provide('plt.Jsworld');
 	    return (dispatchTable[aType])(aType, updateF, attribs);
 	}
 	else {
-	    throw new plt.Kernel.MobyRuntimeError("js-input: does not currently support type " + aType);
+	    throw new Error("js-input: does not currently support type " + aType);
 	}
     }
     Jsworld.input = input;
