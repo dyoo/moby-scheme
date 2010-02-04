@@ -720,21 +720,18 @@ goog.provide('plt.Kernel');
 		    Math.atan2(NumberTower.toFloat(x),
 			       NumberTower.toFloat(args[0])));
 	    } else {
-		var E = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-		var A = plt.Kernel.invokeModule("moby/runtime/arity-struct").EXPORTS;
-		throw E.make_dash_moby_dash_error(
-		    locHashToLoc(plt.Kernel.lastLoc),
-		    E.make_dash_moby_dash_error_dash_type_colon_application_dash_arity(
-			"atan",
-			A.make_dash_arity_colon_mixed(
-			    plt.types.Cons.makeInstance(
-				A.make_dash_arity_colon_fixed(
-				    plt.types.Rational.ONE),
-				plt.types.Cons.makeInstance(
-				    A.make_dash_arity_colon_fixed(
-					plt.types.Rational.TWO),
-				    plt.types.Empty.EMPTY))),
-			plt.types.Rational.makeInstance(args.length)));
+		throwMobyError(locHashToLoc(plt.Kernel.lastLoc),
+			       "make-moby-error-type:application-arity",
+			       ["atan",
+				A.make_dash_arity_colon_mixed(
+				   plt.types.Cons.makeInstance(
+				       A.make_dash_arity_colon_fixed(
+					   plt.types.Rational.ONE),
+				       plt.types.Cons.makeInstance(
+					   A.make_dash_arity_colon_fixed(
+					       plt.types.Rational.TWO),
+					   plt.types.Empty.EMPTY))),
+				plt.types.Rational.makeInstance(args.length)]);
 	    }
 	},
 	
@@ -1097,7 +1094,7 @@ goog.provide('plt.Kernel');
 	list_star_ : function(items, otherItems){
 	    var lastListItem = otherItems.pop();
 	    if (lastListItem == undefined || ! lastListItem instanceof plt.types.Cons) {
-		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		plt.Kernel.throwTypeError("list*",
 					  otherItems.length + 2,
 					  S.make_dash_moby_dash_expected_colon_list(),
@@ -1114,7 +1111,7 @@ goog.provide('plt.Kernel');
 	    var len = 0;
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
 		if (lst.isEmpty()) {
-		    var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+		    var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		    throw S.make_dash_moby_dash_error(
 			locHashToLoc(plt.Kernel.lastLoc),
 			S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
@@ -1321,8 +1318,8 @@ goog.provide('plt.Kernel');
 	string_dash_ref : function(str, i){
 	    check(str, isString, "string-ref", "string", 1);
 	    check(i, isNatural, "string-ref", "natural", 2);
-	    if (i.toFixnum() >= str.length) {
-		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+	    if (NumberTower.toFixnum(i) >= str.length) {
+		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		throw S.make_dash_moby_dash_error(
 		    locHashToLoc(plt.Kernel.lastLoc),
 		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
@@ -1337,7 +1334,7 @@ goog.provide('plt.Kernel');
 	    check(str, isString, "string-ith", "string", 1);
 	    check(i, isNatural, "string-ith", "natural", 2);
 	    if (i.toFixnum() >= str.length) {
-		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		throw S.make_dash_moby_dash_error(
 		    locHashToLoc(plt.Kernel.lastLoc),
 		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
@@ -1364,7 +1361,7 @@ goog.provide('plt.Kernel');
 	    check(begin, isNatural, "substring", "natural", 2);
 	    check(end, isNatural, "substring", "natural", 3);
 	    if (begin.toFixnum() > end.toFixnum()) {
-		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		throw S.make_dash_moby_dash_error(
 		    locHashToLoc(plt.Kernel.lastLoc),
 		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
@@ -1373,7 +1370,7 @@ goog.provide('plt.Kernel');
 			end));
 	    }
 	    if (end.toFixnum() > str.length) {
-		var S = plt.Kernel.invokeModule("moby/runtime/stx").EXPORTS;
+		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		throw S.make_dash_moby_dash_error(
 		    locHashToLoc(plt.Kernel.lastLoc),
 		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
