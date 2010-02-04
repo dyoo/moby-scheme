@@ -497,7 +497,7 @@ goog.provide('plt.reader');
 
 	    case "'":
 	    case "`":
-	    case ","
+	    case ",":
 	    case ",@":
 		plt.types.throwMobyError(peek().loc,
 					 "make-moby-error-type:missing-expression",

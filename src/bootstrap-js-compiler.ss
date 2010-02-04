@@ -526,7 +526,7 @@
 (write-runtime-library-modules)
 (write-compressed-runtime)
 (write-compiler)
-;(write-compressed-compilers)
+(write-compressed-compilers)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
