@@ -2,6 +2,12 @@
 // goog.provide('plt.reader');
 
 
+
+
+if (typeof(plt) === 'undefined') { plt = {}; }
+if (! plt.reader) { plt.reader = {}; }
+
+
 (function(){
 
     var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");

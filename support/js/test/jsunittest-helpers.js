@@ -43,6 +43,12 @@ var mobyErrorType = function(x) {
     return result;
 }
 
+var mobyErrorLoc = function(x) {
+    var result = errorStructModule.getFunction("moby-error-location")(x);
+    return result;
+}
+
+
 var extract = function(functionName) {
     return errorStructModule.getFunction(functionName);
 } 
@@ -67,6 +73,10 @@ var isUnsupportedExpressionForm =
     extract("moby-error-type:unsupported-expression-form?");
 var isUnclosedParentheses =
     extract("moby-error-type:unclosed-parentheses?");
+var isClosingParenthesisBeforeOpener =
+    extract("moby-error-type:closing-parenthesis-before-opener?");
+var isUnbalancedParenthesis =
+    extract("moby-error-type:unbalanced-parentheses?");
 var isMissingExpression =
     extract("moby-error-type:missing-expression?");
 var isDuplicateIdentifier = 
