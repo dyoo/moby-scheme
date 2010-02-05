@@ -140,21 +140,23 @@ if (! plt.reader) { plt.reader = {}; }
 			plt.types.throwMobyError(new Loc(num(offset),
 							 num(line),
 							 num(column),
-							 num(wholeMatch.length)),
+							 num(wholeMatch.length),
+							 source),
 						 "make-moby-error-type:unclosed-lexical-token",
 						 ["string",
-						  plt.types.Symbol.makeInstance(tokenText),
-						  "\""]);
+						  plt.types.Symbol.makeInstance("\""),
+						  plt.types.Symbol.makeInstance("\"")]);
 		    }
 		    if (patternName === "incomplete-pipe-comment") {
 			plt.types.throwMobyError(new Loc(num(offset),
 							 num(line),
 							 num(column),
-							 num(wholeMatch.length)),
+							 num(wholeMatch.length),
+							 source),
 						 "make-moby-error-type:unclosed-lexical-token",
 						 ["comment",
-						  plt.types.Symbol.makeInstance(tokenText),
-						  "|#"]);
+						  plt.types.Symbol.makeInstance("#|"),
+						  plt.types.Symbol.makeInstance("|#")]);
 		    }
 		    
 		    if (patternName == 'string') {

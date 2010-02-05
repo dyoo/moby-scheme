@@ -45,7 +45,7 @@
                
                (span ((class "Error-UnclosedLexicalToken.type")
                       (style "display:none"))
-                     ,(symbol->string (moby-error-type:unclosed-lexical-token-type error-type)))
+                     ,(moby-error-type:unclosed-lexical-token-type error-type))
                (span ((class "Error-UnclosedLexicalToken.opener")
                       (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-lexical-token-opener error-type)))
