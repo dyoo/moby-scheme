@@ -287,6 +287,11 @@
     [(stx-begins-with? expr 'quote)
      (desugar-quote expr pinfo)]
     
+    ;; () isn't supported.
+    [(empty? (stx-e expr))
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:unsupported-expression-form expr)))]
+    
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
      (local [(define exprs (stx-e expr))

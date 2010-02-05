@@ -26,7 +26,7 @@
 ;; If the parentheses are closed by a paren of unexpected shape, we raise
 ;; unbalanced-parentheses. 
 ;; e.g. "( ]"
-(define-struct moby-error-type:unbalanced-parentheses (opener closer other-location))
+(define-struct moby-error-type:unbalanced-parentheses (opener closer observed other-location))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -219,6 +219,7 @@
                                                [closer symbol?])]
  [struct moby-error-type:unbalanced-parentheses ([opener symbol?]
                                                  [closer symbol?]
+                                                 [observed symbol?]
                                                  [other-location Loc?])]
  [struct moby-error-type:closing-parenthesis-before-opener ([closer symbol?])]
  

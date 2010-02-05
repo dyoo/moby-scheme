@@ -33,15 +33,14 @@
         `(span ((class "Error-UnclosedLexicalToken"))
                (span ((class "Error.reason"))
                      "I saw "
-                     ,(symbol->string 
-                       (moby-error-type:unclosed-lexical-token-opener error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:unclosed-lexical-token-opener error-type)
+                                              maybe-dom-parameters)
                      " to start a "
                      ,(moby-error-type:unclosed-lexical-token-type error-type)
                      ", but no "
-                     (span ((class "MobyLexicalToken"))
-                           ,(symbol->string 
-                             (moby-error-type:unclosed-lexical-token-closer error-type)))
-                     "to close it.")
+                     ,(scheme-value->dom-sexp (moby-error-type:unclosed-lexical-token-closer error-type)
+                                              maybe-dom-parameters)
+                     " to close it.")
                
                (span ((class "Error-UnclosedLexicalToken.type")
                       (style "display:none"))
@@ -58,7 +57,8 @@
         `(span ((class "Error-UnrecognizedLexicalToken"))
                (span ((class "Error.reason"))
                      "I saw "
-                     ,(symbol->string (moby-error-type:unrecognized-lexical-token-token error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:unrecognized-lexical-token-token error-type)
+                                              maybe-dom-parameters)
                      " which I don't recognize as a program element.")
                (span ((class "Error-UnrecognizedLexicalToken.token")
                       (style "display:none"))
@@ -67,7 +67,8 @@
        [(moby-error-type:unsupported-lexical-token? error-type)
         `(span ((class "Error-UnsupportedLexicalToken"))
                (span ((class "Error.reason"))
-                     ,(symbol->string (moby-error-type:unsupported-lexical-token-token error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:unsupported-lexical-token-token error-type)
+                                              maybe-dom-parameters)
                      " is currently not supported.")
                (span ((class "Error-UnsupportedLexicalToken.token")
                       (style "display:none"))
@@ -84,17 +85,16 @@
                      ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
                                        maybe-dom-parameters)))]
        
-
-       
-       
        [(moby-error-type:unclosed-parentheses? error-type)
         `(span ((class "Error-UnclosedParentheses"))
                (span ((class "Error.reason"))
                      "I saw "
-                     ,(symbol->string (moby-error-type:unclosed-parentheses-opener error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:unclosed-parentheses-opener error-type)
+                                              maybe-dom-parameters)
                      " to start an expression, but no "
-                     ,(symbol->string (moby-error-type:unclosed-parentheses-closer error-type))
-                     "to close it.")
+                     ,(scheme-value->dom-sexp (moby-error-type:unclosed-parentheses-closer error-type)
+                                              maybe-dom-parameters)
+                     " to close it.")
                (span ((class "Error-UnclosedParentheses.opener")
                       (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-parentheses-opener error-type)))
@@ -102,11 +102,42 @@
                       (style "display:none"))
                      ,(symbol->string (moby-error-type:unclosed-parentheses-closer error-type))))]
        
+       [(moby-error-type:unbalanced-parentheses? error-type)
+        `(span ((class "Error-UnbalancedParentheses"))
+               "I saw "
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:unbalanced-parentheses-opener error-type)
+                 maybe-dom-parameters)
+               " earlier, and expected it to be matched with "
+
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:unbalanced-parentheses-closer error-type)
+                 maybe-dom-parameters)
+
+               ", but instead I see "
+               
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:unbalanced-parentheses-observed error-type)
+                 maybe-dom-parameters)
+
+                 ".")]
+
+        
+        
+       [(moby-error-type:closing-parenthesis-before-opener? error-type)
+        `(span ((class "Error-ClosingParenthesisBeforeOpener"))
+               "I saw "
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:closing-parenthesis-before-opener-closer error-type)
+                 maybe-dom-parameters)
+               " without it being paired with a left parenthesis.")]
+       
        [(moby-error-type:missing-expression? error-type)
         `(span ((class "Error-MissingExpression"))
                (span ((class "Error.reason"))
                      "I expected an expression following "
-                     ,(symbol->string (moby-error-type:missing-expression-token error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:missing-expression-token error-type)
+                                              maybe-dom-parameters)
                      " but did not find one."))]
        
        [(moby-error-type:duplicate-identifier? error-type)

@@ -380,11 +380,12 @@ if (! plt.reader) { plt.reader = {}; }
 					     [plt.types.Symbol.makeInstance(lshape), 
 					      plt.types.Symbol.makeInstance(rshape)]);
 		} else if (peek().text != rshape) {
-		    plt.types.throwMobyError(lparen.loc,
+		    plt.types.throwMobyError(peek().loc,
 					     "make-moby-error-type:unbalanced-parentheses",
 					     [plt.types.Symbol.makeInstance(lshape), 
 					      plt.types.Symbol.makeInstance(rshape),
-					      peek().loc]);
+					      plt.types.Symbol.makeInstance(peek().text),
+					      lparen.loc]);
 		} else {
 		    var rparen = eat(')');
 		    return datumToStx(
