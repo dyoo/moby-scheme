@@ -91,7 +91,7 @@ if (! plt.reader) { plt.reader = {}; }
 				"(?:(?:\\|[^\\#])|[^\\|])*"+
 				"[|][#])")],
 		    ['comment' , /(^;[^\n]*)/],
-		    ['incomplete-token', new RegExp("^[#][|]")],  // unclosed pipe comment
+		    ['incomplete-pipe-comment', new RegExp("^[#][|]")],  // unclosed pipe comment
 		    ['(' , /^(\(|\[|\{)/],
 		    [')' , /^(\)|\]|\})/],
 		    ['\'' , /^(\')/],
@@ -101,7 +101,7 @@ if (! plt.reader) { plt.reader = {}; }
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],
-		    ['incomplete-token', new RegExp("^\"")],      // unclosed string
+		    ['incomplete-string', new RegExp("^\"")],      // unclosed string
 		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")]
 
 		   ];
@@ -136,13 +136,25 @@ if (! plt.reader) { plt.reader = {}; }
 		if (result != null) {
 		    var wholeMatch = result[0];
 		    var tokenText = result[1];
-		    if (patternName === "incomplete-token") {
+		    if (patternName === "incomplete-string") {
 			plt.types.throwMobyError(new Loc(num(offset),
 							 num(line),
 							 num(column),
 							 num(wholeMatch.length)),
 						 "make-moby-error-type:unclosed-lexical-token",
-						 [plt.types.Symbol.makeInstance(tokenText)]);
+						 ["string",
+						  plt.types.Symbol.makeInstance(tokenText),
+						  "\""]);
+		    }
+		    if (patternName === "incomplete-pipe-comment") {
+			plt.types.throwMobyError(new Loc(num(offset),
+							 num(line),
+							 num(column),
+							 num(wholeMatch.length)),
+						 "make-moby-error-type:unclosed-lexical-token",
+						 ["comment",
+						  plt.types.Symbol.makeInstance(tokenText),
+						  "|#"]);
 		    }
 		    
 		    if (patternName == 'string') {
