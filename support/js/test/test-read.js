@@ -1,3 +1,5 @@
+// FIXME: need support for piped symbols.
+
 
 
 function init() {
@@ -310,6 +312,11 @@ function init() {
 	testErrorLocsExtraParen : function() {
 	    this.assertMobyRaise(isClosingParenthesisBeforeOpener,
 				 function() { read("   ())"); });
+
+	    this.assertMobyRaise(isClosingParenthesisBeforeOpener,
+				 function() { read("    (((()))[])]") },
+				"failure to match");
+
  	    try {
  		read("   ())");
  	    } catch (e) {
@@ -317,6 +324,14 @@ function init() {
  		this.assertEqual(1, locSpan(mobyErrorLoc(e)), "span mismatch");
  	    }
 	},
+
+	testErrorUnrecognizedToken: function() {
+	    // FIXME: I don't know how to test this yet, given that almost
+	    // everything is a valid token.
+// 	    this.assertMobyRaise(isUnrecognizedLexicalToken,
+// 				 function() { read(""); })
+	},
+
 	
 	
 	testErrorLocsUnclosedParen : function() {
@@ -327,6 +342,17 @@ function init() {
 	    this.assertMobyRaise(isUnclosedParentheses,
 				 function() { read("    ((()))(") },
 				"failure to match");
+
+
+	    this.assertMobyRaise(isUnclosedParentheses,
+				 function() { read("    (((()))[]") },
+				"failure to match");
+
+	    this.assertMobyRaise(isUnclosedParentheses,
+				 function() { read("   ( foo bar") },
+				"failure to match");
+
+
 
 	    try {
 		read("    (");
@@ -361,6 +387,15 @@ function init() {
 	testErrorLocsMismatching : function() {
 	    this.assertMobyRaise(isUnbalancedParenthesis,
 				 function() { read(" (]") });
+
+	    this.assertMobyRaise(isUnbalancedParenthesis,
+				 function() { read(" {]") });
+
+	    this.assertMobyRaise(isUnbalancedParenthesis,
+				 function() { read(" (}") });
+
+	    read("{}");
+
 	    try {
 		read(" (]");
 	    } catch (e) {
