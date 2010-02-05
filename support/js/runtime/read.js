@@ -380,12 +380,15 @@ if (! plt.reader) { plt.reader = {}; }
 		    var nextExpr = readExpr();
 		    if (nextExpr) {
 			return nextExpr;
+		    } else {
+			return false;
 		    }
+		} else {
+		    plt.types.throwMobyError(
+			hashcomment.loc,
+			"make-moby-error-type:missing-expression",
+			[plt.types.Symbol.makeInstance(hashcomment.text)]);
 		}
-		plt.types.throwMobyError(
-		    hashcomment.loc,
-		    "make-moby-error-type:missing-expression",
-		    [plt.types.Symbol.makeInstance(hashcomment.text)]);
 
 		
 	    case '\'':
@@ -456,10 +459,8 @@ if (! plt.reader) { plt.reader = {}; }
 		return datumToStx(plt.types.Symbol.makeInstance(t.text), t.loc);
 
 	    case ')':
-		plt.types.throwMobyError(peek().loc,
-					 "make-moby-error-type:closing-parenthesis-before-opener"
-					 [plt.types.Symbol.makeInstance(peek().text)]);
-
+		return false;
+		
 	    default:
 		plt.types.throwMobyError(peek().loc,
 					 "make-moby-error-type:unrecognized-lexical-token",
@@ -476,15 +477,6 @@ if (! plt.reader) { plt.reader = {}; }
 	    while (true) {
 		if (peek() == false || isType(')')) {
 		    break;
-		} else if (isType('#;')){
-		    var hashQuoteToken = eat('#;');
-		    var skippingExpr = readExpr();
-		    if (! skippingExpr) {
-			plt.types.throwMobyError(
-			    hashQuoteToken.loc,
-			    "make-moby-error-type:missing-expression",
-			    [plt.types.Symbol.makeInstance(hashQuoteToken.text)]);
-		    }
 		} else {
 		    var nextElt = readExpr();
 		    if (nextElt) {

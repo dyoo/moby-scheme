@@ -352,10 +352,11 @@ function init() {
 
 
 	testReadHashCommentError: function() {
+	    console.log("read hash comment error");
 	    this.assertMobyRaise(isMissingExpression,
-				 function() { read("(hello #;)") });
+				 function() { read("(hello #;") });
 	    try {
-		read("(hello #;)");
+		read("(hello #;");
 	    } catch (e) {
 		this.assertEqual(7, locOffset(mobyErrorLoc(e)));
 	    }
