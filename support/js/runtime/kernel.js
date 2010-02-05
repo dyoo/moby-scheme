@@ -718,9 +718,10 @@ goog.provide('plt.Kernel');
 		    Math.atan2(NumberTower.toFloat(x),
 			       NumberTower.toFloat(args[0])));
 	    } else {
+		var A = plt.Kernel.invokeModule("moby/runtime/arity-struct").EXPORTS;
 		throwMobyError(locHashToLoc(plt.Kernel.lastLoc),
 			       "make-moby-error-type:application-arity",
-			       ["atan",
+			       [plt.types.Symbol.makeInstance("atan"),
 				A.make_dash_arity_colon_mixed(
 				   plt.types.Cons.makeInstance(
 				       A.make_dash_arity_colon_fixed(

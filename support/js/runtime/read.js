@@ -78,13 +78,9 @@ if (! plt.reader) { plt.reader = {}; }
     }
 
 
-    var delimiter = "[\\s\\\(\\\)\\\[\\\]\\\{\\\}\\\"\\\,\\\'\\\`\\\;]";
     var nondelimiter = "[^\\s\\\(\\\)\\\[\\\]\\\{\\\}\\\"\\\,\\\'\\\`\\\;]";
 
 
-    var numberHeader = ("(?:(?:\\d+\\/\\d+)|"+
-			(  "(?:(?:\\d+\\.\\d+|\\d+\\.|\\.\\d+)(?:[eE][+\\-]?\\d+)?)|")+
-			(  "(?:\\d+(?:[eE][+\\-]?\\d+)?))"));
 
     // error tokens have the type "incomplete-token".
 
@@ -104,19 +100,16 @@ if (! plt.reader) { plt.reader = {}; }
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
-
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],
 		    ['incomplete-token', new RegExp("^\"")],      // unclosed string
-
-
-
-		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")],
-
-
-
+		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")]
 
 		   ];
 
+
+    var numberHeader = ("(?:(?:\\d+\\/\\d+)|"+
+			(  "(?:(?:\\d+\\.\\d+|\\d+\\.|\\.\\d+)(?:[eE][+\\-]?\\d+)?)|")+
+			(  "(?:\\d+(?:[eE][+\\-]?\\d+)?))"));
 
     var numberPatterns = [['complex' , new RegExp("^((?:(?:\\#[ei])?[+\\-]?" + numberHeader +")?"
 						  + "(?:[+\\-]" + numberHeader + ")i$)")],
