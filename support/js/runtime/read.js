@@ -86,6 +86,7 @@ if (! plt.reader) { plt.reader = {}; }
 			(  "(?:(?:\\d+\\.\\d+|\\d+\\.|\\.\\d+)(?:[eE][+\\-]?\\d+)?)|")+
 			(  "(?:\\d+(?:[eE][+\\-]?\\d+)?))"));
 
+    // error tokens have the type "incomplete-token".
 
     var PATTERNS = [['whitespace' , /^(\s+)/],
 		    ['#;', /^([#][;])/],
@@ -94,6 +95,7 @@ if (! plt.reader) { plt.reader = {}; }
 				"(?:(?:\\|[^\\#])|[^\\|])*"+
 				"[|][#])")],
 		    ['comment' , /(^;[^\n]*)/],
+		    ['incomplete-token', new RegExp("^[#][|]")],  // unclosed pipe comment
 		    ['(' , /^(\(|\[|\{)/],
 		    [')' , /^(\)|\]|\})/],
 		    ['\'' , /^(\')/],
@@ -102,12 +104,17 @@ if (! plt.reader) { plt.reader = {}; }
 		    [',' , /^(,)/],
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
+
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],
+		    ['incomplete-token', new RegExp("^\"")],      // unclosed string
+
+
+
 		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")],
 
-		    // error tokens
-		    ['incomplete-token', new RegExp("^\"")],      // unclosed string
-		    ['incomplete-token', new RegExp("^[#][|]")],  // unclosed pipe comment
+
+
+
 		   ];
 
 

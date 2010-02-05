@@ -323,19 +323,39 @@ function init() {
 	    this.assertMobyRaise(isUnclosedParentheses,
 				 function() { read("    (") },
 				"failure to match");
+
+	    this.assertMobyRaise(isUnclosedParentheses,
+				 function() { read("    ((()))(") },
+				"failure to match");
+
 	    try {
 		read("    (");
 	    } catch (e) {
 		this.assertEqual(4, locOffset(mobyErrorLoc(e)));
+		this.assertEqual(1, locSpan(mobyErrorLoc(e)));
 	    }
+
+	    try {
+		read("       (blah");
+	    } catch (e) {
+		this.assertEqual(7, locOffset(mobyErrorLoc(e)));
+		this.assertEqual(1, locSpan(mobyErrorLoc(e)));
+	    }
+
 	},
 
 	testUnclosedLexicalToken : function() {
 	    this.assertMobyRaise(isUnclosedLexicalToken,
 				 function() { read("hello \"world"); });
 
-// 	    this.assertMobyRaise(isUnclosedLexicalToken,
-// 				 function() { read("hello #|world"); });
+	    try {
+		read("    \"world");
+	    } catch (e) {
+		this.assertEqual(4, locOffset(mobyErrorLoc(e)));
+		this.assertEqual(1, locSpan(mobyErrorLoc(e)));
+	    }
+ 	    this.assertMobyRaise(isUnclosedLexicalToken,
+ 				 function() { read("hello #| world"); });
 	},
 
 	testErrorLocsMismatching : function() {
