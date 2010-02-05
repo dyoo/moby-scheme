@@ -144,7 +144,7 @@ goog.provide('plt.permission');
 	}
 
 	else if (isOpenImageUrlP(p)) {
-	    var path = permission_colon_open_dash_image_dash_url_dash_url(p);
+	    var path = PEXPORTS.permission_colon_open_dash_image_dash_url_dash_url(p);
 	    var img = new Image();
 	    var loadHandler = function() {
 		// Detach, because looping animated gifs are defined to call onload

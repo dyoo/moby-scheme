@@ -92,17 +92,14 @@
           
           (define (custom-dom-converter-applies? val)
             (and (dom-parameters? maybe-dom-parameters)
-                 (dom-parameters-scheme-value->dom? val)))
+                 ((dom-parameters-scheme-value->dom? maybe-dom-parameters) val)))
           
           (define (apply-custom-dom-converter val)
-            ((dom-parameters-scheme-value->dom val) ->dom))
+            ((dom-parameters-scheme-value->dom maybe-dom-parameters) val ->dom))
           
 
           (define (->dom val)
-            (cond
-              [(custom-dom-converter-applies? val)
-               (apply-custom-dom-converter val)]
-              
+            (cond              
               [(undefined? val)
                `(span ((class "SchemeValue-Undefined"))
                       "<undefined>")]
@@ -132,6 +129,9 @@
                  `(span ((class "SchemeValue-SharedReference"))
                         ,(string-append "#" (number->string (label-n a-label)))))]
               ;;;;
+              
+              [(custom-dom-converter-applies? val)
+               (apply-custom-dom-converter val)]
               
               [(string? val)
                `(span ((class "SchemeValue-String"))
