@@ -4,7 +4,7 @@
 
 
 
-if (typeof(plt) === 'undefined') { plt = {}; }
+    if (typeof(plt) === 'undefined') { plt = {}; }
 if (! plt.reader) { plt.reader = {}; }
 
 
@@ -104,7 +104,7 @@ if (! plt.reader) { plt.reader = {}; }
 		    ['char', /^\#\\(.)/],
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],
 		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")]
-		    ];
+		   ];
 
 
     var numberPatterns = [['complex' , new RegExp("^((?:(?:\\#[ei])?[+\\-]?" + numberHeader +")?"
@@ -112,7 +112,7 @@ if (! plt.reader) { plt.reader = {}; }
 			  ['number' , /^((?:\#[ei])?[+-]inf.0)$/],
 			  ['number' , /^((?:\#[ei])?[+-]nan.0)$/],
 			  ['number' , new RegExp("^((?:\\#[ei])?[+\\-]?" + numberHeader + "$)")]];
-	
+    
 
     var tokenize = function(s, source) {
 
@@ -143,9 +143,9 @@ if (! plt.reader) { plt.reader = {}; }
 				tokens.push({type: numberPatterns[j][0],
 					     text: tokenText,
 					     loc: new Loc(num(offset),
-						     num(line),
-						     num(column),
-						     num(wholeMatch.length), 
+							  num(line),
+							  num(column),
+							  num(wholeMatch.length), 
 							  source)});
 				isNumber = true;
 				break;
@@ -265,13 +265,13 @@ if (! plt.reader) { plt.reader = {}; }
 	    return datumToStx(plt.types.Cons.makeInstance(
 		datumToStx(quoteSymbol, leadingQuote.loc),
 		plt.types.Cons.makeInstance(quoted, empty)),
-			    new Loc(Loc_dash_offset(leadingQuote.loc),
-				    Loc_dash_line(leadingQuote.loc),
-				    Loc_dash_column(leadingQuote.loc),
-				    (plt.types.NumberTower.add(plt.types.NumberTower.subtract(Loc_dash_offset(stxLoc(quoted)),
-											      Loc_dash_offset(leadingQuote.loc)),
-							       Loc_dash_span(stxLoc(quoted)))),
-				    source));
+			      new Loc(Loc_dash_offset(leadingQuote.loc),
+				      Loc_dash_line(leadingQuote.loc),
+				      Loc_dash_column(leadingQuote.loc),
+				      (plt.types.NumberTower.add(plt.types.NumberTower.subtract(Loc_dash_offset(stxLoc(quoted)),
+												Loc_dash_offset(leadingQuote.loc)),
+								 Loc_dash_span(stxLoc(quoted)))),
+				      source));
 	};
 
 	var getParenRShape = function(lparen) {
@@ -302,14 +302,14 @@ if (! plt.reader) { plt.reader = {}; }
 		    var whole = plt.types.Rational.makeInstance(parseInt(decimalMatch[1] || "0") || 0);
 		    if (decimalMatch[1].match(/-/)) {
 			return plt.types.NumberTower.subtract(whole,
-			  plt.types.Rational.makeInstance(
-			      parseInt(decimalMatch[2]), 
-			      Math.pow(10, decimalMatch[2].length)));
+							      plt.types.Rational.makeInstance(
+								  parseInt(decimalMatch[2]), 
+								  Math.pow(10, decimalMatch[2].length)));
 		    } else {
 			return plt.types.NumberTower.add(whole,
-			  plt.types.Rational.makeInstance(
-			      parseInt(decimalMatch[2]), 
-			      Math.pow(10, decimalMatch[2].length)));
+							 plt.types.Rational.makeInstance(
+							     parseInt(decimalMatch[2]), 
+							     Math.pow(10, decimalMatch[2].length)));
 		    }
 		} else {
 		    return plt.types.FloatPoint.makeInstance(parseFloat(text));
@@ -355,9 +355,9 @@ if (! plt.reader) { plt.reader = {}; }
 		} else if (peek().text != rshape) {
 		    plt.types.throwMobyError(lparen.loc,
 					     "make-moby-error-type:unbalanced-parentheses",
-					    [plt.types.Symbol.makeInstance(lshape), 
-					     plt.types.Symbol.makeInstance(rshape),
-					     peek().loc]);
+					     [plt.types.Symbol.makeInstance(lshape), 
+					      plt.types.Symbol.makeInstance(rshape),
+					      peek().loc]);
 		} else {
 		    var rparen = eat(')');
 		    return datumToStx(
@@ -382,9 +382,10 @@ if (! plt.reader) { plt.reader = {}; }
 			return nextExpr;
 		    }
 		}
-		plt.types.throwMobyError(hashcomment.loc,
-					 "make-moby-error-type:missing-expression",
-					 [plt.types.Symbol.makeInstance(hashcomment.text)]);
+		plt.types.throwMobyError(
+		    hashcomment.loc,
+		    "make-moby-error-type:missing-expression",
+		    [plt.types.Symbol.makeInstance(hashcomment.text)]);
 
 		
 	    case '\'':
@@ -406,14 +407,14 @@ if (! plt.reader) { plt.reader = {}; }
 		if (exactnessMatch) {
 		    if (exactnessMatch[1] == "#i") {
 			return datumToStx(parseBasicNumber(exactnessMatch[2], false),
-					t.loc);
+					  t.loc);
 		    } else {
 			return datumToStx(parseBasicNumber(exactnessMatch[2], true),
-					t.loc);
+					  t.loc);
 		    }
 		} else {
 		    return datumToStx(parseBasicNumber(t.text, true),
-				    t.loc);
+				      t.loc);
 		}
 
 	    case 'complex':
@@ -432,7 +433,7 @@ if (! plt.reader) { plt.reader = {}; }
 	    case 'string':
 		var t = eat('string');
 		return datumToStx(plt.types.String.makeInstance(t.text),
-				t.loc);
+				  t.loc);
 	    case 'char':
 		var t = eat('char');
 		if (t.text == 'newline') {
@@ -476,11 +477,19 @@ if (! plt.reader) { plt.reader = {}; }
 		if (peek() == false || isType(')')) {
 		    break;
 		} else if (isType('#;')){
-		    eat('#;');
+		    var hashQuoteToken = eat('#;');
 		    var skippingExpr = readExpr();
+		    if (! skippingExpr) {
+			plt.types.throwMobyError(
+			    hashQuoteToken.loc,
+			    "make-moby-error-type:missing-expression",
+			    [plt.types.Symbol.makeInstance(hashQuoteToken.text)]);
+		    }
 		} else {
 		    var nextElt = readExpr();
-		    result = plt.types.Cons.makeInstance(nextElt, result);
+		    if (nextElt) {
+			result = plt.types.Cons.makeInstance(nextElt, result);
+		    }
 		}
 	    }
 	    return plt.types.Cons.reverse(result);

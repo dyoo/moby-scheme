@@ -142,11 +142,10 @@ function init() {
 					   empty)));
 	},
 
-// 	testReadRational: function() {
-// 	    this.assert(schemeIsEqual(read("1"),
-// 				      cons(number(1), empty)));
-	    
-// 	},
+ 	testReadRational: function() {
+ 	    this.assert(schemeIsEqual(read("1"),
+ 				      cons(number(1), empty)));	    
+ 	},
 
 	testReadRational2: function() {
 	    this.assert(schemeIsEqual(read("3/4"),
@@ -310,49 +309,55 @@ function init() {
 
 	testErrorLocsExtraParen : function() {
 	    this.assertMobyRaise(isClosingParenthesisBeforeOpener,
-				 function() { read("   ())") });
-	    try {
-		read("   ())");
-	    } catch (e) {
-		this.assertEqual(5, locOffset(mobyErrorLoc(e)));
-	    }
+				 function() { read("   ())"); });
+ 	    try {
+ 		read("   ())");
+ 	    } catch (e) {
+ 		this.assertEqual(5, locOffset(mobyErrorLoc(e)), "offset mismatch");
+ 		this.assertEqual(1, locSpan(mobyErrorLoc(e)), "span mismatch");
+ 	    }
 	},
-
-
+	
+	
 	testErrorLocsUnclosedParen : function() {
-	    this.assertRaise("MobyParserError", function() { read("    (") });
+	    this.assertMobyRaise(isUnclosedParentheses,
+				 function() { read("    (") },
+				"failure to match");
 	    try {
 		read("    (");
 	    } catch (e) {
-		this.assertEqual(4, locOffset(e.loc));
+		this.assertEqual(4, locOffset(mobyErrorLoc(e)));
 	    }
 	},
 
 	testErrorLocsMismatching : function() {
-	    this.assertRaise("MobyParserError", function() { read(" (]") });
+	    this.assertMobyRaise(isUnbalancedParenthesis,
+				 function() { read(" (]") });
 	    try {
 		read(" (]");
 	    } catch (e) {
-		this.assertEqual(2, locOffset(e.loc));
+		this.assertEqual(1, locOffset(mobyErrorLoc(e)));
+		this.assertEqual(2, locOffset(mobyErrorType(e).other_dash_location));
 	    }
 	}, 
 
 	testReadDotError: function() {
-	    this.assertRaise("MobyParserError",
-			     function() { read(".") });
+	    this.assertMobyRaise(isUnsupportedLexicalToken,
+				 function() { read(".") });
 
-	    this.assertRaise("MobyParserError",
-			     function() { read("(define f (lambda (x . y) y))"); });
+	    this.assertMobyRaise(isUnsupportedLexicalToken,
+				 function() { 
+				     read("(define f (lambda (x . y) y))"); });
 	},
 
 
 	testReadHashCommentError: function() {
-	    this.assertRaise("MobyParserError",
-			     function() { read("(hello #;") });
+	    this.assertMobyRaise(isMissingExpression,
+				 function() { read("(hello #;)") });
 	    try {
-		read("(hello #;");
+		read("(hello #;)");
 	    } catch (e) {
-		this.assertEqual(7, locOffset(e.loc));
+		this.assertEqual(7, locOffset(mobyErrorLoc(e)));
 	    }
 
 	},

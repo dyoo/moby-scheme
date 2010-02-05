@@ -100,6 +100,8 @@
       (moby-error-type:unsupported-lexical-token? x)
       (moby-error-type:unsupported-expression-form? x)
       (moby-error-type:unclosed-parentheses? x)
+      (moby-error-type:unbalanced-parentheses? x)
+      (moby-error-type:closing-parenthesis-before-opener? x)
       (moby-error-type:missing-expression? x)
       (moby-error-type:duplicate-identifier? x)
       (moby-error-type:expected-identifier? x)

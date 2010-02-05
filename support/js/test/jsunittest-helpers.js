@@ -170,7 +170,7 @@ JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk) 
 	this.fail("assertMobyRaise: expected exception hasn't been raised");
     } catch(e) {
 	this.assert(isMobyError(e), "not a moby error");
-	this.assert(isMobyErrorType(mobyErrorType(e)));
+	this.assert(isMobyErrorType(mobyErrorType(e)), "not a moby error type");
 	this.assert(predicate(mobyErrorType(e)), "predicate fails");
     }
 };

@@ -106,7 +106,8 @@ Box
     };
 
 
-
+    // throwMobyError: (Loc | sexp | false) string [X ...] -> void
+    // Throws an error using the structures in moby/runtime/error-struct.
     plt.types.throwMobyError = function(locSexp, errorTypeName, args) {
 	var makeMobyError = 
 	    getExternalModuleValue("moby/runtime/error-struct",
@@ -117,9 +118,21 @@ Box
 	var sexpToLoc = 
 	    getExternalModuleValue("moby/runtime/stx",
 				   "sexp->Loc")
-	var aLoc = (locSexp ? 
-		    sexpToLoc(locSexp) :
-		    plt.Kernel.locHashToLoc(plt.Kernel.lastLoc));
+	var isLoc = 
+	    getExternalModuleValue("moby/runtime/stx",
+				   "Loc?")
+
+	var aLoc;
+	if (locSexp) {
+	    if (isLoc(locSexp)) { 
+		aLoc = locSexp;
+	    } else {
+		aLoc = sexpToLoc(locSexp);
+	    }
+	    
+	} else {
+	    aLoc = plt.Kernel.locHashToLoc(plt.Kernel.lastLoc);
+	}
 	throw makeMobyError(aLoc,
 			    makeErrorType.apply(null, args));
     };
