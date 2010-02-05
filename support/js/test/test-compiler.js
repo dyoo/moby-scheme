@@ -100,6 +100,19 @@ function init() {
 				 });
 	},
 
+	testNumberToString: function() {
+	    this.assert(isEqual("3124",
+				run("(number->string 3124)")));
+	},
+
+
+	testStringToNumber: function() {
+	    this.assert(isEqual(plt.types.Rational.makeInstance(4213),
+				run("(string->number \"4213\")")));
+	},
+
+
+
 	testBadIfs: function() {
 	    this.assertMobyRaise(isIfTooManyElements,
 				 function() {
