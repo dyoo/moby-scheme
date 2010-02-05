@@ -132,7 +132,7 @@
      (syntax/loc stx
        (base:raise (make-moby-failure (base:format "~a" 
                                                    (if (moby-error? val)
-                                                       (string-append (dom-string-content (moby-error-struct-to-dom-sexp val))
+                                                       (string-append (dom-string-content (error-struct->dom-sexp val false))
                                                                       "\n"
                                                                       (Loc->string (moby-error-location val)))
                                                        val))

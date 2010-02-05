@@ -5,7 +5,7 @@
 (require "stx.ss")
 (require "scheme-value-to-dom.ss")
 (require "dom-helpers.ss")
-
+(require "dom-parameters.ss")
 
 
 ;; Error structure to dom code.
@@ -14,16 +14,18 @@
 
 
 
-;; error-struct-to-dom-sexp: dom -> sexp
-(define (moby-error-struct-to-dom-sexp an-error)
+;; error-struct-to-dom-sexp: dom (dom-parameters | false) -> sexp
+;; Convert an error structure to a dom-sexp.  Optionally provide a dom-parameters
+;; that defines custom dom converters.
+(define (error-struct->dom-sexp an-error maybe-dom-parameters)
   (local [(define embedded-location (moby-error-location an-error))
           (define error-type (moby-error-error-type an-error))
+          
           (define (add-toplevel-dom-error-wrapper a-dom)
             `(span ((class "Error"))
                    ,a-dom
                    (span ((class "Error.location"))
-                         ,(Loc->dom-sexp embedded-location)
-                   )))]
+                         ,(Loc->dom-sexp embedded-location))))]
     
     (add-toplevel-dom-error-wrapper
      (cond
@@ -74,11 +76,13 @@
        [(moby-error-type:unsupported-expression-form? error-type)
         `(span ((class "Error-UnsupportedExpressionForm"))
                (span ((class "Error.reason"))
-                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type))
+                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
+                                       maybe-dom-parameters)
                      " is currently not supported.")
                (span ((class "Error-UnsupportedExpressionForm.expr")
                       (style "display:none"))
-                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type))))]
+                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
+                                       maybe-dom-parameters)))]
        
 
        
@@ -109,7 +113,8 @@
         `(span ((class "Error-DuplicateIdentifier"))
                (span ((class "Error.reason"))
                      "The identifier "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:duplicate-identifier-id error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:duplicate-identifier-id error-type)
+                                              maybe-dom-parameters)
                      " has been duplicated.")
                (span ((class "Error-DuplicateIdentifier.secondLocation")
                       (style "display:none"))
@@ -119,7 +124,8 @@
         `(span ((class "Error-ExpectedIdentifier"))
                (span ((class "Error.reason"))
                      "I expected an identifier but received "
-                     ,(stx-to-dom-sexp (moby-error-type:expected-identifier-observed error-type))
+                     ,(stx-to-dom-sexp (moby-error-type:expected-identifier-observed error-type)
+                                       maybe-dom-parameters)
                      " instead."))]
        
        [(moby-error-type:expected-list-of-identifiers? error-type)
@@ -127,16 +133,19 @@
                (span ((class "Error.reason"))
                      "Within " ,@(prepend-indefinite-article 
                                   (stx-to-dom-sexp 
-                                   (moby-error-type:expected-list-of-identifiers-who error-type)))
+                                   (moby-error-type:expected-list-of-identifiers-who error-type)
+                                   maybe-dom-parameters))
                      ", I expected a list of identifiers but received "
-                     ,(stx-to-dom-sexp (moby-error-type:expected-list-of-identifiers-observed error-type))
+                     ,(stx-to-dom-sexp (moby-error-type:expected-list-of-identifiers-observed error-type)
+                                       maybe-dom-parameters)
                      " instead."))]
        
        [(moby-error-type:undefined-identifier? error-type)
         `(span ((class "Error-UndefinedIdentifier"))
                (span ((class "Error.reason"))
                      "I don't know what "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:undefined-identifier-id error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:undefined-identifier-id error-type)
+                                              maybe-dom-parameters)
                      " is; it's not defined as an input or a primitive."))]
 
        
@@ -144,8 +153,9 @@
         `(span ((class "Error-StructureIdentifierNotExpression"))
                (span ((class "Error.reason"))
                      "The structure name "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:structure-identifier-not-expression-id
-                                                 error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:structure-identifier-not-expression-id
+                                                 error-type)
+                                              maybe-dom-parameters)
                      " can't be used as an expression."))]
 
        
@@ -153,22 +163,25 @@
         `(span ((class "Error-ProvidedNameNotDefined"))
                (span ((class "Error.reason"))
                      "The provided name "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:provided-name-not-defined-id error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:provided-name-not-defined-id error-type)
+                                              maybe-dom-parameters)
                      " is not defined in the program."))]
 
        [(moby-error-type:provided-structure-not-structure? error-type)
         `(span ((class "Error-ProvidedStructureNotStructure"))
                (span ((class "Error.reason"))
                      "The provided name "
-                     ,(scheme-value-to-dom-sexp 
-                       (moby-error-type:provided-structure-not-structure-id error-type))
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:provided-structure-not-structure-id error-type)
+                       maybe-dom-parameters)
                      "is defined in the program, but is not the name of a structure."))]
 
        [(moby-error-type:unknown-module? error-type)
         `(span ((class "Error-UnknownModule"))
                (span ((class "Error.reason"))
                      "I see a require of the module "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:unknown-module-path error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:unknown-module-path error-type)
+                                              maybe-dom-parameters)
                      ", but I don't yet know what this module is."))]
        
        [(moby-error-type:conditional-missing-question-answer? error-type)
@@ -193,13 +206,14 @@
         `(span ((class "Error-BranchValueNotBoolean"))
                "I expected the answer's value to be a boolean expression, "
                "(" 
-               ,(scheme-value-to-dom-sexp true)
+               ,(scheme-value->dom-sexp true maybe-dom-parameters)
                " or " 
-               ,(scheme-value-to-dom-sexp false)
+               ,(scheme-value->dom-sexp false maybe-dom-parameters)
                "), "
                "but instead I see "
-               ,(scheme-value-to-dom-sexp 
-                 (moby-error-type:branch-value-not-boolean-observed error-type))
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:branch-value-not-boolean-observed error-type)
+                 maybe-dom-parameters)
                ".")]
        
        [(moby-error-type:if-too-few-elements? error-type)
@@ -219,7 +233,8 @@
        [(moby-error-type:boolean-chain-too-few-elements? error-type)
         `(span ((class "Error-BooleanChainTooFewElements"))
                "Inside a " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:boolean-chain-too-few-elements-id error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:boolean-chain-too-few-elements-id error-type)
+                                        maybe-dom-parameters)
                ", I expect to see at least two expressions, but I don't see them both.")]
 
        [(moby-error-type:lambda-too-few-elements? error-type)
@@ -267,59 +282,59 @@
        
        [(moby-error-type:when-no-body? error-type)
         `(span ((class "Error-WhenNoBody"))
-               "Inside a " (scheme-value-to-dom-sexp 'when)
+               "Inside a " (scheme-value->dom-sexp 'when maybe-dom-parameters)
                ", I expect to see a body, but I don't see one.")]
        
        [(moby-error-type:unless-no-body? error-type)
         `(span ((class "Error-WhenNoBody"))
-               "Inside an " (scheme-value-to-dom-sexp 'unless) 
+               "Inside an " (scheme-value->dom-sexp 'unless maybe-dom-parameters) 
                ", I expect to see a body, but I don't see one.")]
 
        
        [(moby-error-type:check-expect? error-type)
         `(span ((class "Error-CheckExpect"))
                "Inside a " 
-               ,(scheme-value-to-dom-sexp 'check-expect)
+               ,(scheme-value->dom-sexp 'check-expect maybe-dom-parameters)
                ", the observed value " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-expect-observed error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-expect-observed error-type) maybe-dom-parameters)
                " does not match the expected value " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-expect-expected error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-expect-expected error-type) maybe-dom-parameters)
                ".")]
 
        [(moby-error-type:check-within? error-type)
         `(span ((class "Error-CheckWithin"))
                "Inside a " 
-               ,(scheme-value-to-dom-sexp 'check-within)
+               ,(scheme-value->dom-sexp 'check-within maybe-dom-parameters)
                ", the observed value " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-within-observed error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-within-observed error-type) maybe-dom-parameters)
                " does not match the expected value " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-within-expected error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-within-expected error-type) maybe-dom-parameters)
                " within the bounds "
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-within-within error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-within-within error-type) maybe-dom-parameters)
                ".")]
        
        [(moby-error-type:check-error? error-type)
         `(span ((class "Error-CheckError"))
                "Inside a " 
-               ,(scheme-value-to-dom-sexp 'check-expect)
+               ,(scheme-value->dom-sexp 'check-expect maybe-dom-parameters)
                ", the observed error " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-observed error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-error-observed error-type) maybe-dom-parameters)
                " does not match the expected error " 
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-expected error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-error-expected error-type) maybe-dom-parameters)
                ".")]
        
        [(moby-error-type:check-error-no-error? error-type)
         `(span ((class "Error-CheckErrorNoError"))
                "I expected an the expected error "
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-no-error-expected error-type))
+               ,(scheme-value->dom-sexp (moby-error-type:check-error-no-error-expected error-type) maybe-dom-parameters)
                " but instead I received the value "
-               ,(scheme-value-to-dom-sexp (moby-error-type:check-error-no-error-observed error-type)))]
+               ,(scheme-value->dom-sexp (moby-error-type:check-error-no-error-observed error-type) maybe-dom-parameters))]
        
        [(moby-error-type:application-arity? error-type)
         `(span ((class "Error-ApplicationArity"))
                (span ((class "Error.reason"))
                      "The function "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:application-arity-who error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:application-arity-who error-type) maybe-dom-parameters)
                      " expects "
                      ,(arity-to-dom-sexp (moby-error-type:application-arity-expected error-type))
                      " inputs, but instead I see "
@@ -330,7 +345,7 @@
         `(span ((class "Error-ApplicationOperatorNotAFunction"))
                (span ((class "Error.reason"))
                      "The operator "
-                     ,(scheme-value-to-dom-sexp (moby-error-type:application-operator-not-a-function-who error-type))
+                     ,(scheme-value->dom-sexp (moby-error-type:application-operator-not-a-function-who error-type) maybe-dom-parameters)
                      " is a value, but it isn't a function."))]
 
        
@@ -338,8 +353,9 @@
         `(span ((class "Error-TypeMismatch"))
                (span ((class "Error.reason"))
                      "The function "
-                     ,(scheme-value-to-dom-sexp 
-                       (moby-error-type:type-mismatch-who error-type))
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:type-mismatch-who error-type)
+                       maybe-dom-parameters)
                      " expects "
                      ,@(prepend-indefinite-article   
                         (expected-value-to-dom-sexp
@@ -349,22 +365,26 @@
                        (moby-error-type:type-mismatch-position error-type))
                      ,(ordinal-ending (moby-error-type:type-mismatch-position error-type))
                      " argument, but instead I see "
-                     ,(scheme-value-to-dom-sexp 
-                       (moby-error-type:type-mismatch-observed error-type))
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:type-mismatch-observed error-type)
+                       maybe-dom-parameters)
                      "."))]
 
        [(moby-error-type:index-out-of-bounds? error-type)
         `(span ((class "Error-IndexOutOfBounds"))
                (span ((class "Error.reason"))
                      "The index "
-                     ,(scheme-value-to-dom-sexp
-                       (moby-error-type:index-out-of-bounds-observed error-type))
+                     ,(scheme-value->dom-sexp
+                       (moby-error-type:index-out-of-bounds-observed error-type)
+                       maybe-dom-parameters)
                      " is not within the expected boundary ["
-                     ,(scheme-value-to-dom-sexp 
-                       (moby-error-type:index-out-of-bounds-minimum error-type))
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:index-out-of-bounds-minimum error-type)
+                       maybe-dom-parameters)
                      ", "
-                     ,(scheme-value-to-dom-sexp 
-                       (moby-error-type:index-out-of-bounds-maximum error-type))
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:index-out-of-bounds-maximum error-type)
+                       maybe-dom-parameters)
                      "]"
                      ))]
        
@@ -462,9 +482,8 @@
 
 ;; stx-to-dom-sexp: stx -> dom
 ;; Converts a stx to a dom s-expression.
-(define (stx-to-dom-sexp a-stx)
-  (scheme-value-to-dom-sexp 
-   (stx->datum a-stx)))
+(define (stx-to-dom-sexp a-stx maybe-dom-parameters)
+  (scheme-value->dom-sexp (stx->datum a-stx) maybe-dom-parameters))
 
 
 
@@ -553,4 +572,5 @@
 
     
 
-(provide moby-error-struct-to-dom-sexp)
+(provide/contract 
+ [error-struct->dom-sexp (any/c (or/c false/c dom-parameters?) . -> . any)])

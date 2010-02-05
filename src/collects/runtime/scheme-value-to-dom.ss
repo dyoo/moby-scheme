@@ -1,5 +1,6 @@
 #lang s-exp "private/restricted-runtime-scheme.ss"
 
+(require "dom-parameters.ss")
 
 (define-struct label (n ;; number
                       ))
@@ -27,7 +28,7 @@
 ;; scheme-value-to-dom-sexp: any -> dom
 ;; Converts a value to a DOM.
 ;; FIXME: make this extensible so structures can define how they'd like to be DOMified.
-(define (scheme-value-to-dom-sexp val)
+(define (scheme-value->dom-sexp val maybe-dom-parameters)
   (local [;; Keeps track of the values we've domified so far.
           (define labeled-vals (make-hasheq))
           
@@ -89,10 +90,19 @@
                          (void)]))]
               (loop x)))
           
+          (define (custom-dom-converter-applies? val)
+            (and (dom-parameters? maybe-dom-parameters)
+                 (dom-parameters-scheme-value->dom? val)))
           
+          (define (apply-custom-dom-converter val)
+            ((dom-parameters-scheme-value->dom val) ->dom))
           
+
           (define (->dom val)
             (cond
+              [(custom-dom-converter-applies? val)
+               (apply-custom-dom-converter val)]
+              
               [(undefined? val)
                `(span ((class "SchemeValue-Undefined"))
                       "<undefined>")]
@@ -206,4 +216,4 @@
 
 
 (provide/contract
- [scheme-value-to-dom-sexp (any/c . -> . any)])
+ [scheme-value->dom-sexp (any/c (or/c false/c dom-parameters?) . -> . any)])
