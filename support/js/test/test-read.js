@@ -330,6 +330,14 @@ function init() {
 	    }
 	},
 
+	testUnclosedLexicalToken : function() {
+	    this.assertMobyRaise(isUnclosedLexicalToken,
+				 function() { read("hello \"world"); });
+
+// 	    this.assertMobyRaise(isUnclosedLexicalToken,
+// 				 function() { read("hello #|world"); });
+	},
+
 	testErrorLocsMismatching : function() {
 	    this.assertMobyRaise(isUnbalancedParenthesis,
 				 function() { read(" (]") });
@@ -352,7 +360,6 @@ function init() {
 
 
 	testReadHashCommentError: function() {
-	    console.log("read hash comment error");
 	    this.assertMobyRaise(isMissingExpression,
 				 function() { read("(hello #;") });
 	    try {

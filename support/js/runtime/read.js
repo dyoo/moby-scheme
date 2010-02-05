@@ -103,7 +103,11 @@ if (! plt.reader) { plt.reader = {}; }
 		    ['char', /^\#\\(newline|backspace)/],
 		    ['char', /^\#\\(.)/],
 		    ['string' , new RegExp("^\"((?:([^\\\\\"]|(\\\\.)))*)\"")],
-		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")]
+		    ['symbol-or-number', new RegExp("^(" + nondelimiter + "+)")],
+
+		    // error tokens
+		    ['incomplete-token', new RegExp("^\"")],      // unclosed string
+		    ['incomplete-token', new RegExp("^[#][|]")],  // unclosed pipe comment
 		   ];
 
 
@@ -132,9 +136,20 @@ if (! plt.reader) { plt.reader = {}; }
 		if (result != null) {
 		    var wholeMatch = result[0];
 		    var tokenText = result[1];
+		    if (patternName === "incomplete-token") {
+			plt.types.throwMobyError(new Loc(num(offset),
+							 num(line),
+							 num(column),
+							 num(wholeMatch.length)),
+						 "make-moby-error-type:unclosed-lexical-token",
+						 [plt.types.Symbol.makeInstance(tokenText)]);
+		    }
+		    
 		    if (patternName == 'string') {
 			tokenText = replaceEscapes(tokenText);
 		    } 
+
+		    
 		    if (patternName == "symbol-or-number") {
 			var isNumber = false;
 			for (var j = 0; j < numberPatterns.length; j++) {
@@ -200,7 +215,6 @@ if (! plt.reader) { plt.reader = {}; }
 	var tokensAndError = tokenize(s, source);
 	var tokens = tokensAndError[0];
 
-	var lastToken = undefined;
 
 	if (tokensAndError[1].length > 0) {
 	    var aLoc = new Loc(num(s.length - tokensAndError[1].length),
@@ -237,7 +251,6 @@ if (! plt.reader) { plt.reader = {}; }
 	// eat: -> token 
 	var eat = function() {
 	    var t = tokens.shift();
-	    lastToken = t;
 	    return t;
 	}
 
