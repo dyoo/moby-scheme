@@ -2115,20 +2115,6 @@ Box
 
 
 
-
-    //////////////////////////////////////////////////////////////////////
-    var MobyError = function(msg) {
-	this.msg = msg;
-    }
-    MobyError.prototype.name= 'MobyError';
-    MobyError.prototype.toString = function () { return this.name + ": " + this.msg }
-
-
-    plt.types.MobyError = MobyError;
-
-
-
-
     plt.types.Box = Box;
     
 

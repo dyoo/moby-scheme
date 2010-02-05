@@ -16,7 +16,6 @@ goog.provide('plt.Kernel');
 
     var NumberTower = plt.types.NumberTower;
 
-    var MobyError = plt.types.MobyError;
 
 
 
@@ -2501,10 +2500,6 @@ goog.provide('plt.Kernel');
     plt.Kernel.check = check;
     plt.Kernel.checkList = checkList;
     plt.Kernel.checkListof = checkListof;
-
-
-    // Expose the error classes.
-    plt.Kernel.MobyError = plt.types.MobyError;
 
 
 
