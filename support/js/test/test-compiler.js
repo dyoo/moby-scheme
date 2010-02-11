@@ -938,7 +938,89 @@ function init() {
 				    
 
 
+	},
+	
+
+	testBareCond: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("cond")});
+	},
+	testBareCase: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("case")});
+	},
+	testBareLet: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("let")});
+	},
+	testBareLetStar: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("let*")});
+	},
+	testBareLetRec: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("letrec")});
+	},
+	testBareQuasiquote: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("quasiquote")});
+	},
+	testBareUnquote: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("unquote")});
+	},
+	testBareUnquoteSplicing: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("unquote-splicing")});
+	},
+
+
+	testBareLocal: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("local")});
+	},
+
+	testBareBegin: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("begin")});
+	},
+	testBareSetBang: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("set!")});
+	},
+	testBareIf: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("if")});
+	},
+	testBareAnd: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("and")});
+	},
+	testBareOr: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("or")});
+	},
+
+	testBareWhen: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("when")});
+	},
+
+	testBareUnless: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("unless")});
+	},
+
+	testBareLambda: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("lambda")});
+	},
+
+	testBareQuote: function() {
+	    this.assertMobyRaise(isSyntaxNotApplied,
+				 function() { run("quote")});
 	}
+
 
     });
 

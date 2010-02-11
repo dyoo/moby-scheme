@@ -126,11 +126,13 @@
        [(moby-error-type:syntax-not-applied? error-type)
         `(span ((class "Error-SyntaxNotApplied"))
                "I saw "
-               ,(stx->dom-sexp (moby-error-type:syntax-not-applied-keyword error-type))
+               ,(stx->dom-sexp (moby-error-type:syntax-not-applied-keyword error-type)
+                               maybe-dom-parameters)
                ", which isn't supposed to be used as a bare expression.  "
                "Rather, one example of its use is: "
                ,(scheme-value->dom-sexp 
-                 (moby-error-type:syntax-not-applied-example error-type))
+                 (moby-error-type:syntax-not-applied-example error-type)
+                 maybe-dom-parameters)
                ".")]
        
         

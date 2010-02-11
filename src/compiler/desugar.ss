@@ -617,60 +617,60 @@
 ;; desugar-cond: stx:list -> (list stx:list pinfo)
 ;; Translates conds to ifs.
 (define (desugar-cond an-expr pinfo)
-  (local
-    [
-     (define cond-clauses (rest (stx-e an-expr)))
-     
-     (define (check-clause-structures!)
-       (for-each (lambda (a-clause)
-                   (cond [(not (list? (stx-e a-clause)))
-                          (raise (make-moby-error (stx-loc a-clause)
-                                                  (make-moby-error-type:conditional-malformed-clause)))]
-                         [(< (length (stx-e a-clause)) 2)
-                          (raise (make-moby-error (stx-loc a-clause)
-                                                  (make-moby-error-type:conditional-clause-too-few-elements)))]
-                         [(> (length (stx-e a-clause)) 2)
-                          (raise (make-moby-error (stx-loc a-clause)
-                                                  (make-moby-error-type:conditional-clause-too-many-elements)))]
-                         [else
-                          (void)]))
-                 cond-clauses))
-     
-     
-     ;; loop: (listof stx) (listof stx) stx stx -> stx
-     (define (loop questions answers question-last answer-last)
-       (cond
-         [(empty? questions)
-          (datum->stx #f `(if ,question-last 
-                              ,answer-last
-                              ,(make-cond-exhausted-expression (stx-loc an-expr)))
-                      (stx-loc an-expr))]
-         
-         [else
-          (datum->stx #f `(if ,(first questions)
-                              ,(first answers)
-                              ,(loop (rest questions)
-                                     (rest answers)
-                                     question-last
-                                     answer-last))
-                      (stx-loc an-expr))]))]
-    (cond
-      [(empty? cond-clauses)
-       (raise (make-moby-error (stx-loc an-expr)
-                               (make-moby-error-type:conditional-missing-question-answer)))]
-      [else
-       (begin
-         (check-syntax-application! an-expr (lambda (expr) 
-                                              '(cond [(even? 42) 'ok]
-                                                     [(odd? 42) 'huh?])))
-         (check-clause-structures!)
-         (desugar-expression/expr+pinfo
-          (deconstruct-clauses-with-else cond-clauses
-                                         (lambda (else-stx)
-                                           (datum->stx #f 'true (stx-loc else-stx)))
-                                         (lambda (questions answers question-last answer-last)
-                                           (list (loop questions answers question-last answer-last)
-                                                 pinfo)))))])))
+  (begin
+    (check-syntax-application! an-expr (lambda (expr) 
+                                         '(cond [(even? 42) 'ok]
+                                                [(odd? 42) 'huh?])))
+    (local
+      [(define cond-clauses (rest (stx-e an-expr)))
+       
+       (define (check-clause-structures!)
+         (for-each (lambda (a-clause)
+                     (cond [(not (list? (stx-e a-clause)))
+                            (raise (make-moby-error (stx-loc a-clause)
+                                                    (make-moby-error-type:conditional-malformed-clause)))]
+                           [(< (length (stx-e a-clause)) 2)
+                            (raise (make-moby-error (stx-loc a-clause)
+                                                    (make-moby-error-type:conditional-clause-too-few-elements)))]
+                           [(> (length (stx-e a-clause)) 2)
+                            (raise (make-moby-error (stx-loc a-clause)
+                                                    (make-moby-error-type:conditional-clause-too-many-elements)))]
+                           [else
+                            (void)]))
+                   cond-clauses))
+       
+       
+       ;; loop: (listof stx) (listof stx) stx stx -> stx
+       (define (loop questions answers question-last answer-last)
+         (cond
+           [(empty? questions)
+            (datum->stx #f `(if ,question-last 
+                                ,answer-last
+                                ,(make-cond-exhausted-expression (stx-loc an-expr)))
+                        (stx-loc an-expr))]
+           
+           [else
+            (datum->stx #f `(if ,(first questions)
+                                ,(first answers)
+                                ,(loop (rest questions)
+                                       (rest answers)
+                                       question-last
+                                       answer-last))
+                        (stx-loc an-expr))]))]
+      (cond
+        [(empty? cond-clauses)
+         (raise (make-moby-error (stx-loc an-expr)
+                                 (make-moby-error-type:conditional-missing-question-answer)))]
+        [else
+         (begin
+           (check-clause-structures!)
+           (desugar-expression/expr+pinfo
+            (deconstruct-clauses-with-else cond-clauses
+                                           (lambda (else-stx)
+                                             (datum->stx #f 'true (stx-loc else-stx)))
+                                           (lambda (questions answers question-last answer-last)
+                                             (list (loop questions answers question-last answer-last)
+                                                   pinfo)))))]))))
 
 
 ;; check-syntax-application!: stx (stx -> void) -> void
@@ -735,90 +735,93 @@
 ;; Given a let expression, translates it to the equivalent use of
 ;; a lambda application.
 (define (desugar-let a-stx pinfo)
-  (local [(define clauses-stx (second (stx-e a-stx)))
-          (define body-stx (third (stx-e a-stx)))
-          (define ids (map (lambda (clause)
-                             (first (stx-e clause)))
-                           (stx-e clauses-stx)))
-          (define vals (map (lambda (clause)
-                              (second (stx-e clause)))
-                            (stx-e clauses-stx)))
-          
-          (define new-lambda-stx
-            (datum->stx #f (list (datum->stx #f 'lambda (stx-loc a-stx))
-                                 (datum->stx #f ids (stx-loc a-stx))
-                                 body-stx)
-                        (stx-loc a-stx)))]    
-    (begin
-      (check-syntax-application! a-stx (lambda (a-stx)
-                                         '(let ([x 3]
-                                                [y 4])
-                                            (+ x y))))
-      (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
-      (check-duplicate-identifiers! (map (lambda (a-clause)
-                                           (first (stx-e a-clause)))
-                                         (stx-e clauses-stx)))      
-      (desugar-expression/expr+pinfo 
-       (list (datum->stx #f (cons new-lambda-stx vals)
-                         (stx-loc a-stx))
-             pinfo)))))
+  (begin    
+    (check-syntax-application! a-stx (lambda (a-stx)
+                                       '(let ([x 3]
+                                              [y 4])
+                                          (+ x y))))
+    (local [(define clauses-stx (second (stx-e a-stx)))
+            (define body-stx (third (stx-e a-stx)))
+            (define ids (map (lambda (clause)
+                               (first (stx-e clause)))
+                             (stx-e clauses-stx)))
+            (define vals (map (lambda (clause)
+                                (second (stx-e clause)))
+                              (stx-e clauses-stx)))
+            
+            (define new-lambda-stx
+              (datum->stx #f (list (datum->stx #f 'lambda (stx-loc a-stx))
+                                   (datum->stx #f ids (stx-loc a-stx))
+                                   body-stx)
+                          (stx-loc a-stx)))]    
+      (begin
+        (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+        (check-duplicate-identifiers! (map (lambda (a-clause)
+                                             (first (stx-e a-clause)))
+                                           (stx-e clauses-stx)))      
+        (desugar-expression/expr+pinfo 
+         (list (datum->stx #f (cons new-lambda-stx vals)
+                           (stx-loc a-stx))
+               pinfo))))))
 
 
 ;; desugar-let*: expr-stx -> expr-stx
 ;; Desugars let* into a nested bunch of let expressions.
 (define (desugar-let* a-stx pinfo)
-  (local [(define clauses-stx (second (stx-e a-stx)))
-          (define body-stx (third (stx-e a-stx)))
-          
-          ;; loop: (listof stx) -> stx
-          (define (loop clauses)
-            (cond
-              [(empty? clauses)
-               body-stx]
-              [else
-               (datum->stx #f (list (datum->stx #f 'let (stx-loc (first clauses)))
-                                    (datum->stx #f (list (first clauses))
-                                                (stx-loc (first clauses)))
-                                    (loop (rest clauses)))
-                           (stx-loc (first clauses)))]))]    
-    (begin
-      (check-syntax-application! a-stx (lambda (a-stx)
-                                         '(let* ([x 3]
-                                                 [y 4])
-                                            (+ x y))))
-      (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
-      (desugar-expression/expr+pinfo 
-       (list (loop (stx-e clauses-stx))
-             pinfo)))))
+  (begin
+    (check-syntax-application! a-stx (lambda (a-stx)
+                                       '(let* ([x 3]
+                                               [y 4])
+                                          (+ x y))))
+    (local [(define clauses-stx (second (stx-e a-stx)))
+            (define body-stx (third (stx-e a-stx)))
+            
+            ;; loop: (listof stx) -> stx
+            (define (loop clauses)
+              (cond
+                [(empty? clauses)
+                 body-stx]
+                [else
+                 (datum->stx #f (list (datum->stx #f 'let (stx-loc (first clauses)))
+                                      (datum->stx #f (list (first clauses))
+                                                  (stx-loc (first clauses)))
+                                      (loop (rest clauses)))
+                             (stx-loc (first clauses)))]))]    
+      (begin
+        (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+        (desugar-expression/expr+pinfo 
+         (list (loop (stx-e clauses-stx))
+               pinfo))))))
 
 
 ;; desugar-letrec: stx pinfo -> (list stx pinfo)
 ;; Letrec will be desugared into local.
 (define (desugar-letrec a-stx pinfo)
-  (local [(define clauses-stx (second (stx-e a-stx)))
-          (define body-stx (third (stx-e a-stx)))
-          (define define-clauses
-            (map (lambda (a-clause)
-                   (local [(define name (first (stx-e a-clause)))
-                           (define val (second (stx-e a-clause)))]
-                     (datum->stx #f (list 'define name val)
-                                 (stx-loc a-clause))))
-                 (stx-e clauses-stx)))]
-    (begin
-      (check-syntax-application! a-stx (lambda (a-stx)
-                                         '(letrec ([f (lambda (x) 
-                                                        (if (= x 0)
-                                                            1
-                                                            (* x (f (- x 1)))))])
-                                            (f 3))))
-      (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
-      (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
-                                         (stx-e clauses-stx)))
-      (desugar-expression/expr+pinfo 
-       (list (datum->stx #f 
-                         (list 'local define-clauses body-stx)
-                         (stx-loc a-stx))
-             pinfo)))))
+  (begin
+    (check-syntax-application! a-stx (lambda (a-stx)
+                                       '(letrec ([f (lambda (x) 
+                                                      (if (= x 0)
+                                                          1
+                                                          (* x (f (- x 1)))))])
+                                          (f 3))))
+    (local [(define clauses-stx (second (stx-e a-stx)))
+            (define body-stx (third (stx-e a-stx)))
+            (define define-clauses
+              (map (lambda (a-clause)
+                     (local [(define name (first (stx-e a-clause)))
+                             (define val (second (stx-e a-clause)))]
+                       (datum->stx #f (list 'define name val)
+                                   (stx-loc a-clause))))
+                   (stx-e clauses-stx)))]
+      (begin
+        (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+        (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
+                                           (stx-e clauses-stx)))
+        (desugar-expression/expr+pinfo 
+         (list (datum->stx #f 
+                           (list 'local define-clauses body-stx)
+                           (stx-loc a-stx))
+               pinfo))))))
 
 
 ;; check-single-argument-form!: stx (-> moby-error-type) (-> moby-error-type) -> void

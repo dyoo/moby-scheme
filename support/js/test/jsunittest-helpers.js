@@ -155,7 +155,8 @@ var isCheckError =
     extract("moby-error-type:check-error?");
 var isCheckErrorNoError = 
     extract("moby-error-type:check-error-no-error?");
-
+var isSyntaxNotApplied = 
+    extract("moby-error-type:syntax-not-applied?");
 
 
 
