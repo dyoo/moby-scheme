@@ -206,21 +206,7 @@
     
     ;; (local ([define ...] ...) body)
     [(stx-begins-with? expr 'local)
-     (begin
-       (check-single-body-stx! (rest (rest (stx-e expr))) expr)
-       (local [(define local-symbol-stx (first (stx-e expr)))
-               (define defns (stx-e (second (stx-e expr))))
-               (define body (third (stx-e expr)))
-               
-               (define desugared-defns+pinfo (desugar-program defns pinfo))
-               (define desugared-body+pinfo (desugar-expression body (second desugared-defns+pinfo)))]
-         (list (datum->stx #f (list local-symbol-stx
-                                    (datum->stx #f (first desugared-defns+pinfo)
-                                                (stx-loc (second (stx-e expr))))
-                                    (first desugared-body+pinfo))
-                           (stx-loc expr))
-               (pinfo-update-env (second desugared-body+pinfo)
-                                 (pinfo-env pinfo)))))]
+     (desugar-local expr pinfo)]
     
     ;; (begin ...)
     [(stx-begins-with? expr 'begin)
@@ -228,15 +214,7 @@
     
     ;; (set! identifier value)
     [(stx-begins-with? expr 'set!)
-     (local [(define set-symbol-stx (first (stx-e expr)))
-             (define id (second (stx-e expr)))
-             (define value (third (stx-e expr)))
-             (define desugared-value+pinfo (desugar-expression value pinfo))]
-       (list (datum->stx #f (list set-symbol-stx
-                                  id
-                                  (first desugared-value+pinfo))
-                         (stx-loc expr))
-             (second desugared-value+pinfo)))]
+     (desugar-set! expr pinfo)]
     
     
     ;; (if test consequent alternative)
@@ -294,17 +272,49 @@
     
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
-     (local [(define exprs (stx-e expr))
-             (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-       (list (datum->stx #f (first desugared-exprs+pinfo)
-                         (stx-loc expr))
-             (second desugared-exprs+pinfo)))]
+     (desugar-application expr pinfo)]
+    
     [else
      (raise 
       (make-moby-error (stx-loc expr)
                        (make-moby-error-type:generic-syntactic-error
                         (format "Unable to desugar ~s" (stx->datum expr))
                         (list))))]))
+
+
+
+
+;; desugar-local: expr pinfo -> (list expr pinfo)
+;; Desugars the use of local.
+(define (desugar-local expr pinfo)
+  (begin
+    (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+    (local [(define local-symbol-stx (first (stx-e expr)))
+            (define defns (stx-e (second (stx-e expr))))
+            (define body (third (stx-e expr)))
+            
+            (define desugared-defns+pinfo 
+              (desugar-program defns pinfo))
+            (define desugared-body+pinfo 
+              (desugar-expression body (second desugared-defns+pinfo)))]
+      (list (datum->stx #f (list local-symbol-stx
+                                 (datum->stx #f (first desugared-defns+pinfo)
+                                             (stx-loc (second (stx-e expr))))
+                                 (first desugared-body+pinfo))
+                        (stx-loc expr))
+            (pinfo-update-env (second desugared-body+pinfo)
+                              (pinfo-env pinfo))))))
+
+
+
+;; desugar-application: expr pinfo -> (list expr pinfo)
+;; Desugars function application.
+(define (desugar-application expr pinfo)
+  (local [(define exprs (stx-e expr))
+          (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
+    (list (datum->stx #f (first desugared-exprs+pinfo)
+                      (stx-loc expr))
+          (second desugared-exprs+pinfo))))
 
 
 
@@ -326,6 +336,7 @@
 
 ;; (if test-expr then-expr else-expr)
 ;; desugar-if: stx pinfo -> (list stx pinfo)
+;; Desugars the conditional, ensuring that the boolean test is of boolean value.
 (define (desugar-if expr pinfo)
   (cond
     [(= 4 (length (stx-e expr)))
@@ -373,7 +384,9 @@
                          (stx-loc expr))
              (second desugared-exprs+pinfo)))]))
 
+
 ;; desugar-lambda: expr pinfo -> (list expr pinfo)
+;; Desugars lambda expressions.
 (define (desugar-lambda expr pinfo)
   (begin
     (when (< (length (stx-e expr)) 3)
@@ -406,6 +419,7 @@
 
 
 ;; desugar-when: expr pinfo -> (list expr pinfo)
+;; Desugars when expressions.
 (define (desugar-when expr pinfo)
   (cond 
     [(< (length (stx-e expr)) 3)
@@ -426,6 +440,7 @@
 
 
 ;; desugar-unless: expr pinfo -> (list expr pinfo)
+;; Desugars unless expressions.
 (define (desugar-unless expr pinfo)
   (cond 
     [(< (length (stx-e expr)) 3)
@@ -446,7 +461,18 @@
 
 
 
-
+;; desugar-set!: expr pinfo -> (list expr pinfo)
+;; Desugars set!.
+(define (desugar-set! expr pinfo)
+  (local [(define set-symbol-stx (first (stx-e expr)))
+          (define id (second (stx-e expr)))
+          (define value (third (stx-e expr)))
+          (define desugared-value+pinfo (desugar-expression value pinfo))]
+    (list (datum->stx #f (list set-symbol-stx
+                               id
+                               (first desugared-value+pinfo))
+                      (stx-loc expr))
+          (second desugared-value+pinfo))))
 
 
 
@@ -534,12 +560,6 @@
 
 
 
-;; make-cond-exhausted-expression: loc -> stx
-(define (make-cond-exhausted-expression a-loc)
-  (tag-application-operator/module
-   (datum->stx #f `(throw-cond-exhausted-error (quote ,(Loc->sexp a-loc))) a-loc)
-   'moby/runtime/kernel/misc))
-
 
 ;; tag-application-operator/module: stx module-name -> stx
 ;; Adjust the lexical context of the operator so it refers to the environment of a particular module.
@@ -609,6 +629,11 @@
                                           (list (loop questions answers question-last answer-last)
                                                 pinfo))))])))
 
+;; make-cond-exhausted-expression: loc -> stx
+(define (make-cond-exhausted-expression a-loc)
+  (tag-application-operator/module
+   (datum->stx #f `(throw-cond-exhausted-error (quote ,(Loc->sexp a-loc))) a-loc)
+   'moby/runtime/kernel/misc))
 
 
 ;; deconstruct-clauses-with-else: (listof stx) (stx -> stx) ((listof stx) (listof stx) stx stx -> X) -> X
@@ -779,7 +804,7 @@
                                                     "misuse of a comma or 'unquote, not under a quasiquoting backquote" 
                                                     (list)
                                                     )))]))]
-
+                     
                      [(stx-begins-with? a-stx 'unquote-splicing)
                       (cond
                         [(> depth 1)
