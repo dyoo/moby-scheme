@@ -176,33 +176,37 @@
 
 ;; desugar-expression: expr pinfo -> (list expr pinfo)
 (define (desugar-expression expr pinfo)
-  (cond
+  (cond    
+    ;; () isn't supported.
+    [(empty? (stx-e expr))
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:unsupported-expression-form expr)))]
     
     ;; (cond ...)
     [(stx-begins-with? expr 'cond)
-     (desugar-expression/expr+pinfo (desugar-cond expr pinfo))]
+     (desugar-cond expr pinfo)]
     
     ;; (case val-expr [quoted-expr expr] ...)
     [(stx-begins-with? expr 'case)
-     (desugar-expression/expr+pinfo (desugar-case expr pinfo))]
+     (desugar-case expr pinfo)]
     
     ;; (let ([id val] ...) ...)
     [(stx-begins-with? expr 'let)
-     (desugar-expression/expr+pinfo (desugar-let expr pinfo))]
+     (desugar-let expr pinfo)]
     
     ;; (let* ([id val] ...) ...)
     [(stx-begins-with? expr 'let*)
-     (desugar-expression/expr+pinfo (desugar-let* expr pinfo))]
+     (desugar-let* expr pinfo)]
     
     ;; (let* ([id val] ...) ...)
     [(stx-begins-with? expr 'letrec)
-     (desugar-expression/expr+pinfo (desugar-letrec expr pinfo))]
+     (desugar-letrec expr pinfo)]
     
     ;; (quasiquote x)
     [(or (stx-begins-with? expr 'quasiquote)
          (stx-begins-with? expr 'unquote)
          (stx-begins-with? expr 'quasiquote))
-     (desugar-expression/expr+pinfo (desugar-quasiquote expr pinfo))]
+     (desugar-quasiquote expr pinfo)]
     
     ;; (local ([define ...] ...) body)
     [(stx-begins-with? expr 'local)
@@ -215,7 +219,6 @@
     ;; (set! identifier value)
     [(stx-begins-with? expr 'set!)
      (desugar-set! expr pinfo)]
-    
     
     ;; (if test consequent alternative)
     [(stx-begins-with? expr 'if)
@@ -241,6 +244,14 @@
     [(stx-begins-with? expr 'lambda)
      (desugar-lambda expr pinfo)]
     
+    ;; Quoted datums
+    [(stx-begins-with? expr 'quote)
+     (desugar-quote expr pinfo)]
+    
+    ;; Function call/primitive operation call
+    [(pair? (stx-e expr))
+     (desugar-application expr pinfo)]
+    
     ;; Numbers
     [(number? (stx-e expr))
      (list expr pinfo)]
@@ -260,19 +271,6 @@
     ;; Identifiers
     [(symbol? (stx-e expr))
      (list expr pinfo)]
-    
-    ;; Quoted datums
-    [(stx-begins-with? expr 'quote)
-     (desugar-quote expr pinfo)]
-    
-    ;; () isn't supported.
-    [(empty? (stx-e expr))
-     (raise (make-moby-error (stx-loc expr)
-                             (make-moby-error-type:unsupported-expression-form expr)))]
-    
-    ;; Function call/primitive operation call
-    [(pair? (stx-e expr))
-     (desugar-application expr pinfo)]
     
     [else
      (raise 
@@ -543,15 +541,16 @@
                          (stx-loc an-expr))])]))]
     (cond
       [(stx-begins-with? an-expr 'case)
-       (deconstruct-clauses-with-else (rest (rest (stx-e an-expr)))
-                                      (lambda (else-stx)
-                                        else-stx)
-                                      (lambda (questions answers question-last answer-last)
-                                        (list (datum->stx #f 
-                                                          (list 'let (list (list val-stx (second (stx-e an-expr))))
-                                                                (loop questions answers question-last answer-last))
-                                                          (stx-loc an-expr))
-                                              updated-pinfo-2)))]
+       (desugar-expression/expr+pinfo
+        (deconstruct-clauses-with-else (rest (rest (stx-e an-expr)))
+                                       (lambda (else-stx)
+                                         else-stx)
+                                       (lambda (questions answers question-last answer-last)
+                                         (list (datum->stx #f 
+                                                           (list 'let (list (list val-stx (second (stx-e an-expr))))
+                                                                 (loop questions answers question-last answer-last))
+                                                           (stx-loc an-expr))
+                                               updated-pinfo-2))))]
       [else
        (raise (make-moby-error (stx-loc an-expr)
                                (make-moby-error-type:generic-syntactic-error
@@ -622,12 +621,13 @@
       [else
        (begin
          (check-clause-structures!)
-         (deconstruct-clauses-with-else cond-clauses
-                                        (lambda (else-stx)
-                                          (datum->stx #f 'true (stx-loc else-stx)))
-                                        (lambda (questions answers question-last answer-last)
-                                          (list (loop questions answers question-last answer-last)
-                                                pinfo))))])))
+         (desugar-expression/expr+pinfo
+          (deconstruct-clauses-with-else cond-clauses
+                                         (lambda (else-stx)
+                                           (datum->stx #f 'true (stx-loc else-stx)))
+                                         (lambda (questions answers question-last answer-last)
+                                           (list (loop questions answers question-last answer-last)
+                                                 pinfo)))))])))
 
 ;; make-cond-exhausted-expression: loc -> stx
 (define (make-cond-exhausted-expression a-loc)
@@ -693,9 +693,10 @@
       (check-duplicate-identifiers! (map (lambda (a-clause)
                                            (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))      
-      (list (datum->stx #f (cons new-lambda-stx vals)
-                        (stx-loc a-stx))
-            pinfo))))
+      (desugar-expression/expr+pinfo 
+       (list (datum->stx #f (cons new-lambda-stx vals)
+                         (stx-loc a-stx))
+             pinfo)))))
 
 
 ;; desugar-let*: expr-stx -> expr-stx
@@ -717,8 +718,9 @@
                            (stx-loc (first clauses)))]))]    
     (begin
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
-      (list (loop (stx-e clauses-stx))
-            pinfo))))
+      (desugar-expression/expr+pinfo 
+       (list (loop (stx-e clauses-stx))
+             pinfo)))))
 
 
 ;; desugar-letrec: stx pinfo -> (list stx pinfo)
@@ -737,10 +739,11 @@
       (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
       (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
                                          (stx-e clauses-stx)))
-      (list (datum->stx #f 
-                        (list 'local define-clauses body-stx)
-                        (stx-loc a-stx))
-            pinfo))))
+      (desugar-expression/expr+pinfo 
+       (list (datum->stx #f 
+                         (list 'local define-clauses body-stx)
+                         (stx-loc a-stx))
+             pinfo)))))
 
 
 ;; check-single-argument-form!: stx (-> moby-error-type) (-> moby-error-type) -> void
@@ -865,9 +868,9 @@
                   (datum->stx #f (list 'quote a-stx) (stx-loc a-stx))]
                  [else
                   a-stx])]))]
-    
-    (list (handle-quoted a-stx 0) 
-          pinfo)))
+    (desugar-expression/expr+pinfo 
+     (list (handle-quoted a-stx 0) 
+           pinfo))))
 
 
 
