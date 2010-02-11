@@ -35,6 +35,7 @@
 
 
 
+
 ;; A binding associates a symbol with some value.
 ;; binding?: any -> boolean
 (define (binding? datum)

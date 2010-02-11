@@ -4,9 +4,69 @@
 (require "pinfo.ss")
 (require "env.ss")
 (require "modules.ss")
+(require "rbtree.ss")
 (require "../collects/runtime/stx.ss")
 (require "../collects/runtime/error-struct.ss")
 
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-struct syntax-binding (name ;; symbol
+                               transformer ;; stx pinfo -> (list stx pinfo)
+                               ))
+
+
+(define-struct syntax-env (entries))   ;;   (rbtree of symbol * syntax-binding)
+
+
+(define empty-syntax-env (make-syntax-env empty-rbtree))
+
+;; syntax-env-lookup: syntax-env symbol -> (or false/c syntax-binding)
+(define (syntax-env-lookup a-syntax-env an-id)
+  (rbtree-ref symbol< 
+              (syntax-env-entries a-syntax-env)
+              an-id
+              (lambda () false)))
+
+;; syntax-env-add: syntax-env symbol syntax-binding -> syntax-env
+(define (syntax-env-add a-syntax-env an-id a-binding)
+  (make-syntax-env 
+   (rbtree-insert symbol< 
+                  (syntax-env-entries a-syntax-env)
+                  an-id
+                  a-binding)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; make-default-syntax-env: -> syntax-env
+;; Returns the default syntactic environment
+(define (make-default-syntax-env)
+  (foldl (lambda (entry s-env)
+           (syntax-env-add s-env (first entry) 
+                           (make-syntax-binding (first entry)
+                                                (second entry))))
+         empty-syntax-env
+         (list (list 'cond desugar-cond)
+               (list 'case desugar-case)
+               (list 'let desugar-let)
+               (list 'let* desugar-let*)
+               (list 'letrec desugar-letrec)
+               (list 'quasiquote desugar-quasiquote)
+               (list 'unquote desugar-quasiquote)
+               (list 'unquote-splicing desugar-quasiquote)
+               (list 'local desugar-local)
+               (list 'begin desugar-begin)
+               (list 'set! desugar-set!)
+               (list 'if desugar-if)
+               (list 'and desugar-boolean-chain)
+               (list 'or desugar-boolean-chain)
+               (list 'when desugar-when)
+               (list 'unless desugar-unless)
+               (list 'lambda desugar-lambda)
+               (list 'quote desugar-quote))))
 
 
 
@@ -181,76 +241,29 @@
     [(empty? (stx-e expr))
      (raise (make-moby-error (stx-loc expr)
                              (make-moby-error-type:unsupported-expression-form expr)))]
-    
-    ;; (cond ...)
-    [(stx-begins-with? expr 'cond)
-     (desugar-cond expr pinfo)]
-    
-    ;; (case val-expr [quoted-expr expr] ...)
-    [(stx-begins-with? expr 'case)
-     (desugar-case expr pinfo)]
-    
-    ;; (let ([id val] ...) ...)
-    [(stx-begins-with? expr 'let)
-     (desugar-let expr pinfo)]
-    
-    ;; (let* ([id val] ...) ...)
-    [(stx-begins-with? expr 'let*)
-     (desugar-let* expr pinfo)]
-    
-    ;; (let* ([id val] ...) ...)
-    [(stx-begins-with? expr 'letrec)
-     (desugar-letrec expr pinfo)]
-    
-    ;; (quasiquote x)
-    [(or (stx-begins-with? expr 'quasiquote)
-         (stx-begins-with? expr 'unquote)
-         (stx-begins-with? expr 'quasiquote))
-     (desugar-quasiquote expr pinfo)]
-    
-    ;; (local ([define ...] ...) body)
-    [(stx-begins-with? expr 'local)
-     (desugar-local expr pinfo)]
-    
-    ;; (begin ...)
-    [(stx-begins-with? expr 'begin)
-     (desugar-begin expr pinfo)]
-    
-    ;; (set! identifier value)
-    [(stx-begins-with? expr 'set!)
-     (desugar-set! expr pinfo)]
-    
-    ;; (if test consequent alternative)
-    [(stx-begins-with? expr 'if)
-     (desugar-if expr pinfo)]
-    
-    ;; (and exprs ...)
-    [(stx-begins-with? expr 'and)
-     (desugar-boolean-chain expr pinfo)]
-    
-    ;; (or exprs ...)
-    [(stx-begins-with? expr 'or)
-     (desugar-boolean-chain expr pinfo)]
-    
-    ;; (when test body ...)
-    [(stx-begins-with? expr 'when)
-     (desugar-when expr pinfo)]
-    
-    ;; (unless test body ...)
-    [(stx-begins-with? expr 'unless)
-     (desugar-unless expr pinfo)]
-    
-    ;; (lambda (args ...) body)
-    [(stx-begins-with? expr 'lambda)
-     (desugar-lambda expr pinfo)]
-    
-    ;; Quoted datums
-    [(stx-begins-with? expr 'quote)
-     (desugar-quote expr pinfo)]
-    
+        
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
-     (desugar-application expr pinfo)]
+     (cond
+       [(and (symbol? (stx-e (first (stx-e expr))))
+             (syntax-binding? (syntax-env-lookup THE-DEFAULT-SYNTACTIC-ENVIRONMENT
+                                                 (stx-e (first (stx-e expr))))))
+        ((syntax-binding-transformer (syntax-env-lookup THE-DEFAULT-SYNTACTIC-ENVIRONMENT
+                                                        (stx-e (first (stx-e expr)))))
+         expr pinfo)]
+       [else
+        (desugar-application expr pinfo)])]
+    
+    ;; Identifiers
+    [(symbol? (stx-e expr))
+     (cond
+       [(syntax-binding? (syntax-env-lookup THE-DEFAULT-SYNTACTIC-ENVIRONMENT
+                                            (stx-e expr)))
+        ((syntax-binding-transformer (syntax-env-lookup THE-DEFAULT-SYNTACTIC-ENVIRONMENT
+                                                        (stx-e  expr)))
+         expr pinfo)]
+       [else
+        (list expr pinfo)])]
     
     ;; Numbers
     [(number? (stx-e expr))
@@ -268,16 +281,8 @@
     [(char? (stx-e expr))
      (list expr pinfo)]
     
-    ;; Identifiers
-    [(symbol? (stx-e expr))
-     (list expr pinfo)]
-    
     [else
-     (raise 
-      (make-moby-error (stx-loc expr)
-                       (make-moby-error-type:generic-syntactic-error
-                        (format "Unable to desugar ~s" (stx->datum expr))
-                        (list))))]))
+     (list expr pinfo)]))
 
 
 
@@ -928,6 +933,9 @@
                               (list))))]))
 
 
+
+
+(define THE-DEFAULT-SYNTACTIC-ENVIRONMENT (make-default-syntax-env))
 
 
 (provide/contract
