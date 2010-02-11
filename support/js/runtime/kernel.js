@@ -2329,7 +2329,7 @@ goog.provide('plt.Kernel');
 	    var isMobyError = getExternalModuleValue("moby/runtime/error-struct",
 						     "moby-error?");
 	    var getDom = getExternalModuleValue("moby/runtime/error-struct-to-dom",
-						"moby-error-struct-to-dom-sexp");
+						"error-struct->dom-sexp");
 	    var getDomContent = getExternalModuleValue("moby/runtime/dom-helpers",
 						       "dom-string-content");
 	    
