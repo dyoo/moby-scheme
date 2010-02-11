@@ -77,12 +77,12 @@
        [(moby-error-type:unsupported-expression-form? error-type)
         `(span ((class "Error-UnsupportedExpressionForm"))
                (span ((class "Error.reason"))
-                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
+                     ,(stx->dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
                                        maybe-dom-parameters)
                      " is currently not supported.")
                (span ((class "Error-UnsupportedExpressionForm.expr")
                       (style "display:none"))
-                     ,(stx-to-dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
+                     ,(stx->dom-sexp (moby-error-type:unsupported-expression-form-expr error-type)
                                        maybe-dom-parameters)))]
        
        [(moby-error-type:unclosed-parentheses? error-type)
@@ -123,6 +123,16 @@
                  ".")]
 
         
+       [(moby-error-type:syntax-not-applied? error-type)
+        `(span ((class "Error-SyntaxNotApplied"))
+               "I saw "
+               ,(stx->dom-sexp (moby-error-type:syntax-not-applied-keyword error-type))
+               ", which isn't supposed to be used as a bare expression.  "
+               "Rather, one example of its use is: "
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:syntax-not-applied-example error-type))
+               ".")]
+       
         
        [(moby-error-type:closing-parenthesis-before-opener? error-type)
         `(span ((class "Error-ClosingParenthesisBeforeOpener"))
@@ -155,7 +165,7 @@
         `(span ((class "Error-ExpectedIdentifier"))
                (span ((class "Error.reason"))
                      "I expected an identifier but received "
-                     ,(stx-to-dom-sexp (moby-error-type:expected-identifier-observed error-type)
+                     ,(stx->dom-sexp (moby-error-type:expected-identifier-observed error-type)
                                        maybe-dom-parameters)
                      " instead."))]
        
@@ -163,11 +173,11 @@
         `(span ((class "Error-ExpectedListOfIdentifiers"))
                (span ((class "Error.reason"))
                      "Within " ,@(prepend-indefinite-article 
-                                  (stx-to-dom-sexp 
+                                  (stx->dom-sexp 
                                    (moby-error-type:expected-list-of-identifiers-who error-type)
                                    maybe-dom-parameters))
                      ", I expected a list of identifiers but received "
-                     ,(stx-to-dom-sexp (moby-error-type:expected-list-of-identifiers-observed error-type)
+                     ,(stx->dom-sexp (moby-error-type:expected-list-of-identifiers-observed error-type)
                                        maybe-dom-parameters)
                      " instead."))]
        
@@ -513,7 +523,7 @@
 
 ;; stx-to-dom-sexp: stx -> dom
 ;; Converts a stx to a dom s-expression.
-(define (stx-to-dom-sexp a-stx maybe-dom-parameters)
+(define (stx->dom-sexp a-stx maybe-dom-parameters)
   (scheme-value->dom-sexp (stx->datum a-stx) maybe-dom-parameters))
 
 
