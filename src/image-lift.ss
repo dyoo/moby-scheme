@@ -26,7 +26,6 @@
                   [lift-images/stxs ((listof stx?) . -> . (values (listof stx?) (listof named-bitmap?)))])
 
 
-
 (define named-bitmap-resource%
   (class* object% (resource<%>)
     (init-field named-bitmap)

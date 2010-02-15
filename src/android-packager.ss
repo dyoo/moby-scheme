@@ -142,16 +142,15 @@
 (define (write-main.js&resources program/resources name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
-  (let*-values ([(named-bitmaps)
-                 (program/resources-write-named-bitmaps! program/resources dest-dir)]
-                [(program)
+  (program/resources-write-resources! program/resources dest-dir)
+  (let*-values ([(program)
                  (program/resources-program program/resources)]
                 [(compiled-program)
                  (do-compilation program)])
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
-                    (compiled-program->main.js compiled-program named-bitmaps))
+                    (compiled-program->main.js compiled-program))
                    op))
       #:exists 'replace)
     (delete-file (build-path dest-dir "main.js.template"))
@@ -277,9 +276,10 @@
 
 
 
-;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string
-(define (compiled-program->main.js compiled-program named-bitmaps)
-  (let*-values ([(defns pinfo)
+;; compiled-program->main.js: compiled-program -> string
+(define (compiled-program->main.js compiled-program)
+  (let*-values ([(named-bitmaps) '()]
+                [(defns pinfo)
                  (values (javascript:compiled-program-defns compiled-program)
                          (javascript:compiled-program-pinfo compiled-program))]
                 [(output-port) (open-output-string)]

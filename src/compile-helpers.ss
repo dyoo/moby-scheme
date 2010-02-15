@@ -8,6 +8,8 @@
          scheme/port
          scheme/runtime-path
          scheme/contract
+         scheme/local
+         "program-resources.ss"
          "config.ss"
          "stx-helpers.ss"
          "image-lift.ss"
@@ -185,6 +187,20 @@
                 
 
 
+;; open-program/resources: path -> program/resources
+(define (open-program/resources a-path)
+  (local [(define source-code (open-beginner-program a-path))
+          (define named-bitmaps (map named-bitmap->resource (lift-images! source-code)))]
+    (make-program/resources (parse-text-as-program source-code 
+                                                   (if (string? a-path)
+                                                       a-path
+                                                       (path->string a-path)))
+                            named-bitmaps)))
+
+
+
+
+
 
 (provide/contract
  [parse-text-as-program (((is-a?/c text%)) ((or/c string? false/c)) . ->* .  (listof stx?))]
@@ -196,4 +212,6 @@
  [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]
  [yui-compress (bytes? . -> . bytes?)]
- [google-closure-compile ((bytes?) (#:aggressive? boolean?) . ->* . bytes?)])
+ [google-closure-compile ((bytes?) (#:aggressive? boolean?) . ->* . bytes?)]                  
+ [open-program/resources 
+  (path-string? . -> . program/resources?)])

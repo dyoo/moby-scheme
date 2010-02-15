@@ -2,9 +2,7 @@
 
 
 (require scheme/contract
-         scheme/local
          scheme/class
-         "compile-helpers.ss"
          "image-lift.ss"
          "compiler/helpers.ss")
 
@@ -15,15 +13,6 @@
 (define-struct program/resources (program named-bitmaps))
   
 
-;; open-program/resources: path -> program/resources
-(define (open-program/resources a-path)
-  (local [(define source-code (open-beginner-program a-path))
-          (define named-bitmaps (map named-bitmap->resource (lift-images! source-code)))]
-    (make-program/resources (parse-text-as-program source-code 
-                                                   (if (string? a-path)
-                                                       a-path
-                                                       (path->string a-path)))
-                            named-bitmaps)))
                
 
 
@@ -37,8 +26,6 @@
                           ([program program?]
                            [named-bitmaps (listof named-bitmap?)])]
 
-                  [open-program/resources 
-                   (path-string? . -> . program/resources?)]
                   
                   [program/resources-write-resources!
                    (program/resources? path-string? . -> . (listof named-bitmap?))])

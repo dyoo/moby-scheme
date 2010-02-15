@@ -58,7 +58,8 @@
        (local [(define-values (lifted-source-code named-bitmaps)
                  (lift-images/stxs source-code))
                
-               (define program+resources (make-program/resources lifted-source-code named-bitmaps))
+               (define program+resources (make-program/resources lifted-source-code 
+                                                                 (map named-bitmap->resource named-bitmaps)))
                
                (define-values (dispatcher url)
                  (dispatch-rules
