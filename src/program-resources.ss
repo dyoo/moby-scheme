@@ -1,8 +1,7 @@
 #lang scheme/base
 
 
-(require scheme/gui/base
-         scheme/contract
+(require scheme/contract
          scheme/local
          "compile-helpers.ss"
          "image-lift.ss"
