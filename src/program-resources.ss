@@ -3,6 +3,7 @@
 
 (require scheme/contract
          scheme/local
+         scheme/class
          "compile-helpers.ss"
          "image-lift.ss"
          "compiler/helpers.ss")
@@ -17,7 +18,7 @@
 ;; open-program/resources: path -> program/resources
 (define (open-program/resources a-path)
   (local [(define source-code (open-beginner-program a-path))
-          (define named-bitmaps (lift-images! source-code))]
+          (define named-bitmaps (map named-bitmap->resource (lift-images! source-code)))]
     (make-program/resources (parse-text-as-program source-code 
                                                    (if (string? a-path)
                                                        a-path
@@ -26,12 +27,10 @@
                
 
 
-;; program/resources-write-bitmaps!: program/resources path -> (listof named-bitmap)
-(define (program/resources-write-named-bitmaps! a-program/resources dest-dir)
-  (local [(define named-bitmaps (program/resources-named-bitmaps a-program/resources))]
-    (for ([bm named-bitmaps])
-      (named-bitmap-save bm dest-dir))
-    named-bitmaps))
+;; program/resources-write-bitmaps!: program/resources path -> void
+(define (program/resources-write-resources! a-program/resources dest-dir)
+  (for ([a-resource  (program/resources-named-bitmaps a-program/resources)])
+    (send a-resource save! dest-dir)))
 
 
 (provide/contract [struct program/resources 
@@ -41,5 +40,5 @@
                   [open-program/resources 
                    (path-string? . -> . program/resources?)]
                   
-                  [program/resources-write-named-bitmaps!
+                  [program/resources-write-resources!
                    (program/resources? path-string? . -> . (listof named-bitmap?))])

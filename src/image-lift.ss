@@ -4,6 +4,7 @@
          scheme/list
          mrlib/cache-image-snip
          scheme/contract
+         "resource.ss"
          "collects/runtime/stx.ss")
 
 (define-struct named-bitmap (name bitmap))
@@ -11,14 +12,36 @@
 ;; Image lifting
 
 
+
+
+
 (provide/contract [struct named-bitmap [(name string?)
                                         (bitmap (is-a?/c bitmap%))]]
+                  [named-bitmap->resource (named-bitmap? . -> . (is-a?/c resource<%>))]
                   [named-bitmap-save (named-bitmap? path-string? . -> . any)]
                   [lift-images! ((is-a?/c text%)
                                  . -> . (listof named-bitmap?))]
                   
                   [lift-images/stx (stx? . -> . (values stx? (listof named-bitmap?)))]
                   [lift-images/stxs ((listof stx?) . -> . (values (listof stx?) (listof named-bitmap?)))])
+
+
+
+(define named-bitmap-resource%
+  (class* object% (resource<%>)
+    (init-field named-bitmap)
+    (super-new)
+    
+    (define/public (save! a-path)
+      (named-bitmap-save named-bitmap a-path))))
+
+;; Turns a named bitmap into a resource.
+(define (named-bitmap->resource a-named-bitmap)
+  (new named-bitmap-resource% [named-bitmap a-named-bitmap]))
+
+
+
+
 
 ;; lift-images!: text -> (listof named-bitmap)
 ;; Lifts up the image snips in the text.

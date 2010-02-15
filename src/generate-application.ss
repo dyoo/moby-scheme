@@ -224,7 +224,7 @@
   (make-javascript-directories dest-dir)
   (let*-values ([(named-bitmaps)
                  (cond [(program/resources? text-or-program/resources)
-                        (program/resources-write-named-bitmaps! text-or-program/resources dest-dir)]
+                        (program/resources-write-resources! text-or-program/resources dest-dir)]
                        [else
                         (lift-images-to-directory text-or-program/resources (build-path dest-dir))])]
                 [(program)

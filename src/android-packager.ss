@@ -25,15 +25,14 @@
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
 
 
-;; build-android-package: string compiled-program (listof resource) -> bytes
+;; build-android-package: string program/resources -> bytes
 (define (build-android-package program-name program/resources)
   (with-temporary-directory
    (lambda (dir)
      (let ([dest (simplify-path (build-path dir program-name))])
-       (parameterize ([current-directory source-dir])
-         (build-android-package-in-path program-name
-                                        program+resources
-                                        dest))
+       (build-android-package-in-path program-name
+                                      program/resources
+                                      dest)
        (parameterize ([current-directory dir])
          (zip (build-path dir (string-append program-name ".zip"))
               program-name))
