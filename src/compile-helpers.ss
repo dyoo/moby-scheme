@@ -3,16 +3,12 @@
 
 
 (require scheme/gui/base
-         scheme/file
          scheme/class
          scheme/port
          scheme/runtime-path
          scheme/contract
-         scheme/local
-         "program-resources.ss"
          "config.ss"
          "stx-helpers.ss"
-         "image-lift.ss"
          "collects/runtime/stx.ss"
          "compiler/pinfo.ss"
          "collects/runtime/permission-struct.ss"
@@ -61,37 +57,6 @@
   (for/list ([p (in-hash-keys ht)])
     p))
   
-;; get-on-start-code: pinfo -> string
-#;(define (get-on-start-code a-pinfo)
-  (apply string-append
-         (map permission->on-start-code (get-permissions a-pinfo))))
-
-;; get-on-pause-code: pinfo -> string
-#;(define (get-on-pause-code a-pinfo)
-  (apply string-append
-         (map permission->on-pause-code (get-permissions a-pinfo))))
-
-;; get-on-shutdown-code: pinfo -> string
-#;(define (get-on-destroy-code a-pinfo)
-  (apply string-append
-         (map permission->on-destroy-code (get-permissions a-pinfo))))
-  
-
-
-
-
-
-
-;; lift-images: text path -> (listof named-bitmap)
-;; Lifts up the image snips in the text, writing them into the resource directory.
-;; The snips in the text will be replaced with the expression (create-image <path>)
-;; where path refers to the file saves in the resource directory.
-(define (lift-images-to-directory a-text resource-dir)
-  (make-directory* resource-dir)
-  (let ([named-bitmaps (lift-images! a-text)])
-    (for ([nb named-bitmaps])
-      (named-bitmap-save nb resource-dir))
-    named-bitmaps))
 
 
 
@@ -184,18 +149,7 @@
                 (if aggressive?
                     (list "--compilation_level" "ADVANCED_OPTIMIZATIONS")
                     (list))))
-                
-
-
-;; open-program/resources: path -> program/resources
-(define (open-program/resources a-path)
-  (local [(define source-code (open-beginner-program a-path))
-          (define named-bitmaps (map named-bitmap->resource (lift-images! source-code)))]
-    (make-program/resources (parse-text-as-program source-code 
-                                                   (if (string? a-path)
-                                                       a-path
-                                                       (path->string a-path)))
-                            named-bitmaps)))
+               
 
 
 
@@ -205,13 +159,9 @@
 (provide/contract
  [parse-text-as-program (((is-a?/c text%)) ((or/c string? false/c)) . ->* .  (listof stx?))]
  [get-permissions (pinfo? . -> . (listof permission?))]
- #;[get-on-start-code (pinfo? . -> . string?)]
- #;[get-on-pause-code (pinfo? . -> . string?)]
- #;[get-on-destroy-code (pinfo? . -> . string?)]
- [lift-images-to-directory ((is-a?/c text%) path? . -> . (listof named-bitmap?))]
+
  [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]
  [yui-compress (bytes? . -> . bytes?)]
  [google-closure-compile ((bytes?) (#:aggressive? boolean?) . ->* . bytes?)]                  
- [open-program/resources 
-  (path-string? . -> . program/resources?)])
+ )

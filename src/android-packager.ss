@@ -8,7 +8,6 @@
          
          (only-in xml xexpr->string)
          "compile-helpers.ss"
-         "image-lift.ss"
          "collects/runtime/permission-struct.ss"
          "compiler/pinfo.ss"
          (only-in "compiler/helpers.ss" program?)
@@ -278,20 +277,14 @@
 
 ;; compiled-program->main.js: compiled-program -> string
 (define (compiled-program->main.js compiled-program)
-  (let*-values ([(named-bitmaps) '()]
-                [(defns pinfo)
+  (let*-values ([(defns pinfo)
                  (values (javascript:compiled-program-defns compiled-program)
                          (javascript:compiled-program-pinfo compiled-program))]
                 [(output-port) (open-output-string)]
                 [(mappings) 
                  (build-mappings 
                   (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "["
-                                         (string-join (map (lambda (b) 
-                                                             (format "~s" (named-bitmap-name b)))
-                                                           named-bitmaps) 
-                                                      ", ")
-                                         "]"))
+                  (IMAGES (string-append "[" "]"))
                   (PROGRAM-TOPLEVEL-EXPRESSIONS
                    (javascript:compiled-program-toplevel-exprs
                     compiled-program))

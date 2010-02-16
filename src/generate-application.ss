@@ -7,6 +7,7 @@
          scheme/path
          (only-in xml xexpr->string)
          "compile-helpers.ss"
+         "compile-helpers-with-images.ss"
          "image-lift.ss"
          "collects/runtime/permission-struct.ss"
          "compiler/pinfo.ss"
