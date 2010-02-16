@@ -1,13 +1,13 @@
 #lang scheme/base
 (require (except-in "compiler/lang.ss")
          "stub/parser.ss"
-         "collects/runtime/stx.ss"
+         "collects/moby/runtime/stx.ss"
          "stub/world-config.ss"
          "stub/jsworld.ss"
          "serve.ss"
          "stub/world.ss"
          "stub/net.ss"
-         "collects/runtime/effect-struct.ss"
+         "collects/moby/runtime/effect-struct.ss"
 	 "stub/location.ss"
          scheme/runtime-path
          (for-syntax scheme/base
@@ -133,7 +133,7 @@
          (all-from-out "stub/parser.ss")
          (all-from-out "stub/world.ss")
          (all-from-out "stub/net.ss")
-         (all-from-out "collects/runtime/effect-struct.ss")
+         (all-from-out "collects/moby/runtime/effect-struct.ss")
 	 (all-from-out "stub/location.ss")
  
          include

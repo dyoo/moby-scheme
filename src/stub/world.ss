@@ -13,7 +13,7 @@
          lang/prim
          (for-syntax scheme/base)
 	 (planet dyoo/version-case:1:8)
-         "../collects/runtime/effect-struct.ss"
+         "../collects/moby/runtime/effect-struct.ss"
          "world-effects.ss")
 
 (version-case 
