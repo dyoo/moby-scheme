@@ -1,4 +1,4 @@
-#lang s-exp "private/restricted-runtime-scheme.ss"
+#lang s-exp "../../private/restricted-runtime-scheme.ss"
 
 (require "permission-struct.ss")
 
