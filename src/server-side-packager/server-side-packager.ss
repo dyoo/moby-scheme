@@ -43,10 +43,22 @@
      #"OK"(current-seconds)
      #"application/vnd.android.package-archive"
      (list (make-header #"content-disposition"
-                        (string->bytes/utf-8 (format "attachment; filename=~a.apk" program-name))))
+                        (string->bytes/utf-8 
+                         (format "attachment; filename=~a.apk" 
+                                 (normalize-name-as-filename program-name)))))
      (list (build-android-package program-name
                                   (make-program/resources program '()))))))
 
+
+;; normalize-name-as-filename: string -> string
+(define (normalize-name-as-filename a-name)
+  (let ([a-name
+         (regexp-replace* #px"[^\\w]" a-name "")])
+    (cond
+      [(string=? a-name "")
+       "program"]
+      [else
+       a-name])))
 
 (define (error-no-program req)
   "Missing program")

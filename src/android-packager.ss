@@ -52,7 +52,8 @@
   
   (make-directory* dest)
   (copy-directory/files* phonegap-path dest)
-  (let* ([classname (upper-camel-case name)]
+  (let* ([normal-name (normalize-name name)]
+         [classname (upper-camel-case normal-name)]
          [package (string-append "plt.moby." classname)]
          [compiled-program         
           (write-main.js&resources program/resources
@@ -96,7 +97,7 @@
     (let* ([strings-xml-bytes (get-file-bytes (build-path dest "res" "values" "strings.xml"))]
            [strings-xml-bytes (regexp-replace #rx"DroidGap"
                                               strings-xml-bytes
-                                              (string->bytes/utf-8 name))])
+                                              (string->bytes/utf-8 (xexpr->string name)))])
       ;; FIXME: don't use regular expressions here!
       (call-with-output-file (build-path dest "res" "values" "strings.xml")
         (lambda (op) (write-bytes strings-xml-bytes op))
@@ -127,8 +128,16 @@
 
 
 
-
-
+;; normalize-name: string -> string
+;; Translate a name so it doesn't screw with Java conventions.
+(define (normalize-name a-name)
+  (let ([a-name (regexp-replace* #px"[^\\w\\s]+" a-name "")])
+    (cond
+      [(or (= (string-length a-name) 0)
+           (not (char-alphabetic? (string-ref a-name 0))))
+       (string-append "_" a-name)]
+      [else
+       a-name])))
 
 
 
