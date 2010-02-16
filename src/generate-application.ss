@@ -222,12 +222,11 @@
 (define (compile-program-to-javascript text-or-program/resources name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
-  (let*-values ([(named-bitmaps)
-                 (cond [(program/resources? text-or-program/resources)
+  (cond [(program/resources? text-or-program/resources)
                         (program/resources-write-resources! text-or-program/resources dest-dir)]
                        [else
-                        (lift-images-to-directory text-or-program/resources (build-path dest-dir))])]
-                [(program)
+                        (lift-images-to-directory text-or-program/resources (build-path dest-dir))])
+  (let*-values ([(program)
                  (cond [(program/resources? text-or-program/resources)
                         (program/resources-program text-or-program/resources)]
                        [else
@@ -237,7 +236,7 @@
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
-                    (compiled-program->main.js compiled-program named-bitmaps))
+                    (compiled-program->main.js compiled-program))
                    op))
       #:exists 'replace)
     (delete-file (build-path dest-dir "main.js.template"))
@@ -249,7 +248,7 @@
 
 
 ;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string
-(define (compiled-program->main.js compiled-program named-bitmaps)
+(define (compiled-program->main.js compiled-program)
   (let*-values ([(defns pinfo)
                 (values (javascript:compiled-program-defns compiled-program)
                         (javascript:compiled-program-pinfo compiled-program))]
@@ -260,7 +259,7 @@
                  (IMAGES (string-append "["
                                         (string-join (map (lambda (b) 
                                                             (format "~s" (named-bitmap-name b)))
-                                                          named-bitmaps) 
+                                                          '()) 
                                                      ", ")
                                         "]"))
                  (PROGRAM-TOPLEVEL-EXPRESSIONS
@@ -333,7 +332,7 @@
                    (string? (or/c path-string? program/resources?) path-string? . -> . any)]
                   
                   [compiled-program->main.js
-                   (javascript:compiled-program? (listof named-bitmap?) . -> . string?)]
+                   (javascript:compiled-program? . -> . string?)]
 
                   #;[struct program/resources ([program program?]
                                              [named-bitmaps (listof named-bitmap?)])])
