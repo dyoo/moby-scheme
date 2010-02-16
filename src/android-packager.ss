@@ -4,8 +4,8 @@
          scheme/runtime-path
          scheme/port
          scheme/path
+         scheme/contract
          file/zip
-         
          (only-in xml xexpr->string)
          "compile-helpers.ss"
          "collects/runtime/permission-struct.ss"
@@ -41,7 +41,8 @@
                                        ".zip")))))))
 
 
-
+;; FIXME: name must be cleaned up: it must not have any non-alphanumeric/whitespace, or
+;; else bad things happen.
 (define (build-android-package-in-path name program/resources dest) 
   (unless (file-exists? (current-ant-bin-path))
     (error 'generate-javascript+android-phonegap-application
@@ -268,7 +269,7 @@
 (define (get-permission-js-array perms) 
   (string-append "["
                  (string-join (map (lambda (x)
-                                     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
+                                     (format "plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS.string_dash__greaterthan_permission(~s)" (permission->string x)))
                                    perms)
                               ", ")
                  "]"))
@@ -309,3 +310,9 @@
        (f dir))
      (lambda ()
        (delete-directory/files dir)))))
+
+
+
+
+(provide/contract [build-android-package 
+                   (string? program/resources? . -> . bytes?)])

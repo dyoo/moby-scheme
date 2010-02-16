@@ -5,8 +5,10 @@
 (require scheme/port
          scheme/runtime-path
          scheme/contract
+         "stx-helpers.ss"
          "config.ss"
          "compiler/pinfo.ss"
+         "collects/runtime/stx.ss"
          "collects/runtime/permission-struct.ss"
          "collects/runtime/binding.ss")
 
@@ -19,9 +21,20 @@
 
 
 
-
-
-
+;; parse-string-as-program: string -> program
+;; Given a text, returns a program as well.
+(define (parse-string-as-program a-string [source-name "<unknown>"])
+  (let* ([ip (open-input-string a-string)])
+    (port-count-lines! ip)
+    (parameterize ([read-accept-reader #t]
+		   [read-decimal-as-inexact #f])
+      (let loop ([a-stx (read-syntax source-name ip)])
+        (cond
+          [(eof-object? a-stx)
+           '()]
+          [else
+           (cons (syntax->stx a-stx)
+                 (loop (read-syntax source-name ip)))])))))
 
 
 
@@ -127,6 +140,7 @@
 
 
 (provide/contract
+ [parse-string-as-program ((string?) (string?) . ->* .  (listof stx?))]
  [get-permissions (pinfo? . -> . (listof permission?))]
  [run-ant-build.xml (path? string? . -> . any)]
  [yui-compress (bytes? . -> . bytes?)]

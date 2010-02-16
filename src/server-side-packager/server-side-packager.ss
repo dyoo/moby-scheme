@@ -5,6 +5,8 @@
          file/gzip
          web-server/servlet
          web-server/servlet-env
+         "../program-resources.ss"
+         "../compile-helpers.ss"
          "../android-packager.ss")
 
 ;; This is a servlet that compiles packages to Android.
@@ -19,9 +21,28 @@
 ;; FIXME: add support for gzipping.
 
 
+;; start: request -> response
 (define (start req)
-  "hello world"
-  #;(void))
+  (cond
+    [(and (exists-binding? 'program (request-bindings req))
+          (exists-binding? 'name (request-bindings req)))
+     (try-to-produce-package (extract-binding/single 'program (request-bindings req))
+                             (extract-binding/single 'name (request-bindings req)))]
+    [else
+     (error-no-program req)]))
+
+
+;; try-to-produce-package: string -> response
+(define (try-to-produce-package program-text program-name)
+  (let ([program (parse-string-as-program program-text
+                                          program-name)])
+    (list #"application/vnd.android.package-archive"
+          (build-android-package program-name
+                                 (make-program/resources program '())))))
+
+
+(define (error-no-program req)
+  "Missing program")
 
 
 
@@ -36,5 +57,5 @@
                #:port PORT
                #:extra-files-paths (list HTDOCS-PATH)                 
                #:servlet-regexp (regexp
-                                 "^/package$"))
+                                 "^/package/.*$"))
                                   
