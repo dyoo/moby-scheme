@@ -5,9 +5,31 @@
          scheme/class
          scheme/contract
          scheme/local
+         "collects/runtime/stx.ss"
+         "stx-helpers.ss"
          "compile-helpers.ss"
          "program-resources.ss"
          "image-lift.ss")
+
+
+
+;; parse-text-as-program: text -> program
+;; Given a text, returns a program as well.
+(define (parse-text-as-program a-text [source-name "<unknown>"])
+  (let* ([ip (open-input-text-editor a-text)])
+    (port-count-lines! ip)
+    (parameterize ([read-accept-reader #t]
+		   [read-decimal-as-inexact #f])
+      (let ([stx (read-syntax source-name ip)])
+        (syntax-case stx ()
+          [(module name lang (#%module-begin body ...))
+           (map syntax->stx (syntax->list #'(body ...)))]
+          [(module name lang body ...)
+           (map syntax->stx (syntax->list #'(body ...)))]
+          [else
+           (error 'moby
+                  (string-append "The input does not appear to be a Moby module; "
+                                 "I don't see a \"#lang moby\" at the top of the file."))])))))
 
 
 ;; lift-images: text path -> (listof named-bitmap)
@@ -34,8 +56,19 @@
                             named-bitmaps)))
 
 
+;; open-beginner-program: path-string -> text%
+;; Opens up the beginner-level program.
+(define (open-beginner-program path)
+  (define text (new text%))
+  (send text insert-file (if (path? path) 
+                             (path->string path)
+                             path))
+  text)
+
+
 (provide/contract 
+ [parse-text-as-program (((is-a?/c text%)) ((or/c string? false/c)) . ->* .  (listof stx?))]
  [lift-images-to-directory ((is-a?/c text%) path? . -> . (listof named-bitmap?))]
- [open-program/resources 
-  (path-string? . -> . program/resources?)])
+ [open-beginner-program (path-string? . -> . (is-a?/c text%))]
+ [open-program/resources (path-string? . -> . program/resources?)])
  

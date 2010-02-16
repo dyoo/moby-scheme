@@ -2,14 +2,10 @@
 
 
 
-(require scheme/gui/base
-         scheme/class
-         scheme/port
+(require scheme/port
          scheme/runtime-path
          scheme/contract
          "config.ss"
-         "stx-helpers.ss"
-         "collects/runtime/stx.ss"
          "compiler/pinfo.ss"
          "collects/runtime/permission-struct.ss"
          "collects/runtime/binding.ss")
@@ -23,23 +19,6 @@
 
 
 
-;; parse-text-as-program: text -> program
-;; Given a text, returns a program as well.
-(define (parse-text-as-program a-text [source-name "<unknown>"])
-  (let* ([ip (open-input-text-editor a-text)])
-    (port-count-lines! ip)
-    (parameterize ([read-accept-reader #t]
-		   [read-decimal-as-inexact #f])
-      (let ([stx (read-syntax source-name ip)])
-        (syntax-case stx ()
-          [(module name lang (#%module-begin body ...))
-           (map syntax->stx (syntax->list #'(body ...)))]
-          [(module name lang body ...)
-           (map syntax->stx (syntax->list #'(body ...)))]
-          [else
-           (error 'moby
-                  (string-append "The input does not appear to be a Moby module; "
-                                 "I don't see a \"#lang moby\" at the top of the file."))])))))
 
 
 
@@ -77,15 +56,6 @@
       (log-error line)
       (loop (read-line inp)))))
 
-
-;; open-beginner-program: path-string -> text%
-;; Opens up the beginner-level program.
-(define (open-beginner-program path)
-  (define text (new text%))
-  (send text insert-file (if (path? path) 
-                             (path->string path)
-                             path))
-  text)
 
 
 ;; run-ant-build.xml: path string -> void
@@ -157,10 +127,7 @@
 
 
 (provide/contract
- [parse-text-as-program (((is-a?/c text%)) ((or/c string? false/c)) . ->* .  (listof stx?))]
  [get-permissions (pinfo? . -> . (listof permission?))]
-
- [open-beginner-program (path-string? . -> . (is-a?/c text%))]
  [run-ant-build.xml (path? string? . -> . any)]
  [yui-compress (bytes? . -> . bytes?)]
  [google-closure-compile ((bytes?) (#:aggressive? boolean?) . ->* . bytes?)]                  
