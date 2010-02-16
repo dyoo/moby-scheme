@@ -5,7 +5,7 @@
          scheme/port
          scheme/path
          scheme/contract
-         file/zip
+         scheme/list
          (only-in xml xexpr->string)
          "compile-helpers.ss"
          "collects/moby/runtime/permission-struct.ss"
@@ -32,13 +32,12 @@
        (build-android-package-in-path program-name
                                       program/resources
                                       dest)
-       (parameterize ([current-directory dir])
-         (zip (build-path dir (string-append program-name ".zip"))
-              program-name))
-       (get-file-bytes (build-path 
-                        dir 
-                        (string-append program-name
-                                       ".zip")))))))
+              
+       (get-file-bytes 
+        (first (find-files (lambda (a-path)
+                             (equal? (filename-extension a-path)
+                                     #"apk"))
+                           dest)))))))
 
 
 ;; FIXME: name must be cleaned up: it must not have any non-alphanumeric/whitespace, or

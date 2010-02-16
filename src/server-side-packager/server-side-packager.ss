@@ -1,8 +1,7 @@
 #lang scheme/base
 
-(require scheme/match
-         scheme/runtime-path
-         file/gzip
+(require scheme/runtime-path
+         scheme/cmdline
          web-server/servlet
          web-server/servlet-env
          "../program-resources.ss"
@@ -21,6 +20,9 @@
 ;; FIXME: add support for gzipping.
 
 
+(define-runtime-path HTDOCS-PATH "htdocs")
+
+
 ;; start: request -> response
 (define (start req)
   (cond
@@ -36,9 +38,14 @@
 (define (try-to-produce-package program-text program-name)
   (let ([program (parse-string-as-program program-text
                                           program-name)])
-    (list #"application/vnd.android.package-archive"
-          (build-android-package program-name
-                                 (make-program/resources program '())))))
+    (make-response/full
+     200
+     #"OK"(current-seconds)
+     #"application/vnd.android.package-archive"
+     (list (make-header #"content-disposition"
+                        (string->bytes/utf-8 (format "attachment; filename=~a.apk" program-name))))
+     (list (build-android-package program-name
+                                  (make-program/resources program '()))))))
 
 
 (define (error-no-program req)
@@ -46,16 +53,17 @@
 
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define PORT 8080)
-(define-runtime-path HTDOCS-PATH "htdocs")
+(define PORT (make-parameter 8080))
+
+(command-line #:once-each 
+              [("-p" "--port") port "Use port for web server"
+                               (PORT (string->number port))])
 (serve/servlet start
                #:launch-browser? #f
                #:quit? #f
                #:listen-ip #f
-               #:port PORT
+               #:port (PORT)
                #:extra-files-paths (list HTDOCS-PATH)                 
                #:servlet-regexp (regexp
                                  "^/package/.*$"))
-                                  
