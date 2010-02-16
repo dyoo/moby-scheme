@@ -146,7 +146,7 @@
     (test-all generate-javascript-application test-app-js-path))
   
   ;; If you do not have the Android SDK, change the value in config.ss.
-  (when should-run-android?
+  #;(when should-run-android?
     (test-all generate-javascript+android-phonegap-application test-app-android-path)))
 
 
@@ -159,7 +159,7 @@
 
   (when with-js?
     (a-test generate-javascript-application test-app-js-path))
-  (when should-run-android?
+  #;(when should-run-android?
     (a-test generate-javascript+android-phonegap-application test-app-android-path)))
 
 

@@ -44,10 +44,10 @@
 ;; else bad things happen.
 (define (build-android-package-in-path name program/resources dest) 
   (unless (file-exists? (current-ant-bin-path))
-    (error 'generate-javascript+android-phonegap-application
+    (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
   (unless (directory-exists? (current-android-sdk-path))
-    (error 'generate-javascript+android-phonegap-application
+    (error 'build-android-package-in-path
            "The Android SDK could not be found."))
   
   (make-directory* dest)

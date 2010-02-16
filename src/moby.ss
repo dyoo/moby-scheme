@@ -27,8 +27,8 @@
   (cond 
     [(string=? a-type "js")
      generate-javascript-application]
-    [(string=? a-type "js+android-phonegap")
-     generate-javascript+android-phonegap-application]
+    #;[(string=? a-type "js+android-phonegap")
+       generate-javascript+android-phonegap-application]
     [else
      (error 'moby "Type is expected to be one of [js, js+android-phonegap]")]))
 
@@ -56,7 +56,7 @@
                      (name n)]
     [("-d" "--dest") d "Set the destination path of the output."
                      (dest-dir (build-path d))]
-    [("-t" "--type") t "Set the application type.  Options: [js, js+android-phonegap]"
+    [("-t" "--type") t "Set the application type.  Options: [js]"
                      (app-compiler (lookup-app-type t))]
     #:args (beginner-program-filename)
     (build-path beginner-program-filename))))
