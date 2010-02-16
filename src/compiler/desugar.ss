@@ -5,8 +5,8 @@
 (require "env.ss")
 (require "modules.ss")
 (require "rbtree.ss")
-(require "../collects/runtime/stx.ss")
-(require "../collects/runtime/error-struct.ss")
+(require "../collects/moby/runtime/stx.ss")
+(require "../collects/moby/runtime/error-struct.ss")
 
 
 

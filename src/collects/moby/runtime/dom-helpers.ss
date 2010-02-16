@@ -1,4 +1,4 @@
-#lang s-exp "../../private/restricted-runtime-scheme.ss"
+#lang s-exp "../../../private/restricted-runtime-scheme.ss"
 
 ;; dom-string-content: dom -> string
 ;; Gets the string content of the dom.

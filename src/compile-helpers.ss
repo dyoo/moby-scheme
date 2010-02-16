@@ -8,9 +8,9 @@
          "stx-helpers.ss"
          "config.ss"
          "compiler/pinfo.ss"
-         "collects/runtime/stx.ss"
-         "collects/runtime/permission-struct.ss"
-         "collects/runtime/binding.ss")
+         "collects/moby/runtime/stx.ss"
+         "collects/moby/runtime/permission-struct.ss"
+         "collects/moby/runtime/binding.ss")
 
 ;; Common helper functions used in the compiler.
 

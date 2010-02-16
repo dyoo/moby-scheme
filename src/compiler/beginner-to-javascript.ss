@@ -14,10 +14,10 @@
 (require "labeled-translation.ss")
 (require "rbtree.ss")
 (require "version.ss")
-(require "../collects/runtime/binding.ss")
-(require "../collects/runtime/stx.ss")
-(require "../collects/runtime/error-struct.ss")
-(require "../collects/runtime/arity-struct.ss")
+(require "../collects/moby/runtime/binding.ss")
+(require "../collects/moby/runtime/stx.ss")
+(require "../collects/moby/runtime/error-struct.ss")
+(require "../collects/moby/runtime/arity-struct.ss")
 
 
 ;; A compiled program is a:

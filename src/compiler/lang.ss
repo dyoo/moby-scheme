@@ -9,10 +9,10 @@
          scheme/contract
          lang/htdp-advanced
          (for-syntax scheme/base)
-         "../collects/runtime/stx.ss"
-         "../collects/runtime/error-struct.ss"
-         "../collects/runtime/error-struct-to-dom.ss"
-         "../collects/runtime/dom-helpers.ss")
+         "../collects/moby/runtime/stx.ss"
+         "../collects/moby/runtime/error-struct.ss"
+         "../collects/moby/runtime/error-struct-to-dom.ss"
+         "../collects/moby/runtime/dom-helpers.ss")
 
 
 (provide (except-out (all-from-out lang/htdp-advanced)
@@ -165,8 +165,6 @@
                      (base:error error)
                      (my-raise raise)
                      )
-
-         ;;(all-from-out "../collects/runtime/stx.ss")
 
          
          ;; Contract-related stuff: the following will be erased on 

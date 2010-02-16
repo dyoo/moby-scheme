@@ -6,10 +6,10 @@
 (require "modules.ss")
 (require "rbtree.ss")
 (require "labeled-translation.ss")
-(require "../collects/runtime/error-struct.ss")
-(require "../collects/runtime/permission-struct.ss")
-(require "../collects/runtime/binding.ss")
-(require "../collects/runtime/stx.ss")
+(require "../collects/moby/runtime/error-struct.ss")
+(require "../collects/moby/runtime/permission-struct.ss")
+(require "../collects/moby/runtime/binding.ss")
+(require "../collects/moby/runtime/stx.ss")
 
 
 ;; pinfo (program-info) is the "world" structure for the compilers; 

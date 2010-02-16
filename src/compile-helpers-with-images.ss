@@ -5,7 +5,7 @@
          scheme/class
          scheme/contract
          scheme/local
-         "collects/runtime/stx.ss"
+         "collects/moby/runtime/stx.ss"
          "stx-helpers.ss"
          "compile-helpers.ss"
          "program-resources.ss"

@@ -9,7 +9,7 @@
          "compile-helpers.ss"
          "compile-helpers-with-images.ss"
          "image-lift.ss"
-         "collects/runtime/permission-struct.ss"
+         "collects/moby/runtime/permission-struct.ss"
          "compiler/pinfo.ss"
          (only-in "compiler/helpers.ss" program?)
          (prefix-in javascript: "compiler/beginner-to-javascript.ss")
