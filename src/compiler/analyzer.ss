@@ -26,8 +26,10 @@
 
 (define (program-analyze/pinfo a-program pinfo)
   (local [(define pinfo-1
-            (program-analyze-collect-definitions a-program pinfo))]
-    (program-analyze-uses a-program pinfo-1)))
+            (program-analyze-collect-definitions a-program pinfo))
+          (define pinfo-2
+            (program-analyze-collect-provides a-program pinfo-1))]
+    (program-analyze-uses a-program pinfo-2)))
 
 
 
@@ -37,46 +39,61 @@
 (define (program-analyze-collect-definitions a-program pinfo)
   ;; FIXME: this does not yet say anything if a definition is introduced twice
   ;; in the same lexical scope.  We must do this error check!
-  (cond [(empty? a-program)
-         pinfo]
-        [else
-         (local [(define updated-pinfo
-                   (cond [(defn? (first a-program))
-                          (definition-analyze-collect-definitions (first a-program) pinfo)]
-                         [(test-case? (first a-program))
-                          pinfo]
-                         [(library-require? (first a-program))
-                          (require-analyze-collect-definitions (second (stx-e (first a-program))) pinfo)]
-                         [(provide-statement? (first a-program))
-                          (collect-provided-names (rest (stx-e (first a-program))) pinfo)]
-                         [(expression? (first a-program))
-                          pinfo]))]
-           (program-analyze-collect-definitions (rest a-program)
-                                                updated-pinfo))]))
+  (foldl (lambda (an-element pinfo)
+           (cond [(defn? an-element)
+                  (definition-analyze-collect-definitions an-element pinfo)]
+                 [(test-case? an-element)
+                  pinfo]
+                 [(library-require? an-element)
+                  (require-analyze-collect-definitions (second (stx-e an-element)) pinfo)]
+                 [(provide-statement? an-element)
+                  pinfo]
+                 [(expression? an-element)
+                  pinfo]))
+         pinfo
+         a-program))
+  
+  
+
+;; program-analyze-collect-provides: program pinfo -> pinfo
+;; Walk through the program and collect all the provide statements.
+(define (program-analyze-collect-provides a-program pinfo)
+  (foldl (lambda (an-element pinfo)
+           (cond [(defn? an-element)
+                  pinfo]
+                 [(test-case? an-element)
+                  pinfo]
+                 [(library-require? an-element)
+                  pinfo]
+                 [(provide-statement? an-element)
+                  (collect-provided-names (rest (stx-e an-element)) pinfo)]
+                 [(expression? an-element)
+                  pinfo]))
+         pinfo
+         a-program))
+
 
 
 
 ;; program-analyze-uses: program pinfo -> pinfo
 ;; Collects the uses of bindings that this program uses.
 (define (program-analyze-uses a-program pinfo)
-  (cond [(empty? a-program)
-         pinfo]
-        [else
-         (local [(define updated-pinfo
-                   (cond [(defn? (first a-program))
-                          (definition-analyze-uses (first a-program) pinfo)]
-                         [(test-case? (first a-program))
-                          pinfo]
-                         [(library-require? (first a-program))
-                          pinfo]
-                         [(provide-statement? (first a-program))
-                          pinfo]
-                         [(expression? (first a-program))
-                          (expression-analyze-uses (first a-program)
-                                                   pinfo 
-                                                   (pinfo-env pinfo))]))]
-           (program-analyze-uses (rest a-program)
-                                 updated-pinfo))]))
+  (foldl (lambda (an-element pinfo)
+           (cond [(defn? an-element)
+                  (definition-analyze-uses an-element pinfo)]
+                 [(test-case? an-element)
+                  pinfo]
+                 [(library-require? an-element)
+                  pinfo]
+                 [(provide-statement? an-element)
+                  pinfo]
+                 [(expression? an-element)
+                  (expression-analyze-uses an-element
+                                           pinfo 
+                                           (pinfo-env pinfo))]))
+         pinfo
+         a-program))
+           
 
 
 ;; collect-provided-names: (listof stx) pinfo -> pinfo
