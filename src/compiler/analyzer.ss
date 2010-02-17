@@ -102,11 +102,16 @@
   (foldl (lambda (a-clause a-pinfo)
            (cond
              [(symbol? (stx-e a-clause))
-              (pinfo-update-provided-names a-pinfo
-                                           (rbtree-insert symbol<
-                                                          (pinfo-provided-names a-pinfo)
-                                                          (stx-e a-clause)
-                                                          (make-provide-binding:id a-clause)))]
+              (begin 
+                (unless (rbtree-member? symbol< (pinfo-defined-names a-pinfo) (stx-e a-clause))
+                  (raise (make-moby-error (stx-loc a-clause)
+                                          (make-moby-error-type:provided-name-not-defined
+                                           (stx-e a-clause)))))
+                (pinfo-update-provided-names a-pinfo
+                                             (rbtree-insert symbol<
+                                                            (pinfo-provided-names a-pinfo)
+                                                            (stx-e a-clause)
+                                                            (make-provide-binding:id a-clause))))]
              [(stx-begins-with? a-clause 'struct-out)
               (cond
                 [(and (= (length (stx-e a-clause)) 2)
@@ -115,7 +120,8 @@
                                               (rbtree-insert symbol<
                                                              (pinfo-provided-names a-pinfo)
                                                              (stx-e (second (stx-e a-clause)))
-                                                             (make-provide-binding:struct-id (second (stx-e a-clause)))))]
+                                                             (make-provide-binding:struct-id 
+                                                              (second (stx-e a-clause)))))]
                 [else
                  (raise (make-moby-error (stx-loc a-clause)
                                          (make-moby-error-type:generic-syntactic-error

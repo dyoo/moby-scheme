@@ -165,14 +165,15 @@ var isSyntaxNotApplied =
 
 
 // Monkey patch an assertMobyRaise function.
-JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk) {
+JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk, msg) {
+    msg = msg || "";
     try {
 	thunk();
-	this.fail("assertMobyRaise: expected exception hasn't been raised");
+	this.fail("assertMobyRaise: expected an exception to be raised, but none has. " + msg);
     } catch(e) {
-	this.assert(isMobyError(e), "not a moby error");
-	this.assert(isMobyErrorType(mobyErrorType(e)), "not a moby error type");
-	this.assert(predicate(mobyErrorType(e)), "predicate fails");
+	this.assert(isMobyError(e), "not a moby error. " + msg);
+	this.assert(isMobyErrorType(mobyErrorType(e)), "not a moby error type. " + msg);
+	this.assert(predicate(mobyErrorType(e)), "predicate fails. " + msg);
     }
 };
 

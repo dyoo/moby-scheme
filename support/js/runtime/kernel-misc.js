@@ -62,4 +62,55 @@ goog.provide('plt.kernel.misc');
 
 
 
+    // sexpToDom: sexp -> dom-element
+    plt.kernel.misc.sexpToDom = function(anSexp) {
+	if (typeof(anSexp) === 'undefined') {
+	    return document.createTextNode("undefined");
+	}
+	if (typeof(anSexp) === 'string') {
+	    return document.createTextNode(anSexp)
+	} else if (anSexp.hasOwnProperty('nodeType')) {
+	    return anSexp;
+	} else {
+	    var nodeType = 
+		plt.Kernel.symbol_dash__greaterthan_string(
+		    plt.Kernel.list_dash_ref(anSexp, plt.types.Rational.ZERO));
+	    var nodeAttrList =
+		plt.Kernel.list_dash_ref(anSexp, plt.types.Rational.ONE);
+	    var nodeChildList =
+		plt.Kernel.rest(plt.Kernel.rest(anSexp));
+	    
+	    var newNode = document.createElement(nodeType);
+	    while (! plt.Kernel.empty_question_(nodeAttrList)) {
+		var attrName = 
+		    plt.Kernel.symbol_dash__greaterthan_string(
+			plt.Kernel.first(plt.Kernel.first(nodeAttrList)));
+		var attrValue = 
+		    plt.Kernel.second(plt.Kernel.first(nodeAttrList));
+		if (attrName === "style") {
+		    newNode.style.cssText = attrValue;
+		} else if (attrName === "class") {
+		    newNode.className = attrValue;
+		} else {
+		    newNode[attrName] = attrValue;
+		}
+
+		nodeAttrList = plt.Kernel.rest(nodeAttrList);
+	    }
+
+	    while (! plt.Kernel.empty_question_(nodeChildList)) {
+		newNode.appendChild(sexpToDom(plt.Kernel.first(nodeChildList)));
+		nodeChildList = plt.Kernel.rest(nodeChildList);
+	    }
+
+	    
+	    return newNode;
+	}
+    }
+
+
+
+
+
+
 }());

@@ -59,14 +59,16 @@ function init() {
 	    this.assertMobyRaise(isConditionalExhausted,
 				 function() {
 				     run("(cond [(= 1 0) 'huh?])");
-				 });
+				 },
+				"cond exhausted");
 	},
 
 	testCondBadForm: function() {
 	    this.assertMobyRaise(isConditionalMissingQuestionAnswer,
 				 function() {
 				     run("(cond)");
-				 });
+				 },
+				 "cond missing question answer");
 
 	    this.assertMobyRaise(isConditionalMalformedClause,
 				 function() {
@@ -1019,7 +1021,68 @@ function init() {
 	testBareQuote: function() {
 	    this.assertMobyRaise(isSyntaxNotApplied,
 				 function() { run("quote")});
-	}
+	},
+
+
+	testUnsupportedLexicalToken: function() {
+	    this.assertMobyRaise(isUnsupportedLexicalToken,
+				 function() { run(".") });
+	},
+
+
+
+	testExerciseSyntaxErrorsAndDomGeneration: function() {
+	    var errorRecords = 
+		[["\"", isUnclosedLexicalToken],
+		 // missing test on unrecognized-lexical-token
+		 // missing test on unsupported-expression-form
+		 [".", isUnsupportedLexicalToken],
+		 ["(", isUnclosedParentheses],
+		 [")", isClosingParenthesisBeforeOpener],
+		 ["(]", isUnbalancedParenthesis],
+		 ["begin", isSyntaxNotApplied],
+		 ["(quote)", isMissingExpression],
+		 ["(define (f x x) (* x x))", isDuplicateIdentifier],
+		 ["(define 42 x)", isExpectedIdentifier],
+		 ["(lambda x 42)", isExpectedListOfIdentifiers],
+		 ["x", isUndefinedIdentifier],
+		 ["(define-struct foo ()) foo", isStructureIdentifierNotExpression],
+		 ["(provide x)", isProvidedNameNotDefined],
+		 ["(provide (struct-out x)) (define x 16)", isProvidedStructureNotStructure],
+		 ["(require blah-is-not-a-known-module)", isUnknownModule],
+		 ["(cond)", isConditionalMissingQuestionAnswer],
+		 ["(cond 42)", isConditionalMalformedClause],
+		 ["(cond [true])", isConditionalClauseTooFewElements],
+		 ["(cond [true false false])", isConditionalClauseTooManyElements],
+		 ["(cond [false 'ok])", isConditionalExhausted],
+		 ["(cond [42 'huh?])", isBranchValueNotBoolean]
+		];
+	    var errorToDom = plt.Kernel.invokeModule(
+		"moby/runtime/error-struct-to-dom").
+		EXPORTS.error_dash_struct_dash__greaterthan_dom_dash_sexp;
+	    for(var i = 0; i < errorRecords.length; i++) {
+		var errorString = errorRecords[i][0];
+		var errorTest = errorRecords[i][1];
+		this.assertMobyRaise(errorTest,
+				     function() { run(errorString); },
+				     errorString);
+		var err;
+		try {
+		    run(errorString);
+		} catch (e){
+		    err = e;
+		}
+		if (! err) { continue; }
+		
+		try {
+		    var domSexp = errorToDom(err, false);
+		} catch (e) {
+		    this.fail("Unable to produce dom for expression: " + errorString);
+		}
+	    }
+	},
+
+
 
 
     });
