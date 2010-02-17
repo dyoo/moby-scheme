@@ -116,12 +116,23 @@
               (cond
                 [(and (= (length (stx-e a-clause)) 2)
                       (symbol? (stx-e (second (stx-e a-clause)))))
-                 (pinfo-update-provided-names a-pinfo
-                                              (rbtree-insert symbol<
-                                                             (pinfo-provided-names a-pinfo)
-                                                             (stx-e (second (stx-e a-clause)))
-                                                             (make-provide-binding:struct-id 
-                                                              (second (stx-e a-clause)))))]
+                 (begin
+                   (unless (and (rbtree-member? symbol< (pinfo-defined-names a-pinfo) 
+                                                (stx-e (second (stx-e a-clause))))
+                                (binding:structure?
+                                 (rbtree-ref symbol< 
+                                             (pinfo-defined-names a-pinfo) 
+                                             (stx-e (second (stx-e a-clause)))
+                                             (lambda () #f))))
+                     (raise (make-moby-error (stx-loc a-clause)
+                                             (make-moby-error-type:provided-structure-not-structure
+                                              (stx-e (second (stx-e a-clause)))))))
+                   (pinfo-update-provided-names a-pinfo
+                                                (rbtree-insert symbol<
+                                                               (pinfo-provided-names a-pinfo)
+                                                               (stx-e (second (stx-e a-clause)))
+                                                               (make-provide-binding:struct-id 
+                                                                (second (stx-e a-clause))))))]
                 [else
                  (raise (make-moby-error (stx-loc a-clause)
                                          (make-moby-error-type:generic-syntactic-error
