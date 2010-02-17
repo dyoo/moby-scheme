@@ -1041,9 +1041,12 @@ function init() {
 		 [")", isClosingParenthesisBeforeOpener],
 		 ["(]", isUnbalancedParenthesis],
 		 ["begin", isSyntaxNotApplied],
-		 ["(quote)", isMissingExpression],
+		 // missing test on missing-expression
+		 ["(quote)", isQuoteTooFewElements],
+		 ["(quote x y)", isQuoteTooManyElements],
 		 ["(define (f x x) (* x x))", isDuplicateIdentifier],
-		 ["(define 42 x)", isExpectedIdentifier],
+		 // missing test on expected-identifier
+		 ["(define 42 x)", isGenericSyntacticError],
 		 ["(lambda x 42)", isExpectedListOfIdentifiers],
 		 ["x", isUndefinedIdentifier],
 		 ["(define-struct foo ()) foo", isStructureIdentifierNotExpression],
@@ -1055,7 +1058,30 @@ function init() {
 		 ["(cond [true])", isConditionalClauseTooFewElements],
 		 ["(cond [true false false])", isConditionalClauseTooManyElements],
 		 ["(cond [false 'ok])", isConditionalExhausted],
-		 ["(cond [42 'huh?])", isBranchValueNotBoolean]
+		 ["(cond [42 'huh?])", isBranchValueNotBoolean],
+		 ["(if true 4 5 6)", isIfTooManyElements],
+		 ["(if true)", isIfTooFewElements],
+		 ["(if)", isIfTooFewElements],
+		 ["(quasiquote)", isQuasiquoteTooFewElements],
+		 ["(quasiquote x y)", isQuasiquoteTooManyElements],
+		 ["(quasiquote (unquote))", isUnquoteTooFewElements],
+		 ["(quasiquote (unquote 1 2))", isUnquoteTooManyElements],
+		 ["(quasiquote (unquote-splicing))", isUnquoteSplicingTooFewElements],
+		 ["(quasiquote (unquote-splicing (list) (list)))", isUnquoteSplicingTooManyElements],
+		 ["(begin)", isBeginBodyEmpty],
+		 ["(and)", isBooleanChainTooFewElements],
+		 ["(lambda)", isLambdaTooFewElements],
+		 ["(lambda (x) x x)", isLambdaTooManyElements],
+		 ["(when)", isWhenNoBody],
+		 ["(unless)", isUnlessNoBody],
+		 ["(check-expect 3 4)", isCheckExpect],
+		 ["(check-within 3 4 0.1)", isCheckWithin],
+		 ["(check-error (/ 1 0) \"oh\")", isCheckError],
+		 ["(check-error (* 1 0) \"oh\")", isCheckErrorNoError],
+		 ["(sqr 3 4)", isApplicationArity],		
+		 ["(3 + 4)", isApplicationOperatorNotAFunction],
+		 ["(string-length 42)", isTypeMismatch],
+		 ["(string-ref \"hi\" 17)", isIndexOutOfBounds]
 		];
 	    var errorToDom = plt.Kernel.invokeModule(
 		"moby/runtime/error-struct-to-dom").
