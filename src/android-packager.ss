@@ -4,12 +4,11 @@
          scheme/runtime-path
          scheme/port
          scheme/path
-         file/zip
-         
+         scheme/contract
+         scheme/list
          (only-in xml xexpr->string)
          "compile-helpers.ss"
-         "image-lift.ss"
-         "collects/runtime/permission-struct.ss"
+         "collects/moby/runtime/permission-struct.ss"
          "compiler/pinfo.ss"
          (only-in "compiler/helpers.ss" program?)
          (prefix-in javascript: "compiler/beginner-to-javascript.ss")
@@ -33,27 +32,28 @@
        (build-android-package-in-path program-name
                                       program/resources
                                       dest)
-       (parameterize ([current-directory dir])
-         (zip (build-path dir (string-append program-name ".zip"))
-              program-name))
-       (get-file-bytes (build-path 
-                        dir 
-                        (string-append program-name
-                                       ".zip")))))))
+              
+       (get-file-bytes 
+        (first (find-files (lambda (a-path)
+                             (equal? (filename-extension a-path)
+                                     #"apk"))
+                           dest)))))))
 
 
-
+;; FIXME: name must be cleaned up: it must not have any non-alphanumeric/whitespace, or
+;; else bad things happen.
 (define (build-android-package-in-path name program/resources dest) 
   (unless (file-exists? (current-ant-bin-path))
-    (error 'generate-javascript+android-phonegap-application
+    (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
   (unless (directory-exists? (current-android-sdk-path))
-    (error 'generate-javascript+android-phonegap-application
+    (error 'build-android-package-in-path
            "The Android SDK could not be found."))
   
   (make-directory* dest)
   (copy-directory/files* phonegap-path dest)
-  (let* ([classname (upper-camel-case name)]
+  (let* ([normal-name (normalize-name name)]
+         [classname (upper-camel-case normal-name)]
          [package (string-append "plt.moby." classname)]
          [compiled-program         
           (write-main.js&resources program/resources
@@ -97,7 +97,7 @@
     (let* ([strings-xml-bytes (get-file-bytes (build-path dest "res" "values" "strings.xml"))]
            [strings-xml-bytes (regexp-replace #rx"DroidGap"
                                               strings-xml-bytes
-                                              (string->bytes/utf-8 name))])
+                                              (string->bytes/utf-8 (xexpr->string name)))])
       ;; FIXME: don't use regular expressions here!
       (call-with-output-file (build-path dest "res" "values" "strings.xml")
         (lambda (op) (write-bytes strings-xml-bytes op))
@@ -128,8 +128,16 @@
 
 
 
-
-
+;; normalize-name: string -> string
+;; Translate a name so it doesn't screw with Java conventions.
+(define (normalize-name a-name)
+  (let ([a-name (regexp-replace* #px"[^\\w\\s]+" a-name "")])
+    (cond
+      [(or (= (string-length a-name) 0)
+           (not (char-alphabetic? (string-ref a-name 0))))
+       (string-append "_" a-name)]
+      [else
+       a-name])))
 
 
 
@@ -269,7 +277,7 @@
 (define (get-permission-js-array perms) 
   (string-append "["
                  (string-join (map (lambda (x)
-                                     (format "string_dash__greaterthan_permission(~s)" (permission->string x)))
+                                     (format "plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS.string_dash__greaterthan_permission(~s)" (permission->string x)))
                                    perms)
                               ", ")
                  "]"))
@@ -278,20 +286,14 @@
 
 ;; compiled-program->main.js: compiled-program -> string
 (define (compiled-program->main.js compiled-program)
-  (let*-values ([(named-bitmaps) '()]
-                [(defns pinfo)
+  (let*-values ([(defns pinfo)
                  (values (javascript:compiled-program-defns compiled-program)
                          (javascript:compiled-program-pinfo compiled-program))]
                 [(output-port) (open-output-string)]
                 [(mappings) 
                  (build-mappings 
                   (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "["
-                                         (string-join (map (lambda (b) 
-                                                             (format "~s" (named-bitmap-name b)))
-                                                           named-bitmaps) 
-                                                      ", ")
-                                         "]"))
+                  (IMAGES (string-append "[" "]"))
                   (PROGRAM-TOPLEVEL-EXPRESSIONS
                    (javascript:compiled-program-toplevel-exprs
                     compiled-program))
@@ -316,3 +318,9 @@
        (f dir))
      (lambda ()
        (delete-directory/files dir)))))
+
+
+
+
+(provide/contract [build-android-package 
+                   (string? program/resources? . -> . bytes?)])

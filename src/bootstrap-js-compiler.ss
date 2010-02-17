@@ -8,9 +8,10 @@
          scheme/local
          (only-in scheme/list second)
          "compile-helpers.ss"
+         "compile-helpers-with-images.ss"
          "program-resources.ss"
-         "collects/runtime/stx.ss"
-         "collects/runtime/binding.ss"
+         "collects/moby/runtime/stx.ss"
+         "collects/moby/runtime/binding.ss"
          "compiler/beginner-to-javascript.ss"
          "compiler/desugar.ss"
          "compiler/analyzer.ss"
@@ -18,7 +19,7 @@
          "compiler/pinfo.ss"
          "compiler/modules.ss")
 
-(require (for-syntax (only-in scheme/base build-path)))
+(require (for-syntax (only-in scheme/base build-path #%app)))
 
 ;; Bootstrap the runtime components of Moby, as well as the
 ;; Scheme->Javascript compiler in support/js/compiler.js.
@@ -34,41 +35,42 @@
 (define-struct module-record (name path))
 
 
-;; These are modules that will be bootstrapped to be used by at runtime.
-(define COLLECTS-PATH "collects")
+(define COLLECTS/MOBY/RUNTIME (build-path "collects" "moby" "runtime"))
+(define COLLECTS/BOOTSTRAP (build-path "collects" "bootstrap"))
 
 
-;; Here's the list of runtime modules.
+;; Here is the list of runtime modules.
+;; FIXME: compute this, don't hardcode the list.
+;; FIXME: we need to do topological sort based on require dependencies.
 (define RUNTIME-MODULES
   (list (make-module-record 'moby/runtime/runtime-modules
-                            (build-path COLLECTS-PATH "runtime" "runtime-modules.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "runtime-modules.ss"))
         (make-module-record 'moby/runtime/stx 
-                            (build-path COLLECTS-PATH "runtime" "stx.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "stx.ss"))
         (make-module-record 'moby/runtime/binding
-                            (build-path COLLECTS-PATH "runtime" "binding.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "binding.ss"))
         (make-module-record 'moby/runtime/permission-struct
-                            (build-path COLLECTS-PATH "runtime" "permission-struct.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "permission-struct.ss"))
         (make-module-record 'moby/runtime/effect-struct 
-                            (build-path COLLECTS-PATH "runtime" "effect-struct.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "effect-struct.ss"))
         (make-module-record 'moby/runtime/arity-struct 
-                            (build-path COLLECTS-PATH "runtime" "arity-struct.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "arity-struct.ss"))
         (make-module-record 'moby/runtime/error-struct 
-                            (build-path COLLECTS-PATH "runtime" "error-struct.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "error-struct.ss"))
         (make-module-record 'moby/runtime/scheme-value-to-dom 
-                            (build-path COLLECTS-PATH "runtime" "scheme-value-to-dom.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "scheme-value-to-dom.ss"))
         (make-module-record 'moby/runtime/dom-helpers
-                            (build-path COLLECTS-PATH "runtime" "dom-helpers.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "dom-helpers.ss"))
         (make-module-record 'moby/runtime/dom-parameters
-                            (build-path COLLECTS-PATH "runtime" "dom-parameters.ss"))
+                            (build-path COLLECTS/MOBY/RUNTIME "dom-parameters.ss"))
         (make-module-record 'moby/runtime/error-struct-to-dom 
-                            (build-path COLLECTS-PATH "runtime" "error-struct-to-dom.ss"))
-        
+                            (build-path COLLECTS/MOBY/RUNTIME "error-struct-to-dom.ss"))        
         (make-module-record 'bootstrap/bootstrap-teachpack 
-                            (build-path COLLECTS-PATH "bootstrap" "bootstrap-teachpack.ss"))
+                            (build-path COLLECTS/BOOTSTRAP "bootstrap-teachpack.ss"))
         (make-module-record 'bootstrap/cage-teachpack 
-                            (build-path COLLECTS-PATH "bootstrap" "cage-teachpack.ss"))
+                            (build-path COLLECTS/BOOTSTRAP "cage-teachpack.ss"))
         (make-module-record 'bootstrap/function-teachpack 
-                            (build-path COLLECTS-PATH "bootstrap" "function-teachpack.ss"))))
+                            (build-path COLLECTS/BOOTSTRAP "function-teachpack.ss"))))
 
 
 
@@ -170,7 +172,7 @@
 ;; FIXME: we need to export permission information here too!
 (define (write-runtime-toplevel-bindings-descriptions)
   (printf "Writing out the toplevel binding descriptions.~n")
-  (printf "Warning: if collects/runtime/runtime-modules.ss does get changed, you may see an exception during the bootstrap.  You will~n")
+  (printf "Warning: if collects/moby/runtime/runtime-modules.ss does get changed, you may see an exception during the bootstrap.  You will~n")
   (printf "need to run the bootstrapper one more time to use the refreshed bindings.~n")
   (let ([moby-runtime-module-bindings-description
          `(define MOBY-RUNTIME-MODULE-BINDINGS
@@ -206,12 +208,13 @@
                                       a-binding 
                                       (module-record-name a-runtime-module))))
                                   (pinfo-get-exposed-bindings a-pinfo))))))))])
+    (make-directory* COLLECTS/MOBY/RUNTIME)
     ;; POINT:
     ;; If we screw up computing the module-bindings-description, at least we won't get to this
     ;; point and overwrite runtime-modules.ss, since an exception will have happened up front.
-    (call-with-output-file "collects/runtime/runtime-modules.ss"
+    (call-with-output-file "collects/moby/runtime/runtime-modules.ss"
       (lambda (op)
-        (fprintf op "#lang s-exp \"private/restricted-runtime-scheme.ss\"\n")
+        (fprintf op "#lang s-exp \"../../../private/restricted-runtime-scheme.ss\"\n")
         (fprintf op ";; This file is automagically generated and maintained by bootstrap-js-compiler.\n;; (in write-runtime-toplevel-bindings-descriptions)\n;; Do not edit this file by hand.\n")
         (write moby-runtime-module-bindings-description op)
         (newline op)
@@ -244,6 +247,7 @@
 (define (boot-compile-runtime-library a-module-name a-program-path an-output-path)
   (unless (directory-exists? (path-only an-output-path))
     (make-directory* (path-only an-output-path)))
+  (printf "Writing out to ~s~n" an-output-path)
   (call-with-output-file an-output-path
     (lambda (op)
       (display "// This is automatically generated by bootstrap-js-compiler.ss\n" op)
@@ -310,7 +314,7 @@
       (copy-path-to-port jshashtable.js op)
       (copy-path-to-port types.js op)
       (copy-path-to-port kernel.js op)
-      (copy-path-to-port "../support/js/runtime/collects/runtime/stx.js" op)
+      (copy-path-to-port "../support/js/runtime/collects/moby/runtime/stx.js" op)
       (copy-path-to-port read.js op)
       (copy-path-to-port compiler-path op)
       #;(display (phase-1-bootstrap-compile "compiler/beginner-to-javascript.ss") op)

@@ -4,10 +4,10 @@
 (require "pinfo.ss")
 (require "helpers.ss")
 (require "rbtree.ss")
-(require "../collects/runtime/permission-struct.ss")
-(require "../collects/runtime/binding.ss")
-(require "../collects/runtime/stx.ss")
-(require "../collects/runtime/error-struct.ss")
+(require "../collects/moby/runtime/permission-struct.ss")
+(require "../collects/moby/runtime/binding.ss")
+(require "../collects/moby/runtime/stx.ss")
+(require "../collects/moby/runtime/error-struct.ss")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

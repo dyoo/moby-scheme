@@ -15,9 +15,9 @@
 (require "env.ss")
 (require "helpers.ss")
 
-(require "../collects/runtime/permission-struct.ss")
-(require "../collects/runtime/binding.ss")
-(require "../collects/runtime/runtime-modules.ss")
+(require "../collects/moby/runtime/permission-struct.ss")
+(require "../collects/moby/runtime/binding.ss")
+(require "../collects/moby/runtime/runtime-modules.ss")
 
 
 

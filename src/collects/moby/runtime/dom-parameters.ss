@@ -1,4 +1,4 @@
-#lang s-exp "private/restricted-runtime-scheme.ss"
+#lang s-exp "../../../private/restricted-runtime-scheme.ss"
 
 ;; dom-parameters allows the user to extend the dom-transformers by providing
 ;; custom functions.

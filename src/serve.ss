@@ -16,8 +16,9 @@
          "compiler/beginner-to-javascript.ss"
          "compiler/pinfo.ss"
          "image-lift.ss"
-         "collects/runtime/stx.ss"
-         "generate-application.ss")
+         "collects/moby/runtime/stx.ss"
+         "generate-application.ss"
+         "android-packager.ss")
 
 
 (define-runtime-path javascript-support "../support/js")
@@ -122,18 +123,9 @@
                
                (define generate-apk 
                  (cache (lambda (req filename)
-                          (with-temporary-directory
-                           (lambda (dir)
-                             (let ([dest (simplify-path (build-path dir program-name))])
-                               (parameterize ([current-directory source-dir])
-                                 (generate-javascript+android-phonegap-application program-name
-                                                                                   program+resources
-                                                                                   dest))
-                               (list #"application/vnd.android.package-archive"
-                                     (get-file-bytes (build-path dest "bin" 
-                                                                 (string-append
-                                                                  (upper-camel-case program-name)
-                                                                  "-debug.apk"))))))))))]
+                          (list #"application/vnd.android.package-archive"
+                                (build-android-package program-name
+                                                       program+resources)))))]
          
          (begin
            (generate-javascript-application program-name

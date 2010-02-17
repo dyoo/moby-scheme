@@ -9,6 +9,7 @@ goog.provide('plt.foreign');
 
 
 (function() {
+
     plt.foreign.get_dash_js_dash_object = function(thing, name) {
 	plt.Kernel.check(name, 
 			 plt.Kernel.isString,
@@ -69,5 +70,12 @@ goog.provide('plt.foreign');
 	// function
 	return x;
     };
+
+
+    var moduleObject = {};
+    plt._MODULES['moby/foreign'] = moduleObject;
+    moduleObject.isInvoked = true;
+
+
 
 }());

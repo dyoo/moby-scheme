@@ -1,8 +1,8 @@
 #lang s-exp "lang.ss"
 
 (require "rbtree.ss")
-(require "../collects/runtime/stx.ss")
-(require "../collects/runtime/error-struct.ss")
+(require "../collects/moby/runtime/stx.ss")
+(require "../collects/moby/runtime/error-struct.ss")
 
 ;; A program is a (listof (or/c defn? expr? test-case? library-require?))
 

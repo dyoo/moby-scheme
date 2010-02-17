@@ -2,9 +2,9 @@
 
 (require "rbtree.ss")
 (require "helpers.ss")
-(require "../collects/runtime/stx.ss")
-(require "../collects/runtime/error-struct.ss")
-(require "../collects/runtime/binding.ss")
+(require "../collects/moby/runtime/stx.ss")
+(require "../collects/moby/runtime/error-struct.ss")
+(require "../collects/moby/runtime/binding.ss")
 
 
 ;; An env collects a set of bindings.

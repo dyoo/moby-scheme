@@ -5,7 +5,7 @@
          mrlib/cache-image-snip
          scheme/contract
          "resource.ss"
-         "collects/runtime/stx.ss")
+         "collects/moby/runtime/stx.ss")
 
 (define-struct named-bitmap (name bitmap))
 
