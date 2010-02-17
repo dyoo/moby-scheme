@@ -170,6 +170,17 @@ function init() {
 	},
 	
 
+	testReadBoolean: function() {
+	    this.assert(schemeIsEqual(read("true"),
+				      cons(true, empty)));
+	    this.assert(schemeIsEqual(read("false"),
+				      cons(false, empty)));
+	    this.assert(schemeIsEqual(read("#t"),
+				      cons(true, empty)));
+	    this.assert(schemeIsEqual(read("#f"),
+				      cons(false, empty)));
+	},
+
 
 	testReadExact: function() {
 	    this.assert(schemeIsEqual(read("#e0.1"),
@@ -399,8 +410,8 @@ function init() {
 	    try {
 		read(" (]");
 	    } catch (e) {
-		this.assertEqual(1, locOffset(mobyErrorLoc(e)));
-		this.assertEqual(2, locOffset(mobyErrorType(e).other_dash_location));
+		this.assertEqual(2, locOffset(mobyErrorLoc(e)));
+		this.assertEqual(1, locOffset(mobyErrorType(e).other_dash_location));
 	    }
 	}, 
 

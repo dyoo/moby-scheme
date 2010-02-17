@@ -479,12 +479,17 @@ if (! plt.reader) { plt.reader = {}; }
 
 	    case 'symbol':
 		var t = eat('symbol');
-		if (t.text == '.') {
+		if (t.text === '.') {
 		    plt.types.throwMobyError(t.loc,
 					     "make-moby-error-type:unsupported-lexical-token",
 					     [plt.types.Symbol.makeInstance(t.text)])
+		} else if (t.text === 'true' || t.text === '#t') {
+		    return datumToStx(plt.types.Logic.TRUE, t.loc);
+		} else if (t.text === 'false' || t.text === '#f') {
+		    return datumToStx(plt.types.Logic.FALSE, t.loc);
+		} else {
+		    return datumToStx(plt.types.Symbol.makeInstance(t.text), t.loc);
 		}
-		return datumToStx(plt.types.Symbol.makeInstance(t.text), t.loc);
 
 	    case ')':
 		return false;
