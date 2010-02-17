@@ -174,9 +174,9 @@ JsUnitTest.Unit.Testcase.prototype.assertMobyRaise = function(predicate, thunk, 
 	thunk();
 	this.fail("assertMobyRaise: expected an exception to be raised, but none has. " + msg);
     } catch(e) {
-	this.assert(isMobyError(e), "not a moby error. " + msg);
-	this.assert(isMobyErrorType(mobyErrorType(e)), "not a moby error type. " + msg);
-	this.assert(predicate(mobyErrorType(e)), "predicate fails. " + msg);
+	this.assert(isMobyError(e), "we do see an exception ,but not a moby error. " + msg);
+	this.assert(isMobyErrorType(mobyErrorType(e)), "we do get an error, but not one with a moby error type. " + msg);
+	this.assert(predicate(mobyErrorType(e)), "we do get a moby error, but the type predicate fails. " + msg);
     }
 };
 
