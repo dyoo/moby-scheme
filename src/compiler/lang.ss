@@ -130,14 +130,20 @@
   (syntax-case stx ()
     [(_ val)
      (syntax/loc stx
-       (base:raise (make-moby-failure (base:format "~a" 
-                                                   (if (moby-error? val)
-                                                       (string-append (dom-string-content (error-struct->dom-sexp val false))
-                                                                      "\n"
-                                                                      (Loc->string (moby-error-location val)))
-                                                       val))
-                                      (base:current-continuation-marks) 
-                                      val)))]))
+       (base:let ([msg 
+                   (if (moby-error? val)
+                       (base:with-handlers 
+                        ([void
+                          (lambda (exn)
+                            (format "Bad thing happened: ~s~n" exn))])
+                        (string-append (dom-string-content (error-struct->dom-sexp val false))
+                                       "\n"
+                                       (Loc->string (moby-error-location val))))
+                       (base:format "not a moby error: ~s" val))])
+                 (base:raise (make-moby-failure (base:format "~a" 
+                                                             msg)
+                                                (base:current-continuation-marks) 
+                                                val))))]))
 
 
 

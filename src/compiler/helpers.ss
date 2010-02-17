@@ -401,7 +401,7 @@
                       (raise (make-moby-error (stx-loc (first ids))
                                               (make-moby-error-type:duplicate-identifier
                                                (stx-e (first ids))
-                                               (hash-ref seen-ids (stx-e (first ids)) #f))))]
+                                               (stx-loc (hash-ref seen-ids (stx-e (first ids)) #f)))))]
                      [(not (symbol? (stx-e (first ids))))
                       (raise (make-moby-error (stx-loc (first ids))
                                               (make-moby-error-type:expected-identifier (first ids))))]

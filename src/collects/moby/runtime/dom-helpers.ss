@@ -18,7 +18,7 @@
                                     (string? (second attrib-pair))
                                     (string=? (second attrib-pair) "display:none")))
                              (second a-dom)))
-                 ""]
+                 rest]
                 [else
                  (string-append rest (dom-string-content a-dom))]))
             ""

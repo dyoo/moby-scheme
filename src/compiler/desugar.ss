@@ -683,7 +683,7 @@
     [(symbol? (stx-e expr))
      (raise (make-moby-error (stx-loc expr)
                              (make-moby-error-type:syntax-not-applied 
-                              (stx-e expr)
+                              expr
                               (on-failure expr))))]
     [else
      (raise (make-moby-error (stx-loc expr)
