@@ -224,6 +224,9 @@ if (! plt.reader) { plt.reader = {}; }
 
     // readSchemeExpressions: string string -> (listof stx)
     var readSchemeExpressions = function(s, source) {
+	if (source === undefined) {
+	    source = "<unknown source>";
+	}
 	var stxLoc = stx_dash_loc;
 
 	var tokensAndError = tokenize(s, source);
