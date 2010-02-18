@@ -150,4 +150,11 @@ goog.provide('plt.kernel.misc');
 	    throw err;
 	}
     };
+
+
+    // Returns the last value passed into returnLastArgument.
+    // Used to implement semantics of BEGIN.
+    plt.kernel.misc.returnLastArgument = function() {
+	return arguments[arguments.length -1];
+    };
 }());
