@@ -7,13 +7,15 @@
          "../collects/moby/runtime/stx.ss"
          "../program-resources.ss")
 
-(define current-server-url (make-parameter "http://go.cs.brown.edu/package"))
+(define current-server-url (make-parameter "http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
 ;; Calls out to the compiler web service to get back the android package.
 (define (build-android-package name program/resources)
   (let ([url (encode-parameters-in-url name program/resources)])
+    (log-debug (format "Sending: ~s"  (url->string url)))
+    ;; FIXME: get errors here and do something reasonable.
     (port->bytes (get-pure-port url))))
 
 
