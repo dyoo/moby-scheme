@@ -143,14 +143,7 @@
                  (moby-error-type:closing-parenthesis-before-opener-closer error-type)
                  maybe-dom-parameters)
                " without it being paired with a left parenthesis.")]
-       
-       [(moby-error-type:missing-expression? error-type)
-        `(span ((class "Error-MissingExpression"))
-               (span ((class "Error.reason"))
-                     "I expected an expression following "
-                     ,(scheme-value->dom-sexp (moby-error-type:missing-expression-token error-type)
-                                              maybe-dom-parameters)
-                     " but did not find one."))]
+
        
        [(moby-error-type:duplicate-identifier? error-type)
         `(span ((class "Error-DuplicateIdentifier"))

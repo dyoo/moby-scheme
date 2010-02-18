@@ -77,8 +77,6 @@ var isClosingParenthesisBeforeOpener =
     extract("moby-error-type:closing-parenthesis-before-opener?");
 var isUnbalancedParenthesis =
     extract("moby-error-type:unbalanced-parentheses?");
-var isMissingExpression =
-    extract("moby-error-type:missing-expression?");
 var isDuplicateIdentifier = 
     extract("moby-error-type:duplicate-identifier?");
 var isExpectedIdentifier =

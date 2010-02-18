@@ -1041,11 +1041,10 @@ function init() {
 		 [")", isClosingParenthesisBeforeOpener],
 		 ["(]", isUnbalancedParenthesis],
 		 ["begin", isSyntaxNotApplied],
-		 // missing test on missing-expression
 		 ["(quote)", isQuoteTooFewElements],
 		 ["(quote x y)", isQuoteTooManyElements],
 		 ["(define (f x x) (* x x))", isDuplicateIdentifier],
-		 // missing test on expected-identifier
+		 ["(define x 42) (set! 43 x)", isExpectedIdentifier],
 		 ["(define 42 x)", isGenericSyntacticError],
 		 ["(lambda x 42)", isExpectedListOfIdentifiers],
 		 ["x", isUndefinedIdentifier],

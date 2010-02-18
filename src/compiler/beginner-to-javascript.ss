@@ -693,30 +693,26 @@
 
 ;; begin-sequence->javascript-string: expr-stx (listof expr-stx) env pinfo -> (list string pinfo)
 (define (begin-sequence->javascript-string original-stx exprs env a-pinfo)
-  (cond
-    [(empty? exprs)
-     (raise (make-moby-error (stx-loc original-stx)
-                             (make-moby-error-type:missing-expression 'begin)))]
-    [else
-     (local [;; split-last-element: (listof any) -> (listof (listof any) any)
-             ;; (split-last-element (list x y z)) --> (list (list x y) z)
-             (define (split-last-element ls)
-               (list (reverse (rest (reverse ls))) 
-                     (first (reverse ls))))
-             
-             (define strings+pinfo
-               (expressions->javascript-strings exprs env a-pinfo))
-             
-             (define exprs+last-expr
-               (split-last-element (first strings+pinfo)))]
-       (list (string-append "(function(){"
-                            (string-join (first exprs+last-expr) ";\n")
-                            ";\n"
-                            "return "
-                            (second exprs+last-expr) ";"
-                            "})()")
-             (second strings+pinfo)))]))
-
+  ;; NOTE: we know the body of the begin won't be empty because this edge condition is
+  ;; already checked in desugar.ss.
+  (local [;; split-last-element: (listof any) -> (listof (listof any) any)
+          ;; (split-last-element (list x y z)) --> (list (list x y) z)
+          (define (split-last-element ls)
+            (list (reverse (rest (reverse ls))) 
+                  (first (reverse ls))))
+          
+          (define strings+pinfo
+            (expressions->javascript-strings exprs env a-pinfo))
+          
+          (define exprs+last-expr
+            (split-last-element (first strings+pinfo)))]
+    (list (string-append "(function(){"
+                         (string-join (first exprs+last-expr) ";\n")
+                         ";\n"
+                         "return "
+                         (second exprs+last-expr) ";"
+                         "})()")
+          (second strings+pinfo))))
 
 
 ;; if-expression->javascript-string: expr expr expr env pinfo -> (list string pinfo)

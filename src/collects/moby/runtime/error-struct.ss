@@ -33,7 +33,6 @@
 (define-struct moby-error-type:syntax-not-applied (keyword example))
 
 
-(define-struct moby-error-type:missing-expression (token))
 (define-struct moby-error-type:duplicate-identifier (id second-location))
 (define-struct moby-error-type:expected-identifier (observed))
 (define-struct moby-error-type:expected-list-of-identifiers (who observed))
@@ -105,7 +104,6 @@
       (moby-error-type:unbalanced-parentheses? x)
       (moby-error-type:syntax-not-applied? x)
       (moby-error-type:closing-parenthesis-before-opener? x)
-      (moby-error-type:missing-expression? x)
       (moby-error-type:duplicate-identifier? x)
       (moby-error-type:expected-identifier? x)
       (moby-error-type:expected-list-of-identifiers? x)
@@ -228,7 +226,6 @@
  [struct moby-error-type:syntax-not-applied ([keyword stx?]
                                              [example any/c])]
  
- [struct moby-error-type:missing-expression ([token symbol?])]
  [struct moby-error-type:duplicate-identifier ([id symbol?]
                                                [second-location Loc?])]
  [struct moby-error-type:expected-identifier ([observed stx?])]
