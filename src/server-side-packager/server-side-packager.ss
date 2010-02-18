@@ -4,6 +4,7 @@
          scheme/cmdline
          web-server/servlet
          web-server/servlet-env
+         "../collects/moby/runtime/stx.ss"
          "../program-resources.ss"
          "../compile-helpers.ss"
          "../local-android-packager.ss")
@@ -28,17 +29,42 @@
   (cond
     [(and (exists-binding? 'program (request-bindings req))
           (exists-binding? 'name (request-bindings req)))
-     (try-to-produce-package (extract-binding/single 'program (request-bindings req))
-                             (extract-binding/single 'name (request-bindings req)))]
+     (let ([name (extract-binding/single 'name (request-bindings req))]
+           [program (extract-binding/single 'program (request-bindings req))])
+     (make-package-response name
+                            (program->package name program)))]
+
+    [(and (exists-binding? 'program-stx (request-bindings req))
+          (exists-binding? 'name (request-bindings req)))
+     (let ([name (extract-binding/single 'name (request-bindings req))]
+           [program-stx (extract-binding/single 'program-stx (request-bindings req))])
+     (make-package-response name
+                            (program-stx->package name program-stx)))]
+
     [else
      (error-no-program req)]))
 
 
-;; try-to-produce-package: string -> response
-(define (try-to-produce-package program-text program-name)
-  (let ([program (parse-string-as-program program-text
-                                          program-name)])
-    (make-response/full
+;; program->package: string string -> bytes 
+(define (program->package program-name program-text)
+  (let* ([program (parse-string-as-program program-text
+                                           program-name)]
+         [package-bytes (build-android-package program-name
+                                               (make-program/resources program '()))])
+    package-bytes))
+
+;; program-stx->package: string string -> bytes
+(define (program-stx->package program-name program-stx-sexp)
+  (let* ([program (map sexp->stx (read (open-input-string program-stx-sexp)))]
+         [package-bytes (build-android-package program-name
+                                               (make-program/resources program '()))])
+    package-bytes))
+
+
+
+
+(define (make-package-response program-name package-bytes)
+  (make-response/full
      200
      #"OK"(current-seconds)
      #"application/vnd.android.package-archive"
@@ -46,8 +72,9 @@
                         (string->bytes/utf-8 
                          (format "attachment; filename=~a.apk" 
                                  (normalize-name-as-filename program-name)))))
-     (list (build-android-package program-name
-                                  (make-program/resources program '()))))))
+     (list package-bytes)))
+    
+
 
 
 ;; normalize-name-as-filename: string -> string
