@@ -62,7 +62,10 @@
 
 
 
-
+;; make-package-response: string bytes -> response
+;; Produces the proper HTTP response for the android package.
+;; Headers also include the filename in the content-disposition field, so the
+;; user gets a useful file name.
 (define (make-package-response program-name package-bytes)
   (make-response/full
      200
@@ -86,6 +89,7 @@
        "program"]
       [else
        a-name])))
+
 
 (define (error-no-program req)
   "Missing program")
