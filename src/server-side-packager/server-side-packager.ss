@@ -6,7 +6,7 @@
          web-server/servlet-env
          "../program-resources.ss"
          "../compile-helpers.ss"
-         "../android-packager.ss")
+         "../local-android-packager.ss")
 
 ;; This is a servlet that compiles packages to Android.
 

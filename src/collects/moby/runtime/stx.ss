@@ -128,6 +128,42 @@
      (map stx->datum (stx:list-elts a-stx))]))
 
 
+
+;; stx->sexp: stx -> sexp
+;; Translates the syntax to something that can be read.
+;; WARNING: lexical context will be lost!
+(define (stx->sexp a-stx)
+  (cond
+    [(stx:atom? a-stx)
+     `(make-stx:atom ,(stx:atom-datum a-stx)
+                     ,(Loc->sexp (stx:atom-loc a-stx))
+                     #f)]
+    [(stx:list? a-stx)
+     `(make-stx:list ,(map stx->sexp (stx:list-elts a-stx))
+                     ,(Loc->sexp (stx:atom-loc a-stx))
+                     #f)]))
+
+
+;; sexp->stx: sexp -> stx
+;; Translates s-expressiosn back to stx objects.
+(define (sexp->stx sexp)
+  (cond
+    [(and (list? sexp)
+          (equal? 'make-stx:atom (first sexp))
+          (= (length sexp) 4)
+          (boolean? (fourth sexp)))
+     (make-stx:atom (second sexp)
+                    (sexp->Loc (third sexp))
+                    (fourth sexp))]
+    [(and (list? sexp)
+          (equal? 'make-stx:atom (first sexp))
+          (= (length sexp) 4)
+          (boolean? (fourth sexp)))
+     (make-stx:list (map sexp->stx (second sexp))
+                    (sexp->Loc (third sexp))
+                    (fourth sexp))]))
+
+
   
 
 
@@ -152,5 +188,7 @@
                   [datum->stx ((or/c false? stx?) any/c Loc? . -> . stx?)]
                   [stx->datum (stx? . -> . any)]
                   
+                  [stx->sexp (stx? . -> . any)]
+                  [sexp->stx (stx? . -> . any)]
                   
                   [stx-update-context (stx? any/c . -> . stx?)])
