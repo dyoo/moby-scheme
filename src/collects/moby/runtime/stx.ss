@@ -140,7 +140,7 @@
                      #f)]
     [(stx:list? a-stx)
      `(make-stx:list ,(map stx->sexp (stx:list-elts a-stx))
-                     ,(Loc->sexp (stx:atom-loc a-stx))
+                     ,(Loc->sexp (stx:list-loc a-stx))
                      #f)]))
 
 
