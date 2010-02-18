@@ -1079,6 +1079,7 @@ function init() {
 		 ["(check-error (/ 1 0) \"oh\")", isCheckError],
 		 ["(check-error (* 1 0) \"oh\")", isCheckErrorNoError],
 		 ["(sqr 3 4)", isApplicationArity],		
+		 ["((+ 3) + 4)", isApplicationOperatorNotAFunction],
 		 ["(3 + 4)", isApplicationOperatorNotAFunction],
 		 ["(let ([f 42]) (f 3))", isApplicationOperatorNotAFunction],
 		 ["(string-length 42)", isTypeMismatch],

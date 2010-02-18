@@ -80,7 +80,7 @@
 (define-struct moby-error-type:check-error-no-error (expected observed))
 
 (define-struct moby-error-type:application-arity (who expected observed))
-(define-struct moby-error-type:application-operator-not-a-function (who))
+(define-struct moby-error-type:application-operator-not-a-function (who val))
 (define-struct moby-error-type:type-mismatch (who position expected observed))
 (define-struct moby-error-type:index-out-of-bounds (minimum maximum observed))
 
@@ -289,7 +289,10 @@
  [struct moby-error-type:application-arity ([who any/c]
                                             [expected arity?]
                                             [observed any/c])]
- [struct moby-error-type:application-operator-not-a-function ([who any/c])]
+ [struct moby-error-type:application-operator-not-a-function ([who any/c]   ;; who is the operator
+                                                              [val any/c]   ;; what value 
+                                                                            ;; did the operator produce?
+                                                              )]
  [struct moby-error-type:type-mismatch ([who any/c]
                                         [position number?]
                                         [expected any/c]

@@ -61,6 +61,31 @@ goog.provide('plt.kernel.misc');
     };
 
 
+    // isMobyError: error -> boolean
+    // Returns true if the error is a Moby error.
+    plt.kernel.misc.isMobyError = function(err) {
+	var errorStruct = getModule("moby/runtime/error-struct");
+	return errorStruct.getFunction("moby-error?")(err);
+    };
+
+
+    // mobyErrorToDom: moby-error -> dom-element
+    plt.kernel.misc.mobyErrorToDom = function(err) {
+	var errorDomStruct = getModule("moby/runtime/error-struct-to-dom");
+	return plt.kernel.misc.sexpToDom(
+	    errorDomStruct.getFunction("error-struct->dom-sexp")(err));
+    };
+
+
+    // mobyErrorToString: moby-error -> string
+    plt.kernel.misc.mobyErrorToString = function(err) {
+	var toDomStruct = getModule("moby/runtime/dom-helpers");
+	var errorDomStruct = getModule("moby/runtime/error-struct-to-dom");
+	return (toDomStruct.getFunction("dom-string-content")(
+	    errorDomStruct.getFunction("error-struct->dom-sexp")(err)));
+    };
+
+
 
     // sexpToDom: sexp -> dom-element
     plt.kernel.misc.sexpToDom = function(anSexp) {
@@ -99,7 +124,7 @@ goog.provide('plt.kernel.misc');
 	    }
 
 	    while (! plt.Kernel.empty_question_(nodeChildList)) {
-		newNode.appendChild(sexpToDom(plt.Kernel.first(nodeChildList)));
+		newNode.appendChild(plt.kernel.misc.sexpToDom(plt.Kernel.first(nodeChildList)));
 		nodeChildList = plt.Kernel.rest(nodeChildList);
 	    }
 
@@ -121,7 +146,7 @@ goog.provide('plt.kernel.misc');
 	    var makeApplicationOperatorNotFunction = errorStruct.getFunction(
 		"make-moby-error-type:application-operator-not-a-function");
 	    var aLoc = stxStruct.getFunction("sexp->Loc")(locSexp);
-	    var err = makeMobyError(aLoc, makeApplicationOperatorNotFunction(who));
+	    var err = makeMobyError(aLoc, makeApplicationOperatorNotFunction(who, opVal));
 	    throw err;
 	}
     };

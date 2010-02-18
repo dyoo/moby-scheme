@@ -388,9 +388,14 @@
         `(span ((class "Error-ApplicationOperatorNotAFunction"))
                (span ((class "Error.reason"))
                      "The operator "
-                     ,(scheme-value->dom-sexp (moby-error-type:application-operator-not-a-function-who error-type) maybe-dom-parameters)
-                     " is a value, but it isn't a function."))]
-
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:application-operator-not-a-function-who error-type)
+                       maybe-dom-parameters)
+                     " has a value "
+                     ,(scheme-value->dom-sexp 
+                       (moby-error-type:application-operator-not-a-function-val error-type)
+                       maybe-dom-parameters)
+                     ", but this value isn't a function."))]
        
        [(moby-error-type:type-mismatch? error-type)
         `(span ((class "Error-TypeMismatch"))

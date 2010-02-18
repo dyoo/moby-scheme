@@ -931,9 +931,11 @@
                                              updated-pinfo)
                    updated-pinfo)])]))]
          [(binding:structure? operator-binding)
+          ;; FIXME: This isn't quite the right error, as structure bindings aren't even values.
           (raise (make-moby-error (stx-loc original-stx)
                                   (make-moby-error-type:application-operator-not-a-function 
-                                   (stx-e operator))))]))]
+                                   (stx-e operator)
+                                   '<struct>)))]))]
     
     ;; General application
     [else
