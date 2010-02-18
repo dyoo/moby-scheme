@@ -1018,4 +1018,5 @@
 
 
 (provide/contract
- [desugar-program (program? pinfo? . -> . (list/c program? pinfo?))]) 
+ [desugar-program (program? pinfo? . -> . (list/c program? pinfo?))]
+ [tag-application-operator/module (stx? symbol? . -> . stx?)]) 

@@ -42,6 +42,15 @@
                               false
                               "plt.kernel.misc.verifyBooleanBranchValue"
                               (list)
+                              false)
+                             
+                             (make-binding:function
+                              'check-operator-is-function
+                              "moby/runtime/kernel/misc"
+                              3
+                              false
+                              "plt.kernel.misc.checkOperatorIsFunction"
+                              (list)
                               false))))
 
 

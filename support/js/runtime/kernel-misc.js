@@ -106,11 +106,22 @@ goog.provide('plt.kernel.misc');
 	    
 	    return newNode;
 	}
-    }
+    };
 
 
 
-
-
-
+    plt.kernel.misc.checkOperatorIsFunction = function(opVal, who, locSexp) {
+	if (return typeof(opVal) === 'function') {
+	    return opVal;
+	} else {
+	    var stxStruct = getModule("moby/runtime/stx");
+	    var errorStruct = getModule("moby/runtime/error-struct");
+	    var makeMobyError = errorStruct.getFunction(
+		"make-moby-error");
+	    var makeApplicationOperatorNotFunction = errorStruct.getFunction(
+		"make-moby-error-type:application-operator-not-a-function");
+	    var aLoc = stxStruct.getFunction("sexp->Loc")(locSexp);
+	    var err = makeMobyError(aLoc, makeApplicationOperatorNotFunction(who));
+	}
+    };
 }());

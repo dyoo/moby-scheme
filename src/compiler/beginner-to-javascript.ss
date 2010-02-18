@@ -835,8 +835,19 @@
      a-str]))
 
 
+;; decorate-operator-with-checks: stx -> stx
+;; Check to make sure the operator really is one.  If not, check-operator-is-function
+;; will throw a runtime error.
+(define (decorate-operator-with-function-check operator)
+  (tag-application-operator/module 
+   (datum->stx #f `(check-operator-is-function ,operator
+                                               ',(stx->datum operator)
+                                               ',(Loc->sexp (stx-loc operator)))
+               (stx-loc operator))
+   'moby/runtime/kernel/misc))
+  
 
-;; application-expression->java-string: symbol-stx (listof expr) env pinfo -> (list string pinfo)
+;; application-expression->java-string: stx symbol-stx (listof expr) env pinfo -> (list string pinfo)
 ;; Converts the function application to a string.
 (define (application-expression->javascript-string original-stx operator operands env a-pinfo)
   (cond 
@@ -848,16 +859,19 @@
     
     [(symbol? (stx-e operator))
      (local [(define operator-binding (env-lookup/context env operator))
-             (define operand-strings+pinfo
-               (expressions->javascript-strings operands env a-pinfo))
-             
-             (define operand-strings (first operand-strings+pinfo))
-             (define updated-pinfo (second operand-strings+pinfo))]
+             (define expression-strings+pinfo
+               (expressions->javascript-strings (cons (decorate-operator-with-function-check operator)
+                                                      operands)
+                                                env
+                                                a-pinfo))
+             (define operator-string (first (first expression-strings+pinfo)))
+             (define operand-strings (rest (first expression-strings+pinfo)))
+             (define updated-pinfo (second expression-strings+pinfo))]
        (cond
          
          [(binding:constant? operator-binding)
           (list 
-           (maybe-emit-location-mark (string-append "plt.Kernel.apply(" (binding:constant-java-string operator-binding) ", "
+           (maybe-emit-location-mark (string-append "plt.Kernel.apply(" operator-string ", "
                                                     "                    plt.Kernel.list([" (string-join operand-strings ", ") "]),"
                                                     "                    [])")
                                      (stx-loc original-stx)
@@ -918,7 +932,8 @@
     ;; General application
     [else
      (local [(define expression-strings+pinfo
-               (expressions->javascript-strings (cons operator operands)
+               (expressions->javascript-strings (cons (decorate-operator-with-function-check operator)
+                                                      operands)
                                                 env
                                                 a-pinfo))
              (define operator-string (first (first expression-strings+pinfo)))

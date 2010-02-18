@@ -1681,7 +1681,6 @@ goog.provide('plt.Kernel');
     //////////////////////////////////////////////////////////////////////
 
     
-
     plt.Kernel.apply = function(f, secondArg, restArgs) {
 	var argList;
 	var argArray = [];
