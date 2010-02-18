@@ -46,7 +46,7 @@
 ;; Like compiled-program-main, but exposes all of the provided definitions to the toplevel.
 (define (compiled-program-main/expose a-compiled-program)
   (local [(define defined-names
-
+            
             (expose-provided-names a-compiled-program)
             ;; FIXME: must expose only the provided names
             #;(rbtree-fold (pinfo-defined-names
@@ -86,7 +86,7 @@
                     "    plt._MODULES[" (format "~s" module-name-string) "] = "
                     "        { COMPILER_VERSION: " (format "~s" VERSION) ","
                     "\n\tBINDINGS: {},\n\tEXPORTS : {},\n\tisInvoked: false};\n"
-
+                    
                     "    (function() {\n"
                     ""       (compiled-program-defns a-compiled-program) "\n"
                     (format "        plt._MODULES[~s].invoke = function() { " module-name-string)
@@ -104,7 +104,7 @@
                                               defined-names))
                     "  };\n"               ;; end of invoke() definition
                     "     }());\n"
-
+                    
                     "}\n")))
 
 
@@ -129,7 +129,7 @@
     [(provide-binding:id? a-provide-binding)
      (list (binding-id (lookup-provide-binding-in-definition-bindings a-provide-binding 
                                                                       a-compiled-program)))]
-
+    
     [(provide-binding:struct-id? a-provide-binding)
      (local [(define a-binding (lookup-provide-binding-in-definition-bindings a-provide-binding 
                                                                               a-compiled-program))]
@@ -250,10 +250,10 @@
                                  tops
                                  "\n"
                                  (module-require->javascript-string (first program)
-                                                                   a-pinfo)
+                                                                    a-pinfo)
                                  ";\n")
                                 a-pinfo)]
-
+                         
                          [(provide-statement? (first program))
                           (loop (rest program)
                                 defns
@@ -621,10 +621,10 @@
      (list (boolean->javascript-string (stx-e expr))
            a-pinfo)
      #;(expression->javascript-string (if (stx-e expr) 
-                                        (make-stx:atom 'true (stx-loc expr))
-                                        (make-stx:atom 'false (stx-loc expr)))
-                                    env
-                                    a-pinfo)]
+                                          (make-stx:atom 'true (stx-loc expr))
+                                          (make-stx:atom 'false (stx-loc expr)))
+                                      env
+                                      a-pinfo)]
     ;; Characters
     [(char? (stx-e expr))
      (list (char->javascript-string (stx-e expr))
@@ -845,7 +845,7 @@
                                                ',(Loc->sexp (stx-loc operator)))
                (stx-loc operator))
    'moby/runtime/kernel/misc))
-  
+
 
 ;; application-expression->java-string: stx symbol-stx (listof expr) env pinfo -> (list string pinfo)
 ;; Converts the function application to a string.
@@ -858,72 +858,78 @@
                              (make-moby-error-type:undefined-identifier (stx-e operator))))]
     
     [(symbol? (stx-e operator))
-     (local [(define operator-binding (env-lookup/context env operator))
-             (define expression-strings+pinfo
-               (expressions->javascript-strings (cons (decorate-operator-with-function-check operator)
-                                                      operands)
-                                                env
-                                                a-pinfo))
-             (define operator-string (first (first expression-strings+pinfo)))
-             (define operand-strings (rest (first expression-strings+pinfo)))
-             (define updated-pinfo (second expression-strings+pinfo))]
+     (local [(define operator-binding (env-lookup/context env operator))]
        (cond
-         
          [(binding:constant? operator-binding)
-          (list 
-           (maybe-emit-location-mark (string-append "plt.Kernel.apply(" operator-string ", "
-                                                    "                    plt.Kernel.list([" (string-join operand-strings ", ") "]),"
-                                                    "                    [])")
-                                     (stx-loc original-stx)
-                                     updated-pinfo)
-           updated-pinfo)]
+          (local [(define expression-strings+pinfo
+                    (expressions->javascript-strings (cons (decorate-operator-with-function-check operator)
+                                                           operands)
+                                                     env
+                                                     a-pinfo))
+                  (define operator-string (first (first expression-strings+pinfo)))
+                  (define operand-strings (rest (first expression-strings+pinfo)))
+                  (define updated-pinfo (second expression-strings+pinfo))]
+            (list 
+             (maybe-emit-location-mark (string-append "plt.Kernel.apply(" operator-string ", "
+                                                      "                    plt.Kernel.list([" (string-join operand-strings ", ") "]),"
+                                                      "                    [])")
+                                       (stx-loc original-stx)
+                                       updated-pinfo)
+             updated-pinfo))]
          
          [(binding:function? operator-binding)
-          (cond
-            [(< (length operands)
-                (binding:function-min-arity operator-binding))
-             (raise (make-moby-error (stx-loc original-stx)
-                                     (make-moby-error-type:application-arity (stx-e operator)
-                                                                             (make-arity:fixed (binding:function-min-arity operator-binding))
-                                                                             (length operands))))]
-            [(binding:function-var-arity? operator-binding)
-             (cond [(> (binding:function-min-arity operator-binding) 0)
-                    (list 
-                     (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding)
-                                                              "("
-                                                              (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
-                                                              ", ["
-                                                              (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
-                                                                           ",")
-                                                              "])")
-                                               (stx-loc original-stx)
-                                               updated-pinfo)
-                     updated-pinfo)]
-                   [else
-                    (list
-                     (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding) 
-                                                              "(["
-                                                              (string-join operand-strings ",")
-                                                              "])")
-                                               (stx-loc original-stx)
-                                               updated-pinfo)
-                     updated-pinfo)])]
-            [else
-             (cond
-               [(> (length operands)
-                   (binding:function-min-arity operator-binding))
-                (raise (make-moby-error (stx-loc original-stx)
-                                        (make-moby-error-type:application-arity (stx-e operator)
-                                                                                (make-arity:fixed 
-                                                                                 (binding:function-min-arity operator-binding))
-                                                                                (length operands))))]
-               [else
-                (list 
-                 (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding)
-                                                          "(" (string-join operand-strings ",") ")")
-                                           (stx-loc original-stx)
-                                           updated-pinfo)
-                 updated-pinfo)])])]
+          (local [(define expression-strings+pinfo
+                    (expressions->javascript-strings operands
+                                                     env
+                                                     a-pinfo))
+                  (define operand-strings (first expression-strings+pinfo))
+                  (define updated-pinfo (second expression-strings+pinfo))]
+            (cond
+              [(< (length operands)
+                  (binding:function-min-arity operator-binding))
+               (raise (make-moby-error (stx-loc original-stx)
+                                       (make-moby-error-type:application-arity (stx-e operator)
+                                                                               (make-arity:fixed (binding:function-min-arity operator-binding))
+                                                                               (length operands))))]
+              [(binding:function-var-arity? operator-binding)
+               (cond [(> (binding:function-min-arity operator-binding) 0)
+                      (list 
+                       (maybe-emit-location-mark 
+                        (string-append (binding:function-java-string operator-binding)
+                                       "("
+                                       (string-join (take operand-strings (binding:function-min-arity operator-binding)) ",")
+                                       ", ["
+                                       (string-join (list-tail operand-strings (binding:function-min-arity operator-binding))
+                                                    ",")
+                                       "])")
+                        (stx-loc original-stx)
+                        updated-pinfo)
+                       updated-pinfo)]
+                     [else
+                      (list
+                       (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding) 
+                                                                "(["
+                                                                (string-join operand-strings ",")
+                                                                "])")
+                                                 (stx-loc original-stx)
+                                                 updated-pinfo)
+                       updated-pinfo)])]
+              [else
+               (cond
+                 [(> (length operands)
+                     (binding:function-min-arity operator-binding))
+                  (raise (make-moby-error (stx-loc original-stx)
+                                          (make-moby-error-type:application-arity (stx-e operator)
+                                                                                  (make-arity:fixed 
+                                                                                   (binding:function-min-arity operator-binding))
+                                                                                  (length operands))))]
+                 [else
+                  (list 
+                   (maybe-emit-location-mark (string-append (binding:function-java-string operator-binding)
+                                                            "(" (string-join operand-strings ",") ")")
+                                             (stx-loc original-stx)
+                                             updated-pinfo)
+                   updated-pinfo)])]))]
          [(binding:structure? operator-binding)
           (raise (make-moby-error (stx-loc original-stx)
                                   (make-moby-error-type:application-operator-not-a-function 
@@ -992,7 +998,7 @@
                             (number->string (binding:function-min-arity binding)) ","
                             (rational-number->javascript-string (binding:function-min-arity binding))
                             "))")
-
+             
              #;(string-append "(function() { var _result_ = (function(_args_) {
                     return " (binding:function-java-string binding)
                              "("

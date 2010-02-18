@@ -111,7 +111,7 @@ goog.provide('plt.kernel.misc');
 
 
     plt.kernel.misc.checkOperatorIsFunction = function(opVal, who, locSexp) {
-	if (return typeof(opVal) === 'function') {
+	if (typeof(opVal) === 'function') {
 	    return opVal;
 	} else {
 	    var stxStruct = getModule("moby/runtime/stx");
