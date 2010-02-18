@@ -122,6 +122,7 @@ goog.provide('plt.kernel.misc');
 		"make-moby-error-type:application-operator-not-a-function");
 	    var aLoc = stxStruct.getFunction("sexp->Loc")(locSexp);
 	    var err = makeMobyError(aLoc, makeApplicationOperatorNotFunction(who));
+	    throw err;
 	}
     };
 }());
