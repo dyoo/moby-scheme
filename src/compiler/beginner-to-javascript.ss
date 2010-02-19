@@ -531,9 +531,11 @@
     [(expression-sharable? expr a-pinfo)
      (sharable-expression->javascript-string expr env a-pinfo)]
     [else
-     (unsharable-expression->javascript-string expr env a-pinfo)]))
+     (unshared-expression->javascript-string expr env a-pinfo)]))
 
 
+
+;; sharable-expression->javascript-string: expr-stx env pinfo -> (list string pinfo)
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
 (define (sharable-expression->javascript-string expr env a-pinfo)
@@ -549,7 +551,7 @@
            a-pinfo)]
     [else
      (local [(define translation+pinfo
-               (unsharable-expression->javascript-string expr env a-pinfo))
+               (unshared-expression->javascript-string expr env a-pinfo))
              (define updated-pinfo
                (pinfo-accumulate-shared-expression expr
                                                    (first translation+pinfo)
@@ -560,7 +562,7 @@
 
 ;; Translates an expression into a Java expression string whose evaluation
 ;; should produce an Object.
-(define (unsharable-expression->javascript-string expr env a-pinfo)
+(define (unshared-expression->javascript-string expr env a-pinfo)
   (cond
     ;; (local ([define ...] ...) body)
     [(stx-begins-with? expr 'local)
@@ -619,12 +621,8 @@
     ;; Literal booleans
     [(boolean? (stx-e expr))
      (list (boolean->javascript-string (stx-e expr))
-           a-pinfo)
-     #;(expression->javascript-string (if (stx-e expr) 
-                                          (make-stx:atom 'true (stx-loc expr))
-                                          (make-stx:atom 'false (stx-loc expr)))
-                                      env
-                                      a-pinfo)]
+           a-pinfo)]
+    
     ;; Characters
     [(char? (stx-e expr))
      (list (char->javascript-string (stx-e expr))
@@ -638,8 +636,7 @@
     
     ;; Quoted datums
     [(stx-begins-with? expr 'quote)
-     (list (quote-expression->javascript-string (second (stx-e expr)))
-           a-pinfo)]
+     (quote-expression->javascript-string (second (stx-e expr)) a-pinfo)]
     
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
@@ -717,39 +714,57 @@
      (second es+p))))
 
 
-;; quote-expression->javascript-string: expr -> string
-(define (quote-expression->javascript-string expr)
+
+;; quote-expressions->javascript-strings: (listof expr) pinfo -> (list (listof string) pinfo)
+;; Produces the quotation of a list of expressions.
+(define (quote-expressions->javascript-strings exprs pinfo)
+  (foldl (lambda (an-expr exprs+a-pinfo)
+           (local [(define translation+updated-pinfo
+                     (quote-expression->javascript-string an-expr (second exprs+a-pinfo)))]
+             (list (cons (first translation+updated-pinfo)
+                         (first exprs+a-pinfo))
+                   (second translation+updated-pinfo))))
+         (list empty pinfo)
+         (reverse exprs)))
+
+
+
+;; quote-expression->javascript-string: expr -> (list string pinfo)
+(define (quote-expression->javascript-string expr pinfo)
   (cond
     [(empty? (stx-e expr))
-     "plt.types.Empty.EMPTY"]
+     (list "plt.types.Empty.EMPTY" pinfo)]
     
     [(pair? (stx-e expr))
-     (string-append "(plt.Kernel.list(["
-                    (string-join 
-                     (map quote-expression->javascript-string (stx-e expr))
-                     ",")
-                    "]))")]
+     (local [(define translations+pinfo (quote-expressions->javascript-strings (stx-e expr) pinfo))]
+       (list
+        (string-append "(plt.Kernel.list(["
+                       (string-join (first translations+pinfo) ",")
+                       "]))")
+        (second translations+pinfo)))]
     
     [(symbol? (stx-e expr))
-     (string-append "(plt.types.Symbol.makeInstance(\""
-                    (symbol->string (stx-e expr))
-                    "\"))")]
+     (list (string-append "(plt.types.Symbol.makeInstance(\""
+                          (symbol->string (stx-e expr))
+                          "\"))")
+           pinfo)]
     
     ;; Numbers
     [(number? (stx-e expr))
-     (number->javascript-string (stx-e expr) expr)]
-    
+     (expression->javascript-string expr empty-env pinfo)]
+
+   
     ;; Strings
     [(string? (stx-e expr))
-     (string->javascript-string (stx-e expr))]
+     (expression->javascript-string expr empty-env pinfo)]
     
     ;; Characters
     [(char? (stx-e expr))
-     (char->javascript-string (stx-e expr))]
+     (expression->javascript-string expr empty-env pinfo)]
     
     ;; Booleans
     [(boolean? (stx-e expr))
-     (boolean->javascript-string (stx-e expr))]
+     (expression->javascript-string expr empty-env pinfo)]
     
     [else
      ;; FIXME: This should never happen; all program values should be quotable.
@@ -1158,7 +1173,6 @@
 ;; expression-sharable?: expression program-info -> boolean
 ;; Returns true if the expression syntax denotes a value that can be shared.
 (define (expression-sharable? an-expr a-pinfo)
-  #;false
   (or (and (number? (stx-e an-expr))
            ;; KLUDGE.  Something breaks when I try to share a weird number.
            (not (weird-number? (stx-e an-expr)))
