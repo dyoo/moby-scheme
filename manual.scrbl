@@ -1110,7 +1110,10 @@ same meaning as in @link["http://docs.plt-scheme.org/htdp-langs/advanced-prim-op
                         vector-length
                         vector-ref
                         vector-set!
-                        vector?)))
+                        vector?
+
+			when
+			unless)))
 
 
 
@@ -1120,6 +1123,4 @@ The following ASL forms are currently unimplemented:
            @item{@schemeid[delay]}
            @item{@schemeid[shared]}
            @item{@schemeid[recur]}
-           @item{@schemeid[when]}
-           @item{@schemeid[unless]}
            ]
