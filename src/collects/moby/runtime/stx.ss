@@ -145,7 +145,7 @@
 
 
 ;; sexp->stx: sexp -> stx
-;; Translates s-expressiosn back to stx objects.
+;; Translates s-expressions back to stx objects.
 (define (sexp->stx sexp)
   (cond
     [(and (list? sexp)
@@ -156,7 +156,7 @@
                     (sexp->Loc (third sexp))
                     (fourth sexp))]
     [(and (list? sexp)
-          (equal? 'make-stx:atom (first sexp))
+          (equal? 'make-stx:list (first sexp))
           (= (length sexp) 4)
           (boolean? (fourth sexp)))
      (make-stx:list (map sexp->stx (second sexp))
