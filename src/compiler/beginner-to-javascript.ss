@@ -755,17 +755,26 @@
                        (string-join (first translations+pinfo) ",")
                        "]))")
         (second translations+pinfo)))]
-    
+
+    ;; Symbols
     [(symbol? (stx-e expr))
-     (list (string-append "(plt.types.Symbol.makeInstance(\""
-                          (symbol->string (stx-e expr))
-                          "\"))")
-           pinfo)]
+     (cond [(expression-shared? expr pinfo)
+            (list (lookup-shared-expression-translation-label expr pinfo)
+                  pinfo)]
+           [else
+            (local [(define updated-pinfo 
+                      (pinfo-accumulate-shared-expression
+                       expr
+                       (string-append "(plt.types.Symbol.makeInstance(\""
+                                      (symbol->string (stx-e expr))
+                                      "\"))")
+                       pinfo))]
+              (list (lookup-shared-expression-translation-label expr updated-pinfo)
+                    updated-pinfo))])]
     
     ;; Numbers
     [(number? (stx-e expr))
      (expression->javascript-string expr empty-env pinfo)]
-
    
     ;; Strings
     [(string? (stx-e expr))
