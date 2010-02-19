@@ -599,19 +599,32 @@ Moby supports the building of Android @filepath{.apk} packages;
 programs built as Android packages can take advantage of native
 features of the device.
 
-@subsection{Android Dependencies}
+In order to generate Android applications, the only thing you'll need
+is a connection to the Internet.  When a Moby program is executed, the
+third link on the web browser's page is a link to a Android .APK
+package.  Clicking on the link triggers compilation on a web service,
+removing the need to install any of the Android SDK tools locally.
 
-If you wish to generate programs for the Android+Phonegap backend,
-you'll need the following:
+
+
+
+@subsection{Android Dependencies for local compilation}
+
+If you still wish to generate programs for the Android+Phonegap
+backend using local tools, you'll need the following:
+
 @itemize[
           @item{@link["http://java.sun.com"]{Java >=1.6}}
            @item{@link["http://ant.apache.org"]{Apache Ant >=1.7.1}}
            @item{@link["http://developer.android.com"]{Google Android SDK >= 1.5r3}}
            ]
 
-Moby finds these by using @scheme[find-executable-path]; make sure that
-@exec{ant} and the @exec{android} binary are in your path; Moby will use
-your PATH variable to find Apache Ant and the Android SDK.
+Moby finds these by using @scheme[find-executable-path]; make sure
+that @exec{ant} and the @exec{android} binary are in your path; Moby
+will use your PATH variable to find Apache Ant and the Android SDK.
+
+Note that if you're using a version of the Android SDK greater than
+1.5, you must still currently include support for the 1.5 API.
 
 
 You can verify that @exec{android} and @exec{ant} can be found
