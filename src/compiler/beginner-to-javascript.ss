@@ -695,23 +695,11 @@
 (define (begin-sequence->javascript-string original-stx exprs env a-pinfo)
   ;; NOTE: we know the body of the begin won't be empty because this edge condition is
   ;; already checked in desugar.ss.
-  (local [;; split-last-element: (listof any) -> (listof (listof any) any)
-          ;; (split-last-element (list x y z)) --> (list (list x y) z)
-          (define (split-last-element ls)
-            (list (reverse (rest (reverse ls))) 
-                  (first (reverse ls))))
-          
-          (define strings+pinfo
-            (expressions->javascript-strings exprs env a-pinfo))
-          
-          (define exprs+last-expr
-            (split-last-element (first strings+pinfo)))]
-    (list (string-append "(function(){"
-                         (string-join (first exprs+last-expr) ";\n")
-                         ";\n"
-                         "return "
-                         (second exprs+last-expr) ";"
-                         "})()")
+  (local [(define strings+pinfo
+            (expressions->javascript-strings exprs env a-pinfo))]
+    (list (string-append "(plt.kernel.misc.returnLastArgument("
+                         (string-join (first strings+pinfo) ",\n")
+                         "))")
           (second strings+pinfo))))
 
 
