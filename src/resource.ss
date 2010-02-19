@@ -21,8 +21,10 @@
     (init-field bytes)
     
     (define/public (save! a-path)
-      ;; fixme
-      (void))
+      (call-with-output-file (build-path a-path name)
+        (lambda (op)
+          (write-bytes bytes op))))
+
     
     (define/public (get-name)
       name)

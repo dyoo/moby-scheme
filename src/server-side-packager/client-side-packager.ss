@@ -9,8 +9,8 @@
          "../collects/moby/runtime/stx.ss"
          "../program-resources.ss")
 
-(define current-server-url (make-parameter #;"http://localhost:8080/package/"
-                                           "http://go.cs.brown.edu/package/"))
+(define current-server-url (make-parameter "http://localhost:8080/package/"
+                                           #;"http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -19,7 +19,7 @@
   (let ([url (encode-parameters-in-url name program/resources)])
     (log-debug (format "Sending: ~s"  (url->string url)))
     ;; FIXME: get errors here and do something reasonable.
-    (let* ([ip (get-impure-port)]
+    (let* ([ip (get-impure-port url)]
            [headers (purify-port ip)]
            [status-code (get-status-code headers)])
       (cond
@@ -33,7 +33,7 @@
 ;; get-status-code: string -> number
 ;; Given the 
 (define (get-status-code response-headers)
-  (number->string (second (regexp-match #px"^[^\\s]+\\s([^\\s]+)" response-headers))))
+  (string->number (second (regexp-match #px"^[^\\s]+\\s([^\\s]+)" response-headers))))
 
 
 ;; encode-parameters-in-url: string program/resources -> url
@@ -43,16 +43,17 @@
    (string-append (current-server-url) 
                   "?"
                   (alist->form-urlencoded 
-                   (list (cons 'name name)
-                         (cons 'program-stx
-                               (format "~s" (map stx->sexp 
-                                                 (program/resources-program 
-                                                  program/resources))))
-                         (map (lambda (a-resource)
-                                (cons 'resource (format "~s"
-                                                        (list (send a-resource get-name)
-                                                              (send a-resource get-bytes)))))
-                              (program/resources-resources program/resources)))))))
+                   (list* (cons 'name name)
+                          (cons 'program-stx
+                                (format "~s" (map stx->sexp 
+                                                  (program/resources-program 
+                                                   program/resources))))
+                          (map (lambda (a-resource)
+                                 (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
+                                 (cons 'resource (format "~s"
+                                                         (list (send a-resource get-name)
+                                                               (send a-resource get-bytes)))))
+                               (program/resources-resources program/resources)))))))
 
 
 (provide/contract [build-android-package

@@ -2,9 +2,12 @@
 
 (require scheme/runtime-path
          scheme/cmdline
+         scheme/class
+         scheme/list
          web-server/servlet
          web-server/servlet-env
          "../collects/moby/runtime/stx.ss"
+         "../resource.ss"
          "../program-resources.ss"
          "../compile-helpers.ss"
          "../local-android-packager.ss")
@@ -26,39 +29,56 @@
 
 ;; start: request -> response
 (define (start req)
-  (cond
-    [(and (exists-binding? 'program (request-bindings req))
-          (exists-binding? 'name (request-bindings req)))
-     (let ([name (extract-binding/single 'name (request-bindings req))]
-           [program (extract-binding/single 'program (request-bindings req))])
-     (make-package-response name
-                            (program->package name program)))]
+  (let ([name (parse-program-name req)]
+        [program/resources (parse-program/resources req)])
 
-    [(and (exists-binding? 'program-stx (request-bindings req))
-          (exists-binding? 'name (request-bindings req)))
-     (let ([name (extract-binding/single 'name (request-bindings req))]
-           [program-stx (extract-binding/single 'program-stx (request-bindings req))])
-     (make-package-response name
-                            (program-stx->package name program-stx)))]
-
-    [else
-     (error-no-program req)]))
+    (cond
+      [(and name program/resources)
+       (make-package-response name (build-android-package name 
+                                                          program/resources))]
+      [else
+       (error-no-program req)])))
 
 
-;; program->package: string string -> bytes 
-(define (program->package program-name program-text)
-  (let* ([program (parse-string-as-program program-text
-                                           program-name)]
-         [package-bytes (build-android-package program-name
-                                               (make-program/resources program '()))])
-    package-bytes))
 
-;; program-stx->package: string string -> bytes
-(define (program-stx->package program-name program-stx-sexp)
-  (let* ([program (map sexp->stx (read (open-input-string program-stx-sexp)))]
-         [package-bytes (build-android-package program-name
-                                               (make-program/resources program '()))])
-    package-bytes))
+;; parse-name: request -> string
+;; Extracts the name from the request
+(define (parse-program-name req)
+  (extract-binding/single 'name (request-bindings req)))
+
+
+
+;; parse-program/resources: request -> (or/c program/resource #f)
+;; Try to parse the program and its resources, or return false otherwise.
+(define (parse-program/resources req)
+  (let ([name (parse-program-name req)])
+    (cond
+      [(and name (exists-binding? 'program (request-bindings req)))
+       (let ([program (extract-binding/single 'program (request-bindings req))])
+         (make-program/resources (parse-string-as-program program name)
+                                 (parse-resources req)))]
+      
+      [(and name (exists-binding? 'program-stx (request-bindings req)))
+       (let ([program-stx (extract-binding/single 'program-stx (request-bindings req))])
+         (make-program/resources (map sexp->stx (read (open-input-string program-stx)))
+                                 (parse-resources req)))]
+      
+      [else #f])))
+
+
+
+;; parse-resources: request -> (listof resource<%>)
+(define (parse-resources req)
+  (cond [(exists-binding? 'resource (request-bindings req))
+         (map (lambda (val)
+                (let ([name&bytes (read (open-input-string val))])
+                  (log-debug (format "Reading resource ~s" (first name&bytes)))
+                  (new named-bytes-resource% 
+                       [name (first name&bytes)]
+                       [bytes (second name&bytes)])))
+              (extract-bindings 'resource (request-bindings req)))]
+        [else
+         empty]))
 
 
 
