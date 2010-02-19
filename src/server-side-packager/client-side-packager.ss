@@ -9,8 +9,8 @@
          "../collects/moby/runtime/stx.ss"
          "../program-resources.ss")
 
-(define current-server-url (make-parameter "http://localhost:8080/package/"
-                                           #;"http://go.cs.brown.edu/package/"))
+(define current-server-url (make-parameter #;"http://localhost:8080/package/"
+                                           "http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
