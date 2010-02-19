@@ -308,4 +308,6 @@
 
 
 (provide/contract [build-android-package 
-                   (string? program/resources? . -> . bytes?)])
+                   (string? program/resources? . -> . bytes?)]
+                  [build-android-package-in-path
+                   (string? program/resources? path-string? . -> . any)])

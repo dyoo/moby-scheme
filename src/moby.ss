@@ -5,6 +5,8 @@
 
 (require "generate-application.ss"
          "utils.ss"
+         "local-android-packager.ss"
+         "compile-helpers-with-images.ss"
          scheme/cmdline
          scheme/path)
 
@@ -22,13 +24,22 @@
                           (path->string 
                            (file-name-from-path a-path))) ""))
 
+
+
+(define (generate-android-app name path output-dir)
+  (build-android-package-in-path name 
+                                 (open-program/resources path)
+                                 output-dir))
+
+
+
 ;; lookup-app-type: string -> (string path-string path path-string -> void)
 (define (lookup-app-type a-type)
   (cond 
     [(string=? a-type "js")
      generate-javascript-application]
-    #;[(string=? a-type "js+android-phonegap")
-       generate-javascript+android-phonegap-application]
+    [(string=? a-type "js+android-phonegap")
+     generate-android-app]
     [else
      (error 'moby "Type is expected to be one of [js, js+android-phonegap]")]))
 
@@ -56,7 +67,7 @@
                      (name n)]
     [("-d" "--dest") d "Set the destination path of the output."
                      (dest-dir (build-path d))]
-    [("-t" "--type") t "Set the application type.  Options: [js]"
+    [("-t" "--type") t "Set the application type.  Options: [js, js+android-phonegap]"
                      (app-compiler (lookup-app-type t))]
     #:args (beginner-program-filename)
     (build-path beginner-program-filename))))
