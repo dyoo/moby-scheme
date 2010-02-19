@@ -1,10 +1,6 @@
 #lang s-exp "lang.ss"
 
-;; This program translates beginner-level languages into Javascript.
-;; We pattern match against the language given by:
-;;
-;; http://docs.plt-scheme.org/htdp-langs/beginner.html
-
+;; This program translates advanced-level Scheme into Javascript.
 
 (require "env.ss")
 (require "pinfo.ss")
@@ -26,6 +22,7 @@
     toplevel-exprs ;; string
     pinfo          ;; pinfo
     ))
+
 
 
 ;; compiled-program-main: compiled-program ->string
