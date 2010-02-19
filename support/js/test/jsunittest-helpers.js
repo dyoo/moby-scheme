@@ -129,6 +129,8 @@ var isLambdaTooFewElements =
     extract("moby-error-type:lambda-too-few-elements?");
 var isLambdaTooManyElements =
     extract("moby-error-type:lambda-too-many-elements?");
+var isMissingExpressionFollowingQuote = 
+    extract("moby-error-type:missing-expression-following-quote?");
 var isQuoteTooFewElements = 
     extract("moby-error-type:quote-too-few-elements?");
 var isQuoteTooManyElements = 

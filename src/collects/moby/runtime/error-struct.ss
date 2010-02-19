@@ -53,6 +53,8 @@
 (define-struct moby-error-type:if-too-few-elements ())
 (define-struct moby-error-type:if-too-many-elements ())
 
+(define-struct moby-error-type:missing-expression-following-quote (quote-stx))  ;; e.g. (list hello ')
+
 (define-struct moby-error-type:quote-too-few-elements ())
 (define-struct moby-error-type:quote-too-many-elements ())
 (define-struct moby-error-type:quasiquote-too-few-elements ())
@@ -128,6 +130,7 @@
       (moby-error-type:lambda-too-many-elements? x)
       (moby-error-type:lambda-too-few-elements? x)
 
+      (moby-error-type:missing-expression-following-quote? x)
       (moby-error-type:quote-too-few-elements? x)
       (moby-error-type:quote-too-many-elements? x)
       (moby-error-type:quasiquote-too-few-elements? x)
@@ -257,6 +260,7 @@
  [struct moby-error-type:lambda-too-many-elements ()]
  [struct moby-error-type:lambda-too-few-elements ()]
 
+ [struct moby-error-type:missing-expression-following-quote ([quote-stx stx?])]
  [struct moby-error-type:quote-too-few-elements ()]
  [struct moby-error-type:quote-too-many-elements ()]
  [struct moby-error-type:quasiquote-too-few-elements ()]

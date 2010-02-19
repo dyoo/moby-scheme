@@ -288,8 +288,9 @@ if (! plt.reader) { plt.reader = {}; }
 	    var quoted = readExpr();
 	    if (quoted === false) {
 		plt.types.throwMobyError(leadingQuote.loc,
-					 "make-moby-error-type:missing-expression",
-					 [plt.types.Symbol.makeInstance(leadingQuote.text)]);
+					 "make-moby-error-type:missing-expression-following-quote",
+					 [datumToStx(plt.types.Symbol.makeInstance(leadingQuote.text),
+						     leadingQuote.loc)]);
 	    }
 
 	    return datumToStx(plt.types.Cons.makeInstance(
@@ -417,8 +418,9 @@ if (! plt.reader) { plt.reader = {}; }
 		} else {
 		    plt.types.throwMobyError(
 			hashcomment.loc,
-			"make-moby-error-type:missing-expression",
-			[plt.types.Symbol.makeInstance(hashcomment.text)]);
+			"make-moby-error-type:missing-expression-following-quote",
+			[datumToStx(plt.types.Symbol.makeInstance(hashcomment.text),
+				    hashcomment.loc)]);
 		}
 
 		
@@ -543,8 +545,9 @@ if (! plt.reader) { plt.reader = {}; }
 	    case ",":
 	    case ",@":
 		plt.types.throwMobyError(peek().loc,
-					 "make-moby-error-type:missing-expression",
-					 [plt.types.Symbol.makeInstance(peek().text)]);
+					 "make-moby-error-type:missing-expression-following-quote",
+					 [datumToStx(plt.types.Symbol.makeInstance(peek().text),
+						     peek().loc)]);
 
 	    case 'whitespace':
 	    case '#;':

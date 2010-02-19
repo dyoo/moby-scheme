@@ -1061,6 +1061,8 @@ function init() {
 		 ["(if true 4 5 6)", isIfTooManyElements],
 		 ["(if true)", isIfTooFewElements],
 		 ["(if)", isIfTooFewElements],
+		 ["(list ')", isMissingExpressionFollowingQuote],
+		 ["(list #;)", isMissingExpressionFollowingQuote],
 		 ["(quasiquote)", isQuasiquoteTooFewElements],
 		 ["(quasiquote x y)", isQuasiquoteTooManyElements],
 		 ["(quasiquote (unquote))", isUnquoteTooFewElements],

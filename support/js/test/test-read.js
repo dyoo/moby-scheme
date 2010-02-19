@@ -426,7 +426,7 @@ function init() {
 
 
 	testReadHashCommentError: function() {
-	    this.assertMobyRaise(isMissingExpression,
+	    this.assertMobyRaise(isMissingExpressionFollowingQuote,
 				 function() { read("(hello #;") });
 	    try {
 		read("(hello #;");

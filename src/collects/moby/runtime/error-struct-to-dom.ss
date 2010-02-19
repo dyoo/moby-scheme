@@ -283,6 +283,13 @@
                "Inside a lambda, I expect to see a list of arguments and a single body, "
                "but I see more than these two.")]
 
+       [(moby-error-type:missing-expression-following-quote? error-type)
+        `(span ((class "Error-MissingExpressionFollowingQuote"))
+               "After a " 
+               ,(stx->dom-sexp (moby-error-type:missing-expression-following-quote-quote-stx error-type)
+                               maybe-dom-parameters)
+               ", I expected to see another expression immediately following it, but I don't see one.")]
+       
        [(moby-error-type:quote-too-few-elements? error-type)
         `(span ((class "Error-QuoteTooFewElements"))
                "Inside a quote, I expect to see a single argument, but I don't see one.")]
