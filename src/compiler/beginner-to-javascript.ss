@@ -540,14 +540,8 @@
 ;; should produce an Object.
 (define (sharable-expression->javascript-string expr env a-pinfo)
   (cond
-    [(rbtree-member? expression<?
-                     (pinfo-shared-expressions a-pinfo)
-                     expr)
-     (list (format "_SHARED[~a]" (labeled-translation-label
-                                  (second (rbtree-lookup 
-                                           expression<?
-                                           (pinfo-shared-expressions a-pinfo)
-                                           expr))))
+    [(expression-shared? expr a-pinfo)
+     (list (lookup-shared-expression-translation-label expr a-pinfo)
            a-pinfo)]
     [else
      (local [(define translation+pinfo
@@ -557,6 +551,25 @@
                                                    (first translation+pinfo)
                                                    (second translation+pinfo)))]
        (sharable-expression->javascript-string expr env updated-pinfo))]))
+
+
+;; expression-shared?: expr pinfo -> boolean
+;; Produces true if the expression has been shared.
+(define (expression-shared? an-expr a-pinfo)
+  (rbtree-member? expression<?
+                  (pinfo-shared-expressions a-pinfo)
+                  an-expr))
+     
+
+;; lookup-shared-expression-translation-label: expr pinfo -> string
+;; Lookup the translation of the shared expression.
+(define (lookup-shared-expression-translation-label an-expr a-pinfo)
+  (format "_SHARED[~a]" (labeled-translation-label
+                         (second (rbtree-lookup 
+                                  expression<?
+                                  (pinfo-shared-expressions a-pinfo)
+                                  an-expr)))))
+           
 
 
 
