@@ -189,6 +189,6 @@
                   [stx->datum (stx? . -> . any)]
                   
                   [stx->sexp (stx? . -> . any)]
-                  [sexp->stx (stx? . -> . any)]
+                  [sexp->stx (any/c . -> . stx?)]
                   
                   [stx-update-context (stx? any/c . -> . stx?)])
