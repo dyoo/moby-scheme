@@ -10,7 +10,8 @@
                   [get-file-bytes (path? . -> . bytes?)]
                   [get-input-port-bytes (input-port? . -> . bytes?)]
                   [now-date-string (-> string?)]
-                  [string->date (string? . -> . date?)])
+                  [string->date (string? . -> . date?)]
+                  [with-temporary-directory ((path? . -> . any) . -> . any)])
 
 
 ;; copy-or-overwrite-file: path path -> void
@@ -71,6 +72,21 @@
     (make-directory f)
     f))
 
+
+
+;; Evaluate some function that uses a directory, and put it in the context of a temporary
+;; directory that'll be deleted on exit.
+(define (with-temporary-directory f)
+  (let ([dir #f])
+    (dynamic-wind 
+     (lambda ()
+       (set! dir (make-temporary-file))
+       (delete-file dir)
+       (make-directory dir))     
+     (lambda ()
+       (f dir))
+     (lambda ()
+       (delete-directory/files dir)))))
 
 
 

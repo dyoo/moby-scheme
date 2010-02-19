@@ -2,8 +2,10 @@
 (require scheme/class
          scheme/gui/base 
          scheme/list
+         scheme/port
          mrlib/cache-image-snip
          scheme/contract
+         "utils.ss"
          "resource.ss"
          "collects/moby/runtime/stx.ss")
 
@@ -32,7 +34,19 @@
     (super-new)
     
     (define/public (save! a-path)
-      (named-bitmap-save named-bitmap a-path))))
+      (named-bitmap-save named-bitmap a-path))
+    
+    (define/public (get-name)
+      (named-bitmap-name named-bitmap))
+    
+    (define/public (get-bytes)
+      (with-temporary-directory
+       (lambda (a-dir)
+         (save! a-dir)
+         (call-with-input-file (build-path a-dir (get-name))
+           (lambda (ip)
+             (port->bytes ip))))))))
+
 
 ;; Turns a named bitmap into a resource.
 (define (named-bitmap->resource a-named-bitmap)

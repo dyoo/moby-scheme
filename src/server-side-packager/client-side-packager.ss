@@ -2,12 +2,15 @@
 
 (require scheme/contract
          scheme/port
+         scheme/class
+         scheme/list
          net/url
          net/uri-codec
          "../collects/moby/runtime/stx.ss"
          "../program-resources.ss")
 
-(define current-server-url (make-parameter "http://go.cs.brown.edu/package/"))
+(define current-server-url (make-parameter #;"http://localhost:8080/package/"
+                                           "http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -16,8 +19,21 @@
   (let ([url (encode-parameters-in-url name program/resources)])
     (log-debug (format "Sending: ~s"  (url->string url)))
     ;; FIXME: get errors here and do something reasonable.
-    (port->bytes (get-pure-port url))))
+    (let* ([ip (get-impure-port)]
+           [headers (purify-port ip)]
+           [status-code (get-status-code headers)])
+      (cond
+        [(= status-code 200)
+         (port->bytes ip)]
+        [else
+         (raise (make-exn:fail (port->bytes ip)
+                               (current-continuation-marks)))]))))
 
+
+;; get-status-code: string -> number
+;; Given the 
+(define (get-status-code response-headers)
+  (number->string (second (regexp-match #px"^[^\\s]+\\s([^\\s]+)" response-headers))))
 
 
 ;; encode-parameters-in-url: string program/resources -> url
@@ -32,9 +48,11 @@
                                (format "~s" (map stx->sexp 
                                                  (program/resources-program 
                                                   program/resources))))
-                         #;(map (lambda (a-resource)
-                                  (cons 'resource ...))
-                                program/resources))))))
+                         (map (lambda (a-resource)
+                                (cons 'resource (format "~s"
+                                                        (list (send a-resource get-name)
+                                                              (send a-resource get-bytes)))))
+                              (program/resources-resources program/resources)))))))
 
 
 (provide/contract [build-android-package

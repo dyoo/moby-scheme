@@ -8,15 +8,27 @@
 
 (define resource<%>
   (interface () 
-    save!   ;; path -> void    
+    save!      ;; path -> void    
+    get-name   ;; -> string
+    get-bytes  ;; -> bytes
     ))
 
 
 (define named-bytes-resource%
   (class* object% (resource<%>)
+    (super-new)
+    (init-field name)
+    (init-field bytes)
+    
     (define/public (save! a-path)
       ;; fixme
-      (void))))
+      (void))
+    
+    (define/public (get-name)
+      name)
+    
+    (define/public (get-bytes)
+      bytes)))
 
 
 
