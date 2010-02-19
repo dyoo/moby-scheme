@@ -19,15 +19,27 @@
   (let ([url (encode-parameters-in-url name program/resources)])
     (log-debug (format "Sending: ~s"  (url->string url)))
     ;; FIXME: get errors here and do something reasonable.
-    (let* ([ip (get-impure-port url)]
-           [headers (purify-port ip)]
-           [status-code (get-status-code headers)])
-      (cond
-        [(= status-code 200)
-         (port->bytes ip)]
-        [else
-         (raise (make-exn:fail (port->bytes ip)
-                               (current-continuation-marks)))]))))
+    (with-handlers ([exn:fail:network?
+                     (lambda (exn) (handle-network-failure exn))])
+      (let* ([ip (get-impure-port url)]
+             [headers (purify-port ip)]
+             [status-code (get-status-code headers)])
+        (cond
+          [(= status-code 200)
+           (port->bytes ip)]
+          [else
+           (raise (make-exn:fail (port->bytes ip)
+                                 (current-continuation-marks)))])))))
+
+
+
+;; handle-network-failure: request exn -> response
+(define (handle-network-failure exn)
+  (raise (make-exn:fail 
+          (string-append "We are unable to build your Android package; the web service appears to be offline.\n"
+                         "Please contact the Moby developers; in your response, include the following:\n"
+                         (exn-message exn))
+          (current-continuation-marks))))
 
 
 ;; get-status-code: string -> number
