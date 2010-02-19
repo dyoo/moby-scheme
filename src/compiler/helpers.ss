@@ -364,7 +364,7 @@
      (raise (make-moby-error 
              (stx-loc a-definition)
              (make-moby-error-type:generic-syntactic-error
-              "define expects an identifier and a body.  e.g. (define answer 42)"
+              "define expects either an identifier and a body: (define answer 42), or a function header and body: (define (double x ) (* x 2))"
               (list))))]
 
     [(stx-begins-with? a-definition 'define-struct)
