@@ -6,6 +6,7 @@
          scheme/list
          web-server/servlet
          web-server/servlet-env
+         xml
          "../../collects/moby/runtime/stx.ss"
          "../../resource.ss"
          "../../program-resources.ss"
@@ -29,15 +30,18 @@
 
 ;; start: request -> response
 (define (start req)
-  (let ([name (parse-program-name req)]
-        [program/resources (parse-program/resources req)])
-
-    (cond
-      [(and name program/resources)
-       (make-package-response name (build-android-package name 
-                                                          program/resources))]
-      [else
-       (error-no-program req)])))
+  (with-handlers ([exn:fail?
+                   (lambda (exn)
+                     (handle-unexpected-error exn))])
+    (let ([name (parse-program-name req)]
+          [program/resources (parse-program/resources req)])
+      
+      (cond
+        [(and name program/resources)
+         (make-package-response name (build-android-package name 
+                                                            program/resources))]
+        [else
+         (error-no-program)]))))
 
 
 
@@ -111,8 +115,38 @@
        a-name])))
 
 
-(define (error-no-program req)
-  "Missing program")
+
+;; error-no-program: -> response
+(define (error-no-program)
+  (make-response/full
+     400
+     #"Bad Request"
+     (current-seconds)
+     #"text/html"
+     (list)
+     (list (string->bytes/utf-8 
+            (xexpr->string 
+             `(html (head (title error))
+                    (body
+                     "The expected program is missing from the request.")))))))
+
+
+;; handle-unexpected-error: exn:fail -> response
+(define (handle-unexpected-error exn)
+   (make-response/full
+     400
+     #"Bad Request"
+     (current-seconds)
+     #"text/html"
+     (list)
+     (list (string->bytes/utf-8 
+            (xexpr->string 
+             `(html (head (title error))
+                    (body
+                     "Moby was unable to build your program due to an unexpected error.\n"
+                     "Please contact the Moby developers, and include the following content:\n"
+                     ,(exn-message exn))))))))
+
 
 
 

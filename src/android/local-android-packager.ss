@@ -18,10 +18,10 @@
          "../config.ss"
          "../program-resources.ss")
 
-(define-runtime-path phonegap-path "../support/phonegap-fork/android-1.5")
-(define-runtime-path icon-path "../support/icons/icon.png")
-(define-runtime-path javascript-support-path "../support/js")
-(define-runtime-path javascript-main-template "../support/js/main.js.template")
+(define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
+(define-runtime-path icon-path "../../support/icons/icon.png")
+(define-runtime-path javascript-support-path "../../support/js")
+(define-runtime-path javascript-main-template "../../support/js/main.js.template")
 
 
 ;; build-android-package: string program/resources -> bytes

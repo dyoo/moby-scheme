@@ -164,9 +164,21 @@
                     (fourth sexp))]))
 
 
+;; program->sexp: program -> sexp
+;; Translates a program to an s-expression
+(define (program->sexp a-program)
+  (map stx->sexp a-program))
+
+
+
+;; sexp->program: sexp -> program
+;; Translates an sexp back to a program.
+(define (sexp->program an-sexp)
+  (map sexp->stx an-sexp))
+
+
+
   
-
-
 
 (provide/contract [stx:atom? (any/c . -> . boolean?)]
                   [stx:list? (any/c . -> . boolean?)]
@@ -190,5 +202,8 @@
                   
                   [stx->sexp (stx? . -> . any)]
                   [sexp->stx (any/c . -> . stx?)]
+                  
+                  [program->sexp ((listof stx?) . -> . any)]
+                  [sexp->program (any/c . -> . (listof stx?))]
                   
                   [stx-update-context (stx? any/c . -> . stx?)])
