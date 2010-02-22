@@ -11,8 +11,8 @@
          "../../program-resources.ss"
          "../helpers.ss")
 
-(define current-server-url (make-parameter "http://localhost:8080/package/"
-                                           #;"http://go.cs.brown.edu/package/"))
+(define current-server-url (make-parameter #;"http://localhost:8080/package/"
+                                           "http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -23,7 +23,9 @@
     (with-handlers ([exn:fail:network?
                      (lambda (exn)
                        (handle-network-failure exn))])
-      (let* ([ip (post-impure-port (string->url (current-server-url)) data)]
+      (log-debug (format "Sending ~s ~s" (current-server-url) data))
+      (let* ([ip (post-impure-port (string->url (current-server-url)) 
+                                   data)]
              [headers (purify-port ip)]
              [status-code (get-status-code headers)])
         (cond
@@ -53,21 +55,21 @@
 
 ;; encode-parameters-in-data: string program/resources -> bytes
 ;; Encodes the parameters we need to pass in to get a program.
+;; TODO: GZIP the data, as soon as the web server can support it.
 (define (encode-parameters-in-data name program/resources)
-  (gzip-bytes
-   (string->bytes/utf-8
-    (alist->form-urlencoded 
-     (list* (cons 'name name)
-            (cons 'compiler-version VERSION)
-            (cons 'program-stx
-                  (format "~s" (program->sexp 
-                                (program/resources-program program/resources))))
-            (map (lambda (a-resource)
-                   (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
-                   (cons 'resource (format "~s"
-                                           (list (send a-resource get-name)
-                                                 (send a-resource get-bytes)))))
-                 (program/resources-resources program/resources)))))))
+  (string->bytes/utf-8
+   (alist->form-urlencoded 
+    (list* (cons 'name name)
+           (cons 'compiler-version VERSION)
+           (cons 'program-stx
+                 (format "~s" (program->sexp 
+                               (program/resources-program program/resources))))
+           (map (lambda (a-resource)
+                  (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
+                  (cons 'resource (format "~s"
+                                          (list (send a-resource get-name)
+                                                (send a-resource get-bytes)))))
+                (program/resources-resources program/resources))))))
 
 
 (provide/contract [build-android-package

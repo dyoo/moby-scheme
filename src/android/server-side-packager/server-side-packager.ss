@@ -51,7 +51,8 @@
 (define (get-bindings req)
   (form-urlencoded->alist 
    (bytes->string/utf-8
-    (gunzip-bytes (request-post-data/raw req)))))
+    (request-post-data/raw req)
+    #;(gunzip-bytes (request-post-data/raw req)))))
 
 
 
@@ -148,7 +149,9 @@
              `(html (head (title error))
                     (body
                      "Moby was unable to build your program due to an unexpected error.\n"
+                     (br)
                      "Please contact the Moby developers, and include the following content:\n"
+                     (br)
                      ,(exn-message exn))))))))
 
 
@@ -167,4 +170,4 @@
                #:port (PORT)
                #:extra-files-paths (list HTDOCS-PATH)                 
                #:servlet-regexp (regexp
-                                 "^/package/.*$"))
+                                 "^.*$"  #;"^/package/.*$"))
