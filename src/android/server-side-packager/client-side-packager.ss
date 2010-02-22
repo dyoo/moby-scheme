@@ -19,7 +19,6 @@
 ;; Calls out to the compiler web service to get back the android package.
 (define (build-android-package name program/resources)
   (let ([data (encode-parameters-in-data name program/resources)])
-    (log-debug (format "Sending: ~s"  (current-server-url)))
     ;; FIXME: get errors here and do something reasonable.
     (with-handlers ([exn:fail:network?
                      (lambda (exn)
@@ -48,25 +47,27 @@
 ;; get-status-code: string -> number
 ;; Given the 
 (define (get-status-code response-headers)
+  (log-debug (format "Response headers are ~s~n" response-headers))
   (string->number (second (regexp-match #px"^[^\\s]+\\s([^\\s]+)" response-headers))))
 
 
 ;; encode-parameters-in-data: string program/resources -> bytes
 ;; Encodes the parameters we need to pass in to get a program.
 (define (encode-parameters-in-data name program/resources)
-  (string->bytes/utf-8
-   (alist->form-urlencoded 
-    (list* (cons 'name name)
-           (cons 'compiler-version VERSION)
-           (cons 'program-stx
-                 (format "~s" (program->sexp 
-                                         (program/resources-program program/resources))))
-           (map (lambda (a-resource)
-                  (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
-                  (cons 'resource (format "~s"
-                                          (list (send a-resource get-name)
-                                                (send a-resource get-bytes)))))
-                (program/resources-resources program/resources))))))
+  (gzip-bytes
+   (string->bytes/utf-8
+    (alist->form-urlencoded 
+     (list* (cons 'name name)
+            (cons 'compiler-version VERSION)
+            (cons 'program-stx
+                  (format "~s" (program->sexp 
+                                (program/resources-program program/resources))))
+            (map (lambda (a-resource)
+                   (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
+                   (cons 'resource (format "~s"
+                                           (list (send a-resource get-name)
+                                                 (send a-resource get-bytes)))))
+                 (program/resources-resources program/resources)))))))
 
 
 (provide/contract [build-android-package

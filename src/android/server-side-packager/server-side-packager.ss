@@ -6,11 +6,11 @@
          scheme/list
          web-server/servlet
          web-server/servlet-env
+         net/uri-codec
          xml
          "../../collects/moby/runtime/stx.ss"
          "../../resource.ss"
          "../../program-resources.ss"
-         "../../compile-helpers.ss"
          "../local-android-packager.ss"
          "../helpers.ss")
 
@@ -34,55 +34,57 @@
   (with-handlers ([exn:fail?
                    (lambda (exn)
                      (handle-unexpected-error exn))])
-    (let ([name (parse-program-name req)]
-          [program/resources (parse-program/resources req)])
+    (let* ([bindings (get-bindings req)]
+           [name (parse-program-name bindings)]
+           [program/resources (parse-program/resources bindings)])
       
       (cond
         [(and name program/resources)
-         (make-package-response name (build-android-package name 
-                                                            program/resources))]
+         (make-package-response name (build-android-package name program/resources))]
         [else
          (error-no-program)]))))
 
 
+;; get-bindings: request -> bindings
+;; Return the bindings we get from the request.
+;; Note that this call might be expensive since we're doing a gunzip-bytes.
+(define (get-bindings req)
+  (form-urlencoded->alist 
+   (bytes->string/utf-8
+    (gunzip-bytes (request-post-data/raw req)))))
 
-;; parse-name: request -> string
+
+
+;; parse-name: bindings -> string
 ;; Extracts the name from the request
-(define (parse-program-name req)
-  (extract-binding/single 'name (request-bindings req)))
+(define (parse-program-name bindings)
+  (extract-binding/single 'name bindings))
 
 
-
-;; parse-program/resources: request -> (or/c program/resource #f)
+;; parse-program/resources: bindings -> (or/c program/resource #f)
 ;; Try to parse the program and its resources, or return false otherwise.
-(define (parse-program/resources req)
-  (let ([name (parse-program-name req)])
-    (cond
-      [(and name (exists-binding? 'program (request-bindings req)))
-       (let ([program (extract-binding/single 'program (request-bindings req))])
-         (make-program/resources (parse-string-as-program program name)
-                                 (parse-resources req)))]
-      
-      [(and name (exists-binding? 'program-stx (request-bindings req)))
-       (let ([program-stx (extract-binding/single 'program-stx (request-bindings req))])
+(define (parse-program/resources bindings)
+  (let ([name (parse-program-name bindings)])
+    (cond      
+      [(and name (exists-binding? 'program-stx bindings))
+       (let ([program-stx (extract-binding/single 'program-stx bindings)])
          (make-program/resources (sexp->program 
                                   (read (open-input-string program-stx)))
-                                 (parse-resources req)))]
+                                 (parse-resources bindings)))]
       
       [else #f])))
 
 
-
-;; parse-resources: request -> (listof resource<%>)
-(define (parse-resources req)
-  (cond [(exists-binding? 'resource (request-bindings req))
+;; parse-resources: bindings -> (listof resource<%>)
+(define (parse-resources bindings)
+  (cond [(exists-binding? 'resource bindings)
          (map (lambda (val)
                 (let ([name&bytes (read (open-input-string val))])
                   (log-debug (format "Reading resource ~s" (first name&bytes)))
                   (new named-bytes-resource% 
                        [name (first name&bytes)]
                        [bytes (second name&bytes)])))
-              (extract-bindings 'resource (request-bindings req)))]
+              (extract-bindings 'resource bindings))]
         [else
          empty]))
 
