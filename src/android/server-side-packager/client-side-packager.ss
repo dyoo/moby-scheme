@@ -8,7 +8,8 @@
          net/uri-codec
          "../../compiler/version.ss"
          "../../collects/moby/runtime/stx.ss"
-         "../../program-resources.ss")
+         "../../program-resources.ss"
+         "../helpers.ss")
 
 (define current-server-url (make-parameter "http://localhost:8080/package/"
                                            #;"http://go.cs.brown.edu/package/"))
@@ -58,7 +59,8 @@
     (list* (cons 'name name)
            (cons 'compiler-version VERSION)
            (cons 'program-stx
-                 (format "~s" (program->sexp (program/resources-program program/resources))))
+                 (format "~s" (program->sexp 
+                                         (program/resources-program program/resources))))
            (map (lambda (a-resource)
                   (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
                   (cons 'resource (format "~s"

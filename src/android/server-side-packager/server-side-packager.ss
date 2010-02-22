@@ -11,7 +11,8 @@
          "../../resource.ss"
          "../../program-resources.ss"
          "../../compile-helpers.ss"
-         "../local-android-packager.ss")
+         "../local-android-packager.ss"
+         "../helpers.ss")
 
 ;; This is a servlet that compiles packages to Android.
 
@@ -64,7 +65,8 @@
       
       [(and name (exists-binding? 'program-stx (request-bindings req)))
        (let ([program-stx (extract-binding/single 'program-stx (request-bindings req))])
-         (make-program/resources (map sexp->stx (read (open-input-string program-stx)))
+         (make-program/resources (sexp->program 
+                                  (read (open-input-string program-stx)))
                                  (parse-resources req)))]
       
       [else #f])))
