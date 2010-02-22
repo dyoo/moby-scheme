@@ -6,8 +6,8 @@
          scheme/list
          net/url
          net/uri-codec
-         "../collects/moby/runtime/stx.ss"
-         "../program-resources.ss")
+         "../../collects/moby/runtime/stx.ss"
+         "../../program-resources.ss")
 
 (define current-server-url (make-parameter #;"http://localhost:8080/package/"
                                            "http://go.cs.brown.edu/package/"))

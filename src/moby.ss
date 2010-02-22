@@ -5,7 +5,7 @@
 
 (require "generate-application.ss"
          "utils.ss"
-         "local-android-packager.ss"
+         "android/local-android-packager.ss"
          "compile-helpers-with-images.ss"
          scheme/cmdline
          scheme/path)

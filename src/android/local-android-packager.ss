@@ -7,16 +7,16 @@
          scheme/contract
          scheme/list
          (only-in xml xexpr->string)
-         "compile-helpers.ss"
-         "collects/moby/runtime/permission-struct.ss"
-         "compiler/pinfo.ss"
-         (only-in "compiler/helpers.ss" program?)
-         (prefix-in javascript: "compiler/beginner-to-javascript.ss")
-         (only-in "compiler/helpers.ss" identifier->munged-java-identifier)
-         "utils.ss"
-         "template.ss"
-         "config.ss"
-         "program-resources.ss")
+         "../compile-helpers.ss"
+         "../collects/moby/runtime/permission-struct.ss"
+         "../compiler/pinfo.ss"
+         (only-in "../compiler/helpers.ss" program?)
+         (prefix-in javascript: "../compiler/beginner-to-javascript.ss")
+         (only-in "../compiler/helpers.ss" identifier->munged-java-identifier)
+         "../utils.ss"
+         "../template.ss"
+         "../config.ss"
+         "../program-resources.ss")
 
 (define-runtime-path phonegap-path "../support/phonegap-fork/android-1.5")
 (define-runtime-path icon-path "../support/icons/icon.png")

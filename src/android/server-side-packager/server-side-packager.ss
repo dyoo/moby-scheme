@@ -6,10 +6,10 @@
          scheme/list
          web-server/servlet
          web-server/servlet-env
-         "../collects/moby/runtime/stx.ss"
-         "../resource.ss"
-         "../program-resources.ss"
-         "../compile-helpers.ss"
+         "../../collects/moby/runtime/stx.ss"
+         "../../resource.ss"
+         "../../program-resources.ss"
+         "../../compile-helpers.ss"
          "../local-android-packager.ss")
 
 ;; This is a servlet that compiles packages to Android.

@@ -3,8 +3,8 @@
 (require scheme/contract
          (prefix-in local: "local-android-packager.ss")
          (prefix-in remote: "server-side-packager/client-side-packager.ss")
-         "config.ss"
-         "program-resources.ss")
+         "../config.ss"
+         "../program-resources.ss")
 
 
 ;; local-android-ready?: -> boolean

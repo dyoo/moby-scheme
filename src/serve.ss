@@ -5,7 +5,6 @@
          scheme/runtime-path
          scheme/tcp
          scheme/contract
-         scheme/file
          web-server/servlet
          web-server/servlet-env
          web-server/dispatch 
@@ -18,7 +17,7 @@
          "image-lift.ss"
          "collects/moby/runtime/stx.ss"
          "generate-application.ss"
-         "android-packager.ss")
+         "android/android-packager.ss")
 
 
 (define-runtime-path javascript-support "../support/js")
