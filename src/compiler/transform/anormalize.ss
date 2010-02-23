@@ -3,7 +3,7 @@
 
 (require "anormal-frag-helpers.ss")
 (require "../../collects/moby/runtime/stx.ss")
-;(require "box-local-defs.ss")
+(require "box-local-defs.ss")
 (require "../toplevel.ss")
 (require "../env.ss")
 
@@ -222,10 +222,7 @@
 ;;       and generates the list of primitives to insure it acts
 ;;       as a pure function
 (define (anormalize program)
-  (let ([readied (void)
-                 ;; FIXME!!!
-                 ;; dyoo: where is the definition of this function?
-                 #;(ready-anormalize program)])
+  (let ([readied (ready-anormalize program)])
     (begin
       (reset-gensym)
       (reset-prims (generate-prims (stx->datum readied) 'language-here))
