@@ -337,13 +337,13 @@
 
        var exprs = plt.reader.readSchemeExpressions(s, 'standalone');
        var compiledProgram =
-           _compiler.EXPORTS.program_dash__greaterthan_compiled_dash_program_slash_pinfo(exprs, aPinfo);
+           _compiler.EXPORTS['program->compiled-program/pinfo'](exprs, aPinfo);
 
-       var compiledSrc = _compiler.EXPORTS.compiled_dash_program_dash_main(compiledProgram);
-       var permList = _compiler.EXPORTS.pinfo_dash_permissions(_compiler.EXPORTS.compiled_dash_program_dash_pinfo(compiledProgram));
+       var compiledSrc = _compiler.EXPORTS['compiled-program-main'](compiledProgram);
+       var permList = _compiler.EXPORTS['pinfo-permissions'](_compiler.EXPORTS['compiled-program-pinfo'](compiledProgram));
        var perms = [];
        while (!permList.isEmpty()) {     
-           perms.push(_permissionStruct.EXPORTS.permission_dash__greaterthan_string(permList.first()));
+           perms.push(_permissionStruct.EXPORTS['permission->string'](permList.first()));
            permList = permList.rest();
        }
        return [compiledSrc, perms];

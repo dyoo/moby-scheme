@@ -11,47 +11,47 @@ goog.provide('plt.permission');
 
 
     var isLocationP = function(p) {
-	return PEXPORTS["permission_colon_location_question_"](p);
+	return PEXPORTS["permission:location?"](p);
     };
 
     var isSendSmsP = function(p) {
-	return PEXPORTS["permission_colon_send_dash_sms_question_"](p);
+	return PEXPORTS["permission:send-sms?"](p);
     };
 
     var isReceiveSmsP = function(p) {
-	return PEXPORTS["permission_colon_receive_dash_sms_question_"](p);
+	return PEXPORTS["permission:receive-sms?"](p);
     };
 
     var isTiltP = function(p) {
-	return PEXPORTS["permission_colon_tilt_question_"](p);
+	return PEXPORTS["permission:tilt?"](p);
     };
 
     var isShakeP = function(p) {
-	return PEXPORTS["permission_colon_shake_question_"](p);
+	return PEXPORTS["permission:shake?"](p);
     };
 
     var isInternetP = function(p) {
-	return PEXPORTS["permission_colon_internet_question_"](p);
+	return PEXPORTS["permission:internet?"](p);
     };
 
     var isTelephonyP = function(p) {
-	return PEXPORTS["permission_colon_telephony_question_"](p);
+	return PEXPORTS["permission:telephony?"](p);
     };
 
     var isWakeLockP = function(p) {
-	return PEXPORTS["permission_colon_wake_dash_lock_question_"](p);
+	return PEXPORTS["permission:wake-lock?"](p);
     };
 
     var isForeignFunctionInterfaceP = function(p) {
-	return PEXPORTS["permission_colon_foreign_dash_function_dash_interface_question_"](p);
+	return PEXPORTS["permission:foreign-function-interface?"](p);
     };
 
     var isOpenImageUrlP = function(p) {
-	return PEXPORTS["permission_colon_open_dash_image_dash_url_question_"](p);
+	return PEXPORTS["permission:open-image-url?"](p);
     };
 
     var isUniverseP = function(p) {
-	return PEXPORTS["permission_colon_universe_question_"](p);
+	return PEXPORTS["permission:universe?"](p);
     };
 
 
@@ -144,7 +144,7 @@ goog.provide('plt.permission');
 	}
 
 	else if (isOpenImageUrlP(p)) {
-	    var path = PEXPORTS.permission_colon_open_dash_image_dash_url_dash_url(p);
+	    var path = PEXPORTS['permission:open-image-url-url'](p);
 	    var img = new Image();
 	    var loadHandler = function() {
 		// Detach, because looping animated gifs are defined to call onload

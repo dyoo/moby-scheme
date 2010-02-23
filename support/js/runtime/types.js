@@ -82,14 +82,6 @@ Box
 
 
     var getExternalModuleValue = function(module, name) {
-
-	// munge: string -> string
-	var munge = function(name) {
-	    var C = plt.Kernel.invokeModule("moby/compiler").EXPORTS;
-	    return (C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(
-		plt.types.Symbol.makeInstance(name))).toString();
-	}
-	
 	// getModule: string -> module
 	// Returns a module that knows how to map scheme names to javascript
 	// names.
@@ -99,7 +91,7 @@ Box
 	    return {
 		theModule: theModule,
 		getFunction: function(n) {
-		    return exports[munge(n)];
+		    return exports[n];
 		}};
 	}
 	return getModule(module).getFunction(name);

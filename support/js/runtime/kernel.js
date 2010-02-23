@@ -67,13 +67,6 @@ goog.provide('plt.Kernel');
     //////////////////////////////////////////////////////////////////////
     var getExternalModuleValue = function(module, name) {
 
-	// munge: string -> string
-	var munge = function(name) {
-	    var C = plt.Kernel.invokeModule("moby/compiler").EXPORTS;
-	    return (C.identifier_dash__greaterthan_munged_dash_java_dash_identifier(
-		plt.types.Symbol.makeInstance(name))).toString();
-	}
-	
 	// getModule: string -> module
 	// Returns a module that knows how to map scheme names to javascript
 	// names.
@@ -83,7 +76,7 @@ goog.provide('plt.Kernel');
 	    return {
 		theModule: theModule,
 		getFunction: function(n) {
-		    return exports[munge(n)];
+		    return exports[n];
 		}};
 	}
 	return getModule(module).getFunction(name);
@@ -305,7 +298,7 @@ goog.provide('plt.Kernel');
 	    var E = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 	    plt.Kernel.throwTypeError(functionName, 
 				      position, 
-				      E.make_dash_moby_dash_expected_colon_list(), 
+				      E['make-moby-expected:list'](), 
 				      x);
 // 	    throw new MobyTypeError(
 // 		makeTypeErrorMessage(functionName, "list", position, x));
@@ -318,8 +311,8 @@ goog.provide('plt.Kernel');
 	if (! isList(x)) {
 	    plt.Kernel.throwTypeError(functionName, 
 				      position, 
-				      E.make_dash_moby_dash_expected_colon_listof(
-					  E.make_dash_moby_dash_expected_colon_something(
+				      E['make-moby-expected:listof'](
+					  E['make-moby-expected:something'](
 					      typeName)), 
 				      x);
 // 	    throw new MobyTypeError(
@@ -329,8 +322,8 @@ goog.provide('plt.Kernel');
 	    if (! f(x.first())) {
 		plt.Kernel.throwTypeError(functionName, 
 					  position, 
-					  E.make_dash_moby_dash_expected_colon_listof(
-					      E.make_dash_moby_dash_expected_colon_something(
+					  E['make-moby-expected:listof'](
+					      E['make-moby-expected:something'](
 						  typeName)), 
 					  x);
 // 		throw new MobyTypeError(makeTypeErrorMessage(functionName, "listof " + typeName, position, x));
@@ -721,12 +714,12 @@ goog.provide('plt.Kernel');
 		throwMobyError(locHashToLoc(plt.Kernel.lastLoc),
 			       "make-moby-error-type:application-arity",
 			       [plt.types.Symbol.makeInstance("atan"),
-				A.make_dash_arity_colon_mixed(
+				A['make-arity:mixed'](
 				   plt.types.Cons.makeInstance(
-				       A.make_dash_arity_colon_fixed(
+				       A['make-arity:fixed'](
 					   plt.types.Rational.ONE),
 				       plt.types.Cons.makeInstance(
-					   A.make_dash_arity_colon_fixed(
+					   A['make-arity:fixed'](
 					       plt.types.Rational.TWO),
 					   plt.types.Empty.EMPTY))),
 				plt.types.Rational.makeInstance(args.length)]);
@@ -1095,7 +1088,7 @@ goog.provide('plt.Kernel');
 		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
 		plt.Kernel.throwTypeError("list*",
 					  otherItems.length + 2,
-					  S.make_dash_moby_dash_expected_colon_list(),
+					  S['make-moby-expected:list'](),
 					  lastListItem);
 	    }
 	    otherItems.unshift(items);
@@ -1110,9 +1103,9 @@ goog.provide('plt.Kernel');
 	    for (; plt.Kernel._lessthan_(i, x,[]); i = plt.Kernel.add1(i)) {
 		if (lst.isEmpty()) {
 		    var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-		    throw S.make_dash_moby_dash_error(
+		    throw S['make-moby-error'](
 			locHashToLoc(plt.Kernel.lastLoc),
-			S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
+			S['make-moby-error-type:index-out-of-bounds'](
 			    plt.types.Rational.ZERO,
 			    plt.types.Rational.makeInstance(len - 1),
 			    x));
@@ -1219,7 +1212,7 @@ goog.provide('plt.Kernel');
 		var stxList = plt.reader.readSchemeExpressions(str, "");
 		if (NumberTower.equal(plt.Kernel.length(stxList),
 						plt.types.Rational.ONE)) {
-		    var result = stxModule.EXPORTS.stx_dash_e(stxList.first());
+		    var result = stxModule.EXPORTS['stx-e'](stxList.first());
 		    if (isNumber(result)) {
 			return result;
 		    } else {
@@ -1318,9 +1311,9 @@ goog.provide('plt.Kernel');
 	    check(i, isNatural, "string-ref", "natural", 2);
 	    if (NumberTower.toFixnum(i) >= str.length) {
 		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-		throw S.make_dash_moby_dash_error(
+		throw S['make-moby-error'](
 		    locHashToLoc(plt.Kernel.lastLoc),
-		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
+		    S['make-moby-error-type:index-out-of-bounds'](
 			plt.types.Rational.ZERO,
 			plt.types.Rational.makeInstance(str.length - 1),
 			i));
@@ -1333,9 +1326,9 @@ goog.provide('plt.Kernel');
 	    check(i, isNatural, "string-ith", "natural", 2);
 	    if (i.toFixnum() >= str.length) {
 		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-		throw S.make_dash_moby_dash_error(
+		throw S['make-moby-error'](
 		    locHashToLoc(plt.Kernel.lastLoc),
-		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
+		    S['make-moby-error-type:index-out-of-bounds'](
 			plt.types.Rational.ZERO,
 			plt.types.Rational.makeInstance(str.length - 1),
 			i));
@@ -1360,18 +1353,18 @@ goog.provide('plt.Kernel');
 	    check(end, isNatural, "substring", "natural", 3);
 	    if (begin.toFixnum() > end.toFixnum()) {
 		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-		throw S.make_dash_moby_dash_error(
+		throw S['make-moby-error'](
 		    locHashToLoc(plt.Kernel.lastLoc),
-		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
+		    S['make-moby-error-type:index-out-of-bounds'](
 			begin,
 			plt.types.Rational.makeInstance(str.length),
 			end));
 	    }
 	    if (end.toFixnum() > str.length) {
 		var S = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-		throw S.make_dash_moby_dash_error(
+		throw S['make-moby-error'](
 		    locHashToLoc(plt.Kernel.lastLoc),
-		    S.make_dash_moby_dash_error_dash_type_colon_index_dash_out_dash_of_dash_bounds(
+		    S['make-moby-error-type:index-out-of-bounds'](
 			begin,
 			plt.types.Rational.makeInstance(str.length),
 			end));
@@ -2429,14 +2422,14 @@ goog.provide('plt.Kernel');
     var locHashToLoc = function(locHash) {
 	var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
 	if (locHash === undefined){
-	    return stxModule.EXPORTS.make_dash_Loc(
+	    return stxModule.EXPORTS['make-Loc'](
 		plt.types.Rational.ZERO,
 		plt.types.Rational.ZERO,
 		plt.types.Rational.ZERO,
 		plt.types.Rational.ZERO,
 		"<undefined>");
 	} else {
-	    return stxModule.EXPORTS.make_dash_Loc(
+	    return stxModule.EXPORTS['make-Loc'](
 		plt.types.Rational.makeInstance(locHash.offset),
 		plt.types.Rational.makeInstance(locHash.line),
 		plt.types.Rational.makeInstance(locHash.column),
@@ -2451,8 +2444,8 @@ goog.provide('plt.Kernel');
     // Helper function to throw a type error.
     plt.Kernel.throwTypeError = function(who, argumentPosition, expected, observed) {
 	var E = plt.Kernel.invokeModule("moby/runtime/error-struct").EXPORTS;
-	var makeMobyError = E.make_dash_moby_dash_error;
-	var makeTypeMismatchType = E.make_dash_moby_dash_error_dash_type_colon_type_dash_mismatch;
+	var makeMobyError = E['make-moby-error'];
+	var makeTypeMismatchType = E['make-moby-error-type:type-mismatch'];
 
 	var coersedExpectedValue =
 	    (typeof(expected) === 'string' ? 

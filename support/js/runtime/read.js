@@ -11,22 +11,20 @@ if (! plt.reader) { plt.reader = {}; }
 (function(){
 
     var stxModule = plt.Kernel.invokeModule("moby/runtime/stx");
-    var Loc = stxModule.EXPORTS.Loc;
+    var Loc = stxModule.EXPORTS['Loc'];
     var datumToStx = function(thing, loc) {
 	var context = false;
-	return stxModule.EXPORTS.datum_dash__greaterthan_stx(context, 
-							     thing, 
-							     loc);
+	return stxModule.EXPORTS['datum->stx'](context, 
+					       thing, 
+					       loc);
     };
-    var make_dash_stx_colon_list = stxModule.EXPORTS.make_dash_stx_colon_list;
-    var make_dash_stx_colon_atom = stxModule.EXPORTS.make_dash_stx_colon_atom;
-    var stx_dash_loc = stxModule.EXPORTS.stx_dash_loc;
+    var stx_dash_loc = stxModule.EXPORTS['stx-loc'];
 
-    var Loc_dash_offset = stxModule.EXPORTS.Loc_dash_offset;
-    var Loc_dash_line = stxModule.EXPORTS.Loc_dash_line;
-    var Loc_dash_column = stxModule.EXPORTS.Loc_dash_column;
-    var Loc_dash_offset = stxModule.EXPORTS.Loc_dash_offset;
-    var Loc_dash_span = stxModule.EXPORTS.Loc_dash_span;
+    var Loc_dash_offset = stxModule.EXPORTS['Loc-offset'];
+    var Loc_dash_line = stxModule.EXPORTS['Loc-line'];
+    var Loc_dash_column = stxModule.EXPORTS['Loc-column'];
+    var Loc_dash_offset = stxModule.EXPORTS['Loc-offset'];
+    var Loc_dash_span = stxModule.EXPORTS['Loc-span'];
 
 
     var num = plt.types.Rational.makeInstance;

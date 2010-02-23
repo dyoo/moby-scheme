@@ -8,7 +8,7 @@ goog.require('plt.Kernel');
 
     var make_dash_effect_colon_none =
 	(plt.Kernel.invokeModule("moby/runtime/effect-struct")
-	 .EXPORTS.make_dash_effect_colon_none);
+	 .EXPORTS['make-effect:none']);
 
 
 

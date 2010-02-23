@@ -125,7 +125,7 @@
       (binding:constant-name a-binding)
       (format "plt._MODULES[~s].EXPORTS[~s]"
               (symbol->string a-module-name)
-              (binding:constant-java-string a-binding))
+              (symbol->string (binding:constant-name a-binding)))
       (binding:constant-permissions a-binding))]
     [(binding:function? a-binding)
      (make-binding:function
@@ -135,7 +135,7 @@
       (binding:function-var-arity? a-binding)
       (format "plt._MODULES[~s].EXPORTS[~s]"
               (symbol->string a-module-name)
-              (binding:function-java-string a-binding))
+              (symbol->string (binding:function-name a-binding)))
       (binding:function-permissions a-binding)
       (binding:function-cps? a-binding))]
     [(binding:structure? a-binding)

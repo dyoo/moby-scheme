@@ -46,7 +46,7 @@ function resetRepl() {
     interactions.value = "WeScheme Interactions\n---\n";
     prompt.value = "";
     _namespace = new Namespace();
-    _pinfo = C.get_dash_base_dash_pinfo(
+    _pinfo = C['get-base-pinfo'](
         plt.types.Symbol.makeInstance("moby"));
 }
 
@@ -80,13 +80,13 @@ function runSource(aSource) {
     try {
         var program = plt.reader.readSchemeExpressions(aSource);
         var compiledProgram = 
-            C.program_dash__greaterthan_compiled_dash_program_slash_pinfo(
+            C['program->compiled-program/pinfo'](
                 program, _pinfo);
 
 	var newPinfo = 
-	    C.compiled_dash_program_dash_pinfo(compiledProgram);
+	    C['compiled-program-pinfo'](compiledProgram);
 
-	var perms = _getPermissionList(C.pinfo_dash_permissions(newPinfo));
+	var perms = _getPermissionList(C['pinfo-permissions'](newPinfo));
 
     } catch (err) {
         if (plt.kernel.misc.isMobyError(err)) {
@@ -102,8 +102,8 @@ function runSource(aSource) {
 	perms,
 	function() {
 	    try {
-		var defns = C.compiled_dash_program_dash_defns(compiledProgram);
-		var interFunc = C.compiled_dash_program_dash_toplevel_dash_exprs(
+		var defns = C['compiled-program-defns'](compiledProgram);
+		var interFunc = C['compiled-program-toplevel-exprs'](
 		    compiledProgram);
 		var runToplevel = _namespace.eval(defns, interFunc);
 		
@@ -114,7 +114,7 @@ function runSource(aSource) {
 		});
 
 		// Update the pinfo.
-		_pinfo = C.compiled_dash_program_dash_pinfo(compiledProgram);
+		_pinfo = C['compiled-program-pinfo'](compiledProgram);
 	    } catch (err) {
                 if (plt.kernel.misc.isMobyError(err)) {
                     addToInteractions(plt.kernel.misc.mobyErrorToString(err) + "\n");

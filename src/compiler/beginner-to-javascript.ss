@@ -95,7 +95,7 @@
                                                           (identifier->munged-java-identifier a-name))]
                                                   (format "plt._MODULES[~s].EXPORTS[~s] = ~a;\n"
                                                           module-name-string
-                                                          (symbol->string munged-name)
+                                                          (symbol->string a-name)
                                                           munged-name
                                                           )))
                                               defined-names))

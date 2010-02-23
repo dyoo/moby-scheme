@@ -17,17 +17,17 @@ function init() {
     var FALSE = plt.types.Logic.FALSE;
 
     var compilerModule = plt.Kernel.invokeModule("moby/compiler");
-    var pinfo = compilerModule.EXPORTS.get_dash_base_dash_pinfo(symbol("moby"));
+    var pinfo = compilerModule.EXPORTS['get-base-pinfo'](symbol("moby"));
 
     // run: string -> scheme-value
     // Evaluates the string and produces the evaluated scheme value.
     var run = function(aSource) {
 	var namespace = new Namespace();
 	var program = plt.reader.readSchemeExpressions(aSource, "test");
-	var compiledProgram = (compilerModule.EXPORTS.program_dash__greaterthan_compiled_dash_program_slash_pinfo
+	var compiledProgram = (compilerModule.EXPORTS['program->compiled-program/pinfo']
 			       (program, pinfo));
-	var defns = compilerModule.EXPORTS.compiled_dash_program_dash_defns(compiledProgram);
-	var interFunc = compilerModule.EXPORTS.compiled_dash_program_dash_toplevel_dash_exprs(compiledProgram);
+	var defns = compilerModule.EXPORTS['compiled-program-defns'](compiledProgram);
+	var interFunc = compilerModule.EXPORTS['compiled-program-toplevel-exprs'](compiledProgram);
 	var runToplevel = namespace.eval(defns, interFunc);
 	
 	var result;				  
@@ -1088,7 +1088,7 @@ function init() {
 		];
 	    var errorToDom = plt.Kernel.invokeModule(
 		"moby/runtime/error-struct-to-dom").
-		EXPORTS.error_dash_struct_dash__greaterthan_dom_dash_sexp;
+		EXPORTS['error-struct->dom-sexp'];
 	    for(var i = 0; i < errorRecords.length; i++) {
 		var errorString = errorRecords[i][0];
 		var errorTest = errorRecords[i][1];

@@ -10,46 +10,46 @@ goog.provide('plt.world.effects');
     var E = plt.Kernel.invokeModule("moby/runtime/effect-struct").EXPORTS;
 
     var effect_colon_none =
-	E['effect_colon_none'];
+	E['effect:none'];
 
     var effect_colon_beep =
-	E['effect_colon_beep'];
+	E['effect:beep'];
 
     var effect_colon_play_dash_dtmf_dash_tone =
-	E['effect_colon_play_dash_dtmf_dash_tone'];
+	E['effect:play-dtmf-tone'];
 
     var effect_colon_send_dash_sms = 
-	E['effect_colon_send_dash_sms'];
+	E['effect:send-sms'];
 
     var effect_colon_play_dash_sound = 
-	E['effect_colon_play_dash_sound'];
+	E['effect:play-sound'];
 
     var effect_colon_pause_dash_sound = 
-	E['effect_colon_pause_dash_sound'];
+	E['effect:pause-sound'];
 
     var effect_colon_stop_dash_sound = 
-	E['effect_colon_stop_dash_sound'];
+	E['effect:stop-sound'];
 
     var effect_colon_set_dash_sound_dash_volume = 
-	E['effect_colon_set_dash_sound_dash_volume'];
+	E['effect:set-sound-volume'];
 
     var effect_colon_raise_dash_sound_dash_volume = 
-	E['effect_colon_raise_dash_sound_dash_volume'];
+	E['effect:raise-sound-volume'];
 
     var effect_colon_lower_dash_sound_dash_volume = 
-	E['effect_colon_lower_dash_sound_dash_volume'];
+	E['effect:lower-sound-volume'];
 
     var effect_colon_set_dash_wake_dash_lock = 
-	E['effect_colon_set_dash_wake_dash_lock'];
+	E['effect:set-wake-lock'];
 
     var effect_colon_release_dash_wake_dash_lock = 
-	E['effect_colon_release_dash_wake_dash_lock'];
+	E['effect:release-wake-lock'];
 
     var effect_colon_pick_dash_playlist = 
-	E['effect_colon_pick_dash_playlist'];
+	E['effect:pick-playlist'];
 
     var effect_colon_pick_dash_random = 
-	E['effect_colon_pick_dash_random'];
+	E['effect:pick-random'];
 
 
 

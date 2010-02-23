@@ -16,8 +16,8 @@ function doEvaluate() {
 function doCompilation(exprs) {
     var compilerModule = plt.Kernel.invokeModule("moby/compiler");
     var compiledProgram =
-        compilerModule.EXPORTS.program_dash__greaterthan_compiled_dash_program(exprs);
-    return compilerModule.EXPORTS.compiled_dash_program_dash_main(compiledProgram);
+        compilerModule.EXPORTS['program->compiled-program'](exprs);
+    return compilerModule.EXPORTS['compiled-program-main'](compiledProgram);
 }
 </script>
 </head>

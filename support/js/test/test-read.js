@@ -7,13 +7,13 @@ function init() {
     var locOffset = function(loc) {
 	return plt.types.NumberTower.toFixnum(
 	    plt.Kernel.invokeModule(
-		"moby/runtime/stx").EXPORTS.Loc_dash_offset(loc));
+		"moby/runtime/stx").EXPORTS['Loc-offset'](loc));
     }
     
     var locSpan = function(loc) {
 	return plt.types.NumberTower.toFixnum(
 	    plt.Kernel.invokeModule(
-		"moby/runtime/stx").EXPORTS.Loc_dash_span(loc));
+		"moby/runtime/stx").EXPORTS['Loc-span'](loc));
     }
 
 
@@ -58,7 +58,7 @@ function init() {
 
     var stxToDatum = function(aStx) {
 	return plt.Kernel.invokeModule(
-	    "moby/runtime/stx").EXPORTS.stx_dash__greaterthan_datum(aStx);
+	    "moby/runtime/stx").EXPORTS['stx->datum'](aStx);
     }
 
     var tokenize = function(s) {
