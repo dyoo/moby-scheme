@@ -1,10 +1,54 @@
-#lang scheme
+#lang scheme/base
+
+(require test-engine/scheme-tests
+         "anormalize.ss"
+         "../../collects/moby/runtime/stx.ss")
+(require (for-syntax scheme/base
+                     "../../stx-helpers.ss"
+                     "../../collects/moby/runtime/stx.ss"))
+
 
 #|
-This file has several test cases in it. The first is a walk-through of the entire process, detailing the input and output at each stage as the code goes through the high-level functions in each file. The rest are simply input-output pairs that I wrote by hand and verified are correct (and work properly).
+This file has several test cases in it. The first is a walk-through of the entire process,
+detailing the input and output at each stage as the code goes through the high-level functions in each
+file. The rest are simply input-output pairs that I wrote by hand and verified are correct (and work
+properly).
 
-Also, I'm writing everything as s-expressions. If you use stx->datum on all outputs, this is what you will get.
+Also, I'm writing everything as s-expressions. If you use stx->datum on all outputs, this is what you
+will get.
 |#
+
+
+(define-syntax (check-expansion stx)
+  (syntax-case stx ()
+    [(_ original-form expanded-form)
+     (with-syntax ([a-stx-sexp (stx->sexp (syntax->stx #'original-form))])
+       (syntax/loc stx
+         (check-expect (stx->datum 
+                        (anormalize (sexp->stx (quote a-stx-sexp))))
+                       (quote expanded-form))))]))
+
+
+(check-expansion [(define (f x)
+                    (* x x))]
+                 
+                 [(define (d0_f a_x)
+                    (* a_x a_x))])
+
+
+(check-expansion [(define (g x)
+                    x)]
+                 
+                 [(define (d0_g a_x)
+                    a_x)])
+
+
+(test)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#;(
 
 
 ;; Walk through:
@@ -311,3 +355,4 @@ Also, I'm writing everything as s-expressions. If you use stx->datum on all outp
             (local [(define temp0 (d0_max (rest a_lst)))]
               (f0_d0_max temp0 d1_max-rest a_lst))
             (f1_d0_max d1_max-rest a_lst))))))
+)
