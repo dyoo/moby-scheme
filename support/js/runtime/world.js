@@ -1050,7 +1050,7 @@ goog.provide('plt.world.Kernel');
     
     LineImage.prototype.render = function(ctx, xstart, ystart) {
 	ctx.save();
-	ctx.moveTo(0, 0);
+	ctx.moveTo(xstart, ystart);
 	ctx.lineTo((this.x + xstart),
 		   (this.y + ystart));
 	ctx.strokeStyle = this.color.toString();
