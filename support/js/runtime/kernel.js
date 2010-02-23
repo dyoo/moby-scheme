@@ -2449,7 +2449,7 @@ goog.provide('plt.Kernel');
 
 	var coersedExpectedValue =
 	    (typeof(expected) === 'string' ? 
-	     E.make_dash_moby_dash_expected_colon_something(expected) : 
+	     E['make-moby-expected:something'](expected) : 
 	     expected);
 
 	throw makeMobyError(
