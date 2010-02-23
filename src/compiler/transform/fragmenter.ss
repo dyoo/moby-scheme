@@ -1,7 +1,8 @@
-#lang s-exp "../../Documents/Work/Summer_09/moby-scheme/src/compiler/lang.ss"
+#lang s-exp "../lang.ss"
 
 (require "anormal-frag-helpers.ss")
 (require "anormalize.ss")
+(require "../../collects/moby/runtime/stx.ss")
 
 ;; strings to prepend onto fragments and name anonymous expressions
 (define frag-prepend "f~a_~a")
@@ -93,6 +94,7 @@
                        ;; otherwise recur on a new procedure fragment
                        (fragment-help
                         (datum->stx
+                         false
                          (list 'define
                                (cons (string->symbol (format frag-prepend
                                                              frag-counter
@@ -117,6 +119,7 @@
              ;; the fragments are the recursive fragments with the new
              ;;    fragment consed on if it exists
              (make-finfo (datum->stx
+                          false
                           (list 'local
                                 (apply append
                                        (map get-fragments
@@ -142,6 +145,7 @@
            (let* ([first-expr (fragment-help (second expr-list) args name frag-counter)]
                   [rec-rest
                    (fragment-help (datum->stx
+                                   false
                                    (list 'define
                                          (cons (string->symbol
                                                 (format frag-prepend
@@ -156,7 +160,8 @@
                                   args
                                   name
                                   (add1 (finfo-gensym first-expr)))])
-             (make-finfo (datum->stx (list (first expr-list)
+             (make-finfo (datum->stx false
+                                     (list (first expr-list)
                                            (finfo-return first-expr)
                                            (second (stx-e (finfo-return rec-rest))))
                                      (stx-loc expr))
@@ -180,7 +185,8 @@
                                            filtered-args
                                            name
                                            frag-counter)])
-             (make-finfo (datum->stx (list 'define
+             (make-finfo (datum->stx false
+                                     (list 'define
                                            (second expr-list)
                                            (finfo-return rec-rest))
                                      (stx-loc expr))
@@ -195,7 +201,8 @@
                                             args
                                             name
                                             (finfo-gensym then-info))])
-             (make-finfo (datum->stx (list 'if
+             (make-finfo (datum->stx false
+                                     (list 'if
                                            (second expr-list)
                                            (finfo-return then-info)
                                            (finfo-return else-info))
@@ -231,7 +238,8 @@
 (define (fragment program)
   (begin
     (reset-gensym)
-    (datum->stx (apply append (map get-fragments
+    (datum->stx false
+                (apply append (map get-fragments
                                    (stx-e (anormalize program))))
                 (stx-loc program))))
 

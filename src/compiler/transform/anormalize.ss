@@ -1,10 +1,11 @@
-#lang s-exp "../../Documents/Work/Summer_09/moby-scheme/src/compiler/lang.ss"
+#lang s-exp "../lang.ss"
 
 
 (require "anormal-frag-helpers.ss")
-(require "box-local-defs.ss")
-(require "../../Documents/Work/Summer_09/moby-scheme/src/compiler/toplevel.ss")
-(require "../../Documents/Work/Summer_09/moby-scheme/src/compiler/env.ss")
+(require "../../collects/moby/runtime/stx.ss")
+;(require "box-local-defs.ss")
+(require "../toplevel.ss")
+(require "../env.ss")
 
 ;; string with which to name temporary variables
 (define temp-begin "temp~a")
@@ -96,7 +97,8 @@
           ;; and put any raised elements in a local inside the define
           [(equal? first-elt 'define)
            (let ([body-info (anormal-help (third expr-list))])
-             (make-linfo (datum->stx (list (first expr-list)
+             (make-linfo (datum->stx false
+                                     (list (first expr-list)
                                            (second expr-list)
                                            (if (empty? (linfo-raise body-info))
                                                (linfo-return body-info)
@@ -113,7 +115,8 @@
           [(equal? first-elt 'local)
            (let ([defs (map make-anormal (stx-e (second expr-list)))]
                  [body-info (anormal-help (third expr-list))])
-             (make-linfo (datum->stx (list (first expr-list)
+             (make-linfo (datum->stx false
+                                     (list (first expr-list)
                                            (append defs
                                                    (linfo-raise body-info))
                                            (linfo-return body-info))
@@ -129,20 +132,23 @@
                  [then-clause (make-anormal (third expr-list))]
                  [else-clause (make-anormal (fourth expr-list))])
              (if (primitive-expr? (linfo-return condition))
-                 (make-linfo (datum->stx (list 'if
+                 (make-linfo (datum->stx false
+                                         (list 'if
                                                (linfo-return condition)
                                                then-clause
                                                else-clause)
                                          (stx-loc expr))
                              (linfo-raise condition))
                  (let ([temp-symbol (gen-temp-symbol (gensym))])
-                   (make-linfo (datum->stx (list 'if
+                   (make-linfo (datum->stx false
+                                           (list 'if
                                                  temp-symbol
                                                  then-clause
                                                  else-clause)
                                            (stx-loc expr))
                                (append (linfo-raise condition)
                                        (list (datum->stx
+                                              false
                                               (list 'define
                                                     temp-symbol
                                                     (linfo-return condition))
@@ -153,7 +159,8 @@
           [(or (equal? first-elt 'and)
                (equal? first-elt 'or)
                (equal? first-elt 'begin))
-           (make-linfo (datum->stx (map make-anormal expr-list)
+           (make-linfo (datum->stx false
+                                   (map make-anormal expr-list)
                                    (stx-loc expr))
                        empty)]
           ;; for quote, define-struct, and require, we don't want to touch anything
@@ -174,17 +181,20 @@
                                 (make-linfo (cons an-expr (linfo-return rest-args))
                                             (linfo-raise rest-args))
                                 (let ([temp-symbol (gen-temp-symbol (gensym))])
-                                  (make-linfo (cons (datum->stx temp-symbol
+                                  (make-linfo (cons (datum->stx false
+                                                                temp-symbol
                                                                 (stx-loc an-expr))
                                                     (linfo-return rest-args))
-                                              (cons (datum->stx (list 'define
+                                              (cons (datum->stx false
+                                                                (list 'define
                                                                       temp-symbol
                                                                       an-expr)
                                                                 (stx-loc an-expr))
                                                     (linfo-raise rest-args))))))
                           (make-linfo empty empty)
                           (linfo-return arg-info))])
-             (make-linfo (datum->stx (reverse (linfo-return anormal-expr))
+             (make-linfo (datum->stx false
+                                     (reverse (linfo-return anormal-expr))
                                      (stx-loc expr))
                          (append (linfo-raise arg-info)
                                  (reverse (linfo-raise anormal-expr)))))]))))
@@ -199,7 +209,8 @@
       (let ([linfo-out (anormal-help expr)])
         (if (empty? (linfo-raise linfo-out))
             (linfo-return linfo-out)
-            (datum->stx (list 'local
+            (datum->stx false
+                        (list 'local
                               (linfo-raise linfo-out)
                               (linfo-return linfo-out))
                         (stx-loc expr))))))
@@ -211,11 +222,12 @@
 ;;       and generates the list of primitives to insure it acts
 ;;       as a pure function
 (define (anormalize program)
-  (let ([readied (ready-anormalize program)])
+  (let ([readied (void) #;(ready-anormalize program)])
     (begin
       (reset-gensym)
       (reset-prims (generate-prims (stx->datum readied) 'language-here))
-      (datum->stx (map make-anormal (stx-e readied))
+      (datum->stx false
+                  (map make-anormal (stx-e readied))
                   (stx-loc readied)))))
   
 (provide/contract

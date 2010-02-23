@@ -1,8 +1,9 @@
-#lang s-exp "../../Documents/Work/Summer_09/moby-scheme/src/compiler/lang.ss"
+#lang s-exp "../lang.ss"
 
 
 (require "anormal-frag-helpers.ss")
-(require "../../Documents/Work/Summer_09/moby-scheme/src/compiler/rbtree.ss")
+(require "../rbtree.ss")
+(require "../../collects/moby/runtime/stx.ss")
 
 ;; format strings to modify symbols
 ;; to insure unique identifiers later
@@ -57,7 +58,8 @@
                                                        replacements
                                                        (stx-e expr)))
                                 expr
-                                (datum->stx (second (rbtree-lookup symbol<
+                                (datum->stx false
+                                            (second (rbtree-lookup symbol<
                                                                    replacements
                                                                    (stx-e expr)))
                                             (stx-loc expr)))]
@@ -84,7 +86,8 @@
                                                                     symb))))
                                           replacements
                                           new-args)])
-            (datum->stx (list (first expr-list)
+            (datum->stx false
+                        (list (first expr-list)
                               (replace-ids (second expr-list) new-replacements)
                               (replace-ids (third expr-list) new-replacements))
                         (stx-loc expr)))]
@@ -95,13 +98,15 @@
           (let ([new-replacements (foldl get-id-tree
                                          replacements
                                          (stx->datum (second expr-list)))])
-            (datum->stx (list (first expr-list)
+            (datum->stx false
+                        (list (first expr-list)
                               (replace-ids (second expr-list) new-replacements)
                               (replace-ids (third expr-list) new-replacements))
                         (stx-loc expr)))]
          ;; if define-struct, we only want to munge the struct name
          [(equal? first-elt 'define-struct)
-          (datum->stx (list (first expr-list)
+          (datum->stx false
+                      (list (first expr-list)
                             (replace-ids (second expr-list) replacements)
                             (third expr-list))
                       (stx-loc expr))]
@@ -110,7 +115,8 @@
               (equal? first-elt 'require))
           expr]
          ;; otherwise map over the entire expression
-         [else (datum->stx (map (lambda (an-expr)
+         [else (datum->stx false
+                           (map (lambda (an-expr)
                                   (replace-ids an-expr replacements))
                                 expr-list)
                            (stx-loc expr))]))]

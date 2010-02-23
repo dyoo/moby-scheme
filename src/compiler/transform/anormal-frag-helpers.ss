@@ -1,4 +1,6 @@
-#lang s-exp "../../Documents/Work/Summer_09/moby-scheme/src/compiler/lang.ss"
+#lang s-exp "../lang.ss"
+
+(require "../../collects/moby/runtime/stx.ss")
 
 ;; lift information (linfo) contains
 ;;    - return : stx (used as (list-of stx) when folding)
@@ -54,7 +56,8 @@
       (let ([stx-list (stx-e a-def)])
         (if (and (stx:atom? (second stx-list))
                  (stx-begins-with? (third stx-list) 'lambda))
-            (datum->stx (list (first stx-list)
+            (datum->stx false
+                        (list (first stx-list)
                               (cons (second stx-list)
                                     (stx-e (second (stx-e (third stx-list)))))
                               (third (stx-e (third stx-list))))
