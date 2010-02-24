@@ -27,4 +27,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Android APK packages can now be built by Moby even without Java or the Android SDK locally installed."))
+(define release-notes '("Android APK packages can now be built by Moby even without Java or the Android SDK locally installed.  Improved syntax error messages."))
