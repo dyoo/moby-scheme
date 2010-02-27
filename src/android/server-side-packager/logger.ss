@@ -4,7 +4,8 @@
          scheme/path)
 ;; Logger module; record programs that have been sent to us.
 
-(require "../../program-resources.ss")
+(require "../../program-resources.ss"
+         "../helpers.ss")
 
 
 (define-struct logger (semaphore logfile-path))
@@ -15,6 +16,12 @@
 (define (-make-logger logfile-path)
   (make-logger (make-semaphore 1)
                (normalize-path logfile-path)))
+
+;; sexp->compressed-bytes: sexp -> bytes
+(define (sexp->compressed-bytes an-sexp)
+  (let ([op (open-output-bytes)])
+    (write an-sexp op)
+    (gzip-bytes (get-output-bytes op))))
 
 
 ;; logger-add!: logger string program-resources any -> void
@@ -27,7 +34,9 @@
        (lambda (op)
          (write `((time ,(current-inexact-milliseconds))
                   (client-ip ,client-ip)
-                  (program ,(program/resources->sexp a-program/resources))
+                  (compressed-program/resources-sexp 
+                   ,(sexp->compressed-bytes 
+                     (program/resources->sexp a-program/resources)))
                   (other-attributes ,other-attributes))
                 op)
          (newline op))
