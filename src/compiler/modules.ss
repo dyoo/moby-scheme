@@ -69,7 +69,8 @@
 
 
 
-
+;; FIXME: this should not be here; it should be read off runtime-bindings.ss
+;; We need to attach the permissions properly from the scheme source.
 (define world-effects-module 
   (local [;; bf: symbol path number boolean string -> binding:function
           ;; Helper function.
@@ -82,16 +83,16 @@
                          module-path
                          (list (bf 'make-effect:none module-path 0
                                    false 
-                                   "make_dash_effect_colon_none")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:none']")
                                (bf 'make-effect:beep module-path 0
                                    false 
-                                   "make_dash_effect_colon_beep")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:beep']")
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false 
-                                   "make_dash_effect_colon_play_dash_dtmf_dash_tone")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:play-dtmf-tone']")
                                (make-binding:function 
                                 'make-effect:send-sms module-path 2 false 
-                                "make_dash_effect_colon_send_dash_sms"
+                                "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:send-sms']"
                                 (list PERMISSION:SEND-SMS)
                                 false)                               
                                (make-binding:function
@@ -99,40 +100,42 @@
                                 module-path
                                 1
                                 false 
-                                "make_dash_effect_colon_play_dash_sound"
+                                "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:play-sound']"
                                 (list PERMISSION:INTERNET)
                                 false)
                                (bf 'make-effect:stop-sound module-path 1
                                    false 
-                                   "make_dash_effect_colon_stop_dash_sound")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:stop-sound']")
                                (bf 'make-effect:pause-sound module-path 1
                                    false
-                                   "make_dash_effect_colon_pause_dash_sound")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:pause-sound']")
                                (bf 'make-effect:set-sound-volume module-path 1
                                    false 
-                                   "make_dash_effect_colon_set_dash_sound_dash_volume")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:set-sound-volume']")
                                (bf 'make-effect:raise-sound-volume module-path 0
                                    false
-                                   "make_dash_effect_colon_raise_dash_sound_dash_volume")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:raise-sound-volume']")
                                (bf 'make-effect:lower-sound-volume module-path 0
                                    false 
-                                   "make_dash_effect_colon_lower_dash_sound_dash_volume")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:lower-sound-volume']")
                                
                                (make-binding:function 'make-effect:set-wake-lock module-path 1
-                                   false "make_dash_effect_colon_set_dash_wake_dash_lock" 
+                                   false 
+				   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:set-wake-lock']" 
                                    (list PERMISSION:WAKE-LOCK) 
                                    false)
                                (make-binding:function
                                 'make-effect:release-wake-lock
                                 module-path
                                 0
-                                false "make_dash_effect_colon_release_dash_wake_dash_lock"
+                                false 
+				"plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:release-wake-lock']"
                                 (list PERMISSION:WAKE-LOCK)
                                 false)
                                (bf 'make-effect:pick-playlist module-path 1 false
-                                   "make_dash_effect_colon_pick_dash_playlist")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:pick-playlist']")
                                (bf 'make-effect:pick-random module-path 2 false
-                                   "make_dash_effect_colon_pick_dash_random")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:pick-random']")
                                ))))
 
 
