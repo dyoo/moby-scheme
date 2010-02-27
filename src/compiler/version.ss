@@ -1,7 +1,7 @@
 #lang s-exp "lang.ss"
 
 (define MAJOR "2")
-(define MINOR "33")
+(define MINOR "34")
 
 (define VERSION (format "~a.~a" MAJOR MINOR))
 

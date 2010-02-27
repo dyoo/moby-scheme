@@ -11,8 +11,8 @@
          "../../program-resources.ss"
          "../helpers.ss")
 
-(define current-server-url (make-parameter "http://localhost:8080/package/"
-                                           #;"http://go.cs.brown.edu/package/"))
+(define current-server-url (make-parameter #;"http://localhost:8080/package/"
+                                           "http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
