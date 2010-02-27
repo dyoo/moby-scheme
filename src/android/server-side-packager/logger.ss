@@ -27,8 +27,8 @@
        (lambda (op)
          (write `((time ,(current-inexact-milliseconds))
                   (client-ip ,client-ip)
-                  (program ,(program/resources->sexp a-program-resources))
-                  (other-attributes ,other-attibutes))
+                  (program ,(program/resources->sexp a-program/resources))
+                  (other-attributes ,other-attributes))
                 op)
          (newline op))
        #:exists 'append))))
@@ -37,6 +37,6 @@
 
 
 (provide/contract
- [logger? (any/c? . -> . boolean?)]
+ [logger? (any/c . -> . boolean?)]
  [rename -make-logger make-logger (path-string? . -> . logger?)]
- [logger-add! (logger? string? program/resources? . -> . any)])
+ [logger-add! (logger? string? program/resources? any/c . -> . any)])
