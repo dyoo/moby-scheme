@@ -143,10 +143,11 @@ test = function(){
 	print("Elapsed time : " + startTime-endTime);
 };
 
-if(verbose)
+
 	print("--Script loaded--\n"
 			 + "Initial CallCount: " + callcount
 			 +"\nBreakAt: " + breakat
 			 + "\nVerbosity: " + verbose
 			 + "\nLoop Verbosity: " + loopverbose
+			 + "\nDebug Mode: " + debug
 			 + "\nContinuation print: " + printContinuation);
