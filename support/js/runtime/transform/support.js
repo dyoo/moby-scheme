@@ -1,6 +1,7 @@
-verbose = true;
-loopverbose = true;
+verbose = false;
+loopverbose = false;
 debug = false;
+printContinuation = true;
 
 ContinuationFrame = function(){
 	this.continuation;
@@ -58,10 +59,6 @@ SaveContinuationException = function(){
 					};
 	this.Replace = function(extension)
 					{this.new_frames = this.new_frames.rest;this.Extend(extension);};
-	this.printContinuation = function(){
-							var newFrames = this.new_frames;
-							var oldFrames = this.old_frames;
-							};
 };
 
 
@@ -85,6 +82,16 @@ Continuation.prototype.Reload = function(restart_value){
 	return rev.first.Reload(rev.rest, restart_value);
 };
 
+Continuation.prototype.print = function(){
+	print("--- PRINTING THE CONTINUATION ---");
+	var _frames = this.frames;
+	while(_frames!=null){
+		_frames.first.print();
+		_frames = _frames.rest;
+	}
+	print("--- PRINTING DONE. ---");
+};
+
 Continuation.BeginUnwind = function(){
 	if(verbose)
 		print("-- Beginning to unwind");
@@ -100,6 +107,10 @@ CWCC_frame0.prototype.Invoke = function(return_value){
 	return this.receiver(return_value);
 };
 
+CWCC_frame0.prototype.print = function(){
+	print("CWCC Frame0");
+};
+
 Continuation.CWCC = function(receiver){
 	if(verbose){
 		print("-- Call/cc");
@@ -107,7 +118,7 @@ Continuation.CWCC = function(receiver){
 	}
 	try
 	{
-		Continuation.BeginUnwind();12586268025
+		Continuation.BeginUnwind();
 	}catch(sce)
 	{
 		if(verbose)
@@ -153,6 +164,8 @@ Continuation.InitialContinuationAux = function(thunk){
 	}catch(sce)
 	{
 		k = sce.toContinuation();
+		if(printContinuation)
+			k.print();
 		if(verbose)
 			print("-- Init aux: SCE.toContinuation ok");
 		throw new WithinInitialContinuationException(function(){
