@@ -2,8 +2,8 @@ load("support.js");
 
 
 callcount = 0;
-breakat = 10;
-breakevery = 10;
+breakat = 100;
+breakevery = 100;
 
 sum_pause = function(){
 	if(verbose)
@@ -132,15 +132,15 @@ sum = function(n,acc){
 	// resetting the control variables
 	// these will be changed during the execution
 	callcount = 0;
-	breakat = 10;
+	breakat = 100;
 	return Continuation.EstablishInitialContinuation(function(){return sum_an(n,acc);});
 };
 
 test = function(){
 	var startTime = new Date();
-	print(sum(1000000,0));
+	print(sum(100000,0));
 	var endTime = new Date();
-	print("Elapsed time : " + startTime-endTime);
+	print("Elapsed time : " + (endTime-startTime));
 };
 
 
