@@ -141,6 +141,11 @@ fib = function(n){
 	return Continuation.EstablishInitialContinuation(function(){return fib_an(n,1,1,2);});
 };
 
-if(verbose)
-	print("--Script loaded--\nInitial CallCount: " + callcount + 
-			"\nBreakAt: " + breakat + "\nLoop Verbosity: " + loopverbose);
+
+		print("--Script loaded--\n"
+			 + "Initial CallCount: " + callcount
+			 +"\nBreakAt: " + breakat
+			 + "\nVerbosity: " + verbose
+			 + "\nLoop Verbosity: " + loopverbose
+			 + "\nDebug Mode: " + debug
+			 + "\nContinuation print: " + printContinuation);
