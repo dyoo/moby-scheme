@@ -138,9 +138,11 @@ sum = function(n,acc){
 
 test = function(){
 	var startTime = new Date();
-	print(sum(1000000,0));
+	var result = sum(1000000,0);
+	print(result);
 	var endTime = new Date();
 	print("Elapsed time : " + startTime-endTime);
+	return result;
 };
 
 
