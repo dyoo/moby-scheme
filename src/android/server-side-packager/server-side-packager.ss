@@ -8,6 +8,7 @@
          web-server/servlet-env
          net/uri-codec
          xml
+         "logger.ss"
          "../../collects/moby/runtime/stx.ss"
          "../../resource.ss"
          "../../program-resources.ss"
@@ -28,6 +29,8 @@
 
 (define-runtime-path HTDOCS-PATH "htdocs")
 
+(define current-access-logger (make-parameter #f))
+
 
 ;; start: request -> response
 (define (start req)
@@ -37,12 +40,24 @@
     (let* ([bindings (get-bindings req)]
            [name (parse-program-name bindings)]
            [program/resources (parse-program/resources bindings)])
-      
+      (write-to-access-log! req program/resources)
       (cond
         [(and name program/resources)
          (make-package-response name (build-android-package name program/resources))]
         [else
          (error-no-program)]))))
+
+
+;; write-to-access-log!: request program/resources -> void
+(define (write-to-access-log! req program/resources)
+  (when (current-access-logger)
+    (with-handlers ([void (lambda (exn)
+                           (write (exn-message exn) (current-error-port)))])
+      (logger-add! (current-access-logger)
+                   (request-client-ip req)
+                   program/resources
+                   '()))))
+
 
 
 ;; get-bindings: request -> bindings
@@ -159,10 +174,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define PORT (make-parameter 8080))
-
+(define LOGFILE-PATH (make-parameter (build-path (current-directory) "access.log")))
 (command-line #:once-each 
               [("-p" "--port") port "Use port for web server"
-                               (PORT (string->number port))])
+                               (PORT (string->number port))]
+              [("-L" "--logfile-dir") logfile-dir "Use the directory to write access.log"
+                                      (LOGFILE-PATH (build-path logfile-dir "access.log"))])
+
+(current-access-logger (make-logger (LOGFILE-PATH)))
 (serve/servlet start
                #:launch-browser? #f
                #:quit? #f
