@@ -2,8 +2,8 @@ load("support.js");
 
 
 callcount = 0;
-breakat = 10000;
-breakevery = 10000;
+breakat = 10;
+breakevery = 10;
 
 sum_pause = function(){
 	if(verbose)
@@ -29,6 +29,10 @@ sum_frame0 = function(n, acc){
 sum_frame0.prototype = new ContinuationFrame;
 sum_frame0.prototype.Invoke = function(return_value){
 	return sum_an0(this.n,this.acc);
+};
+
+sum_frame0.prototype.print = function(){
+	print("Sum Frame 0: n = " + this.n + " - acc = " + this.acc);
 };
 
 
@@ -128,7 +132,7 @@ sum = function(n,acc){
 	// resetting the control variables
 	// these will be changed during the execution
 	callcount = 0;
-	breakat = 10000;
+	breakat = 10;
 	return Continuation.EstablishInitialContinuation(function(){return sum_an(n,acc);});
 };
 
@@ -140,5 +144,9 @@ test = function(){
 };
 
 if(verbose)
-	print("--Script loaded--\nInitial CallCount: " + callcount + 
-			"\nBreakAt: " + breakat + "\nLoop Verbosity: " + loopverbose);
+	print("--Script loaded--\n"
+			 + "Initial CallCount: " + callcount
+			 +"\nBreakAt: " + breakat
+			 + "\nVerbosity: " + verbose
+			 + "\nLoop Verbosity: " + loopverbose
+			 + "\nContinuation print: " + printContinuation);
