@@ -2,8 +2,8 @@ load("support.js");
 
 
 callcount = 0;
-breakat = 100;
-breakevery = 100;
+breakat = 10;
+breakevery = 10;
 
 fib_pause = function(){
 	if(verbose)
@@ -30,6 +30,13 @@ fib_frame0 = function(n,f,s,i){
 fib_frame0.prototype = new ContinuationFrame;
 fib_frame0.prototype.Invoke = function(return_value){
 	return fib_an0(this.n,this.f,this.s,this.i);
+};
+
+fib_frame0.prototype.print = function(){
+	print("Fib Frame 0: n = " + this.n
+			 + " - f = " + this.f
+			 + " - s = " + this.s
+			 + " - i = " + this.i);
 };
 
 // FIB_AN
@@ -130,7 +137,7 @@ fib = function(n){
 	// resetting the control variables
 	// these will be changed during the execution
 	callcount = 0;
-	breakat = 100;
+	breakat = 10;
 	return Continuation.EstablishInitialContinuation(function(){return fib_an(n,1,1,2);});
 };
 
