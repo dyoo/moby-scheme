@@ -142,11 +142,18 @@ Continuation.CWCC = function(receiver){
     return null;
 };
 
-WithinInitialContinuationException = function(thunk){
+WithinInitialContinuationException = function(k){
     if(verbose)
 	print("-- WIC: a new WIC raised");
-    this.thunk = thunk;
+    this.k = k;
 };
+
+
+WithinInitialContinuationException.prototype.thunk = function() {
+    return this.k.Reload(this.k);
+};
+
+
 
 Continuation.EstablishInitialContinuation = function(thunk){
     if(verbose){
@@ -172,15 +179,12 @@ Continuation.InitialContinuationAux = function(thunk){
     try
     {
 	return thunk();
-    }catch(sce)
-    {
+    } catch(sce) {
 	k = sce.toContinuation();
 	if(printContinuation)
 	    k.print();
 	if(verbose)
 	    print("-- Init aux: SCE.toContinuation ok");
-	throw new WithinInitialContinuationException(function(){
-	    return k.Reload(k);
-	});
+	throw new WithinInitialContinuationException(k);
     }
 };

@@ -6,6 +6,10 @@ breakat = 1;
 breakevery = 1;
 
 
+function nullFunction(cont) {
+    return null;
+}
+
 sum_pause = function(){
     if(verbose)
 	print("PAUSING at " + callcount);
@@ -15,8 +19,7 @@ sum_pause = function(){
     if(verbose)
 	print("next pause at "+ breakat);
 
-    return Continuation.CWCC (function(cont){
-	return null;});
+    return Continuation.CWCC(nullFunction);
 };
 
 // SUM FRAME 0
