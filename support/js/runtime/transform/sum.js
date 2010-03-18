@@ -2,8 +2,8 @@ load("support.js");
 
 
 callcount = 0;
-breakat = 1;
-breakevery = 1;
+breakat = 10;
+breakevery = 10;
 
 
 function nullFunction(cont) {
