@@ -179,8 +179,10 @@ Continuation.InitialContinuationAux = function(thunk){
 	    k.print();
 	if(verbose)
 	    print("-- Init aux: SCE.toContinuation ok");
-	throw new WithinInitialContinuationException(function(){
-	    return k.Reload(k);
-	});
+	throw new WithinInitialContinuationException(makeThunk(k));
     }
 };
+
+function makeThunk(k) { 
+    return function() { return k.Reload(k); }
+}
