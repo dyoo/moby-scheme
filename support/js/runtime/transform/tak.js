@@ -183,7 +183,7 @@ tak = function(x,y,z){
 
 test = function(){
     var startTime = new Date();
-    var result = tak(1800,1200,600);
+    var result = tak(18,12,6);
     print(result);
     var endTime = new Date();
     print("Elapsed time : " + startTime-endTime);
