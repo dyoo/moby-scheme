@@ -36,6 +36,7 @@ FrameList.reverse = function(originalFrameList){
     return result;
 };
 
+<<<<<<< HEAD:support/js/runtime/transform/support.js
 FrameList.prototype.print = function(){
 //     var frames = this;
 //     while(frames!=null){
@@ -51,6 +52,33 @@ SaveContinuationException = function(){
 
 SaveContinuationException.prototype.Extend = function(extension) {
     this.new_frames = new FrameList(extension, this.new_frames);
+=======
+SaveContinuationException = function(){
+    if(verbose)
+	print("-- SCE: a new SCE raised");
+    this.new_frames = null;
+    this.old_frames = null;
+};
+
+SaveContinuationException.prototype.Extend = function(extension) {
+    this.new_frames = new FrameList(extension, this.new_frames);
+};
+
+SaveContinuationException.prototype.Append = function(old_frames) {
+    this.old_frames = old_frames;
+};
+
+SaveContinuationException.prototype.Replace = function(extension) {
+    this.new_frames = this.new_frames.rest;
+    this.Extend(extension);
+};
+
+
+SaveContinuationException.prototype.toContinuation = function() {
+    if(verbose)
+	print("-- SCE: toContinuation started");
+    return new Continuation(this.new_frames,this.old_frames);
+>>>>>>> caner/master:support/js/runtime/transform/support.js
 };
 
 SaveContinuationException.prototype.Append = function(old_frames) {
@@ -124,12 +152,11 @@ CWCC_frame0.prototype.print = function(){
 
 Continuation.CWCC = function(receiver){
     if(verbose){
-	print("-- Call/cc");
-	//print(receiver);
+		print("-- Call/cc");
     }
     try
     {
-	Continuation.BeginUnwind();
+		Continuation.BeginUnwind();
     }catch(sce)
     {
 	if(verbose)
@@ -152,7 +179,6 @@ WithinInitialContinuationException = function(k){
 WithinInitialContinuationException.prototype.thunk = function() {
     return this.k.Reload(this.k);
 };
-
 
 
 Continuation.EstablishInitialContinuation = function(thunk){
