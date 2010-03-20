@@ -24,7 +24,7 @@ ContinuationFrame.prototype.Reload = function(frames_above, restart_value){
     try {
 	return this.Invoke(continue_value);
     } catch(sce) {
-        if (! sce instanceof SaveContinuationException) { throw sce; }
+        if (! (sce instanceof SaveContinuationException)) { throw sce; }
 	if(verbose)
 	    print("-- ContinuationFrame : caught a SCE!");
 	sce.Append(this.continuation);
@@ -123,7 +123,7 @@ Continuation.CWCC = function(receiver){
 		Continuation.BeginUnwind();
     }catch(sce)
     {
-        if (! sce instanceof SaveContinuationException) { throw sce; }
+        if (! (sce instanceof SaveContinuationException)) { throw sce; }
 	if(verbose)
 	    print("-- Call/cc : caught a SCE!");
 	sce.Extend(new CWCC_frame0(receiver));
@@ -149,7 +149,7 @@ Continuation.EstablishInitialContinuation = function(thunk){
 	    return Continuation.InitialContinuationAux(thunk);
 	}catch(wic)
 	{
-	    if (! wic instanceof WithinInitialContinuationException) { throw wic; }
+	    if (! (wic instanceof WithinInitialContinuationException)) { throw wic; }
 	    if(loopverbose)
 		print("-- EIC: loop-caught");
 	    thunk = wic.thunk;
@@ -162,6 +162,7 @@ Continuation.InitialContinuationAux = function(thunk){
     {
 	return thunk();
     } catch(sce) {
+        if (! (sce instanceof SaveContinuationException)) { throw sce; }
 	k = sce.toContinuation();
 	if(printContinuation)
 	    k.print();

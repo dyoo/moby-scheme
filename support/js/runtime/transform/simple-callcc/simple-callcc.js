@@ -38,7 +38,7 @@ load("../support.js");
 var f = function() {
     var temp1;
     try {
-        temp1 = Continuation.CWCC(function(k) { return k("hello"); } );
+        temp1 = Continuation.CWCC(function(k) { return hello; } );
     } catch (sce) {
          if (! sce instanceof SaveContinuationException) { throw sce; }
          sce.Extend(new f0_frame());
