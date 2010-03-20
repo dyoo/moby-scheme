@@ -5,24 +5,24 @@ printContinuation = false;
 
 ContinuationFrame = function(){
     this.continuation;
-    this.Reload = function(frames_above, restart_value){
-	var continue_value = (frames_above == null) ? 
-	    restart_value : 
-	    frames_above.first.Reload(frames_above.rest, restart_value);
-	try
-	{
-	    return this.Invoke(continue_value);
-	}catch(sce)
-	{
-	    if(verbose)
-		print("-- ContinuationFrame : caught a SCE!");
-	    sce.Append(this.continuation);
-	    throw sce;
-	}
-    };
 };
 
-FrameList = function(_first,_rest){
+ContinuationFrame.prototype.Reload = function(frames_above, restart_value){
+    var continue_value = ((frames_above == null) ? 
+			  restart_value : 
+			  frames_above.first.Reload(frames_above.rest, restart_value));
+    try {
+	return this.Invoke(continue_value);
+    } catch(sce) {
+	if(verbose)
+	    print("-- ContinuationFrame : caught a SCE!");
+	sce.Append(this.continuation);
+	throw sce;
+    }
+};
+
+
+FrameList = function(_first, _rest){
     this.first = _first;
     this.rest = _rest;
 };
@@ -36,23 +36,9 @@ FrameList.reverse = function(originalFrameList){
     return result;
 };
 
-<<<<<<< HEAD:support/js/runtime/transform/support.js
 FrameList.prototype.print = function(){
-//     var frames = this;
-//     while(frames!=null){
-//     }
 };
 
-SaveContinuationException = function(){
-    if(verbose)
-	print("-- SCE: a new SCE raised");
-    this.new_frames = null;
-    this.old_frames = null;
-};
-
-SaveContinuationException.prototype.Extend = function(extension) {
-    this.new_frames = new FrameList(extension, this.new_frames);
-=======
 SaveContinuationException = function(){
     if(verbose)
 	print("-- SCE: a new SCE raised");
@@ -78,7 +64,6 @@ SaveContinuationException.prototype.toContinuation = function() {
     if(verbose)
 	print("-- SCE: toContinuation started");
     return new Continuation(this.new_frames,this.old_frames);
->>>>>>> caner/master:support/js/runtime/transform/support.js
 };
 
 SaveContinuationException.prototype.Append = function(old_frames) {

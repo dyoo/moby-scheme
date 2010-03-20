@@ -1,4 +1,4 @@
-load("support.js");
+load("../support.js");
 
 // Translation of the function:
 //
@@ -47,8 +47,8 @@ var f = function() {
 }
 var f_frame = function() {
 };
-f_frame0.prototype = new ContinuationFrame;
-f_frame0.prototype.Invoke = function() {
+f_frame.prototype = new ContinuationFrame;
+f_frame.prototype.Invoke = function() {
     return f();
 }
 
