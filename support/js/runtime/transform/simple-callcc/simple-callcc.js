@@ -40,6 +40,7 @@ var f = function() {
     try {
         temp1 = Continuation.CWCC(function(k) { return k("hello"); } );
     } catch (sce) {
+         if (! sce instanceof SaveContinuationException) { throw sce; }
          sce.Extend(new f0_frame());
 	 throw sce;
     }
@@ -48,7 +49,7 @@ var f = function() {
 
 var f_frame = function() {
 };
-f_frame.prototype = new ContinuationFrame;
+f_frame.prototype = new ContinuationFrame();
 f_frame.prototype.Invoke = function(v) { return f(); };
 
 
@@ -58,7 +59,7 @@ var f0 = function(temp1) {
 var f0_frame = function(temp1) {
     this.temp1 = temp1;
 };
-f0_frame.prototype = new ContinuationFrame;
+f0_frame.prototype = new ContinuationFrame();
 f0_frame.prototype.Invoke = function(v) { return f0(v); }
 
 
