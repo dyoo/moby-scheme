@@ -47,11 +47,6 @@ var f = function() {
     return f0(temp1);
 }
 
-var f_frame = function() {
-};
-f_frame.prototype = new ContinuationFrame();
-f_frame.prototype.Invoke = function(v) { return f(); };
-
 
 var f0 = function(temp1) {
     return [temp1, "world"];
