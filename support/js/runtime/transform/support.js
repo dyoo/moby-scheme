@@ -3,13 +3,6 @@
 
 //////////////////////////////////////////////////////////////////////
 
-// GLOBALS
-
-verbose = false;
-loopverbose = false;
-debug = false;
-printContinuation = false;
-
 
 //////////////////////////////////////////////////////////////////////
 
@@ -30,8 +23,6 @@ ContinuationFrame.prototype.Reload = function(frames_above, restart_value){
 	return this.Invoke(continue_value);
     } catch(sce) {
         if (! (sce instanceof SaveContinuationException)) { throw sce; }
-	if(verbose)
-	    print("-- ContinuationFrame : caught a SCE!");
 	sce.Append(this.continuation);
 	throw sce;
     }
@@ -59,16 +50,12 @@ FrameList.reverse = function(originalFrameList){
     return result;
 };
 
-FrameList.prototype.print = function(){
-};
 
 FrameList.prototype.toString = function() { return "[FrameList]"; }
 
 //////////////////////////////////////////////////////////////////////
 
 SaveContinuationException = function(){
-    if(verbose)
-	print("-- SCE: a new SCE raised");
     this.new_frames = null;
     this.old_frames = null;
 };
@@ -82,19 +69,21 @@ SaveContinuationException.prototype.Append = function(old_frames) {
 };
 
 SaveContinuationException.prototype.toContinuation = function() {
-    if(verbose)
-	print("-- SCE: toContinuation started");
-    return new Continuation(this.new_frames,this.old_frames);
+    return new Continuation(this.new_frames, this.old_frames);
 };
 
 SaveContinuationException.prototype.toString = function() { return "[SaveContinuationException]"; }
+
+
+ReplaceContinuationException = function(k, v) {
+    this.k = k;
+    this.v = v;
+}
 
 //////////////////////////////////////////////////////////////////////
 
 
 var Continuation = function(new_frames, old_frames){
-    if(verbose)
-	print("here's another continuation");
     this.frames = old_frames;
     while(new_frames !== null){
 	// head_frame is a ContinuationFrame 
@@ -107,84 +96,72 @@ var Continuation = function(new_frames, old_frames){
     }
 };
 
-Continuation.prototype.Reload = function(restart_value){
+Continuation.prototype.popTopFrame = function() {
+    return new Continuation(null, this.frames.rest);
+}
+
+
+Continuation.prototype.reload = function(restart_value){
     var rev = FrameList.reverse(this.frames);
     return rev.first.Reload(rev.rest, restart_value);
-};
-
-Continuation.prototype.print = function(){
-    print("--- PRINTING THE CONTINUATION ---");
-    var _frames = this.frames;
-    while(_frames!=null){
-	_frames.first.print();
-	_frames = _frames.rest;
-    }
-    print("--- PRINTING DONE. ---");
 };
 
 Continuation.prototype.toString = function() { return "[Continuation]"; };
 
 Continuation.BeginUnwind = function(){
-    if(verbose)
-	print("-- Beginning to unwind");
     throw new SaveContinuationException();
 };
 
 Continuation.CWCC = function(receiver){
-    if(verbose){
-		print("-- Call/cc");
-    }
-    try
-    {
-		Continuation.BeginUnwind();
-    }catch(sce)
-    {
+    try {
+        Continuation.BeginUnwind();
+    } catch(sce) {
         if (! (sce instanceof SaveContinuationException)) { throw sce; }
-	if(verbose)
-	    print("-- Call/cc : caught a SCE!");
 	sce.Extend(new CWCC_frame0(receiver));
 	throw sce;
     }
-    if(verbose) 
-	print("!!! Should never get here, something's wrong !!!");
     return null;
 };
 
+Continuation.apply = function(k, v) {
+    throw new ReplaceContinuationException(k, v);
+};
 
 
+// thunk -> object
 Continuation.EstablishInitialContinuation = function(thunk){
-    if(verbose){
-	print("-- EIC: ");
-	//print(thunk);
-    }
-    while(true){
-	try
-	{
-	    if(loopverbose)
-		print("-- EIC: loop-try");
+    while (true){
+	try {
 	    return Continuation.InitialContinuationAux(thunk);
-	}catch(wic)
-	{
+	} catch(wic) {
 	    if (! (wic instanceof WithinInitialContinuationException)) { throw wic; }
-	    if(loopverbose)
-		print("-- EIC: loop-caught");
 	    thunk = wic.thunk;
 	}
     }
 };
 
+// thunk -> object
 Continuation.InitialContinuationAux = function(thunk){
     try
     {
 	return thunk();
     } catch(sce) {
-        if (! (sce instanceof SaveContinuationException)) { throw sce; }
-	k = sce.toContinuation();
-	if(printContinuation)
-	    k.print();
-	if(verbose)
-	    print("-- Init aux: SCE.toContinuation ok");
-	throw new WithinInitialContinuationException(k);
+        if (sce instanceof SaveContinuationException) { 
+	    k = sce.toContinuation();
+	    // fixme: fix lexical scoping issue here
+	    throw new WithinInitialContinuationException(makeWICThunk(k));
+        } else if (sce instanceof ReplaceContinuationException)  {
+            return sce.k.reload(sce.v);
+        } else {
+	    throw sce;
+        }
+    }
+};
+
+var makeWICThunk = function(k) {
+    return function() {
+        var adjustedContinuation = k.popTopFrame();
+	return k.reload(adjustedContinuation);
     }
 };
 
@@ -192,31 +169,21 @@ Continuation.InitialContinuationAux = function(thunk){
 //////////////////////////////////////////////////////////////////////
 
 CWCC_frame0 = function(receiver){
+    ContinuationFrame.call(this);
     this.receiver = receiver;
 };
-
 CWCC_frame0.prototype = new ContinuationFrame();
 CWCC_frame0.prototype.Invoke = function(return_value){
     return this.receiver(return_value);
 };
-
-CWCC_frame0.prototype.print = function(){
-    print("CWCC Frame0");
-};
-
 CWCC_frame0.prototype.toString = function() { return "[CWCC_frame0]"; };
 
 
 //////////////////////////////////////////////////////////////////////
-WithinInitialContinuationException = function(k){
-    if(verbose)
-	print("-- WIC: a new WIC raised");
-    this.k = k;
+WithinInitialContinuationException = function(thunk){
+    this.thunk = thunk;
 };
 
-WithinInitialContinuationException.prototype.thunk = function() {
-    return this.k.Reload(this.k);
-};
 
 WithinInitialContinuationException.prototype.toString = function() { return "[WithinInitialContinuationException]"; };
 

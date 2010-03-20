@@ -38,7 +38,7 @@ load("../support.js");
 var f = function() {
     var temp1;
     try {
-        temp1 = Continuation.CWCC(function(k) { console.log("Continuation looks like this:"); console.log(k); return "hello"; } );
+        temp1 = Continuation.CWCC(function(k) { return Continuation.apply(k, "hello"); } );
     } catch (sce) {
          if (! (sce instanceof SaveContinuationException)) { throw sce; }
          sce.Extend(new f0_frame());
@@ -52,6 +52,7 @@ var f0 = function(temp1) {
     return [temp1, "world"];
 };
 var f0_frame = function(temp1) {
+    ContinuationFrame.call(this);
     this.temp1 = temp1;
 };
 f0_frame.prototype = new ContinuationFrame();
