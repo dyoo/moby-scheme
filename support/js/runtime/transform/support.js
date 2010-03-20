@@ -142,15 +142,14 @@ Continuation.EstablishInitialContinuation = function(thunk){
 
 // thunk -> object
 Continuation.InitialContinuationAux = function(thunk){
-    try
-    {
+    try {
 	return thunk();
     } catch(sce) {
         if (sce instanceof SaveContinuationException) { 
 	    k = sce.toContinuation();
-	    // fixme: fix lexical scoping issue here
 	    throw new WithinInitialContinuationException(makeWICThunk(k));
         } else if (sce instanceof ReplaceContinuationException)  {
+            // NOTE: maybe this code belongs in the trampoline established in EstablishInitialContinuation.
             return sce.k.reload(sce.v);
         } else {
 	    throw sce;

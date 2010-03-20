@@ -12,13 +12,7 @@ function nullFunction(cont) {
 }
 
 pause = function(){
-    if(verbose)
-	print("PAUSING at " + callcount);
-
     breakat = callcount + breakevery;
-
-    if(verbose)
-	print("next pause at "+ breakat);
 
     return Continuation.CWCC(nullFunction);
 };
@@ -44,15 +38,11 @@ even_question_frame0.prototype.print = function(){
 // EVEN_AN
 
 even_question_an = function(n){
-    if(debug)
-	print("even_question_an : n = " + n);
     callcount+=1;
     if(callcount == breakat){
 	try{
 	    pause();
 	}catch(sce){
-	    if(verbose)
-		print("-- Even_an: caught a SCE!");
 	    sce.Extend(new even_question_frame0(n));
 	    throw sce;
 	}
@@ -74,8 +64,6 @@ even_question_frame1.prototype.Invoke = function(return_value){
 // even_question_AN0
 
 even_question_an0 = function(n){
-    if(debug)
-	print("even_question_an0 : n = " + n);
     if(n==0)
 		return true;
     var temp0;
@@ -84,8 +72,6 @@ even_question_an0 = function(n){
 		temp0 = n-1;
     }catch(sce)
     {
-	if(verbose)
-	    print("even_question an0: caught!");
 	sce.Extend(new even_question_frame1(n));
 	throw sce;
     }
@@ -118,15 +104,11 @@ odd_question_frame0.prototype.print = function(){
 // odd_AN
 
 odd_question_an = function(n){
-    if(debug)
-	print("odd_question_an : n = " + n);
     callcount+=1;
     if(callcount == breakat){
 	try{
 	    pause();
 	}catch(sce){
-	    if(verbose)
-		print("-- odd_an: caught a SCE!");
 	    sce.Extend(new odd_question_frame0(n));
 	    throw sce;
 	}
@@ -148,8 +130,6 @@ odd_question_frame1.prototype.Invoke = function(return_value){
 // odd_question_AN0
 
 odd_question_an0 = function(n){
-    if(debug)
-	print("odd_question_an0 : n = " + n);
     if(n==0)
 		return false;
     var temp0;
@@ -158,8 +138,6 @@ odd_question_an0 = function(n){
 		temp0 = n-1;
     }catch(sce)
     {
-	if(verbose)
-	    print("odd_question an0: caught!");
 	sce.Extend(new odd_question_frame1(n));
 	throw sce;
     }
@@ -205,8 +183,4 @@ test = function(){
 
 print("--Script loaded--\n"
       + "Initial CallCount: " + callcount
-      +"\nBreakAt: " + breakat
-      + "\nVerbosity: " + verbose
-      + "\nLoop Verbosity: " + loopverbose
-      + "\nDebug Mode: " + debug
-      + "\nContinuation print: " + printContinuation);
+      +"\nBreakAt: " + breakat);

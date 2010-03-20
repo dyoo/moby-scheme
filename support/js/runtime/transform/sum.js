@@ -11,14 +11,7 @@ function nullFunction(cont) {
 }
 
 sum_pause = function(){
-    if(verbose)
-	print("PAUSING at " + callcount);
-
     breakat = callcount + breakevery;
-
-    if(verbose)
-	print("next pause at "+ breakat);
-
     return Continuation.CWCC(nullFunction);
 };
 
@@ -43,15 +36,11 @@ sum_frame0.prototype.print = function(){
 // SUM_AN
 
 sum_an = function(n, acc){
-    if(debug)
-	print("sum_an : n = " + n + "  acc = " + acc);
     callcount+=1;
     if(callcount == breakat){
 	try{
 	    sum_pause();
 	}catch(sce){
-	    if(verbose)
-		print("-- Sum_an: caught a SCE!");
 	    sce.Extend(new sum_frame0(n,acc));
 	    throw sce;
 	}
@@ -74,8 +63,6 @@ sum_frame1.prototype.Invoke = function(return_value){
 // SUM_AN0
 
 sum_an0 = function(n,acc){
-    if(debug)
-	print("sum_an0 : n = " + n + "  acc = " + acc);
     if(n<=0)
 	return acc;
     var temp0;
@@ -84,8 +71,6 @@ sum_an0 = function(n,acc){
 	temp0 = n-1;
     }catch(sce)
     {
-	if(verbose)
-	    print("sum an0: caught!");
 	sce.Extend(new sum_frame1(n,acc));
 	throw sce;
     }
@@ -95,16 +80,12 @@ sum_an0 = function(n,acc){
 // SUM_AN1
 
 sum_an1 = function(temp0, n, acc){
-    if(debug)
-	print("sum_an1 : n = " + n + "  acc = " + acc + " temp0 = " + temp0);
     var temp1;
     try
     {
 	temp1 = n+acc;
     }catch(sce)
     {
-	if(verbose)
-	    print("sum an1: caught!");
 	sce.Extend(new sum_frame2(temp0));
 	throw sce;
     }
@@ -152,8 +133,4 @@ test = function(){
 
 print("--Script loaded--\n"
       + "Initial CallCount: " + callcount
-      +"\nBreakAt: " + breakat
-      + "\nVerbosity: " + verbose
-      + "\nLoop Verbosity: " + loopverbose
-      + "\nDebug Mode: " + debug
-      + "\nContinuation print: " + printContinuation);
+      +"\nBreakAt: " + breakat);
