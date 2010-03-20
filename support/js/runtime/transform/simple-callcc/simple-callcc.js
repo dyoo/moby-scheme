@@ -38,9 +38,9 @@ load("../support.js");
 var f = function() {
     var temp1;
     try {
-        temp1 = Continuation.CWCC(function(k) { return hello; } );
+        temp1 = Continuation.CWCC(function(k) { console.log("Continuation looks like this:"); console.log(k); return "hello"; } );
     } catch (sce) {
-         if (! sce instanceof SaveContinuationException) { throw sce; }
+         if (! (sce instanceof SaveContinuationException)) { throw sce; }
          sce.Extend(new f0_frame());
 	 throw sce;
     }
@@ -61,7 +61,7 @@ var f0_frame = function(temp1) {
 };
 f0_frame.prototype = new ContinuationFrame();
 f0_frame.prototype.Invoke = function(v) { return f0(v); }
-
+f0_frame.prototype.toString = function() { return "[f0_frame]"; }
 
 // Let's try to test this code.
 

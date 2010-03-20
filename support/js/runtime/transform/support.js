@@ -18,9 +18,14 @@ ContinuationFrame = function(){
 };
 
 ContinuationFrame.prototype.Reload = function(frames_above, restart_value){
-    var continue_value = ((frames_above == null) ? 
-			  restart_value : 
-			  frames_above.first.Reload(frames_above.rest, restart_value));
+    				  
+    var continue_value;
+    if (frames_above === null) {
+        continue_value = restart_value;
+    } else {
+        continue_value = frames_above.first.Reload(frames_above.rest, restart_value);
+    }
+
     try {
 	return this.Invoke(continue_value);
     } catch(sce) {
@@ -31,6 +36,11 @@ ContinuationFrame.prototype.Reload = function(frames_above, restart_value){
 	throw sce;
     }
 };
+ContinuationFrame.prototype.Invoke = function(return_value) {
+    throw new Error("Unimplemented!");
+};
+
+ContinuationFrame.prototype.toString = function() { return "[ContinuationFrame]"; };
 
 
 //////////////////////////////////////////////////////////////////////
@@ -51,6 +61,8 @@ FrameList.reverse = function(originalFrameList){
 
 FrameList.prototype.print = function(){
 };
+
+FrameList.prototype.toString = function() { return "[FrameList]"; }
 
 //////////////////////////////////////////////////////////////////////
 
@@ -75,6 +87,8 @@ SaveContinuationException.prototype.toContinuation = function() {
     return new Continuation(this.new_frames,this.old_frames);
 };
 
+SaveContinuationException.prototype.toString = function() { return "[SaveContinuationException]"; }
+
 //////////////////////////////////////////////////////////////////////
 
 
@@ -82,11 +96,11 @@ var Continuation = function(new_frames, old_frames){
     if(verbose)
 	print("here's another continuation");
     this.frames = old_frames;
-    while(new_frames != null){
+    while(new_frames !== null){
 	// head_frame is a ContinuationFrame 
 	var head_frame = new_frames.first;
 	new_frames = new_frames.rest;
-	if(head_frame.continuation != null)
+	if(head_frame.continuation !== null)
 	    throw "Continuation not empty?";
 	head_frame.continuation = this.frames;
 	this.frames = new FrameList(head_frame, this.frames);
@@ -107,6 +121,8 @@ Continuation.prototype.print = function(){
     }
     print("--- PRINTING DONE. ---");
 };
+
+Continuation.prototype.toString = function() { return "[Continuation]"; };
 
 Continuation.BeginUnwind = function(){
     if(verbose)
@@ -188,16 +204,20 @@ CWCC_frame0.prototype.print = function(){
     print("CWCC Frame0");
 };
 
+CWCC_frame0.prototype.toString = function() { return "[CWCC_frame0]"; };
+
+
+//////////////////////////////////////////////////////////////////////
 WithinInitialContinuationException = function(k){
     if(verbose)
 	print("-- WIC: a new WIC raised");
     this.k = k;
 };
 
-//////////////////////////////////////////////////////////////////////
-
 WithinInitialContinuationException.prototype.thunk = function() {
     return this.k.Reload(this.k);
 };
+
+WithinInitialContinuationException.prototype.toString = function() { return "[WithinInitialContinuationException]"; };
 
 //////////////////////////////////////////////////////////////////////
