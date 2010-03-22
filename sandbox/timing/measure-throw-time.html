@@ -10,8 +10,27 @@ var f1 = function() {
 };
 
 var f2 = function() {
+    try {
+        return 42;
+    } catch (x) {
+        throw new Error("shouldn't be here");
+    }
+}
+
+var f3 = function() {
     return 42;
 };
+
+
+var f4 = function() {
+    var result = f4_0();
+    if (result == THE_RETURN_VALUE) {
+        return result.val;
+    }
+}
+var ReturnValue = function(val) { this.val = val; }
+var THE_RETURN_VALUE = new ReturnValue(undefined);
+var f4_0 = function() { THE_RETURN_VALUE.val = 42; return THE_RETURN_VALUE; }
 
 
 var time = function(thunk, iterations) {
