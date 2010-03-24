@@ -6,3 +6,4 @@ The following people have helped implement Moby:
     Brendan Hickey
     Shriram Krishanmurthi
     Caner Derici
+    Noah Zimmt
