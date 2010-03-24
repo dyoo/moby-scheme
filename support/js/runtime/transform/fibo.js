@@ -6,13 +6,9 @@ breakat = 10;
 breakevery = 10;
 
 fib_pause = function(){
-	if(verbose)
-		print("PAUSING at " + callcount);
 
 	breakat = callcount + breakevery;
 
-	if(verbose)
-		print("next pause at "+ breakat);
 
 	return Continuation.CWCC (function(cont){
 								return null;});
@@ -42,15 +38,11 @@ fib_frame0.prototype.print = function(){
 // FIB_AN
 
 fib_an = function(n,f,s,i){
-	if(debug)
-		print("fib_an : n = " + n + "  f = " + f + "  s = " + s + "  i = " + i);
 	callcount+=1;
 	if(callcount == breakat){
 		try{
 			fib_pause();
 		}catch(sce){
-			if(verbose)
-				print("-- fib_an: caught a SCE!");
 			sce.Extend(new fib_frame0(n,f,s,i));
 			throw sce;
 		}
@@ -74,8 +66,6 @@ fib_frame1.prototype.Invoke = function(return_value){
 // FIB_AN0
 
 fib_an0 = function(n,f,s,i){
-	if(debug)
-		print("fib_an0 : n = " + n + "  f = " + f + "  s = " + s + "  i = " + i);
 	if(n==i)
 		return f;
 	var temp0;
@@ -84,8 +74,6 @@ fib_an0 = function(n,f,s,i){
 		temp0 = f+s;
 	}catch(sce)
 	{
-		if(verbose)
-			print("fib an0: caught!");
 		sce.Extend(new fib_frame1(n,f,i));
 		throw sce;
 	}
@@ -95,16 +83,12 @@ fib_an0 = function(n,f,s,i){
 // FIB_AN1
 
 fib_an1 = function(temp0, n, f, i){
-	if(debug)
-		print("fib_an1 : n = " + n + " temp0 = " + temp0 + "  f = " + f + "  i = " + i);
 	var temp1;
 	try
 	{
 		temp1 = i+1;
 	}catch(sce)
 	{
-		if(verbose)
-			print("fib an1: caught!");
 		sce.Extend(new fib_frame2(n,temp0,f));
 		throw sce;
 	}
@@ -144,8 +128,4 @@ fib = function(n){
 
 		print("--Script loaded--\n"
 			 + "Initial CallCount: " + callcount
-			 +"\nBreakAt: " + breakat
-			 + "\nVerbosity: " + verbose
-			 + "\nLoop Verbosity: " + loopverbose
-			 + "\nDebug Mode: " + debug
-			 + "\nContinuation print: " + printContinuation);
+			 +"\nBreakAt: " + breakat);

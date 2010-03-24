@@ -1,0 +1,49 @@
+<html>
+<head>
+<script>
+var f1 = function() {
+    try {
+        throw 42;
+    } catch(x) {
+        return x;
+    }
+};
+
+var f2 = function() {
+    try {
+        return 42;
+    } catch (x) {
+        throw new Error("shouldn't be here");
+    }
+}
+
+var f3 = function() {
+    return 42;
+};
+
+
+var f4 = function() {
+    var result = f4_0();
+    if (result == THE_RETURN_VALUE) {
+        return result.val;
+    }
+}
+var ReturnValue = function(val) { this.val = val; }
+var THE_RETURN_VALUE = new ReturnValue(undefined);
+var f4_0 = function() { THE_RETURN_VALUE.val = 42; return THE_RETURN_VALUE; }
+
+
+var time = function(thunk, iterations) {
+    var startTime  = (new Date()).getTime();
+    for (var i = 0; i < iterations; i++) {
+        thunk();
+    }
+    var endTime = (new Date()).getTime();
+    return endTime - startTime;
+}
+
+</script>
+</head>
+<body>
+</body>
+</html>
