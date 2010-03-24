@@ -1,27 +1,30 @@
-function init() {
+var lastException;
 
-    function isEqual(x, y) {
-	return plt.Kernel.equal_question_(x, y);
-    }
 
-    function cons(x, y) {
-	return plt.Kernel.cons(x, y);
-    }
 
-    var empty = plt.types.Empty.EMPTY;
-    var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
-    var str = function(x) { return plt.types.String.makeInstance(x); };
-    var symbol = plt.types.Symbol.makeInstance;
+function isEqual(x, y) {
+    return plt.Kernel.equal_question_(x, y);
+}
 
-    var TRUE = plt.types.Logic.TRUE;
-    var FALSE = plt.types.Logic.FALSE;
+function cons(x, y) {
+    return plt.Kernel.cons(x, y);
+}
 
-    var compilerModule = plt.Kernel.invokeModule("moby/compiler");
-    var pinfo = compilerModule.EXPORTS['get-base-pinfo'](symbol("moby"));
+var empty = plt.types.Empty.EMPTY;
+var number = function(x) { return plt.types.Rational.makeInstance(x, 1); };
+var str = function(x) { return plt.types.String.makeInstance(x); };
+var symbol = plt.types.Symbol.makeInstance;
 
-    // run: string -> scheme-value
-    // Evaluates the string and produces the evaluated scheme value.
-    var run = function(aSource) {
+var TRUE = plt.types.Logic.TRUE;
+var FALSE = plt.types.Logic.FALSE;
+
+var compilerModule = plt.Kernel.invokeModule("moby/compiler");
+var pinfo = compilerModule.EXPORTS['get-base-pinfo'](symbol("moby"));
+
+// run: string -> scheme-value
+// Evaluates the string and produces the evaluated scheme value.
+var run = function(aSource) {
+    try {
 	var namespace = new Namespace();
 	var program = plt.reader.readSchemeExpressions(aSource, "test");
 	var compiledProgram = (compilerModule.EXPORTS['program->compiled-program/pinfo']
@@ -33,9 +36,15 @@ function init() {
 	var result;				  
 	runToplevel(function(val) { result = val;  });
 	return result;
-    }
+    } catch(e) {
+	lastException = e;
+	throw e;
+    } 
+}
 
 
+
+function init() {
 
     return new Test.Unit.Runner({
 	setup: function() {},
@@ -1030,24 +1039,6 @@ function init() {
 	},
 
 
-	testConstructEffectStructures: function() {
-	    run("(make-effect:none)");
-	    run("(make-effect:beep)");
-	    run("(make-effect:play-dtmf-tone 0 1)");
-	    run("(make-effect:send-sms \"1234\" \"hello world\")");
-	    run("(make-effect:play-sound \"test.wav\")");
-	    run("(make-effect:pause-sound \"test.wav\")");
-	    run("(make-effect:stop-sound \"test.wav\")");
-	    run("(make-effect:set-sound-volume 0)");
-	    run("(make-effect:raise-sound-volume)");
-	    run("(make-effect:lower-sound-volume)");
-	    run("(make-effect:set-wake-lock 0)");
-	    run("(make-effect:release-wake-lock)");
-	    run("(make-effect:pick-playlist)");
-	    run("(make-effect:pick-random 0 (lambda (k) k))");
-	},
-
-
 	testExerciseSyntaxErrorsAndDomGeneration: function() {
 	    var errorRecords = 
 		[["\"", isUnclosedLexicalToken],
@@ -1127,6 +1118,27 @@ function init() {
 		}
 	    }
 	},
+
+
+
+	testConstructEffectStructures: function() {
+	    var that = this;
+	    var testEffect = function(e) { that.assert(e['run'] !== 'undefined'); };
+	    testEffect(run("(make-effect:none)"));
+	    testEffect(run("(make-effect:beep)"));
+	    testEffect(run("(make-effect:play-dtmf-tone 0 1)"));
+	    testEffect(run("(make-effect:send-sms \"1234\" \"hello world\")"));
+	    testEffect(run("(make-effect:play-sound \"test.wav\")"));
+	    testEffect(run("(make-effect:pause-sound \"test.wav\")"));
+	    testEffect(run("(make-effect:stop-sound \"test.wav\")"));
+	    testEffect(run("(make-effect:set-sound-volume 0)"));
+	    testEffect(run("(make-effect:raise-sound-volume)"));
+	    testEffect(run("(make-effect:lower-sound-volume)"));
+	    testEffect(run("(make-effect:set-wake-lock 0)"));
+	    testEffect(run("(make-effect:release-wake-lock)"));
+	    testEffect(run("(make-effect:pick-playlist (lambda (k) k))"));
+	    testEffect(run("(make-effect:pick-random 0 (lambda (k) k))"));
+	}
 
 
 
