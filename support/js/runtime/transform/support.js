@@ -96,9 +96,11 @@ var Continuation = function(new_frames, old_frames){
     }
 };
 
-Continuation.prototype.popTopFrame = function() {
-    return new Continuation(null, this.frames.rest);
-}
+// Adjusts the continuation to be used to escape out of the context.
+Continuation.prototype.adjustForEscape = function() {
+    var newFrames = new FrameList(new ContinuationApplication_frame0(), null);
+    return new Continuation(newFrames, this.frames.rest);
+};
 
 
 Continuation.prototype.reload = function(restart_value){
@@ -146,11 +148,12 @@ Continuation.InitialContinuationAux = function(thunk){
 	return thunk();
     } catch(sce) {
         if (sce instanceof SaveContinuationException) { 
-	    k = sce.toContinuation();
-	    throw new WithinInitialContinuationException(makeWICThunk(k));
+	    var k = sce.toContinuation();
+	    throw new WithinInitialContinuationException(
+		makeWICThunk(k));
         } else if (sce instanceof ReplaceContinuationException)  {
-            // NOTE: maybe this code belongs in the trampoline established in EstablishInitialContinuation.
-            return sce.k.reload(sce.v);
+	    throw new WithinInitialContinuationException(
+		makeReplaceContinuationThunk(sce)});
         } else {
 	    throw sce;
         }
@@ -159,10 +162,18 @@ Continuation.InitialContinuationAux = function(thunk){
 
 var makeWICThunk = function(k) {
     return function() {
-        var adjustedContinuation = k.popTopFrame();
-	return k.reload(adjustedContinuation);
+        var escapingContinuation = k.adjustForEscape();
+	return k.reload(escapingContinuation);
     }
 };
+
+var makeReplaceContinuationThunk = function(rce) {
+    return function() {
+	return rce.k.reload(rce.v);
+    };
+};
+
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -176,6 +187,23 @@ CWCC_frame0.prototype.Invoke = function(return_value){
     return this.receiver(return_value);
 };
 CWCC_frame0.prototype.toString = function() { return "[CWCC_frame0]"; };
+
+//////////////////////////////////////////////////////////////////////
+
+ContinuationApplication_frame0 = function(){
+    ContinuationFrame.call(this);
+};
+
+ContinuationApplication_frame0.prototype = new ContinuationFrame();
+
+ContinuationApplication_frame0.prototype.Invoke = function(return_value){
+    return return_value;
+};
+ContinuationApplication_frame0.prototype.toString = function() { 
+    return "[ContinuationApplication_frame0]";
+};
+
+//////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
