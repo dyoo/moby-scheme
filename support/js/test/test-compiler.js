@@ -1030,6 +1030,23 @@ function init() {
 	},
 
 
+	testConstructEffectStructures: function() {
+	    run("(make-effect:none)");
+	    run("(make-effect:beep)");
+	    run("(make-effect:play-dtmf-tone 0 1)");
+	    run("(make-effect:send-sms \"1234\" \"hello world\")");
+	    run("(make-effect:play-sound \"test.wav\")");
+	    run("(make-effect:pause-sound \"test.wav\")");
+	    run("(make-effect:stop-sound \"test.wav\")");
+	    run("(make-effect:set-sound-volume 0)");
+	    run("(make-effect:raise-sound-volume)");
+	    run("(make-effect:lower-sound-volume)");
+	    run("(make-effect:set-wake-lock 0)");
+	    run("(make-effect:release-wake-lock)");
+	    run("(make-effect:pick-playlist)");
+	    run("(make-effect:pick-random 0 (lambda (k) k))");
+	},
+
 
 	testExerciseSyntaxErrorsAndDomGeneration: function() {
 	    var errorRecords = 
