@@ -153,7 +153,7 @@ Continuation.InitialContinuationAux = function(thunk){
 		makeWICThunk(k));
         } else if (sce instanceof ReplaceContinuationException)  {
 	    throw new WithinInitialContinuationException(
-		makeReplaceContinuationThunk(sce)});
+		makeReplaceContinuationThunk(sce));
         } else {
 	    throw sce;
         }
