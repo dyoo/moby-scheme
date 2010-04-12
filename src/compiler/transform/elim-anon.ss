@@ -1,272 +1,209 @@
 #lang s-exp "../lang.ss"
 
-(require "lift-locals.ss")
-(require "../toplevel.ss")
-(require "../env.ss")
+(require "anormal-frag-helpers.ss")
+(require "munge-ids.ss")
+(require "../../collects/moby/runtime/stx.ss")
 
-;(define def-prepend "o_")
-;(define arg-prepend "a_")
-;(define struct-prepend "s_")
-(define anon-prepend "anon")
+;; format string to give names to formerly anonymous procedures
+(define anon-prepend "anon~a")
 
-#|
-(define empty-hash (make-immutable-hasheq empty))
-
-(define-struct wrapped (expr))
-
-;; mod-symbol: string symbol string -> symbol
-;; consumes a prepend string, an original symbol, and an append string
-;; returns a new symbol with the prepend string prepended and the append string appended
-(define (mod-symbol prepend symb append)
-  (string->symbol (string-append prepend (symbol->string symb) append)))
-
-;; unwrap: s-expr -> s-expr
-;; consumes a symbolic expression
-;; returns the same expression, unwrapping any wrapped statements
-(define (unwrap expr)
-  (cond
-    [(wrapped? expr) (wrapped-expr expr)]
-    [(cons? expr) (map unwrap expr)]
-    [else expr]))
-
-;; get-struct-names: (listof expr) -> (listof symbol)
-;; takes a top-level list of expression
-;; returns a list of the name of all structs defined at top level
-(define (get-struct-ids expr)
-  (foldl (lambda (an-expr symb-list)
-           (if (and (cons? an-expr)
-                    (equal? (first an-expr) 'define-struct))
-               (cons (second an-expr) symb-list)
-               symb-list))
-         empty
-         expr))
-
-;; struct-replace: symbol (listof symbol) -> symbol/false
-;; takes a symbol and a list of struct names
-;; returns the original symbol with the struct name prepened
-;;   or false if the struct name did not appear in the list
-(define (struct-replace? symb prepend struct-names)
-  (cond
-    [(empty? struct-names) false]
-    [(cons? struct-names)
-     (cond
-       [(equal? symb (first struct-names))
-        (make-wrapped (mod-symbol prepend symb ""))]
-       [(equal? symb (mod-symbol "make-" (first struct-names) ""))
-        (make-wrapped (mod-symbol (string-append "make-" prepend)
-                                (first struct-names)
-                                ""))]
-       [(equal? symb (mod-symbol "" (first struct-names) "?"))
-        (make-wrapped (mod-symbol prepend (first struct-names) "?"))]
-       [(and (> (string-length (symbol->string symb))
-                (string-length (symbol->string (first struct-names))))
-             (equal? (string->symbol
-                 (substring (symbol->string symb)
-                            0
-                            (string-length (symbol->string (first struct-names)))))
-                (first struct-names)))
-        (make-wrapped (mod-symbol prepend symb ""))]
-       [else (struct-replace? symb prepend (rest struct-names))])]))
-
-;; replace-struct-ids: s-expr (listof symbol) -> s-expr
-;; consumes a symbolic expression and a list of identifiers to replace
-;; returns the same expression with the struct identifiers replaced
-(define (replace-struct-ids expr struct-names)
-  (cond
-    [(cons? expr)
-     (local [(define new-names (append struct-names
-                                       (if (equal? (first expr) 'local)
-                                           (get-struct-ids (second expr))
-                                           empty)))]
-       (map (lambda (elt) (replace-struct-ids elt new-names)) expr))]
-    [(symbol? expr)
-     (local [(define name-replace (struct-replace? expr struct-prepend struct-names))]
-       (if (false? name-replace)
-           expr
-           name-replace))]
-    [else expr]))
-
-;; rename-toplevel-structs: (listof s-expr) -> s-expr
-;; consumes a top-level list of expression
-;; returns the same list by with all struct names munged
-(define (rename-structs expr)
-  (replace-struct-ids expr (get-struct-ids expr)))
-
-;; add-id-pairs: string (listof symbol) hash -> hash
-;; consumes a prepend string and a list of symbols
-;; returns a hash table mapping each symbol in the list
-;;    to the same symbol prepended with the string
-(define (add-id-pairs prepend id-list base-hash)
-  (foldl (lambda (id a-hash)
-           (hash-set a-hash id (make-wrapped (mod-symbol prepend id ""))))
-         base-hash
-         id-list))
-
-;; get-outter-ids: (listof s-expr) -> (listof symbol)
-;; consumes a program represented as a list of symbolic expressions in abstract syntax
-;; returns the list of all identifiers bound at the outter level of the expression
-(define (get-outter-ids expr)
-  (foldl (lambda (an-expr symb-list)
-           (if (and (cons? an-expr)
-                    (equal? (first an-expr) 'define))
-               (cons (if (cons? (second an-expr))
-                         (first (second an-expr))
-                         (second an-expr))
-                     symb-list)
-               symb-list))
-         empty
-         expr))
-
-;; replace-user-ids: s-expr (hashof symbol . wrapped) -> s-expr
-;; consumes a symbolic expression and a hash of things to replace
-;; returns the same expression with all user-defined identifiers munged
-;;    by prepending orig-prepend
-(define (replace-user-ids expr id-hash)
-  (cond
-    [(symbol? expr) (if (false? (hash-ref id-hash expr false))
-                        expr
-                        (hash-ref id-hash expr false))]
-    [(cons? expr)
-     (cond
-       [(equal? (first expr) 'local)
-        (local [(define new-id-hash
-                  (add-id-pairs def-prepend
-                                (get-outter-ids (second expr))
-                                id-hash))]
-          (map (lambda (elt) (replace-user-ids elt new-id-hash)) expr))]
-       [(or (equal? (first expr) 'define)
-            (equal? (first expr) 'lambda))
-        (local [(define new-id-hash
-                  (add-id-pairs arg-prepend
-                                (if (equal? (first expr) 'lambda)
-                                    (second expr)
-                                    (if (cons? (second expr))
-                                        (rest (second expr))
-                                        empty))
-                                id-hash))]
-          (map (lambda (elt) (replace-user-ids elt new-id-hash)) expr))]
-       [(equal? (first expr) 'quote) expr]
-       [else (map (lambda (elt) (replace-user-ids elt id-hash)) expr)])]
-    [else expr]))
-
-;; replace-ids: s-expr -> s-expr
-;; munges all indentifiers in the initial expression
-(define (rename-all-ids expr)
-  (unwrap (replace-user-ids (replace-struct-ids expr (get-struct-ids expr))
-                            (add-id-pairs def-prepend (get-outter-ids expr)
-                                          empty-hash))))
-|#
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-struct linfo (return raise gensym))
-
-;; ensugar: s-expr -> s-expr
-;; takes a define statement in abstract syntax
-;; if the identifier is bound directly to a syntactic lambda
-;;    then it returns the syntactic sugar for the statement
-;;    otherwise it returns the original statement
-(define (ensugar def)
-  (if (and (cons? def)
-           (equal? (first def) 'define))
-      (if (and (not (cons? (second def)))
-               (and (cons? (third def))
-                    (equal? (first (third def)) 'lambda)))
-          (list 'define
-                (cons (second def) (second (third def)))
-                (third (third def)))
-          def)
-      (error 'ensugar "expected definition in abstract syntax, found something else.")))
-
-;; fold-elim-anon: s-expr number -> linfo
-;; consumes a symbolic expression and a gensym counter
-;; returns the result of folding elim-anon-help across the expression
-(define (fold-elim-anon expr gensym)
+;; fold-elim-anon-help: stx:list -> linfo
+;; consumes a stx:list
+;; returns the result of folding elim-anon-help over the elements of expr
+(define (fold-elim-anon-help expr)
   (local [(define reversed-info
             (foldl (lambda (an-expr new-info)
-                     (local [(define rec-info
-                               (elim-anon-help an-expr (linfo-gensym new-info)))]
+                     (let ([rec-info (elim-anon-help an-expr)])
                        (make-linfo (cons (linfo-return rec-info)
                                          (linfo-return new-info))
                                    (append (linfo-raise new-info)
-                                           (linfo-raise rec-info))
-                                   (linfo-gensym rec-info))))
-                   (make-linfo empty empty gensym)
-                   expr))]
-    (make-linfo (reverse (linfo-return reversed-info))
-                (linfo-raise reversed-info)
-                (linfo-gensym reversed-info))))
+                                           (linfo-raise rec-info)))))
+                   (make-linfo empty empty)
+                   (stx-e expr)))]
+    (make-linfo (datum->stx false
+                            (reverse (linfo-return reversed-info))
+                            (stx-loc expr))
+                (linfo-raise reversed-info))))
 
-;; elim-anon-help: s-expr number -> linfo
-;; consumes a symbolic expression and a gensym counter
-;; returns linfo where the return is the new statement,
-;;    the raise is new local definitions to be placed inside the next
-;;    binding form, and the gensym is the new gensym counter
-(define (elim-anon-help expr gensym)
-  (cond
-    [(cons? expr)
-     (cond
-       [(equal? (first expr) 'lambda)
-        (local [(define new-proc-name
-                  (string->symbol (string-append anon-prepend
-                                                 (number->string gensym))))
-                (define rec-info (elim-anon-help (third expr) (add1 gensym)))]
-        ;(begin
-          #;(printf "lambda expression becoming ~a is\n ~a\n"
-                  new-proc-name
-                  expr)
-          (make-linfo new-proc-name
-                      (list (list 'define
-                                  (cons new-proc-name (second expr))
-                                  (if (empty? (linfo-raise rec-info))
-                                      (linfo-return rec-info)
-                                      (list 'local
-                                            (linfo-raise rec-info)
-                                            (linfo-return rec-info)))))
-                      (linfo-gensym rec-info)))];)]
-       [(equal? (first expr) 'define)
-        (local [(define sugared-def (ensugar expr))
-                (define rec-info (if (cons? (third sugared-def))
-                                     (elim-anon-help (third sugared-def) gensym)
-                                     (make-linfo (third sugared-def) empty gensym)))]
-          (make-linfo (list 'define
-                            (second sugared-def)
-                            (if (empty? (linfo-raise rec-info))
-                                (linfo-return rec-info)
-                                (list 'local
-                                      (linfo-raise rec-info)
-                                      (linfo-return rec-info))))
-                      empty
-                      (linfo-gensym rec-info)))]
-       [(equal? (first expr) 'local)
-        (local [(define new-defs (fold-elim-anon (second expr) gensym))
-                (define rec-info (elim-anon-help (third expr) (linfo-gensym new-defs)))]
-          ;(begin
-            #;(when (not (empty? (linfo-raise new-defs)))
-              (printf "local defines returned raise:\n ~a\n"
-                      (linfo-raise new-defs)))
-          (make-linfo (list 'local
-                            (append (linfo-return new-defs)
-                                    (linfo-raise rec-info))
-                            (linfo-return rec-info))
-                      empty
-                      (linfo-gensym rec-info)))];)]
-       [(equal? (first expr) 'quote) (make-linfo expr empty gensym)]
-       [else (fold-elim-anon expr gensym)])]
-    [else (make-linfo expr empty gensym)]))
+;; elim-anon-help: stx -> linfo
+;; consumes a syntax object with a valid expression inside
+;; returns linfo where the return is the same statement
+;;    but with all anonymous procedures named, and
+;;    the raise is new local definitions to be placed inside the next binding form
+(define (elim-anon-help expr)
+  ;; if we have an atomic element, return it
+  (if (stx:atom? expr)
+      (make-linfo expr empty)
+      ;; otherwise we have a list
+      (let* ([expr-list (stx-e expr)]
+             [first-elt (stx-e (first expr-list))])
+        (cond
+          
+          ;; lambda expressions get lifted
+          [(equal? first-elt 'lambda)
+           (let ([new-proc-name (string->symbol (format anon-prepend (gensym)))]
+                 [rec-info (elim-anon-help (third expr-list))])
+             (make-linfo (datum->stx false new-proc-name (stx-loc expr))
+                         (list
+                          (datum->stx false
+                                      (list 'define
+                                            (cons new-proc-name
+                                                  (stx-e (second expr-list)))
+                                            (if (empty? (linfo-raise rec-info))
+                                                (linfo-return rec-info)
+                                                (list 'local
+                                                      (linfo-raise rec-info)
+                                                      (linfo-return rec-info))))
+                                      (stx-loc expr)))))]
+          
+          ;; define is a binding form, so lift everything inside it
+          ;; then put the new lifts in a local just inside (if they exist)
+          ;; but make sure the definition uses syntactic sugar for procedure
+          ;;    definitions so we don't unnecessarily name already-named procedures
+          [(equal? first-elt 'define)
+           (let* ([sugared-def (ensugar expr)]
+                  [rec-info (elim-anon-help (third (stx-e sugared-def)))])
+             (make-linfo (datum->stx false
+                                     (list 'define
+                                           (second (stx-e sugared-def))
+                                           (if (empty? (linfo-raise rec-info))
+                                               (linfo-return rec-info)
+                                               (list 'local
+                                                     (linfo-raise rec-info)
+                                                     (linfo-return rec-info))))
+                                     (stx-loc expr))
+                         empty))]
+          
+          ;; local is another binding form
+          ;; so recursively lift both the definitions and the body
+          ;; then add the new bindings to the list of bindings on the local
+          [(equal? first-elt 'local)
+           (let ([new-defs (map elim-anon (stx-e (second expr-list)))]
+                 [rec-info (elim-anon-help (third expr-list))])
+             (make-linfo (datum->stx false
+                                     (list 'local
+                                           (append new-defs
+                                                   (linfo-raise rec-info))
+                                           (linfo-return rec-info))
+                                     (stx-loc expr))
+                         empty))]
+          
+          ;; if we have a quote or define-struct, we let it be
+          [(or (equal? first-elt 'quote)
+               (equal? first-elt 'define-struct)
+               (equal? first-elt 'require))
+           (make-linfo expr empty)]
+          
+          ;; each statement is its own self-contained thing in a begin
+          ;; so just map elim-anon across them
+          [(equal? first-elt 'begin)
+           (make-linfo (datum->stx false
+                                   (map elim-anon expr-list)
+                                   (stx-loc expr))
+                       empty)]
+          
+          ;; otherwise fold across each sub-expression
+          [else (fold-elim-anon-help expr)]))))
 
-;; elim-anon: s-expr -> s-expr
-;; consumes a symbolic expression and names all anonymous procedures
+;; elim-anon: stx -> stx
+;; consumes an expression as a syntax object and names all anonymous procedures
 (define (elim-anon expr)
-  (linfo-return (elim-anon-help expr 0)))
+  (let ([lifted (elim-anon-help expr)])
+    (if (empty? (linfo-raise lifted))
+        (linfo-return lifted)
+        (datum->stx false
+                    (list 'local
+                          (linfo-raise lifted)
+                          (linfo-return lifted))
+                    (stx-loc expr)))))
 
-;; ready-anormalize: (listof s-expr) -> (listof s-expr)
-;; consumes a list of toplevel symbolic expressions representing a program
-;; returns the program with all locally defined procedures lifted to toplevel,
-;;    all anonymous procedures lifted to local definitions, and all identifiers munged
-;;    such that the program is ready to be anormalized
-(define (ready-anormalize expr)
-  (elim-anon (lift-program expr)))
+;; name-anon-procs: stx -> stx
+;; consumes a syntax object representing a program
+;; produces a syntax object representing a semantically equivalent
+;;    program, but with no anonymous procedures
+;; NOTE: This procedure only exists to export a self-contained
+;;       procedure that resets the state to insure it acts as a
+;;       pure function. It is otherwise elim-anon
+(define (name-anon-procs expr)
+  (begin
+    (reset-gensym)
+    (elim-anon expr)))
 
-(provide ensugar)
-(provide ready-anormalize)
+;; lift-struct-defs: stx -> stx
+;; consumes a syntax object representing a toplevel program
+;; returns a symantically equivalent program with all local
+;;    struct definitions raised to top leve
+;; NOTE: This procedure munges identifiers to insure no collisions
+;;       since it potentially increases the scope of different definitions
+(define (lift-struct-defs expr)
+  (let ([lifted (lift-struct-defs-help (munge-identifiers expr))])
+    (datum->stx false
+                (append (linfo-raise lifted)
+                        (stx-e (linfo-return lifted)))
+                (stx-loc expr))))
 
+;; fold-lift-struct-defs-help: (list-of stx) -> linfo
+;; consumes a list of syntax objects and folds lift-struct-defs-help over the list
+;; producing linfo where the return is the lifted return and the raise
+;;    is all the raises appended together
+(define (fold-lift-struct-defs-help expr-list)
+  (foldr (lambda (expr info)
+           (let ([output (lift-struct-defs-help expr)])
+             (make-linfo (cons (linfo-return output)
+                               (linfo-return info))
+                         (append (linfo-raise output)
+                                 (linfo-raise info)))))
+         (make-linfo empty empty)
+         expr-list))
+
+;; lift-struct-defs-help: stx -> linfo
+;; consumes a syntax object representing an expression
+;; produces an linfo where the return is a syntax object representing
+;;    the same expression, but missing all local struct definitions
+;;    and the raise is a list of removed struct definitions
+(define (lift-struct-defs-help expr)
+  ;; we have an atomic element, there cannot be any local struct definitions
+  ;; so return the element
+  (if (stx:atom? expr)
+      (make-linfo expr empty)
+      ;; otherwise we have a list
+      (let* ([expr-list (stx-e expr)]
+             [first-elt (stx-e (first expr-list))])
+        (cond
+          ;; if we have a local, we need to get the local struct definitions
+          [(equal? first-elt 'local)
+           (let ([struct-defs
+                  (filter (lambda (a-def) (equal? (stx-e (first (stx-e a-def)))
+                                                  'define-struct))
+                          (stx-e (second expr-list)))]
+                 [other-defs
+                  (fold-lift-struct-defs-help
+                   (filter (lambda (a-def) (equal? (stx-e (first (stx-e a-def)))
+                                                   'define))
+                           (stx-e (second expr-list))))])
+             (make-linfo (datum->stx false
+                                     (if (empty? (linfo-return other-defs))
+                                         (third expr-list)
+                                         (list 'local
+                                               (linfo-return other-defs)
+                                               (third expr-list)))
+                                     (stx-loc expr))
+                         (append struct-defs
+                                 (linfo-raise other-defs))))]
+          ;; if we see quote, define-struct (outside a local), or require
+          ;; then don't touch anything
+          [(or (equal? first-elt 'quote)
+               (equal? first-elt 'define-struct)
+               (equal? first-elt 'require))
+           (make-linfo expr empty)]
+          ;; otherwise recursively fold over each element
+          [else (let ([folded-list (fold-lift-struct-defs-help expr-list)])
+                  (make-linfo (datum->stx false
+                                          (linfo-return folded-list)
+                                          (stx-loc expr))
+                              (linfo-raise folded-list)))]))))
+
+
+(provide/contract
+ [name-anon-procs (stx? . -> . stx?)]
+ [lift-struct-defs (stx? . -> . stx?)])

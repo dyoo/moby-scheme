@@ -1,166 +1,250 @@
 #lang s-exp "../lang.ss"
 
-(require "lift-locals.ss")
+(require "anormal-frag-helpers.ss")
 (require "anormalize.ss")
+(require "../../collects/moby/runtime/stx.ss")
 
-(define frag-prepend "f")
-(define statement-name 'statement)
+;; strings to prepend onto fragments and name anonymous expressions
+(define frag-prepend "f~a_~a")
+(define statement-name "statement~a")
 
+;; finfo is used to hold fragmentation information
+;;    - return : stx representing the new expression
+;;    - fragments : (list-of stx) containing the definitions of new fragments
+;;    - gensym : a gensym counter counting the number of fragments
 (define-struct finfo (return fragments gensym))
 
-;; fragment-help: s-expr number -> linfo
-;; consumes a symbolic expression and a gensym counter
-;; returns a fragmented symbolic expression
-(define (fragment-help expr args name gensym frag-locals?)
-  (cond
-    [(cons? expr)
-     (cond
-       [(equal? (first expr) 'local)
-        (local [(define definitions (if frag-locals?
-                                        (foldr (lambda (statement rest-statements)
-                                                 (append (get-fragments statement)
-                                                         rest-statements))
-                                               empty
-                                               (second expr))
-                                        (second expr)))
-                (define first-def-id (if (cons? (second (first definitions)))
-                                         (first (second (first definitions)))
-                                         (second (first definitions))))
-                (define rec-rest
-                  (fragment-help (list 'define
-                                       (list* (string->symbol
-                                               (string-append frag-prepend
-                                                              (number->string gensym)
-                                                              "_"
-                                                              (symbol->string name)))
-                                              first-def-id
-                                              args)
-                                       (if (empty? (rest definitions))
-                                           (third expr)
-                                           (list 'local
-                                                 (rest definitions)
-                                                 (third expr))))
-                                 (cons first-def-id args)
-                                 name
-                                 (add1 gensym)
-                                 false))]
-          (make-finfo (list 'local
-                            (list (first definitions))
-                            (if (and (cons? (finfo-return rec-rest))
-                                     (equal? (first (finfo-return rec-rest)) 'define))
-                                (second (finfo-return rec-rest))
-                                (finfo-return rec-rest)))
-                      (if (and (cons? (finfo-return rec-rest))
-                               (equal? (first (finfo-return rec-rest)) 'define))
-                          (cons (finfo-return rec-rest)
-                                (finfo-fragments rec-rest))
-                          (finfo-fragments rec-rest))
-                      (finfo-gensym rec-rest)))]
-       [(equal? (first expr) 'quote) (make-finfo expr empty gensym)]
-       [(equal? (first expr) 'define)
-        (local [(define filtered-args
-                  (if (cons? (second expr))
-                      (append (rest (second expr))
-                              (filter (lambda (elt)
-                                        (not (contains? elt (rest (second expr)))))
-                                      args))
-                      args))
-                (define rec-rest (fragment-help (third expr)
-                                                filtered-args
-                                                name
-                                                gensym
-                                                frag-locals?))]
-          (make-finfo (list 'define
-                            (second expr)
-                            (finfo-return rec-rest))
-                      (finfo-fragments rec-rest)
-                      (finfo-gensym rec-rest)))]
-       [else (foldl (lambda (an-expr rest-info)
-                      (local [(define rec-info
-                                (fragment-help an-expr
-                                               args
-                                               name
-                                               (finfo-gensym rest-info)
-                                               true))]
-                        (make-finfo (append (finfo-return rest-info)
-                                            (list (finfo-return rec-info)))
-                                    (append (finfo-fragments rest-info)
-                                            (finfo-fragments rec-info))
-                                    (finfo-gensym rec-info))))
-                    (make-finfo empty empty gensym)
-                    expr)])]
-    [else (make-finfo expr empty gensym)]))
+;; split is used when splitting a list of definitions inside local fragmentation
+;;    - keep : (list-of stx), a list of definitions to keep (and fragment)
+;;    - current : (or stx false), the first value definition, kept in this fragment
+;;    - move : (list-of stx), the reamining value definitions to fragment out
+(define-struct split (keep current move))
 
-;; get-fragments: s-expr -> (listof s-expr)
-;; consumes a toplevel symbolic expression that is the output of anormalize
-;; fragments the expression into mini-methods
+;; get-bound-id: stx -> symbol
+;; consumes a definition (as a syntax object)
+;; returns the id bound by the define statement
+(define (get-bound-id defn)
+  (if (stx-begins-with? defn 'define)
+      (if (stx:atom? (second (stx-e defn)))
+          (stx-e (second (stx-e defn)))
+          (stx-e (first (stx-e (second (stx-e defn))))))
+      (error 'get-bound-id (format "expected definition, found: ~a" defn))))
+
+;; split-def-list: (listof stx) -> split
+;; consumes a list of definitions
+;; returns a split where the keep is the beginning of the input list
+;;    up to (and including) the first value definition that is not a boxed undefined
+;;    the current is that first definition if it exists (false otherwise)
+;;    and the move is everything after that definition
+(define (split-def-list def-list)
+  (cond
+    [(empty? def-list) (make-split empty #f empty)]
+    [(and (cons? def-list)
+          (stx-begins-with? (first def-list) 'define))
+     (let ([components (stx-e (first def-list))])
+       (if (or (stx:list? (second components))
+               (equal? (stx->datum (third components))
+                       '(box 'undefined)))
+           (let ([rec-return (split-def-list (rest def-list))])
+             (make-split (cons (first def-list)
+                               (split-keep rec-return))
+                         (split-current rec-return)
+                         (split-move rec-return)))
+           (make-split (list (first def-list))
+                       (first def-list)
+                       (rest def-list))))]
+    [else (error 'split-def-list
+                 (format "expected list of defininitions, found: ~a" def-list))]))
+
+;; fragment-help: stx (list-of symbol) symbol number -> finfo
+;; consumes an expression (as a syntax object),
+;;    a list of arguments for any new fragments (generated by finding closures),
+;;    the name of the procedure/statement we're fragmenting,
+;;    and a counter to tell us how many fragments we've already made
+;; produces finfo where the return is the first fragment (or the expression itself),
+;;    the fragements are all other fragments of the current expression
+;;    and the gensym is the index of the next fragment
+(define (fragment-help expr args name frag-counter)
+  ;; if we have an atomic element there's nothing to fragment
+  (if (stx:atom? expr)
+      (make-finfo expr empty frag-counter)
+      ;; otherwise we have a list
+      (let* ([expr-list (stx-e expr)]
+             [first-elt (stx-e (first expr-list))])
+        (cond
+          
+          ;; if we have a LOCAL, then we may have fragments
+          ;; unless everything is either a procedure or boxed undefine
+          [(equal? first-elt 'local)
+           (let* (;; first split the definition list into procedures/boxed undefined
+                  ;; and temporary statement definitions
+                  ;; and get the identifiers bound by the first set of defines
+                  [split-defs (split-def-list (stx-e (second expr-list)))]
+                  [new-bound-ids (map get-bound-id (split-keep split-defs))]
+                  ;; make a recursive call, that depends on the definitions
+                  [rec-rest
+                   ;; if there are no temporary value definitions at all
+                   ;; then just recur on the body of the local
+                   ;; because we don't need any more fragments
+                   (if (false? (split-current split-defs))
+                       (fragment-help (third expr-list)
+                                      (append new-bound-ids args)
+                                      name
+                                      frag-counter)
+                       ;; otherwise recur on a new procedure fragment
+                       (fragment-help
+                        (datum->stx
+                         false
+                         (list 'define
+                               (cons (string->symbol (format frag-prepend
+                                                             frag-counter
+                                                             name))
+                                     (append new-bound-ids args))
+                               ;; the contents of the new definitions are just
+                               ;; the local body if we hit the last temp definition
+                               (if (empty? (split-move split-defs))
+                                   (third expr-list)
+                                   ;; or a new local with the rest otherwise
+                                   (list 'local
+                                         (split-move split-defs)
+                                         (third expr-list))))
+                         (stx-loc expr))
+                        args
+                        name
+                        (add1 frag-counter)))]
+                  [more-fragments? (stx-begins-with? (finfo-return rec-rest) 'define)])
+             ;; now make new linfo with the fragmented local definitions
+             ;;    that we kept, and either a call to the next fragment or
+             ;;    the fragmented body of the local
+             ;; the fragments are the recursive fragments with the new
+             ;;    fragment consed on if it exists
+             (make-finfo (datum->stx
+                          false
+                          (list 'local
+                                (apply append
+                                       (map get-fragments
+                                            (split-keep split-defs)))
+                                (if more-fragments?
+                                    (second (stx-e (finfo-return rec-rest)))
+                                    (finfo-return rec-rest)))
+                          (stx-loc expr))
+                         (if more-fragments?
+                             (cons (finfo-return rec-rest)
+                                   (finfo-fragments rec-rest))
+                             (finfo-fragments rec-rest))
+                         (finfo-gensym rec-rest)))]
+          
+          ;; if we have a BEGIN, AND, or OR, then recursively fragment a new
+          ;;    procedure with all but the first expression
+          ;; then return finfo where the return is the same type of statement
+          ;;    that first calls the first instruction and then the next fragment
+          ;;    and the raise is the rest of the fragments
+          [(or (equal? first-elt 'begin)
+               (equal? first-elt 'and)
+               (equal? first-elt 'or))
+           (let* ([first-expr (fragment-help (second expr-list) args name frag-counter)]
+                  [rec-rest
+                   (fragment-help (datum->stx
+                                   false
+                                   (list 'define
+                                         (cons (string->symbol
+                                                (format frag-prepend
+                                                        (finfo-gensym first-expr)
+                                                        name))
+                                               args)
+                                         (if (empty? (rest (rest (rest expr-list))))
+                                             (third expr-list)
+                                             (cons (first expr-list)
+                                                   (rest (rest expr-list)))))
+                                   (stx-loc expr))
+                                  args
+                                  name
+                                  (add1 (finfo-gensym first-expr)))])
+             (make-finfo (datum->stx false
+                                     (list (first expr-list)
+                                           (finfo-return first-expr)
+                                           (second (stx-e (finfo-return rec-rest))))
+                                     (stx-loc expr))
+                         (append (finfo-fragments first-expr)
+                                 (cons (finfo-return rec-rest)
+                                       (finfo-fragments rec-rest)))
+                         (finfo-gensym rec-rest)))]
+          
+          ;; if we have a DEFINE, then collect the arguments for the closure
+          ;; then recursively fragment the body, and return the fragmented body
+          ;; inside the same define (with the fragments in the raise)
+          [(equal? first-elt 'define)
+           (let* ([new-args (if (stx:list? (second expr-list))
+                                (rest (stx->datum (second expr-list)))
+                                empty)]
+                  [filtered-args (append new-args
+                                         (filter (lambda (elt)
+                                                   (not (member elt new-args)))
+                                                 args))]
+                  [rec-rest (fragment-help (third expr-list)
+                                           filtered-args
+                                           name
+                                           frag-counter)])
+             (make-finfo (datum->stx false
+                                     (list 'define
+                                           (second expr-list)
+                                           (finfo-return rec-rest))
+                                     (stx-loc expr))
+                         (finfo-fragments rec-rest)
+                         (finfo-gensym rec-rest)))]
+          
+          ;; with an IF statement we need to recursively fragment both
+          ;; the then and else clauses
+          [(equal? first-elt 'if)
+           (let* ([then-info (fragment-help (third expr-list) args name frag-counter)]
+                  [else-info (fragment-help (fourth expr-list)
+                                            args
+                                            name
+                                            (finfo-gensym then-info))])
+             (make-finfo (datum->stx false
+                                     (list 'if
+                                           (second expr-list)
+                                           (finfo-return then-info)
+                                           (finfo-return else-info))
+                                     (stx-loc expr))
+                         (append (finfo-fragments then-info)
+                                 (finfo-fragments else-info))
+                         (finfo-gensym else-info)))]
+          
+          ;; if we have any other type of expression then it cannot contain
+          ;; more than one call to anything other than a first-order primitive
+          ;; since everything is already in a-normal form, so simply return it
+          [else (make-finfo expr empty frag-counter)]))))
+
+;; get-fragments: stx -> (list-of stx)
+;; consumes a syntax object representing a toplevel expression
+;; fragments the expression into mini-procedures and returns a list
+;;    of those fragments
+;; NOTE: assumes the input has already been run through anormalize
 (define (get-fragments expr)
-  (local [(define name (if (and (cons? expr)
-                                (equal? (first expr) 'define))
-                           (if (cons? (second expr))
-                               (first (second expr))
-                               (second expr))
-                           statement-name))
-          (define frag-info (fragment-help expr empty name 0 true))]
+  (let* ([name (if (stx-begins-with? expr 'define)
+                   (get-bound-id expr)
+                   (string->symbol (format statement-name (gensym))))]
+         [frag-info (fragment-help expr empty name 0)])
     (reverse (cons (finfo-return frag-info)
                    (finfo-fragments frag-info)))))
-
-;; fragment: (listof s-expr) -> (listof s-expr)
-;; consumes a toplevel list of symbolic expressions representing a program
-;; returns the program with each statement fragmented
+    
+;; fragment: stx:list? -> stx:list?
+;; consumes a syntax object representing a program
+;; returns a semantically equivalent program that has been
+;;    completely a-normalized and fragmented
+;; NOTE: resets the stateful gensym counter to insure it acts
+;;       as a pure function
 (define (fragment program)
-  (foldr (lambda (statement rest-statements)
-           (append (get-fragments statement) rest-statements))
-         empty
-         (anormalize program)))
+  (begin
+    (reset-gensym)
+    (datum->stx false
+                (apply append (map get-fragments
+                                   (stx-e (anormalize program))))
+                (stx-loc program))))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(provide/contract
+ [fragment (stx:list? . -> . stx:list?)])
 
-;; STORAGE
 
-#|
-        ;(begin
-          #;(printf "in local\n")
-
-                  ;(begin
-                    #;(printf "calling fragment-help (~a) on\n ~a\n"
-                            frag-locals?
-                            (list 'define
-                                  (list* (string->symbol
-                                          (string-append frag-prepend
-                                                         (number->string gensym)
-                                                         "_"
-                                                         (symbol->string name)))
-                                         first-def-id
-                                         args)
-                                  (if (empty? (rest definitions))
-                                      (third expr)
-                                      (list 'local
-                                            (rest definitions)
-                                            (third expr)))))
-
-          ;(begin
-            #;(printf "In a local statement, name '~a', args is\n ~a\n"
-                    name
-                    args)
-
-        ;(begin
-          #;(printf "in define: ~a\n"
-                  (if (cons? (second expr))
-                      (first (second expr))
-                      (second expr)))
-
-          ;(begin
-            #;(printf "In define, new name is '~a'\n";, returning\n ~a\n"
-                    (if (cons? (second expr))
-                        (first (second expr))
-                        (second expr))
-                    #;(list 'define
-                          (second expr)
-                          (finfo-return rec-rest)))
-
-        ;(begin
-          #;(printf "in else: ~a\n"
-                  (first expr))
-|#
