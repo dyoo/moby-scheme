@@ -1,5 +1,16 @@
 package com.phonegap.demo;
 
+
+// Class for listening to SMS-receive intents and sending such events
+// to other listeners.
+
+
+// NOTE: you must have the right permissions to use this class.
+// You need the android.permission.RECEIVE_SMS permission.
+
+
+import java.util.List;
+import java.util.ArrayList;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +20,6 @@ import android.os.Bundle;
 // FIXME: when we move to more recent Android, use android.telephony.SmsMessage
 // since the other class is deprecated.
 import android.telephony.gsm.SmsMessage;
-
-import android.util.Log;
-import android.webkit.WebView;
-
-import java.util.List;
-import java.util.ArrayList;
 
 
 public class SmsListener extends BroadcastReceiver implements LifecycleService
@@ -41,12 +46,14 @@ public class SmsListener extends BroadcastReceiver implements LifecycleService
 	this.listeners = new ArrayList<OnSmsMessageReceive>();
     }
 
+
     /**
      * Add a new listener.
      */
     public void addListener(OnSmsMessageReceive listener) {
 	this.listeners.add(listener);
     }
+
 
     /** Given a message, extract it and notify all our listeners that
      *  we got a new message.
@@ -100,4 +107,3 @@ public class SmsListener extends BroadcastReceiver implements LifecycleService
 	ctx.unregisterReceiver(this);
     }
 }
-

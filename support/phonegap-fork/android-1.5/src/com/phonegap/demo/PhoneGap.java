@@ -78,6 +78,8 @@ public class PhoneGap implements LifecycleService {
 
     private enum Services {
 	SMS_SERVICE
+	    // FIXME: All the other services (power management, audio, etc) should also
+	    // fall under here, to regularize the lifecycle management code.
     };
 
     
@@ -410,13 +412,19 @@ public class PhoneGap implements LifecycleService {
 
 
     // smsStartService
-    // Ensure that the SMS device is starting to listen.
+    // Ensure that the SMS device is starting to listen.  If it isn't running yet,
+    // bring it up.
+    // NOTE: you must have the right permissions to call this.
+    // You need the android.permission.RECEIVE_SMS permission.
     public void smsStartService() {
 	if (! this.services.containsKey(Services.SMS_SERVICE)) {
 	    SmsListener aService = new SmsListener(this.mCtx);
 	    aService.addListener(new SmsListener.OnSmsMessageReceive() {
 		    public void onSmsMessageReceive(String sender, String message) {
-			// fill me in
+			PhoneGap.this.arguments.clearCache();
+			PhoneGap.this.arguments.put("sender", sender);
+			PhoneGap.this.arguments.put("message", message);
+			PhoneGap.this.mAppView.loadUrl("javascript:Device.onReceiveSms()");
 		    }
 		});
 	    this.services.put(Services.SMS_SERVICE, aService);
