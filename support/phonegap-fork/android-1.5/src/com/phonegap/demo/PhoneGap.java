@@ -418,17 +418,19 @@ public class PhoneGap implements LifecycleService {
     // You need the android.permission.RECEIVE_SMS permission.
     public void smsStartService() {
 	if (! this.services.containsKey(Services.SMS_SERVICE)) {
+	    Log.d("PhoneGap", "Starting SMS listening service");
 	    SmsListener aService = new SmsListener(this.mCtx);
 	    aService.addListener(new SmsListener.OnSmsMessageReceive() {
 		    public void onSmsMessageReceive(String sender, String message) {
 			PhoneGap.this.arguments.clearCache();
 			PhoneGap.this.arguments.put("sender", sender);
 			PhoneGap.this.arguments.put("message", message);
-			PhoneGap.this.mAppView.loadUrl("javascript:Device.onReceiveSms()");
+			System.out.println("dispatching to Device phonegap.js");
+			PhoneGap.this.mAppView.loadUrl("javascript:navigator.sms.onReceiveSms()");
 		    }
 		});
 	    this.services.put(Services.SMS_SERVICE, aService);
-	    aService.onStart();
+	    aService.onResume();
 	}
     }
 

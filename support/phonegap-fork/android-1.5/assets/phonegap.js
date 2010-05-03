@@ -590,12 +590,18 @@ Sms.prototype.addListener = function(listener) {
 Sms.prototype.onReceiveSms = function() {
     var sender = Args.get("sender");
     var message = Args.get("message");
+    alert("got sender and message" + sender + " / " + message);
+    alert("now sending to listeners " + this.listeners.length);
     for (var i = 0; i < this.listeners.length; i++) {
+	alert("sending to listener " + i);
 	(this.listeners[i])(sender, msg);
+	alert("sent");
     }
 };
 
-if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+if (typeof navigator.sms == "undefined") { 
+    navigator.sms = new Sms();
+}
 
 
 //////////////////////////////////////////////////////////////////////

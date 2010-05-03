@@ -792,7 +792,9 @@ goog.provide('plt.platform');
     };
     
     PhonegapSmsService.prototype.addListener = function(aListener) {
+	alert("adding listener " + aListener);
 	navigator.sms.addListener(aListener);
+	alert("here I am");
     };
 
     var GenericSmsService = function() {

@@ -84,26 +84,24 @@ public class SmsListener extends BroadcastReceiver implements LifecycleService
      * Start listening.
      */
     public void onStart() {
-	ctx.registerReceiver(this, new IntentFilter(ACTION));;
     }
 
     public void onResume() {
+	System.out.println("registering receiver");
 	ctx.registerReceiver(this, new IntentFilter(ACTION));;
     }
 
     public void onPause() {
+	System.out.println("unregistering receiver");
 	ctx.unregisterReceiver(this);
     }
 
     public void onStop() {
-	ctx.unregisterReceiver(this);
     }
 
     public void onRestart() {
-	ctx.registerReceiver(this, new IntentFilter(ACTION));;
     }
 
     public void onDestroy() {
-	ctx.unregisterReceiver(this);
     }
 }
