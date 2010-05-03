@@ -1,3 +1,8 @@
+// The variables Device, Geo, Accel, Console, Args, and PlaylistPicker
+// are all values defined by the DroidGap middleware.
+
+
+
 /**
  * This class contains acceleration information
  * @constructor
@@ -545,6 +550,10 @@ PositionError.TIMEOUT = 3;
 
 
 
+//////////////////////////////////////////////////////////////////////
+
+// SMS management, both sending of SMS and receiving.
+
 /**
      * This class provides access to the device SMS functionality.
      * @constructor
@@ -563,22 +572,35 @@ function Sms() {
      */
 Sms.prototype.send = function(number, msg) {
     Device.sendSmsMessage(number, msg);
-}
+};
 
-/*
-    Sms.prototype.listen = function(successCallback, errorCallback, options) {
-//	Device.smsStart();
-//    	return this.listeners.push( { "success" : successCallback, "fail" : errorCallback } ) - 1;
-    }
 
-    Sms.prototype.onReceiveSms = function(sender, msg) {
-    	for ( var i = 0; i < this.listeners.length; i++) {
-    		this.listeners[i].success(sender, msg);
-    	}
+// Add a SMS listener: whenever an sms message is received, notify all
+// listeners
+Sms.prototype.addListener = function(listener) {
+    Device.smsStartService();
+    this.listeners.push(listener);
+};
+
+
+// onReceiveSms: -> void
+// Do not call this directly!
+// The middleware will call this function, assigning appropriate values
+// into the Args.
+Sms.prototype.onReceiveSms = function() {
+    var sender = Args.get("sender");
+    var message = Args.get("message");
+    for (var i = 0; i < this.listeners.length; i++) {
+	(this.listeners[i])(sender, msg);
     }
-*/
+};
 
 if (typeof navigator.sms == "undefined") navigator.sms = new Sms();
+
+
+//////////////////////////////////////////////////////////////////////
+
+
 
 
 /**
@@ -914,7 +936,7 @@ Accelerometer.prototype.watchShake = function(successCallback, errorCallback, op
 
     	if (navigator.accelerometer.allListenersEmpty()) {
     	    Console.println("Stopping Accel");
-    	    Accel.stop();
+    	    Accel.onStop();
     	}
     };
 }
@@ -1010,7 +1032,7 @@ Accelerometer.clearTypeWatch = function(list, watchId) {
 
     if (navigator.accelerometer.allListenersEmpty()) {
     	Console.println("Stopping accel");
-    	Accel.stop();
+    	Accel.onStop();
     }
 }
 
@@ -1033,7 +1055,7 @@ Accelerometer.prototype.clearAllWatches = function() {
     }
     
     // finally, stop the accelerometer
-    Accel.stop();
+    Accel.onStop();
 }
 
 

@@ -43,8 +43,10 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.util.Log;
 
-
 import plt.playlist.PlaylistRecord;
+
+import java.util.Map;
+import java.util.HashMap;
 
 
 public class PhoneGap implements LifecycleService {
@@ -60,7 +62,7 @@ public class PhoneGap implements LifecycleService {
     private Activity mCtx;
     private Handler handler;
     private WebView mAppView;
-    private SmsListener mSmsListener;
+
     private DirectoryManager fileManager;
     private AudioHandler audio;
     private ToneHandler tones;
@@ -68,6 +70,16 @@ public class PhoneGap implements LifecycleService {
     private Telephony telephony;
     private PowerManager.WakeLock lock;
     private ArgTable arguments;
+
+
+    private Map<Services, LifecycleService> services;
+
+
+
+    private enum Services {
+	SMS_SERVICE
+    };
+
     
     public PhoneGap(Activity ctx,
 		    Handler handler,
@@ -81,7 +93,8 @@ public class PhoneGap implements LifecycleService {
 	this.arguments = args;
 
 
-	mSmsListener = new SmsListener(ctx,mAppView);
+	this.services = new HashMap<Services, LifecycleService>();
+
 	fileManager = new DirectoryManager();
 	audio = new AudioHandler("/sdcard/tmprecording.mp3", ctx, handler, mAppView, assets, arguments);
 	tones = new ToneHandler();
@@ -154,34 +167,6 @@ public class PhoneGap implements LifecycleService {
 	return version;
     }	
 	
-    // Old SMS code, figure out what to do with this!
-    // BTW: This is awesome!
-	
-    public void notificationWatchPosition(String filter)
-    /**
-     * Starts the listener for incoming notifications of type filter
-     * TODO: JavaScript Call backs for success and error handling. More filter types. 
-     */
-    {
-	if (filter.contains("SMS"))
-	    {
-    		IntentFilter mFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-    		mCtx.registerReceiver(mSmsListener,mFilter);
-	    }
-    }
-	
-    public void notificationClearWatch(String filter) 
-    /**
-     * Stops the listener for incoming notifications of type filter
-     * TODO: JavaScript Call backs for success and error handling 
-     */
-    {
-    	if (filter.contains("SMS")) 
-	    {
-    		mCtx.unregisterReceiver(mSmsListener);
-	    }	
-    }
-    
     public void httpGet(String url, String file)
     /**
      * grabs a file from specified url and saves it to a name and location
@@ -407,14 +392,46 @@ public class PhoneGap implements LifecycleService {
         return(tz.getID());
     }
 
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    // SMS
+
+
     public void sendSmsMessage(String destination, String msg) {
 	Log.d("PhoneGap", "Sending SMS message '" + msg + "' to " + destination);
     	SmsManager.getDefault().sendTextMessage(destination, null, msg, null, null);
     }
 
-    public void smsStart() {
-	//	SmsListener listener = new SmsListener(mCtx, mAppView);
+
+
+    // smsStartService
+    // Ensure that the SMS device is starting to listen.
+    public void smsStartService() {
+	if (! this.services.containsKey(Services.SMS_SERVICE)) {
+	    SmsListener aService = new SmsListener(this.mCtx);
+	    aService.addListener(new SmsListener.OnSmsMessageReceive() {
+		    public void onSmsMessageReceive(String sender, String message) {
+			// fill me in
+		    }
+		});
+	    this.services.put(Services.SMS_SERVICE, aService);
+	    aService.onStart();
+	}
     }
+
+
+
+    //////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
     public void setWakeLock(int lockFlag) {
     	if (lock != null) {
@@ -458,21 +475,34 @@ public class PhoneGap implements LifecycleService {
     // LifecycleService implementations
 
     public void onResume() {
+	for(Services key : this.services.keySet()) {
+	    this.services.get(key).onResume();
+	}
     }
 
     public void onPause() {
+	for(Services key : this.services.keySet()) {
+	    this.services.get(key).onPause();
+	}
     }
 
     public void onStop() {
-	// FILL ME IN
+	for(Services key : this.services.keySet()) {
+	    this.services.get(key).onStop();
+	}
     }
 
     public void onRestart() {
-	// FILL ME IN
+	for(Services key : this.services.keySet()) {
+	    this.services.get(key).onRestart();
+	}
     }
 
-
     public void onDestroy() {
+	for(Services key : this.services.keySet()) {
+	    this.services.get(key).onDestroy();
+	}
+
 	// FILL ME IN
     	audio.clearCache();
 	stopAllAudio();

@@ -200,6 +200,4 @@ public class AccelListener implements SensorListener, LifecycleService {
 	sensorManager.unregisterListener(this);
     }
 
-
-
 }

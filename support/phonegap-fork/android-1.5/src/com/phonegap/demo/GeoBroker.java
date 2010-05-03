@@ -63,6 +63,11 @@ public class GeoBroker implements LifecycleService {
     }
 
 
+
+
+
+    // LifecycleService implementations
+
     public void onPause() {}
 
     public void onResume() {
@@ -73,11 +78,9 @@ public class GeoBroker implements LifecycleService {
 	// FILL ME IN
     }
     
-
     public void onRestart() {
 	// FILL ME IN
     }
-
 
     public void onDestroy() {
 	for ( GeoListener geo : geoListeners.values() ) {
