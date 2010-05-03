@@ -76,12 +76,15 @@
 ;; Assumes the build file is called "build.xml" at the top of the directory.
 (define (run-ant-build.xml dest-dir target)
   (parameterize ([current-directory dest-dir])
-    (let*-values ([(string-error-port) (open-output-string "")]
+    (let*-values ([(string-output-port string-error-port)
+                   (values (open-output-string "")
+                           (open-output-string ""))]
                   [(a-subprocess inp outp errp)
                    (subprocess #f #f #f (current-ant-bin-path) target)]
                   [(t1 t2) 
                    (values (thread (lambda () 
-                                     (copy-port-to-debug-log inp)))
+                                     (copy-port-to-debug-log (peeking-input-port inp))
+                                     (copy-port inp string-output-port)))
                            (thread (lambda ()
                                      (copy-port-to-error-log (peeking-input-port errp))
                                      (copy-port errp string-error-port))))])
@@ -90,7 +93,8 @@
       (sync t1)
       (sync t2)
       (unless (= 0 (subprocess-status a-subprocess))
-        (error 'ant "Internal error while running ant: ~a"
+        (error 'ant "Internal error while running ant: ~a\n\n~a"
+               (get-output-string string-output-port)
                (get-output-string string-error-port)))
       (void))))
 

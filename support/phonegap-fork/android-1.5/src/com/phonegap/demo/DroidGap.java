@@ -57,6 +57,7 @@ public class DroidGap extends Activity {
     private GeoBroker geo;
     private AccelListener accel;
     private ConsoleOutput console;
+
     private ArgTable arguments;
     private PlaylistPicker playlistPicker;
 	
@@ -146,15 +147,18 @@ public class DroidGap extends Activity {
 
     public void onPause() {
 	System.out.println("Being paused");
+	gap.onPause();
+	geo.onPause();
+	accel.onPause();
 	super.onPause();
     }
 
 
     public void onResume() {
 	System.out.println("Being resumed");
-	gap.resume();
-	geo.resume();
-	accel.resume();
+	gap.onResume();
+	geo.onResume();
+	accel.onResume();
 	super.onResume();
     }
 
@@ -162,18 +166,18 @@ public class DroidGap extends Activity {
 
     public void onStop() {
     	System.out.println("Being stopping");
-    	gap.stop();
-    	geo.stop();
-    	accel.stop();
+    	gap.onStop();
+    	geo.onStop();
+    	accel.onStop();
     	super.onStop();
     }
 
 
     public void onRestart() {
 	System.out.println("Being restarted");
-	gap.restart();
-	geo.restart();
-	accel.restart();
+	gap.onRestart();
+	geo.onRestart();
+	accel.onRestart();
 	super.onRestart();
     }
 
@@ -184,9 +188,9 @@ public class DroidGap extends Activity {
 	System.out.println("Being destroyed");
 	appView.destroy();
 
-	gap.destroy();
-	geo.destroy();
-	accel.destroy();
+	gap.onDestroy();
+	geo.onDestroy();
+	accel.onDestroy();
 	super.onDestroy();
     }
 

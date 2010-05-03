@@ -15,7 +15,7 @@ import android.location.Location;
  * This class only starts and stops various GeoListeners, which consist of a GPS and a Network Listener
  */
 
-public class GeoBroker {
+public class GeoBroker implements LifecycleService {
     private WebView mAppView;
     private Context mCtx;
     private ArgTable arguments;

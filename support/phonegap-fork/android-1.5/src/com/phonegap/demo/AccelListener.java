@@ -11,7 +11,7 @@ import android.webkit.WebView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AccelListener implements SensorListener{
+public class AccelListener implements SensorListener, LifecycleService {
 
     WebView mAppView;
     Context mCtx;

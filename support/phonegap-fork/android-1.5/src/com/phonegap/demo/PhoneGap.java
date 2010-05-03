@@ -47,7 +47,7 @@ import android.util.Log;
 import plt.playlist.PlaylistRecord;
 
 
-public class PhoneGap {
+public class PhoneGap implements LifecycleService {
 	
     private static final String LOG_TAG = "PhoneGap";
     /*
@@ -468,7 +468,8 @@ public class PhoneGap {
 
 
 
-    public void destroy() {
+
+    public void onDestroy() {
 	// FILL ME IN
     	audio.clearCache();
 	stopAllAudio();
