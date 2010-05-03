@@ -212,6 +212,18 @@ public class DroidGap extends Activity {
 	    mCtx = ctx;
     	}
     	
+	void onConsoleMessage(String message, int lineNumber, String sourceId) {
+	    String singleMessage = ("javascript: " + 
+				    sourceId + " : " +
+				    lineNumber + " : " + 
+				    message);
+            AlertDialog.Builder alertBldr = new AlertDialog.Builder(mCtx);
+            alertBldr.setMessage(singleMessage);
+            alertBldr.setTitle("Javascript Error");
+            alertBldr.show();
+	    System.out.println(singleMessage);
+	}
+
     	@Override
 	    public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             Log.d(LOG_TAG, message);
