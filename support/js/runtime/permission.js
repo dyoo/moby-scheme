@@ -95,11 +95,7 @@ goog.provide('plt.permission');
 		
 	else if (isReceiveSmsP(p)) {
 	    platform.getSmsService().addListener(function(sender, msg) {
-		    alert("in permission.js, with sender " 
-			  + sender + " and message " + msg);
-		    try {
-			stimuli.onSmsReceive(sender, msg);
-		    } catch (e) { alert(e); }
+		    stimuli.onSmsReceive(sender, msg);
 		});
 	    keepGoing();
 	}

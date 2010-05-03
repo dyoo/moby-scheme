@@ -588,8 +588,8 @@ Sms.prototype.addListener = function(listener) {
 // The middleware will call this function, assigning appropriate values
 // into the Args.
 Sms.prototype.onReceiveSms = function() {
-    var sender = Args.get("sender");
-    var message = Args.get("message");
+    var sender = "" + Args.get("sender");
+    var message = "" + Args.get("message");
     for (var i = 0; i < this.listeners.length; i++) {
 	(this.listeners[i])(sender, message);
     }

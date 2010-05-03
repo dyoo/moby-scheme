@@ -1,5 +1,11 @@
 // Feeds stimuli inputs into the world.  The functions here
 // are responsible for converting to Scheme values.
+//
+// NOTE and WARNING: make sure to really do the coersions, even for
+// strings.  Bad things happen otherwise, as in the sms stuff, where
+// we're getting string-like values that aren't actually strings.
+
+
 goog.provide('plt.world.stimuli');
 
 (function() {
@@ -64,13 +70,12 @@ goog.provide('plt.world.stimuli');
 
     // Sms receiving
     stimuli.onSmsReceive = function(sender, message) {
-	alert("in stimuli.onSmsReceive");
-	alert("message = " + message);
-	alert("sender = " + sender);
 	var onSmsReceive = lookup('onSmsReceive');
 	var onSmsReceiveEffect = lookup('onSmsReceiveEffect');
-	doStimuli(onSmsReceiveEffect, onSmsReceive, [sender.toString(),
-						     message.toString()]);
+	// IMPORTANT: must coerse to string by using x+"".  Do not use
+	// toString(): it's not safe.
+	doStimuli(onSmsReceiveEffect, onSmsReceive, [sender+"",
+						     message+""]);
     };
 
 
