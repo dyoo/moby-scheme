@@ -453,20 +453,23 @@ public class PhoneGap implements LifecycleService {
 
 
 
-    public void stop() {
+
+
+    // LifecycleService implementations
+
+    public void onResume() {
+    }
+
+    public void onPause() {
+    }
+
+    public void onStop() {
 	// FILL ME IN
     }
 
-
-    public void resume() {
-    }
-
-
-    public void restart() {
+    public void onRestart() {
 	// FILL ME IN
     }
-
-
 
 
     public void onDestroy() {

@@ -105,29 +105,6 @@ public class AccelListener implements SensorListener, LifecycleService {
 				       SensorManager.SENSOR_DELAY_GAME);
     }
 	
-    public void stop()
-    {
-	sensorManager.unregisterListener(this);
-    }
-
-
-    public void restart() {
-	sensorManager.registerListener(this,
-				       SensorManager.SENSOR_ACCELEROMETER,
-				       SensorManager.SENSOR_DELAY_GAME);
-	sensorManager.registerListener(this,
-				       SensorManager.SENSOR_ORIENTATION,
-				       SensorManager.SENSOR_DELAY_GAME);
-    }
-
-    public void resume() {
-    }
-
-
-    public void destroy() {
-	sensorManager.unregisterListener(this);
-    }
-
 
 
 
@@ -189,4 +166,40 @@ public class AccelListener implements SensorListener, LifecycleService {
     public float getAzimuth() { return azimuth; }
     public float getPitch() { return pitch; }
     public float getRoll() { return roll; }
+
+
+
+
+
+
+
+
+
+
+    // LifecycleService implementations
+
+
+    public void onPause() {}
+
+    public void onResume() {}
+
+    public void onStop() {
+	sensorManager.unregisterListener(this);
+    }
+
+    public void onRestart() {
+	sensorManager.registerListener(this,
+				       SensorManager.SENSOR_ACCELEROMETER,
+				       SensorManager.SENSOR_DELAY_GAME);
+	sensorManager.registerListener(this,
+				       SensorManager.SENSOR_ORIENTATION,
+				       SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    public void onDestroy() {
+	sensorManager.unregisterListener(this);
+    }
+
+
+
 }
