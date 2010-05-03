@@ -32,7 +32,7 @@
 
 (define PERMISSION:LOCATION (make-permission:location))
 (define PERMISSION:SEND-SMS (make-permission:send-sms))
-(define PERMISSION:RECEIVE-SMS (make-permission:send-sms))
+(define PERMISSION:RECEIVE-SMS (make-permission:receive-sms))
 (define PERMISSION:TILT (make-permission:tilt))
 (define PERMISSION:SHAKE (make-permission:shake))
 (define PERMISSION:INTERNET (make-permission:internet))

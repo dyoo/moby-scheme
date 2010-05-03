@@ -93,6 +93,11 @@ goog.require('plt.Kernel');
 	    // onShakeEffect: world -> effect
 	    onShakeEffect: false,
 
+	    // onSmsReceive: world -> world
+	    onSmsReceive: false,
+	    // onSmsReceiveEffect: world -> effect
+	    onSmsReceiveEffect: false,
+
 	    // onLocationChange: world number number -> world
 	    onLocationChange : false,
 	    // onLocationChangeEffect: world number number -> effect
@@ -307,6 +312,29 @@ goog.require('plt.Kernel');
 					 onShakeEffect : effectHandler});
 	    }, "on-shake");
     };
+
+
+
+
+    plt.world.config.Kernel.onSmsReceive = function(handler) {
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-sms-receive", "function", 1);
+	return plt.world.config.Kernel.onSmsReceive_star_(handler, 
+						     function(w, a, p, r) { 
+							 return getNoneEffect(); });
+    };
+
+    plt.world.config.Kernel.onSmsReceive_star_ = function(handler, effectHandler) {
+	plt.Kernel.check(handler, plt.Kernel.isFunction, "on-sms-receive!", "function", 1);
+	plt.Kernel.check(effectHandler, plt.Kernel.isFunction, "on-sms-receive!", "function", 2);
+	return addStringMethods(
+	    function(config) {
+		return config.updateAll({onSmsReceive : handler,
+					 onSmsReceiveEffect : effectHandler});
+	    }, "on-sms-receive");
+    };
+
+
+
 
 
 

@@ -94,7 +94,10 @@ goog.provide('plt.permission');
 	}
 		
 	else if (isReceiveSmsP(p)) {
-	    // Do nothing
+	    platform.getSmsService().startService();
+	    platform.getSmsService().addListener(function(sender, msg) {
+		    stimuli.onSmsReceive(sender, msg);
+		});
 	    keepGoing();
 	}
 

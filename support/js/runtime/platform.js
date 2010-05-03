@@ -790,12 +790,20 @@ goog.provide('plt.platform');
     PhonegapSmsService.prototype.send = function(address, msg) {
 	navigator.sms.send(address, msg);
     };
+    
+    PhonegapSmsService.prototype.addListener = function(aListener) {
+	navigator.sms.addListener(aListener);
+    };
+
     var GenericSmsService = function() {
     }
     GenericSmsService.prototype.send = function(address, msg) {
 	alert("SMS should be sent to " + address + " with the content: " + msg);
     };
 
+    GenericSmsService.prototype.addListener = function(aListener) {
+	alert("SMS listening support is not supported on this platform.");
+    };
 
 
     //////////////////////////////////////////////////////////////////////

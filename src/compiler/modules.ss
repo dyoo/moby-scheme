@@ -197,6 +197,18 @@
                                 false)
                                
                                (make-binding:function
+                                'on-sms-receive module-path 1 false
+                                "plt.world.config.Kernel.onSmsReceive"
+                                (list PERMISSION:RECEIVE-SMS)
+                                false)
+
+                               (make-binding:function
+                                'on-sms-receive* module-path 1 false
+                                "plt.world.config.Kernel.onSmsReceive_star"
+                                (list PERMISSION:RECEIVE-SMS)
+                                false)
+                               
+                               (make-binding:function
                                 'on-shake module-path 1 false
                                 "plt.world.config.Kernel.onShake"
                                 (list PERMISSION:SHAKE)

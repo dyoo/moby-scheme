@@ -1,4 +1,5 @@
-// Feeds stimuli inputs into the world.
+// Feeds stimuli inputs into the world.  The functions here
+// are responsible for converting to Scheme values.
 goog.provide('plt.world.stimuli');
 
 (function() {
@@ -60,6 +61,13 @@ goog.provide('plt.world.stimuli');
 	doStimuli(onShakeEffect, onShake, []);
     };
 
+
+    // Sms receiving
+    stimuli.onSmsReceive = function(sender, message) {
+	var onSmsReceive = lookup('onSmsReceive');
+	var onSmsReceiveEffect = lookup('onSmsReceiveEffect');
+	doStimuli(onSmsReceiveEffect, onSmsReceive, [sender, message]);
+    };
 
 
     // Locations
