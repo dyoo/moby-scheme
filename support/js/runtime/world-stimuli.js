@@ -64,9 +64,13 @@ goog.provide('plt.world.stimuli');
 
     // Sms receiving
     stimuli.onSmsReceive = function(sender, message) {
+	alert("in stimuli.onSmsReceive");
+	alert("message = " + message);
+	alert("sender = " + sender);
 	var onSmsReceive = lookup('onSmsReceive');
 	var onSmsReceiveEffect = lookup('onSmsReceiveEffect');
-	doStimuli(onSmsReceiveEffect, onSmsReceive, [sender, message]);
+	doStimuli(onSmsReceiveEffect, onSmsReceive, [sender.toString(),
+						     message.toString()]);
     };
 
 
