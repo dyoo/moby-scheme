@@ -262,11 +262,27 @@
   (for ([subpath (list "css" "runtime")])
     (copy-directory/files* (build-path javascript-support-path subpath) 
                            (build-path dest-dir subpath)))
+  
+  ;; delete redundant files in the runtime
+  (delete-redundant-files-already-in-the-compressed-runtime (build-path dest-dir "runtime"))
+
   (for ([file (list "index.html" "main.js.template")])
     (when (file-exists? (build-path dest-dir file))
       (delete-file (build-path dest-dir file)))
     (copy-file (build-path javascript-support-path file)
                (build-path dest-dir file))))
+
+
+(define (delete-redundant-files-already-in-the-compressed-runtime runtime-path)
+  (delete-file (build-path runtime-path "whole-runtime.js"))
+  (delete-file (build-path runtime-path "compiler.js"))
+  (delete-file (build-path runtime-path "compressed-compiler.js"))
+  (call-with-input-file (build-path runtime-path "MANIFEST")
+                    (lambda (ip)
+                      (for ([line (in-lines ip)])
+                        (delete-file (build-path runtime-path line))))))
+
+
 
 
 (define (do-compilation program)
