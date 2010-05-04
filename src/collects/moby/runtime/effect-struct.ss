@@ -81,4 +81,6 @@
                   [struct effect:pick-random ([n number?]
                                               [update-f (any/c number? . -> . any/c)])]
                   
-                  [effect? (any/c . -> . boolean?)])
+                  [effect? (any/c . -> . boolean?)]
+
+		  [struct playlist-sound ([playlist any/c])])
