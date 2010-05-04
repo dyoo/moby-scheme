@@ -474,7 +474,7 @@ stimulus handlers described above.
 
 
 @defproc[(make-effect:none) effect]{No result when interpreted.}
-@defproc[(make-effect:beep) effect]{Audible beep when interpreted.}
+@defproc[(make-effect:beep) effect]{Audible beep when interpreted.  On an Android smartphone, uses the notification ringtone.}
 
 
 @defproc[(make-effect:play-sound (a-sound sound)) effect]{Plays a sound from the given @scheme[sound].  If the sound is already playing, then the sound continues to play.}
@@ -489,6 +489,8 @@ A @scheme[sound] is a:
 @defproc[(make-effect:set-sound-volume (volume number)) effect]{Sets the sound volume; the number should be between 0 and 100.}
 @defproc[(make-effect:raise-sound-volume) effect]{Raises the sound volume.  If the volume's already at 100, has no effect.}
 @defproc[(make-effect:lower-sound-volume) effect]{Lowers the sound volume.  If the volume's set to 0, has no effect.}
+
+@defproc[(make-effect:set-beep-volume (volume number)) effect]{Sets the sound volume of the beep; the number should be between 0 and 100.  On an Android smartphone, uses the notification sound.}
 
 @defproc[(make-effect:play-dtmf-tone (tone number)) effect]{On a smartphone, plays a DTMF tone, where @scheme[tone] is between 0 and 15 inclusive.}
 

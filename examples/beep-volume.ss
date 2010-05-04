@@ -13,11 +13,11 @@
                           (lambda (w) (make-effect:beep)))
 	      (list (js-text "Beep")))
 	(list (js-button! (lambda (w) w)
-                          (lambda (w) (make-effect:set-ringer-volume 0)))
-	      (list (js-text "Mute ringer")))
+                          (lambda (w) (make-effect:set-beep-volume 0)))
+	      (list (js-text "Mute beep volume")))
 	(list (js-button! (lambda (w) w)
-                          (lambda (w) (make-effect:set-ringer-volume 75)))
-	      (list (js-text "Set ringer to 75%")))))
+                          (lambda (w) (make-effect:set-beep-volume 75)))
+	      (list (js-text "Set beep volume to 75%")))))
 
 
 ;; draw: world -> DOM-sexp

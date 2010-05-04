@@ -27,4 +27,4 @@
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
 
-(define release-notes '("Added on-sms-receive ."))
+(define release-notes '("Added on-sms-receive and set-beep-volume."))

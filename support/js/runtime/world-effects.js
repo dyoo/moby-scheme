@@ -110,7 +110,7 @@ goog.provide('plt.world.effects');
 	    plt.types.NumberTower.toFixnum(this._fields[0]));
     };
 
-    E['effect:set-ringer-volume'].prototype.run = function() {
+    E['effect:set-beep-volume'].prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService().setRingerVolume(
 	    plt.types.NumberTower.toFixnum(this._fields[0]));
     };
