@@ -11,6 +11,7 @@
 (define-struct permission:internet ())
 (define-struct permission:telephony ())
 (define-struct permission:wake-lock ())
+(define-struct permission:vibrate ())
 (define-struct permission:foreign-function-interface ())
 (define-struct permission:open-image-url (url))
 (define-struct permission:universe (url))
@@ -25,6 +26,7 @@
       (permission:internet? datum)
       (permission:telephony? datum)
       (permission:wake-lock? datum)
+      (permission:vibrate? datum)
       (permission:foreign-function-interface? datum)
       (permission:open-image-url? datum)
       (permission:universe? datum)))
@@ -37,6 +39,7 @@
 (define PERMISSION:SHAKE (make-permission:shake))
 (define PERMISSION:INTERNET (make-permission:internet))
 (define PERMISSION:TELEPHONY (make-permission:telephony))
+(define PERMISSION:VIBRATE (make-permission:vibrate))
 (define PERMISSION:WAKE-LOCK (make-permission:wake-lock))
 (define PERMISSION:FOREIGN-FUNCTION-INTERFACE (make-permission:foreign-function-interface))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,6 +65,8 @@
      "PERMISSION:TELEPHONY"]
     [(permission:wake-lock? a-permission)
      "PERMISSION:WAKE-LOCK"]
+    [(permission:vibrate? a-permission)
+     "PERMISSION:VIBRATE"]
     [(permission:foreign-function-interface? a-permission)
      "PERMISSION:FOREIGN-FUNCTION-INTERFACE"]
     [(permission:open-image-url? a-permission)
@@ -106,6 +111,8 @@
        PERMISSION:TELEPHONY]
       [(string=? a-ref "PERMISSION:WAKE-LOCK")
        PERMISSION:WAKE-LOCK]
+      [(string=? a-ref "PERMISSION:VIBRATE")
+       PERMISSION:VIBRATE]
       [(string=? a-ref "PERMISSION:FOREIGN-FUNCTION-INTERFACE")
        PERMISSION:FOREIGN-FUNCTION-INTERFACE]
       [(is-permission/1? "PERMISSION:OPEN-IMAGE-URL" a-ref)
@@ -137,6 +144,8 @@
      (list "android.permission.ACCESS_COARSE_UPDATES")]
     [(permission:wake-lock? a-permission)
      (list "android.permission.WAKE_LOCK")]
+    [(permission:vibrate? a-permission)
+     (list "android.permission.VIBRATE")]
     [(permission:foreign-function-interface? a-permission)
      (list)]
     [(permission:open-image-url? a-permission)
@@ -155,6 +164,7 @@
                   [struct permission:internet ()]
                   [struct permission:telephony ()]
                   [struct permission:wake-lock ()]
+                  [struct permission:vibrate ()]
                   [struct permission:foreign-function-interface ()]
                   [struct permission:open-image-url ((url string?))]
                   [struct permission:universe ((url string?))]
@@ -167,6 +177,7 @@
                   [PERMISSION:INTERNET permission?]
                   [PERMISSION:TELEPHONY permission?]
                   [PERMISSION:WAKE-LOCK permission?]
+                  [PERMISSION:VIBRATE permission?]
                   [PERMISSION:FOREIGN-FUNCTION-INTERFACE permission?]
                   
                   [permission->string

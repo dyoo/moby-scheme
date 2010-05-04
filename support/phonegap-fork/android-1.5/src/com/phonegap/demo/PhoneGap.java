@@ -116,7 +116,7 @@ public class PhoneGap implements LifecycleService {
 	if (notification != null) {
 	    notification.play();
 	} else {
-	    vibrate(pattern);
+	    vibrate(500);
 	}
     }
 	
@@ -319,7 +319,7 @@ public class PhoneGap implements LifecycleService {
     }
 
     public boolean setRingerVolume(int volume, int flags) {
-    	return audio.setVolume(volume, flags);
+    	return audio.setRingerVolume(volume, flags);
     }
 
 

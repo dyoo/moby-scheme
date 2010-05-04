@@ -84,9 +84,12 @@
                          (list (bf 'make-effect:none module-path 0
                                    false 
                                    "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:none']")
-                               (bf 'make-effect:beep module-path 0
+                               (make-binding:function
+				'make-effect:beep module-path 0
                                    false 
-                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:beep']")
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:beep']"
+				   (list PERMISSION:VIBRATE)
+				   false)
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false 
                                    "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:play-dtmf-tone']")
