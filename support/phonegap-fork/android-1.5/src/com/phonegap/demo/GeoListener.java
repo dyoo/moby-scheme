@@ -36,7 +36,7 @@ public class GeoListener {
 	if(!id.equals("global"))
 	    {
 		arguments.put("gpsId", id);
-		mAppView.loadUrl("javascript:navigator.geolocation.success()");
+		mAppView.loadUrl("javascript:navigator.phonegap_geo.success()");
 	    }
 	else
 	    {

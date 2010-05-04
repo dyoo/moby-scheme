@@ -411,7 +411,11 @@ Geolocation.prototype.clearWatch = function(watchId) {
     clearInterval(watchId);
 }
 
-if (typeof navigator.geolocation == "undefined") navigator.geolocation = new Geolocation();
+navigator.phonegap_geo = new Geolocation();
+if (typeof navigator.geolocation == "undefined") {
+    navigator.geolocation = navigator.phonegap_geo;
+}
+
 
 
 /**

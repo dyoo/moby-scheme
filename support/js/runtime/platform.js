@@ -259,11 +259,11 @@ goog.provide('plt.platform');
 			 that.currentPosition.longitude);
     	    }
 	}; 
-    	this.watchId = navigator.geolocation.watchPosition(locSuccessCallback, function() {}, {});
+    	this.watchId = navigator.phonegap_geo.watchPosition(locSuccessCallback, function() {}, {});
     };
 
     PhonegapLocationService.prototype.shutdownService = function() {
-    	navigator.geolocation.clearWatch(this.watchId);
+    	navigator.phonegap_geo.clearWatch(this.watchId);
     };
     
     PhonegapLocationService.prototype.addLocationChangeListener = function(listener) {
@@ -271,11 +271,11 @@ goog.provide('plt.platform');
     };
 
     PhonegapLocationService.prototype.getLatitude = function () {
-	return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.latitude);
+	return plt.types.FloatPoint.makeInstance(navigator.phonegap_geo.lastPosition.latitude);
     };
 
     PhonegapLocationService.prototype.getLongitude = function () {
-	return plt.types.FloatPoint.makeInstance(navigator.geolocation.lastPosition.longitude);
+	return plt.types.FloatPoint.makeInstance(navigator.phonegap_geo.lastPosition.longitude);
     };
 
     PhonegapLocationService.prototype.getAltitude = function () {
@@ -292,7 +292,7 @@ goog.provide('plt.platform');
 
     PhonegapLocationService.prototype.getDistanceBetween = function (lat1, long1, lat2, long2) {
 	return plt.types.FloatPoint.makeInstance(
-	    navigator.geolocation.getDistanceBetween(lat1.toFloat(),
+	    navigator.phonegap_geo.getDistanceBetween(lat1.toFloat(),
 						     long1.toFloat(),
 						     lat2.toFloat(),
 						     long2.toFloat()));
