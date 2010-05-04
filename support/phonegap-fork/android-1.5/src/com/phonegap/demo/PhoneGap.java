@@ -109,12 +109,15 @@ public class PhoneGap implements LifecycleService {
 	mCtx.finish();
     }
 	
-    public void beep(long pattern)
-    {
+    public void beep(long pattern) {
 	RingtoneManager beeper = new RingtoneManager(mCtx);
 	Uri ringtone = beeper.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 	Ringtone notification = beeper.getRingtone(mCtx, ringtone);
-	notification.play();
+	if (notification != null) {
+	    notification.play();
+	} else {
+	    vibrate(pattern);
+	}
     }
 	
     public void vibrate(long pattern){
