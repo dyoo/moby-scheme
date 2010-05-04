@@ -315,6 +315,9 @@ public class PhoneGap implements LifecycleService {
     	return audio.setVolume(volume, flags);
     }
 
+    public boolean setRingerVolume(int volume, int flags) {
+    	return audio.setVolume(volume, flags);
+    }
 
 
 

@@ -56,7 +56,8 @@ public class AudioHandler implements OnCompletionListener,
     //	private String curPlaying = null;
     private AudioManager volumeControl;
 	
-    private static final int MUSIC_STREAM = AudioManager.STREAM_MUSIC;
+    private static final int STREAM_MUSIC = AudioManager.STREAM_MUSIC;
+    private static final int STREAM_RING = AudioManager.STREAM_RING;
 
     private class MPlayerStatus {
 	public String file;
@@ -202,7 +203,7 @@ public class AudioHandler implements OnCompletionListener,
 			Log.d("AudioStartPlaying", "Streaming");
 			// Streaming prepare async
 			mPlayer.setDataSource(f.getAbsolutePath());
-			mPlayer.setAudioStreamType(MUSIC_STREAM);  
+			mPlayer.setAudioStreamType(STREAM_MUSIC);  
 			mPlayer.prepare();
 		    } else {
 		    Log.d("AudioStartPlaying", "File");
@@ -321,13 +322,13 @@ public class AudioHandler implements OnCompletionListener,
     }
 
     public void increaseVolume(int flags) {
-	volumeControl.adjustStreamVolume(MUSIC_STREAM,
+	volumeControl.adjustStreamVolume(STREAM_MUSIC,
 					 AudioManager.ADJUST_RAISE,
 					 flags);
     }
 
     public void decreaseVolume(int flags) {
-	volumeControl.adjustStreamVolume(MUSIC_STREAM,
+	volumeControl.adjustStreamVolume(STREAM_MUSIC,
 					 AudioManager.ADJUST_LOWER,
 					 flags);
     }
@@ -336,8 +337,18 @@ public class AudioHandler implements OnCompletionListener,
 	if (percent < 0 || percent > 100)
 	    return false;
 
-	int volIndex = percent * volumeControl.getStreamMaxVolume(MUSIC_STREAM) / 100;
-	volumeControl.setStreamVolume(MUSIC_STREAM, volIndex, flags);
+	int volIndex = percent * volumeControl.getStreamMaxVolume(STREAM_MUSIC) / 100;
+	volumeControl.setStreamVolume(STREAM_MUSIC, volIndex, flags);
+	return true;
+    }
+
+
+    public boolean setRingerVolume(int percent, int flags) {
+	if (percent < 0 || percent > 100)
+	    return false;
+
+	int volIndex = percent * volumeControl.getStreamMaxVolume(STREAM_MUSIC) / 100;
+	volumeControl.setStreamVolume(STREAM_RING, volIndex, flags);
 	return true;
     }
 	

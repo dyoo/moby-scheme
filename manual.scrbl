@@ -456,6 +456,16 @@ Calls the acceleration handlers when the device feels change in acceleration.
 
 
 
+@deftogether[(
+              @defproc[(on-sms-receive (world-update-f (world (sender string) (message string) -> world))) handler]
+               @defproc[(on-sms-receive! (world-update-f (world (sender string) (message string) -> world))
+                                   (effect-f (world (sender string) (message string) -> effect)))
+                        handler])]{
+Calls the sms-receiving handlers when the phone is physically jerked.  The first string is the
+sender's address, and the second string is the message payload.}
+
+
+
 @subsection{Effects}
 
 Effects allow world programs to apply side effects to the outside
@@ -699,8 +709,17 @@ Download the Moby source, currently hosted on
     Moby as before.
 
 
-@subsection{Running Moby from the command line}
+@subsection{Running the bootstrapper}
 
+Whenever you first check out moby ,and whenever you make changes to
+the underlying kernel libraries (in
+@filepath{moby/support/js/runtime}), you will need to run the bootstrapper
+program @filepath{moby/src/bootstrap-js-compiler.ss}.  This generates a set
+of translated libraries and dependencies for the Moby runtime.
+
+
+
+@subsection{Running Moby from the command line}
 
 You can run the Moby command line utility (@filepath{moby/src/moby.ss}) on a Moby
 program to produce a compiled version of your application.  Moby

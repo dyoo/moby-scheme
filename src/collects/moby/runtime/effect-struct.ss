@@ -27,6 +27,10 @@
 (define-struct effect:set-sound-volume (volume))
 (define-struct effect:raise-sound-volume ())
 (define-struct effect:lower-sound-volume ())
+
+;; The ringer volume is a separate volume control in Android.
+(define-struct effect:set-ringer-volume (volume))
+
 (define-struct effect:set-wake-lock (locks))
 (define-struct effect:release-wake-lock ())
 (define-struct effect:pick-playlist (update-f))
@@ -47,6 +51,7 @@
       (effect:pause-sound? thing)
       (effect:stop-sound? thing)
       (effect:set-sound-volume? thing)
+      (effect:set-ringer-volume? thing)
       (effect:raise-sound-volume? thing)
       (effect:lower-sound-volume? thing)
       (effect:set-wake-lock? thing)
@@ -64,7 +69,10 @@
                   [struct effect:play-sound ([sound sound?])]
                   [struct effect:pause-sound ([sound sound?])]
                   [struct effect:stop-sound ([sound sound?])]
+
                   [struct effect:set-sound-volume ([volume number?])]
+                  [struct effect:set-ringer-volume ([volume number?])]
+
                   [struct effect:lower-sound-volume ()]
                   [struct effect:raise-sound-volume ()]
                   [struct effect:set-wake-lock ([locks number?])]

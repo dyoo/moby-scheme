@@ -112,6 +112,9 @@
                                (bf 'make-effect:set-sound-volume module-path 1
                                    false 
                                    "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:set-sound-volume']")
+                               (bf 'make-effect:set-ringer-volume module-path 1
+                                   false 
+                                   "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:set-ringer-volume']")
                                (bf 'make-effect:raise-sound-volume module-path 0
                                    false
                                    "plt.Kernel.invokeModule('moby/runtime/effect-struct').EXPORTS['make-effect:raise-sound-volume']")

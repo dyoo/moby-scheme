@@ -620,7 +620,10 @@ goog.provide('plt.platform');
     };
     PhonegapSoundService.prototype.setVolume = function(volume) {
     	navigator.audio.setMusicVolume(volume);
-    }
+    };
+    PhonegapSoundService.prototype.setRingerVolume = function(volume) {
+    	navigator.audio.setRingerVolume(volume);
+    };
     PhonegapSoundService.prototype.raiseVolume = function() {
     	navigator.audio.increaseMusicVolume();
     };
@@ -685,6 +688,9 @@ goog.provide('plt.platform');
 	this.baseVolume = volume;
     };
 
+    Html5SoundService.prototype.setRingerVolume = function(volume) {
+    };
+
     Html5SoundService.prototype.raiseVolume = function() {
 	this.setVolume(Math.min(this.baseVolume + 5, 100));
     };
@@ -733,6 +739,8 @@ goog.provide('plt.platform');
     GenericSoundService.prototype.pauseSoundUrl = function(url) {
     };
     GenericSoundService.prototype.setVolume = function(volume) {
+    };
+    GenericSoundService.prototype.setRingerVolume = function(volume) {
     };
     GenericSoundService.prototype.raiseVolume = function() {
     };

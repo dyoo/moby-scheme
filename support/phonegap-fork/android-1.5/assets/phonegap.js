@@ -697,6 +697,12 @@ Audio.prototype.setMusicVolume = function(volume, flags) {
     Device.setMusicVolume(volume, theFlags);
 }
 
+Audio.prototype.setRingerVolume = function(volume, flags) {
+    var theFlags = (typeof flags == "undefined")? Audio.FLAG_NONE : flags;
+    Device.setRingerVolume(volume, theFlags);
+}
+
+
 Audio.prototype.playDTMF = function(tone) {
     Device.playDTMF(tone);
 }

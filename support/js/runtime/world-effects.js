@@ -110,6 +110,11 @@ goog.provide('plt.world.effects');
 	    plt.types.NumberTower.toFixnum(this._fields[0]));
     };
 
+    E['effect:set-ringer-volume'].prototype.run = function() {
+	plt.platform.Platform.getInstance().getSoundService().setRingerVolume(
+	    plt.types.NumberTower.toFixnum(this._fields[0]));
+    };
+
     effect_colon_raise_dash_sound_dash_volume.prototype.run = function() {
 	plt.platform.Platform.getInstance().getSoundService.raiseVolume();
     };
