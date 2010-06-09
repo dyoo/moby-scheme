@@ -64,11 +64,11 @@
     
     
     ;; (if test consequent alternative)
-    #;[(stx-begins-with? expr 'if)
-       (local [(define test (second (stx-e expr)))
-               (define consequent (third (stx-e expr)))
-               (define alternative (fourth (stx-e expr)))]
-         (if-expression->javascript-string test consequent alternative env a-pinfo))]
+    [(stx-begins-with? expr 'if)
+     (local [(define test (second (stx-e expr)))
+             (define consequent (third (stx-e expr)))
+             (define alternative (fourth (stx-e expr)))]
+       (compile-if-expression test consequent alternative env a-pinfo))]
     
     
     ;; (and exprs ...)
@@ -130,8 +130,13 @@
 
 
 
-
-
+;; compile-if-expression: expression expression expression env pinfo -> (values expr pinfo)
+(define (compile-if-expression test then else env pinfo)
+  (let*-values ([(c-test pinfo-1) (compile-expression test env pinfo)]
+                [(c-then pinfo-2) (compile-expression then env pinfo-1)]
+                [(c-else pinfo-3) (compile-expression else env pinfo-2)])
+    (values (bcode:make-branch c-test c-then c-else)
+            pinfo-3)))
 
 
 

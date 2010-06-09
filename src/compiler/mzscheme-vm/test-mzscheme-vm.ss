@@ -4,7 +4,8 @@
          "mzscheme-vm.ss"
          "../env.ss"
          "../pinfo.ss"
-         "../../stx-helpers.ss")
+         "../../stx-helpers.ss"
+         "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss")
 
 (require (for-syntax scheme/base))
 
@@ -26,6 +27,9 @@
 (check-expect (c #t) #t)
 (check-expect (c #f) #f)
 (check-expect (c #\z) #\z)
+
+(check-expect (c (if #t 3 4))
+              (make-branch #t 3 4))
 
 
 
