@@ -34,7 +34,14 @@
 
 
 ;; identifiers and lambdas
-(check-error (c x) "env-lookup: Couldn't find x in the environment")
+(check-error 
+ (c x)
+ "compile-identifier-expression: Couldn't find x in the environment")
+
+#;(check-expect (c (lambda (x y) x))
+                (make-lam ...
+                 ... (make-localref 0)))
+
 
 
 (test)

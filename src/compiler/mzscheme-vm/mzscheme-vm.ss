@@ -179,7 +179,113 @@
 
     [(struct global-stack-reference (depth pos))
      (values (bcode:make-toplevel depth pos #f #f)
-             pinfo)]))
+             pinfo)]
+    [(struct unbound-stack-reference (name))
+     (error 'compile-identifier-expression 
+            (format "Couldn't find ~a in the environment" name))]))
+
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; free-variables: expr env pinfo -> (listof expr)
+;; Given an expression, compute the set of free variable occcurances
+(define (free-variables expr env)
+  (cond
+    
+    ;; (if test consequent alternative)
+    [(stx-begins-with? expr 'if)
+     (local [(define test (second (stx-e expr)))
+             (define consequent (third (stx-e expr)))
+             (define alternative (fourth (stx-e expr)))]
+       (append (free-variables test)
+               (free-variables consequent)
+               (free-variables alternative)))]
+
+
+    ;; (begin ...)
+    [(stx-begins-with? expr 'begin)
+     (local [(define exprs (rest (stx-e expr)))]
+       (apply append
+              (map (lambda (e) (free-variables e env)) exprs)))]
+
+    
+    ;; Identifiers
+    [(symbol? (stx-e expr))
+     (match (env-lookup env (stx-e expr))
+       [(struct local-stack-reference (depth))
+        empty]
+       [(struct global-stack-reference (depth pos))
+        empty]
+       [(struct unbound-stack-reference (name))
+        expr])]
+
+        
+    ;; (local ([define ...] ...) body)
+    #;[(stx-begins-with? expr 'local)
+     (local [(define defns (stx-e (second (stx-e expr))))
+             (define body (third (stx-e expr)))]
+       ...)]
+    
+    
+    ;; (set! identifier value)
+    ;; Attention: it's evaluation doesn't produce an Object
+    #;[(stx-begins-with? expr 'set!)
+     (local [(define id (second (stx-e expr)))
+             (define value (third (stx-e expr)))]
+       ...)]
+    
+    
+    
+    
+    ;; (and exprs ...)
+    #;[(stx-begins-with? expr 'and)
+       ...]
+    
+    ;; (or exprs ...)
+    #;[(stx-begins-with? expr 'or)
+       ...]
+    
+    ;; (lambda (args ...) body)
+    #;[(stx-begins-with? expr 'lambda)
+       ...]
+    
+    ;; Quoted datums
+    #;[(stx-begins-with? expr 'quote)
+       ...]
+    
+      
+    ;; Function call/primitive operation call
+    #;[(pair? (stx-e expr))
+       ...
+       ]
+    
+    ;; Numbers
+    [(number? (stx-e expr))
+     empty]
+    
+    ;; Strings
+    [(string? (stx-e expr))
+     empty]
+    
+    ;; Literal booleans
+    [(boolean? (stx-e expr))
+     empty]
+    
+    ;; Characters
+    [(char? (stx-e expr))
+     empty]))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
 
 
 

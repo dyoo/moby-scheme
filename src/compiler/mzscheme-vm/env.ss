@@ -42,6 +42,7 @@
 (define-struct stack-reference ())
 (define-struct (local-stack-reference stack-reference) (depth))
 (define-struct (global-stack-reference stack-reference) (depth pos))
+(define-struct (unbound-stack-reference stack-reference) (name))
 
 
 
@@ -66,7 +67,8 @@
              [depth 0])
     (match env
       [(struct empty-env ())
-       (error 'env-lookup (format "Couldn't find ~s in the environment" a-name))]
+       (make-unbound-stack-reference a-name)]
+
       [(struct local-env (name parent-env))
        (cond
          [(eq? a-name name)
@@ -94,4 +96,6 @@
                           [(depth number?)]]
                   [struct (global-stack-reference stack-reference)
                           [(depth number?)
-                           (pos number?)]])
+                           (pos number?)]]
+                  [struct (unbound-stack-reference stack-reference)
+                          [(name symbol?)]])
