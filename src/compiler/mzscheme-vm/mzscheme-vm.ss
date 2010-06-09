@@ -7,23 +7,30 @@
          scheme/contract
          (only-in scheme/list empty first second third fourth empty? rest))
 
-#;(require "env.ss")
-#;(require "pinfo.ss")
+
+
 #;(require "analyzer.ss")
-#;(require "helpers.ss")
 #;(require "desugar.ss")
 #;(require "labeled-translation.ss")
 #;(require "rbtree.ss")
 #;(require "../collects/moby/runtime/binding.ss")
-(require "../collects/moby/runtime/stx.ss")
 #;(require "../collects/moby/runtime/error-struct.ss")
 #;(require "../collects/moby/runtime/arity-struct.ss")
-#;(require (prefix-in bcode: "../../support/externals/mzscheme-vm/src/bytecode-structs.ss"))
+
+(require "../helpers.ss"
+         "../env.ss"
+         "../pinfo.ss"
+         "../../collects/moby/runtime/stx.ss")
+
+(require (prefix-in bcode: "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss"))
 
 
 
 
-
+(provide/contract [compile-expression (expression? env? pinfo? . -> . 
+                                             (values 
+                                              (or/c bcode:form? bcode:indirect? any/c)
+                                              pinfo?))])
 
 
 
