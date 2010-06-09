@@ -2,7 +2,7 @@
 
 (require test-engine/scheme-tests
          "mzscheme-vm.ss"
-         "../env.ss"
+         "env.ss"
          "../pinfo.ss"
          "../../stx-helpers.ss"
          "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss")
@@ -32,6 +32,9 @@
 (check-expect (c (begin "hello" "world"))
               (make-seq (list "hello" "world")))
 
+
+;; identifiers and lambdas
+(check-error (c x) "env-lookup: Couldn't find x in the environment")
 
 
 (test)

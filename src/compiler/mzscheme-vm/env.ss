@@ -7,9 +7,12 @@
 ;; Representation of the stack environment of the mzscheme vm, so we know where
 ;; things live.
 
-(define-struct empty-env ())
-(define-struct local-env (name parent-rib))
-(define-struct global-env (names parent-rib))
+(define-struct env ())
+(define-struct (empty-env env) ())
+(define-struct (local-env env) (name parent-rib))
+(define-struct (global-env env) (names parent-rib))
+
+(define EMPTY-ENV (make-empty-env))
 
 
 
@@ -36,13 +39,9 @@
 
 
 
-;; stack-reference?: any -> boolean
-(define (stack-reference? x)
-  (or (local-stack-reference? x)
-      (global-stack-reference? x)))
-
-(define-struct local-stack-reference (depth))
-(define-struct global-stack-reference (depth pos))
+(define-struct stack-reference ())
+(define-struct (local-stack-reference stack-reference) (depth))
+(define-struct (global-stack-reference stack-reference) (depth pos))
 
 
 
@@ -82,3 +81,17 @@
              [else
               (loop parent-env (add1 depth))])])))
 
+
+
+(provide/contract [env? (any/c . -> . boolean?)]
+                  [rename EMPTY-ENV empty-env env?]
+                  [env-push-globals (env? (listof symbol?) . -> . env?)]
+                  [env-push-local (env? symbol? . -> . env?)]
+                  [env-pop (env? . -> . env?)]
+                  [env-lookup (env? symbol? . -> . stack-reference?)]
+                  [struct stack-reference ()]
+                  [struct (local-stack-reference stack-reference) 
+                          [(depth number?)]]
+                  [struct (global-stack-reference stack-reference)
+                          [(depth number?)
+                           (pos number?)]])

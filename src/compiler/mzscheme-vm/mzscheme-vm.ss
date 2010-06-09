@@ -5,6 +5,7 @@
 (require scheme/local
          scheme/bool
          scheme/contract
+         scheme/match
          (only-in scheme/list empty first second third fourth empty? rest))
 
 
@@ -18,9 +19,11 @@
 #;(require "../collects/moby/runtime/arity-struct.ss")
 
 (require "../helpers.ss"
-         "../env.ss"
+
          "../pinfo.ss"
-         "../../collects/moby/runtime/stx.ss")
+         "../../collects/moby/runtime/stx.ss"
+         
+         "env.ss")
 
 (require (prefix-in bcode: "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss"))
 
@@ -57,6 +60,11 @@
     [(stx-begins-with? expr 'begin)
      (local [(define exprs (rest (stx-e expr)))]
        (compile-begin exprs env a-pinfo))]
+
+    
+    ;; Identifiers
+    [(symbol? (stx-e expr))
+     (compile-identifier-expression expr env a-pinfo)]
 
     
     
@@ -106,11 +114,6 @@
        (application-expression->javascript-string expr operator operands env a-pinfo))]
     
     
-    ;; Identifiers
-    #;[(symbol? (stx-e expr))
-     (list
-        (identifier-expression->javascript-string expr env)
-        a-pinfo)]
 
     
 
@@ -166,6 +169,18 @@
   (let-values ([(compiled-exprs pinfo-1)
                 (compile-expressions exprs env pinfo)])
     (values (bcode:make-seq compiled-exprs) pinfo-1)))
+
+
+(define (compile-identifier-expression expr env pinfo)
+  (match (env-lookup env (stx-e expr))
+    [(struct local-stack-reference (depth))
+     (values (bcode:make-localref #f depth #f #f #f)
+             pinfo)]
+
+    [(struct global-stack-reference (depth pos))
+     (values (bcode:make-toplevel depth pos #f #f)
+             pinfo)]))
+
 
 
 
