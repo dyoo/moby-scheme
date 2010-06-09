@@ -44,16 +44,28 @@
 ;; compile-expression: expression env pinfo -> (values expr pinfo)
 (define (compile-expression expr env a-pinfo)
   (cond
+
+    ;; (if test consequent alternative)
+    [(stx-begins-with? expr 'if)
+     (local [(define test (second (stx-e expr)))
+             (define consequent (third (stx-e expr)))
+             (define alternative (fourth (stx-e expr)))]
+       (compile-if-expression test consequent alternative env a-pinfo))]
+
+
+    ;; (begin ...)
+    [(stx-begins-with? expr 'begin)
+     (local [(define exprs (rest (stx-e expr)))]
+       (compile-begin exprs env a-pinfo))]
+
+    
+    
     ;; (local ([define ...] ...) body)
     #;[(stx-begins-with? expr 'local)
      (local [(define defns (stx-e (second (stx-e expr))))
              (define body (third (stx-e expr)))]
        (local-expression->javascript-string defns body env a-pinfo))]
     
-    ;; (begin ...)
-    #;[(stx-begins-with? expr 'begin)
-     (local [(define exprs (rest (stx-e expr)))]
-       (begin-sequence->javascript-string expr exprs env a-pinfo))]
     
     ;; (set! identifier value)
     ;; Attention: it's evaluation doesn't produce an Object
@@ -63,12 +75,6 @@
        (set!-expression->javascript-string id value env a-pinfo))]
     
     
-    ;; (if test consequent alternative)
-    [(stx-begins-with? expr 'if)
-     (local [(define test (second (stx-e expr)))
-             (define consequent (third (stx-e expr)))
-             (define alternative (fourth (stx-e expr)))]
-       (compile-if-expression test consequent alternative env a-pinfo))]
     
     
     ;; (and exprs ...)
@@ -128,6 +134,23 @@
 
 
 
+;; compile-expressions: (listof expression) env pinfo -> (values (listof expr) pinfo)
+(define (compile-expressions exprs env pinfo)
+  (let loop ([exprs exprs]
+             [pinfo pinfo])
+    (cond
+      [(empty? exprs)
+       (values empty pinfo)]
+      [else
+       (let*-values ([(compiled-expr pinfo-1)
+                      (compile-expression (first exprs) env pinfo)]
+                     [(compiled-rest-exprs pinfo-2)
+                      (loop (rest exprs) pinfo-1)])
+         (values (cons compiled-expr compiled-rest-exprs)
+                 pinfo-2))])))
+         
+             
+
 
 
 ;; compile-if-expression: expression expression expression env pinfo -> (values expr pinfo)
@@ -137,6 +160,13 @@
                 [(c-else pinfo-3) (compile-expression else env pinfo-2)])
     (values (bcode:make-branch c-test c-then c-else)
             pinfo-3)))
+
+
+(define (compile-begin exprs env pinfo)
+  (let-values ([(compiled-exprs pinfo-1)
+                (compile-expressions exprs env pinfo)])
+    (values (bcode:make-seq compiled-exprs) pinfo-1)))
+
 
 
 

@@ -27,9 +27,10 @@
 (check-expect (c #t) #t)
 (check-expect (c #f) #f)
 (check-expect (c #\z) #\z)
-
 (check-expect (c (if #t 3 4))
               (make-branch #t 3 4))
+(check-expect (c (begin "hello" "world"))
+              (make-seq (list "hello" "world")))
 
 
 
