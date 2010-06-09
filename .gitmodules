@@ -1,0 +1,3 @@
+[submodule "support/externals/mzscheme-vm"]
+	path = support/externals/mzscheme-vm
+	url = git://github.com/dyoo/mzscheme-vm.git
