@@ -46,8 +46,8 @@
 
 
 (define-struct stack-reference ())
-(define-struct (local-stack-reference stack-reference) (depth))
-(define-struct (global-stack-reference stack-reference) (depth pos))
+(define-struct (local-stack-reference stack-reference) (name depth))
+(define-struct (global-stack-reference stack-reference) (name depth pos))
 (define-struct (unbound-stack-reference stack-reference) (name))
 
 
@@ -78,14 +78,14 @@
       [(struct local-env (name parent-env))
        (cond
          [(eq? a-name name)
-          (make-local-stack-reference depth)]
+          (make-local-stack-reference a-name depth)]
          [else 
           (loop parent-env (add1 depth))])]
       [(struct global-env (names parent-env))
        (cond [(position a-name names)
               =>
               (lambda (pos)
-                (make-global-stack-reference depth pos))]
+                (make-global-stack-reference a-name depth pos))]
              [else
               (loop parent-env (add1 depth))])]
       [(struct unnamed-env (parent-env))
@@ -102,9 +102,11 @@
                   [env-lookup (env? symbol? . -> . stack-reference?)]
                   [struct stack-reference ()]
                   [struct (local-stack-reference stack-reference) 
-                          [(depth number?)]]
+                          [(name symbol?)
+                           (depth number?)]]
                   [struct (global-stack-reference stack-reference)
-                          [(depth number?)
+                          [(name symbol?)
+                           (depth number?)
                            (pos number?)]]
                   [struct (unbound-stack-reference stack-reference)
                           [(name symbol?)]])
