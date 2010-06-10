@@ -45,7 +45,7 @@
  "compile-identifier-expression: Couldn't find x in the environment")
 
 
-#;(check-expect (c (lambda (x y) x))
+(check-expect (c (lambda (x y) x))
               (make-lam '() 
                         '() 
                         2 

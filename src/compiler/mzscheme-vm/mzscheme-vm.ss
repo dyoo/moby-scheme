@@ -193,12 +193,22 @@
 (define (compile-lambda-expression lambda-expr args body env pinfo)
   ;; Capture the closure's values
   ;; Compile the body, extending the environment
-  (let* ([free-vars (free-variables lambda-expr env)]
-         [extended-env (foldl (lambda (var)
-                                (append (reverse args)
-                                        (reverse free-vars)))
-                              args)])
-    (values 'foo pinfo)))
+  (let*-values ([(free-vars) (free-variables lambda-expr env)]
+         
+                [(extended-env) (foldl (lambda (var env)
+                                         (env-push-local env var))
+                                       env
+                                       (append (reverse args)
+                                               (reverse free-vars)))]
+                [(compiled-body pinfo-1) (compile-expression body extended-env pinfo)])
+    (values (bcode:make-lam empty 
+                            '()
+                            (length args)
+                            (build-list (length args) (lambda (i)
+                                                        'val))
+                            #f
+                            ...)
+            pinfo-1)))
 
 
 
@@ -265,8 +275,14 @@
           ...]
        
        ;; (lambda (args ...) body)
-       #;[(stx-begins-with? expr 'lambda)
-          ...]
+       [(stx-begins-with? expr 'lambda)
+        (let ([args (map stx-e (stx-e (second (stx-e expr))))]
+              [body (third (stx-e expr))])
+          (loop body (foldl (lambda (id env)
+                              (env-push-local env id))
+                            env
+                            (reverse args))))]
+                            
        
        ;; Quoted datums
        #;[(stx-begins-with? expr 'quote)
@@ -292,7 +308,9 @@
        
        ;; Characters
        [(char? (stx-e expr))
-        empty]))))
+        empty]
+       [else
+        (error 'free-variables (format "~s" (stx-e expr)))]))))
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

@@ -9,8 +9,9 @@
 
 (define-struct env ())
 (define-struct (empty-env env) ())
-(define-struct (local-env env) (name parent-rib))
-(define-struct (global-env env) (names parent-rib))
+(define-struct (local-env env) (name parent-env))
+(define-struct (global-env env) (names parent-env))
+(define-struct (unnamed-env env) (parent-env))
 
 (define EMPTY-ENV (make-empty-env))
 
@@ -26,6 +27,9 @@
 (define (env-push-local env name)
   (make-local-env name env))
 
+(define (env-push-unnamed env)
+  (make-unnamed-env env))
+
 
 ;; env-pop: env -> env
 (define (env-pop env)
@@ -35,6 +39,8 @@
     [(struct local-env (name parent-env))
      parent-env]
     [(struct global-env (names parent-env))
+     parent-env]
+    [(struct unnamed-env (parent-env))
      parent-env]))
 
 
@@ -81,7 +87,9 @@
               (lambda (pos)
                 (make-global-stack-reference depth pos))]
              [else
-              (loop parent-env (add1 depth))])])))
+              (loop parent-env (add1 depth))])]
+      [(struct unnamed-env (parent-env))
+       (loop parent-env (add1 depth))])))
 
 
 
@@ -89,6 +97,7 @@
                   [rename EMPTY-ENV empty-env env?]
                   [env-push-globals (env? (listof symbol?) . -> . env?)]
                   [env-push-local (env? symbol? . -> . env?)]
+                  [env-push-unnamed (env? . -> . env?)]
                   [env-pop (env? . -> . env?)]
                   [env-lookup (env? symbol? . -> . stack-reference?)]
                   [struct stack-reference ()]
