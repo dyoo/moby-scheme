@@ -10,12 +10,18 @@
 (require (for-syntax scheme/base))
 
 
+(define-syntax (s stx)
+  (syntax-case stx ()
+    [(_ e)
+     (syntax/loc stx 
+       (syntax->stx #'e))]))
+
 (define-syntax (c stx)
   (syntax-case stx ()
     [(_ e)
      (syntax/loc stx 
        (let-values ([(bytecode pinfo)
-                     (compile-expression (syntax->stx #'e)
+                     (compile-expression (s e)
                                          empty-env
                                          empty-pinfo)])
          bytecode))]))
@@ -38,9 +44,23 @@
  (c x)
  "compile-identifier-expression: Couldn't find x in the environment")
 
+
 #;(check-expect (c (lambda (x y) x))
-                (make-lam ...
-                 ... (make-localref 0)))
+              (make-lam '() 
+                        '() 
+                        2 
+                        '(val val) 
+                        #f 
+                        #() 
+                        '() 
+                        0
+                        (make-localref #f 0 #f #f #f)))
+
+
+
+(check-expect (free-variables (s x) empty-env) '(x))
+(check-expect (free-variables (s (if x y z)) empty-env) '(x y z))
+(check-expect (free-variables (s 42) empty-env) '())
 
 
 

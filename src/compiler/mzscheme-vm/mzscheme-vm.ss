@@ -33,7 +33,9 @@
 (provide/contract [compile-expression (expression? env? pinfo? . -> . 
                                              (values 
                                               (or/c bcode:form? bcode:indirect? any/c)
-                                              pinfo?))])
+                                              pinfo?))]
+                  
+                  [free-variables (expression? env? . -> . (listof symbol?))])
 
 
 
@@ -66,7 +68,14 @@
     [(symbol? (stx-e expr))
      (compile-identifier-expression expr env a-pinfo)]
 
+   
     
+    ;; (lambda (args ...) body)
+    [(stx-begins-with? expr 'lambda)
+     (local [(define args (stx-e (second (stx-e expr))))
+             (define body (third (stx-e expr)))]
+       (compile-lambda-expression expr args body env a-pinfo))]
+
     
     ;; (local ([define ...] ...) body)
     #;[(stx-begins-with? expr 'local)
@@ -94,12 +103,7 @@
     #;[(stx-begins-with? expr 'or)
        (local [(define exprs (rest (stx-e expr)))]
          (boolean-chain->javascript-string "||" exprs env a-pinfo))]
-    
-    ;; (lambda (args ...) body)
-    #;[(stx-begins-with? expr 'lambda)
-       (local [(define args (stx-e (second (stx-e expr))))
-               (define body (third (stx-e expr)))]
-         (lambda-expression->javascript-string expr args body env a-pinfo))]
+   
     
     
     ;; Quoted datums
@@ -186,6 +190,16 @@
 
 
 
+(define (compile-lambda-expression lambda-expr args body env pinfo)
+  ;; Capture the closure's values
+  ;; Compile the body, extending the environment
+  (let* ([free-vars (free-variables lambda-expr env)]
+         [extended-env (foldl (lambda (var)
+                                (append (reverse args)
+                                        (reverse free-vars)))
+                              args)])
+    (values 'foo pinfo)))
+
 
 
 
@@ -196,94 +210,108 @@
 ;; free-variables: expr env pinfo -> (listof expr)
 ;; Given an expression, compute the set of free variable occcurances
 (define (free-variables expr env)
-  (cond
-    
-    ;; (if test consequent alternative)
-    [(stx-begins-with? expr 'if)
-     (local [(define test (second (stx-e expr)))
-             (define consequent (third (stx-e expr)))
-             (define alternative (fourth (stx-e expr)))]
-       (append (free-variables test)
-               (free-variables consequent)
-               (free-variables alternative)))]
-
-
-    ;; (begin ...)
-    [(stx-begins-with? expr 'begin)
-     (local [(define exprs (rest (stx-e expr)))]
-       (apply append
-              (map (lambda (e) (free-variables e env)) exprs)))]
-
-    
-    ;; Identifiers
-    [(symbol? (stx-e expr))
-     (match (env-lookup env (stx-e expr))
-       [(struct local-stack-reference (depth))
+  (sort-and-unique
+   (let loop ([expr expr]
+              [env env])
+     (cond
+       ;; (if test consequent alternative)
+       [(stx-begins-with? expr 'if)
+        (local [(define test (second (stx-e expr)))
+                (define consequent (third (stx-e expr)))
+                (define alternative (fourth (stx-e expr)))]
+          (append (loop test env)
+                  (loop consequent env)
+                  (loop alternative env)))]
+       
+       
+       ;; (begin ...)
+       [(stx-begins-with? expr 'begin)
+        (local [(define exprs (rest (stx-e expr)))]
+          (apply append
+                 (map (lambda (e) (loop e env)) exprs)))]
+       
+       
+       ;; Identifiers
+       [(symbol? (stx-e expr))
+        (match (env-lookup env (stx-e expr))
+          [(struct local-stack-reference (depth))
+           empty]
+          [(struct global-stack-reference (depth pos))
+           empty]
+          [(struct unbound-stack-reference (name))
+           (list (stx-e expr))])]
+       
+       
+       ;; (local ([define ...] ...) body)
+       #;[(stx-begins-with? expr 'local)
+          (local [(define defns (stx-e (second (stx-e expr))))
+                  (define body (third (stx-e expr)))]
+            ...)]
+       
+       
+       ;; (set! identifier value)
+       ;; Attention: it's evaluation doesn't produce an Object
+       #;[(stx-begins-with? expr 'set!)
+          (local [(define id (second (stx-e expr)))
+                  (define value (third (stx-e expr)))]
+            ...)]
+       
+       ;; (and exprs ...)
+       #;[(stx-begins-with? expr 'and)
+          ...]
+       
+       ;; (or exprs ...)
+       #;[(stx-begins-with? expr 'or)
+          ...]
+       
+       ;; (lambda (args ...) body)
+       #;[(stx-begins-with? expr 'lambda)
+          ...]
+       
+       ;; Quoted datums
+       #;[(stx-begins-with? expr 'quote)
+          ...]
+       
+       
+       ;; Function call/primitive operation call
+       #;[(pair? (stx-e expr))
+          ...
+          ]
+       
+       ;; Numbers
+       [(number? (stx-e expr))
         empty]
-       [(struct global-stack-reference (depth pos))
+       
+       ;; Strings
+       [(string? (stx-e expr))
         empty]
-       [(struct unbound-stack-reference (name))
-        expr])]
-
-        
-    ;; (local ([define ...] ...) body)
-    #;[(stx-begins-with? expr 'local)
-     (local [(define defns (stx-e (second (stx-e expr))))
-             (define body (third (stx-e expr)))]
-       ...)]
-    
-    
-    ;; (set! identifier value)
-    ;; Attention: it's evaluation doesn't produce an Object
-    #;[(stx-begins-with? expr 'set!)
-     (local [(define id (second (stx-e expr)))
-             (define value (third (stx-e expr)))]
-       ...)]
-    
-    
-    
-    
-    ;; (and exprs ...)
-    #;[(stx-begins-with? expr 'and)
-       ...]
-    
-    ;; (or exprs ...)
-    #;[(stx-begins-with? expr 'or)
-       ...]
-    
-    ;; (lambda (args ...) body)
-    #;[(stx-begins-with? expr 'lambda)
-       ...]
-    
-    ;; Quoted datums
-    #;[(stx-begins-with? expr 'quote)
-       ...]
-    
-      
-    ;; Function call/primitive operation call
-    #;[(pair? (stx-e expr))
-       ...
-       ]
-    
-    ;; Numbers
-    [(number? (stx-e expr))
-     empty]
-    
-    ;; Strings
-    [(string? (stx-e expr))
-     empty]
-    
-    ;; Literal booleans
-    [(boolean? (stx-e expr))
-     empty]
-    
-    ;; Characters
-    [(char? (stx-e expr))
-     empty]))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+       
+       ;; Literal booleans
+       [(boolean? (stx-e expr))
+        empty]
+       
+       ;; Characters
+       [(char? (stx-e expr))
+        empty]))))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
+;; sort-and-unique: (listof symbol) -> (listof symbol)
+(define (sort-and-unique elts)
+  (let loop ([elts (sort elts (lambda (x y) (string<? (symbol->string x)
+                                                      (symbol->string y))))])
+    (cond
+      [(empty? elts)
+       empty]
+      [(empty? (rest elts))
+       elts]
+      [(symbol=? (first elts) (second elts))
+       (loop (rest elts))]
+      [else
+       (cons (first elts) (loop (rest elts)))])))
+
+               
 
 
 
