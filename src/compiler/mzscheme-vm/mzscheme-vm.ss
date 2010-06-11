@@ -195,7 +195,7 @@
 (define (compile-lambda-expression lambda-expr args body env pinfo)
   (let*-values ([(free-vars) 
                  (free-variables lambda-expr 
-                                 (foldl (lambda (var env) (env-push-local var env))
+                                 (foldl (lambda (var env) (env-push-local env (stx-e var)))
                                         empty-env
                                         args))]
                 [(closure-vector extended-env)
@@ -210,7 +210,10 @@
                             (build-list (length args) (lambda (i)
                                                         'val))
                             #f
-                            (void))
+                            closure-vector
+                            (build-list (vector-length closure-vector) (lambda (i) 'val/ref))
+                            0
+                            compiled-body)
             pinfo-1)))
 
 
@@ -242,6 +245,7 @@
               ;; The arguments
               [env-1 (foldl (lambda (name env)
                               (env-push-local env name))
+                            env
                             (reverse args))]
 
               ;; The lexical free variables
@@ -324,12 +328,17 @@
                             ...)]
                        
                        ;; (and exprs ...)
-                       #;[(stx-begins-with? expr 'and)
-                          ...]
+                       [(stx-begins-with? expr 'and)
+                        (apply append (map (lambda (x)
+                                             (loop x env)))
+                               (rest (stx-e expr)))]
                        
                        ;; (or exprs ...)
-                       #;[(stx-begins-with? expr 'or)
-                          ...]
+                       [(stx-begins-with? expr 'or)
+                        (apply append (map (lambda (x)
+                                             (loop x env)))
+                               (rest (stx-e expr)))]
+                       
                        
                        ;; (lambda (args ...) body)
                        [(stx-begins-with? expr 'lambda)
@@ -342,14 +351,14 @@
                        
                        
                        ;; Quoted datums
-                       #;[(stx-begins-with? expr 'quote)
-                          ...]
-                       
+                       [(stx-begins-with? expr 'quote)
+                        empty]
                        
                        ;; Function call/primitive operation call
-                       #;[(pair? (stx-e expr))
-                          ...
-                          ]
+                       [(pair? (stx-e expr))
+                        (apply append (map (lambda (x)
+                                             (loop x env)))
+                               (stx-e expr))]
                        
                        ;; Numbers
                        [(number? (stx-e expr))
