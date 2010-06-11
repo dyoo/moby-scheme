@@ -399,10 +399,58 @@
        (local [(define boolean-chain-stx (first (stx-e expr)))
                (define exprs (rest (stx-e expr)))
                (define desugared-exprs+pinfo (desugar-expressions exprs pinfo))]
-         (list (datum->stx #f (cons boolean-chain-stx
-                                    (first desugared-exprs+pinfo))
-                           (stx-loc expr))
-               (second desugared-exprs+pinfo)))])))
+         (cond [(symbol=? (stx-e boolean-chain-stx) 'and)
+                (list (desugar-and (first desugared-exprs+pinfo) (stx-loc expr))
+                      (second desugared-exprs+pinfo))]
+               [(symbol=? (stx-e boolean-chain-stx) 'or)
+                (desugar-or (first desugared-exprs+pinfo) 
+                            (stx-loc expr) 
+                            (second desugared-exprs+pinfo))]))])))
+
+
+
+;; desugar-and: (listof expr) loc -> expr
+;; Assumption: (length exprs) >= 2
+(define (desugar-and exprs loc)
+  (cond [(= (length exprs) 2)
+         (datum->stx #f 
+                     `(if ,(first exprs) 
+                          ,(second exprs) 
+                          #f) 
+                     loc)]
+        [else
+         (datum->stx #f 
+                     `(if ,(first exprs) 
+                          ,(desugar-and (rest exprs) loc) 
+                          #f) 
+                     loc)]))
+
+
+(define (desugar-or exprs loc pinfo)
+  (cond [(= (length exprs) 2)
+         (local [(define pinfo+tmp-sym (pinfo-gensym pinfo 'tmp))]
+           (list (datum->stx #f 
+                             `(let ([,(second pinfo+tmp-sym) 
+                                     ,(first exprs)])
+                                (if ,(second pinfo+tmp-sym)
+                                    ,(second pinfo+tmp-sym)
+                                    ,(second exprs)))
+                             loc)
+                 (first pinfo+tmp-sym)))]
+        [else
+         (local [(define pinfo+tmp-sym (pinfo-gensym pinfo 'tmp))
+                 (define rest-exprs+pinfo (desugar-or (rest exprs) loc (first pinfo+tmp-sym)))]
+           (list (datum->stx #f `(let ([,(second pinfo+tmp-sym) ,(first exprs)])
+                                   (if ,(second pinfo+tmp-sym) 
+                                       ,(first rest-exprs+pinfo)
+                                       #f))
+                             loc)
+                 (second rest-exprs+pinfo)))]))
+
+
+
+
+
 
 
 ;; desugar-lambda: expr pinfo -> (list expr pinfo)
