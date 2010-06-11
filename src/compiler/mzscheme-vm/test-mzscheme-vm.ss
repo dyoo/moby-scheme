@@ -160,6 +160,21 @@
 
 
 
+;; Application
+
+(check-expect (c (lambda (x y) (x y y)))
+              (make-lam '()
+                        '()
+                        2
+                        '(val val)
+                        #f
+                        #()
+                        '()
+                        0
+                        (make-application (make-localref #f 2 #f #f #f)
+                                          (list (make-localref #f 3 #f #f #f)
+                                                (make-localref #f 3 #f #f #f)))))
+
 
 
 

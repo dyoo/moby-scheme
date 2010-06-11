@@ -112,13 +112,10 @@
 
     
     ;; Function call/primitive operation call
-    #;[(pair? (stx-e expr))
-       (local [(define operator (first (stx-e expr)))
-               (define operands (rest (stx-e expr)))]
-         (application-expression->javascript-string expr operator operands env a-pinfo))]
-    
-    
-    
+    [(pair? (stx-e expr))
+     (local [(define operator (first (stx-e expr)))
+             (define operands (rest (stx-e expr)))]
+       (compile-application-expression operator operands env a-pinfo))]
     
     
     ;; Regular data are just themselves in the emitted bytecode.
@@ -286,6 +283,22 @@
 
 
 
+;; compile-application-expression: expr (listof expr) env pinfo -> (values expression-form pinfo)
+(define (compile-application-expression operator operands env pinfo)
+  (let*-values ([(extended-env) (foldl (lambda (operand env)
+                                         (env-push-unnamed env))
+                                       env
+                                       operands)]
+                ;; extended-env includes the intermediate scratch space used for operand/operator
+                ;; evaluation.
+                [(compiled-operator pinfo-1)
+                 (compile-expression operator extended-env pinfo)]
+                [(compiled-operands pinfo-2)
+                 (compile-expressions operands extended-env pinfo-1)])
+    (values (bcode:make-application compiled-operator compiled-operands) pinfo-2)))
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -367,8 +380,8 @@
                        ;; Function call/primitive operation call
                        [(pair? (stx-e expr))
                         (apply append (map (lambda (x)
-                                             (loop x env)))
-                               (stx-e expr))]
+                                             (loop x env))
+                                           (stx-e expr)))]
                        
                        ;; Numbers
                        [(number? (stx-e expr))
