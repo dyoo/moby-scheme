@@ -45,6 +45,18 @@
  "compile-identifier-expression: Couldn't find x in the environment")
 
 
+(check-expect (c (lambda () 42))
+              (make-lam '()
+                        '()
+                        0
+                        '()
+                        #f
+                        #()
+                        '()
+                        0
+                        42))
+
+
 (check-expect (c (lambda (x y) x))
               (make-lam '() 
                         '() 
@@ -139,6 +151,12 @@
                                   (make-localref #f 0 #f #f #f))))
 
 
+;; Quotations
+(check-expect (c (quote test))
+            'test)
+
+(check-expect (c (quote (3 4 five)))
+            '(3 4 five))
 
 
 

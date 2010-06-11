@@ -107,9 +107,9 @@
     
     
     ;; Quoted datums
-    #;[(stx-begins-with? expr 'quote)
-       (quote-expression->javascript-string (second (stx-e expr)) a-pinfo)]
-    
+    [(stx-begins-with? expr 'quote)
+     (compile-quote-expression (second (stx-e expr)) env a-pinfo)]
+
     
     ;; Function call/primitive operation call
     #;[(pair? (stx-e expr))
@@ -187,6 +187,16 @@
     [(struct unbound-stack-reference (name))
      (error 'compile-identifier-expression 
             (format "Couldn't find ~a in the environment" name))]))
+
+
+
+
+;; quote-expression->javascript-string: expr env pinfo -> (values expr pinfo)
+(define (compile-quote-expression expr env pinfo)
+  (values (stx->datum expr) pinfo))
+
+
+
 
 
 ;; compile-lambda-expression: expr (listof symbol-stx) expr env pinfo -> (values lam pinfo)
@@ -1008,7 +1018,7 @@
       
       ;; Symbols
       [(symbol? (stx-e expr))
-       (cond [(expression-shared? expr pinfo)
+       (cond #;[(expression-shared? expr pinfo)
               (list (lookup-shared-expression-translation-label expr pinfo)
                     pinfo)]
              [else
@@ -1019,7 +1029,7 @@
                                         (symbol->string (stx-e expr))
                                         "\"))")
                          pinfo))]
-                (list (lookup-shared-expression-translation-label expr updated-pinfo)
+                (list #;(lookup-shared-expression-translation-label expr updated-pinfo)
                       updated-pinfo))])]
       
       ;; Numbers
