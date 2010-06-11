@@ -57,10 +57,91 @@
                         (make-localref #f 0 #f #f #f)))
 
 
+(check-expect (c (lambda (x y z) z))
+              (make-lam '() 
+                        '() 
+                        3 
+                        '(val val val) 
+                        #f 
+                        #() 
+                        '() 
+                        0
+                        (make-localref #f 2 #f #f #f)))
+
+
+(check-expect (c (lambda (x y) 
+                   (lambda (z) x)))
+              (make-lam '() 
+                        '() 
+                        2 
+                        '(val val) 
+                        #f 
+                        #() 
+                        '() 
+                        0
+                        (make-lam '() 
+                                  '() 
+                                  1 
+                                  '(val) 
+                                  #f 
+                                  #(0) 
+                                  '(val/ref) 
+                                  0
+                                  (make-localref #f 0 #f #f #f))))
+
+
 
 (check-expect (free-variables (s x) empty-env) '(x))
 (check-expect (free-variables (s (if x y z)) empty-env) '(x y z))
 (check-expect (free-variables (s 42) empty-env) '())
+
+
+(check-expect (c (lambda (x y) 
+                   (lambda (z) z)))
+              (make-lam '() 
+                        '() 
+                        2 
+                        '(val val) 
+                        #f 
+                        #() 
+                        '() 
+                        0
+                        (make-lam '() 
+                                  '() 
+                                  1 
+                                  '(val) 
+                                  #f 
+                                  #() 
+                                  '() 
+                                  0
+                                  (make-localref #f 0 #f #f #f))))
+
+
+
+(check-expect (c (lambda (x y) 
+                   (lambda (z) y)))
+              (make-lam '() 
+                        '() 
+                        2 
+                        '(val val) 
+                        #f 
+                        #() 
+                        '() 
+                        0
+                        (make-lam '() 
+                                  '() 
+                                  1 
+                                  '(val) 
+                                  #f 
+                                  #(1) 
+                                  '(val/ref) 
+                                  0
+                                  (make-localref #f 0 #f #f #f))))
+
+
+
+
+
 
 
 
