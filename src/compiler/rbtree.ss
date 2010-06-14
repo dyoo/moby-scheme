@@ -127,6 +127,16 @@
 
 
 
+;; rbtree-keys: rbtree -> (listof keys)
+;; Produces all of the keys in the rbtree.
+(define (rbtree-keys t)
+  (rbtree-fold t 
+               (lambda (key value keys) (cons key keys))
+               '()))
+               
+
+
+
 (provide/contract [rbtree? (any/c . -> . boolean?)]
                   
                   [empty-rbtree 
@@ -149,6 +159,9 @@
                   
                   [rbtree->list
                    (rbtree? . -> . (listof (list/c any/c any/c)))]
+                  
+                  [rbtree-keys
+                   (rbtree? . -> . (listof any/c))]
                   
                   [rbtree-fold
                    (rbtree? (any/c any/c any/c . -> . any/c) any/c . -> . any/c)]

@@ -10,11 +10,11 @@
 
 
 (require "../desugar.ss")
+(require "../analyzer.ss")
+(require "../rbtree.ss")
 
-
-#;(require "analyzer.ss")
 #;(require "labeled-translation.ss")
-#;(require "rbtree.ss")
+
 #;(require "../collects/moby/runtime/binding.ss")
 #;(require "../collects/moby/runtime/error-struct.ss")
 #;(require "../collects/moby/runtime/arity-struct.ss")
@@ -52,7 +52,11 @@
 (define (compile-compilation-top-module a-program pinfo)
   (let* ([a-program+pinfo (desugar-program a-program pinfo)]
          [a-program (first a-program+pinfo)]
-         [pinfo (second a-program+pinfo)])
+         [pinfo (second a-program+pinfo)]
+         [pinfo (program-analyze/pinfo a-program pinfo)])
+    
+    ;; The toplevel is going to include all of the defined identifiers in the pinfo
+    ;; The environment will refer to elements in the toplevel.
 
     ;; FIXME: analyze to figure out which identifiers are being used
     
@@ -63,24 +67,36 @@
                                                (expression? x))) 
                                a-program)])
       (let-values ([(toplevel-prefix env) 
-                    (make-module-prefix-and-env defns requires expressions)])
+                    (make-module-prefix-and-env defns requires expressions pinfo)])
         (let-values ([(compiled-exprs updated-pinfo)
                       (compile-expressions expressions env pinfo)])
           (values (bcode:make-compilation-top 0 
                                               toplevel-prefix
                                               (bcode:make-seq compiled-exprs))
                   updated-pinfo))))))
-  
-;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) -> (values prefix env)
-(define (make-module-prefix-and-env defns requires expressions)
+
+
+
+;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) pinfo -> (values prefix env)
+(define (make-module-prefix-and-env defns requires expressions pinfo)
   ;; FIXME: currently ignoring requires
   ;;
   ;; collect all the free names being defined and used at toplevel
   ;;
   ;; Create a prefix that refers to those values
   ;; Create an environment that maps to the prefix
-  (values (bcode:make-prefix 0 '() '())
-          empty-env))
+  (let ([local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
+        [module-defined-bindings (pinfo-used-bindings-hash pinfo)])
+    (values (bcode:make-prefix 0 (append (build-list (length local-defined-names )
+                                                     (lambda (i) #f))
+                                         ;; FIXME: should contain module variable references
+                                         ;; that come from module-defined-bindings
+                                         '())
+                               '())
+            (env-push-globals empty-env 
+                              (append local-defined-names 
+                                      ;; FIXME: do something with module-defined-bindings
+                                      '())))))
 
   
   
