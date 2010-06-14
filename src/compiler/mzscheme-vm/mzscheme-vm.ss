@@ -57,28 +57,32 @@
     
     ;; The toplevel is going to include all of the defined identifiers in the pinfo
     ;; The environment will refer to elements in the toplevel.
-
-    ;; FIXME: analyze to figure out which identifiers are being used
     
-    (let ([defns (filter defn? a-program)]
-          [requires (filter library-require? a-program)]
-          [provides (filter provide-statement? a-program)]
-          [expressions (filter (lambda (x) (or (test-case? x)
-                                               (expression? x))) 
-                               a-program)])
-      (let-values ([(toplevel-prefix env) 
-                    (make-module-prefix-and-env defns requires expressions pinfo)])
-        (let-values ([(compiled-exprs updated-pinfo)
-                      (compile-expressions expressions env pinfo)])
+    (let-values ([(toplevel-prefix env) 
+                  (make-module-prefix-and-env pinfo)])
+
+      (let ([defns (filter defn? a-program)]
+            [requires (filter library-require? a-program)]
+            [provides (filter provide-statement? a-program)]
+            [expressions (filter (lambda (x) (or (test-case? x)
+                                                 (expression? x))) 
+                                 a-program)])
+        (printf "Don't forget the definitions ~s~n" (map stx->datum defns))
+        (let*-values ([(compiled-definitions pinfo)
+                       (compile-definitions defns env pinfo)]
+                      [(compiled-exprs pinfo)
+                       (compile-expressions expressions env pinfo)])
           (values (bcode:make-compilation-top 0 
                                               toplevel-prefix
-                                              (bcode:make-seq compiled-exprs))
-                  updated-pinfo))))))
+                                              (bcode:make-seq 
+                                               (append compiled-definitions 
+                                                       compiled-exprs)))
+                  pinfo))))))
 
 
 
 ;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) pinfo -> (values prefix env)
-(define (make-module-prefix-and-env defns requires expressions pinfo)
+(define (make-module-prefix-and-env pinfo)
   ;; FIXME: currently ignoring requires
   ;;
   ;; collect all the free names being defined and used at toplevel
@@ -98,7 +102,54 @@
                                       ;; FIXME: do something with module-defined-bindings
                                       '())))))
 
+(define (compile-definitions defns env a-pinfo)
+  (let loop ([defns defns]
+             [a-pinfo a-pinfo])
+    (cond [(empty? defns)
+           (values empty a-pinfo)]
+          [else
+           (let*-values ([(compiled-defn a-pinfo)
+                          (compile-definition (first defns) env a-pinfo)]
+                         [(compiled-rest-defns a-pinfo)
+                          (loop (rest defns) a-pinfo)])
+             (values (cons compiled-defn compiled-rest-defns)
+                     a-pinfo))])))
+             
+
+
+(define (compile-definition a-defn env a-pinfo)
+  (case-analyze-definition 
+   a-defn
+   (lambda (fun args body)
+     (compile-function-definition fun args body env a-pinfo))
+   (lambda (id body)
+     (compile-variable-definition id body env a-pinfo))
+   (lambda (id fields)
+     (error 'compile-definition "We're shouldn't get here")
+     #;(struct-definition->javascript-string id fields env a-pinfo))))
+
+
+(define (compile-function-definition fun-name args body env a-pinfo)
+  (let*-values ([(compiled-fun-name a-pinfo)
+                 (compile-expression fun-name env a-pinfo)]
+                [(compiled-lambda a-pinfo)
+                 (compile-lambda-expression args body env a-pinfo)])
+    (values (bcode:make-def-values (list compiled-fun-name)
+                                   compiled-lambda)
+            a-pinfo)))
+
+
+(define (compile-variable-definition fun-name args body env a-pinfo)
+  (let*-values ([(compiled-args a-pinfo)
+                 (compile-expressions args env a-pinfo)]
+                [(compiled-body a-pinfo)
+                 (compile-expression body env a-pinfo)])
+    (values (bcode:make-def-values compiled-args 
+                                   compiled-body)
+            a-pinfo)))
   
+
+
   
 
 ;; compile-expression: expression env pinfo -> (values expr pinfo)
@@ -129,7 +180,7 @@
     [(stx-begins-with? expr 'lambda)
      (local [(define args (stx-e (second (stx-e expr))))
              (define body (third (stx-e expr)))]
-       (compile-lambda-expression expr args body env a-pinfo))]
+       (compile-lambda-expression args body env a-pinfo))]
     
     
     ;; (local ([define ...] ...) body)
@@ -236,6 +287,7 @@
     [(struct global-stack-reference (name depth pos))
      (values (bcode:make-toplevel depth pos #f #f)
              pinfo)]
+    
     [(struct unbound-stack-reference (name))
      (error 'compile-identifier-expression 
             (format "Couldn't find ~a in the environment" name))]))
@@ -251,12 +303,12 @@
 
 
 
-;; compile-lambda-expression: expr (listof symbol-stx) expr env pinfo -> (values lam pinfo)
+;; compile-lambda-expression: (listof symbol-stx) expr env pinfo -> (values lam pinfo)
 ;; Compile a lambda expression.  The lambda must close its free variables over the
 ;; environment.
-(define (compile-lambda-expression lambda-expr args body env pinfo)
+(define (compile-lambda-expression args body env pinfo)
   (let*-values ([(free-vars) 
-                 (free-variables lambda-expr 
+                 (free-variables body 
                                  (foldl (lambda (var env) (env-push-local env (stx-e var)))
                                         empty-env
                                         args))]
