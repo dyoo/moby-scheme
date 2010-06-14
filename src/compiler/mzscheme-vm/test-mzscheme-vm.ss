@@ -4,8 +4,9 @@
          "mzscheme-vm.ss"
          "env.ss"
          "../pinfo.ss"
+         "../../collects/moby/runtime/stx.ss"
          "../../stx-helpers.ss"
-         "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss")
+         (except-in "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss" stx?))
 
 (require (for-syntax scheme/base))
 
@@ -176,6 +177,35 @@
                                                 (make-localref #f 3 #f #f #f)))))
 
 
+
+
+
+;; Module compilation
+(check-expect (let-values ([(compiled-module pinfo)
+                            (compile-compilation-top-module 
+                             (stx-e (s ((define (f x) (* x x))
+                                        (f 42))))
+                             (get-base-pinfo 'moby))])
+                compiled-module)
+              
+              (make-compilation-top
+               0
+               (make-prefix 0 '() '())
+               (make-mod 'name 
+                         (module-path-index-join #f #f)
+                         (make-prefix 0 '(#f) '())
+                         '()  ; provides
+                         '()  ; requires
+                         (list (make-application (make-toplevel 1 0 #f #f)
+                                                 (list 42)))  ; body
+                         '()  ; syntax-body
+                         '(()()())  ; unexported
+                         0    ; max-let-depth
+                         (make-toplevel 0 0 #f #f) ; dummy
+                         #f ; lang-info
+                         #f ; internal-context
+                         )))
+                                      
 
 
 (test)

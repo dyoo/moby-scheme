@@ -9,9 +9,10 @@
          (only-in scheme/list empty first second third fourth empty? rest))
 
 
+(require "../desugar.ss")
+
 
 #;(require "analyzer.ss")
-#;(require "desugar.ss")
 #;(require "labeled-translation.ss")
 #;(require "rbtree.ss")
 #;(require "../collects/moby/runtime/binding.ss")
@@ -31,7 +32,7 @@
 
 
 (provide/contract [compile-compilation-top-module
-                   (program? env? pinfo? . -> . 
+                   (program? pinfo? . -> . 
                              (values (or/c bcode:form? bcode:indirect? any/c)
                                      pinfo?))]
 
@@ -49,20 +50,26 @@
 
 ;; compile-compilation-top-module: program pinfo -> 
 (define (compile-compilation-top-module a-program pinfo)
-  (let ([defns (filter defn? a-program)]
-        [requires (filter library-require? a-program)]
-        [provides (filter provide-statement? a-program)]
-        [expressions (filter (lambda (x) (or (test-case? x)
-                                             (expression? x))) 
-                             a-program)])
-    (let-values ([(toplevel-prefix env) 
-                  (make-module-prefix-and-env defns requires expressions)])
-      (let-values ([(compiled-exprs updated-pinfo)
-                    (compile-expressions expressions env pinfo)])
-        (values (bcode:make-compilation-top 0 
-                                            toplevel-prefix
-                                            (bcode:make-seq compiled-exprs))
-                updated-pinfo)))))
+  (let* ([a-program+pinfo (desugar-program a-program pinfo)]
+         [a-program (first a-program+pinfo)]
+         [pinfo (second a-program+pinfo)])
+
+    ;; FIXME: analyze to figure out which identifiers are being used
+    
+    (let ([defns (filter defn? a-program)]
+          [requires (filter library-require? a-program)]
+          [provides (filter provide-statement? a-program)]
+          [expressions (filter (lambda (x) (or (test-case? x)
+                                               (expression? x))) 
+                               a-program)])
+      (let-values ([(toplevel-prefix env) 
+                    (make-module-prefix-and-env defns requires expressions)])
+        (let-values ([(compiled-exprs updated-pinfo)
+                      (compile-expressions expressions env pinfo)])
+          (values (bcode:make-compilation-top 0 
+                                              toplevel-prefix
+                                              (bcode:make-seq compiled-exprs))
+                  updated-pinfo))))))
   
 ;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) -> (values prefix env)
 (define (make-module-prefix-and-env defns requires expressions)
