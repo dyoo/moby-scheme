@@ -30,21 +30,53 @@
 
 
 
-(provide/contract [compile-expression (expression? env? pinfo? . -> . 
-                                                   (values 
-                                                    (or/c bcode:form? bcode:indirect? any/c)
-                                                    pinfo?))]
+(provide/contract [compile-compilation-top-module
+                   (program? env? pinfo? . -> . 
+                             (values (or/c bcode:form? bcode:indirect? any/c)
+                                     pinfo?))]
+
+                  [compile-expression 
+                   (expression? env? pinfo? . -> . 
+                                (values 
+                                 (or/c bcode:form? bcode:indirect? any/c)
+                                 pinfo?))]
                   
-                  [free-variables (expression? env? . -> . (listof symbol?))])
+                  [free-variables 
+                   (expression? env? . -> . (listof symbol?))])
 
 
 
 
+;; compile-compilation-top-module: program pinfo -> 
+(define (compile-compilation-top-module a-program pinfo)
+  (let ([defns (filter defn? a-program)]
+        [requires (filter library-require? a-program)]
+        [provides (filter provide-statement? a-program)]
+        [expressions (filter (lambda (x) (or (test-case? x)
+                                             (expression? x))) 
+                             a-program)])
+    (let-values ([(toplevel-prefix env) 
+                  (make-module-prefix-and-env defns requires expressions)])
+      (let-values ([(compiled-exprs updated-pinfo)
+                    (compile-expressions expressions env pinfo)])
+        (values (bcode:make-compilation-top 0 
+                                            toplevel-prefix
+                                            (bcode:make-seq compiled-exprs))
+                updated-pinfo)))))
+  
+;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) -> (values prefix env)
+(define (make-module-prefix-and-env defns requires expressions)
+  ;; FIXME: currently ignoring requires
+  ;;
+  ;; collect all the free names being defined and used at toplevel
+  ;;
+  ;; Create a prefix that refers to those values
+  ;; Create an environment that maps to the prefix
+  (values (bcode:make-prefix 0 '() '())
+          empty-env))
 
-;; compile-program: program pinfo -> compilation-top
-
-
-
+  
+  
 
 ;; compile-expression: expression env pinfo -> (values expr pinfo)
 (define (compile-expression expr env a-pinfo)
