@@ -97,6 +97,7 @@
                                          ;; that come from module-defined-bindings
                                          '())
                                '())
+            (printf "I need to handle ~s~n" (rbtree-keys module-defined-bindings))
             (env-push-globals empty-env 
                               (append local-defined-names 
                                       ;; FIXME: do something with module-defined-bindings
