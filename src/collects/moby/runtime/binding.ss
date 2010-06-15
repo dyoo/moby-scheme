@@ -5,7 +5,10 @@
 
 ;; binding:constant records an id and its associated Java implementation.
 (define-struct binding:constant
-  (name java-string permissions))
+  (name 
+   module-source
+   java-string
+   permissions))
 
 
 ;; Function bindings try to record more information about the toplevel-bound
@@ -25,8 +28,8 @@
 ;; A binding to a structure.
 (define-struct binding:structure
   (name        ;; symbol
+   module-source
    fields      ;; (listof symbol)
-   
    constructor ;; symbol
    predicate   ;; symbol
    accessors   ;; (listof symbol)
@@ -57,6 +60,16 @@
      (binding:structure-name a-binding)]))
 
 
+(define (binding-module-source a-binding)
+  (cond
+    [(binding:constant? a-binding)
+     (binding:constant-module-source a-binding)]
+    [(binding:function? a-binding)
+     (binding:function-module-source a-binding)]
+    [(binding:structure? a-binding)
+     (binding:structure-module-source a-binding)]))
+
+
 ;; binding->sexp: binding -> s-expr
 ;; Serialize a binding as an s-expression.
 (define (binding->sexp a-binding)
@@ -64,6 +77,7 @@
     [(binding:constant? a-binding)
      (list 'binding:constant 
            (binding:constant-name a-binding)
+           (binding:constant-module-source a-binding)
            (binding:constant-java-string a-binding)
            (map permission->string (binding:constant-permissions a-binding)))]
     [(binding:function? a-binding)
@@ -78,6 +92,7 @@
     [(binding:structure? a-binding)
      (list 'binding:structure
            (binding:structure-name a-binding)
+           (binding:structure-module-source a-binding)
            (binding:structure-fields a-binding)
            (binding:structure-constructor a-binding)
            (binding:structure-predicate a-binding)
@@ -95,10 +110,16 @@
 (define (sexp->binding an-sexp)
   (case (first an-sexp)
     [(binding:constant)
-     (make-binding:constant (list-ref an-sexp 1)
-                            (list-ref an-sexp 2)
-                            (map string->permission (list-ref an-sexp 3))
-                            )]
+     (cond [(= (length an-sexp) 4)
+            (make-binding:constant (list-ref an-sexp 1)
+                                   "something"
+                                   (list-ref an-sexp 2)
+                                   (map string->permission (list-ref an-sexp 3)))]
+           [else            
+            (make-binding:constant (list-ref an-sexp 1)
+                                   (list-ref an-sexp 2)
+                                   (list-ref an-sexp 3)
+                                   (map string->permission (list-ref an-sexp 4)))])]
     [(binding:function)
      (make-binding:function (list-ref an-sexp 1)
                             (list-ref an-sexp 2)
@@ -108,12 +129,22 @@
                             (map string->permission (list-ref an-sexp 6))
                             (list-ref an-sexp 7))]
     [(binding:structure)
-     (make-binding:structure (list-ref an-sexp 1)
-                             (list-ref an-sexp 2)
-                             (list-ref an-sexp 3)
-                             (list-ref an-sexp 4)
-                             (list-ref an-sexp 5)
-                             (list-ref an-sexp 6))]))
+     (cond [(= (length an-sexp) 7)
+            (make-binding:structure (list-ref an-sexp 1)
+                                    "something"
+                                    (list-ref an-sexp 2)
+                                    (list-ref an-sexp 3)
+                                    (list-ref an-sexp 4)
+                                    (list-ref an-sexp 5)
+                                    (list-ref an-sexp 6))]
+           [else
+            (make-binding:structure (list-ref an-sexp 1)
+                                    (list-ref an-sexp 2)
+                                    (list-ref an-sexp 3)
+                                    (list-ref an-sexp 4)
+                                    (list-ref an-sexp 5)
+                                    (list-ref an-sexp 6)
+                                    (list-ref an-sexp 7))])]))
 
 
 ;; localize-binding-to-module: binding module-name -> binding
@@ -123,6 +154,7 @@
     [(binding:constant? a-binding)
      (make-binding:constant 
       (binding:constant-name a-binding)
+      (binding:constant-module-source a-binding)
       (format "plt._MODULES[~s].EXPORTS[~s]"
               (symbol->string a-module-name)
               (symbol->string (binding:constant-name a-binding)))
@@ -141,6 +173,7 @@
     [(binding:structure? a-binding)
      (make-binding:structure
       (binding:structure-name a-binding)
+      (binding:structure-module-source a-binding)
       (binding:structure-fields a-binding)
       (binding:structure-constructor a-binding)
       (binding:structure-predicate a-binding)
@@ -184,12 +217,12 @@
 (provide/contract
  
  [struct binding:constant ([name symbol?]
+                           [module-source (or/c false/c module-path?)]
                            [java-string string?]
                            [permissions (listof permission?)])]
  
  [struct binding:function ([name symbol?]
-                           ;; fixme: module-source should be a module-name, not a module-path
-                           [module-source (or/c false/c string?)]
+                           [module-source (or/c false/c module-path?)]
                            [min-arity natural-number/c]
                            [var-arity? boolean?]
                            [java-string string?]
@@ -197,6 +230,7 @@
                            [cps? boolean?])]
  
  [struct binding:structure ([name symbol?]
+                            [module-source (or/c false/c module-path?)]
                             [fields (listof symbol?)]
                             [constructor symbol?]
                             [predicate symbol?]
@@ -210,6 +244,8 @@
  [sexp->binding (any/c . -> . binding?)]
  
  [localize-binding-to-module (binding? module-name? . -> . binding?)]
+ 
+ [binding-module-source (binding? . -> . (or/c module-path? false/c))]
  
  
  

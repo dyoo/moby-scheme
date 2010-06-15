@@ -9,7 +9,7 @@
   ;; fixme: use the language to limit what symbols get in the toplevel.
   (local [(define base-constants-env
             (foldl (lambda (id+name env)
-                     (env-extend-constant env (first id+name) (second id+name)))
+                     (env-extend-constant env (first id+name) "moby/toplevel" (second id+name)))
                    empty-env
                    '((null "plt.types.Empty.EMPTY")
                      (empty "plt.types.Empty.EMPTY")

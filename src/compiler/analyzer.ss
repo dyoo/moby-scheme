@@ -176,10 +176,12 @@
    
    ;; For regular defintions
    (lambda (id expr)
-     (pinfo-accumulate-defined-binding (make-binding:constant (stx-e id)
-                                                      (symbol->string 
-                                                       (identifier->munged-java-identifier (stx-e id)))
-                                                      empty)
+     (pinfo-accumulate-defined-binding (make-binding:constant 
+                                        (stx-e id)
+                                        #f
+                                        (symbol->string 
+                                         (identifier->munged-java-identifier (stx-e id)))
+                                        empty)
                                pinfo))
    
    ;; For structure definitions
@@ -274,6 +276,7 @@
           (define env-2
             (foldl (lambda (arg-id env) 
                      (env-extend env (make-binding:constant (stx-e arg-id)
+                                                            #f
                                                             (symbol->string
                                                              (stx-e arg-id))
                                                             empty)))

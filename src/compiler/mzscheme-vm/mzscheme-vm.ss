@@ -12,6 +12,7 @@
 (require "../desugar.ss")
 (require "../analyzer.ss")
 (require "../rbtree.ss")
+(require (prefix-in binding: "../../collects/moby/runtime/binding.ss"))
 
 #;(require "labeled-translation.ss")
 
@@ -32,7 +33,7 @@
 
 
 (provide/contract [compile-compilation-top-module
-                   (program? pinfo? . -> . 
+                   (program? pinfo? #:name symbol? . -> . 
                              (values (or/c bcode:form? bcode:indirect? any/c)
                                      pinfo?))]
 
@@ -49,7 +50,8 @@
 
 
 ;; compile-compilation-top-module: program pinfo -> 
-(define (compile-compilation-top-module a-program pinfo)
+(define (compile-compilation-top-module a-program pinfo
+                                        #:name name) 
   (let* ([a-program+pinfo (desugar-program a-program pinfo)]
          [a-program (first a-program+pinfo)]
          [pinfo (second a-program+pinfo)]
@@ -89,19 +91,29 @@
   ;;
   ;; Create a prefix that refers to those values
   ;; Create an environment that maps to the prefix
-  (let ([local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
-        [module-defined-bindings (pinfo-used-bindings-hash pinfo)])
-    (values (bcode:make-prefix 0 (append (build-list (length local-defined-names )
+  (let* ([local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
+         [module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash pinfo)
+                                               (lambda (name a-binding acc)
+                                                 (cond
+                                                   [(binding:binding-module-source a-binding)
+                                                    (cons a-binding acc)]
+                                                   [else acc]))
+                                               '())])
+    (printf "I need to handle ~s~n" module-defined-bindings)
+    (values (bcode:make-prefix 0 (append (build-list (length local-defined-names)
                                                      (lambda (i) #f))
-                                         ;; FIXME: should contain module variable references
-                                         ;; that come from module-defined-bindings
-                                         '())
+                                         (map (lambda (binding) 
+                                                (bcode:make-module-variable (module-path-index-join 
+                                                                              (binding:binding-module-source binding) 
+                                                                              (module-path-index-join #f #f))
+                                                                            (binding:binding-id binding)
+                                                                            -1
+                                                                            0))
+                                              module-defined-bindings))
                                '())
-            (printf "I need to handle ~s~n" (rbtree-keys module-defined-bindings))
             (env-push-globals empty-env 
                               (append local-defined-names 
-                                      ;; FIXME: do something with module-defined-bindings
-                                      '())))))
+                                      (map binding:binding-id module-defined-bindings))))))
 
 (define (compile-definitions defns env a-pinfo)
   (let loop ([defns defns]

@@ -332,6 +332,7 @@
                           (list 
                            (bf 'START module-path 14 false (string-append js-module-path ".EXPORTS['START']"))
                            (make-binding:constant 'test-frame 
+                                                  "moby/bootstrap-teachpack"
                                                   (string-append js-module-path ".EXPORTS['test-frame']")
                                                   empty)
                            (bf 'sq module-path 1 false (string-append js-module-path ".EXPORTS['sq']"))

@@ -185,15 +185,25 @@
                             (compile-compilation-top-module 
                              (stx-e (s ((define (f x) (* x x))
                                         (f 42))))
-                             (get-base-pinfo 'moby))])
+                             (get-base-pinfo 'moby)
+                             #:name 'my-program)])
                 compiled-module)
               
               (make-compilation-top
                0
                (make-prefix 0 '() '())
-               (make-mod 'name 
+               (make-mod 'my-program 
                          (module-path-index-join #f #f)
-                         (make-prefix 0 '(#f) '())
+                         (make-prefix 0 
+                                      (list #f 
+                                            (make-module-variable 
+                                             (module-path-index-join 
+                                              "moby/toplevel"
+                                              (module-path-index-join #f #f))
+                                             '*
+                                             -1
+                                             0))
+                                      '())
                          '()  ; provides
                          '()  ; requires
                          (list (make-application (make-toplevel 1 0 #f #f)
