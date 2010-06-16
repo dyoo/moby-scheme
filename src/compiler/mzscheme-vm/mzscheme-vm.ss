@@ -346,8 +346,8 @@
 
 ;; get-closure-vector-and-env: (listof symbol) (listof symbol) env -> (values (vectorof number) env) 
 ;; Produce the closure map, given the set of free variables.
-(define (get-closure-vector-and-env args free-variables env)
-  (let ([free-variable-references (map (lambda (var) (env-lookup env var))
+(define (get-closure-vector-and-env args free-variables original-env)
+  (let ([free-variable-references (map (lambda (var) (env-lookup original-env var))
                                        free-variables)])
     (cond 
       ;; If anything's unbound, we're in trouble and need to signal an error.
@@ -372,7 +372,7 @@
               ;; The arguments
               [env-1 (foldl (lambda (name env)
                               (env-push-local env name))
-                            env
+                            original-env
                             (reverse args))]
 
               ;; The lexical free variables
@@ -387,8 +387,9 @@
                                                (= (global-stack-reference-depth a-ref) a-depth))
                                              global-references)])
                                 (env-push-globals env 
-                                                  (map global-stack-reference-name 
-                                                       references-at-depth))))
+                                                  (global-env-names
+                                                   (env-peek original-env a-depth))
+                                                  )))
                             env-2
                             (reverse global-depths))])
          #|

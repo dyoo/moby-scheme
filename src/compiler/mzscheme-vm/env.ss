@@ -92,6 +92,30 @@
        (loop parent-env (add1 depth))])))
 
 
+;; env-peek: env number -> env
+(define (env-peek env depth)
+  (let loop ([env env]
+             [depth depth])
+    (cond
+      [(= depth 0)
+       env]
+      [else
+       (match env
+         [(struct empty-env ())
+          (error 'env-peek)]
+         
+         [(struct local-env (name parent-env))
+          (loop parent-env (sub1 depth))]
+
+         [(struct global-env (names parent-env))
+          (loop parent-env (sub1 depth))]
+         [(struct unnamed-env (parent-env))
+          
+          (loop parent-env (sub1 depth))])])))
+                 
+         
+
+
 
 (provide/contract [env? (any/c . -> . boolean?)]
                   [rename EMPTY-ENV empty-env env?]
@@ -99,7 +123,14 @@
                   [env-push-local (env? symbol? . -> . env?)]
                   [env-push-unnamed (env? . -> . env?)]
                   [env-pop (env? . -> . env?)]
+
                   [env-lookup (env? symbol? . -> . stack-reference?)]
+
+                  [env-peek (env? number? . -> . env?)]
+                  
+                  [struct global-env ([names (listof symbol?)]
+                                      [parent-env (listof env?)])]
+                  
                   [struct stack-reference ()]
                   [struct (local-stack-reference stack-reference) 
                           [(name symbol?)

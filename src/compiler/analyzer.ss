@@ -338,7 +338,7 @@
     ;; Identifiers
     [(symbol? (stx-e an-expression))
      (cond
-       [(env-contains? env (stx-e an-expression))
+       [(not (eq? (env-lookup/context env an-expression) #f))
         (pinfo-accumulate-binding-use (env-lookup/context env an-expression) pinfo)]
        [else
         pinfo])]
