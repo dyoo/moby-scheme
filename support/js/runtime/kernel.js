@@ -2386,6 +2386,26 @@ goog.provide('plt.Kernel');
 	return undefined;
     }
 
+
+    plt.Kernel.display = function(thing) {
+	plt.Kernel.printHook(plt.Kernel.format("~a", thing));
+	return undefined;
+    };
+
+
+    plt.Kernel.write = function(thing) {
+	plt.Kernel.printHook(plt.Kernel.format("~w", thing));
+	return undefined;
+    };
+
+    plt.Kernel.newline = function() {
+	plt.Kernel.printHook("\n");
+	return undefined;
+    };
+
+
+
+
     plt.Kernel.printHook = function(str) {
     };
 

@@ -309,7 +309,12 @@
                      (vector? 1)
 
 		     (printf 1 true)
-                     
+                     (display 1)                     
+                     (write 1)
+		     (newline 0)
+
+		     (call/cc 1)
+
                      (procedure-arity 1)
                      
                      
