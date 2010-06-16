@@ -230,6 +230,7 @@
           
           (define structure-binding
             (make-binding:structure id
+				    #f
                                     fields
                                     constructor-id
                                     predicate-id

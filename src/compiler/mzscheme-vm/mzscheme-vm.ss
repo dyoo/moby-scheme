@@ -138,7 +138,7 @@
    (lambda (id body)
      (compile-variable-definition id body env a-pinfo))
    (lambda (id fields)
-     (error 'compile-definition "We're shouldn't get here")
+     (error 'compile-definition "structure definitions not implemented yet")
      #;(struct-definition->javascript-string id fields env a-pinfo))))
 
 
