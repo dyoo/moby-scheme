@@ -27,7 +27,9 @@
          
          "env.ss")
 
-(require (prefix-in bcode: "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss"))
+(require 
+ (prefix-in bcode: 
+            "../../../support/externals/mzscheme-vm/src/bytecode-structs.ss"))
 
 
 
@@ -69,7 +71,6 @@
             [expressions (filter (lambda (x) (or (test-case? x)
                                                  (expression? x))) 
                                  a-program)])
-        (printf "Don't forget the definitions ~s~n" (map stx->datum defns))
         (let*-values ([(compiled-definitions pinfo)
                        (compile-definitions defns env pinfo)]
                       [(compiled-exprs pinfo)
@@ -99,7 +100,6 @@
                                                     (cons a-binding acc)]
                                                    [else acc]))
                                                '())])
-    (printf "I need to handle ~s~n" module-defined-bindings)
     (values (bcode:make-prefix 0 (append (build-list (length local-defined-names)
                                                      (lambda (i) #f))
                                          (map (lambda (binding) 

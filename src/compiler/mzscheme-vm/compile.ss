@@ -1,22 +1,26 @@
 #lang scheme/base
 
 (require scheme/list
+         scheme/contract
          "mzscheme-vm.ss"
          "../pinfo.ss"
          "../../stx-helpers.ss"
-         "../../../support/externals/mzscheme-vm/src/bytecode-compiler.ss")
+         "../../../support/externals/mzscheme-vm/src/bytecode-compiler.ss"
+         "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 
 ;; compile: input-port output-port -> void
 (define (compile in out)
-  (let* ([stxs (read-syntaxes in)]
-         [a-compilation-top 
-          (compile-compilation-top-module stxs 
-                                          (get-base-pinfo 'moby)
-                                          #:name (string->symbol (port-name in)))]
-         )
-    stxs
-    #;(void)))
+  (let*-values 
+      ([(stxs) (read-syntaxes in)]
+       [(a-compilation-top a-pinfo)
+        (compile-compilation-top-module stxs 
+                                        (get-base-pinfo 'moby)
+                                        #:name (string->symbol (port-name in)))]
+       [(a-jsexp) (compile-top a-compilation-top)])
+    (display (jsexp->js a-jsexp)
+             out)))
+
 
 ;; port-name: port -> string
 (define (port-name a-port)
@@ -33,3 +37,6 @@
               empty]
              [else
               (cons stx (loop))])))))
+
+
+(provide/contract [compile (input-port? output-port? . -> . any)])
