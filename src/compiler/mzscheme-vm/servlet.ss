@@ -2,8 +2,10 @@
 
 (require web-server/servlet
          web-server/servlet-env
+         scheme/runtime-path
          "compile.ss")
 
+(define-runtime-path htdocs "servlet-htdocs")
 
 ;; make-port-response: (values output-port response/incremental)
 (define (make-port-response #:mime-type (mime-type #"application/octet-stream"))
@@ -39,5 +41,6 @@
 
 (serve/servlet start 
                #:port 8000
+               #:extra-files-paths (list htdocs)
                #:launch-browser? #f)
 
