@@ -14,9 +14,9 @@
   (let*-values 
       ([(stxs) (read-syntaxes in)]
        [(a-compilation-top a-pinfo)
-        (compile-compilation-top-module stxs 
-                                        (get-base-pinfo 'moby)
-                                        #:name (string->symbol (port-name in)))]
+        (compile-compilation-top stxs 
+                                 (get-base-pinfo 'moby)
+                                 #:name (string->symbol (port-name in)))]
        [(a-jsexp) (compile-top a-compilation-top)])
     (display (jsexp->js a-jsexp)
              out)))

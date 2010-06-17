@@ -18,6 +18,7 @@
 (define-struct pinfo (env                    ; env
                       modules                ; (listof module-binding) 
                       used-bindings-hash     ; (hashof symbol binding)
+                      free-variables         ; (listof symbol)
                       gensym-counter         ; number
                       provided-names         ; (hashof symbol provide-binding)
                       defined-names          ; (hashof symbol binding)
@@ -53,7 +54,8 @@
 (define empty-pinfo
   (make-pinfo empty-env
               empty 
-              empty-rbtree              
+              empty-rbtree
+              '()
               0
               empty-rbtree
               empty-rbtree
@@ -81,6 +83,7 @@
    an-env
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-free-variables a-pinfo)
    (pinfo-gensym-counter a-pinfo)
    (pinfo-provided-names a-pinfo)
    (pinfo-defined-names a-pinfo)
@@ -99,6 +102,7 @@
    (pinfo-env a-pinfo)
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-free-variables a-pinfo)
    (pinfo-gensym-counter a-pinfo)
    provided-names
    (pinfo-defined-names a-pinfo)
@@ -116,6 +120,7 @@
    (pinfo-env a-pinfo)
    (pinfo-modules a-pinfo)
    (pinfo-used-bindings-hash a-pinfo)
+   (pinfo-free-variables a-pinfo)
    (pinfo-gensym-counter a-pinfo)
    (pinfo-provided-names a-pinfo)
    defined-names
@@ -133,6 +138,7 @@
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -149,6 +155,7 @@
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -164,6 +171,7 @@
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -179,6 +187,7 @@
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -195,6 +204,7 @@
   (make-pinfo (pinfo-env a-pinfo)
               (pinfo-modules a-pinfo)
               (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
               (add1 (pinfo-gensym-counter a-pinfo))
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -218,6 +228,7 @@
      (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
                  (pinfo-modules a-pinfo)
                  (pinfo-used-bindings-hash a-pinfo)
+                 (pinfo-free-variables a-pinfo)
                  (pinfo-gensym-counter a-pinfo)
                  (pinfo-provided-names a-pinfo)
                  (rbtree-insert symbol< 
@@ -234,6 +245,7 @@
      (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
                  (pinfo-modules a-pinfo)
                  (pinfo-used-bindings-hash a-pinfo)
+                 (pinfo-free-variables a-pinfo)
                  (pinfo-gensym-counter a-pinfo)
                  (pinfo-provided-names a-pinfo)
                  (rbtree-insert symbol< 
@@ -265,6 +277,7 @@
            (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
                        (pinfo-modules a-pinfo)
                        (pinfo-used-bindings-hash a-pinfo)
+                       (pinfo-free-variables a-pinfo)
                        (pinfo-gensym-counter a-pinfo)
                        (pinfo-provided-names a-pinfo)
                        (pinfo-defined-names a-pinfo)
@@ -284,6 +297,7 @@
   (make-pinfo (pinfo-env a-pinfo)
               (cons a-module (pinfo-modules a-pinfo))
               (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -304,6 +318,7 @@
                              (pinfo-used-bindings-hash a-pinfo)
                              (binding-id a-binding)
                              a-binding)
+              (pinfo-free-variables a-pinfo)
               (pinfo-gensym-counter a-pinfo)
               (pinfo-provided-names a-pinfo)
               (pinfo-defined-names a-pinfo)
@@ -315,12 +330,36 @@
               (pinfo-current-module-path a-pinfo)))
 
 
+;; pinfo-accumulate-free-variable-use: symbol pinfo -> pinfo
+;; Mark a free variable usage.
+(define (pinfo-accumulate-free-variable-use a-sym a-pinfo)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (cond [(member a-sym (pinfo-free-variables a-pinfo))
+                     (pinfo-free-variables a-pinfo)]
+                    [else
+                     (cons a-sym (pinfo-free-variables a-pinfo))])
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
+
+  
+
+
 ;; pinfo-gensym: pinfo symbol -> (list pinfo symbol)
 ;; Generates a unique symbol.
 (define (pinfo-gensym a-pinfo a-label)
   (list (make-pinfo (pinfo-env a-pinfo)
                     (pinfo-modules a-pinfo)
                     (pinfo-used-bindings-hash a-pinfo)
+                    (pinfo-free-variables a-pinfo)
                     (add1 (pinfo-gensym-counter a-pinfo))
                     (pinfo-provided-names a-pinfo)
                     (pinfo-defined-names a-pinfo)
@@ -476,6 +515,7 @@
 (provide/contract [struct pinfo ([env env?]
                                  [modules (listof module-binding?)]
                                  [used-bindings-hash rbtree?]
+                                 [free-variables (listof symbol?)]
                                  [gensym-counter number?]
                                  [provided-names rbtree?]
                                  [defined-names rbtree?]
@@ -498,6 +538,7 @@
                   [pinfo-accumulate-defined-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-module-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-shared-expression (expression? string? pinfo? . -> . pinfo?)]
+                  [pinfo-accumulate-free-variable-use (symbol? pinfo? . -> . pinfo?)]
                   [pinfo-update-provided-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]

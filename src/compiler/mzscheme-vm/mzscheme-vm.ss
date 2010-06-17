@@ -34,7 +34,7 @@
 
 
 
-(provide/contract [compile-compilation-top-module
+(provide/contract [compile-compilation-top
                    (program? pinfo? #:name symbol? . -> . 
                              (values (or/c bcode:form? bcode:indirect? any/c)
                                      pinfo?))]
@@ -52,7 +52,7 @@
 
 
 ;; compile-compilation-top-module: program pinfo -> 
-(define (compile-compilation-top-module a-program pinfo
+(define (compile-compilation-top a-program pinfo
                                         #:name name) 
   (let* ([a-program+pinfo (desugar-program a-program pinfo)]
          [a-program (first a-program+pinfo)]
@@ -92,7 +92,8 @@
   ;;
   ;; Create a prefix that refers to those values
   ;; Create an environment that maps to the prefix
-  (let* ([local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
+  (let* ([free-variables (pinfo-free-variables pinfo)]
+         [local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
          [module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash pinfo)
                                                (lambda (name a-binding acc)
                                                  (cond
@@ -100,7 +101,8 @@
                                                     (cons a-binding acc)]
                                                    [else acc]))
                                                '())])
-    (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket local-defined-names)
+    (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
+                                         (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
                                                 (bcode:make-module-variable (module-path-index-join 
                                                                               (binding:binding-module-source binding) 
@@ -111,7 +113,8 @@
                                               module-defined-bindings))
                                '())
             (env-push-globals empty-env 
-                              (append local-defined-names 
+                              (append free-variables
+                                      local-defined-names 
                                       (map binding:binding-id module-defined-bindings))))))
 
 (define (compile-definitions defns env a-pinfo)

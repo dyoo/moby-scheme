@@ -342,7 +342,9 @@
        [(not (eq? (env-lookup/context env an-expression) #f))
         (pinfo-accumulate-binding-use (env-lookup/context env an-expression) pinfo)]
        [else
-        pinfo])]
+        ;; free variable
+        (pinfo-accumulate-free-variable-use (stx-e an-expression) pinfo)])]
+
     
     ;; Quoted symbols
     [(stx-begins-with? an-expression 'quote)
