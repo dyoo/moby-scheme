@@ -100,8 +100,7 @@
                                                     (cons a-binding acc)]
                                                    [else acc]))
                                                '())])
-    (values (bcode:make-prefix 0 (append (build-list (length local-defined-names)
-                                                     (lambda (i) #f))
+    (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
                                                 (bcode:make-module-variable (module-path-index-join 
                                                                               (binding:binding-module-source binding) 
