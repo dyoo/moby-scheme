@@ -10,6 +10,9 @@ var executeButtonPressed = function() {
 
 
 var addToHistory = function(thing) {
+    if (typeof thing === 'string' || typeof thing === 'number') {
+	thing = document.createTextNode(thing + '');
+    }
     var history = document.getElementById('history');
     history.appendChild(thing);
     history.appendChild(document.createElement('br'));
@@ -23,9 +26,7 @@ var compileCode = function(code, k) {
 	data: {program : code},
 	dataType: 'text',
 	success: function(compiledBytecode, textStatus, xhr) {
-	    console.log("textStatus is " + textStatus); 
-	    console.log("bytecode is ");
-	    console.log(compiledBytecode);
+	    addToHistory("emitted bytecode is " + compiledBytecode);
 	}});
     console.log();
 }
