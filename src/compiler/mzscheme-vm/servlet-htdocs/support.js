@@ -5248,6 +5248,7 @@ types.keyword = function(k) { return new Keyword(k); };
 types.pair = function(x, y) { return Cons.makeInstance(x, y); };
 types.hash = makeHashEqual;
 types.hashEq = makeHashEq;
+types.toDomNode = toDomNode;
 types.toWrittenString = toWrittenString;
 types.toDisplayedString = toDisplayedString;
 
