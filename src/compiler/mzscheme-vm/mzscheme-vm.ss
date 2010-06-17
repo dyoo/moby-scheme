@@ -151,12 +151,12 @@
             a-pinfo)))
 
 
-(define (compile-variable-definition fun-name args body env a-pinfo)
-  (let*-values ([(compiled-args a-pinfo)
-                 (compile-expressions args env a-pinfo)]
+(define (compile-variable-definition id body env a-pinfo)
+  (let*-values ([(compiled-id a-pinfo)
+                 (compile-expression id env a-pinfo)]
                 [(compiled-body a-pinfo)
                  (compile-expression body env a-pinfo)])
-    (values (bcode:make-def-values compiled-args 
+    (values (bcode:make-def-values (list compiled-id)
                                    compiled-body)
             a-pinfo)))
   
