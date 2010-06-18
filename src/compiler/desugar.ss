@@ -126,7 +126,7 @@
      (desugar-provide/contract an-element a-pinfo)]
     [(expression? an-element)
      (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
-       (list (list (first expr+pinfo))
+       (list (list (tag-toplevel-expression-for-printing (first expr+pinfo)))
              (second expr+pinfo)))]))
 
 
@@ -380,6 +380,19 @@
       [(> (length (stx-e expr)) 4)
        (raise (make-moby-error (stx-loc expr)
                                (make-moby-error-type:if-too-many-elements)))])))
+
+
+
+;; tag-toplevel-expression-for-printing: expression -> expression
+;; Add a print-values for an expression at the toplevel.
+(define (tag-toplevel-expression-for-printing an-expr)
+  (tag-application-operator/module 
+   (datum->stx #f 
+               `(print-values
+                 ,an-expr)
+               (stx-loc an-expr))
+   'moby/runtime/kernel/misc))
+
 
 
 

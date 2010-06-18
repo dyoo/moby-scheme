@@ -3,6 +3,7 @@
 (require web-server/servlet
          web-server/servlet-env
          scheme/runtime-path
+         "write-support.ss"
          "compile.ss")
 
 (define-runtime-path htdocs "servlet-htdocs")
@@ -38,6 +39,11 @@
 
 
 
+;; Write out a fresh copy of the support library.
+(call-with-output-file (build-path htdocs "support.js")
+                       (lambda (op)
+                         (write-support "browser" op))
+                       #:exists 'replace)
 
 (serve/servlet start 
                #:port 8000

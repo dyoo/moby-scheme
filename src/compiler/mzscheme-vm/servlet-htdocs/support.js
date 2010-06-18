@@ -4865,13 +4865,13 @@ EqualHashTable.prototype.isEqual = function(other, aUnionFind) {
 
 
 var toWrittenString = function(x, cache) {
-    // if (! cache) { 
-    // 	cache = makeLowLevelEqHash();
-    // }
+    if (! cache) { 
+     	cache = makeLowLevelEqHash();
+    }
 
-    // if (x && cache.containsKey(x)) {
-    // 	return "...";
-    // }
+    if (x && cache.containsKey(x)) {
+     	return "...";
+    }
 
     if (x == undefined || x == null) {
 	return "<undefined>";
@@ -4895,12 +4895,12 @@ var toWrittenString = function(x, cache) {
 
 
 var toDisplayedString = function(x, cache) {
-    // if (! cache) {
-    // 	cache = makeLowLevelEqHash();
-    // }
-    // if (x && cache.containsKey(x)) {
-    // 	return "...";
-    // }
+    if (! cache) {
+    	cache = makeLowLevelEqHash();
+    }
+    if (x && cache.containsKey(x)) {
+    	return "...";
+    }
 
     if (x == undefined || x == null) {
 	return "<undefined>";
@@ -4925,19 +4925,20 @@ var toDisplayedString = function(x, cache) {
 
 // toDomNode: scheme-value -> dom-node
 var toDomNode = function(x, cache) {
-    // if (! cache) {
-    // 	cache = makeLowLevelEqHash();
-    // }
-    // if (x && cache.containsKey(x)) {
-    // 	return document.createTextNode("...");
-    // }
+    if (! cache) {
+    	cache = makeLowLevelEqHash();
+    }
+    
+    if (x && cache.containsKey(x)) {
+    	return document.createTextNode("...");
+    }
 
     if (x == undefined || x == null) {
 	var node = document.createTextNode("<undefined>");
 	return node;
     }
     if (typeof(x) == 'string') {
-	var node = document.createTextNode(x.toWrittenString());
+	var node = document.createTextNode(toWrittenString(x));
 	return node;
     }
     if (typeof(x) != 'object' && typeof(x) != 'function') {
@@ -5308,6 +5309,11 @@ types.makeStructureType = makeStructureType;
 
 //var types = require('./types');
 
+
+
+// Represents the interpreter state.
+
+
 var state = {};
 
 (function () {
@@ -5331,6 +5337,11 @@ var debugF = function(f_s) {
 }
 
 
+var defaultPrintHook = function(thing) { 
+    sys.print(types.toWrittenString(thing) + "\n"); };
+
+var defaultDisplayHook = function(thing) { 
+    sys.print(types.toDisplayedString(thing)); };
 
 
 // Interpreter
@@ -5340,6 +5351,8 @@ var State = function() {
     this.cstack = [];  // control stack
     this.heap = {};    // map from name to closures
     this.globals = {}; // map from string to types.GlobalBucket values
+    this.hooks = { printHook: defaultPrintHook,
+		   displayHook: defaultPrintHook};
 };
 
 
@@ -5349,6 +5362,7 @@ State.prototype.clear = function() {
     this.cstack = [];
     this.heap = {};
     this.globals = {};
+    this.hooks = { printHook: function(str) { sys.print(str + ''); }};
 };
 
 
@@ -5357,7 +5371,8 @@ State.prototype.save = function() {
 	     vstack: this.vstack.slice(0),
 	     cstack: this.cstack.slice(0),
 	     heap: this.heap,
-	     globals: this.globals };
+	     globals: this.globals,
+             hooks: this.hooks };
 };
 
 
@@ -5367,6 +5382,7 @@ State.prototype.restore = function(params) {
     this.cstack = params.cstack;
     this.heap = params.heap;
     this.globals = params.globals;
+    this.hooks = params.hooks;
 };
 
 
@@ -5463,10 +5479,33 @@ State.prototype.setPrefix = function(depth, pos, v) {
 
 
 
+
+State.prototype.setPrintHook = function(printHook) {
+    this.hooks['printHook'] = printHook;
+};
+
+
+State.prototype.getPrintHook = function() {
+    return this.hooks['printHook'];
+};
+
+
+State.prototype.setDisplayHook = function(printHook) {
+    this.hooks['displayHook'] = printHook;
+};
+
+
+State.prototype.getDisplayHook = function() {
+    return this.hooks['displayHook'];
+};
+
+
+
+
+
 state.State = State;
 
 })();
-
 /*
 var types = require("./types");
 var sys = require("sys");
@@ -5915,6 +5954,20 @@ PRIMITIVES['throw-cond-exhausted-error'] =
 		     });
 
 
+PRIMITIVES['print-values'] = 
+    new PrimProc('print-values',
+		 0,
+		 true,
+		 true,
+		 function(state, values) {
+		     for (var i = 0; i < values.length; i++) {
+			 if (values[i] !== types.VOID) {
+			     state.getPrintHook()(values[i]);
+			 }
+		     }
+		     return UNDEF;
+		 });
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -5923,20 +5976,20 @@ var defaultPrint =
     new PrimProc('print', 
 		 1, 
 		 false, 
-		 false, 
-		 function(x) {
-		     sys.print(''+ x + '\n');
-		     return UNDEF;
+		 true, 
+		 function(state, x) {
+		     state.getPrintHook()(''+ types.toWrittenString(x) + '\n');
+		     return types.VOID;
 		 });
 
 
 PRIMITIVES['display'] = 
     new CasePrimitive(
-	[new PrimProc('display', 1, false, false, function(x) {
-	    sys.print('' + x);
-	    return UNDEF;
+		      [new PrimProc('display', 1, false, true, function(state, x) {
+				  state.getPrintHook()('' + types.toDisplayedString(x));
+	    return types.VOID;
 	}),
-	 new PrimProc('display', 2, false, false, function(x, port) {
+			  new PrimProc('display', 2, false, true, function(state, x, port) {
 	     // FIXME
 	     throw new Error("display to a port not implemented yet.");
 	 } )]);
@@ -5945,9 +5998,9 @@ PRIMITIVES['display'] =
 
 PRIMITIVES['newline'] = 
     new CasePrimitive(
-	[new PrimProc('newline', 0, false, false, function() {
-	    sys.print('\n');
-	    return UNDEF;
+	[new PrimProc('newline', 0, false, true, function(state) {
+		    state.getPrintHook()('\n');
+	    return types.VOID;
 	}),
 	 new PrimProc('newline', 1, false, false, function(port) {
 	     // FIXME
@@ -5963,20 +6016,6 @@ PRIMITIVES['current-print'] =
 		 function() {
 		     return defaultPrint;
 		 });
-
-
-/*
-PRIMITIVES['printf'] = 
-    new PrimProc('printf',
-		 1,
-		 true, false,
-		 function(fmtString, vals) {
-		     // FIXME
-		     sys.print("printf not implemented yet.  " + fmtString);
-		     sys.print(sys.inspect(vals));
-		     return UNDEF;
-		 });
-*/
 
 
 PRIMITIVES['for-each'] =
@@ -7398,8 +7437,6 @@ PRIMITIVES['map'] =
 					argsFirst.push(args[i].first());
 					argsRest.push(args[i].rest());
 				}
-				//sys.print(sys.inspect(argsFirst));
-				//sys.print(sys.inspect(argsRest));
 				var result = CALL(f, argsFirst,
 					function(result) {
 						return mapHelp(f, argsRest, types.cons(result, acc));
@@ -8236,10 +8273,10 @@ PRIMITIVES['format'] = new PrimProc('format', 1, true, false, format('format'));
 
 
 PRIMITIVES['printf'] =
-    new PrimProc('printf', 1, true, false,
-		 function(formatStr, args) {
+    new PrimProc('printf', 1, true, true,
+		 function(state, formatStr, args) {
 			var msg = (format('printf'))(formatStr, args);
-			sys.print(msg);
+			state.getPrintHook()(msg);
 			return types.VOID;
 		 });
 

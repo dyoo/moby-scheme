@@ -51,6 +51,16 @@
                               false
                               "plt.kernel.misc.checkOperatorIsFunction"
                               (list)
+                              false)
+                             
+                             
+                             (make-binding:function
+                              'print-values
+                              "moby/runtime/kernel/misc"
+                              0
+                              true
+                              "plt.kernel.misc.printValues"
+                              (list)
                               false))))
 
 

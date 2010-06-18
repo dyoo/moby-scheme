@@ -1,5 +1,17 @@
 var state = new state.State();
 
+state.setPrintHook(function(thing) {
+	var dom = types.toDomNode(thing);
+	addToHistory(dom);	
+    });
+
+
+state.setDisplayHook(function(thing) {
+	var dom = types.toDisplayedString(thing);
+	addToHistory(dom);	
+    });
+
+
 
 
 var executeButtonPressed = function() {
@@ -30,18 +42,13 @@ var compileCode = function(code, k) {
 	    data: {program : code},
 	    dataType: 'text',
 	    success: function(compiledBytecode, textStatus, xhr) {
-		//		addToHistory("emitted bytecode is " + compiledBytecode);
+		//addToHistory("emitted bytecode is " + compiledBytecode);
 		interpret.load(eval('(' + compiledBytecode + ')'), state);
 		interpret.run(state, function(lastResult) {
-			var dom = types.toDomNode(lastResult);
-			addToHistory(dom);
-			console.log("last result is " + types.toString(lastResult));
-			console.log(lastResult);
 		    });	    
 	    }});
-    console.log();
-}
-
+};
+    
 
 
     var oldCode = '{"$" : "compilation-top" ,"max-let-depth" : 0}';
