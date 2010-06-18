@@ -442,23 +442,25 @@
 (define (desugar-or exprs loc pinfo)
   (cond [(= (length exprs) 2)
          (local [(define pinfo+tmp-sym (pinfo-gensym pinfo 'tmp))]
-           (list (datum->stx #f 
-                             `(let ([,(second pinfo+tmp-sym) 
-                                     ,(first exprs)])
-                                (if ,(second pinfo+tmp-sym)
-                                    ,(second pinfo+tmp-sym)
-                                    ,(second exprs)))
-                             loc)
-                 (first pinfo+tmp-sym)))]
+           (desugar-expression/expr+pinfo
+            (list (datum->stx #f 
+                              `(let ([,(second pinfo+tmp-sym) 
+                                      ,(first exprs)])
+                                 (if ,(second pinfo+tmp-sym)
+                                     ,(second pinfo+tmp-sym)
+                                     ,(second exprs)))
+                              loc)
+                  (first pinfo+tmp-sym))))]
         [else
          (local [(define pinfo+tmp-sym (pinfo-gensym pinfo 'tmp))
                  (define rest-exprs+pinfo (desugar-or (rest exprs) loc (first pinfo+tmp-sym)))]
-           (list (datum->stx #f `(let ([,(second pinfo+tmp-sym) ,(first exprs)])
-                                   (if ,(second pinfo+tmp-sym) 
-                                       ,(first rest-exprs+pinfo)
-                                       #f))
-                             loc)
-                 (second rest-exprs+pinfo)))]))
+           (desugar-expression/expr+pinfo
+            (list (datum->stx #f `(let ([,(second pinfo+tmp-sym) ,(first exprs)])
+                                    (if ,(second pinfo+tmp-sym) 
+                                        ,(first rest-exprs+pinfo)
+                                        #f))
+                              loc)
+                  (second rest-exprs+pinfo))))]))
 
 
 

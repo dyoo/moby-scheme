@@ -329,6 +329,7 @@
           (define env-with-arg-bindings
             (foldl (lambda (arg-id env) 
                      (env-extend env (make-binding:constant (stx-e arg-id)
+                                                            #f
                                                             (symbol->string
                                                              (identifier->munged-java-identifier
                                                               (stx-e arg-id)))
@@ -362,6 +363,7 @@
           (define new-env (env-extend env 
                                       (make-binding:constant 
                                        (stx-e id)
+                                       #f
                                        (symbol->string munged-id)
                                        empty)))
           (define str+p (expression->javascript-string body new-env a-pinfo))]
@@ -1062,6 +1064,7 @@
                      (env-extend env 
                                  (make-binding:constant 
                                   (stx-e arg-id)
+                                  #f
                                   (symbol->string
                                    (identifier->munged-java-identifier (stx-e arg-id)))
                                   empty)))
