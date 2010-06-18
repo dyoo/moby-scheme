@@ -182,7 +182,7 @@
 
 ;; Module compilation
 (check-expect (let-values ([(compiled-module pinfo)
-                            (compile-compilation-top-module 
+                            (compile-compilation-top 
                              (stx-e (s ((define (f x) (* x x))
                                         (f 42))))
                              (get-base-pinfo 'moby)
