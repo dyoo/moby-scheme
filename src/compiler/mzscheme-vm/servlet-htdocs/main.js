@@ -11,6 +11,15 @@ state.setDisplayHook(function(thing) {
 	addToHistory(dom);	
     });
 
+state.setToplevelNodeHook(function() {
+	var innerDom = document.createElement("div");
+	var dom = document.createElement("div");
+	dom.appendChild(innerDom);
+	addToHistory(dom);	
+	return innerDom;
+    });
+
+
 
 
 
