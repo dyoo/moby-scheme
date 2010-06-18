@@ -30,7 +30,7 @@ var compileCode = function(code, k) {
 	    data: {program : code},
 	    dataType: 'text',
 	    success: function(compiledBytecode, textStatus, xhr) {
-		addToHistory("emitted bytecode is " + compiledBytecode);
+		//		addToHistory("emitted bytecode is " + compiledBytecode);
 		interpret.load(eval('(' + compiledBytecode + ')'), state);
 		interpret.run(state, function(lastResult) {
 			var dom = types.toDomNode(lastResult);
