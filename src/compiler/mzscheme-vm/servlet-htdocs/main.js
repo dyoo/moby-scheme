@@ -18,10 +18,7 @@ var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
     addToHistory(document.createTextNode(interactionText.value));
 
-    compileCode(interactionText.value);
-
-    interactionText.value = '';
-    interactionText.focus();
+    executeProgram(interactionText.value);
 };
 
 
@@ -36,16 +33,23 @@ var addToHistory = function(thing) {
 
 
 // compileCode: string continuation -> void
-var compileCode = function(code, k) {
+var executeProgram = function(code, k) {
+    var interactionText = document.getElementById('textarea');
+    var executeButton = document.getElementById('executeButton');
+    interactionText.disabled = true;
+    executeButton.disabled = true;
     jQuery.ajax({
 	    url: "/servlets/standalone.ss",
 	    data: {program : code},
 	    dataType: 'text',
 	    success: function(compiledBytecode, textStatus, xhr) {
-		//addToHistory("emitted bytecode is " + compiledBytecode);
 		interpret.load(eval('(' + compiledBytecode + ')'), state);
 		interpret.run(state, function(lastResult) {
-		    });	    
+  			interactionText.disabled = false;
+  			executeButton.disabled = false;
+			interactionText.value = '';
+			interactionText.focus();
+		    });
 	    }});
 };
     
@@ -56,5 +60,8 @@ var compileCode = function(code, k) {
 
 google.load("jquery", "1");
 google.setOnLoadCallback(function() {
-	// allow interaction with the interface after the page has loaded.
+	var interactionText = document.getElementById('textarea');
+	var executeButton = document.getElementById('executeButton');
+	interactionText.disabled = false;
+	executeButton.disabled = false;
     });
