@@ -47,21 +47,42 @@ var executeProgram = function(code, k) {
     var executeButton = document.getElementById('executeButton');
     interactionText.disabled = true;
     executeButton.disabled = true;
-    jQuery.ajax({
-	    url: "/servlets/standalone.ss",
-	    data: {program : code},
-	    dataType: 'text',
-	    success: function(compiledBytecode, textStatus, xhr) {
-		interpret.load(eval('(' + compiledBytecode + ')'), state);
-		interpret.run(state, function(lastResult) {
-  			interactionText.disabled = false;
-  			executeButton.disabled = false;
-			interactionText.value = '';
-			interactionText.focus();
-		    });
-	    }});
+    jQuery.ajax({ url: "/servlets/standalone.ss",
+		  data: {program : code},
+		  dataType: 'text',
+		  success: onCompilation });
 };
     
+
+var onCompilation = function(compiledBytecode, textStatus, xhr) {
+    var interactionText = document.getElementById('textarea');
+    var executeButton = document.getElementById('executeButton');
+    
+    var onSuccess =  function(lastResult) {
+  	interactionText.disabled = false;
+  	executeButton.disabled = false;
+	interactionText.value = '';
+	interactionText.focus();
+    };
+
+    var onFail = function(exn) {
+  	interactionText.disabled = false;
+  	executeButton.disabled = false;
+	interactionText.value = '';
+	interactionText.focus();
+
+	if (console && console.log && exn.stack) {
+	    console.log(exn.stack);
+	}
+
+	throw exn;
+    };
+
+    interpret.load(eval('(' + compiledBytecode + ')'), state);
+    interpret.run(state, onSuccess, onFail);
+};
+    
+
 
 
     var oldCode = '{"$" : "compilation-top" ,"max-let-depth" : 0}';
