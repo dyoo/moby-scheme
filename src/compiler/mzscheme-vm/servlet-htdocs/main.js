@@ -50,11 +50,12 @@ var executeProgram = function(code, k) {
     jQuery.ajax({ url: "/servlets/standalone.ss",
 		  data: {program : code},
 		  dataType: 'text',
-		  success: onCompilation });
+		  success: onCompilationSuccess,
+		  error: onCompilationFailure});
 };
     
 
-var onCompilation = function(compiledBytecode, textStatus, xhr) {
+var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
     var interactionText = document.getElementById('textarea');
     var executeButton = document.getElementById('executeButton');
     
@@ -71,7 +72,9 @@ var onCompilation = function(compiledBytecode, textStatus, xhr) {
 	interactionText.value = '';
 	interactionText.focus();
 
-	if (console && console.log && exn.stack) {
+	// Under google-chrome, this will produce a nice error stack
+	// trace that we can deal with.
+	if (console && console.log && exn && exn.stack) {
 	    console.log(exn.stack);
 	}
 
@@ -82,6 +85,12 @@ var onCompilation = function(compiledBytecode, textStatus, xhr) {
     interpret.run(state, onSuccess, onFail);
 };
     
+
+var onCompilationFailure = function(xhr, textStatus, errorThrown) {
+    console.log("here");
+};
+
+
 
 
 

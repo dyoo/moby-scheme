@@ -51,9 +51,12 @@
 
 
 (define (handle-exception-response exn)
-  (void))
+  (make-response/basic 500 
+                       (exn-message exn)
+                       (current-seconds)
+                       #"application/octet-stream"
+                       (list)))
 
-    
 
 
 
