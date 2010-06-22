@@ -157,6 +157,10 @@
                                ;; FIXME: extend the environment with the
                                ;; structure identifiers here!
                                (local [(define id-string (symbol->string (stx-e id)))
+                                       (define ref-stx (datum->stx #f 
+                                                                   (string->symbol
+                                                                    (string-append id-string "-ref"))
+                                                                   (stx-loc a-defn)))
                                        (define def-values-stx
                                          (datum->stx 
                                           #f 
@@ -165,13 +169,24 @@
                                                              (string-append "make-" id-string))
                                                            ,(string->symbol
                                                              (string-append id-string "?"))
-                                                           ,(string->symbol
-                                                             (string-append id-string "-ref"))
+                                                           ,ref-stx
                                                            ,(string->symbol
                                                              (string-append id-string "-set!")))
                                              (make-struct-type ',id #f ,(length fields) 0))
-                                          (stx-loc a-defn)))]
-                                 (list (list def-values-stx) a-pinfo)))
+                                          (stx-loc a-defn)))
+                                       (define selector-stxs
+                                         (mapi (lambda (field i)
+                                                 (datum->stx #f 
+                                                             `(define ,(string->symbol 
+                                                                        (string-append id-string 
+                                                                                       "-" 
+                                                                                       (symbol->string (stx-e field))))
+                                                                (make-struct-field-accessor ,ref-stx ,i ',(stx-e field)))
+                                                             (stx-loc a-defn)))
+                                              fields))
+                                       ;; FIXME: add bindings to the mutators too.
+                                       ]
+                                 (list (cons def-values-stx selector-stxs) a-pinfo)))
                              
                              (lambda (ids body)
                                (local [(define desugared-body+pinfo (desugar-expression body a-pinfo))]
