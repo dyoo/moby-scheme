@@ -32,7 +32,8 @@
 
 ;; Web service consuming programs and producing bytecode.
 (define (start request)
-  (with-handlers ([void handle-exception-response])
+  (with-handlers ([void 
+                   handle-exception-response])
     (let*-values ([(program-text) (extract-binding/single 'program (request-bindings request))]
                   [(program-input-port) (open-input-string program-text)]
                   [(response output-port) (make-port-response #:mime-type #"text/plain")])
@@ -50,9 +51,10 @@
              response]))))
 
 
+
+;; handle-exception-response: exn -> response
 (define (handle-exception-response exn)
-  (raise exn)
-  #;(make-response/basic 500 
+  (make-response/basic 500 
                        (string->bytes/utf-8 (exn-message exn))
                        (current-seconds)
                        #"application/octet-stream"

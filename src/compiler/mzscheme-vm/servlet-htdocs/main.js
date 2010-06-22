@@ -84,13 +84,21 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
     var onFail = function(exn) {
 	// Under google-chrome, this will produce a nice error stack
 	// trace that we can deal with.
-	if (typeof(console) !== 'undefined' && console.log && exn && exn.stack) {
+	if (typeof(console) !== 'undefined' && console.log &&
+	    exn && exn.stack) {
 	    console.log(exn.stack);
 	}
-
-	console.log(exn);
-
-	reportError(exn+'');
+	
+	if (types.isSchemeError(exn)) {
+	    var errorValue = exn.val;
+	    if (types.isExn(errorValue)) {
+		reportError(types.exnValue(errorValue) + '');
+	    } else {
+		reportError(exn+'');
+	    }
+	} else {
+	    reportError(exn+'');
+	}
 	
     };
 
