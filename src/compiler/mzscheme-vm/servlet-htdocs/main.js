@@ -87,7 +87,11 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
 	if (typeof(console) !== 'undefined' && console.log && exn && exn.stack) {
 	    console.log(exn.stack);
 	}
+
+	console.log(exn);
+
 	reportError(exn+'');
+	
     };
 
     aState.clearForEval();

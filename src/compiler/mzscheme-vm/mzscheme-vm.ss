@@ -140,15 +140,21 @@
    (lambda (id body)
      (compile-variable-definition id body env a-pinfo))
    (lambda (id fields)
-     (error 'compile-definition "structure definitions not implemented yet")
-     #;(struct-definition->javascript-string id fields env a-pinfo))))
+     (error 'compile-definition "structure definitions not implemented yet"))
+   (lambda (ids body)
+     (compile-variables-definition ids body env a-pinfo))))
+
 
 
 (define (compile-function-definition fun-name args body env a-pinfo)
   (let*-values ([(compiled-fun-name a-pinfo)
                  (compile-expression fun-name env a-pinfo)]
                 [(compiled-lambda a-pinfo)
-                 (compile-lambda-expression args body env a-pinfo)])
+                 (compile-lambda-expression (stx-e fun-name)
+                                            args
+                                            body
+                                            env 
+                                            a-pinfo)])
     (values (bcode:make-def-values (list compiled-fun-name)
                                    compiled-lambda)
             a-pinfo)))
@@ -164,6 +170,15 @@
             a-pinfo)))
   
 
+;; compile-variables-definition: (listof id) body env pinfo -> (values expression pinfo)
+(define (compile-variables-definition ids body env a-pinfo)
+  (let*-values ([(compiled-ids a-pinfo)
+                 (compile-expressions ids env a-pinfo)]
+                [(compiled-body a-pinfo)
+                 (compile-expression body env a-pinfo)])
+    (values (bcode:make-def-values compiled-ids
+                                   compiled-body)
+            a-pinfo)))
 
   
 
@@ -195,7 +210,7 @@
     [(stx-begins-with? expr 'lambda)
      (local [(define args (stx-e (second (stx-e expr))))
              (define body (third (stx-e expr)))]
-       (compile-lambda-expression args body env a-pinfo))]
+       (compile-lambda-expression empty args body env a-pinfo))]
     
     
     ;; (local ([define ...] ...) body)
@@ -318,10 +333,10 @@
 
 
 
-;; compile-lambda-expression: (listof symbol-stx) expr env pinfo -> (values lam pinfo)
+;; compile-lambda-expression: (or symbol empty) (listof symbol-stx) expr env pinfo -> (values lam pinfo)
 ;; Compile a lambda expression.  The lambda must close its free variables over the
 ;; environment.
-(define (compile-lambda-expression args body env pinfo)
+(define (compile-lambda-expression name args body env pinfo)
   (let*-values ([(free-vars) 
                  (free-variables body 
                                  (foldl (lambda (var env) (env-push-local env (stx-e var)))
@@ -333,7 +348,7 @@
                 [(compiled-body pinfo-1) 
                  (compile-expression body extended-env pinfo)])
     
-    (values (bcode:make-lam empty 
+    (values (bcode:make-lam name 
                             '()
                             (length args)
                             (build-list (length args) (lambda (i)
@@ -694,21 +709,6 @@
 
 
 
-;; definition->java-string: definition env pinfo -> (list string string pinfo)
-;; Consumes a definition (define or define-struct) and produces two strings.
-;; The first maps a definitions string.
-;; The second value is the expression that will be evaluated at the toplevel.
-;;
-;; Structure definitions map to static inner classes with transparent fields.
-#;(define (definition->javascript-strings defn env a-pinfo)
-    (case-analyze-definition 
-     defn
-     (lambda (fun args body)
-       (function-definition->java-string fun args body env a-pinfo))
-     (lambda (id body)
-       (variable-definition->javascript-strings id body env a-pinfo))
-     (lambda (id fields)
-       (struct-definition->javascript-string id fields env a-pinfo))))
 
 
 

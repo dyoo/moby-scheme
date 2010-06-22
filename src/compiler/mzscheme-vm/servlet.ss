@@ -51,7 +51,8 @@
 
 
 (define (handle-exception-response exn)
-  (make-response/basic 500 
+  (raise exn)
+  #;(make-response/basic 500 
                        (string->bytes/utf-8 (exn-message exn))
                        (current-seconds)
                        #"application/octet-stream"

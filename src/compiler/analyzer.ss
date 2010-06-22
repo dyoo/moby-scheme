@@ -182,13 +182,28 @@
                                         (symbol->string 
                                          (identifier->munged-java-identifier (stx-e id)))
                                         empty)
-                               pinfo))
+                                       pinfo))
    
    ;; For structure definitions
    (lambda (id fields)
      (pinfo-accumulate-defined-bindings (struct-definition-bindings (stx-e id) 
                                                             (map stx-e fields))
-                                pinfo))))
+                                pinfo))
+
+   ;; define-values
+   (lambda (ids body)
+     (foldl (lambda (id pinfo)
+              (pinfo-accumulate-defined-binding 
+               (make-binding:constant
+                (stx-e id)
+                #f
+                (symbol->string
+                 (identifier->munged-java-identifier
+                  (stx-e id)))
+                empty)
+               pinfo))
+            pinfo
+            ids))))
 
 
 
@@ -258,7 +273,13 @@
                              (expression-analyze-uses expr pinfo (pinfo-env pinfo)))
                            (lambda (id fields)
                              ;; Structures don't introduce any uses.
-                             pinfo)))
+                             pinfo)
+                           
+                           ;; define-values can introduce uses
+                           (lambda (ids body)
+                             (expression-analyze-uses body 
+                                                      pinfo 
+                                                      (pinfo-env pinfo)))))
 
 
 ;; function-definition-analyze-uses: stx (listof stx) stx program-info -> program-info

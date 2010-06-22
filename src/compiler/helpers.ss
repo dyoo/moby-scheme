@@ -109,6 +109,8 @@
      true]
     [(stx-begins-with? an-sexp 'define-struct)
      true]
+    [(stx-begins-with? an-sexp 'define-values)
+     true]
     [else
      false]))
 
@@ -309,9 +311,11 @@
 
 ;; Helper to help with the destructuring and case analysis of functions.
 (define (case-analyze-definition a-definition 
-                                 f-function            ;; (stx (listof stx) expr-stx) -> ...
-                                 f-regular-definition  ;; (stx expr-stx) -> ...
-                                 f-define-struct)      ;; (stx (listof id-stx)) -> ...
+                                 f-function             ;; (stx (listof stx) expr-stx) -> ...
+                                 f-regular-definition   ;; (stx expr-stx) -> ...
+                                 f-define-struct        ;; (stx (listof id-stx)) -> ...
+                                 f-define-values        ;; ((listof id-stx) stx) -> ... 
+                                 )
   (cond
     ;; (define (id args ...) body)
     [(and (stx-begins-with? a-definition 'define)
@@ -355,6 +359,14 @@
      (local [(define id (second (stx-e a-definition)))
              (define fields (stx-e (third (stx-e a-definition))))]
        (f-define-struct id fields))]
+ 
+    ;; (define-values (id ...) body)
+    [(and (stx-begins-with? a-definition 'define-values)
+          (= (length (stx-e a-definition)) 3)
+          (stx-list-of-symbols? (second (stx-e a-definition))))
+     (local [(define ids (stx-e (second (stx-e a-definition))))
+             (define body (third (stx-e a-definition)))]
+       (f-define-values ids body))]
     
     
 
@@ -468,6 +480,7 @@
                                             (symbol-stx? (listof symbol-stx?) stx? . -> . any)
                                             (symbol-stx? any/c . -> . any)
                                             (symbol-stx? (listof symbol-stx?) . -> . any)
+                                            ((listof symbol-stx?) stx? . -> . any)
                                             . -> . any)]
                   [string-join ((listof string?) string? . -> . string?)]
                   [string-split (string? char? . -> . (listof string?))])

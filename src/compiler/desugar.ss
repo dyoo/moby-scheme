@@ -9,6 +9,7 @@
 (require "../collects/moby/runtime/error-struct.ss")
 
 
+;; FIXME: this whole process is non-hygienic macro expansion.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -155,21 +156,31 @@
                              (lambda (id fields) 
                                ;; FIXME: extend the environment with the
                                ;; structure identifiers here!
-                               (local [(define def-values-stx
+                               (local [(define id-string (symbol->string (stx-e id)))
+                                       (define def-values-stx
                                          (datum->stx 
                                           #f 
                                           `(define-values (,id 
                                                            ,(string->symbol
-                                                             (string-append "make-" (symbol->string id)))
+                                                             (string-append "make-" id-string))
                                                            ,(string->symbol
-                                                             (string-append (symbol->string id) "?"))
+                                                             (string-append id-string "?"))
                                                            ,(string->symbol
-                                                             (string-append (symbol->string id) "-ref"))
+                                                             (string-append id-string "-ref"))
                                                            ,(string->symbol
-                                                             (string-append (symbol->string id) "-set!")))
+                                                             (string-append id-string "-set!")))
                                              (make-struct-type ',id #f ,(length fields) 0))
                                           (stx-loc a-defn)))]
-                                 (list (list def-values-stx) a-pinfo))))))
+                                 (list (list def-values-stx) a-pinfo)))
+                             
+                             (lambda (ids body)
+                               (local [(define desugared-body+pinfo (desugar-expression body a-pinfo))]
+                                 (list (list (datum->stx #f 
+                                                         `(define-values (@,ids) 
+                                                            ,(first (desugared-body+pinfo)))
+                                                         (stx-loc a-defn)))
+                                       (second desugared-body+pinfo)))))))
+
 
 
 ;; desugar-expressions: (listof expr) pinfo -> (list (listof expr) pinfo)
