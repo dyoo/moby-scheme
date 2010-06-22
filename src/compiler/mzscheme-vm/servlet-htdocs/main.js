@@ -1,17 +1,17 @@
-var state = new state.State();
+var aState = new state.State();
 
-state.setPrintHook(function(thing) {
+aState.setPrintHook(function(thing) {
 	var dom = types.toDomNode(thing);
 	addToHistory(dom);	
     });
 
 
-state.setDisplayHook(function(thing) {
+aState.setDisplayHook(function(thing) {
 	var dom = types.toDisplayedString(thing);
 	addToHistory(dom);	
     });
 
-state.setToplevelNodeHook(function() {
+aState.setToplevelNodeHook(function() {
 	var innerDom = document.createElement("div");
 	var dom = document.createElement("div");
 	dom.appendChild(innerDom);
@@ -78,11 +78,17 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
 	    console.log(exn.stack);
 	}
 
+	var errorDom = document.createElement("div");
+	errorDom.style.color="red";
+	errorDom.appendChild(document.createTextNode(exn+''));
+	addToHistory(errorDom);
+
 	throw exn;
     };
 
-    interpret.load(eval('(' + compiledBytecode + ')'), state);
-    interpret.run(state, onSuccess, onFail);
+    aState.clearForEval();
+    interpret.load(eval('(' + compiledBytecode + ')'), aState);
+    interpret.run(aState, onSuccess, onFail);
 };
     
 
