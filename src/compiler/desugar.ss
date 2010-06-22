@@ -155,7 +155,21 @@
                              (lambda (id fields) 
                                ;; FIXME: extend the environment with the
                                ;; structure identifiers here!
-                               (list (list a-defn) a-pinfo)))))
+                               (local [(define def-values-stx
+                                         (datum->stx 
+                                          #f 
+                                          `(define-values (,id 
+                                                           ,(string->symbol
+                                                             (string-append "make-" (symbol->string id)))
+                                                           ,(string->symbol
+                                                             (string-append (symbol->string id) "?"))
+                                                           ,(string->symbol
+                                                             (string-append (symbol->string id) "-ref"))
+                                                           ,(string->symbol
+                                                             (string-append (symbol->string id) "-set!")))
+                                             (make-struct-type ',id #f ,(length fields) 0))
+                                          (stx-loc a-defn)))]
+                                 (list (list def-values-stx) a-pinfo))))))
 
 
 ;; desugar-expressions: (listof expr) pinfo -> (list (listof expr) pinfo)

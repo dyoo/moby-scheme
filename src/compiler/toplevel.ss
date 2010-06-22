@@ -344,6 +344,12 @@
                      ;; Checking for undefined
                      (undefined? 1)
                      
+                     
+                     ;; structures
+                     (make-struct-type 4 true)
+                     (make-struct-field-accessor 2 true)
+                     (make-struct-field-mutator 2 true)
+                     
                      )))]
     core-env))
 

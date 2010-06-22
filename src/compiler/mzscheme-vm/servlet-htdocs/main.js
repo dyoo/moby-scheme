@@ -26,9 +26,11 @@ aState.setToplevelNodeHook(function() {
 var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
     addToHistory(document.createTextNode(interactionText.value));
-
-    executeProgram(interactionText.value);
+    blockInput();
+    executeProgram(interactionText.value,
+		   function() { unblockInput() });
 };
+
 
 
 var addToHistory = function(thing) {
@@ -42,48 +44,50 @@ var addToHistory = function(thing) {
 
 
 // compileCode: string continuation -> void
-var executeProgram = function(code, k) {
+var executeProgram = function(code, onDone) {
     var interactionText = document.getElementById('textarea');
     var executeButton = document.getElementById('executeButton');
-    interactionText.disabled = true;
-    executeButton.disabled = true;
     jQuery.ajax({ url: "/servlets/standalone.ss",
 		  data: {program : code},
 		  dataType: 'text',
-		  success: onCompilationSuccess,
-		  error: onCompilationFailure});
+		  success: function(code, status, xhr){ 
+		      onCompilationSuccess(code, status, xhr);
+		      onDone(); },
+		  error: function(xhr, status, errorThrown) { 
+		      onCompilationFailure(xhr, status, errorThrown);
+		      onDone(); }
+		});
 };
     
+
+var reportError = function(thing) {
+    var errorDom = document.createElement("div");
+    errorDom.style.color="red";
+    if (typeof thing === 'string') {
+	errorDom.appendChild(document.createTextNode(thing+''));
+    } else {
+	errorDom.appendChild(thing);
+    }
+    addToHistory(errorDom);
+}
+
 
 var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
     var interactionText = document.getElementById('textarea');
     var executeButton = document.getElementById('executeButton');
     
     var onSuccess =  function(lastResult) {
-  	interactionText.disabled = false;
-  	executeButton.disabled = false;
-	interactionText.value = '';
-	interactionText.focus();
+	// Do nothing; side effects will have printed values of toplevel
+	// expressions already.
     };
 
     var onFail = function(exn) {
-  	interactionText.disabled = false;
-  	executeButton.disabled = false;
-	interactionText.value = '';
-	interactionText.focus();
-
 	// Under google-chrome, this will produce a nice error stack
 	// trace that we can deal with.
-	if (console && console.log && exn && exn.stack) {
+	if (typeof(console) !== 'undefined' && console.log && exn && exn.stack) {
 	    console.log(exn.stack);
 	}
-
-	var errorDom = document.createElement("div");
-	errorDom.style.color="red";
-	errorDom.appendChild(document.createTextNode(exn+''));
-	addToHistory(errorDom);
-
-	throw exn;
+	reportError(exn+'');
     };
 
     aState.clearForEval();
@@ -92,21 +96,36 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
 };
     
 
+
 var onCompilationFailure = function(xhr, textStatus, errorThrown) {
-    console.log("here");
+    reportError(xhr.statusText);
+};
+
+
+
+var unblockInput = function() {
+    var interactionText = document.getElementById('textarea');
+    var executeButton = document.getElementById('executeButton');
+    interactionText.disabled = false;
+    executeButton.disabled = false;
+    interactionText.value = '';
+    interactionText.focus();
+};
+
+
+var blockInput = function() {
+    var interactionText = document.getElementById('textarea');
+    var executeButton = document.getElementById('executeButton');
+    interactionText.disabled = true;
+    executeButton.disabled = true;
 };
 
 
 
 
-
-    var oldCode = '{"$" : "compilation-top" ,"max-let-depth" : 0}';
-
-
 google.load("jquery", "1");
 google.setOnLoadCallback(function() {
-	var interactionText = document.getElementById('textarea');
-	var executeButton = document.getElementById('executeButton');
-	interactionText.disabled = false;
-	executeButton.disabled = false;
-    });
+    var interactionText = document.getElementById('textarea');
+    var executeButton = document.getElementById('executeButton');
+    unblockInput();
+});

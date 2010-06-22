@@ -52,7 +52,7 @@
 
 (define (handle-exception-response exn)
   (make-response/basic 500 
-                       (exn-message exn)
+                       (string->bytes/utf-8 (exn-message exn))
                        (current-seconds)
                        #"application/octet-stream"
                        (list)))
