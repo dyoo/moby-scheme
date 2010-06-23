@@ -51,11 +51,11 @@ var executeProgram = function(code, onDone) {
 		  data: {program : code},
 		  dataType: 'text',
 		  success: function(code, status, xhr){ 
-		      onCompilationSuccess(code, status, xhr);
-		      onDone(); },
+		      onCompilationSuccess(code, status, xhr, onDone);
+	          },
 		  error: function(xhr, status, errorThrown) { 
-		      onCompilationFailure(xhr, status, errorThrown);
-		      onDone(); }
+		      onCompilationFailure(xhr, status, errorThrown, onDone);
+		  }
 		});
 };
     
@@ -72,13 +72,14 @@ var reportError = function(thing) {
 }
 
 
-var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
+var onCompilationSuccess = function(compiledBytecode, textStatus, xhr, contK) {
     var interactionText = document.getElementById('textarea');
     var executeButton = document.getElementById('executeButton');
     
     var onSuccess =  function(lastResult) {
 	// Do nothing; side effects will have printed values of toplevel
 	// expressions already.
+	contK();
     };
 
     var onFail = function(exn) {
@@ -99,7 +100,7 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
 	} else {
 	    reportError(exn+'');
 	}
-	
+	contK();
     };
 
     aState.clearForEval();
@@ -109,8 +110,9 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr) {
     
 
 
-var onCompilationFailure = function(xhr, textStatus, errorThrown) {
+var onCompilationFailure = function(xhr, textStatus, errorThrown, contK) {
     reportError(xhr.statusText);
+    contK();
 };
 
 
