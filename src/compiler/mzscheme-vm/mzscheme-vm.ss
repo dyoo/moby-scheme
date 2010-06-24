@@ -237,7 +237,9 @@
     [(pair? (stx-e expr))
      (local [(define operator (first (stx-e expr)))
              (define operands (rest (stx-e expr)))]
-       (compile-application-expression operator operands env a-pinfo))]
+       (compile-application-expression/stack-record (stx-loc expr)
+                                                    operator
+                                                    operands env a-pinfo))]
     
     
     ;; Regular data are just themselves in the emitted bytecode.
@@ -431,6 +433,22 @@
        list-of-names))
 
 
+(define MOBY-STACK-RECORD-CONTINUATION-MARK-KEY
+  'moby-stack-record-continuation-mark-key)
+
+
+(define (compile-application-expression/stack-record a-loc operator operands env pinfo)
+  (let-values ([(an-app pinfo)
+                (compile-application-expression operator operands env pinfo)])
+    (values (bcode:make-with-cont-mark
+             MOBY-STACK-RECORD-CONTINUATION-MARK-KEY
+             (vector (Loc-id a-loc)
+                     (Loc-offset a-loc)
+                     (Loc-line a-loc)
+                     (Loc-column a-loc)
+                     (Loc-span a-loc))
+             an-app)
+            pinfo)))
 
 ;; compile-application-expression: expr (listof expr) env pinfo -> (values expression-form pinfo)
 (define (compile-application-expression operator operands env pinfo)
