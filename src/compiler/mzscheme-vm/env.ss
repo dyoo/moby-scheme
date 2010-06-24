@@ -81,13 +81,14 @@
     (match env
       [(struct empty-env ())
        (make-unbound-stack-reference a-name)]
-
+      
       [(struct local-env (name boxed? parent-env))
        (cond
          [(eq? a-name name)
           (make-local-stack-reference name boxed? depth)]
          [else 
           (loop parent-env (add1 depth))])]
+      
       [(struct global-env (names parent-env))
        (cond [(position a-name names)
               =>
@@ -95,6 +96,7 @@
                 (make-global-stack-reference a-name depth pos))]
              [else
               (loop parent-env (add1 depth))])]
+      
       [(struct unnamed-env (parent-env))
        (loop parent-env (add1 depth))])))
 

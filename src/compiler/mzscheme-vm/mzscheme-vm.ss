@@ -38,7 +38,7 @@
                    (program? pinfo? #:name symbol? . -> . 
                              (values (or/c bcode:form? bcode:indirect? any/c)
                                      pinfo?))]
-
+                  
                   [compile-expression 
                    (expression? env? pinfo? . -> . 
                                 (values 
@@ -53,7 +53,7 @@
 
 ;; compile-compilation-top-module: program pinfo -> 
 (define (compile-compilation-top a-program pinfo
-                                        #:name name) 
+                                 #:name name) 
   (let* ([a-program+pinfo (desugar-program a-program pinfo)]
          [a-program (first a-program+pinfo)]
          [pinfo (second a-program+pinfo)]
@@ -64,7 +64,7 @@
     
     (let-values ([(toplevel-prefix env) 
                   (make-module-prefix-and-env pinfo)])
-
+      
       (let ([defns (filter defn? a-program)]
             [requires (filter library-require? a-program)]
             [provides (filter provide-statement? a-program)]
@@ -105,8 +105,8 @@
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
                                                 (bcode:make-module-variable (module-path-index-join 
-                                                                              (binding:binding-module-source binding) 
-                                                                              (module-path-index-join #f #f))
+                                                                             (binding:binding-module-source binding) 
+                                                                             (module-path-index-join #f #f))
                                                                             (binding:binding-id binding)
                                                                             -1
                                                                             0))
@@ -129,7 +129,7 @@
                           (loop (rest defns) a-pinfo)])
              (values (cons compiled-defn compiled-rest-defns)
                      a-pinfo))])))
-             
+
 
 
 (define (compile-definition a-defn env a-pinfo)
@@ -168,7 +168,7 @@
     (values (bcode:make-def-values (list compiled-id)
                                    compiled-body)
             a-pinfo)))
-  
+
 
 ;; compile-variables-definition: (listof id) body env pinfo -> (values expression pinfo)
 (define (compile-variables-definition ids body env a-pinfo)
@@ -180,7 +180,7 @@
                                    compiled-body)
             a-pinfo)))
 
-  
+
 
 ;; compile-expression: expression env pinfo -> (values expr pinfo)
 (define (compile-expression expr env a-pinfo)
@@ -231,7 +231,7 @@
     ;; Quoted datums
     [(stx-begins-with? expr 'quote)
      (compile-quote-expression (second (stx-e expr)) env a-pinfo)]
-
+    
     
     ;; Function call/primitive operation call
     [(pair? (stx-e expr))
@@ -295,18 +295,19 @@
 
 
 (define (compile-identifier-expression expr env pinfo)
-  (match (env-lookup env (stx-e expr))
-    [(struct local-stack-reference (name boxed? depth))
-     (values (bcode:make-localref boxed? depth #f #f #f)
-             pinfo)]
-    
-    [(struct global-stack-reference (name depth pos))
-     (values (bcode:make-toplevel depth pos #f #f)
-             pinfo)]
-    
-    [(struct unbound-stack-reference (name))
-     (error 'compile-identifier-expression 
-            (format "Couldn't find ~a in the environment" name))]))
+  (let ([a-stack-reference (env-lookup env (stx-e expr))])
+    (values (match a-stack-reference
+              [(struct local-stack-reference (name boxed? depth))
+               (bcode:make-localref boxed? depth #f #f #f)]
+              
+              [(struct global-stack-reference (name depth pos))
+               (bcode:make-toplevel depth pos #f #f)]
+              
+              [(struct unbound-stack-reference (name))
+               (error 'compile-identifier-expression 
+                      (format "Couldn't find ~a in the environment" 
+                              name))])
+    pinfo)))
 
 
 
@@ -341,7 +342,8 @@
                                                         'val))
                             #f
                             closure-vector
-                            (build-list (vector-length closure-vector) (lambda (i) 'val/ref))
+                            (build-list (vector-length closure-vector) 
+                                        (lambda (i) 'val/ref))
                             0
                             compiled-body)
             pinfo-1)))
@@ -373,16 +375,22 @@
               [global-references (filter global-stack-reference? free-variable-references)]
               [global-depths (sort-and-unique (map global-stack-reference-depth global-references)
                                               < =)]
-         
+              
               ;; Function arguments
               [env-1 (foldl (lambda (name env)
-                         (env-push-local env name))
-                       original-env
-                       (reverse args))]         
+                              (env-push-local env name))
+                            original-env
+                            (reverse args))]         
               
               ;; The lexical free variables
               [env-2 (foldl (lambda (ref env)
-                              (env-push-local env (local-stack-reference-name ref)))
+                              (cond 
+                                [(local-stack-reference-boxed? ref)
+                                 (env-push-local/boxed env 
+                                                 (local-stack-reference-name ref))]
+                                [else
+                                 (env-push-local env 
+                                                 (local-stack-reference-name ref))]))
                             env-1
                             (reverse lexical-free-references))]
               ;; The global free variables
@@ -446,90 +454,99 @@
     [(empty? defns)
      (compile-expression body env pinfo)]
     [else
-     (compile-expression body env pinfo)
      (let* ([defined-names (collect-defined-names defns)]
             [env-with-boxed-names (foldl (lambda (id env)
                                            (env-push-local/boxed env (stx-e id)))
                                          env 
                                          (reverse defined-names))])
-       (bcode:make-let-void 
-        (length defined-names)
-        #t
-        (let loop ([defns defns]
-                   [pinfo pinfo]
-                   [i 0])
-          (cond [(empty? defns)
-                 (compile-expression body 
-                                     env-with-boxed-names
-                                     pinfo)]
-                [else
-                 (case-analyze-definition 
-                  (first defns)
-                  
-                  (lambda (id args body)
-                    (let*-values ([(lambda-rhs pinfo)
-                                   (compile-lambda-expression 
-                                    id args body 
-                                    env-with-boxed-names pinfo)]
-                                  [(new-body pinfo)
-                                   (loop (rest defns) pinfo (add1 i))])
-                      (values (bcode:make-install-value 1
-                                                  i
-                                                  #t
-                                                  lambda-rhs
-                                                  new-body)
-                              pinfo)))
-                  
-                  (lambda (id val)
-                    (let*-values ([(rhs pinfo)
-                                   (compile-expression 
-                                    val env-with-boxed-names pinfo)]
-                                  [(new-body pinfo)
-                                   (loop (rest defns) pinfo (add1 i))])
-                      (values (bcode:make-install-value 1
-                                                  i
-                                                  #t
-                                                  rhs
-                                                  new-body)
-                              pinfo)))
-                  
-                  
-                  (lambda (id fields)
-                    (error 'compile-local-expression 
-                           "IMPOSSIBLE: structures should have been desugared"))
-                  
-                  (lambda (ids body)
-                    (let*-values ([(rhs pinfo)
-                                   (compile-expression 
-                                    body env-with-boxed-names pinfo)]
-                                  [(new-body pinfo)
-                                   (loop (rest defns)
-                                         pinfo
-                                         (+ i (length ids)))])
-                      (values (bcode:make-install-value (length ids)
-                                                        i
-                                                        #t
-                                                        rhs
-                                                        new-body)
-                              pinfo))))]))))]))
+
+       (let-values
+           ([(let-void-body pinfo)
+             (let loop ([defns defns]
+                        [pinfo pinfo]
+                        [i 0])
+               (cond [(empty? defns)
+                      (compile-expression body 
+                                          env-with-boxed-names
+                                          pinfo)]
+                     [else
+                      (case-analyze-definition 
+                       (first defns)
+                       
+                       (lambda (id args body)
+                         (let*-values ([(lambda-rhs pinfo)
+                                        (compile-lambda-expression 
+                                         (stx-e id)
+                                         args body 
+                                         env-with-boxed-names pinfo)]
+                                       [(new-body pinfo)
+                                        (loop (rest defns) pinfo (add1 i))])
+                           (values (bcode:make-install-value 1
+                                                             i
+                                                             #t
+                                                             lambda-rhs
+                                                             new-body)
+                                   pinfo)))
+                       
+                       (lambda (id val)
+                         (let*-values ([(rhs pinfo)
+                                        (compile-expression 
+                                         val env-with-boxed-names pinfo)]
+                                       [(new-body pinfo)
+                                        (loop (rest defns) pinfo (add1 i))])
+                           (values (bcode:make-install-value 1
+                                                             i
+                                                             #t
+                                                             rhs
+                                                             new-body)
+                                   pinfo)))
+                       
+                       
+                       (lambda (id fields)
+                         (error 'compile-local-expression 
+                                "IMPOSSIBLE: structures should have been desugared"))
+                       
+                       (lambda (ids body)
+                         (let*-values ([(rhs pinfo)
+                                        (compile-expression 
+                                         body env-with-boxed-names pinfo)]
+                                       [(new-body pinfo)
+                                        (loop (rest defns)
+                                              pinfo
+                                              (+ i (length ids)))])
+                           (values (bcode:make-install-value (length ids)
+                                                             i
+                                                             #t
+                                                             rhs
+                                                             new-body)
+                                   pinfo))))]))])
+       
+         (values (bcode:make-let-void 
+                  (length defined-names)
+                  #t
+                  let-void-body)
+                 pinfo)))]))
+
+
 
 
 
 ;; collect-defined-names: (listof defn) -> (listof id-stx)
 (define (collect-defined-names defns)
-  (foldl (lambda (a-defn collected-names)
-           (case-analyze-definition a-defn
-                                    (lambda (id args body)
-                                      (cons id collected-names))
-                                    (lambda (id val)
-                                      (cons id collected-names))
-                                    (lambda (id fields)
-                                      (error 'collect-defined-names
-                                             "IMPOSSIBLE"))
-                                    (lambda (ids body)
-                                      (append ids collected-names))))
-         empty
-         defns))
+  (reverse 
+   (foldl (lambda (a-defn collected-names)
+            (case-analyze-definition a-defn
+                                     (lambda (id args body)
+                                       (cons id collected-names))
+                                     (lambda (id val)
+                                       (cons id collected-names))
+                                     (lambda (id fields)
+                                       (error 'collect-defined-names
+                                              "IMPOSSIBLE"))
+                                     (lambda (ids body)
+                                       (append (reverse ids) collected-names))))
+          empty
+          defns)))
 
 
 
