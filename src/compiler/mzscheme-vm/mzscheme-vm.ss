@@ -364,8 +364,9 @@
 ;; get-closure-vector-and-env: (listof symbol) (listof symbol) env -> (values (vectorof number) env) 
 ;; Produce the closure map, given the set of free variables.
 (define (get-closure-vector-and-env args free-variables original-env)
-  (let ([free-variable-references (map (lambda (var) (env-lookup original-env var))
-                                       free-variables)])
+  (let* ([free-variable-references 
+          (map (lambda (var) (env-lookup original-env var))
+               free-variables)])
     (cond 
       ;; If anything's unbound, we're in trouble and need to signal an error.
       [(ormap unbound-stack-reference? free-variable-references)
@@ -382,16 +383,17 @@
                                 (lambda (x y) (= (local-stack-reference-depth x)
                                                  (local-stack-reference-depth y))))]
               [lexical-free-depths (map local-stack-reference-depth lexical-free-references)]
-
+              
               [global-references (filter global-stack-reference? free-variable-references)]
               [global-depths (sort-and-unique (map global-stack-reference-depth global-references)
                                               < =)]
-              ;; The arguments
+         
+              ;; Function arguments
               [env-1 (foldl (lambda (name env)
-                              (env-push-local env name))
-                            original-env
-                            (reverse args))]
-
+                         (env-push-local env name))
+                       original-env
+                       (reverse args))]         
+              
               ;; The lexical free variables
               [env-2 (foldl (lambda (ref env)
                               (env-push-local env (local-stack-reference-name ref)))
@@ -399,14 +401,18 @@
                             (reverse lexical-free-references))]
               ;; The global free variables
               [env-3 (foldl (lambda (a-depth env)
-                              (let ([references-at-depth
-                                     (filter (lambda (a-ref)
-                                               (= (global-stack-reference-depth a-ref) a-depth))
-                                             global-references)])
+                              (let* ([references-at-depth
+                                      (filter (lambda (a-ref)
+                                                (= (global-stack-reference-depth a-ref) a-depth))
+                                              global-references)]
+                                     [used-global-names 
+                                      (map global-stack-reference-name
+                                           references-at-depth)])
                                 (env-push-globals env 
-                                                  (global-env-names
-                                                   (env-peek original-env a-depth))
-                                                  )))
+                                                  (mask-unused-globals 
+                                                   (global-env-names
+                                                    (env-peek original-env a-depth))
+                                                   used-global-names))))
                             env-2
                             (reverse global-depths))])
          #|
@@ -418,6 +424,17 @@
          
          (values (list->vector (append global-depths lexical-free-depths))
                  env-3))])))
+
+
+;; mask-unused-globals: (listof symbol?) (listof symbol?) -> (listof (or/c symbol? false/c))
+(define (mask-unused-globals list-of-names names-to-keep)
+  (map (lambda (n)
+         (cond
+           [(member n names-to-keep)
+            n]
+           [else
+            #f]))
+       list-of-names))
 
 
 

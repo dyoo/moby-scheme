@@ -7,11 +7,11 @@
 ;; Representation of the stack environment of the mzscheme vm, so we know where
 ;; things live.
 
-(define-struct env ())
-(define-struct (empty-env env) ())
-(define-struct (local-env env) (name parent-env))
-(define-struct (global-env env) (names parent-env))
-(define-struct (unnamed-env env) (parent-env))
+(define-struct env () #:transparent)
+(define-struct (empty-env env) () #:transparent)
+(define-struct (local-env env) (name parent-env) #:transparent)
+(define-struct (global-env env) (names parent-env) #:transparent)
+(define-struct (unnamed-env env) (parent-env) #:transparent)
 
 (define EMPTY-ENV (make-empty-env))
 
@@ -45,10 +45,10 @@
 
 
 
-(define-struct stack-reference ())
-(define-struct (local-stack-reference stack-reference) (name depth))
-(define-struct (global-stack-reference stack-reference) (name depth pos))
-(define-struct (unbound-stack-reference stack-reference) (name))
+(define-struct stack-reference () #:transparent)
+(define-struct (local-stack-reference stack-reference) (name depth) #:transparent)
+(define-struct (global-stack-reference stack-reference) (name depth pos) #:transparent)
+(define-struct (unbound-stack-reference stack-reference) (name) #:transparent)
 
 
 
@@ -119,7 +119,7 @@
 
 (provide/contract [env? (any/c . -> . boolean?)]
                   [rename EMPTY-ENV empty-env env?]
-                  [env-push-globals (env? (listof symbol?) . -> . env?)]
+                  [env-push-globals (env? (listof (or/c false/c symbol?)) . -> . env?)]
                   [env-push-local (env? symbol? . -> . env?)]
                   [env-push-unnamed (env? . -> . env?)]
                   [env-pop (env? . -> . env?)]
@@ -128,7 +128,7 @@
 
                   [env-peek (env? number? . -> . env?)]
                   
-                  [struct global-env ([names (listof symbol?)]
+                  [struct global-env ([names (listof (or/c false/c symbol?))]
                                       [parent-env (listof env?)])]
                   
                   [struct stack-reference ()]
