@@ -1,25 +1,37 @@
-// Defines an Evaluator class.
-
-
+// Defines an Evaluator class, with the following constructor:
+//
+//
 // Evaluator(options)
 //     options: { write: dom -> void,
-//                writeError: dom -> void }
+//                writeError: dom -> void,
+//                compilationServletUrl: string}
 //
 // Constructs a new evaluator.
 // 
 //
+// and the main method:
+//
 //
 // Evaluator.prototype.executeProgram: [name string] [program string] [onDone (-> void)] -> void
+//
 // Executes the program with the given name.  When the program is done evaluating,
 // calls onDone.
-
+//
+// 
+// WARNING: this code assumes that there's toplevel access to:
+//
+//     Evaluator.compilation_success_callback__
+//     Evaluator.compilation_failure_callback__
+//
+// because we use SCRIPT injection to work around the same-origin
+// policy.
 
 
 
 
 var Evaluator = (function() {
 
-    var COMPILATION_SERVLET_URL = "/servlets/standalone.ss";
+    var DEFAULT_COMPILATION_SERVLET_URL = "/servlets/standalone.ss";
 
 
     var Evaluator = function(options) {
@@ -37,6 +49,12 @@ var Evaluator = (function() {
 	} else {
 	    this.writeError = function(dom) {
 	    };
+	}
+
+	if (options.compilationServletUrl) {
+	    this.compilationServletUrl = options.compilationServletUrl;
+	} else {
+	    this.compilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
 	}
 
 
@@ -88,7 +106,7 @@ var Evaluator = (function() {
 	    that._onCompilationFailure(errorMessage, onDone);
 	};
 	
-	loadScript(COMPILATION_SERVLET_URL + "?" +
+	loadScript(this.compilationServletUrl + "?" +
 		   encodeUrlParameters({ 'name': programName,
 					 'program': code,
 					 'callback': 'Evaluator.compilation_success_callback__',
@@ -192,10 +210,11 @@ var Evaluator = (function() {
 	    if (script.readyState && script.readyState != "loaded" && script.readyState != "complete")
 		return;
 	    script.onreadystatechange = script.onload = null;
-	    while (queue[url].length)
-		queue[url].shift()();
-	    delete(queue[url]);
 	    document.getElementsByTagName("head")[0].removeChild(script);
+	    var work = queue[url];
+	    delete(queue[url]);
+	    while (work.length)
+		work.shift()();
 	};
 	script.src = url;
 	document.getElementsByTagName("head")[0].appendChild(script);
