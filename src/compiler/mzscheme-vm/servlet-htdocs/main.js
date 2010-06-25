@@ -10,12 +10,15 @@ var writeToInteractions = function(thing) {
 
 var evaluator = new Evaluator(
     { write: writeToInteractions,
-      writeError: writeToInteractions
+      writeError: writeToInteractions,
+      compilationServletUrl: "/servlets/standalone.ss"
     });
 
 
 var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
+    evaluator.compilationServletUrl = (document.getElementById('compilationServletUrl').value);
+
     writeToInteractions(document.createTextNode(interactionText.value));
     blockInput();
     evaluator.executeProgram("interaction",
