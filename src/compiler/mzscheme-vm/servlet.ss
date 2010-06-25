@@ -4,7 +4,8 @@
          web-server/servlet-env
          scheme/runtime-path
          "write-support.ss"
-         "compile.ss")
+         "compile.ss"
+         "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 (define-runtime-path htdocs "servlet-htdocs")
 
@@ -37,62 +38,69 @@
   (with-handlers ([void 
                    (lambda (exn)
                      (cond
-                       [(jsonp-request? exn)
-                        (handle-json-exception-response exn)]
+                       [(jsonp-request? request)
+                        (handle-json-exception-response request exn)]
                        [else 
-                        (handle-exception-response exn)]))])
+                        (handle-exception-response request exn)]))])
     (let*-values ([(program-name)
                    (string->symbol
                     (extract-binding/single 'name (request-bindings request)))]
                   [(program-text) 
                    (extract-binding/single 'program (request-bindings request))]
-                  [(program-input-port) (open-input-string program-text)]
-                  [(response output-port) (make-port-response #:mime-type #"text/plain")])
+                  [(program-input-port) (open-input-string program-text)])
       ;; To support JSONP:
       (cond [(jsonp-request? request)
-             (handle-json-response request program-name program-input-port output-port response)]
+             (handle-json-response request program-name program-input-port)]
             [else
-             (handle-response request program-name program-input-port output-port response)
+             (handle-response request program-name program-input-port)
              ]))))
 
 
 
 
 ;; jsonp-request?: request -> boolean
+;; Does the request look like a jsonp request?
 (define (jsonp-request? request)
   (exists-binding? 'callback (request-bindings request)))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; jsonp stuff
+
 ;; handle-json-response: -> response
-(define (handle-json-response request program-name program-input-port output-port response)
-  (fprintf output-port "~a(" 
-           (extract-binding/single 'callback (request-bindings request)))
-  (compile program-input-port output-port #:name program-name)
-  (fprintf output-port ")")
-  (close-output-port output-port)
-  response)
+(define (handle-json-response request program-name program-input-port)
+  (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
+    (fprintf output-port "~a(" 
+             (extract-binding/single 'callback (request-bindings request)))
+    (compile program-input-port output-port #:name program-name)
+    (fprintf output-port ")")
+    (close-output-port output-port)
+    response))
 
 
 ;; handle-json-exception-response: exn -> response
-(define (handle-json-exception-response exn)
-  #;(raise exn)
-  (make-response/basic 500 
-                       (string->bytes/utf-8 (exn-message exn))
-                       (current-seconds)
-                       #"application/octet-stream"
-                       (list)))
+(define (handle-json-exception-response request exn)
+  (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
+    (let ([payload
+           (format "~a(~a)" (extract-binding/single 'on-error (request-bindings request))
+                   (sexp->js (exn-message exn)))])
+      (fprintf output-port "~a~n" payload)
+      (close-output-port output-port)
+      response)))
 
 
 
 
-(define (handle-response request program-name program-input-port output-port response)
-  (compile program-input-port output-port #:name program-name)
-  (close-output-port output-port)
-  response)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; non jsonp stuff: use with xmlhttprequest
+(define (handle-response request program-name program-input-port)
+  (let-values  ([(response output-port) (make-port-response #:mime-type #"text/plain")])
+    (compile program-input-port output-port #:name program-name)
+    (close-output-port output-port)
+    response))
 
 ;; handle-exception-response: exn -> response
-(define (handle-exception-response exn)
+(define (handle-exception-response request exn)
   #;(raise exn)
   (make-response/basic 500 
                        (string->bytes/utf-8 (exn-message exn))
