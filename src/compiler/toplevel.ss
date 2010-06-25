@@ -350,6 +350,12 @@
                      (make-struct-field-accessor 2 true)
                      (make-struct-field-mutator 2 true)
                      
+                     ;; continuation mark stuff
+                     ;; FIXME: add support for prompt optional argument
+                     (current-continuation-marks 0 false)
+                     (continuation-mark-set->list 2 false)
+                     
+                     
                      )))]
     core-env))
 

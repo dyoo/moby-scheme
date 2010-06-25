@@ -27,7 +27,8 @@ var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
     addToHistory(document.createTextNode(interactionText.value));
     blockInput();
-    executeProgram(interactionText.value,
+    executeProgram("interaction",
+		   interactionText.value,
 		   function() { unblockInput() });
 };
 
@@ -44,11 +45,12 @@ var addToHistory = function(thing) {
 
 
 // compileCode: string continuation -> void
-var executeProgram = function(code, onDone) {
+var executeProgram = function(programName, code, onDone) {
     var interactionText = document.getElementById('textarea');
     var executeButton = document.getElementById('executeButton');
     jQuery.ajax({ url: "/servlets/standalone.ss",
-		  data: {program : code},
+		  data: {name: programName,
+		         program : code},
 		  dataType: 'text',
 		  success: function(code, status, xhr){ 
 		      onCompilationSuccess(code, status, xhr, onDone);

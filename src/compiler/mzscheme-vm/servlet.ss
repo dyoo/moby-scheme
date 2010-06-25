@@ -34,19 +34,24 @@
 (define (start request)
   (with-handlers ([void 
                    handle-exception-response])
-    (let*-values ([(program-text) (extract-binding/single 'program (request-bindings request))]
+    (let*-values ([(program-name)
+                   (string->symbol
+                    (extract-binding/single 'name (request-bindings request)))]
+                  [(program-text) 
+                   (extract-binding/single 'program (request-bindings request))]
                   [(program-input-port) (open-input-string program-text)]
                   [(response output-port) (make-port-response #:mime-type #"text/plain")])
       ;; To support JSONP:
       (cond [(exists-binding? 'callback (request-bindings request))
              (fprintf output-port "~a(" 
                       (extract-binding/single 'callback (request-bindings request)))
-             (compile program-input-port output-port)
+             (compile program-input-port output-port #:name program-name)
              (fprintf output-port ")")
              (close-output-port output-port)
              response]
+            
             [else
-             (compile program-input-port output-port)
+             (compile program-input-port output-port #:name program-name)
              (close-output-port output-port)
              response]))))
 
