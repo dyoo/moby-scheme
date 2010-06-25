@@ -1,6 +1,19 @@
 // Defines an Evaluator class.
 
 
+// Evaluator(options)
+//     options: { write: dom -> void,
+//                writeError: dom -> void }
+//
+// Constructs a new evaluator.
+// 
+//
+//
+// Evaluator.prototype.executeProgram: [name string] [program string] [onDone (-> void)] -> void
+// Executes the program with the given name.  When the program is done evaluating,
+// calls onDone.
+
+
 var Evaluator = (function() {
 
     var Evaluator = function(options) {
@@ -43,7 +56,7 @@ var Evaluator = (function() {
     };
 
 
-    Evaluator.prototype.reportError = function(thing) {
+    Evaluator.prototype._reportError = function(thing) {
 	var errorDom = document.createElement("div");
 	errorDom.style.color = "red";
 	if (typeof thing === 'string') {
@@ -67,17 +80,17 @@ var Evaluator = (function() {
 		             program : code},
 		      dataType: 'text',
 		      success: function(code, status, xhr){ 
-			  that.onCompilationSuccess(code, status, xhr, onDone);
+			  that._onCompilationSuccess(code, status, xhr, onDone);
 	              },
 		      error: function(xhr, status, errorThrown) { 
-			  that.onCompilationFailure(xhr, status, errorThrown, onDone);
+			  that._onCompilationFailure(xhr, status, errorThrown, onDone);
 		      }
 		    });
     };
     
         
 
-    Evaluator.prototype.onCompilationSuccess = 
+    Evaluator.prototype._onCompilationSuccess = 
 	function(compiledBytecode, textStatus, xhr, contK) {
 	var that = this;
 	var interactionText = document.getElementById('textarea');
@@ -100,12 +113,12 @@ var Evaluator = (function() {
 	    if (types.isSchemeError(exn)) {
 		var errorValue = exn.val;
 		if (types.isExn(errorValue)) {
-		    that.reportError(types.exnValue(errorValue) + '');
+		    that._reportError(types.exnValue(errorValue) + '');
 		} else {
-		    that.reportError(exn+'');
+		    that._reportError(exn+'');
 		}
 	    } else {
-		that.reportError(exn+'');
+		that._reportError(exn+'');
 	    }
 	    contK();
 	};
@@ -117,8 +130,8 @@ var Evaluator = (function() {
     
 
 
-    Evaluator.prototype.onCompilationFailure = function(xhr, textStatus, errorThrown, contK) {
-	this.reportError(xhr.statusText);
+    Evaluator.prototype._onCompilationFailure = function(xhr, textStatus, errorThrown, contK) {
+	this._reportError(xhr.statusText);
 	contK();
     };
 

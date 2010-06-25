@@ -32,8 +32,15 @@
 
 ;; Web service consuming programs and producing bytecode.
 (define (start request)
+  
+  
   (with-handlers ([void 
-                   handle-exception-response])
+                   (lambda (exn)
+                     (cond
+                       [(jsonp-request? exn)
+                        (handle-json-exception-response exn)]
+                       [else 
+                        (handle-exception-response exn)]))])
     (let*-values ([(program-name)
                    (string->symbol
                     (extract-binding/single 'name (request-bindings request)))]
@@ -42,19 +49,46 @@
                   [(program-input-port) (open-input-string program-text)]
                   [(response output-port) (make-port-response #:mime-type #"text/plain")])
       ;; To support JSONP:
-      (cond [(exists-binding? 'callback (request-bindings request))
-             (fprintf output-port "~a(" 
-                      (extract-binding/single 'callback (request-bindings request)))
-             (compile program-input-port output-port #:name program-name)
-             (fprintf output-port ")")
-             (close-output-port output-port)
-             response]
-            
+      (cond [(jsonp-request? request)
+             (handle-json-response request program-name program-input-port output-port response)]
             [else
-             (compile program-input-port output-port #:name program-name)
-             (close-output-port output-port)
-             response]))))
+             (handle-response request program-name program-input-port output-port response)
+             ]))))
 
+
+
+
+;; jsonp-request?: request -> boolean
+(define (jsonp-request? request)
+  (exists-binding? 'callback (request-bindings request)))
+
+
+;; handle-json-response: -> response
+(define (handle-json-response request program-name program-input-port output-port response)
+  (fprintf output-port "~a(" 
+           (extract-binding/single 'callback (request-bindings request)))
+  (compile program-input-port output-port #:name program-name)
+  (fprintf output-port ")")
+  (close-output-port output-port)
+  response)
+
+
+;; handle-json-exception-response: exn -> response
+(define (handle-json-exception-response exn)
+  #;(raise exn)
+  (make-response/basic 500 
+                       (string->bytes/utf-8 (exn-message exn))
+                       (current-seconds)
+                       #"application/octet-stream"
+                       (list)))
+
+
+
+
+(define (handle-response request program-name program-input-port output-port response)
+  (compile program-input-port output-port #:name program-name)
+  (close-output-port output-port)
+  response)
 
 
 ;; handle-exception-response: exn -> response
@@ -67,13 +101,15 @@
                        (list)))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; Write out a fresh copy of the support library.
 (call-with-output-file (build-path htdocs "support.js")
-                       (lambda (op)
-                         (write-support "browser" op))
-                       #:exists 'replace)
+  (lambda (op)
+    (write-support "browser" op))
+  #:exists 'replace)
 
 (serve/servlet start 
                #:port 8000
