@@ -144,6 +144,20 @@ var Evaluator = (function() {
     };
 
 
+    Evaluator.prototype.getMessageFromExn = function(exn) {
+	if (types.isSchemeError(exn)) {
+	    var errorValue = exn.val;
+	    if (types.isExn(errorValue)) {
+		return types.exnMessage(errorValue);
+	    } else {
+		return errorValue + '';
+	    }
+	} else {
+	    return exn.message;
+	}
+    };
+
+
 
     Evaluator.prototype._onCompilationSuccess = function(compiledBytecode,
 							 onDoneSuccess,

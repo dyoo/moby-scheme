@@ -32,16 +32,7 @@ var executeButtonPressed = function() {
 
 var reportError = function(exn) {
     var domElt = document.createElement('div');
-    if (types.isSchemeError(exn)) {
-	var errorValue = exn.val;
-	if (types.isExn(errorValue)) {
-	    domElt.appendChild(document.createTextNode(''+types.exnMessage(errorValue)));
-	} else {
-	    domElt.appendChild(document.createTextNode(''+errorValue));
-	}
-    } else {
-	domElt.appendChild(document.createTextNode(exn+""));
-    }
+    domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
 
     var stacktrace = evaluator.getTraceFromExn(exn);
     for (var i = 0; i < stacktrace.length; i++) {
