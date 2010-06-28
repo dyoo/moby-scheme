@@ -4,13 +4,11 @@ var writeToInteractions = function(thing) {
     }
     var history = document.getElementById('history');
     history.appendChild(thing);
-    history.appendChild(document.createElement('br'));
 }
 
 
 var evaluator = new Evaluator(
     { write: writeToInteractions,
-      writeError: writeToInteractions,
       compilationServletUrl: "/servlets/standalone.ss"
     });
 
@@ -19,12 +17,46 @@ var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
     evaluator.compilationServletUrl = (document.getElementById('compilationServletUrl').value);
 
-    writeToInteractions(document.createTextNode(interactionText.value));
+    var theCodeElement = document.createElement('pre');
+    theCodeElement.appendChild(document.createTextNode(interactionText.value));
+    writeToInteractions(theCodeElement);
     blockInput();
     evaluator.executeProgram("interaction",
 			     interactionText.value,
-			     function() { unblockInput() });
+			     function() { unblockInput() },
+			     function(exn) {
+				 reportError(exn);
+				 unblockInput() });
 };
+
+
+var reportError = function(exn) {
+    var domElt = document.createElement('div');
+    if (types.isSchemeError(exn)) {
+	var errorValue = exn.val;
+	if (types.isExn(errorValue)) {
+	    domElt.appendChild(document.createTextNode(''+types.exnMessage(errorValue)));
+	} else {
+	    domElt.appendChild(document.createTextNode(''+errorValue));
+	}
+    } else {
+	domElt.appendChild(document.createTextNode(exn+""));
+    }
+
+    var stacktrace = evaluator.getTraceFromExn(exn);
+    for (var i = 0; i < stacktrace.length; i++) {
+	domElt.appendChild(document.createElement("br"));
+	domElt.appendChild(document.createTextNode(
+			     "in " + stacktrace[i].id +
+			     ", at offset " + stacktrace[i].offset +
+			     ", line " + stacktrace[i].line +
+			     ", column " + stacktrace[i].column +
+			     ", span " + stacktrace[i].span));
+    };
+
+    writeToInteractions(domElt);
+};
+
 
 var unblockInput = function() {
     var interactionText = document.getElementById('textarea');

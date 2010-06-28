@@ -44,13 +44,6 @@ var Evaluator = (function() {
 	    };
 	}
 
-	if (options.writeError) {
-	    this.writeError = options.writeError;
-	} else {
-	    this.writeError = function(dom) {
-	    };
-	}
-
 	if (options.compilationServletUrl) {
 	    this.compilationServletUrl = options.compilationServletUrl;
 	} else {
@@ -80,32 +73,19 @@ var Evaluator = (function() {
     };
 
 
-    Evaluator.prototype._reportError = function(thing) {
-	var errorDom = document.createElement("span");
-	// FIXME: should use a particular class so that we can style
-	// with css instead.
-	errorDom.style.color = "red";
-	if (typeof thing === 'string') {
-	    errorDom.appendChild(document.createTextNode(thing+''));
-	} else {
-	    errorDom.appendChild(thing);
-	}
-	this.writeError(errorDom);
-    };
 
-
-
-
-    // compileCode: string string continuation -> void
-    Evaluator.prototype.executeProgram = function(programName, code, onDone) {
+    // compileCode: string string (-> void) (exn -> void) -> void
+    Evaluator.prototype.executeProgram = function(programName, code,
+						  onDone,
+						  onDoneError) {
 	var that = this;
 
 	Evaluator.compilation_success_callback__ = function(compiledCode) {
-	    that._onCompilationSuccess(compiledCode, onDone);
+	    that._onCompilationSuccess(compiledCode, onDone, onDoneError);
 	};
 
 	Evaluator.compilation_failure_callback__ = function(errorMessage) {
-	    that._onCompilationFailure(errorMessage, onDone);
+	    that._onCompilationFailure(errorMessage, onDoneError);
 	};
 	
 	loadScript(this.compilationServletUrl + "?" +
@@ -129,64 +109,100 @@ var Evaluator = (function() {
 
 	
 
-    Evaluator.prototype._onCompilationSuccess = function(compiledBytecode, contK) {
 
+    var STACK_KEY = types.symbol("moby-stack-record-continuation-mark-key");
+
+    Evaluator.prototype.getTraceFromExn = function(exn) {
+	var results = [];
+	var errorValue = exn.val;
+	if (types.isExn(errorValue)) {
+	    if (types.exnContMarks(errorValue)) {
+		var contMarkSet = types.exnContMarks(errorValue);
+		var stackTrace = contMarkSet.ref(STACK_KEY);
+		// KLUDGE: the first element in the stack trace
+		// is weird because it's due to the print-values
+		// introduced by a macro.
+		stackTrace.shift();			
+		for (var i = stackTrace.length - 1; 
+		     i >= 0; i--) {
+		    var callRecord = stackTrace[i];
+		    var id = callRecord.ref(0);
+		    var offset = callRecord.ref(1);
+		    var line = callRecord.ref(2);
+		    var column = callRecord.ref(3);
+		    var span = callRecord.ref(4);
+		    results.push({'id': id, 
+				  'offset': offset,
+				  'line': line, 
+				  'column': column,
+				  'span': span});
+
+		}
+	    }
+	}
+	return results;
+    };
+
+
+
+    Evaluator.prototype._onCompilationSuccess = function(compiledBytecode,
+							 onDoneSuccess,
+							 onDoneFail) {
 	var that = this;
 	
-	var onSuccess =  function(lastResult) {
-	    // Do nothing; side effects will have printed values of toplevel
-	    // expressions already.
-	    contK();
-	};
 
-	var onFail = function(exn) {
-	    // Under google-chrome, this will produce a nice error stack
-	    // trace that we can deal with.
-	    if (typeof(console) !== 'undefined' && console.log &&
-		exn && exn.stack) {
-		console.log(exn.stack);
-	    }
+// 	var onFail = function(exn) {
+// 	    // Under google-chrome, this will produce a nice error stack
+// 	    // trace that we can deal with.
+// 	    if (typeof(console) !== 'undefined' && console.log &&
+// 		exn && exn.stack) {
+// 		console.log(exn.stack);
+// 	    }
 	    
-	    if (types.isSchemeError(exn)) {
-		var errorValue = exn.val;
-		if (types.isExn(errorValue)) {
-		    that._reportError(types.exnMessage(errorValue) + '');
-		    if (types.exnContMarks(errorValue)) {
-			var contMarkSet = types.exnContMarks(errorValue);
-			var stackTrace = contMarkSet.ref(types.symbol("moby-stack-record-continuation-mark-key"));
-			for (var i = 0; i < stackTrace.length; i++) {
-			    var callRecord = stackTrace[i];
-			    var id = callRecord.ref(0);
-			    var offset = callRecord.ref(1);
-			    var line = callRecord.ref(2);
-			    var column = callRecord.ref(3);
-			    var span = callRecord.ref(4);
-			    that._reportError("    in " + id + 
-					      ", at: line " + line + 
-					      ", column " + column + 
-					      ", span " + span); 
-			}
-			console.log(stackTrace);
-		    }
-		} else {
-		    that._reportError(exn+'');
-		}
-	    } else {
-		that._reportError(exn+'');
-	    }
-	    contK();
-	};
+// 	    if (types.isSchemeError(exn)) {
+// 		var errorValue = exn.val;
+// 		if (types.isExn(errorValue)) {
+// 		    that._reportError(types.exnMessage(errorValue) + '');
+// 		    if (types.exnContMarks(errorValue)) {
+// 			var contMarkSet = types.exnContMarks(errorValue);
+// 			var stackTrace = contMarkSet.ref(types.symbol("moby-stack-record-continuation-mark-key"));
+// 			// KLUDGE: the first element in the stack trace
+// 			// is weird because it's due to the print-values
+// 			// introduced by a macro.
+// 			stackTrace.shift();
+			
+// 			for (var i = stackTrace.length - 1; 
+// 			     i >= 0; i--) {
+// 			    var callRecord = stackTrace[i];
+// 			    var id = callRecord.ref(0);
+// 			    var offset = callRecord.ref(1);
+// 			    var line = callRecord.ref(2);
+// 			    var column = callRecord.ref(3);
+// 			    var span = callRecord.ref(4);
+// 			    that._reportError("    in " + id + 
+// 					      ", at: line " + line + 
+// 					      ", column " + column + 
+// 					      ", span " + span); 
+// 			}
+// 		    }
+// 		} else {
+// 		    that._reportError(exn+'');
+// 		}
+// 	    } else {
+// 		that._reportError(exn+'');
+// 	    }
+// 	    onDoneSuccess();
+// 	};
 
 	this.aState.clearForEval();
 	interpret.load(compiledBytecode, this.aState);
-	interpret.run(this.aState, onSuccess, onFail);
+	interpret.run(this.aState, onDoneSuccess, onDoneFail);
     };
     
 
 
-    Evaluator.prototype._onCompilationFailure = function(errorMessage, contK) {
-	this._reportError(errorMessage);
-	contK();
+    Evaluator.prototype._onCompilationFailure = function(errorMessage, onDoneError) {
+	onDoneError(new Error(errorMessage));
     };
 
 
