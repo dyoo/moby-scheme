@@ -81,7 +81,9 @@ var Evaluator = (function() {
 
 
     Evaluator.prototype._reportError = function(thing) {
-	var errorDom = document.createElement("div");
+	var errorDom = document.createElement("span");
+	// FIXME: should use a particular class so that we can style
+	// with css instead.
 	errorDom.style.color = "red";
 	if (typeof thing === 'string') {
 	    errorDom.appendChild(document.createTextNode(thing+''));
@@ -148,7 +150,24 @@ var Evaluator = (function() {
 	    if (types.isSchemeError(exn)) {
 		var errorValue = exn.val;
 		if (types.isExn(errorValue)) {
-		    that._reportError(types.exnValue(errorValue) + '');
+		    that._reportError(types.exnMessage(errorValue) + '');
+		    if (types.exnContMarks(errorValue)) {
+			var contMarkSet = types.exnContMarks(errorValue);
+			var stackTrace = contMarkSet.ref(types.symbol("moby-stack-record-continuation-mark-key"));
+			for (var i = 0; i < stackTrace.length; i++) {
+			    var callRecord = stackTrace[i];
+			    var id = callRecord.ref(0);
+			    var offset = callRecord.ref(1);
+			    var line = callRecord.ref(2);
+			    var column = callRecord.ref(3);
+			    var span = callRecord.ref(4);
+			    that._reportError("    in " + id + 
+					      ", at: line " + line + 
+					      ", column " + column + 
+					      ", span " + span); 
+			}
+			console.log(stackTrace);
+		    }
 		} else {
 		    that._reportError(exn+'');
 		}
