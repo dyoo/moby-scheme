@@ -164,8 +164,8 @@
             "moby/world-handlers")]
     (make-module-binding 'world-config
                          module-path
-                         (list (bf 'on-tick module-path 2 false "plt.world.config.Kernel.onTick")
-                               (bf 'on-tick! module-path 3 false "plt.world.config.Kernel.onTick_star_")
+                         (list (bf 'on-tick module-path 1 true "plt.world.config.Kernel.onTick")
+                               (bf 'on-tick! module-path 2 true "plt.world.config.Kernel.onTick_star_")
                                (bf 'on-mouse module-path 1 false "plt.world.config.Kernel.onMouse")
                                (bf 'on-mouse! module-path 2 false "plt.world.config.Kernel.onMouse_star_")
                                
