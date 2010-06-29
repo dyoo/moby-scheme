@@ -412,46 +412,10 @@
 
 
 (define (application-expression-analyze-uses an-expression pinfo env)
-  (local [(define updated-pinfo
-            (foldl (lambda (e p)
-                     (expression-analyze-uses e p env))
-                   pinfo
-                   (stx-e an-expression)))
-          
-          ;; handle-image-url-kludge: expr-stx pinfo -> pinfo
-          ;; Doing something very unprincipled here: we're hacking open-image-url on strings
-          ;; so they emit a particular permission.
-          (define (handle-image-url-kludge expr a-pinfo env)
-            (cond
-              [(and (stx-begins-with? expr 'open-image-url)
-                    (stx:list? expr)
-                    (= (length (stx-e expr)) 2)
-                    (string? (stx-e (second (stx-e expr))))
-                    (env-contains? env 'open-image-url)
-                    (binding:function? (env-lookup env 'open-image-url))
-                    (string=? (binding:function-java-string (env-lookup env 'open-image-url))
-                              "plt.world.Kernel.openImageUrl"))
-               (local [(define b (env-lookup env 'open-image-url))]
-                 (pinfo-accumulate-binding-use (make-binding:function (string->symbol
-                                                                       (format "~a-~a" (binding:function-name b)
-                                                                               (stx-e (second (stx-e expr)))))
-                                                                      (binding:function-module-source b)
-                                                                      (binding:function-min-arity b) 
-                                                                      (binding:function-var-arity? b)
-                                                                      (binding:function-java-string b)
-                                                                      (list (make-permission:open-image-url
-                                                                             (stx-e (second (stx-e expr)))))
-                                                                      (binding:function-cps? b))
-                                               a-pinfo))]
-              [else a-pinfo]))]
-    (handle-image-url-kludge an-expression updated-pinfo env)))
-
-
-
-
-
-
-
+  (foldl (lambda (e p)
+           (expression-analyze-uses e p env))
+         pinfo
+         (stx-e an-expression)))
 
 
 

@@ -4,7 +4,7 @@
 (require "../collects/moby/runtime/stx.ss")
 (require "../collects/moby/runtime/error-struct.ss")
 
-;; A program is a (listof (or/c defn? expr? test-case? library-require?))
+;; A program is a (listof (or/c defn? expr? library-require?))
 
 (define (list? datum)
   (or (empty? datum)
@@ -89,7 +89,6 @@
        (andmap (lambda (x) 
                  (or (defn? x)
                      (expression? x)
-                     (test-case? x)
                      (library-require? x)))
                datum)))
 
@@ -98,7 +97,6 @@
 ;; Returns true if the datum is an expression.
 (define (expression? an-expr)
   (and (not (defn? an-expr))
-       (not (test-case? an-expr))
        (not (library-require? an-expr))))
 
 

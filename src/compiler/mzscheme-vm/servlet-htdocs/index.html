@@ -2,15 +2,17 @@
   <head>
     <title></title>
     <script src="http://www.google.com/jsapi"></script>
-    <script src="support.js">
-    </script>
-    <script src="main.js">
-    </script>
+    <script src="support.js"></script>
+    <script src="evaluator.js"></script>
+    <script src="main.js"></script>
   </head>
   <body>
     <form>
+      (Compilation will be performed on
+      <input type="text" id="compilationServletUrl" size="80" value="/servlets/standalone.ss">)
+      <hr>
       <div id="history"></div>
-      <textarea id="textarea" rows="2" cols="80" disabled="true"></textarea>
+      <textarea id="textarea" rows="20" cols="80" disabled="true"></textarea>
       <input id="executeButton" type="button" value="Execute" onClick="executeButtonPressed()" disabled="true">
     </form>
   </body>

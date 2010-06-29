@@ -9,7 +9,7 @@
 
 (define-struct env () #:transparent)
 (define-struct (empty-env env) () #:transparent)
-(define-struct (local-env env) (name parent-env) #:transparent)
+(define-struct (local-env env) (name boxed? parent-env) #:transparent)
 (define-struct (global-env env) (names parent-env) #:transparent)
 (define-struct (unnamed-env env) (parent-env) #:transparent)
 
@@ -25,8 +25,15 @@
 
 ;; env-push-local: env symbol -> env
 (define (env-push-local env name)
-  (make-local-env name env))
+  (make-local-env name #f env))
 
+
+;; env-push-local: env symbol -> env
+(define (env-push-local/boxed env name)
+  (make-local-env name #t env))
+
+
+;; env-push-unnamed: env -> env
 (define (env-push-unnamed env)
   (make-unnamed-env env))
 
@@ -36,7 +43,7 @@
   (match env
     [(struct empty-env ())
      (error 'env-pop "empty env")]
-    [(struct local-env (name parent-env))
+    [(struct local-env (name boxed? parent-env))
      parent-env]
     [(struct global-env (names parent-env))
      parent-env]
@@ -46,7 +53,7 @@
 
 
 (define-struct stack-reference () #:transparent)
-(define-struct (local-stack-reference stack-reference) (name depth) #:transparent)
+(define-struct (local-stack-reference stack-reference) (name boxed? depth) #:transparent)
 (define-struct (global-stack-reference stack-reference) (name depth pos) #:transparent)
 (define-struct (unbound-stack-reference stack-reference) (name) #:transparent)
 
@@ -74,13 +81,14 @@
     (match env
       [(struct empty-env ())
        (make-unbound-stack-reference a-name)]
-
-      [(struct local-env (name parent-env))
+      
+      [(struct local-env (name boxed? parent-env))
        (cond
          [(eq? a-name name)
-          (make-local-stack-reference a-name depth)]
+          (make-local-stack-reference name boxed? depth)]
          [else 
           (loop parent-env (add1 depth))])]
+      
       [(struct global-env (names parent-env))
        (cond [(position a-name names)
               =>
@@ -88,6 +96,7 @@
                 (make-global-stack-reference a-name depth pos))]
              [else
               (loop parent-env (add1 depth))])]
+      
       [(struct unnamed-env (parent-env))
        (loop parent-env (add1 depth))])))
 
@@ -104,13 +113,12 @@
          [(struct empty-env ())
           (error 'env-peek)]
          
-         [(struct local-env (name parent-env))
+         [(struct local-env (name boxed? parent-env))
           (loop parent-env (sub1 depth))]
 
          [(struct global-env (names parent-env))
           (loop parent-env (sub1 depth))]
          [(struct unnamed-env (parent-env))
-          
           (loop parent-env (sub1 depth))])])))
                  
          
@@ -121,6 +129,7 @@
                   [rename EMPTY-ENV empty-env env?]
                   [env-push-globals (env? (listof (or/c false/c symbol?)) . -> . env?)]
                   [env-push-local (env? symbol? . -> . env?)]
+                  [env-push-local/boxed (env? symbol? . -> . env?)]
                   [env-push-unnamed (env? . -> . env?)]
                   [env-pop (env? . -> . env?)]
 
@@ -134,6 +143,7 @@
                   [struct stack-reference ()]
                   [struct (local-stack-reference stack-reference) 
                           [(name symbol?)
+                           (boxed? boolean?)
                            (depth number?)]]
                   [struct (global-stack-reference stack-reference)
                           [(name symbol?)

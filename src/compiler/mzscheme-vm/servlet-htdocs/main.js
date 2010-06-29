@@ -1,123 +1,56 @@
-var aState = new state.State();
-
-aState.setPrintHook(function(thing) {
-	var dom = types.toDomNode(thing);
-	addToHistory(dom);	
+var evaluator = new Evaluator(
+    { write: function(x) { writeToInteractions(x) },
+      writeError: function(err) { reportError(err) },
+      compilationServletUrl: "/servlets/standalone.ss"
     });
-
-
-aState.setDisplayHook(function(thing) {
-	var dom = document.createElement("span");
-        dom.style["white-space"] = "pre";	
-	var node = document.createTextNode(thing);
-	dom.appendChild(node);
-	addToHistory(dom);	
-    });
-
-aState.setToplevelNodeHook(function() {
-	var innerDom = document.createElement("div");
-	var dom = document.createElement("div");
-	dom.appendChild(innerDom);
-	addToHistory(dom);	
-	return innerDom;
-    });
-
-
 
 
 
 var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
-    addToHistory(document.createTextNode(interactionText.value));
+    writeToInteractions(document.createElement("br"));
+    writeToInteractions(document.createTextNode(interactionText.value));
+    writeToInteractions(document.createElement("br"));
     blockInput();
-    executeProgram(interactionText.value,
-		   function() { unblockInput() });
+    evaluator.executeProgram("interactions",
+			     interactionText.value,
+			     function() {
+				 unblockInput() },
+			     function(exn) { reportError(exn);
+					     unblockInput() });
 };
 
 
-
-var addToHistory = function(thing) {
+var writeToInteractions = function(thing) {
     if (typeof thing === 'string' || typeof thing === 'number') {
-	thing = document.createTextNode(thing + '');
+	thing = document.createElement('div');
+	thing.style['white-space'] = 'pre';
+	div.appendChild(document.createTextNode(thing + ''));
     }
     var history = document.getElementById('history');
     history.appendChild(thing);
-    history.appendChild(document.createElement('br'));
-};
-
-
-// compileCode: string continuation -> void
-var executeProgram = function(code, onDone) {
-    var interactionText = document.getElementById('textarea');
-    var executeButton = document.getElementById('executeButton');
-    jQuery.ajax({ url: "/servlets/standalone.ss",
-		  data: {program : code},
-		  dataType: 'text',
-		  success: function(code, status, xhr){ 
-		      onCompilationSuccess(code, status, xhr, onDone);
-	          },
-		  error: function(xhr, status, errorThrown) { 
-		      onCompilationFailure(xhr, status, errorThrown, onDone);
-		  }
-		});
-};
-    
-
-var reportError = function(thing) {
-    var errorDom = document.createElement("div");
-    errorDom.style.color="red";
-    if (typeof thing === 'string') {
-	errorDom.appendChild(document.createTextNode(thing+''));
-    } else {
-	errorDom.appendChild(thing);
-    }
-    addToHistory(errorDom);
 }
 
 
-var onCompilationSuccess = function(compiledBytecode, textStatus, xhr, contK) {
-    var interactionText = document.getElementById('textarea');
-    var executeButton = document.getElementById('executeButton');
-    
-    var onSuccess =  function(lastResult) {
-	// Do nothing; side effects will have printed values of toplevel
-	// expressions already.
-	contK();
+
+var reportError = function(exn) {
+    var domElt = document.createElement('div');
+    domElt.style['color'] = 'red';
+    domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
+
+    var stacktrace = evaluator.getTraceFromExn(exn);
+    for (var i = 0; i < stacktrace.length; i++) {
+	domElt.appendChild(document.createElement("br"));
+	domElt.appendChild(document.createTextNode(
+			     "in " + stacktrace[i].id +
+			     ", at offset " + stacktrace[i].offset +
+			     ", line " + stacktrace[i].line +
+			     ", column " + stacktrace[i].column +
+			     ", span " + stacktrace[i].span));
     };
 
-    var onFail = function(exn) {
-	// Under google-chrome, this will produce a nice error stack
-	// trace that we can deal with.
-	if (typeof(console) !== 'undefined' && console.log &&
-	    exn && exn.stack) {
-	    console.log(exn.stack);
-	}
-	
-	if (types.isSchemeError(exn)) {
-	    var errorValue = exn.val;
-	    if (types.isExn(errorValue)) {
-		reportError(types.exnMessage(errorValue) + '');
-	    } else {
-		reportError(exn+'');
-	    }
-	} else {
-	    reportError(exn+'');
-	}
-	contK();
-    };
-
-    aState.clearForEval();
-    interpret.load(eval('(' + compiledBytecode + ')'), aState);
-    interpret.run(aState, onSuccess, onFail);
+    writeToInteractions(domElt);
 };
-    
-
-
-var onCompilationFailure = function(xhr, textStatus, errorThrown, contK) {
-    reportError(xhr.statusText);
-    contK();
-};
-
 
 
 var unblockInput = function() {
@@ -136,8 +69,6 @@ var blockInput = function() {
     interactionText.disabled = true;
     executeButton.disabled = true;
 };
-
-
 
 
 google.load("jquery", "1");
