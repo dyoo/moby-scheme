@@ -1,37 +1,41 @@
+var evaluator = new Evaluator(
+    { write: function(x) { writeToInteractions(x) },
+      writeError: function(err) { reportError(err) },
+      compilationServletUrl: "/servlets/standalone.ss"
+    });
+
+
+
+var executeButtonPressed = function() {
+    var interactionText = document.getElementById('textarea');
+    writeToInteractions(document.createElement("br"));
+    writeToInteractions(document.createTextNode(interactionText.value));
+    writeToInteractions(document.createElement("br"));
+    blockInput();
+    evaluator.executeProgram("interactions",
+			     interactionText.value,
+			     function() {
+				 unblockInput() },
+			     function(exn) { reportError(exn);
+					     unblockInput() });
+};
+
+
 var writeToInteractions = function(thing) {
     if (typeof thing === 'string' || typeof thing === 'number') {
-	thing = document.createTextNode(thing + '');
+	thing = document.createElement('div');
+	thing.style['white-space'] = 'pre';
+	div.appendChild(document.createTextNode(thing + ''));
     }
     var history = document.getElementById('history');
     history.appendChild(thing);
 }
 
 
-var evaluator = new Evaluator(
-    { write: writeToInteractions,
-      compilationServletUrl: "/servlets/standalone.ss"
-    });
-
-
-var executeButtonPressed = function() {
-    var interactionText = document.getElementById('textarea');
-    evaluator.compilationServletUrl = (document.getElementById('compilationServletUrl').value);
-
-    var theCodeElement = document.createElement('pre');
-    theCodeElement.appendChild(document.createTextNode(interactionText.value));
-    writeToInteractions(theCodeElement);
-    blockInput();
-    evaluator.executeProgram("interaction",
-			     interactionText.value,
-			     function() { unblockInput() },
-			     function(exn) {
-				 reportError(exn);
-				 unblockInput() });
-};
-
 
 var reportError = function(exn) {
     var domElt = document.createElement('div');
+    domElt.style['color'] = 'red';
     domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
 
     var stacktrace = evaluator.getTraceFromExn(exn);

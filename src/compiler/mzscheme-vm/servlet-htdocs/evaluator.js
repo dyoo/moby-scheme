@@ -59,7 +59,10 @@ var Evaluator = (function() {
 	});
 		
 	this.aState.setDisplayHook(function(thing) {
-	    var dom = types.toDisplayedString(thing);
+	    var dom = document.createElement("span");
+            dom.style["white-space"] = "pre";	
+	    var node = document.createTextNode(thing);
+	    dom.appendChild(node);
 	    that.write(dom);	
 	});
 	

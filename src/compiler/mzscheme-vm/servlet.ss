@@ -80,7 +80,7 @@
 
 ;; handle-json-exception-response: exn -> response
 (define (handle-json-exception-response request exn)
-  #;(raise exn)
+  (raise exn)
   (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
     (let ([payload
            (format "~a(~a)" (extract-binding/single 'on-error (request-bindings request))
@@ -102,7 +102,7 @@
 
 ;; handle-exception-response: exn -> response
 (define (handle-exception-response request exn)
-  #;(raise exn)
+  (raise exn)
   (make-response/basic 500 
                        (string->bytes/utf-8 (exn-message exn))
                        (current-seconds)
