@@ -121,8 +121,6 @@
      (list (list an-element) a-pinfo)]
     [(provide-statement? an-element)
      (list (list an-element) a-pinfo)]
-    [(test-case? an-element)
-     (desugar-test-case an-element a-pinfo)]
     [(provide/contract-statement? an-element)
      (desugar-provide/contract an-element a-pinfo)]
     [(expression? an-element)
@@ -234,38 +232,6 @@
         [else
          (void)]))
 
-
-;; desugar-test-case: test-case-stx pinfo -> (list (listof test-case-stx) pinfo)
-;; Translates use of a test case form to use of the test case toplevel functions.
-;; We transform each expression to a thunk, and provide the test case function
-;; the locations of all expressions as another argument.
-(define (desugar-test-case a-test-case a-pinfo)
-  (local [(define test-symbol-stx (first (stx-e a-test-case)))
-          (define test-exprs (map thunkify-stx (rest (stx-e a-test-case))))
-          
-          (define desugared-exprs+pinfo (desugar-expressions test-exprs a-pinfo))]
-    (begin
-      (cond [(stx-begins-with? a-test-case 'check-expect)
-             (check-test-case-length! a-test-case 3
-                                      "check-expect requires two expressions.  Try (check-expect test expected).")]
-            [(stx-begins-with? a-test-case 'EXAMPLE)
-             (check-test-case-length! a-test-case 3
-                                      "EXAMPLE requires two expressions.  Try (EXAMPLE test expected).")]
-            
-            [(stx-begins-with? a-test-case 'check-within)
-             (check-test-case-length! a-test-case 4
-                                      "check-within requires three expressions.  Try (check-within test expected range).")]
-            [(stx-begins-with? a-test-case 'check-error)
-             (check-test-case-length! a-test-case 3
-                                      "check-error requires two expressions.  Try (check-error test message).")]
-            [else
-             (void)])
-      
-      (list (list (datum->stx #f `(,test-symbol-stx
-                                   ,@(first desugared-exprs+pinfo)
-                                   (quote ,(Loc->sexp (stx-loc a-test-case))))
-                              (stx-loc a-test-case)))
-            (second desugared-exprs+pinfo)))))
 
 
 ;; desugar-expression/expr+pinfo: (list expr pinfo) -> (list expr pinfo)
