@@ -294,6 +294,8 @@
 					 "plt.world.Kernel.overlay")
 				     (bf 'overlay/xy module-path 4 false
 					 "plt.world.Kernel.overlay_slash_xy")
+                                     (bf 'underlay module-path 2 true "")
+                                     (bf 'underlay/xy module-path 4 false "")
 
                                      (bf 'key=? module-path 2 false
                                          "plt.world.Kernel.isKeyEqual")

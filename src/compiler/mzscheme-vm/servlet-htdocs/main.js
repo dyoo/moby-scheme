@@ -7,7 +7,10 @@ aState.setPrintHook(function(thing) {
 
 
 aState.setDisplayHook(function(thing) {
-	var dom = types.toDisplayedString(thing);
+	var dom = document.createElement("span");
+        dom.style["white-space"] = "pre";	
+	var node = document.createTextNode(thing);
+	dom.appendChild(node);
 	addToHistory(dom);	
     });
 
@@ -93,7 +96,7 @@ var onCompilationSuccess = function(compiledBytecode, textStatus, xhr, contK) {
 	if (types.isSchemeError(exn)) {
 	    var errorValue = exn.val;
 	    if (types.isExn(errorValue)) {
-		reportError(types.exnValue(errorValue) + '');
+		reportError(types.exnMessage(errorValue) + '');
 	    } else {
 		reportError(exn+'');
 	    }
