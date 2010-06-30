@@ -34,6 +34,13 @@ var writeToInteractions = function(thing) {
 
 
 var reportError = function(exn) {
+    // Under google-chrome, this will produce a nice error stack
+    // trace that we can deal with.
+    if (typeof(console) !== 'undefined' && console.log &&
+	exn && exn.stack) {
+	console.log(exn.stack);
+    }
+
     var domElt = document.createElement('div');
     domElt.style['color'] = 'red';
     domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));

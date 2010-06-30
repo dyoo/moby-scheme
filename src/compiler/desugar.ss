@@ -462,9 +462,9 @@
                  (define rest-exprs+pinfo (desugar-or (rest exprs) loc (first pinfo+tmp-sym)))]
            (desugar-expression/expr+pinfo
             (list (datum->stx #f `(let ([,(second pinfo+tmp-sym) ,(first exprs)])
-                                    (if ,(second pinfo+tmp-sym) 
-                                        ,(first rest-exprs+pinfo)
-                                        #f))
+                                    (if ,(second pinfo+tmp-sym)
+                                        ,(second pinfo+tmp-sym)
+                                        ,(first rest-exprs+pinfo)))
                               loc)
                   (second rest-exprs+pinfo))))]))
 
