@@ -99,6 +99,14 @@ var Evaluator = (function() {
     };
     
 
+    Evaluator.prototype.executeCompiledProgram = function(compiledBytecode,
+							  onDoneSuccess, onDoneFail) {
+	this.aState.clearForEval();
+	interpret.load(compiledBytecode, this.aState);
+	interpret.run(this.aState, onDoneSuccess, onDoneFail);
+    };
+
+
     var encodeUrlParameters = function(hash) {
 	var chunks = [];
 	for (var key in hash) {
@@ -165,8 +173,7 @@ var Evaluator = (function() {
     Evaluator.prototype._onCompilationSuccess = function(compiledBytecode,
 							 onDoneSuccess,
 							 onDoneFail) {
-	var that = this;
-	
+	this.runCompiledCode(compiledBytecode, onDoneFail, onDoneFail);
 
 // 	var onFail = function(exn) {
 // 	    // Under google-chrome, this will produce a nice error stack
@@ -210,10 +217,6 @@ var Evaluator = (function() {
 // 	    }
 // 	    onDoneSuccess();
 // 	};
-
-	this.aState.clearForEval();
-	interpret.load(compiledBytecode, this.aState);
-	interpret.run(this.aState, onDoneSuccess, onDoneFail);
     };
     
 
