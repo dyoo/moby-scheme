@@ -173,7 +173,7 @@ var Evaluator = (function() {
     Evaluator.prototype._onCompilationSuccess = function(compiledBytecode,
 							 onDoneSuccess,
 							 onDoneFail) {
-	this.executeCompiledProgram(compiledBytecode, onDoneFail, onDoneFail);
+	this.executeCompiledProgram(compiledBytecode, onDoneSuccess, onDoneFail);
 
 // 	var onFail = function(exn) {
 // 	    // Under google-chrome, this will produce a nice error stack
