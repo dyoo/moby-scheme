@@ -131,9 +131,8 @@ var Evaluator = (function() {
 		var contMarkSet = types.exnContMarks(errorValue);
 		var stackTrace = contMarkSet.ref(STACK_KEY);
 		// KLUDGE: the first element in the stack trace
-		// is weird because it's due to the print-values
-		// introduced by a macro.
-		stackTrace.shift();			
+		// can be weird print-values may introduce a duplicate
+		// location.
 		for (var i = stackTrace.length - 1; 
 		     i >= 0; i--) {
 		    var callRecord = stackTrace[i];
@@ -142,16 +141,47 @@ var Evaluator = (function() {
 		    var line = callRecord.ref(2);
 		    var column = callRecord.ref(3);
 		    var span = callRecord.ref(4);
-		    results.push({'id': id, 
-				  'offset': offset,
-				  'line': line, 
-				  'column': column,
-				  'span': span});
-
+		    var newHash = {'id': id, 
+				   'offset': offset,
+				   'line': line, 
+				   'column': column,
+				   'span': span};
+		    if (results.length === 0 ||
+			(! isEqualHash(results[results.length-1],
+				       newHash))) {
+			results.push(newHash);
+		    }
 		}
 	    }
 	}
 	return results;
+    };
+
+
+    var isEqualHash = function(hash1, hash2) {
+	for (var key in hash1) {
+	    if (hash1.hasOwnProperty(key)) {
+		if (hash2.hasOwnProperty(key)) {
+		    if (hash1[key] !== hash2[key]) {
+			return false;
+		    }
+		} else {
+		    return false;
+		}
+	    }
+	}
+	for (var key in hash2) {
+	    if (hash2.hasOwnProperty(key)) {
+		if (hash1.hasOwnProperty(key)) {
+		    if (hash1[key] !== hash2[key]) {
+			return false;
+		    }
+		} else {
+		    return false;
+		}
+	    }
+	}
+	return true;
     };
 
 
