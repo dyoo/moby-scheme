@@ -1,32 +1,21 @@
-var writeToInteractions = function(thing) {
-    if (typeof thing === 'string' || typeof thing === 'number') {
-	thing = document.createTextNode(thing + '');
-    }
-    var history = document.getElementById('history');
-    history.appendChild(thing);
-}
-
-
 var evaluator = new Evaluator(
-    { write: writeToInteractions,
+    { write: function(x) { writeToInteractions(x) },
+      writeError: function(err) { reportError(err) },
       compilationServletUrl: "/servlets/standalone.ss"
     });
 
 
+
 var executeButtonPressed = function() {
     var interactionText = document.getElementById('textarea');
-    evaluator.compilationServletUrl = (document.getElementById('compilationServletUrl').value);
-
-    var theCodeElement = document.createElement('pre');
-    theCodeElement.appendChild(document.createTextNode(interactionText.value));
-    writeToInteractions(theCodeElement);
+    writeToInteractions(interactionText.value);
     blockInput();
-    evaluator.executeProgram("interaction",
+    evaluator.executeProgram("interactions",
 			     interactionText.value,
-			     function() { unblockInput() },
-			     function(exn) {
-				 reportError(exn);
-				 unblockInput() });
+			     function() {
+				 unblockInput() },
+			     function(exn) { reportError(exn);
+					     unblockInput() });
 };
 
 
@@ -35,20 +24,30 @@ var breakButtonPressed = function() {
 };
 
 
-var reportError = function(exn) {
-    console.log(exn);
-    var domElt = document.createElement('div');
-    if (types.isSchemeError(exn)) {
-	console.log(exn);
-	var errorValue = exn.val;
-	if (types.isExn(errorValue)) {
-	    domElt.appendChild(document.createTextNode(''+types.exnMessage(errorValue)));
-	} else {
-	    domElt.appendChild(document.createTextNode(''+errorValue));
-	}
+var writeToInteractions = function(thing) {
+    var history = document.getElementById('history');
+    if (typeof thing === 'string' || typeof thing === 'number') {
+	var dom = document.createElement('div');
+	dom.style['white-space'] = 'pre';
+	dom.appendChild(document.createTextNode(thing + ''));
+	history.appendChild(dom);
     } else {
-	domElt.appendChild(document.createTextNode(exn+""));
+	history.appendChild(thing);
     }
+};
+
+
+var reportError = function(exn) {
+    // Under google-chrome, this will produce a nice error stack
+    // trace that we can deal with.
+    if (typeof(console) !== 'undefined' && console.log &&
+	exn && exn.stack) {
+	console.log(exn.stack);
+    }
+
+    var domElt = document.createElement('div');
+    domElt.style['color'] = 'red';
+    domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
 
     var stacktrace = evaluator.getTraceFromExn(exn);
     for (var i = 0; i < stacktrace.length; i++) {
