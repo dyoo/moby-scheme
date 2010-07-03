@@ -73,6 +73,10 @@ var Evaluator = (function() {
     };
 
 
+    Evaluator.prototype.requestBreak = function() {
+	this.aState.requestBreak();
+    };
+
 
     // compileCode: string string (-> void) (exn -> void) -> void
     Evaluator.prototype.executeProgram = function(programName, code,

@@ -30,9 +30,16 @@ var executeButtonPressed = function() {
 };
 
 
+var breakButtonPressed = function() {
+    evaluator.requestBreak();
+};
+
+
 var reportError = function(exn) {
+    console.log(exn);
     var domElt = document.createElement('div');
     if (types.isSchemeError(exn)) {
+	console.log(exn);
 	var errorValue = exn.val;
 	if (types.isExn(errorValue)) {
 	    domElt.appendChild(document.createTextNode(''+types.exnMessage(errorValue)));
