@@ -44,6 +44,12 @@ var Evaluator = (function() {
 	    };
 	}
 
+	if (options.ajax) {
+	    this.ajax = options.ajax;
+	} else {
+	    this.ajax = true;
+	}
+
 	if (options.compilationServletUrl) {
 	    this.compilationServletUrl = options.compilationServletUrl;
 	} else {
@@ -86,20 +92,43 @@ var Evaluator = (function() {
 						  onDone,
 						  onDoneError) {
 	var that = this;
-
-	Evaluator.compilation_success_callback__ = function(compiledCode) {
-	    that._onCompilationSuccess(compiledCode, onDone, onDoneError);
-	};
-
-	Evaluator.compilation_failure_callback__ = function(errorMessage) {
-	    that._onCompilationFailure(errorMessage, onDoneError);
-	};
 	
-	loadScript(this.compilationServletUrl + "?" +
-		   encodeUrlParameters({ 'name': programName,
-					 'program': code,
-					 'callback': 'Evaluator.compilation_success_callback__',
-					 'on-error': 'Evaluator.compilation_failure_callback__'}));
+
+	if (this.ajax) {
+	    var params = encodeUrlParameters({'name': programName,
+					      'program': code });
+	    var xhr = new XMLHttpRequest();
+	    xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4) {
+		    if (xhr.status === 200) {
+			that._onCompilationSuccess(eval('(' + xhr.responseText + ')'), 
+						   onDone, onDoneError);
+		    } else {
+			that._onCompilationFailure(xhr.statusText, 
+						   onDoneError);
+		    }
+		}
+	    };
+	    xhr.open("POST", this.compilationServletUrl, true);
+	    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	    xhr.send(params);
+	} else {
+	    var params = encodeUrlParameters({ 'name': programName,
+					       'program': code,
+					       'callback': 'Evaluator.compilation_success_callback__',
+					       'on-error': 'Evaluator.compilation_failure_callback__'});
+
+	    Evaluator.compilation_success_callback__ = function(compiledCode) {
+		that._onCompilationSuccess(compiledCode, onDone, onDoneError);
+	    };
+
+	    Evaluator.compilation_failure_callback__ = function(errorMessage) {
+		that._onCompilationFailure(errorMessage, onDoneError);
+	    };
+	    
+	    loadScript(this.compilationServletUrl + "?" +
+		       params);
+	}
     };
     
 

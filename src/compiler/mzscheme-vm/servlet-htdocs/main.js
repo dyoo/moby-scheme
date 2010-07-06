@@ -7,6 +7,7 @@ var evaluator = new Evaluator(
 
 
 var executeButtonPressed = function() {
+    evaluator.compilationServletUrl = document.getElementById('compilationServletUrl').value;
     var interactionText = document.getElementById('textarea');
     writeToInteractions(interactionText.value);
     blockInput();
@@ -91,9 +92,10 @@ var blockInput = function() {
 };
 
 
-google.load("jquery", "1");
-google.setOnLoadCallback(function() {
+
+
+var mainPageLoad = function() {
     var interactionText = document.getElementById('textarea');
     var executeButton = document.getElementById('executeButton');
     unblockInput();
-});
+};
