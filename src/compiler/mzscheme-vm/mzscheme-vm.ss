@@ -252,13 +252,36 @@
     [(string? (stx-e expr))
      (values (stx-e expr) a-pinfo)]
     
+    ;; Bytes
+    [(bytes? (stx-e expr))
+     (values (stx-e expr) a-pinfo)]
+
     ;; Literal booleans
     [(boolean? (stx-e expr))
      (values (stx-e expr) a-pinfo)]
     
     ;; Characters
     [(char? (stx-e expr))
+     (values (stx-e expr) a-pinfo)]
+
+
+    ;; Paths
+    [(path? (stx-e expr))
+     (values (stx-e expr) a-pinfo)]
+
+    ;; Boxes
+    [(box? (stx-e expr))
+     (values (stx-e expr) a-pinfo)]
+    
+    ;; Regexps
+    [(regexp? (stx-e expr))
+     (values (stx-e expr) a-pinfo)]
+
+
+    ;; Byte regexps
+    [(byte-regexp? (stx-e expr))
      (values (stx-e expr) a-pinfo)]))
+
 
 
 

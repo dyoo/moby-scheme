@@ -373,7 +373,10 @@
     
     ;; Function call/primitive operation call
     [(pair? (stx-e an-expression))
-     (application-expression-analyze-uses an-expression pinfo env)]))
+     (application-expression-analyze-uses an-expression pinfo env)]
+
+    [else
+     pinfo]))
 
 
 
