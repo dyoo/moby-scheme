@@ -104,7 +104,7 @@ var Evaluator = (function() {
 			that._onCompilationSuccess(eval('(' + xhr.responseText + ')'), 
 						   onDone, onDoneError);
 		    } else {
-			that._onCompilationFailure(xhr.statusText, 
+			that._onCompilationFailure(xhr.responseText, 
 						   onDoneError);
 		    }
 		}

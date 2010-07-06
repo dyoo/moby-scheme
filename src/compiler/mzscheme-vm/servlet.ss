@@ -104,11 +104,12 @@
 
 ;; handle-exception-response: exn -> response
 (define (handle-exception-response request exn)
-  (make-response/basic 500 
-                       (string->bytes/utf-8 (exn-message exn))
-                       (current-seconds)
-                       #"application/octet-stream"
-                       (list)))
+  (make-response/full 500 
+                      #"Internal Server Error"
+                      (current-seconds)
+                      #"application/octet-stream"
+                      (list)
+                      (list (string->bytes/utf-8 (exn-message exn)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
