@@ -8,6 +8,9 @@
          "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 (define-runtime-path htdocs "servlet-htdocs")
+(define-runtime-path compat 
+  "../../../support/externals/mzscheme-vm/lib/compat")
+
 
 ;; make-port-response: (values response/incremental output-port)
 ;; Creates a response that's coupled to an output-port: whatever you
@@ -73,7 +76,7 @@
     (fprintf output-port "~a(" 
              (extract-binding/single 'callback (request-bindings request)))
     (compile program-input-port output-port #:name program-name)
-    (fprintf output-port ")")
+    (fprintf output-port ");\n")
     (close-output-port output-port)
     response))
 
@@ -82,9 +85,9 @@
 (define (handle-json-exception-response request exn)
   (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
     (let ([payload
-           (format "~a(~a)" (extract-binding/single 'on-error (request-bindings request))
+           (format "~a(~a);\n" (extract-binding/single 'on-error (request-bindings request))
                    (sexp->js (exn-message exn)))])
-      (fprintf output-port "~a~n" payload)
+      (fprintf output-port "~a" payload)
       (close-output-port output-port)
       response)))
 
@@ -120,7 +123,7 @@
 
 (serve/servlet start 
                #:port 8000
-               #:extra-files-paths (list htdocs)
+               #:extra-files-paths (list htdocs compat)
                #:launch-browser? #f
                #:listen-ip #f)
 
