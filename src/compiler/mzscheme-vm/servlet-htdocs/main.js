@@ -1,7 +1,8 @@
 var evaluator = new Evaluator(
     { write: function(x) { writeToInteractions(x) },
       writeError: function(err) { reportError(err) },
-      compilationServletUrl: "/servlets/standalone.ss"
+      compilationServletUrl: "/servlets/standalone.ss",
+      scriptCompilationServletUrl: "/servlets/standalone.ss"
     });
 
 

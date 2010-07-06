@@ -4,7 +4,8 @@
 // Evaluator(options)
 //     options: { write: dom -> void,
 //                writeError: dom -> void,
-//                compilationServletUrl: string}
+//                compilationServletUrl: string,
+//                scriptCompilationServletUrl: string}
 //
 // Constructs a new evaluator.
 // 
@@ -14,8 +15,25 @@
 //
 // Evaluator.prototype.executeProgram: [name string] [program string] [onDone (-> void)] -> void
 //
+//
 // Executes the program with the given name.  When the program is done evaluating,
 // calls onDone.
+//
+//
+// Evaluator.prototype.requestBreak: -> void
+//
+// Triggers scheme evaluation to raise an exn:break.
+//
+//
+// Evaluator.prototype.executeCompiledProgram: bytecode (-> void) (exn -> void) -> void 
+//
+// Execute a compiled program, given the bytecode already.
+//
+//
+//
+// Evaluator.prototype.getMessageFromExn
+//
+// Evaluator.prototype.getStackTraceFromExn
 //
 // 
 // WARNING: this code assumes that there's toplevel access to:
@@ -23,8 +41,8 @@
 //     Evaluator.compilation_success_callback__
 //     Evaluator.compilation_failure_callback__
 //
-// because we use SCRIPT injection to work around the same-origin
-// policy.
+// because we will use SCRIPT injection to work around the same-origin
+// policy for direct access to the compilation server.
 
 
 
@@ -44,17 +62,18 @@ var Evaluator = (function() {
 	    };
 	}
 
-	if (options.ajax) {
-	    this.ajax = options.ajax;
-	} else {
-	    this.ajax = true;
-	}
-
 	if (options.compilationServletUrl) {
 	    this.compilationServletUrl = options.compilationServletUrl;
 	} else {
 	    this.compilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
 	}
+
+	if (options.scriptCompilationServletUrl) {
+	    this.scriptCompilationServletUrl = options.scriptCompilationServletUrl;
+	} else {
+	    this.scriptCompilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
+	}
+
 
 
 	this.aState = new state.State();
@@ -87,49 +106,75 @@ var Evaluator = (function() {
     };
 
 
-    // compileCode: string string (-> void) (exn -> void) -> void
+    var encodeScriptParameters = function(programName, code) {
+	return encodeUrlParameters({ 'name': programName,
+				     'program': code,
+				     'callback': 'Evaluator.compilation_success_callback__',
+				     'on-error': 'Evaluator.compilation_failure_callback__'});
+    };
+
+
+
+    // Returns true if the length of the SCRIPT src is short enough that
+    // we can safely use SCRIPT to talk directly to the compilation server.
+    Evaluator.prototype._isScriptRequestPossible = function(programName, code) {
+	var encodedParams = encodeScriptParameters(programName, code);
+	return (encodedParams.length +
+		this.scriptCompilationServletUrl.length + 1 
+		< 255);
+    };
+
+
+    // executeProgram: string string (-> void) (exn -> void) -> void
     Evaluator.prototype.executeProgram = function(programName, code,
 						  onDone,
 						  onDoneError) {
-	var that = this;
-	
-
-	if (this.ajax) {
-	    var params = encodeUrlParameters({'name': programName,
-					      'program': code });
-	    var xhr = new XMLHttpRequest();
-	    xhr.onreadystatechange = function() {
-		if (xhr.readyState == 4) {
-		    if (xhr.status === 200) {
-			that._onCompilationSuccess(eval('(' + xhr.responseText + ')'), 
-						   onDone, onDoneError);
-		    } else {
-			that._onCompilationFailure(xhr.responseText, 
-						   onDoneError);
-		    }
-		}
-	    };
-	    xhr.open("POST", this.compilationServletUrl, true);
-	    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	    xhr.send(params);
+	if (! this._isScriptRequestPossible(programName, code)) {
+	    this._executeProgramWithAjax(programName, code, onDone, onDoneError);
 	} else {
-	    var params = encodeUrlParameters({ 'name': programName,
-					       'program': code,
-					       'callback': 'Evaluator.compilation_success_callback__',
-					       'on-error': 'Evaluator.compilation_failure_callback__'});
-
-	    Evaluator.compilation_success_callback__ = function(compiledCode) {
-		that._onCompilationSuccess(compiledCode, onDone, onDoneError);
-	    };
-
-	    Evaluator.compilation_failure_callback__ = function(errorMessage) {
-		that._onCompilationFailure(errorMessage, onDoneError);
-	    };
-	    
-	    loadScript(this.compilationServletUrl + "?" +
-		       params);
+	    this._executeProgramWithScript(programName, code, onDone, onDoneError);
 	}
     };
+
+    // _executeProgramWithScript: string string (-> void) (exn -> void) -> void
+    Evaluator.prototype._executeProgramWithScript = function(programName, code,
+							     onDone, onDoneError) {
+	var that = this;
+	var params = encodeScriptParameters(programName, code);
+	Evaluator.compilation_success_callback__ = function(compiledCode) {
+	    that._onCompilationSuccess(compiledCode, onDone, onDoneError);
+	};
+
+	Evaluator.compilation_failure_callback__ = function(errorMessage) {
+	    that._onCompilationFailure(errorMessage, onDoneError);
+	};
+	loadScript(this.scriptCompilationServletUrl + "?" + params);
+    };
+
+
+    // _executeProgramWithAjax: string string (-> void) (exn -> void) -> void
+    Evaluator.prototype._executeProgramWithAjax = function(programName, code,
+							   onDone, onDoneError) {
+	var that = this;
+	var params = encodeUrlParameters({'name': programName,
+					  'program': code });
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+	    if (xhr.readyState == 4) {
+		if (xhr.status === 200) {
+		    that._onCompilationSuccess(eval('(' + xhr.responseText + ')'), 
+					       onDone, onDoneError);
+		} else {
+		    that._onCompilationFailure(xhr.responseText, 
+					       onDoneError);
+		}
+	    }
+	};
+	xhr.open("POST", this.compilationServletUrl, true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.send(params);
+    };
+
     
 
     Evaluator.prototype.executeCompiledProgram = function(compiledBytecode,
