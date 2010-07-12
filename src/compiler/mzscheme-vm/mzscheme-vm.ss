@@ -86,7 +86,20 @@
 
 ;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) pinfo -> (values prefix env)
 (define (make-module-prefix-and-env pinfo)
+  ;;
   ;; FIXME: currently ignoring requires
+  ;;
+  ;; FIXME: local-defined-names and module-defined-bindings may not be
+  ;; disjoint, in which case, references to toplevel-bound identifiers
+  ;; may actually be intended to reference a global that should be
+  ;; shadowing.
+  ;;
+  ;; We may need to do a solution such as namespace-require/copy
+  ;; (http://list.cs.brown.edu/pipermail/plt-scheme/2007-February/016390.html)
+  ;; to copy all toplevel references off to globals.  That means every variable
+  ;; reference (save lexically-scoped ones) become references to the global array.
+  ;; This doesn't sound so good either...
+  
   ;;
   ;; collect all the free names being defined and used at toplevel
   ;;
@@ -101,6 +114,7 @@
                                                     (cons a-binding acc)]
                                                    [else acc]))
                                                '())])
+    #;(check-definitions-do-not-overlap-toplevel! local-defined-names pinfo)
     (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
@@ -116,6 +130,31 @@
                               (append free-variables
                                       local-defined-names 
                                       (map binding:binding-id module-defined-bindings))))))
+
+
+
+;; check-definitions-do-not-overlap-toplevel!: (listof symbol) pinfo -> void
+;; Raise an error if any names overlap between the defined ones and ones
+;; that we already use.
+#;(define (check-definitions-do-not-overlap-toplevel! names pinfo)
+  (let ([module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash pinfo)
+                                               (lambda (name a-binding acc)
+                                                 (cond
+                                                   [(binding:binding-module-source a-binding)
+                                                    (cons a-binding acc)]
+                                                   [else acc]))
+                                               '())])
+    (for-each (lambda (a-name)
+                (when (findf (lambda (a-binding)
+                               (symbol=? a-name 
+                                         (binding:binding-id a-binding)))
+                             module-defined-bindings)
+                  (error 'compiler 
+                         "The definition ~s conflicts with a built-in definition." a-name)))
+              names)))
+
+
+
 
 (define (compile-definitions defns env a-pinfo)
   (let loop ([defns defns]
@@ -596,7 +635,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; free-variables: expr env pinfo -> (listof expr)
+;; free-variables: expr env pinfo -> (listof symbol)
 ;; Given an expression, compute the set of free variable occcurances
 (define (free-variables expr env)
   (sort-and-unique (let loop ([expr expr]
