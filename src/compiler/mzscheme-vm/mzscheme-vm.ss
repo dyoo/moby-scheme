@@ -631,10 +631,36 @@
                        
                        
                        ;; (local ([define ...] ...) body)
-                       #;[(stx-begins-with? expr 'local)
+                       [(stx-begins-with? expr 'local)
                           (local [(define defns (stx-e (second (stx-e expr))))
-                                  (define body (third (stx-e expr)))]
-                            ...)]
+                                  (define body (third (stx-e expr)))] 
+                            ;; construct an updated environment, adding all the definitions
+                            ;; introduced by defns.
+                            ;; Also walk though each of the definitions and collect its free variables.
+                            (let* ([defined-names (collect-defined-names defns)]
+                                   [updated-env (foldl (lambda (id env)
+                                                         (env-push-local/boxed env (stx-e id)))
+                                                       env 
+                                                       (reverse defined-names))])
+                              (append 
+                               (loop body updated-env)
+                               (apply append (map (lambda (a-defn) 
+                                                    (case-analyze-definition a-defn
+                                                                             (lambda (id args body)
+                                                                               (loop body (foldl (lambda (id env)
+                                                                                                   (env-push-local env (stx-e id)))
+                                                                                                 updated-env
+                                                                                                 args)))
+                                                                             (lambda (id body)
+                                                                               (loop body updated-env))
+                                                                             (lambda (id fields)
+                                                                               empty)
+                                                                             (lambda (ids body)
+                                                                               (loop body updated-env))))
+                                                  defns)))))]
+                              
+                              
+
                        
                        
                        ;; (set! identifier value)
