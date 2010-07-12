@@ -2,7 +2,12 @@
 
 (require test-engine/scheme-tests
          scheme/bool
-         "helpers.ss")
+         (only-in scheme/list first rest)
+         "helpers.ss"
+         "desugar.ss"
+         "../collects/moby/runtime/stx.ss"
+         "../stx-helpers.ss"
+         "pinfo.ss")
 
 (require (for-syntax "../stx-helpers.ss")
          (for-syntax scheme/base))
@@ -37,6 +42,12 @@
 
 
 
+#;(stx->datum (first (first (desugar-program (list (syntax->stx #'(define (f x) 
+                                                                    (local [(define g 16)
+                                                                            (define-struct k (z b))]
+                                                                      (* x x)))))
+                                             (get-base-pinfo 'moby)))))
+                 
 
 
 
