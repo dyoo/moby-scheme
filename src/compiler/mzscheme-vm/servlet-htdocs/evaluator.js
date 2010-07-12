@@ -114,6 +114,10 @@ var Evaluator = (function() {
     };
 
 
+    // The limit till script breaks is about 2000 characters, according to:
+    // http://stackoverflow.com/questions/2659952/maximum-length-of-http-get-request
+    var MAX_CHARACTERS_TILL_SCRIPT_BREAKS = 2000;
+
 
     // Returns true if the length of the SCRIPT src is short enough that
     // we can safely use SCRIPT to talk directly to the compilation server.
@@ -121,7 +125,7 @@ var Evaluator = (function() {
 	var encodedParams = encodeScriptParameters(programName, code);
 	return (encodedParams.length +
 		this.scriptCompilationServletUrl.length + 1 
-		< 255);
+		< MAX_CHARACTERS_TILL_SCRIPT_BREAKS);
     };
 
 
