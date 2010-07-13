@@ -41,6 +41,8 @@
 (define-struct moby-error-type:provided-name-not-defined (id))
 (define-struct moby-error-type:provided-structure-not-structure (id))
 (define-struct moby-error-type:unknown-module (path))
+(define-struct moby-error-type:redefinition-not-allowed (id))
+
 
 (define-struct moby-error-type:conditional-missing-question-answer ())
 (define-struct moby-error-type:conditional-malformed-clause ())
@@ -114,6 +116,7 @@
       (moby-error-type:provided-name-not-defined? x)
       (moby-error-type:provided-structure-not-structure? x)
       (moby-error-type:unknown-module? x)
+      (moby-error-type:redefinition-not-allowed? x)
       (moby-error-type:conditional-missing-question-answer? x)
       (moby-error-type:conditional-exhausted? x)
       (moby-error-type:conditional-missing-question-answer? x)
@@ -241,6 +244,8 @@
  
  [struct moby-error-type:unknown-module ([path module-path?])]
 
+ [struct moby-error-type:redefinition-not-allowed ([id symbol?])]
+ 
  [struct moby-error-type:conditional-missing-question-answer ()] ;; missing clauses
  [struct moby-error-type:conditional-malformed-clause ()]           ;; a clause which isn't an [question answer]
  [struct moby-error-type:conditional-clause-too-few-elements ()]  ;; a clause without a question or an answer

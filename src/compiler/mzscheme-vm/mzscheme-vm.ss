@@ -52,9 +52,9 @@
 
 
 ;; compile-compilation-top-module: program pinfo -> 
-(define (compile-compilation-top a-program pinfo
+(define (compile-compilation-top a-program base-pinfo
                                  #:name name) 
-  (let* ([a-program+pinfo (desugar-program a-program pinfo)]
+  (let* ([a-program+pinfo (desugar-program a-program base-pinfo)]
          [a-program (first a-program+pinfo)]
          [pinfo (second a-program+pinfo)]
          [pinfo (program-analyze/pinfo a-program pinfo)])
@@ -84,7 +84,7 @@
 
 
 
-;; make-module-prefix-and-env: (listof definition) (listof require) (listof expression) pinfo -> (values prefix env)
+;; make-module-prefix-and-env: pinfo -> (values prefix env)
 (define (make-module-prefix-and-env pinfo)
   ;;
   ;; FIXME: currently ignoring requires
@@ -114,7 +114,6 @@
                                                     (cons a-binding acc)]
                                                    [else acc]))
                                                '())])
-    #;(check-definitions-do-not-overlap-toplevel! local-defined-names pinfo)
     (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
@@ -136,14 +135,15 @@
 ;; check-definitions-do-not-overlap-toplevel!: (listof symbol) pinfo -> void
 ;; Raise an error if any names overlap between the defined ones and ones
 ;; that we already use.
-#;(define (check-definitions-do-not-overlap-toplevel! names pinfo)
-  (let ([module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash pinfo)
-                                               (lambda (name a-binding acc)
-                                                 (cond
-                                                   [(binding:binding-module-source a-binding)
-                                                    (cons a-binding acc)]
-                                                   [else acc]))
-                                               '())])
+#;(define (check-definitions-do-not-overlap-toplevel! names base-env)
+  (void)
+  #;(let ([module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash base-pinfo)
+                                              (lambda (name a-binding acc)
+                                                (cond
+                                                  [(binding:binding-module-source a-binding)
+                                                   (cons a-binding acc)]
+                                                  [else acc]))
+                                              '())])
     (for-each (lambda (a-name)
                 (when (findf (lambda (a-binding)
                                (symbol=? a-name 

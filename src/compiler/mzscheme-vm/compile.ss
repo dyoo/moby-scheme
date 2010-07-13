@@ -13,9 +13,12 @@
 (define (compile in out #:name name)
   (let*-values 
       ([(stxs) (read-syntaxes in #:name name)]
+       [(a-pinfo)
+         (pinfo-update-allow-redefinition? (get-base-pinfo 'moby)
+                                           #f)]
        [(a-compilation-top a-pinfo)
         (compile-compilation-top stxs 
-                                 (get-base-pinfo 'moby)
+                                 a-pinfo
                                  #:name name)]
        [(a-jsexp) (compile-top a-compilation-top)])
     (display (jsexp->js a-jsexp)

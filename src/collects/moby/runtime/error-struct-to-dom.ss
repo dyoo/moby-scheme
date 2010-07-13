@@ -203,14 +203,14 @@
                                               maybe-dom-parameters)
                      " is not defined in the program."))]
 
-       [(moby-error-type:provided-structure-not-structure? error-type)
-        `(span ((class "Error-ProvidedStructureNotStructure"))
+       [(moby-error-type:redefinition-not-allowed? error-type)
+        `(span ((class "Error-RedefinitionNotAllowed"))
                (span ((class "Error.reason"))
-                     "The provided name "
+                     "The defined name "
                      ,(scheme-value->dom-sexp 
-                       (moby-error-type:provided-structure-not-structure-id error-type)
+                       (moby-error-type:redefinition-not-allowed-id error-type)
                        maybe-dom-parameters)
-                     "is defined in the program, but is not the name of a structure."))]
+                     " is being defined in the program, but it already has a definition that is not allowed to be redefined."))]
 
        [(moby-error-type:unknown-module? error-type)
         `(span ((class "Error-UnknownModule"))
@@ -219,6 +219,16 @@
                      ,(scheme-value->dom-sexp (moby-error-type:unknown-module-path error-type)
                                               maybe-dom-parameters)
                      ", but I don't yet know what this module is."))]
+
+       
+              [(moby-error-type:unknown-module? error-type)
+        `(span ((class "Error-UnknownModule"))
+               (span ((class "Error.reason"))
+                     "I see a require of the module "
+                     ,(scheme-value->dom-sexp (moby-error-type:unknown-module-path error-type)
+                                              maybe-dom-parameters)
+                     ", but I don't yet know what this module is."))]
+
        
        [(moby-error-type:conditional-missing-question-answer? error-type)
         `(span ((class "Error-ConditionalMissingQuestionAnswer"))

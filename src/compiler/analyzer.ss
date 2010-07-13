@@ -4,7 +4,6 @@
 (require "pinfo.ss")
 (require "helpers.ss")
 (require "rbtree.ss")
-(require "../collects/moby/runtime/permission-struct.ss")
 (require "../collects/moby/runtime/binding.ss")
 (require "../collects/moby/runtime/stx.ss")
 (require "../collects/moby/runtime/error-struct.ss")
@@ -52,8 +51,8 @@
                   pinfo]))
          pinfo
          a-program))
-  
-  
+
+
 
 ;; program-analyze-collect-provides: program pinfo -> pinfo
 ;; Walk through the program and collect all the provide statements.
@@ -93,7 +92,7 @@
                                            (pinfo-env pinfo))]))
          pinfo
          a-program))
-           
+
 
 
 ;; collect-provided-names: (listof stx) pinfo -> pinfo
@@ -148,7 +147,7 @@
          a-pinfo
          clauses))
 
-  
+
 
 
 
@@ -167,12 +166,13 @@
    ;; For functions
    (lambda (id args body)
      (pinfo-accumulate-defined-binding (bf (stx-e id)
-                                   false
-                                   (length args) 
-                                   false 
-                                   (symbol->string
-                                    (identifier->munged-java-identifier (stx-e id))))
-                               pinfo))
+                                           false
+                                           (length args) 
+                                           false 
+                                           (symbol->string
+                                            (identifier->munged-java-identifier (stx-e id))))
+                                       pinfo
+                                       (stx-loc id)))
    
    ;; For regular defintions
    (lambda (id expr)
@@ -182,14 +182,16 @@
                                         (symbol->string 
                                          (identifier->munged-java-identifier (stx-e id)))
                                         empty)
-                                       pinfo))
+                                       pinfo
+                                       (stx-loc id)))
    
    ;; For structure definitions
    (lambda (id fields)
      (pinfo-accumulate-defined-bindings (struct-definition-bindings (stx-e id) 
-                                                            (map stx-e fields))
-                                pinfo))
-
+                                                                    (map stx-e fields))
+                                        pinfo
+                                        (stx-loc id)))
+   
    ;; define-values
    (lambda (ids body)
      (foldl (lambda (id pinfo)
@@ -201,7 +203,8 @@
                  (identifier->munged-java-identifier
                   (stx-e id)))
                 empty)
-               pinfo))
+               pinfo
+               (stx-loc id)))
             pinfo
             ids))))
 
@@ -245,7 +248,7 @@
           
           (define structure-binding
             (make-binding:structure id
-				    #f
+                                    #f
                                     fields
                                     constructor-id
                                     predicate-id
@@ -365,7 +368,7 @@
        [else
         ;; free variable
         (pinfo-accumulate-free-variable-use (stx-e an-expression) pinfo)])]
-
+    
     
     ;; Quoted symbols
     [(stx-begins-with? an-expression 'quote)
@@ -374,7 +377,7 @@
     ;; Function call/primitive operation call
     [(pair? (stx-e an-expression))
      (application-expression-analyze-uses an-expression pinfo env)]
-
+    
     [else
      pinfo]))
 
@@ -393,7 +396,7 @@
                               nested-pinfo
                               (pinfo-env nested-pinfo))
      (pinfo-env pinfo))))
-  
+
 
 ;; begin-expression-analyze-uses: expr-stx pinfo env -> pinfo
 (define (begin-expression-analyze-uses an-expression pinfo env)
@@ -436,26 +439,26 @@
   (local [(define (signal-error)
             (raise (make-moby-error (stx-loc require-path)
                                     (make-moby-error-type:unknown-module (stx-e require-path)))))
-
+          
           (define maybe-module-name ((pinfo-module-path-resolver pinfo)
                                      (stx-e require-path)
                                      (pinfo-current-module-path pinfo)))]
+    
+    (cond
+      [(module-name? maybe-module-name)
+       (local [(define maybe-module-binding
+                 ((pinfo-module-resolver pinfo) maybe-module-name))]
+         (cond [(module-binding? maybe-module-binding)
+                (pinfo-accumulate-module maybe-module-binding
+                                         (pinfo-accumulate-module-bindings
+                                          (module-binding-bindings maybe-module-binding)
+                                          pinfo))]
+               [else
+                (signal-error)]))]
+      [else
+       (signal-error)])))
 
-  (cond
-    [(module-name? maybe-module-name)
-     (local [(define maybe-module-binding
-               ((pinfo-module-resolver pinfo) maybe-module-name))]
-       (cond [(module-binding? maybe-module-binding)
-              (pinfo-accumulate-module maybe-module-binding
-                                       (pinfo-accumulate-module-bindings
-                                        (module-binding-bindings maybe-module-binding)
-                                        pinfo))]
-             [else
-              (signal-error)]))]
-    [else
-     (signal-error)])))
 
-  
 
 
 (provide/contract [program-analyze (program?  . -> . pinfo?)]

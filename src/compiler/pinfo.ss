@@ -150,6 +150,22 @@
               (pinfo-current-module-path a-pinfo)))
 
 
+;; pinfo-update-allow-redefinition?: pinfo boolean -> pinfo
+(define (pinfo-update-allow-redefinition? a-pinfo allow-redefinition?)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
+              (pinfo-gensym-counter a-pinfo)
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              allow-redefinition?
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)))
+
 ;; pinfo-update-module-resolver: pinfo module-resolver -> pinfo
 (define (pinfo-update-module-resolver a-pinfo module-resolver)
   (make-pinfo (pinfo-env a-pinfo)
@@ -220,27 +236,15 @@
               (pinfo-current-module-path a-pinfo)))
 
                                             
-;; pinfo-accumulate-defined-binding: binding pinfo -> pinfo
+;; pinfo-accumulate-defined-binding: binding pinfo loc -> pinfo
 ;; Adds a new defined binding to a pinfo's set.
-(define (pinfo-accumulate-defined-binding a-binding a-pinfo)
+(define (pinfo-accumulate-defined-binding a-binding a-pinfo a-loc)
   (cond
-    [(pinfo-allow-redefinition? a-pinfo)
-     (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
-                 (pinfo-modules a-pinfo)
-                 (pinfo-used-bindings-hash a-pinfo)
-                 (pinfo-free-variables a-pinfo)
-                 (pinfo-gensym-counter a-pinfo)
-                 (pinfo-provided-names a-pinfo)
-                 (rbtree-insert symbol< 
-                                (pinfo-defined-names a-pinfo)
-                                (binding-id a-binding)
-                                a-binding)
-                 (pinfo-shared-expressions a-pinfo)
-                 (pinfo-with-location-emits? a-pinfo)
-                 (pinfo-allow-redefinition? a-pinfo)
-                 (pinfo-module-resolver a-pinfo)
-                 (pinfo-module-path-resolver a-pinfo)
-                 (pinfo-current-module-path a-pinfo))]
+    [(and (not (pinfo-allow-redefinition? a-pinfo))
+          (is-redefinition? (binding-id a-binding) a-pinfo))
+     (raise (make-moby-error a-loc
+                             (make-moby-error-type:redefinition-not-allowed
+                              (binding-id a-binding))))]
     [else
      (make-pinfo (env-extend (pinfo-env a-pinfo) a-binding)
                  (pinfo-modules a-pinfo)
@@ -260,10 +264,17 @@
                  (pinfo-current-module-path a-pinfo))]))
 
 
-;; pinfo-accumulate-bindings: (listof binding) pinfo -> pinfo
+;; is-redefinition?: symbol -> boolean
+(define (is-redefinition? a-name a-pinfo)
+  (binding? (env-lookup (pinfo-env a-pinfo) a-name)))
+
+
+
+;; pinfo-accumulate-bindings: (listof binding) pinfo Loc -> pinfo
 ;; Adds a list of defined bindings to the pinfo's set.
-(define (pinfo-accumulate-defined-bindings bindings a-pinfo)
-  (foldl pinfo-accumulate-defined-binding
+(define (pinfo-accumulate-defined-bindings bindings a-pinfo a-loc)
+  (foldl (lambda (a-binding a-pinfo)
+           (pinfo-accumulate-defined-binding a-binding a-pinfo a-loc))
          a-pinfo
          bindings))
 
@@ -533,9 +544,9 @@
                   [get-base-pinfo (symbol? . -> . pinfo?)]
                   [pinfo-used-bindings (pinfo? . -> . (listof binding?))]
                   [pinfo-accumulate-module (module-binding? pinfo? . -> . pinfo?)]
-                  [pinfo-accumulate-defined-binding (binding? pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-binding-use (binding? pinfo? . -> . pinfo?)]
-                  [pinfo-accumulate-defined-bindings ((listof binding?) pinfo? . -> . pinfo?)]
+                  [pinfo-accumulate-defined-binding (binding? pinfo? Loc? . -> . pinfo?)]
+                  [pinfo-accumulate-defined-bindings ((listof binding?) pinfo? Loc? . -> . pinfo?)]
                   [pinfo-accumulate-module-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-shared-expression (expression? string? pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-free-variable-use (symbol? pinfo? . -> . pinfo?)]
@@ -543,6 +554,7 @@
                   [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
                   [pinfo-update-with-location-emits? (pinfo? boolean? . -> . pinfo?)]
+                  [pinfo-update-allow-redefinition? (pinfo? boolean? . -> . pinfo?)]
 
                   [pinfo-update-module-resolver (pinfo? (module-name? . -> . (or/c module-binding? false/c))
                                                         . -> . pinfo?)]
