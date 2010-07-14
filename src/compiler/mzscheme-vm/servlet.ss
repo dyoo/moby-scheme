@@ -73,10 +73,10 @@
 ;; handle-json-response: -> response
 (define (handle-json-response request program-name program-input-port)
   (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
-    (fprintf output-port "~a(" 
+    (fprintf output-port "~a((" 
              (extract-binding/single 'callback (request-bindings request)))
     (compile program-input-port output-port #:name program-name)
-    (fprintf output-port ");\n")
+    (fprintf output-port "));\n")
     (close-output-port output-port)
     response))
 
@@ -98,7 +98,9 @@
 ;; non jsonp stuff: use with xmlhttprequest
 (define (handle-response request program-name program-input-port)
   (let-values  ([(response output-port) (make-port-response #:mime-type #"text/plain")])
+    (display "(" output-port)
     (compile program-input-port output-port #:name program-name)
+    (display ")" output-port)
     (close-output-port output-port)
     response))
 
