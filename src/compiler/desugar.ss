@@ -189,8 +189,9 @@
                              (lambda (ids body)
                                (local [(define desugared-body+pinfo (desugar-expression body a-pinfo))]
                                  (list (list (datum->stx #f 
-                                                         `(define-values (@,ids) 
-                                                            ,(first (desugared-body+pinfo)))
+                                                         `(define-values (,@ids) 
+                                                            ,(first 
+                                                              desugared-body+pinfo))
                                                          (stx-loc a-defn)))
                                        (second desugared-body+pinfo)))))))
 

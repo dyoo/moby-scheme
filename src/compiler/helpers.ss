@@ -364,7 +364,7 @@
           (stx-list-of-symbols? (second (stx-e a-definition))))
      (local [(define ids (stx-e (second (stx-e a-definition))))
              (define body (third (stx-e a-definition)))]
-       (f-define-values ids body))]
+         (f-define-values ids body))]
     
     
 
@@ -382,7 +382,16 @@
              (stx-loc a-definition)
              (make-moby-error-type:generic-syntactic-error
               "define-struct expects an identifier and a list of fields.  i.e. (define-struct pizza (dough sauce toppings))"
-              (list))))]))
+              (list))))]
+    
+    [(stx-begins-with? a-definition 'define-values)
+     (raise (make-moby-error
+             (stx-loc a-definition)
+             (make-moby-error-type:generic-syntactic-error
+              "define-values expects a list of identifiers and a body.  i.e. (define-values (x) 42)"
+              (list))))]
+    
+    ))
 
 
 
