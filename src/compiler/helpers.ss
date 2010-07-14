@@ -171,23 +171,23 @@
 ;; java-identifiers: (rbtreeof symbol boolean)
 (define java-identifiers
   (foldl (lambda (sym an-rbtree)
-          (rbtree-insert symbol< an-rbtree sym true))
-        empty-rbtree
-        
-        '(abstract  continue  	for  	new  	switch
-                    assert 	default 	goto 	package 	synchronized
-                    boolean 	do 	if 	private 	#; this
-                    break 	double 	implements 	protected 	throw
-                    byte 	delete  else 	import 	public 	throws
-                    case 	enum 	instanceof instanceOf 	return 	transient
-                    catch 	extends 	int 	short 	try
-                    char 	final 	interface 	static 	void
-                    class 	finally 	long 	strictfp 	volatile
-                    const 	float 	native 	super 	while null
-                    
-                    comment export import in label typeof with false true
-                    debugger)))
-          
+           (rbtree-insert symbol< an-rbtree sym true))
+         empty-rbtree
+         
+         '(abstract  continue  	for  	new  	switch
+                     assert 	default 	goto 	package 	synchronized
+                     boolean 	do 	if 	private 	#; this
+                     break 	double 	implements 	protected 	throw
+                     byte 	delete  else 	import 	public 	throws
+                     case 	enum 	instanceof instanceOf 	return 	transient
+                     catch 	extends 	int 	short 	try
+                     char 	final 	interface 	static 	void
+                     class 	finally 	long 	strictfp 	volatile
+                     const 	float 	native 	super 	while null
+                     
+                     comment export import in label typeof with false true
+                     debugger)))
+
 
 ;; special-character-mappings: (rbtreeof char string)
 (define special-character-mappings
@@ -323,10 +323,10 @@
              (define args (rest (stx-e (second (stx-e a-definition)))))
              (define body (third (stx-e a-definition)))]
        (begin
-	 (check-single-body-stx! (rest (rest (stx-e a-definition))) a-definition)
-	 (f-function id args body)))]
-
-
+         (check-single-body-stx! (rest (rest (stx-e a-definition))) a-definition)
+         (f-function id args body)))]
+    
+    
     ;; (define id (lambda (args ...) body))
     [(and (stx-begins-with? a-definition 'define)
           (= (length (stx-e a-definition)) 3)
@@ -336,8 +336,8 @@
              (define args (stx-e (second (stx-e (third (stx-e a-definition))))))
              (define body (third (stx-e (third (stx-e a-definition)))))]
        (begin
-	 (check-single-body-stx! (rest (rest (stx-e (third (stx-e a-definition))))) a-definition)
-	 (f-function id args body)))]
+         (check-single-body-stx! (rest (rest (stx-e (third (stx-e a-definition))))) a-definition)
+         (f-function id args body)))]
     
     ;; (define id body)
     [(and (stx-begins-with? a-definition 'define)
@@ -357,17 +357,17 @@
      (local [(define id (second (stx-e a-definition)))
              (define fields (stx-e (third (stx-e a-definition))))]
        (f-define-struct id fields))]
- 
+    
     ;; (define-values (id ...) body)
     [(and (stx-begins-with? a-definition 'define-values)
           (= (length (stx-e a-definition)) 3)
           (stx-list-of-symbols? (second (stx-e a-definition))))
      (local [(define ids (stx-e (second (stx-e a-definition))))
              (define body (third (stx-e a-definition)))]
-         (f-define-values ids body))]
+       (f-define-values ids body))]
     
     
-
+    
     ;; FIXME: add more error productions as necessary to get
     ;; reasonable error messages.
     [(stx-begins-with? a-definition 'define)
@@ -376,7 +376,7 @@
              (make-moby-error-type:generic-syntactic-error
               "define expects either an identifier and a body: (define answer 42), or a function header and body: (define (double x ) (* x 2))"
               (list))))]
-
+    
     [(stx-begins-with? a-definition 'define-struct)
      (raise (make-moby-error
              (stx-loc a-definition)
@@ -452,13 +452,13 @@
 ;; mapi: (X number -> Y) (listof X) -> (listof Y)
 (define (mapi f lst)
   (local ([define (loop lst i)
-	    
-	    (cond
-	     [(empty? lst)
-	      empty]
-	     [else
-	      (cons (f (first lst) i)
-		    (loop (rest lst) (add1 i)))])])
+            
+            (cond
+              [(empty? lst)
+               empty]
+              [else
+               (cons (f (first lst) i)
+                     (loop (rest lst) (add1 i)))])])
     (loop lst 0)))
 
 
@@ -472,7 +472,7 @@
                   [provide-statement? (any/c . -> . boolean?)]
                   [take ((listof any/c) number? . -> . (listof any/c))]
                   [list-tail ((listof any/c) number? . -> . (listof any/c))]
-
+                  
                   [expression<? (expression? expression? . -> . boolean?)]
                   
                   [remove-leading-whitespace (string? . -> . string?)]
@@ -481,7 +481,7 @@
                   
                   
                   [check-duplicate-identifiers! ((listof stx?)  . -> . any)]
-
+                  
                   [check-single-body-stx! ((listof stx?) stx? . -> . any)]
                   [case-analyze-definition (stx? 
                                             (symbol-stx? (listof symbol-stx?) stx? . -> . any)
