@@ -8,16 +8,16 @@
 (define (get-toplevel-env lang)
   ;; fixme: use the language to limit what symbols get in the toplevel.
   (local [(define base-constants-env
-            (foldl (lambda (id+name env)
-                     (env-extend-constant env (first id+name) "moby/toplevel" (second id+name)))
+            (foldl (lambda (id env)
+                     (env-extend-constant env id "moby/toplevel"))
                    empty-env
-                   '((null "plt.types.Empty.EMPTY")
-                     (empty "plt.types.Empty.EMPTY")
-                     (true "plt.types.Logic.TRUE")
-                     (false "plt.types.Logic.FALSE")
-                     (eof "plt.types.EofObject.EOF")
-                     (pi "plt.Kernel.pi")
-                     (e "plt.Kernel.e"))))
+                   '(null
+                     empty
+                     true
+                     false
+                     eof
+                     pi
+                     e)))
           
           ;; Registers a new toplevel function, munging the name
           (define (r env a-name arity vararity?)
@@ -25,11 +25,7 @@
                                  a-name 
                                  "moby/toplevel"
                                  arity 
-                                 vararity?
-                                 (string-append 
-                                  "plt.Kernel."
-                                  (symbol->string (identifier->munged-java-identifier 
-                                                   a-name)))))
+                                 vararity?))
           
           ;; The core environment includes bindings to Javascript-written functions.
           (define core-env

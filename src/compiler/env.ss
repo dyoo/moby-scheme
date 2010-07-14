@@ -59,20 +59,19 @@
 
 ;; env-extend-constant: env (module-path | #f) symbol string -> env
 ;; Extends the environment with a new constant binding.
-(define (env-extend-constant an-env id module-source java-string)
+(define (env-extend-constant an-env id module-source)
   (env-extend an-env
-              (make-binding:constant id module-source java-string empty)))
+              (make-binding:constant id module-source empty)))
 
 
 ;; env-extend-function: env symbol (or/c string false) number boolean? string? -> env
 ;; Extends the environment with a new function binding
-(define (env-extend-function an-env id module-source min-arity var-arity? java-string)
+(define (env-extend-function an-env id module-source min-arity var-arity?)
   (env-extend an-env
               (make-binding:function id 
                                      module-source
                                      min-arity 
                                      var-arity?
-                                     java-string
                                      empty
                                      false)))
 
@@ -105,6 +104,6 @@
  [env-contains? (env? symbol? . -> . boolean?)]
  [env-keys (env? . -> . (listof symbol?))]
  
- [env-extend-constant (env? symbol? (or/c module-path? false/c) string? . -> . env?)]
- [env-extend-function (env? symbol? (or/c module-path? false/c) number? boolean? string?
+ [env-extend-constant (env? symbol? (or/c module-path? false/c) . -> . env?)]
+ [env-extend-function (env? symbol? (or/c module-path? false/c) number? boolean? 
                        . -> . env?)])

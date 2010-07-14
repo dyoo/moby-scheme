@@ -105,15 +105,24 @@
   ;;
   ;; Create a prefix that refers to those values
   ;; Create an environment that maps to the prefix
-  (let* ([free-variables (pinfo-free-variables pinfo)]
+  (let* ([required-modules (pinfo-modules pinfo)]
+         [free-variables (pinfo-free-variables pinfo)]
          [local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
-         [module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash pinfo)
-                                               (lambda (name a-binding acc)
-                                                 (cond
-                                                   [(binding:binding-module-source a-binding)
-                                                    (cons a-binding acc)]
-                                                   [else acc]))
-                                               '())])
+         [module-defined-bindings 
+          (rbtree-fold (pinfo-used-bindings-hash pinfo)
+                       (lambda (name a-binding acc)
+                         (printf "~s ~s ~s\n"  
+                                 a-binding
+                                 (binding:binding-id a-binding)
+                                 (binding:binding-module-source a-binding))
+                         (cond
+                           [(binding:binding-module-source a-binding)
+                            (cons a-binding acc)]
+                           [else acc]))
+                       '())])
+    (printf "required modules: ~s" (map (lambda (a-mod)
+                                          (binding:module-binding-name a-mod))
+                                        required-modules))
     (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
@@ -125,33 +134,12 @@
                                                                             0))
                                               module-defined-bindings))
                                '())
-            (env-push-globals empty-env 
-                              (append free-variables
-                                      local-defined-names 
-                                      (map binding:binding-id module-defined-bindings))))))
+            (env-push-globals 
+             empty-env 
+             (append free-variables
+                     local-defined-names 
+                     (map binding:binding-id module-defined-bindings))))))
 
-
-
-;; check-definitions-do-not-overlap-toplevel!: (listof symbol) pinfo -> void
-;; Raise an error if any names overlap between the defined ones and ones
-;; that we already use.
-#;(define (check-definitions-do-not-overlap-toplevel! names base-env)
-  (void)
-  #;(let ([module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash base-pinfo)
-                                              (lambda (name a-binding acc)
-                                                (cond
-                                                  [(binding:binding-module-source a-binding)
-                                                   (cons a-binding acc)]
-                                                  [else acc]))
-                                              '())])
-    (for-each (lambda (a-name)
-                (when (findf (lambda (a-binding)
-                               (symbol=? a-name 
-                                         (binding:binding-id a-binding)))
-                             module-defined-bindings)
-                  (error 'compiler 
-                         "The definition ~s conflicts with a built-in definition." a-name)))
-              names)))
 
 
 
