@@ -111,18 +111,18 @@
          [module-defined-bindings 
           (rbtree-fold (pinfo-used-bindings-hash pinfo)
                        (lambda (name a-binding acc)
-                         (printf "~s ~s ~s\n"  
-                                 a-binding
-                                 (binding:binding-id a-binding)
-                                 (binding:binding-module-source a-binding))
+                         #;(printf "~s ~s ~s\n"  
+                                   a-binding
+                                   (binding:binding-id a-binding)
+                                   (binding:binding-module-source a-binding))
                          (cond
                            [(binding:binding-module-source a-binding)
                             (cons a-binding acc)]
                            [else acc]))
                        '())])
-    (printf "required modules: ~s" (map (lambda (a-mod)
-                                          (binding:module-binding-name a-mod))
-                                        required-modules))
+    #;(printf "required modules: ~s" (map (lambda (a-mod)
+                                            (binding:module-binding-name a-mod))
+                                          required-modules))
     (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 

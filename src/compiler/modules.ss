@@ -89,13 +89,13 @@
                          (list (bf 'make-effect:none module-path 0
                                    false) 
                                (make-binding:function
-				'make-effect:beep module-path 0
-                                   false 
-                                   (list PERMISSION:VIBRATE)
-				   false)
+                                'make-effect:beep module-path 0
+                                false 
+                                (list PERMISSION:VIBRATE)
+                                false)
                                (bf 'make-effect:play-dtmf-tone module-path 2
                                    false)
-
+                               
                                (make-binding:function 
                                 'make-effect:send-sms module-path 2 false 
                                 (list PERMISSION:SEND-SMS)
@@ -121,9 +121,9 @@
                                    false)
                                
                                (make-binding:function 'make-effect:set-wake-lock module-path 1
-                                   false 
-                                   (list PERMISSION:WAKE-LOCK) 
-                                   false)
+                                                      false 
+                                                      (list PERMISSION:WAKE-LOCK) 
+                                                      false)
                                (make-binding:function
                                 'make-effect:release-wake-lock
                                 module-path
@@ -150,15 +150,15 @@
                                (bf 'on-mouse module-path 1 false)
                                (bf 'on-mouse! module-path 2 false)
                                
-
-			       (bf 'initial-effect module-path 1 false)
-
+                               
+                               (bf 'initial-effect module-path 1 false)
+                               
                                (bf 'on-key module-path 1 false)
                                (bf 'on-key! module-path 2 false)
-
+                               
                                (bf 'on-announce module-path 1 false)
                                (bf 'on-announce! module-path 2 false)
-
+                               
                                (make-binding:function
                                 'on-location-change module-path 1 false
                                 (list PERMISSION:LOCATION)
@@ -191,7 +191,7 @@
                                 'on-sms-receive module-path 1 false
                                 (list PERMISSION:RECEIVE-SMS)
                                 false)
-
+                               
                                (make-binding:function
                                 'on-sms-receive* module-path 1 false
                                 (list PERMISSION:RECEIVE-SMS)
@@ -225,44 +225,44 @@
           (define (bf name module-path arity vararity?)
             (make-binding:function name module-path arity vararity? empty false))]
     (make-module-binding 'world
-                       module-path
-                       (append (module-binding-bindings world-handlers-module)
-                               (module-binding-bindings world-effects-module)
-                               (list (bf 'big-bang module-path 3 true)
-
-				     ;; Images
-				     (bf 'image? module-path 1 false)
-				     (bf 'image=? module-path 2 false)
-
-				     (bf 'make-color module-path 3 false)
-
-                                     (bf 'empty-scene module-path 2 false)
-                                     (bf 'place-image module-path 4 false)
-                                     
-                                     (bf 'put-pinhole module-path 3 false)
-
-                                     (bf 'circle module-path 3 false)
-                                     
-                                     (bf 'star module-path 5 false)
-
-                                     (bf 'nw:rectangle module-path 4 false)
-                                     (bf 'rectangle module-path 4 false)
-                                     (bf 'triangle module-path 3 false)
-                                     (bf 'ellipse module-path 4 false)
-                                     (bf 'line module-path 3 false)
-                                     
-				     (bf 'overlay module-path 2 true)
-				     (bf 'overlay/xy module-path 4 false)
-                                     (bf 'underlay module-path 2 true)
-                                     (bf 'underlay/xy module-path 4 false)
-
-                                     (bf 'key=? module-path 2 false)
-                                     (bf 'text module-path 3 false)
-				     (bf 'open-image-url module-path 1 false)
-                                     (bf 'image-width module-path 1 false)
-                                     (bf 'image-height module-path 1 false)
-                                     (bf 'image-rotate module-path 2 false)
-                                     )))))
+                         module-path
+                         (append (module-binding-bindings world-handlers-module)
+                                 (module-binding-bindings world-effects-module)
+                                 (list (bf 'big-bang module-path 3 true)
+                                       
+                                       ;; Images
+                                       (bf 'image? module-path 1 false)
+                                       (bf 'image=? module-path 2 false)
+                                       
+                                       (bf 'make-color module-path 3 false)
+                                       
+                                       (bf 'empty-scene module-path 2 false)
+                                       (bf 'place-image module-path 4 false)
+                                       
+                                       (bf 'put-pinhole module-path 3 false)
+                                       
+                                       (bf 'circle module-path 3 false)
+                                       
+                                       (bf 'star module-path 5 false)
+                                       
+                                       (bf 'nw:rectangle module-path 4 false)
+                                       (bf 'rectangle module-path 4 false)
+                                       (bf 'triangle module-path 3 false)
+                                       (bf 'ellipse module-path 4 false)
+                                       (bf 'line module-path 3 false)
+                                       
+                                       (bf 'overlay module-path 2 true)
+                                       (bf 'overlay/xy module-path 4 false)
+                                       (bf 'underlay module-path 2 true)
+                                       (bf 'underlay/xy module-path 4 false)
+                                       
+                                       (bf 'key=? module-path 2 false)
+                                       (bf 'text module-path 3 false)
+                                       (bf 'open-image-url module-path 1 false)
+                                       (bf 'image-width module-path 1 false)
+                                       (bf 'image-height module-path 1 false)
+                                       (bf 'image-rotate module-path 2 false)
+                                       )))))
 
 
 ;; world teachpack bindings
@@ -288,7 +288,7 @@
           (define module-path
             "bootstrap/bootstrap-teachpack")
           ]
-    (make-module-binding 'moby/bootstrap-teachpack
+    (make-module-binding 'bootstrap/bootstrap-teachpack
                          module-path
                          (append 
                           (list 
@@ -298,7 +298,7 @@
                            (bf 'sine module-path 1 false)
                            (bf 'cosine module-path 1 false)
                            (bf 'tangent module-path 1 false))
-                           (module-binding-bindings world-stub-module)))))
+                          (module-binding-bindings world-stub-module)))))
 
 ;; Cage teachpack
 (define cage-teachpack
@@ -308,7 +308,7 @@
             (make-binding:function name module-path arity vararity? empty false))
           (define module-path
             "bootstrap/cage-teachpack")]
-    (make-module-binding 'moby/cage-teachpack
+    (make-module-binding 'bootstrap/cage-teachpack
                          module-path
                          (append 
                           (list 
@@ -323,7 +323,7 @@
           (define module-path
             "bootstrap/function-teachpack")
           ]
-    (make-module-binding 'moby/function-teachpack
+    (make-module-binding 'bootstrap/function-teachpack
                          module-path
                          (append 
                           (list 
@@ -378,7 +378,7 @@
 (define telephony-module
   (local [(define module-path
             "moby/telephony")]
-
+    
     (make-module-binding 'telephony
                          module-path
                          (list (make-binding:function 'get-signal-strengths
@@ -395,7 +395,7 @@
 (define net-module
   (local [(define module-path
             "moby/net")]
-
+    
     (make-module-binding 'net
                          module-path
                          (list (make-binding:function 'get-url
@@ -408,7 +408,7 @@
 (define parser-module
   (local [(define module-path
             "moby/parser")]
-
+    
     (make-module-binding 'parser
                          module-path
                          (list (make-binding:function 'xml->s-exp
@@ -421,7 +421,7 @@
 (define jsworld-module
   (local [(define module-path
             "moby/jsworld")
-
+          
           (define (bf name arity)
             (make-binding:function name module-path arity true empty false))]
     (make-module-binding 'jsworld
@@ -443,18 +443,18 @@
                                
                                ;; Each of these functions can take an optional
                                ;; (sexpof css-style) argument.
-
+                               
                                (bf 'js-div 0)
                                (bf 'js-p 0)
                                (bf 'js-button 1)
                                (bf 'js-button! 2)
                                (bf 'js-input 2)
-			       (make-binding:function 'js-img module-path 1 true 
-						      (list PERMISSION:INTERNET) 
-						      false)
+                               (make-binding:function 'js-img module-path 1 true 
+                                                      (list PERMISSION:INTERNET) 
+                                                      false)
                                (bf 'js-node 1)
-			       (bf 'js-select 2)))))
-  
+                               (bf 'js-select 2)))))
+
 
 
 
@@ -480,14 +480,14 @@
 
 
 #;(define MOBY-RUNTIME-MODULES
-  (map (lambda (sexp)
-         (local [(define name (list-ref sexp 0))
-                 (define path (list-ref sexp 1))
-                 (define bindings (map sexp->binding (list-ref sexp 2)))]
-           (make-module-binding name
-                                path
-                                bindings)))
-       MOBY-RUNTIME-MODULE-BINDINGS))
+    (map (lambda (sexp)
+           (local [(define name (list-ref sexp 0))
+                   (define path (list-ref sexp 1))
+                   (define bindings (map sexp->binding (list-ref sexp 2)))]
+             (make-module-binding name
+                                  path
+                                  bindings)))
+         MOBY-RUNTIME-MODULE-BINDINGS))
 
 
 
@@ -502,7 +502,7 @@
                         (module-binding-bindings jsworld-module)
                         #;(module-binding-bindings telephony-module)
                         #;(module-binding-bindings location-module)
-			#;(module-binding-bindings net-module))))
+                        #;(module-binding-bindings net-module))))
 
 
 
@@ -518,21 +518,21 @@
 
 ;; These modules are hardcoded.
 (define known-modules (list world-module
-                             world-stub-module
-                             location-module
-                             tilt-module
-                             net-module
-                             parser-module
-                             bootstrap-teachpack
-                             function-teachpack
-                             cage-teachpack
-                             telephony-module
-                             moby-module-binding
-                             
-                             foreign-module
-                             kernel-misc-module
-                             #;MOBY-RUNTIME-MODULES
-                             ))
+                            world-stub-module
+                            location-module
+                            tilt-module
+                            net-module
+                            parser-module
+                            bootstrap-teachpack
+                            function-teachpack
+                            cage-teachpack
+                            telephony-module
+                            moby-module-binding
+                            
+                            foreign-module
+                            kernel-misc-module
+                            #;MOBY-RUNTIME-MODULES
+                            ))
 
 
 ;; default-module-resolver: symbol -> (module-binding | false)
@@ -553,6 +553,9 @@
 
 ;; default-module-path-resolver: module-path module-path -> module-name
 (define (default-module-path-resolver a-module-path parent-module-path)
+  #;(printf "looking for ~s, among ~s~n"
+          a-module-path
+          (map (lambda (a-module) (module-binding-name a-module)) known-modules))
   (local [(define (loop modules)
             (cond
               [(empty? modules)
@@ -585,7 +588,7 @@
           (define (path-only p)
             (string-join (butlast (path-split p))
                          "/"))
-
+          
           (define (path-split p)
             (string-split p #\/))
           
@@ -605,21 +608,21 @@
                          (loop (cons (first pieces) current-chunks)
                                (rest pieces))]))]
               (loop empty (path-split p))))]
-  (cond
-    [(symbol? p2)
-     p2]
-    [(string? p2)
-     (cond
-       [(and (string? p1)
-             (looks-like-relative-path? p2))
-        (if (string=? (path-only p1) "")
-            p2
-            (path-simplify
-             (string-append (path-only p1)
-                            "/"
-                            p2)))]
-       [else
-        (path-simplify p2)])])))
+    (cond
+      [(symbol? p2)
+       p2]
+      [(string? p2)
+       (cond
+         [(and (string? p1)
+               (looks-like-relative-path? p2))
+          (if (string=? (path-only p1) "")
+              p2
+              (path-simplify
+               (string-append (path-only p1)
+                              "/"
+                              p2)))]
+         [else
+          (path-simplify p2)])])))
 
 
 

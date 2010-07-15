@@ -450,16 +450,20 @@
                  ((pinfo-module-resolver pinfo) maybe-module-name))]
          (cond [(module-binding? maybe-module-binding)
                 (begin
-                  (printf "require-analyze-collect-definitions: installing ~s~n"
+                  #;(printf "require-analyze-collect-definitions: installing ~s\n"
                           maybe-module-binding)
                   (pinfo-accumulate-module maybe-module-binding
                                            (pinfo-accumulate-module-bindings
                                             (module-binding-bindings maybe-module-binding)
                                             pinfo)))]
                [else
-                (signal-error)]))]
+                (begin
+                  #;(printf "~s doesn't mind to any known module: ~s\n" maybe-module-name maybe-module-binding)
+                  (signal-error))]))]
       [else
-       (signal-error)])))
+       (begin
+         #;(printf "not a module name: ~s~n" maybe-module-name)
+         (signal-error))])))
 
 
 

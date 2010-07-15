@@ -36,8 +36,6 @@
 
 ;; Web service consuming programs and producing bytecode.
 (define (start request)
-  
-  
   (with-handlers ([void 
                    (lambda (exn)
                      (cond
@@ -83,7 +81,7 @@
 
 ;; handle-json-exception-response: exn -> response
 (define (handle-json-exception-response request exn)
-  (raise exn)
+  #;(raise exn)
   (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
     (let ([payload
            (format "~a(~a);\n" (extract-binding/single 'on-error (request-bindings request))
@@ -107,7 +105,7 @@
 
 ;; handle-exception-response: exn -> response
 (define (handle-exception-response request exn)
-  (raise exn)
+  #;(raise exn)
   (make-response/full 500 
                       #"Internal Server Error"
                       (current-seconds)
