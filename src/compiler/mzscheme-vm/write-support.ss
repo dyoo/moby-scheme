@@ -9,9 +9,12 @@
 
 (require scheme/runtime-path
          scheme/port
-         scheme/contract)
+         scheme/contract
+         "compile.ss")
 
 (define-runtime-path mzscheme-vm-library-path "../../../support/externals/mzscheme-vm/lib")
+
+(define-runtime-path collections-path "collections")
 
 
 ;; cat-to-port: path output-port -> void
@@ -25,15 +28,65 @@
   (let ([platform-specific-js-path
          (build-path mzscheme-vm-library-path 
                      (string-append a-platform "-platform.js"))])
-      
+    
     (cond
-    [(file-exists? platform-specific-js-path)
-     (cat-to-port platform-specific-js-path out-port)
-     (call-with-input-file (build-path mzscheme-vm-library-path "order")
-       (lambda (order-ip)
-         (for ([filename (in-lines order-ip)])
-           (cat-to-port (build-path mzscheme-vm-library-path filename) out-port))))]
-    [else
-     (error 'mobyc (format "No support for platform ~s" a-platform))])))
+      [(file-exists? platform-specific-js-path)
+       (cat-to-port platform-specific-js-path out-port)
+       (call-with-input-file (build-path mzscheme-vm-library-path "order")
+         (lambda (order-ip)
+           (for ([filename (in-lines order-ip)])
+             (cat-to-port (build-path mzscheme-vm-library-path filename) out-port))))]
+      [else
+       (error 'mobyc (format "No support for platform ~s" a-platform))])))
 
-(provide/contract [write-support (string? output-port? . -> . any)])
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collection writing
+
+
+
+(define (write-collections out-port)
+  ;; FIXME: figure out better way to do this besides assigning toplevel
+  ;; variable COLLECTIONS.
+  ;;
+  ;; FIXME: write exported bindings out so the compiler knows about them.
+  (fprintf out-port "var COLLECTIONS = {}")
+  
+  (write-single-collection 'bootstrap/bootstrap-teachpack
+                           (build-path collections-path 
+                                       "bootstrap" 
+                                       "bootstrap-teachpack-translated.ss")
+                           out-port)
+  
+  (write-single-collection 'bootstrap/cage-teachpack
+                           (build-path collections-path 
+                                       "bootstrap" 
+                                       "cage-teachpack-translated.ss")
+                           out-port)
+  
+  (write-single-collection 'bootstrap/compass-teachpack
+                           (build-path collections-path 
+                                       "bootstrap" 
+                                       "compass-teachpack-translated.ss")
+                           out-port)
+  
+  (write-single-collection 'bootstrap/function-teachpack
+                           (build-path collections-path 
+                                       "bootstrap" 
+                                       "function-teachpack-translated.ss")
+                           out-port))
+
+
+;; write-collection: symbol path output-port -> void
+(define (write-single-collection module-name source-path out-port)
+  (fprintf out-port "COLLECTIONS[~s] = (" (symbol->string module-name))
+  (call-with-input-file source-path 
+    (lambda (in)
+      (compile in out-port #:name module-name)))
+  (fprintf out-port ");\n"))
+
+
+
+(provide/contract [write-support (string? output-port? . -> . any)]
+                  [write-collections (output-port? . -> . any)])
