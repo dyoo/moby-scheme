@@ -87,7 +87,6 @@
 ;; make-module-prefix-and-env: pinfo -> (values prefix env)
 (define (make-module-prefix-and-env pinfo)
   ;;
-  ;; FIXME: currently ignoring requires
   ;;
   ;; FIXME: local-defined-names and module-defined-bindings may not be
   ;; disjoint, in which case, references to toplevel-bound identifiers
@@ -105,10 +104,21 @@
   ;;
   ;; Create a prefix that refers to those values
   ;; Create an environment that maps to the prefix
-  (let* ([required-modules (pinfo-modules pinfo)]
+  (let* ([required-modules 
+          (pinfo-modules pinfo)]
+         
+         [required-module-bindings
+          (foldl (lambda (a-module acc)
+                   (append (binding:module-binding-bindings a-module)
+                           acc)) 
+                 empty
+                 required-modules)]
+         
          [free-variables (pinfo-free-variables pinfo)]
+         
          [local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
-         [module-defined-bindings 
+         
+         [module-or-toplevel-defined-bindings 
           (rbtree-fold (pinfo-used-bindings-hash pinfo)
                        (lambda (name a-binding acc)
                          #;(printf "~s ~s ~s\n"  
@@ -116,13 +126,12 @@
                                    (binding:binding-id a-binding)
                                    (binding:binding-module-source a-binding))
                          (cond
-                           [(binding:binding-module-source a-binding)
+                           [(and (binding:binding-module-source a-binding)
+                                 (not (member a-binding required-module-bindings)))
                             (cons a-binding acc)]
                            [else acc]))
                        '())])
-    #;(printf "required modules: ~s" (map (lambda (a-mod)
-                                            (binding:module-binding-name a-mod))
-                                          required-modules))
+
     (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
@@ -132,13 +141,14 @@
                                                                             (binding:binding-id binding)
                                                                             -1
                                                                             0))
-                                              module-defined-bindings))
+                                              (append required-module-bindings
+                                                      module-or-toplevel-defined-bindings)))
                                '())
             (env-push-globals 
              empty-env 
              (append free-variables
                      local-defined-names 
-                     (map binding:binding-id module-defined-bindings))))))
+                     (map binding:binding-id (append required-module-bindings module-or-toplevel-defined-bindings)))))))
 
 
 

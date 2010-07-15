@@ -1,5 +1,12 @@
 #lang scheme/base
 
+;; Writes out some support libraries that need to be included to
+;; properly evaluate a mzscheme-vm-compiled program.
+;;
+;; TODO: automatically generate the bootstrap-teachpack code.
+
+
+
 (require scheme/runtime-path
          scheme/port
          scheme/contract)
