@@ -92,12 +92,19 @@ var Evaluator = (function() {
 	});
 	
 	this.aState.setToplevelNodeHook(function() {
-	    var innerDom = document.createElement("div");
-	    var dom = document.createElement("div");
-	    dom.appendChild(innerDom);
-	    that.write(dom);	
-	    return innerDom;
+	    // KLUDGE: special hook to support jsworld.
+	    return that.makeToplevelNode();
 	});
+    };
+
+
+    // Toplevel nodes are constructed for world programs.
+    Evaluator.prototype.makeToplevelNode = function() {
+	var innerDom = document.createElement("div");
+	var dom = document.createElement("div");
+	dom.appendChild(innerDom);
+	this.write(dom);	
+	return innerDom;
     };
 
 
