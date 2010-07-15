@@ -290,15 +290,13 @@
           ]
     (make-module-binding 'bootstrap/bootstrap-teachpack
                          module-path
-                         (append 
-                          (list 
-                           (bf 'START module-path 14 false)
-                           (make-binding:constant 'test-frame module-path empty)
-                           (bf 'sq module-path 1 false)
-                           (bf 'sine module-path 1 false)
-                           (bf 'cosine module-path 1 false)
-                           (bf 'tangent module-path 1 false))
-                          (module-binding-bindings world-stub-module)))))
+                         (list 
+                          (bf 'START module-path 14 false)
+                          (make-binding:constant 'test-frame module-path empty)
+                          (bf 'sq module-path 1 false)
+                          (bf 'sine module-path 1 false)
+                          (bf 'cosine module-path 1 false)
+                          (bf 'tangent module-path 1 false)))))
 
 ;; Cage teachpack
 (define cage-teachpack
@@ -310,9 +308,8 @@
             "bootstrap/cage-teachpack")]
     (make-module-binding 'bootstrap/cage-teachpack
                          module-path
-                         (append 
-                          (list 
-                           (bf 'start module-path 1 false))))))
+                         (list 
+                          (bf 'start module-path 1 false)))))
 
 ;; Function teachpack
 (define function-teachpack
@@ -325,9 +322,8 @@
           ]
     (make-module-binding 'bootstrap/function-teachpack
                          module-path
-                         (append 
-                          (list 
-                           (bf 'start module-path 1 false))))))
+                         (list 
+                          (bf 'start module-path 1 false)))))
 
 
 
