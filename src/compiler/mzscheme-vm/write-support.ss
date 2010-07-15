@@ -77,10 +77,17 @@
 
 
 ;; write-collection: symbol path output-port -> void
+;; Writes out a module record.
+;; name: string
+;; bytecode: bytecode
+;; provides: arrayof string
 (define (write-single-collection module-name source-path out-port)
-  (fprintf out-port "COLLECTIONS[~s] = { 'bytecode': " (symbol->string module-name))
+  (fprintf out-port "COLLECTIONS[~s] = { 'name': ~s, "
+           (symbol->string module-name)
+           (symbol->string module-name))
   (call-with-input-file source-path 
     (lambda (in)
+      (fprintf out-port "'bytecode': ")
       (let ([pinfo (compile in out-port #:name module-name)])
         (fprintf out-port ", 'provides': [~a]};\n"
                  (string-join (map (lambda (a-binding)
