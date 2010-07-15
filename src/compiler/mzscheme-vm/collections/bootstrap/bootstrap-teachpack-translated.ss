@@ -104,7 +104,7 @@
      (make-world (world-objects w)
                  (world-targets w)
                  (world-player w)
-                 (cons (make-being (being-posn (world-player w)) (unbox PROJECTILE-IMAGE))
+                 (cons (make-being (being-posn (world-player w)) (unbox PROJECTILE-IMG))
                        (if (= 20 (length (world-projectiles w)))
                            (rest (world-projectiles w))
                            (world-projectiles w)))
@@ -213,7 +213,7 @@
          (player (make-being (make-posn 320 400) playerImg))
          (targets (map (lambda (t) (make-being (make-posn (random 640) (random 480)) t)) targetImgs))
          (objects (map (lambda (o) (make-being (make-posn (random 640) (random 480)) o)) objectImgs))
-         (projectiles (list (make-being (make-posn -200 0) (unbox PROJECTILE-IMAGE))))
+         (projectiles (list (make-being (make-posn -200 0) (unbox PROJECTILE-IMG))))
          (world (make-world objects targets player projectiles
                             (put-pinhole bg 0 0)
                             100

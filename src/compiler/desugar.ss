@@ -385,13 +385,14 @@
                (define then-expr (second (first desugared-exprs+pinfo)))
                (define else-expr (third (first desugared-exprs+pinfo)))]
          (list (datum->stx #f 
-                           `(,if-symbol-stx ,(tag-application-operator/module 
-                                              (datum->stx #f 
-                                                          `(verify-boolean-branch-value 
-                                                            ,test-expr
-                                                            (quote ,(Loc->sexp (stx-loc test-expr))))
-                                                          (stx-loc test-expr))
-                                              'moby/runtime/kernel/misc)
+                           `(,if-symbol-stx ,test-expr
+                                            #;,(tag-application-operator/module 
+                                                (datum->stx #f 
+                                                            `(verify-boolean-branch-value 
+                                                              ,test-expr
+                                                              (quote ,(Loc->sexp (stx-loc test-expr))))
+                                                            (stx-loc test-expr))
+                                                'moby/runtime/kernel/misc)
                                             ,then-expr
                                             ,else-expr)
                            (stx-loc expr))
