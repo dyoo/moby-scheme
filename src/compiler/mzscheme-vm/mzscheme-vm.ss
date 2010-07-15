@@ -71,14 +71,17 @@
             [expressions (filter (lambda (x) (or (test-case? x)
                                                  (expression? x))) 
                                  a-program)])
-        (let*-values ([(compiled-definitions pinfo)
+        (let*-values ([(compiled-requires pinfo)
+                       (compile-requires requires pinfo)]
+                      [(compiled-definitions pinfo)
                        (compile-definitions defns env pinfo)]
                       [(compiled-exprs pinfo)
                        (compile-expressions expressions env pinfo)])
           (values (bcode:make-compilation-top 0 
                                               toplevel-prefix
                                               (bcode:make-seq 
-                                               (append compiled-definitions 
+                                               (append compiled-requires
+                                                       compiled-definitions 
                                                        compiled-exprs)))
                   pinfo))))))
 
@@ -132,7 +135,8 @@
                            [else acc]))
                        '())])
 
-    (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
+    (values (bcode:make-prefix 0 (append (list #f)
+                                         (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
                                                 (bcode:make-module-variable (module-path-index-join 
@@ -146,7 +150,8 @@
                                '())
             (env-push-globals 
              empty-env 
-             (append free-variables
+             (append (list #f)
+                     free-variables
                      local-defined-names 
                      (map binding:binding-id (append required-module-bindings module-or-toplevel-defined-bindings)))))))
 
@@ -181,6 +186,26 @@
    (lambda (ids body)
      (compile-variables-definition ids body env a-pinfo))))
 
+
+;; compile-requires: (listof require) pinfo -> (values (listof bcode) pinfo)
+(define (compile-requires requires a-pinfo)
+  (cond [(empty? requires)
+         (values empty a-pinfo)]
+        [else
+         (let*-values ([(first-compiled-require a-pinfo)
+                        (compile-require (first requires) a-pinfo)]
+                       [(rest-compiled-requires a-pinfo)
+                        (compile-requires (rest requires) a-pinfo)])
+           (values (cons first-compiled-require rest-compiled-requires)
+                   a-pinfo))]))
+
+
+(define (compile-require a-require a-pinfo)
+  ;; FIXME: I should be doing some kind of module resolution here.
+  (values (bcode:make-req
+           (datum->syntax #f (stx->datum (second (stx-e a-require))))
+           (bcode:make-toplevel 0 0 #f #f))
+          a-pinfo))
 
 
 (define (compile-function-definition fun-name args body env a-pinfo)
