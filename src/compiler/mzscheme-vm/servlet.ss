@@ -124,6 +124,14 @@
     (write-support "browser" op))
   #:exists 'replace)
 
+
+;; Also, write out the collections
+(call-with-output-file (build-path htdocs "collections.js")
+  (lambda (op)
+    (write-collections op))
+  #:exists 'replace)
+
+
 (serve/servlet start 
                #:port 8000
                #:extra-files-paths (list htdocs compat)

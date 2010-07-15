@@ -9,7 +9,7 @@
 #;(provide circle triangle rectangle ellipse star line text #;EXAMPLE)
 #;(provide-higher-order-primitive start (rocket-height))
 
-#;(provide start)
+(provide start)
 
 ; dimensions: 
 (define WIDTH  200)

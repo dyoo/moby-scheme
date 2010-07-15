@@ -10,6 +10,10 @@
 (require scheme/runtime-path
          scheme/port
          scheme/contract
+         scheme/string
+         "../../collects/moby/runtime/binding.ss"
+         "../rbtree.ss"
+         "../pinfo.ss"
          "compile.ss")
 
 (define-runtime-path mzscheme-vm-library-path "../../../support/externals/mzscheme-vm/lib")
@@ -51,7 +55,7 @@
   ;; variable COLLECTIONS.
   ;;
   ;; FIXME: write exported bindings out so the compiler knows about them.
-  (fprintf out-port "var COLLECTIONS = {}")
+  (fprintf out-port "var COLLECTIONS = {};\n")
   
   (write-single-collection 'bootstrap/bootstrap-teachpack
                            (build-path collections-path 
@@ -65,12 +69,6 @@
                                        "cage-teachpack-translated.ss")
                            out-port)
   
-  (write-single-collection 'bootstrap/compass-teachpack
-                           (build-path collections-path 
-                                       "bootstrap" 
-                                       "compass-teachpack-translated.ss")
-                           out-port)
-  
   (write-single-collection 'bootstrap/function-teachpack
                            (build-path collections-path 
                                        "bootstrap" 
@@ -80,11 +78,16 @@
 
 ;; write-collection: symbol path output-port -> void
 (define (write-single-collection module-name source-path out-port)
-  (fprintf out-port "COLLECTIONS[~s] = (" (symbol->string module-name))
+  (fprintf out-port "COLLECTIONS[~s] = { 'bytecode': " (symbol->string module-name))
   (call-with-input-file source-path 
     (lambda (in)
-      (compile in out-port #:name module-name)))
-  (fprintf out-port ");\n"))
+      (let ([pinfo (compile in out-port #:name module-name)])
+        (fprintf out-port ", 'provides': [~a]};\n"
+                 (string-join (map (lambda (a-binding)
+                                     (format "~s" (symbol->string (binding-id a-binding))))
+                                   (pinfo-get-exposed-bindings pinfo))
+                              ","))))))
+
 
 
 

@@ -89,7 +89,8 @@
        (andmap (lambda (x) 
                  (or (defn? x)
                      (expression? x)
-                     (library-require? x)))
+                     (library-require? x)
+                     (provide-statement? x)))
                datum)))
 
 
@@ -97,7 +98,8 @@
 ;; Returns true if the datum is an expression.
 (define (expression? an-expr)
   (and (not (defn? an-expr))
-       (not (library-require? an-expr))))
+       (not (library-require? an-expr))
+       (not (provide-statement? an-expr))))
 
 
 ;; defn?: stx -> boolean

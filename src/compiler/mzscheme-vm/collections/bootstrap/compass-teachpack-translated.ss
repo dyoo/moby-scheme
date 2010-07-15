@@ -7,12 +7,12 @@
          (for-syntax scheme/base)
          (except-in htdp/testing test)
          lang/prim)
-#;(provide random-direction
+(provide random-direction
          random-color
-         TEST
-         (rename-out (on-key-event/new on-key-event))
-         (rename-out (on-mouse-event/new on-mouse-event))
-         (except-out (all-from-out htdp/world) 
+         #;TEST
+         #;(rename-out (on-key-event/new on-key-event))
+         #;(rename-out (on-mouse-event/new on-mouse-event))
+         #;(except-out (all-from-out htdp/world) 
                      on-key-event 
                      on-mouse-event))
 

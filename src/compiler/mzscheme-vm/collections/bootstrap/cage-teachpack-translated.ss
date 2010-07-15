@@ -1,4 +1,4 @@
-#lang s-exp "../../moby-lang.ss"
+;;#lang s-exp "../../moby-lang.ss"
 
 #;(require (lib "world.ss" "htdp")
          (lib "prim.ss" "lang")
