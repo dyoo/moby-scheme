@@ -302,6 +302,7 @@
                                       '(local [(define (f x) (* x x))]
                                          (+ (f 3) (f 4)))))
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+    (local:check-all-definitions! (stx-e (second (stx-e expr))))
     (local [(define local-symbol-stx (first (stx-e expr)))
             (define defns (stx-e (second (stx-e expr))))
             (define body (third (stx-e expr)))
@@ -317,6 +318,20 @@
                         (stx-loc expr))
             (pinfo-update-env (second desugared-body+pinfo)
                               (pinfo-env pinfo))))))
+
+
+(define (local:check-all-definitions! defns)
+  (cond
+    [(empty? defns)
+     (void)]
+    [(defn? (first defns))
+     (local:check-all-definitions! (rest defns))]
+    [else
+     (raise (make-moby-error (stx-loc (first defns))
+                             (make-moby-error-type:generic-syntactic-error
+                              (format "local expects only definitions, but ~s is not a definition"
+                                      (stx->datum (first defns)))
+                              (list))))]))
 
 
 
