@@ -153,8 +153,8 @@
 
 ;; bf: symbol path number boolean string -> binding:function
 ;; Helper function.
-(define (bf name module-path arity vararity? java-string)
-  (make-binding:function name module-path arity vararity? java-string empty false))
+(define (bf name module-path arity vararity?)
+  (make-binding:function name module-path arity vararity? empty false))
 
 
 ;; definition-analyze-collect-definitions: definition program-info -> program-info
@@ -168,9 +168,7 @@
      (pinfo-accumulate-defined-binding (bf (stx-e id)
                                            false
                                            (length args) 
-                                           false 
-                                           (symbol->string
-                                            (identifier->munged-java-identifier (stx-e id))))
+                                           false)
                                        pinfo
                                        (stx-loc id)))
    
@@ -179,8 +177,6 @@
      (pinfo-accumulate-defined-binding (make-binding:constant 
                                         (stx-e id)
                                         #f
-                                        (symbol->string 
-                                         (identifier->munged-java-identifier (stx-e id)))
                                         empty)
                                        pinfo
                                        (stx-loc id)))
@@ -199,9 +195,6 @@
                (make-binding:constant
                 (stx-e id)
                 #f
-                (symbol->string
-                 (identifier->munged-java-identifier
-                  (stx-e id)))
                 empty)
                pinfo
                (stx-loc id)))
@@ -217,24 +210,18 @@
   (local [(define constructor-id 
             (string->symbol (string-append "make-" (symbol->string id))))
           (define constructor-binding 
-            (bf constructor-id false (length fields) false
-                (symbol->string
-                 (identifier->munged-java-identifier constructor-id))))
+            (bf constructor-id false (length fields) false))
           (define predicate-id
             (string->symbol (string-append (symbol->string id) "?")))
           (define predicate-binding
-            (bf predicate-id false 1 false
-                (symbol->string
-                 (identifier->munged-java-identifier predicate-id))))
+            (bf predicate-id false 1 false))
           (define selector-ids
             (map (lambda (f)
                    (string->symbol (string-append (symbol->string id) "-" (symbol->string f))))
                  fields))
           (define selector-bindings
             (map (lambda (sel-id) 
-                   (bf sel-id false 1 false 
-                       (symbol->string
-                        (identifier->munged-java-identifier sel-id))))
+                   (bf sel-id false 1 false))
                  selector-ids))
           (define mutator-ids
             (map (lambda (f)
@@ -242,8 +229,7 @@
                  fields))
           (define mutator-bindings
             (map (lambda (mut-id)
-                   (bf mut-id false 2 false
-                       (symbol->string (identifier->munged-java-identifier mut-id))))
+                   (bf mut-id false 2 false))
                  mutator-ids))
           
           (define structure-binding
@@ -289,8 +275,7 @@
 (define (function-definition-analyze-uses fun args body pinfo)
   (local [(define env-1 (pinfo-env pinfo))
           (define env-2 
-            (env-extend env-1 (bf (stx-e fun) false (length args) false
-                                  (symbol->string (identifier->munged-java-identifier (stx-e fun))))))]
+            (env-extend env-1 (bf (stx-e fun) false (length args) false)))]
     (lambda-expression-analyze-uses args body (pinfo-update-env pinfo env-2))))
 
 
@@ -302,8 +287,6 @@
             (foldl (lambda (arg-id env) 
                      (env-extend env (make-binding:constant (stx-e arg-id)
                                                             #f
-                                                            (symbol->string
-                                                             (stx-e arg-id))
                                                             empty)))
                    env-1
                    args))]
@@ -449,14 +432,21 @@
        (local [(define maybe-module-binding
                  ((pinfo-module-resolver pinfo) maybe-module-name))]
          (cond [(module-binding? maybe-module-binding)
-                (pinfo-accumulate-module maybe-module-binding
-                                         (pinfo-accumulate-module-bindings
-                                          (module-binding-bindings maybe-module-binding)
-                                          pinfo))]
+                (begin
+                  #;(printf "require-analyze-collect-definitions: installing ~s\n"
+                          maybe-module-binding)
+                  (pinfo-accumulate-module maybe-module-binding
+                                           (pinfo-accumulate-module-bindings
+                                            (module-binding-bindings maybe-module-binding)
+                                            pinfo)))]
                [else
-                (signal-error)]))]
+                (begin
+                  #;(printf "~s doesn't mind to any known module: ~s\n" maybe-module-name maybe-module-binding)
+                  (signal-error))]))]
       [else
-       (signal-error)])))
+       (begin
+         #;(printf "not a module name: ~s~n" maybe-module-name)
+         (signal-error))])))
 
 
 

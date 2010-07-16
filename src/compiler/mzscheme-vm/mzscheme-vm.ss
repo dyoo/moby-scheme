@@ -71,14 +71,17 @@
             [expressions (filter (lambda (x) (or (test-case? x)
                                                  (expression? x))) 
                                  a-program)])
-        (let*-values ([(compiled-definitions pinfo)
+        (let*-values ([(compiled-requires pinfo)
+                       (compile-requires requires pinfo)]
+                      [(compiled-definitions pinfo)
                        (compile-definitions defns env pinfo)]
                       [(compiled-exprs pinfo)
                        (compile-expressions expressions env pinfo)])
           (values (bcode:make-compilation-top 0 
                                               toplevel-prefix
                                               (bcode:make-seq 
-                                               (append compiled-definitions 
+                                               (append compiled-requires
+                                                       compiled-definitions 
                                                        compiled-exprs)))
                   pinfo))))))
 
@@ -87,7 +90,6 @@
 ;; make-module-prefix-and-env: pinfo -> (values prefix env)
 (define (make-module-prefix-and-env pinfo)
   ;;
-  ;; FIXME: currently ignoring requires
   ;;
   ;; FIXME: local-defined-names and module-defined-bindings may not be
   ;; disjoint, in which case, references to toplevel-bound identifiers
@@ -105,16 +107,36 @@
   ;;
   ;; Create a prefix that refers to those values
   ;; Create an environment that maps to the prefix
-  (let* ([free-variables (pinfo-free-variables pinfo)]
+  (let* ([required-modules 
+          (pinfo-modules pinfo)]
+         
+         [required-module-bindings
+          (foldl (lambda (a-module acc)
+                   (append (binding:module-binding-bindings a-module)
+                           acc)) 
+                 empty
+                 required-modules)]
+         
+         [free-variables (pinfo-free-variables pinfo)]
+         
          [local-defined-names (rbtree-keys (pinfo-defined-names pinfo))]
-         [module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash pinfo)
-                                               (lambda (name a-binding acc)
-                                                 (cond
-                                                   [(binding:binding-module-source a-binding)
-                                                    (cons a-binding acc)]
-                                                   [else acc]))
-                                               '())])
-    (values (bcode:make-prefix 0 (append (map bcode:make-global-bucket free-variables)
+         
+         [module-or-toplevel-defined-bindings 
+          (rbtree-fold (pinfo-used-bindings-hash pinfo)
+                       (lambda (name a-binding acc)
+                         #;(printf "~s ~s ~s\n"  
+                                   a-binding
+                                   (binding:binding-id a-binding)
+                                   (binding:binding-module-source a-binding))
+                         (cond
+                           [(and (binding:binding-module-source a-binding)
+                                 (not (member a-binding required-module-bindings)))
+                            (cons a-binding acc)]
+                           [else acc]))
+                       '())])
+
+    (values (bcode:make-prefix 0 (append (list #f)
+                                         (map bcode:make-global-bucket free-variables)
                                          (map bcode:make-global-bucket local-defined-names)
                                          (map (lambda (binding) 
                                                 (bcode:make-module-variable (module-path-index-join 
@@ -123,35 +145,16 @@
                                                                             (binding:binding-id binding)
                                                                             -1
                                                                             0))
-                                              module-defined-bindings))
+                                              (append required-module-bindings
+                                                      module-or-toplevel-defined-bindings)))
                                '())
-            (env-push-globals empty-env 
-                              (append free-variables
-                                      local-defined-names 
-                                      (map binding:binding-id module-defined-bindings))))))
+            (env-push-globals 
+             empty-env 
+             (append (list #f)
+                     free-variables
+                     local-defined-names 
+                     (map binding:binding-id (append required-module-bindings module-or-toplevel-defined-bindings)))))))
 
-
-
-;; check-definitions-do-not-overlap-toplevel!: (listof symbol) pinfo -> void
-;; Raise an error if any names overlap between the defined ones and ones
-;; that we already use.
-#;(define (check-definitions-do-not-overlap-toplevel! names base-env)
-  (void)
-  #;(let ([module-defined-bindings (rbtree-fold (pinfo-used-bindings-hash base-pinfo)
-                                              (lambda (name a-binding acc)
-                                                (cond
-                                                  [(binding:binding-module-source a-binding)
-                                                   (cons a-binding acc)]
-                                                  [else acc]))
-                                              '())])
-    (for-each (lambda (a-name)
-                (when (findf (lambda (a-binding)
-                               (symbol=? a-name 
-                                         (binding:binding-id a-binding)))
-                             module-defined-bindings)
-                  (error 'compiler 
-                         "The definition ~s conflicts with a built-in definition." a-name)))
-              names)))
 
 
 
@@ -183,6 +186,26 @@
    (lambda (ids body)
      (compile-variables-definition ids body env a-pinfo))))
 
+
+;; compile-requires: (listof require) pinfo -> (values (listof bcode) pinfo)
+(define (compile-requires requires a-pinfo)
+  (cond [(empty? requires)
+         (values empty a-pinfo)]
+        [else
+         (let*-values ([(first-compiled-require a-pinfo)
+                        (compile-require (first requires) a-pinfo)]
+                       [(rest-compiled-requires a-pinfo)
+                        (compile-requires (rest requires) a-pinfo)])
+           (values (cons first-compiled-require rest-compiled-requires)
+                   a-pinfo))]))
+
+
+(define (compile-require a-require a-pinfo)
+  ;; FIXME: I should be doing some kind of module resolution here.
+  (values (bcode:make-req
+           (datum->syntax #f (stx->datum (second (stx-e a-require))))
+           (bcode:make-toplevel 0 0 #f #f))
+          a-pinfo))
 
 
 (define (compile-function-definition fun-name args body env a-pinfo)

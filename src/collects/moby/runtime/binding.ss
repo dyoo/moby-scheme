@@ -7,7 +7,6 @@
 (define-struct binding:constant
   (name 
    module-source
-   java-string
    permissions))
 
 
@@ -19,7 +18,6 @@
    module-source  ;; source where the function's really defined
    min-arity      ;; minimal arity to call
    var-arity?     ;; is this vararity?
-   java-string    ;; the java-string name of the function
    permissions    ;; what permissions do we need to call this function?
    cps?           ;; does the function respect CPS calling conventions?
    ))
@@ -78,7 +76,7 @@
      (list 'binding:constant 
            (binding:constant-name a-binding)
            (binding:constant-module-source a-binding)
-           (binding:constant-java-string a-binding)
+           ""
            (map permission->string (binding:constant-permissions a-binding)))]
     [(binding:function? a-binding)
      (list 'binding:function
@@ -86,7 +84,7 @@
            (binding:function-module-source a-binding)
            (binding:function-min-arity a-binding)
            (binding:function-var-arity? a-binding)
-           (binding:function-java-string a-binding)
+           ""
            (map permission->string (binding:function-permissions a-binding))
            (binding:function-cps? a-binding))]
     [(binding:structure? a-binding)
@@ -218,14 +216,12 @@
  
  [struct binding:constant ([name symbol?]
                            [module-source (or/c false/c module-path?)]
-                           [java-string string?]
                            [permissions (listof permission?)])]
  
  [struct binding:function ([name symbol?]
                            [module-source (or/c false/c module-path?)]
                            [min-arity natural-number/c]
                            [var-arity? boolean?]
-                           [java-string string?]
                            [permissions (listof permission?)]
                            [cps? boolean?])]
  

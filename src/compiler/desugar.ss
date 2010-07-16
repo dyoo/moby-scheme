@@ -189,8 +189,9 @@
                              (lambda (ids body)
                                (local [(define desugared-body+pinfo (desugar-expression body a-pinfo))]
                                  (list (list (datum->stx #f 
-                                                         `(define-values (@,ids) 
-                                                            ,(first (desugared-body+pinfo)))
+                                                         `(define-values (,@ids) 
+                                                            ,(first 
+                                                              desugared-body+pinfo))
                                                          (stx-loc a-defn)))
                                        (second desugared-body+pinfo)))))))
 
@@ -301,6 +302,7 @@
                                       '(local [(define (f x) (* x x))]
                                          (+ (f 3) (f 4)))))
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+    (local:check-all-definitions! (stx-e (second (stx-e expr))))
     (local [(define local-symbol-stx (first (stx-e expr)))
             (define defns (stx-e (second (stx-e expr))))
             (define body (third (stx-e expr)))
@@ -316,6 +318,20 @@
                         (stx-loc expr))
             (pinfo-update-env (second desugared-body+pinfo)
                               (pinfo-env pinfo))))))
+
+
+(define (local:check-all-definitions! defns)
+  (cond
+    [(empty? defns)
+     (void)]
+    [(defn? (first defns))
+     (local:check-all-definitions! (rest defns))]
+    [else
+     (raise (make-moby-error (stx-loc (first defns))
+                             (make-moby-error-type:generic-syntactic-error
+                              (format "local expects only definitions, but ~s is not a definition"
+                                      (stx->datum (first defns)))
+                              (list))))]))
 
 
 
@@ -369,13 +385,14 @@
                (define then-expr (second (first desugared-exprs+pinfo)))
                (define else-expr (third (first desugared-exprs+pinfo)))]
          (list (datum->stx #f 
-                           `(,if-symbol-stx ,(tag-application-operator/module 
-                                              (datum->stx #f 
-                                                          `(verify-boolean-branch-value 
-                                                            ,test-expr
-                                                            (quote ,(Loc->sexp (stx-loc test-expr))))
-                                                          (stx-loc test-expr))
-                                              'moby/runtime/kernel/misc)
+                           `(,if-symbol-stx ,test-expr
+                                            #;,(tag-application-operator/module 
+                                                (datum->stx #f 
+                                                            `(verify-boolean-branch-value 
+                                                              ,test-expr
+                                                              (quote ,(Loc->sexp (stx-loc test-expr))))
+                                                            (stx-loc test-expr))
+                                                'moby/runtime/kernel/misc)
                                             ,then-expr
                                             ,else-expr)
                            (stx-loc expr))

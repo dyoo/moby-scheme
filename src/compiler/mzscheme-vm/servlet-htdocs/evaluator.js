@@ -92,12 +92,19 @@ var Evaluator = (function() {
 	});
 	
 	this.aState.setToplevelNodeHook(function() {
-	    var innerDom = document.createElement("div");
-	    var dom = document.createElement("div");
-	    dom.appendChild(innerDom);
-	    that.write(dom);	
-	    return innerDom;
+	    // KLUDGE: special hook to support jsworld.
+	    return that.makeToplevelNode();
 	});
+    };
+
+
+    // Toplevel nodes are constructed for world programs.
+    Evaluator.prototype.makeToplevelNode = function() {
+	var innerDom = document.createElement("div");
+	var dom = document.createElement("div");
+	dom.appendChild(innerDom);
+	this.write(dom);	
+	return innerDom;
     };
 
 
@@ -184,7 +191,12 @@ var Evaluator = (function() {
     Evaluator.prototype.executeCompiledProgram = function(compiledBytecode,
 							  onDoneSuccess, onDoneFail) {
 	this.aState.clearForEval();
-	interpret.load(compiledBytecode, this.aState);
+	try {
+	    interpret.load(compiledBytecode, this.aState);
+	} catch(e) {
+	    onDoneFail(e);
+	    return;
+	}
 	interpret.run(this.aState, onDoneSuccess, onDoneFail);
     };
 
@@ -206,38 +218,51 @@ var Evaluator = (function() {
     var STACK_KEY = types.symbol("moby-stack-record-continuation-mark-key");
 
     Evaluator.prototype.getTraceFromExn = function(exn) {
-	var results = [];
-	var errorValue = exn.val;
-	if (types.isExn(errorValue)) {
-	    if (types.exnContMarks(errorValue)) {
-		var contMarkSet = types.exnContMarks(errorValue);
-		var stackTrace = contMarkSet.ref(STACK_KEY);
-		// KLUDGE: the first element in the stack trace
-		// can be weird print-values may introduce a duplicate
-		// location.
-		for (var i = stackTrace.length - 1; 
-		     i >= 0; i--) {
-		    var callRecord = stackTrace[i];
-		    var id = callRecord.ref(0);
-		    var offset = callRecord.ref(1);
-		    var line = callRecord.ref(2);
-		    var column = callRecord.ref(3);
-		    var span = callRecord.ref(4);
-		    var newHash = {'id': id, 
-				   'offset': offset,
-				   'line': line, 
-				   'column': column,
-				   'span': span};
-		    if (results.length === 0 ||
-			(! isEqualHash(results[results.length-1],
-				       newHash))) {
-			results.push(newHash);
-		    }
+	if (types.isSchemeError(exn)) {
+	    var errorValue = exn.val;
+	    if (types.isExn(errorValue)) {
+		if (types.exnContMarks(errorValue)) {
+		    return getTraceFromContinuationMarks(
+			types.exnContMarks(errorValue));
 		}
+	    } else {
+		return [];
+	    }
+	} else if (types.isInternalError(exn)) {
+	    return getTraceFromContinuationMarks(exn.contMarks);
+	}	
+	return [];
+    };
+
+
+    var getTraceFromContinuationMarks = function(contMarkSet) {
+	var results = [];
+	var stackTrace = contMarkSet.ref(STACK_KEY);
+	// KLUDGE: the first element in the stack trace
+	// can be weird print-values may introduce a duplicate
+	// location.
+	for (var i = stackTrace.length - 1; 
+	     i >= 0; i--) {
+	    var callRecord = stackTrace[i];
+	    var id = callRecord.ref(0);
+	    var offset = callRecord.ref(1);
+	    var line = callRecord.ref(2);
+	    var column = callRecord.ref(3);
+	    var span = callRecord.ref(4);
+	    var newHash = {'id': id, 
+			   'offset': offset,
+			   'line': line, 
+			   'column': column,
+			   'span': span};
+	    if (results.length === 0 ||
+		(! isEqualHash(results[results.length-1],
+			       newHash))) {
+		results.push(newHash);
 	    }
 	}
 	return results;
     };
+
 
 
     var isEqualHash = function(hash1, hash2) {
@@ -275,6 +300,8 @@ var Evaluator = (function() {
 	    } else {
 		return errorValue + '';
 	    }
+	} else if (types.isInternalError(exn)) {
+	    return exn.val + '';
 	} else {
 	    return exn.message;
 	}

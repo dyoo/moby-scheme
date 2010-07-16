@@ -465,7 +465,7 @@
 
 
 
-;; pinfo-get-exposed-bindings: pinfo -> (listof pinfo)
+;; pinfo-get-exposed-bindings: pinfo -> (listof binding)
 ;; Extract the list of the defined bindings that are exposed by provide.
 (define (pinfo-get-exposed-bindings a-pinfo)
   (local [;; lookup-provide-binding-in-definition-bindings: provide-binding compiled-program -> (listof binding)

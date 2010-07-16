@@ -9,7 +9,7 @@
          "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 
-;; compile: input-port output-port #:name -> void
+;; compile: input-port output-port #:name -> pinfo
 (define (compile in out #:name name)
   (let*-values 
       ([(stxs) (read-syntaxes in #:name name)]
@@ -22,7 +22,8 @@
                                  #:name name)]
        [(a-jsexp) (compile-top a-compilation-top)])
     (display (jsexp->js a-jsexp)
-             out)))
+             out)
+    a-pinfo))
 
 
 ;; port-name: port -> string
