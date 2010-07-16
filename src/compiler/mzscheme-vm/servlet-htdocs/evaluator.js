@@ -215,7 +215,6 @@ var Evaluator = (function() {
 	
 
 
-    var STACK_KEY = types.symbol("moby-stack-record-continuation-mark-key");
 
     Evaluator.prototype.getTraceFromExn = function(exn) {
 	if (types.isSchemeError(exn)) {
@@ -236,31 +235,7 @@ var Evaluator = (function() {
 
 
     var getTraceFromContinuationMarks = function(contMarkSet) {
-	var results = [];
-	var stackTrace = contMarkSet.ref(STACK_KEY);
-	// KLUDGE: the first element in the stack trace
-	// can be weird print-values may introduce a duplicate
-	// location.
-	for (var i = stackTrace.length - 1; 
-	     i >= 0; i--) {
-	    var callRecord = stackTrace[i];
-	    var id = callRecord.ref(0);
-	    var offset = callRecord.ref(1);
-	    var line = callRecord.ref(2);
-	    var column = callRecord.ref(3);
-	    var span = callRecord.ref(4);
-	    var newHash = {'id': id, 
-			   'offset': offset,
-			   'line': line, 
-			   'column': column,
-			   'span': span};
-	    if (results.length === 0 ||
-		(! isEqualHash(results[results.length-1],
-			       newHash))) {
-		results.push(newHash);
-	    }
-	}
-	return results;
+	return state.getStackTraceFromContinuationMarks(contMarkSet);
     };
 
 
