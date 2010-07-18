@@ -7,6 +7,7 @@
          scheme/contract
          scheme/list
          (prefix-in mzscheme-vm: "../compiler/mzscheme-vm/compile.ss")
+         (prefix-in mzscheme-vm: "../compiler/mzscheme-vm/write-support.ss")
          (only-in xml xexpr->string)
          "../compile-helpers.ss"
          "../collects/moby/runtime/permission-struct.ss"
@@ -20,7 +21,7 @@
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
 
 (define-runtime-path icon-path "support/icons/icon.png")
-(define-runtime-path javascript-support-path "support/js")
+(define-runtime-path support-path "support/js")
 (define-runtime-path javascript-main-template "support/js/main.js.template")
 
 
@@ -54,11 +55,12 @@
   (copy-directory/files* phonegap-path dest)
   (let* ([normal-name (normalize-name name)]
          [classname (upper-camel-case normal-name)]
-         [package (string-append "plt.moby." classname)]
-         [compiled-program         
-          (write-main.js&resources program/resources
-                                   name
-                                   (build-path dest "assets"))])
+         [package (string-append "plt.moby." classname)])
+
+    
+    (write-main.js&resources program/resources
+                             name
+                             (build-path dest "assets"))
     
     ;; Write out the icon
     (make-directory* (build-path dest "res" "drawable"))
@@ -151,7 +153,26 @@
 (define (write-main.js&resources program/resources name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
+  
+  (unless (file-exists? (build-path dest-dir "index.html"))
+    (copy-file (build-path support-path "index.html")
+               (build-path dest-dir "index.html")))
+  
+  ;; Write out a fresh copy of the support library.
+  (call-with-output-file (build-path dest-dir "support.js")
+    (lambda (op)
+      (mzscheme-vm:write-support "browser" op))
+    #:exists 'replace)
+  
+  ;; Also, write out the collections.
+  ;; FIXME: only write the collections we need.
+  (call-with-output-file (build-path dest-dir "collections.js")
+    (lambda (op)
+      (mzscheme-vm:write-collections op))
+    #:exists 'replace)
+  
   (program/resources-write-resources! program/resources dest-dir)
+  
   (let*-values ([(program)
                  (program/resources-program program/resources)]
                 [(compiled-program)
@@ -254,27 +275,17 @@
   
   ;; Paranoid check: if dest-dir is a subdirectory of
   ;; javascript-support-path, we are in trouble!
-  (when (subdirectory-of? javascript-support-path dest-dir)
+  (when (subdirectory-of? support-path dest-dir)
     (error 'moby "The output directory (~s) must not be a subdirectory of ~s."
            (path->string (normalize-path dest-dir))
-           (path->string (normalize-path javascript-support-path))))
+           (path->string (normalize-path support-path))))
   
 
   (for ([file (list "index.html" "main.js.template")])
     (when (file-exists? (build-path dest-dir file))
       (delete-file (build-path dest-dir file)))
-    (copy-file (build-path javascript-support-path file)
+    (copy-file (build-path support-path file)
                (build-path dest-dir file))))
-
-
-(define (delete-redundant-files-already-in-the-compressed-runtime runtime-path)
-  (delete-file (build-path runtime-path "whole-runtime.js"))
-  (delete-file (build-path runtime-path "compiler.js"))
-  (delete-file (build-path runtime-path "compressed-compiler.js"))
-  (call-with-input-file (build-path runtime-path "MANIFEST")
-                    (lambda (ip)
-                      (for ([line (in-lines ip)])
-                        (delete-file (build-path runtime-path line))))))
 
 
 
