@@ -83,7 +83,7 @@
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
       (lambda (op)
-        (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
+        (fprintf op "sdk.dir=~a~n" (path->string (current-android-sdk-path))))
       #:exists 'replace)
     
     ;; HACKS!
