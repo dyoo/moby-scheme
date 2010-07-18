@@ -48,7 +48,7 @@
   (unless (file-exists? (current-ant-bin-path))
     (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
-  #;(unless (directory-exists? (current-android-sdk-path))
+  (unless (directory-exists? (current-android-sdk-path))
     (error 'build-android-package-in-path
            "The Android SDK could not be found."))
   
@@ -127,7 +127,7 @@
     
     ;; Write out the defaults.properties so that ant can build
     ;; Run ant debug.
-    #;(run-ant-build.xml dest "debug")))
+    (run-ant-build.xml dest "debug")))
 
 
 
@@ -289,10 +289,8 @@
   
 
   (for ([file (list "index.html" "main.js.template")])
-    (when (file-exists? (build-path dest-dir file))
-      (delete-file (build-path dest-dir file)))
-    (copy-file (build-path support-path file)
-               (build-path dest-dir file))))
+    (copy-file* (build-path support-path file)
+                (build-path dest-dir file))))
 
 
 
