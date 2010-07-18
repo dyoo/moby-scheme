@@ -88,7 +88,7 @@
   (call-with-input-file source-path 
     (lambda (in)
       (fprintf out-port "'bytecode': ")
-      (let ([pinfo (compile in out-port #:name module-name)])
+      (let ([pinfo (compile/port in out-port #:name module-name)])
         (fprintf out-port ", 'provides': [~a]};\n"
                  (string-join (map (lambda (a-binding)
                                      (format "~s" (symbol->string (binding-id a-binding))))

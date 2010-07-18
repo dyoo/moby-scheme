@@ -10,7 +10,7 @@
 
 
 ;; compile: input-port output-port #:name -> pinfo
-(define (compile in out #:name name)
+(define (compile/port in out #:name name)
   (let*-values 
       ([(stxs) (read-syntaxes in #:name name)]
        [(a-pinfo)
@@ -44,4 +44,4 @@
               (cons stx (loop))])))))
 
 
-(provide/contract [compile (input-port? output-port? #:name symbol? . -> . any)])
+(provide/contract [compile/port (input-port? output-port? #:name symbol? . -> . any)])
