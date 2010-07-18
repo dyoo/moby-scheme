@@ -6,22 +6,22 @@
          scheme/path
          scheme/contract
          scheme/list
+         (prefix-in mzscheme-vm: "../compiler/mzscheme-vm/compile.ss")
          (only-in xml xexpr->string)
          "../compile-helpers.ss"
          "../collects/moby/runtime/permission-struct.ss"
          "../compiler/pinfo.ss"
          (only-in "../compiler/helpers.ss" program?)
-         (prefix-in javascript: "../compiler/beginner-to-javascript.ss")
-         (only-in "../compiler/helpers.ss" identifier->munged-java-identifier)
-         "../utils.ss"
          "../template.ss"
+         "../utils.ss"
          "../config.ss"
          "../program-resources.ss")
 
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
-(define-runtime-path icon-path "../../support/icons/icon.png")
-(define-runtime-path javascript-support-path "../../support/js")
-(define-runtime-path javascript-main-template "../../support/js/main.js.template")
+
+(define-runtime-path icon-path "support/icons/icon.png")
+(define-runtime-path javascript-support-path "support/js")
+(define-runtime-path javascript-main-template "support/js/main.js.template")
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -75,7 +75,8 @@
                             #:permissions (apply append 
                                                  (map permission->android-permissions
                                                       (pinfo-permissions 
-                                                       (javascript:compiled-program-pinfo compiled-program)))))
+                                                       ;; dyoo: fixme
+                                                       #;(javascript:compiled-program-pinfo compiled-program)))))
     
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
@@ -258,13 +259,6 @@
            (path->string (normalize-path dest-dir))
            (path->string (normalize-path javascript-support-path))))
   
-  
-  (for ([subpath (list "css" "runtime")])
-    (copy-directory/files* (build-path javascript-support-path subpath) 
-                           (build-path dest-dir subpath)))
-  
-  ;; delete redundant files in the runtime
-  (delete-redundant-files-already-in-the-compressed-runtime (build-path dest-dir "runtime"))
 
   (for ([file (list "index.html" "main.js.template")])
     (when (file-exists? (build-path dest-dir file))
@@ -284,9 +278,17 @@
 
 
 
+(define-struct compiled-program (source-program
+                                 bytecode
+                                 pinfo))
 
+;; do-compilation: program -> compiled-program
 (define (do-compilation program)
-  (javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+  (let* ([op (open-output-bytes)]
+         [pinfo (mzscheme-vm:compile/program program op)])
+    (make-compiled-program program 
+                           (get-output-bytes op)
+                           pinfo)))
 
 
 ;; get-permission-js-array: (listof permission) -> string
@@ -302,18 +304,13 @@
 
 ;; compiled-program->main.js: compiled-program -> string
 (define (compiled-program->main.js compiled-program)
-  (let*-values ([(defns pinfo)
-                 (values (javascript:compiled-program-defns compiled-program)
-                         (javascript:compiled-program-pinfo compiled-program))]
-                [(output-port) (open-output-string)]
+  (let*-values ([(output-port) (open-output-string)]
                 [(mappings) 
                  (build-mappings 
-                  (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "[" "]"))
-                  (PROGRAM-TOPLEVEL-EXPRESSIONS
-                   (javascript:compiled-program-toplevel-exprs
-                    compiled-program))
-                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+                  (BYTECODE (compiled-program-bytecode compiled-program))
+                  (PERMISSIONS (get-permission-js-array
+                                (pinfo-permissions 
+                                 (compiled-program-pinfo compiled-program)))))])
     (fill-template-port (open-input-file javascript-main-template)
                         output-port
                         mappings)

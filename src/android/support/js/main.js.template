@@ -1,0 +1,118 @@
+var main = {};
+
+
+(function() {
+
+    main.permissions = <<PERMISSIONS>>;
+    main.program = (<<BYTECODE>>);
+    
+
+    main.onload = function() {
+    }; 
+
+    main.onunload = function() {
+    };
+
+
+
+
+//     main.permissions = <<PERMISSIONS>>;
+
+//     main.startup = function(thunk) {
+//         plt.permission.startupAllPermissions(main.permissions, thunk);
+//     };
+
+//     main.shutdown = function() {
+//        for(var i = 0; i < main.permissions.length; i++) {
+//            plt.permission.runShutdownCode(main.permissions[i]);
+//        }
+
+//        // Send a stimuli to shut everything down.
+//        plt.world.stimuli.onShutdown();
+//     };
+
+
+
+//     main.onload = function() {
+// 	main.startup(function() {
+// 	   	main.afterPreloadImages(main.runToplevel); });
+//     };
+
+
+//     main.onunload = function() {
+// 	main.shutdown();
+//     };
+
+
+//     main.runAgain = function() { 
+//         main.shutdown();
+//         main.startup(function() { main.runToplevel(); });
+//     };
+
+
+
+
+//     // Waits until all images are loaded, after which we
+//     // evaluate the after thunk.
+//     main.afterPreloadImages = function(after) {
+// 	var imagePaths = <<IMAGES>>;
+// 	var images = [];
+// 	function wait(predicate, after) {
+// 	    if (predicate()) 
+// 		after();
+// 	    else
+// 		setTimeout(function() { wait(predicate, after); },
+// 			   100);
+// 	}
+
+// 	function isAllLoaded() {
+// 	    var i;
+// 	    for (i = 0; i < images.length; i++) {
+// 		if (! (images[i].isLoaded)) {
+// 		    return false;
+// 		}
+// 	    }
+// 	    return true;
+// 	}
+
+// 	var i;
+// 	for (i = 0; i < imagePaths.length; i++) {
+// 	    images.push(plt.world.Kernel.openImageUrl
+// 			(plt.types.String.makeInstance(imagePaths[i])));
+// 	}
+// 	wait(isAllLoaded, after);
+//     };
+
+
+//     main.runToplevel = function() {
+// 	var showToplevelExpression = function(val) {
+// 	    if (val != undefined && val != null) {
+// 		document.body.appendChild(plt.types.toDomNode(val));
+// 		document.body.appendChild(document.createElement("br"));
+// 	    }
+//         };
+// 	plt.Kernel.printHook = function(str) {
+// 		document.body.appendChild(document.createTextNode(str));
+// 		document.body.appendChild(document.createElement("br"));
+//         };
+//         try {
+// 	    var startTime = (new Date()).getTime();
+//    	    (<<PROGRAM-TOPLEVEL-EXPRESSIONS>>)(showToplevelExpression);
+// 	    var stopTime = (new Date()).getTime();
+// //	    if (typeof(console) != 'undefined' && 
+// //	        typeof(console.log) != 'undefined') {
+// //		try {
+// //		    console.log("DEBUG: toplevel evaluation took " + (stopTime - startTime) + " milliseconds");
+// //               } catch (e) {}
+// //            }
+//         } catch (e) {
+// 	    plt.Kernel.reportError(e);
+//             throw e;
+//         }
+//     };
+
+// 	<<PROGRAM-DEFINITIONS>>
+
+
+
+})();
