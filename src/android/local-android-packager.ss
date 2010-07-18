@@ -22,6 +22,7 @@
 
 (define-runtime-path icon-path "support/icons/icon.png")
 (define-runtime-path support-path "support/js")
+(define-runtime-path evaluator-path "../compiler/mzscheme-vm/servlet-htdocs/evaluator.js")
 (define-runtime-path javascript-main-template "support/js/main.js.template")
 
 
@@ -47,7 +48,7 @@
   (unless (file-exists? (current-ant-bin-path))
     (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
-  (unless (directory-exists? (current-android-sdk-path))
+  #;(unless (directory-exists? (current-android-sdk-path))
     (error 'build-android-package-in-path
            "The Android SDK could not be found."))
   
@@ -55,30 +56,29 @@
   (copy-directory/files* phonegap-path dest)
   (let* ([normal-name (normalize-name name)]
          [classname (upper-camel-case normal-name)]
-         [package (string-append "plt.moby." classname)])
-
-    
-    (write-main.js&resources program/resources
-                             name
-                             (build-path dest "assets"))
+         [package (string-append "plt.moby." classname)]
+         [compiled-program
+          (write-main.js&resources program/resources
+                                   name
+                                   (build-path dest "assets"))])
     
     ;; Write out the icon
     (make-directory* (build-path dest "res" "drawable"))
     (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
     
     (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
-                            (build-path dest "assets" "runtime" "phonegap.js"))
+                            (build-path dest "assets" "phonegap.js"))
     
     ;; Put in the customized manifest.
     (write-android-manifest (build-path dest "AndroidManifest.xml")
                             #:name name
                             #:package package
                             #:activity-class (string-append package "." classname)
-                            #:permissions (apply append 
-                                                 (map permission->android-permissions
-                                                      (pinfo-permissions 
-                                                       ;; dyoo: fixme
-                                                       #;(javascript:compiled-program-pinfo compiled-program)))))
+                            #:permissions 
+                            (apply append 
+                                   (map permission->android-permissions
+                                        (pinfo-permissions
+                                         (compiled-program-pinfo compiled-program)))))
     
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
@@ -127,7 +127,7 @@
     
     ;; Write out the defaults.properties so that ant can build
     ;; Run ant debug.
-    (run-ant-build.xml dest "debug")))
+    #;(run-ant-build.xml dest "debug")))
 
 
 
@@ -143,6 +143,11 @@
        a-name])))
 
 
+(define (copy-file* src dest)
+  (when (file-exists? dest)
+    (delete-file dest))
+  (copy-file src dest))
+
 
 
 ;; compile-program-to-javascript: platform program/resources string path-string -> compiled-program
@@ -154,10 +159,12 @@
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
   
-  (unless (file-exists? (build-path dest-dir "index.html"))
-    (copy-file (build-path support-path "index.html")
-               (build-path dest-dir "index.html")))
+  (copy-file* (build-path support-path "index.html") 
+              (build-path dest-dir "index.html"))
   
+  (copy-file* (build-path evaluator-path)
+             (build-path dest-dir "evaluator.js"))
+
   ;; Write out a fresh copy of the support library.
   (call-with-output-file (build-path dest-dir "support.js")
     (lambda (op)
@@ -176,7 +183,7 @@
   (let*-values ([(program)
                  (program/resources-program program/resources)]
                 [(compiled-program)
-                 (do-compilation program)])
+                 (do-compilation program (string->symbol name))])
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
@@ -218,7 +225,7 @@
             (android:versionCode "1")
             (android:versionName "1.0.0"))
            
-           (uses-sdk ((android:minSdkVersion "2")))
+           (uses-sdk ((android:minSdkVersion "3")))
            
            ,@(map (lambda (p)
                     `(uses-permission ((android:name ,p))))
@@ -294,9 +301,9 @@
                                  pinfo))
 
 ;; do-compilation: program -> compiled-program
-(define (do-compilation program)
+(define (do-compilation program name)
   (let* ([op (open-output-bytes)]
-         [pinfo (mzscheme-vm:compile/program program op)])
+         [pinfo (mzscheme-vm:compile/program program op #:name name)])
     (make-compiled-program program 
                            (get-output-bytes op)
                            pinfo)))

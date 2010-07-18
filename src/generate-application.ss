@@ -11,7 +11,7 @@
          "collects/moby/runtime/permission-struct.ss"
          "compiler/pinfo.ss"
          (only-in "compiler/helpers.ss" program?)
-         (prefix-in javascript: "compiler/beginner-to-javascript.ss")
+         #;(prefix-in javascript: "compiler/beginner-to-javascript.ss")
          (only-in "compiler/helpers.ss" identifier->munged-java-identifier)
          "utils.ss"
          "template.ss"
@@ -74,12 +74,16 @@
 
 
 (define (do-compilation program)
-  (javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+  ;; dyoo: FIXME
+  (void)
+  #;(javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
 
 
 ;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string
 (define (compiled-program->main.js compiled-program)
-  (let*-values ([(defns pinfo)
+  ;; dyoo: FIXME
+  (void)
+  #;(let*-values ([(defns pinfo)
                 (values (javascript:compiled-program-defns compiled-program)
                         (javascript:compiled-program-pinfo compiled-program))]
                [(output-port) (open-output-string)]
@@ -157,4 +161,4 @@
                    (string? (or/c path-string? program/resources?) path-string? . -> . any)]
                   
                   [compiled-program->main.js
-                   (javascript:compiled-program? . -> . string?)])
+                   (any/c . -> . string?)])
