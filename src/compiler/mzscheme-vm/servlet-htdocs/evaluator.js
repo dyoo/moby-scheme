@@ -3,7 +3,7 @@
 //
 // Evaluator(options)
 //     options: { write: dom -> void,
-//                writeError: dom -> void,
+//                writeError: exn -> void,
 //                compilationServletUrl: string,
 //                scriptCompilationServletUrl: string}
 //
@@ -81,6 +81,7 @@ var Evaluator = (function() {
 	this.aState.setPrintHook(function(thing) {
 	    var dom = types.toDomNode(thing);
 	    that.write(dom);	
+	    helpers.maybeCallAfterAttach(dom);
 	});
 		
 	this.aState.setDisplayHook(function(thing) {
@@ -89,6 +90,7 @@ var Evaluator = (function() {
 	    var node = document.createTextNode(thing);
 	    dom.appendChild(node);
 	    that.write(dom);	
+	    helpers.maybeCallAfterAttach(dom);
 	});
 	
 	this.aState.setToplevelNodeHook(function() {
@@ -104,6 +106,7 @@ var Evaluator = (function() {
 	var dom = document.createElement("div");
 	dom.appendChild(innerDom);
 	this.write(dom);	
+	helpers.maybeCallAfterAttach(dom);
 	return innerDom;
     };
 
