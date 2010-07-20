@@ -17,7 +17,9 @@
                      false
                      eof
                      pi
-                     e)))
+                     e
+		     js-undefined
+		     js-null)))
           
           ;; Registers a new toplevel function, munging the name
           (define (r env a-name arity vararity?)
@@ -302,6 +304,7 @@
                      (vector-ref 2)
                      (vector-set! 3)
                      (vector->list 1)
+                     (list->vector 1)
                      (vector? 1)
 
 		     (printf 1 true)
@@ -354,6 +357,32 @@
                      ;; FIXME: add support for prompt optional argument
                      (current-continuation-marks 0 false)
                      (continuation-mark-set->list 2 false)
+                     
+                     ;; Things for javascript FFI and world
+                     (scheme->prim-js 1 false)
+                     (prim-js->scheme 1 false)
+                     (procedure->cps-js-fun 1 false)
+                     (procedure->void-js-fun 1 false)
+                     (get-named-js-object 1 false)
+                     (get-js-object 2 true)
+                     ;(get-js-array-field 2 false)
+                     (js-set-field! 3 false)
+                     ;(js-set-array-field! 3 false)
+                     (js-typeof 1 false)
+                     (js-instanceof 2 false)
+                     (js-call 2 true)
+                     (js-new 1 true)
+                     (make-js-hash 0 true)
+                     
+                     (make-world-config 2 true)
+                     (make-effect 1 false)
+                     (effect? 1 false)
+                     (world-with-effects 2 false)
+                     ;(coerce-world-handler 1 false)
+                     
+                     (values 0 true)
+                     
+                     (make-exn 2 false)
                      
                      
                      )))]
