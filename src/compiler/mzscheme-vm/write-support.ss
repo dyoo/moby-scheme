@@ -73,6 +73,12 @@
                            (build-path collections-path 
                                        "bootstrap" 
                                        "function-teachpack-translated.ss")
+                           out-port)
+  
+  (write-single-collection 'jsworld/google-maps
+                           (build-path collections-path
+                                       "jsworld"
+                                       "google-maps.ss")
                            out-port))
 
 
