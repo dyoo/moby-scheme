@@ -12,7 +12,6 @@
          "program-resources.ss"
          "stub/net.ss"
          "utils.ss"
-         "compiler/beginner-to-javascript.ss"
          "compiler/pinfo.ss"
          "image-lift.ss"
          "collects/moby/runtime/stx.ss"
@@ -144,8 +143,6 @@
 
 ;;; FIXME: A lot of this is just copy-and-pasted from generate-application.  FIXME!
 
-(define (do-compilation program)
-  (program->compiled-program/pinfo program (get-base-pinfo 'moby)))
 
 
 

@@ -12,6 +12,9 @@
          "compiler/pinfo.ss"
          (only-in "compiler/helpers.ss" program?)
          #;(prefix-in javascript: "compiler/beginner-to-javascript.ss")
+         (prefix-in mzscheme-vm: "compiler/mzscheme-vm/compile.ss")
+         (prefix-in mzscheme-vm: "compiler/mzscheme-vm/write-support.ss")
+
          (only-in "compiler/helpers.ss" identifier->munged-java-identifier)
          "utils.ss"
          "template.ss"
@@ -24,9 +27,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define-runtime-path javascript-support-path "../support/js")
+(define-runtime-path support-path "../support/js")
 
 (define-runtime-path javascript-main-template "../support/js/main.js.template")
+(define-runtime-path evaluator-path 
+  "compiler/mzscheme-vm/servlet-htdocs/evaluator.js")
 
 
 
@@ -43,6 +48,11 @@
                                   dest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (copy-file* src dest)
+  (when (file-exists? dest)
+    (delete-file dest))
+  (copy-file src dest))
 
 ;; compile-program-to-javascript: platform (or program/resources text%) string path-string -> compiled-program
 ;; Consumes a text, an application name, destination directory, and produces an application.
@@ -62,48 +72,66 @@
                        [else
                         (parse-text-as-program text-or-program/resources name)])]
                 [(compiled-program)
-                 (do-compilation program)])
+                 (do-compilation program (string->symbol name))])
+    
+    
+    (copy-file* (build-path evaluator-path)
+                (build-path dest-dir "evaluator.js"))
+
+    (copy-file* (build-path support-path "index.html") 
+                (build-path dest-dir "index.html"))
+    
+    ;; Write out a fresh copy of the support library.
+    (call-with-output-file (build-path dest-dir "support.js")
+      (lambda (op)
+        (mzscheme-vm:write-support "browser" op))
+      #:exists 'replace)
+    
+    ;; Also, write out the collections.
+    ;; FIXME: only write the collections we need.
+    (call-with-output-file (build-path dest-dir "collections.js")
+      (lambda (op)
+        (mzscheme-vm:write-collections op))
+      #:exists 'replace)
+
+    
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
                     (compiled-program->main.js compiled-program))
                    op))
       #:exists 'replace)
-    (delete-file (build-path dest-dir "main.js.template"))
     compiled-program))
 
 
-(define (do-compilation program)
-  ;; dyoo: FIXME
-  (void)
-  #;(javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+(define-struct compiled-program (source-program
+                                 bytecode
+                                 pinfo))
+
+
+;; do-compilation: program -> compiled-program
+(define (do-compilation program name)
+  (let* ([op (open-output-bytes)]
+         [pinfo (mzscheme-vm:compile/program program op #:name name)])
+    (make-compiled-program program 
+                           (get-output-bytes op)
+                           pinfo)))
 
 
 ;; compiled-program->main.js: compiled-program (listof named-bitmap) -> string
 (define (compiled-program->main.js compiled-program)
-  ;; dyoo: FIXME
-  (void)
-  #;(let*-values ([(defns pinfo)
-                (values (javascript:compiled-program-defns compiled-program)
-                        (javascript:compiled-program-pinfo compiled-program))]
-               [(output-port) (open-output-string)]
-               [(mappings) 
-                (build-mappings 
-                 (PROGRAM-DEFINITIONS defns)
-                 (IMAGES (string-append "["
-                                        (string-join (map (lambda (b) 
-                                                            (format "~s" (named-bitmap-name b)))
-                                                          '()) 
-                                                     ", ")
-                                        "]"))
-                 (PROGRAM-TOPLEVEL-EXPRESSIONS
-                  (javascript:compiled-program-toplevel-exprs
-                   compiled-program))
-		 (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+    (let*-values ([(output-port) (open-output-string)]
+                [(mappings) 
+                 (build-mappings 
+                  (BYTECODE (compiled-program-bytecode compiled-program))
+                  (PERMISSIONS (get-permission-js-array
+                                (pinfo-permissions 
+                                 (compiled-program-pinfo compiled-program)))))])
     (fill-template-port (open-input-file javascript-main-template)
                         output-port
                         mappings)
     (get-output-string output-port)))
+
 
 
 
@@ -139,21 +167,11 @@
   (make-directory* dest-dir)
   
   ;; Paranoid check: if dest-dir is a subdirectory of
-  ;; javascript-support-path, we are in trouble!
-  (when (subdirectory-of? javascript-support-path dest-dir)
+  ;; support-path, we are in trouble!
+  (when (subdirectory-of? support-path dest-dir)
     (error 'moby "The output directory (~s) must not be a subdirectory of ~s."
            (path->string (normalize-path dest-dir))
-           (path->string (normalize-path javascript-support-path))))
-
-
-  (for ([subpath (list "css" "runtime")])
-    (copy-directory/files* (build-path javascript-support-path subpath) 
-                           (build-path dest-dir subpath)))
-  (for ([file (list "index.html" "main.js.template")])
-    (when (file-exists? (build-path dest-dir file))
-      (delete-file (build-path dest-dir file)))
-    (copy-file (build-path javascript-support-path file)
-               (build-path dest-dir file))))
+           (path->string (normalize-path support-path)))))
 
 
 
