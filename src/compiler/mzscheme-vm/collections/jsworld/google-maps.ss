@@ -1,3 +1,4 @@
+
 (provide on-map-drag!
          on-map-click!
          on-map-dblclick!
@@ -7,7 +8,9 @@
          make-effect:map:location
          make-effect:map:marker
          make-effect:map:pan
-         make-effect:map:clear)
+         make-effect:map:clear
+         make-effect:script)
+
 
 
 (define document (js-get-named-object "document"))
@@ -44,7 +47,7 @@
                                      (js-call (js-get-named-object "setTimeout") 
                                               false 
                                               (procedure->void-js-fun phase2) 
-                                              (scheme->prim-js 1000)))
+                                              (scheme->prim-js 500)))
                                    (local [(define load (js-get-field google "load"))
                                            (define callback (js-make-hash))]
                                      (begin 
@@ -80,6 +83,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;GMAP BIG-BANG EVENT HANDLERS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (define (on-map-drag! map-dom world-updater effect-updater)
   (local [(define map (js-get-field map-dom "gmap"))]
@@ -274,7 +278,6 @@
                           (js-call (js-get-field mymap "addOverlay") mymap marker (scheme->prim-js false)))))
                     
                     '()
-                    
                     (lambda (map-dom lat lng text name)
                       (if (and 
                            (number? lat)
@@ -282,5 +285,63 @@
                            (string? text))
                           (values map-dom lat lng text)
                           (error name "expected type <number> as 2nd and 3rd argument and <string> as 4th argument, given: ~s ~s ~s" lat lng text)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;SCRIPT EFFECT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define (my-string-join elts delim) 
+  (local [(define s
+            (foldr (lambda (s1 s2)
+                     (string-append s1 delim s2))
+                   ""
+                   elts))]
+    (if (= (string-length s) 0)
+        ""
+        (substring s 0 (sub1 (string-length s))))))
+
+(define (escape s)
+  (local [(define esc (js-get-named-object "escape"))]
+    (prim-js->scheme (js-call esc false s))))
+
+(define (form-url url params)
+  (local [
+          (define param-string (my-string-join 
+                                (map (lambda (l) 
+                                       (my-string-join (map escape l) "=")) 
+                                     (append params 
+                                             (list
+                                              (list "output" "json") 
+                                              (list "callback" "script_effect_callback"))))
+                                "&"))]
+    (string-append url "?" param-string)))
+
+(define-values (effect:script make-effect:script effect:script? effect:script-accessor effect:script-mutator)
+  (make-effect-type 'effect:script
+                    #f
+                    3
+                    (lambda (url params response) 
+                      (local [(define script-url (form-url url params))]
+                        (begin
+                          (js-set-field! (js-get-named-object "window") "script_effect_callback" response)
+                          (loadScript script-url)))) 
+                    '(2)
+                    (lambda (url params response name)
+                      (if (and
+                           (list? params)
+                           (andmap list? params)
+                           (andmap (lambda (x)
+                                     (and (= (length x) 2)
+                                          (string? (first x))
+                                          (string? (second x))))
+                                   params)
+                           (string? url)
+                           (procedure? response))
+                          (values url params response)
+                          (error name 
+                                 "expected type <string> as 1st argument, <list-of (list-of strings)> as 2nd argument, and <procedure> as 3rd argument: given ~s ~s ~s"
+                                 url
+                                 params
+                                 response)))))
 
 
