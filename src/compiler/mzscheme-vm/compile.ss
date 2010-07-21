@@ -18,7 +18,7 @@
 
 
 
-;; compile/program: program output-rp9ort name -> pinfo
+;; compile/program: program output-port name -> pinfo
 (define (compile/program a-program out #:name name)
   (let*-values ([(a-pinfo)
                  (pinfo-update-allow-redefinition? (get-base-pinfo 'moby)
