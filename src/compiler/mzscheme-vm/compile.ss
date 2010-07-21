@@ -3,27 +3,39 @@
 (require scheme/list
          scheme/contract
          "mzscheme-vm.ss"
+         "collections-module-resolver.ss"
          "../pinfo.ss"
+         (only-in "../helpers.ss" program?)
          "../../stx-helpers.ss"
          "../../../support/externals/mzscheme-vm/src/bytecode-compiler.ss"
          "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 
 ;; compile: input-port output-port #:name -> pinfo
-(define (compile in out #:name name)
-  (let*-values 
-      ([(stxs) (read-syntaxes in #:name name)]
-       [(a-pinfo)
-         (pinfo-update-allow-redefinition? (get-base-pinfo 'moby)
-                                           #f)]
-       [(a-compilation-top a-pinfo)
-        (compile-compilation-top stxs 
-                                 a-pinfo
-                                 #:name name)]
-       [(a-jsexp) (compile-top a-compilation-top)])
+(define (compile/port in out #:name name)
+  (let ([stxs (read-syntaxes in #:name name)])
+    (compile/program stxs out #:name name)))
+
+
+
+;; compile/program: program output-port name -> pinfo
+(define (compile/program a-program out #:name name)
+  (let*-values ([(a-pinfo)
+                 (pinfo-update-allow-redefinition? (get-base-pinfo 'moby)
+                                                   #f)]
+                [(a-pinfo)
+                  (pinfo-update-module-resolver a-pinfo 
+                                                (extend-module-resolver-with-collections
+                                                 (pinfo-module-resolver a-pinfo)))]
+                [(a-compilation-top a-pinfo)
+                 (compile-compilation-top a-program 
+                                          a-pinfo
+                                          #:name name)]
+                [(a-jsexp) (compile-top a-compilation-top)])
     (display (jsexp->js a-jsexp)
              out)
-    a-pinfo))
+  a-pinfo))
+  
 
 
 ;; port-name: port -> string
@@ -44,4 +56,5 @@
               (cons stx (loop))])))))
 
 
-(provide/contract [compile (input-port? output-port? #:name symbol? . -> . any)])
+(provide/contract [compile/port (input-port? output-port? #:name symbol? . -> . any)]
+                  [compile/program (program? output-port? #:name symbol? . -> . any)])

@@ -14,6 +14,7 @@
          "../../collects/moby/runtime/binding.ss"
          "../rbtree.ss"
          "../pinfo.ss"
+         "collections/manifest.ss"
          "compile.ss")
 
 (define-runtime-path mzscheme-vm-library-path "../../../support/externals/mzscheme-vm/lib")
@@ -56,24 +57,10 @@
   ;;
   ;; FIXME: write exported bindings out so the compiler knows about them.
   (fprintf out-port "var COLLECTIONS = {};\n")
-  
-  (write-single-collection 'bootstrap/bootstrap-teachpack
-                           (build-path collections-path 
-                                       "bootstrap" 
-                                       "bootstrap-teachpack-translated.ss")
-                           out-port)
-  
-  (write-single-collection 'bootstrap/cage-teachpack
-                           (build-path collections-path 
-                                       "bootstrap" 
-                                       "cage-teachpack-translated.ss")
-                           out-port)
-  
-  (write-single-collection 'bootstrap/function-teachpack
-                           (build-path collections-path 
-                                       "bootstrap" 
-                                       "function-teachpack-translated.ss")
-                           out-port))
+  (for ([a-collection-reference (in-list known-collections)])
+    (write-single-collection (collection-reference-name a-collection-reference)
+                             (collection-reference-path a-collection-reference)
+                             out-port)))
 
 
 ;; write-collection: symbol path output-port -> void
@@ -88,7 +75,7 @@
   (call-with-input-file source-path 
     (lambda (in)
       (fprintf out-port "'bytecode': ")
-      (let ([pinfo (compile in out-port #:name module-name)])
+      (let ([pinfo (compile/port in out-port #:name module-name)])
         (fprintf out-port ", 'provides': [~a]};\n"
                  (string-join (map (lambda (a-binding)
                                      (format "~s" (symbol->string (binding-id a-binding))))

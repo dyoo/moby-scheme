@@ -10,10 +10,6 @@
          scheme/cmdline
          scheme/path)
 
-;; Parameters with their default values.
-(define name (make-parameter #f))
-(define dest-dir (make-parameter #f))
-(define app-compiler (make-parameter generate-javascript-application))
 
 
 
@@ -30,6 +26,16 @@
   (build-android-package-in-path name 
                                  (open-program/resources path)
                                  output-dir))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Parameters with their default values.
+(define name (make-parameter #f))
+(define dest-dir (make-parameter #f))
+(define app-compiler (make-parameter generate-android-app))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 

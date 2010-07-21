@@ -6,22 +6,24 @@
          scheme/path
          scheme/contract
          scheme/list
+         (prefix-in mzscheme-vm: "../compiler/mzscheme-vm/compile.ss")
+         (prefix-in mzscheme-vm: "../compiler/mzscheme-vm/write-support.ss")
          (only-in xml xexpr->string)
          "../compile-helpers.ss"
          "../collects/moby/runtime/permission-struct.ss"
          "../compiler/pinfo.ss"
          (only-in "../compiler/helpers.ss" program?)
-         (prefix-in javascript: "../compiler/beginner-to-javascript.ss")
-         (only-in "../compiler/helpers.ss" identifier->munged-java-identifier)
-         "../utils.ss"
          "../template.ss"
+         "../utils.ss"
          "../config.ss"
          "../program-resources.ss")
 
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
-(define-runtime-path icon-path "../../support/icons/icon.png")
-(define-runtime-path javascript-support-path "../../support/js")
-(define-runtime-path javascript-main-template "../../support/js/main.js.template")
+
+(define-runtime-path icon-path "support/icons/icon.png")
+(define-runtime-path support-path "support/js")
+(define-runtime-path evaluator-path "../compiler/mzscheme-vm/servlet-htdocs/evaluator.js")
+(define-runtime-path javascript-main-template "support/js/main.js.template")
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -55,7 +57,7 @@
   (let* ([normal-name (normalize-name name)]
          [classname (upper-camel-case normal-name)]
          [package (string-append "plt.moby." classname)]
-         [compiled-program         
+         [compiled-program
           (write-main.js&resources program/resources
                                    name
                                    (build-path dest "assets"))])
@@ -65,22 +67,24 @@
     (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
     
     (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
-                            (build-path dest "assets" "runtime" "phonegap.js"))
+                            (build-path dest "assets" "phonegap.js"))
     
     ;; Put in the customized manifest.
     (write-android-manifest (build-path dest "AndroidManifest.xml")
                             #:name name
                             #:package package
                             #:activity-class (string-append package "." classname)
-                            #:permissions (apply append 
-                                                 (map permission->android-permissions
-                                                      (pinfo-permissions 
-                                                       (javascript:compiled-program-pinfo compiled-program)))))
+                            #:permissions 
+                            (apply append 
+                                   (map permission->android-permissions
+                                        (pinfo-permissions
+                                         (compiled-program-pinfo compiled-program)))))
     
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
       (lambda (op)
-        (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
+        (fprintf op "sdk.dir=~a~n" (path->string (current-android-sdk-path)))
+        (fprintf op "sdk_platform=~a~n" (path->string (current-android-sdk-path))))
       #:exists 'replace)
     
     ;; HACKS!
@@ -140,6 +144,11 @@
        a-name])))
 
 
+(define (copy-file* src dest)
+  (when (file-exists? dest)
+    (delete-file dest))
+  (copy-file src dest))
+
 
 
 ;; compile-program-to-javascript: platform program/resources string path-string -> compiled-program
@@ -150,11 +159,32 @@
 (define (write-main.js&resources program/resources name dest-dir)
   (log-info (format "Compiling ~a to ~s" name dest-dir))
   (make-javascript-directories dest-dir)
+  
+  (copy-file* (build-path support-path "index.html") 
+              (build-path dest-dir "index.html"))
+  
+  (copy-file* (build-path evaluator-path)
+             (build-path dest-dir "evaluator.js"))
+
+  ;; Write out a fresh copy of the support library.
+  (call-with-output-file (build-path dest-dir "support.js")
+    (lambda (op)
+      (mzscheme-vm:write-support "browser" op))
+    #:exists 'replace)
+  
+  ;; Also, write out the collections.
+  ;; FIXME: only write the collections we need.
+  (call-with-output-file (build-path dest-dir "collections.js")
+    (lambda (op)
+      (mzscheme-vm:write-collections op))
+    #:exists 'replace)
+  
   (program/resources-write-resources! program/resources dest-dir)
+  
   (let*-values ([(program)
                  (program/resources-program program/resources)]
                 [(compiled-program)
-                 (do-compilation program)])
+                 (do-compilation program (string->symbol name))])
     (call-with-output-file (build-path dest-dir "main.js")
       (lambda (op)
         (copy-port (open-input-string 
@@ -196,7 +226,7 @@
             (android:versionCode "1")
             (android:versionName "1.0.0"))
            
-           (uses-sdk ((android:minSdkVersion "2")))
+           (uses-sdk ((android:minSdkVersion "3")))
            
            ,@(map (lambda (p)
                     `(uses-permission ((android:name ,p))))
@@ -253,40 +283,29 @@
   
   ;; Paranoid check: if dest-dir is a subdirectory of
   ;; javascript-support-path, we are in trouble!
-  (when (subdirectory-of? javascript-support-path dest-dir)
+  (when (subdirectory-of? support-path dest-dir)
     (error 'moby "The output directory (~s) must not be a subdirectory of ~s."
            (path->string (normalize-path dest-dir))
-           (path->string (normalize-path javascript-support-path))))
+           (path->string (normalize-path support-path))))
   
-  
-  (for ([subpath (list "css" "runtime")])
-    (copy-directory/files* (build-path javascript-support-path subpath) 
-                           (build-path dest-dir subpath)))
-  
-  ;; delete redundant files in the runtime
-  (delete-redundant-files-already-in-the-compressed-runtime (build-path dest-dir "runtime"))
 
   (for ([file (list "index.html" "main.js.template")])
-    (when (file-exists? (build-path dest-dir file))
-      (delete-file (build-path dest-dir file)))
-    (copy-file (build-path javascript-support-path file)
-               (build-path dest-dir file))))
-
-
-(define (delete-redundant-files-already-in-the-compressed-runtime runtime-path)
-  (delete-file (build-path runtime-path "whole-runtime.js"))
-  (delete-file (build-path runtime-path "compiler.js"))
-  (delete-file (build-path runtime-path "compressed-compiler.js"))
-  (call-with-input-file (build-path runtime-path "MANIFEST")
-                    (lambda (ip)
-                      (for ([line (in-lines ip)])
-                        (delete-file (build-path runtime-path line))))))
+    (copy-file* (build-path support-path file)
+                (build-path dest-dir file))))
 
 
 
+(define-struct compiled-program (source-program
+                                 bytecode
+                                 pinfo))
 
-(define (do-compilation program)
-  (javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+;; do-compilation: program -> compiled-program
+(define (do-compilation program name)
+  (let* ([op (open-output-bytes)]
+         [pinfo (mzscheme-vm:compile/program program op #:name name)])
+    (make-compiled-program program 
+                           (get-output-bytes op)
+                           pinfo)))
 
 
 ;; get-permission-js-array: (listof permission) -> string
@@ -302,18 +321,13 @@
 
 ;; compiled-program->main.js: compiled-program -> string
 (define (compiled-program->main.js compiled-program)
-  (let*-values ([(defns pinfo)
-                 (values (javascript:compiled-program-defns compiled-program)
-                         (javascript:compiled-program-pinfo compiled-program))]
-                [(output-port) (open-output-string)]
+  (let*-values ([(output-port) (open-output-string)]
                 [(mappings) 
                  (build-mappings 
-                  (PROGRAM-DEFINITIONS defns)
-                  (IMAGES (string-append "[" "]"))
-                  (PROGRAM-TOPLEVEL-EXPRESSIONS
-                   (javascript:compiled-program-toplevel-exprs
-                    compiled-program))
-                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+                  (BYTECODE (compiled-program-bytecode compiled-program))
+                  (PERMISSIONS (get-permission-js-array
+                                (pinfo-permissions 
+                                 (compiled-program-pinfo compiled-program)))))])
     (fill-template-port (open-input-file javascript-main-template)
                         output-port
                         mappings)

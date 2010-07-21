@@ -343,6 +343,10 @@
                      ;; Checking for undefined
                      (undefined? 1)
                      
+
+		     ;; values for multiple value definition
+		     (values 0 true)
+
                      
                      ;; structures
                      (make-struct-type 4 true)

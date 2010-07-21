@@ -35,15 +35,6 @@ var writeToInteractions = function(thing) {
 	history.appendChild(dom);
     } else {
 	history.appendChild(thing);
-	// IE Hack for excanvas elements.
-	// See: http://www.lrbabe.com/?p=104
-	// The issue is that if we use excanvas, and it has
-	// vml, things don't render if the element hasn't been
-	// attached to the dom.  Ugly stuff.
-	if (/MSIE/.test(navigator.userAgent) && !window.opera) {
-	    setTimeout(function() { thing.outerHTML = thing.outerHTML; },
-		       0);
-	}
     }
 };
 
