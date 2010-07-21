@@ -28,6 +28,8 @@
             (program-analyze-collect-definitions a-program pinfo))
           (define pinfo-2
             (program-analyze-collect-provides a-program pinfo-1))]
+    ;; FIXME: we need to walk all the require-permissions and mark
+    ;; bindings with the appropriate ones.
     (program-analyze-uses a-program pinfo-2)))
 
 
@@ -48,6 +50,8 @@
                  [(provide-statement? an-element)
                   pinfo]
                  [(expression? an-element)
+                  pinfo]
+                 [(require-permission? an-element)
                   pinfo]))
          pinfo
          a-program))
@@ -67,6 +71,8 @@
                  [(provide-statement? an-element)
                   (collect-provided-names (rest (stx-e an-element)) pinfo)]
                  [(expression? an-element)
+                  pinfo]
+                 [(require-permission? an-element)
                   pinfo]))
          pinfo
          a-program))
@@ -89,7 +95,9 @@
                  [(expression? an-element)
                   (expression-analyze-uses an-element
                                            pinfo 
-                                           (pinfo-env pinfo))]))
+                                           (pinfo-env pinfo))]
+                 [(require-permission? an-element)
+                  pinfo]))
          pinfo
          a-program))
 

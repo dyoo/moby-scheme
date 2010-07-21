@@ -32,6 +32,7 @@
    predicate   ;; symbol
    accessors   ;; (listof symbol)
    mutators    ;; (listof symbol)
+   permissions ;; (listof permission)
    ))
 
 
@@ -212,6 +213,44 @@
 
 
 
+(define (binding-update-permissions a-binding permissions)
+  (cond
+    [(binding:constant? a-binding)
+     (make-binding:constant (binding:constant-name a-binding)
+                            (binding:constant-module-source a-binding)
+                            permissions)]
+    [(binding:function? a-binding)
+     (make-binding:function (binding:function-name a-binding)
+                            (binding:function-module-source a-binding)
+                            (binding:function-min-arity a-binding)
+                            (binding:function-var-arity? a-binding)
+                            permissions
+                            (binding:function-cps? a-binding))]
+    [(binding:structure? a-binding)
+     (make-binding:structure (binding:structure-name a-binding)
+                             (binding:structure-module-source a-binding)
+                             (binding:structure-fields a-binding)
+                             (binding:structure-constructor a-binding)
+                             (binding:structure-predicate a-binding)
+                             (binding:structure-accessors a-binding)
+                             (binding:structure-mutators a-binding)
+                             permissions)]))
+
+
+(define (binding-permissions a-binding)
+  (cond
+    [(binding:constant? a-binding)
+     (binding:constant-permissions a-binding)]
+    [(binding:function? a-binding)
+     (binding:function-permissions a-binding)]
+    [(binding:structure? a-binding)
+     (binding:structure-permissions a-binding)]))
+
+
+
+
+
+
 (provide/contract
  
  [struct binding:constant ([name symbol?]
@@ -231,12 +270,15 @@
                             [constructor symbol?]
                             [predicate symbol?]
                             [accessors (listof symbol?)]
-                            [mutators (listof symbol?)])]
+                            [mutators (listof symbol?)]
+                            [permissions (listof permission?)])]
  
  
  [binding? (any/c . -> . boolean?)] 
  [binding-id (binding? . -> . symbol?)]
  [binding->sexp (binding? . -> . any)]
+ [binding-update-permissions (binding? (listof permission?) . -> . binding?)]
+ [binding-permissions (binding? . -> . binding?)]
  [sexp->binding (any/c . -> . binding?)]
  
  [localize-binding-to-module (binding? module-name? . -> . binding?)]

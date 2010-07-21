@@ -69,8 +69,9 @@
                                 constructor
                                 predicate 
                                 accessors
-                                mutators))
-     (make-binding:structure name a-source fields constructor predicate accessors mutators)]))
+                                mutators
+                                permissions))
+     (make-binding:structure name a-source fields constructor predicate accessors mutators permissions)]))
     
          
  ;; read-syntaxes: input-port #:name symbol -> (listof stx)

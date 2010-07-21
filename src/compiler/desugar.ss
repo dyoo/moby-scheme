@@ -119,6 +119,8 @@
      (desugar-defn an-element a-pinfo)]
     [(library-require? an-element)
      (list (list an-element) a-pinfo)]
+    [(require-permission? an-element)
+     (list (list an-element) a-pinfo)]
     [(provide-statement? an-element)
      (list (list an-element) a-pinfo)]
     [(provide/contract-statement? an-element)

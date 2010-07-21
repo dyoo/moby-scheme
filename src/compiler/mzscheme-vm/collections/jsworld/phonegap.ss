@@ -50,6 +50,10 @@
                        (lambda (w e)
                          (error 'on-acceleration! "an error occured with the accelerometer")))))
 
+
+(require-permission on-acceleration! "PERMISSION:TILT")
+
+
 (define (on-acceleration world-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
     (make-world-config (lambda (success error)
@@ -65,6 +69,11 @@
                            (effect-updater w x y z)))
                        (lambda (w e)
                          (error 'on-acceleration "an error occured with the accelerometer")))))
+(require-permission on-acceleration "PERMISSION:TILT")
+
+
+
+
 
 (define (on-shake! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
@@ -80,6 +89,9 @@
                        (lambda (w e)
                          (error 'on-shake! "an error occured with the accelerometer")))))
 
+(require-permission on-shake! "PERMISSION:SHAKE")
+                     
+
 (define (on-shake world-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
     (make-world-config (lambda (success error)
@@ -91,6 +103,8 @@
                        world-updater
                        (lambda (w e)
                          (error 'on-shake "an error occured with the accelerometer")))))
+(require-permission on-shake "PERMISSION:SHAKE") 
+
 
 (define (on-tilt! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
@@ -108,8 +122,10 @@
                                                (world-updater w azimuth pitch roll))))
                        (lambda (w e)
                          (error 'on-tilt! "an error occured with the accelerometer")))))
+(require-permission on-tilt! "PERMISSION:TILT") 
 
-(define (on-tilt! world-updater)
+
+(define (on-tilt world-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchOrientation")
@@ -124,6 +140,9 @@
                            (world-updater w azimuth pitch roll)))
                        (lambda (w e)
                          (error 'on-tilt "an error occured with the accelerometer")))))
+
+(require-permission on-tilt "PERMISSION:TILT")
+
 
 (define (on-location-change! world-updater effect-updater)
   (let ([geolocation (js-new (js-get-field (js-get-named-object "phonegap") "Geolocation"))])
@@ -141,6 +160,9 @@
                        (lambda (w e)
                          (error 'on-location-change! "an error occurred with accessing GPS locations")))))
 
+(require-permission on-location-change! "PERMISSION:LOCATION")
+
+
 (define (on-location-change world-updater)
   (let ([geolocation (js-new (js-get-field (js-get-named-object "phonegap") "Geolocation"))])
     (make-world-config (lambda (success error)
@@ -156,6 +178,9 @@
                        (lambda (w e)
                          (error 'on-location-change "an error occurred with accessing GPS locations")))))
 
+(require-permission on-location-change "PERMISSION:LOCATION")
+
+
 (define (on-sms-receive! world-updater effect-updater)
   (let ([sms (js-new (js-get-field (js-get-named-object "phonegap") "Sms"))])
     (make-world-config (lambda (handler)
@@ -169,6 +194,8 @@
                          (world-with-effects (effect-updater w sender msg)
                                              (world-updater w sender msg)))))))
 
+(require-permission on-sms-receive! "PERMISSION:SEND-SMS")
+
 (define (on-sms-receive world-updater)
   (let ([sms (js-new (js-get-field (js-get-named-object "phonegap") "Sms"))])
     (make-world-config (lambda (handler)
@@ -180,3 +207,6 @@
                          (let ([sender (prim-js->scheme sender-js-str)]
                                [msg (prim-js->scheme msg-js-str)])
                          (world-updater w sender msg))))))
+
+
+(require-permission on-sms-receive! "PERMISSION:RECEIVE-SMS")

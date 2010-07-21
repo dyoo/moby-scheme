@@ -147,8 +147,8 @@
                          module-path
                          (list (bf 'on-tick module-path 1 true)
                                (bf 'on-tick! module-path 2 true)
-                               (bf 'on-mouse module-path 1 false)
-                               (bf 'on-mouse! module-path 2 false)
+                               #;(bf 'on-mouse module-path 1 false)
+                               #;(bf 'on-mouse! module-path 2 false)
                                
                                
                                (bf 'initial-effect module-path 1 false)
@@ -156,53 +156,53 @@
                                (bf 'on-key module-path 1 false)
                                (bf 'on-key! module-path 2 false)
                                
-                               (bf 'on-announce module-path 1 false)
-                               (bf 'on-announce! module-path 2 false)
+                               #;(bf 'on-announce module-path 1 false)
+                               #;(bf 'on-announce! module-path 2 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-location-change module-path 1 false
                                 (list PERMISSION:LOCATION)
                                 false)
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-location-change! module-path 2 false
                                 (list PERMISSION:LOCATION)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-tilt module-path 1 false
                                 (list PERMISSION:TILT)
                                 false)
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-tilt! module-path 2 false
                                 (list PERMISSION:TILT)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-acceleration module-path 1 false
                                 (list PERMISSION:TILT)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-acceleration! module-path 2 false
                                 (list PERMISSION:TILT)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-sms-receive module-path 1 false
                                 (list PERMISSION:RECEIVE-SMS)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-sms-receive* module-path 1 false
                                 (list PERMISSION:RECEIVE-SMS)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-shake module-path 1 false
                                 (list PERMISSION:SHAKE)
                                 false)
                                
-                               (make-binding:function
+                               #;(make-binding:function
                                 'on-shake! module-path 2 false
                                 (list PERMISSION:SHAKE)
                                 false)
