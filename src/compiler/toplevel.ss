@@ -359,6 +359,7 @@
                      (prim-js->scheme 1 false)
                      (procedure->cps-js-fun 1 false)
                      (procedure->void-js-fun 1 false)
+                     (js-=== 2 false)
                      (js-get-named-object 1 false)
                      (js-get-field 2 true)
                      ;(get-js-array-field 2 false)
@@ -377,6 +378,7 @@
                      ;(coerce-world-handler 1 false)
                      
                      (values 0 true)
+                     (sleep 0 true)
                      
                      (make-exn 2 false)
                      
