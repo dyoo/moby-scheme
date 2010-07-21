@@ -46,7 +46,7 @@
                                               (procedure->void-js-fun phase2) 
                                               (scheme->prim-js 1000)))
                                    (local [(define load (js-get-field google "load"))
-                                           (define callback (make-js-hash))]
+                                           (define callback (js-make-hash))]
                                      (begin 
                                        (js-set-field! callback "callback" (procedure->void-js-fun 
                                                                            (lambda ()
@@ -180,6 +180,7 @@
                     #f 
                     1 
                     (lambda (map-dom) (error 'effect:map "has no default implementation"))
+                    '()
                     (lambda (map-dom name)
                       (if (not
                            (equal? (js-get-field map-dom "gmap") js-undefined))
@@ -193,6 +194,7 @@
                     (lambda (map-dom zoom-val) 
                       (local [(define mymap (js-get-field map-dom "gmap"))]
                         (js-call (js-get-field mymap "setZoom") mymap zoom-val)))
+                    '()
                     (lambda (map zoom-val name)
                       (if (and (exact? zoom-val)
                                (integer? zoom-val)
@@ -207,9 +209,10 @@
                     (lambda (map-dom lat lng) 
                       (local [(define mymap (js-get-field map-dom "gmap"))]
                         (js-call (js-get-field mymap "setCenter") mymap (js-new
-                                                                          (js-get-named-object "GLatLng")
-                                                                          lat
-                                                                          lng))))
+                                                                         (js-get-named-object "GLatLng")
+                                                                         lat
+                                                                         lng))))
+                    '()
                     (lambda (map-dom lat lng name)
                       (if (and 
                            (number? lat)
@@ -224,10 +227,11 @@
                     (lambda (map-dom lat lng)
                       (local [(define mymap (js-get-field map-dom "gmap"))]
                         (js-call (js-get-field mymap "panTo") mymap (js-new
-                                                                      (js-get-named-object "GLatLng")
-                                                                      lat
-                                                                      
-                                                                      lng))))
+                                                                     (js-get-named-object "GLatLng")
+                                                                     lat
+                                                                     
+                                                                     lng))))
+                    '()
                     (lambda (map-dom lat lng name)
                       (if (and 
                            (number? lat)
@@ -241,7 +245,8 @@
                     0
                     (lambda (map-dom)
                       (local [(define mymap (js-get-field map-dom "gmap"))]
-                        (js-call (js-get-field mymap "clearOverlays") mymap )))))
+                        (js-call (js-get-field mymap "clearOverlays") mymap )))
+                    '()))
 
 
 ;make variable arity so no text has to be specified!!
@@ -266,7 +271,9 @@
                                                      (js-call (js-get-field marker "openInfoWindowHtml") 
                                                               marker 
                                                               (scheme->prim-js marker-text)))))
-                           (js-call (js-get-field mymap "addOverlay") mymap marker (scheme->prim-js false)))))
+                          (js-call (js-get-field mymap "addOverlay") mymap marker (scheme->prim-js false)))))
+                    
+                    '()
                     
                     (lambda (map-dom lat lng text name)
                       (if (and 
@@ -275,6 +282,5 @@
                            (string? text))
                           (values map-dom lat lng text)
                           (error name "expected type <number> as 2nd and 3rd argument and <string> as 4th argument, given: ~s ~s ~s" lat lng text)))))
-                        
-                        
-                    
+
+

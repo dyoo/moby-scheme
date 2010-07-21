@@ -23,7 +23,11 @@
         
         (make-collection-reference 
          'jsworld/google-maps 
-         (build-path self "jsworld" "google-maps.ss"))))
+         (build-path self "jsworld" "google-maps.ss"))
+
+        (make-collection-reference 
+         'jsworld/phonegap 
+         (build-path self "jsworld" "phonegap.ss"))))
 
 
 (provide/contract [struct collection-reference ([name module-name?]
