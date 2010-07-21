@@ -3,6 +3,7 @@
 (require scheme/list
          scheme/contract
          "mzscheme-vm.ss"
+         "collections-module-resolver.ss"
          "../pinfo.ss"
          (only-in "../helpers.ss" program?)
          "../../stx-helpers.ss"
@@ -22,6 +23,10 @@
   (let*-values ([(a-pinfo)
                  (pinfo-update-allow-redefinition? (get-base-pinfo 'moby)
                                                    #f)]
+                [(a-pinfo)
+                  (pinfo-update-module-resolver a-pinfo 
+                                                (extend-module-resolver-with-collections
+                                                 (pinfo-module-resolver a-pinfo)))]
                 [(a-compilation-top a-pinfo)
                  (compile-compilation-top a-program 
                                           a-pinfo
@@ -31,6 +36,7 @@
              out)
   a-pinfo))
   
+
 
 ;; port-name: port -> string
 (define (port-name a-port)
