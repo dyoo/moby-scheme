@@ -316,7 +316,7 @@
 (define (get-permission-js-array perms) 
   (string-append "["
                  (string-join (map (lambda (x)
-                                     (format "plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS['string->permission'](~s)" (permission->string x)))
+                                     (format "~s" (permission->string x)))
                                    perms)
                               ", ")
                  "]"))

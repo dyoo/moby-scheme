@@ -29,8 +29,7 @@
                       
                       with-location-emits?   ; boolean
                       ;; If true, the compiler emits calls to plt.Kernel.setLastLoc to maintain
-                      ;; source position during evaluation.
-
+                      ;; source position during evaluation.                      
 
                       allow-redefinition?     ; boolean
                       ;; If true, redefinition of a value that's already defined will not raise an error.
@@ -40,6 +39,8 @@
                       module-path-resolver   ; (string module-path -> module-name)
                       current-module-path    ; module-path
 
+                      declared-permissions            ; (listof (listof symbol any/c))
+                      
                       ))
 
 
@@ -64,7 +65,8 @@
               true
               default-module-resolver
               default-module-path-resolver
-              default-current-module-path))
+              default-current-module-path
+              empty))
 
 
 
@@ -92,7 +94,8 @@
    (pinfo-allow-redefinition? a-pinfo)
    (pinfo-module-resolver a-pinfo)
    (pinfo-module-path-resolver a-pinfo)
-   (pinfo-current-module-path a-pinfo)))
+   (pinfo-current-module-path a-pinfo)
+   (pinfo-declared-permissions a-pinfo)))
 
 
 ;; pinfo-update-defined-names: pinfo rbtree -> pinfo
@@ -111,7 +114,8 @@
    (pinfo-allow-redefinition? a-pinfo)
    (pinfo-module-resolver a-pinfo)
    (pinfo-module-path-resolver a-pinfo)
-   (pinfo-current-module-path a-pinfo)))
+   (pinfo-current-module-path a-pinfo)
+   (pinfo-declared-permissions a-pinfo)))
 
 ;; pinfo-update-defined-names: pinfo rbtree -> pinfo
 ;; Updates the defined names of a pinfo.
@@ -129,7 +133,8 @@
    (pinfo-allow-redefinition? a-pinfo)
    (pinfo-module-resolver a-pinfo)
    (pinfo-module-path-resolver a-pinfo)
-   (pinfo-current-module-path a-pinfo)))
+   (pinfo-current-module-path a-pinfo)
+   (pinfo-declared-permissions a-pinfo)))
 
 
 ;; pinfo-update-with-location-emits?: pinfo boolean -> pinfo
@@ -147,7 +152,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
 
 ;; pinfo-update-allow-redefinition?: pinfo boolean -> pinfo
@@ -164,7 +170,8 @@
               allow-redefinition?
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
 ;; pinfo-update-module-resolver: pinfo module-resolver -> pinfo
 (define (pinfo-update-module-resolver a-pinfo module-resolver)
@@ -180,7 +187,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               module-resolver
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
 ;; pinfo-update-module-path-resolver: pinfo module-resolver -> pinfo
 (define (pinfo-update-module-path-resolver a-pinfo module-path-resolver)
@@ -196,7 +204,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               module-path-resolver
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
 ;; pinfo-update-module-resolver: pinfo module-resolver -> pinfo
 (define (pinfo-update-current-module-path a-pinfo current-module-path)
@@ -212,8 +221,27 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              current-module-path))
+              current-module-path
+              (pinfo-declared-permissions a-pinfo)))
 
+(define (pinfo-accumulate-declared-permission a-name a-permission a-pinfo)
+  (make-pinfo (pinfo-env a-pinfo)
+              (pinfo-modules a-pinfo)
+              (pinfo-used-bindings-hash a-pinfo)
+              (pinfo-free-variables a-pinfo)
+              (add1 (pinfo-gensym-counter a-pinfo))
+              (pinfo-provided-names a-pinfo)
+              (pinfo-defined-names a-pinfo)
+              (pinfo-shared-expressions a-pinfo)
+              (pinfo-with-location-emits? a-pinfo)
+              (pinfo-allow-redefinition? a-pinfo)
+              (pinfo-module-resolver a-pinfo)
+              (pinfo-module-path-resolver a-pinfo)
+              (pinfo-current-module-path a-pinfo)
+              (cons (list a-name a-permission)
+                    (pinfo-declared-permissions a-pinfo))))
+
+  
 
 ;; pinfo-accumulate-shared-expression: expression string pinfo -> pinfo
 (define (pinfo-accumulate-shared-expression a-shared-expression a-translation a-pinfo)
@@ -233,7 +261,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
                                             
 ;; pinfo-accumulate-defined-binding: binding pinfo loc -> pinfo
@@ -261,7 +290,8 @@
                  (pinfo-allow-redefinition? a-pinfo)
                  (pinfo-module-resolver a-pinfo)
                  (pinfo-module-path-resolver a-pinfo)
-                 (pinfo-current-module-path a-pinfo))]))
+                 (pinfo-current-module-path a-pinfo)
+                 (pinfo-declared-permissions a-pinfo))]))
 
 
 ;; is-redefinition?: symbol -> boolean
@@ -297,7 +327,8 @@
                        (pinfo-allow-redefinition? a-pinfo)
                        (pinfo-module-resolver a-pinfo)
                        (pinfo-module-path-resolver a-pinfo)
-                       (pinfo-current-module-path a-pinfo)))
+                       (pinfo-current-module-path a-pinfo)
+                       (pinfo-declared-permissions a-pinfo)))
          a-pinfo
          bindings))
 
@@ -317,7 +348,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
 
 ;; pinfo-accumulate-binding-use: binding pinfo -> pinfo
@@ -338,7 +370,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
 
 ;; pinfo-accumulate-free-variable-use: symbol pinfo -> pinfo
@@ -359,7 +392,8 @@
               (pinfo-allow-redefinition? a-pinfo)
               (pinfo-module-resolver a-pinfo)
               (pinfo-module-path-resolver a-pinfo)
-              (pinfo-current-module-path a-pinfo)))
+              (pinfo-current-module-path a-pinfo)
+              (pinfo-declared-permissions a-pinfo)))
 
   
 
@@ -379,7 +413,8 @@
                     (pinfo-allow-redefinition? a-pinfo)
                     (pinfo-module-resolver a-pinfo)
                     (pinfo-module-path-resolver a-pinfo)
-                    (pinfo-current-module-path a-pinfo))
+                    (pinfo-current-module-path a-pinfo)
+                    (pinfo-declared-permissions a-pinfo))
 
         (string->symbol
          (string-append (symbol->string a-label)
@@ -501,6 +536,18 @@
                 [else
                  (list the-binding)])))
           
+          
+          ;; decorate-with-permissions: binding -> binding
+          ;; HACK!
+          (define (decorate-with-permissions a-binding)
+            (binding-update-permissions a-binding
+                                        (map second
+                                             (filter (lambda (entry)
+                                                       (symbol=? (first entry)
+                                                                 (binding-id a-binding)))
+                                                     (pinfo-declared-permissions a-pinfo)))))
+
+          
           ;; Make sure that if the provide says "struct-out ...", that the exported binding
           ;; is really a structure.
           (define (check-binding-compatibility a-provide-binding a-binding)
@@ -517,7 +564,8 @@
                a-binding]))]
     (rbtree-fold (pinfo-provided-names a-pinfo)
                  (lambda (id a-provide-binding acc)
-                   (append (lookup-provide-binding-in-definition-bindings a-provide-binding)
+                   (append (map decorate-with-permissions
+                                (lookup-provide-binding-in-definition-bindings a-provide-binding))
                          acc))
                  empty)))
 
@@ -537,7 +585,8 @@
                                  
                                  [module-resolver (module-name? . -> . (or/c module-binding? false/c))]
                                  [module-path-resolver (module-path? module-path? . -> . module-name?)]
-                                 [current-module-path module-path?])]
+                                 [current-module-path module-path?]
+                                 [declared-permissions (listof (list/c symbol? permission?))])]
                   
                   
                   [empty-pinfo pinfo?]
@@ -550,6 +599,9 @@
                   [pinfo-accumulate-module-bindings ((listof binding?) pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-shared-expression (expression? string? pinfo? . -> . pinfo?)]
                   [pinfo-accumulate-free-variable-use (symbol? pinfo? . -> . pinfo?)]
+
+                  [pinfo-accumulate-declared-permission (symbol? permission? pinfo? . -> . pinfo?)]
+
                   [pinfo-update-provided-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-defined-names (pinfo? rbtree? . -> . pinfo?)]
                   [pinfo-update-env (pinfo? env? . -> . pinfo?)]
@@ -559,6 +611,7 @@
                   [pinfo-update-module-resolver (pinfo? (module-name? . -> . (or/c module-binding? false/c))
                                                         . -> . pinfo?)]
                   [pinfo-update-module-path-resolver (pinfo? (module-path? module-path? . -> . (or/c module-name? false/c))
+
                                                              . -> . pinfo?)]
                   [pinfo-update-current-module-path (pinfo? module-path? . -> . pinfo?)]
                   
@@ -567,7 +620,6 @@
                   [pinfo-permissions (pinfo? . -> . (listof permission?))]
  
                   [pinfo-get-exposed-bindings (pinfo? . -> . (listof binding?))]
-                  
                   
                   [struct provide-binding:id ([stx stx?])]
                   [struct provide-binding:struct-id ([stx stx?])]

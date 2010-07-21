@@ -4,6 +4,7 @@
 (require "pinfo.ss")
 (require "helpers.ss")
 (require "rbtree.ss")
+(require "../collects/moby/runtime/permission-struct.ss")
 (require "../collects/moby/runtime/binding.ss")
 (require "../collects/moby/runtime/stx.ss")
 (require "../collects/moby/runtime/error-struct.ss")
@@ -51,8 +52,13 @@
                   pinfo]
                  [(expression? an-element)
                   pinfo]
+                 
+                 ;; HACK!  Shriram says this is wrong!
                  [(require-permission? an-element)
-                  pinfo]))
+                  (pinfo-accumulate-declared-permission
+                   (stx-e (second (stx-e an-element)))
+                   (string->permission (stx->datum (third (stx-e an-element))))
+                   pinfo)]))
          pinfo
          a-program))
 

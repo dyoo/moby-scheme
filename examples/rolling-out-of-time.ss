@@ -1,4 +1,7 @@
 #lang s-exp "../moby-lang.ss"
+
+(require jsworld/phonegap)
+
 ;; Rolling out of time
 ;;
 ;; Roll the blue ball onto the red target:

@@ -6,28 +6,30 @@
          "collections-module-resolver.ss"
          "../pinfo.ss"
          (only-in "../helpers.ss" program?)
+         "../modules.ss"
          "../../stx-helpers.ss"
          "../../../support/externals/mzscheme-vm/src/bytecode-compiler.ss"
          "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 
+(define default-base-pinfo (pinfo-update-module-resolver
+                            (pinfo-update-allow-redefinition? 
+                             (get-base-pinfo 'moby) #f)
+                            (extend-module-resolver-with-collections
+                             default-module-resolver)))
+
 ;; compile: input-port output-port #:name -> pinfo
-(define (compile/port in out #:name name)
+(define (compile/port in out #:name name #:pinfo (pinfo default-base-pinfo))
   (let ([stxs (read-syntaxes in #:name name)])
-    (compile/program stxs out #:name name)))
+    (compile/program stxs out #:name name #:pinfo pinfo)))
 
 
 
 ;; compile/program: program output-port name -> pinfo
-(define (compile/program a-program out #:name name)
-  (let*-values ([(a-pinfo)
-                 (pinfo-update-allow-redefinition? (get-base-pinfo 'moby)
-                                                   #f)]
-                [(a-pinfo)
-                  (pinfo-update-module-resolver a-pinfo 
-                                                (extend-module-resolver-with-collections
-                                                 (pinfo-module-resolver a-pinfo)))]
-                [(a-compilation-top a-pinfo)
+(define (compile/program a-program out 
+                         #:name name 
+                         #:pinfo (a-pinfo default-base-pinfo))
+  (let*-values ([(a-compilation-top a-pinfo)
                  (compile-compilation-top a-program 
                                           a-pinfo
                                           #:name name)]
