@@ -133,7 +133,7 @@
                                   success
                                   error))
                        (lambda (shutdown-f) (js-call shutdown-f #f))
-                       (lambda (w js-azimut js-pitch js-roll)
+                       (lambda (w js-azimuth js-pitch js-roll)
                          (let ([azimuth (prim-js->scheme js-azimuth)]
                                [pitch (prim-js->scheme js-pitch)]
                                [roll (prim-js->scheme js-roll)])

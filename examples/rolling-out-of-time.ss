@@ -160,7 +160,7 @@
 
 
 (js-big-bang initial-world
-             (on-tick 1/20 tick)
+             (on-tick tick 1/20)
              (on-tilt tilt)
              
              (on-redraw render)
