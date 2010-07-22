@@ -1020,16 +1020,21 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 //Accelerometer.base_orient_method = Accelerometer.prototype.watchOrientation;
 Accelerometer.prototype.watchOrientation = function(successCallback, errorCallback, options)
 {
-    Accel.start();
+    if (typeof Accel === 'undefined' || typeof(navigator.accelerometer) === 'undefined') {
+	alert("No accelerometer found");
+	return function() {
+	    alert("watchOrientation off");
+	};
+    }
     
     navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
     var frequency = (options != undefined)? options.frequency : 100;
     navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
     var frequency = (options != undefined)? options.frequency : 100;
-
     var id = setInterval(function() {
 	navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
     }, frequency);
+
     this.orientListeners.push(id);
     
     var that = this;

@@ -126,7 +126,7 @@
 
 
 (define (on-tilt world-updater)
-  (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
+  (let ([accelerometer (js-new (js-get-named-object "Accelerometer"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchOrientation")
                                   accelerometer
