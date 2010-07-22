@@ -235,6 +235,9 @@
                                        (bf 'image=? module-path 2 false)
                                        
                                        (bf 'make-color module-path 3 false)
+                                       (bf 'color-red module-path 1 false)
+                                       (bf 'color-green module-path 1 false)
+                                       (bf 'color-blue module-path 1 false)
                                        
                                        (bf 'empty-scene module-path 2 false)
                                        (bf 'place-image module-path 4 false)
