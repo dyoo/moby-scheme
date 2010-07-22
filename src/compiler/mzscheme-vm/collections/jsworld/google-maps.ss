@@ -80,6 +80,10 @@
       (loadGoogleMaps lat lng zoom dom)
       dom)))
 
+
+(require-permission google-map "PERMISSION:INTERNET")
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;GMAP BIG-BANG EVENT HANDLERS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -214,8 +218,8 @@
                       (local [(define mymap (js-get-field map-dom "gmap"))]
                         (js-call (js-get-field mymap "setCenter") mymap (js-new
                                                                          (js-get-named-object "GLatLng")
-                                                                         lat
-                                                                         lng))))
+                                                                         (scheme->prim-js lat)
+                                                                         (scheme->prim-js lng)))))
                     '()
                     (lambda (map-dom lat lng name)
                       (if (and 
@@ -232,9 +236,9 @@
                       (local [(define mymap (js-get-field map-dom "gmap"))]
                         (js-call (js-get-field mymap "panTo") mymap (js-new
                                                                      (js-get-named-object "GLatLng")
-                                                                     lat
+                                                                     (scheme->prim-js lat)
                                                                      
-                                                                     lng))))
+                                                                     (scheme->prim-js lng)))))
                     '()
                     (lambda (map-dom lat lng name)
                       (if (and 
