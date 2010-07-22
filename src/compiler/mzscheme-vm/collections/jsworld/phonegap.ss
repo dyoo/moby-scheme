@@ -107,14 +107,14 @@
 
 
 (define (on-tilt! world-updater effect-updater)
-  (let ([accelerometer (js-new (js-get-field (js-get-named-object "phonegap") "Accelerometer"))])
+  (let ([accelerometer (js-new (js-get-named-object "Accelerometer"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchOrientation")
                                   accelerometer
                                   success
                                   error))
                        (lambda (shutdown-f) (js-call shutdown-f #f))
-                       (lambda (w js-azimut js-pitch js-roll)
+                       (lambda (w js-azimuth js-pitch js-roll)
                          (let ([azimuth (prim-js->scheme js-azimuth)]
                                [pitch (prim-js->scheme js-pitch)]
                                [roll (prim-js->scheme js-roll)])
@@ -145,7 +145,7 @@
 
 
 (define (on-location-change! world-updater effect-updater)
-  (let ([geolocation (js-new (js-get-field (js-get-named-object "phonegap") "Geolocation"))])
+  (let ([geolocation (js-new (js-get-named-object "Geolocation"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field geolocation "watchPosition")
                                   geolocation
@@ -164,7 +164,8 @@
 
 
 (define (on-location-change world-updater)
-  (let ([geolocation (js-new (js-get-field (js-get-named-object "phonegap") "Geolocation"))])
+  (let ([geolocation (js-get-field (js-get-named-object "navigator")
+				   "phonegap_geo")])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field geolocation "watchPosition")
                                   geolocation

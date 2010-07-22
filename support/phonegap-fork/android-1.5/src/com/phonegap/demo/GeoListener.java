@@ -28,8 +28,8 @@ public class GeoListener {
 	
     void success(Location loc)
     {
-	arguments.put("gpsLat", loc.getLatitude());
-	arguments.put("gpsLng", loc.getLongitude());
+	arguments.put("gpsLat", new Float(loc.getLatitude()));
+	arguments.put("gpsLng", new Float(loc.getLongitude()));
 	/*
 	 * We only need to figure out what we do when we succeed!
 	 */

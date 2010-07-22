@@ -46,9 +46,9 @@ public class GeoBroker implements LifecycleService {
 
     public String start(int freq, String key)
     {
-	Log.d("GeoBroker start",
-	      "Making new GeoListener with freq " + freq +
-	      " and key " + key);
+// 	Log.d("GeoBroker start",
+// 	      "Making new GeoListener with freq " + freq +
+// 	      " and key " + key);
 	GeoListener listener = new GeoListener(key, mCtx, freq, mAppView, arguments);
 	geoListeners.put(key, listener);
 	return key;
@@ -75,7 +75,10 @@ public class GeoBroker implements LifecycleService {
     }
 
     public void onStop() {
-	// FILL ME IN
+	for ( GeoListener geo : geoListeners.values() ) {
+	    geo.stop();
+	}
+	geoListeners.clear();
     }
     
     public void onRestart() {
