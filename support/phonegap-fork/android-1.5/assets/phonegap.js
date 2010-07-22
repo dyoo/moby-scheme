@@ -996,8 +996,8 @@ Accelerometer.prototype.getCurrentOrientation = function(successCallback, errorC
     //    Console.println("getting current orientation");
     
     var orient = new Orientation( Accel.getAzimuth(), Accel.getPitch(), Accel.getRoll() );
-    Accelerometer.lastOrienetation = orient;
-    successCallback(orient);
+    Accelerometer.lastOrientation = orient;
+    successCallback(Accel.getAzimuth(), Accel.getPitch(), Accel.getRoll());
 }
 
 //Accelerometer.base_method = Accelerometer.prototype.watchAcceleration
@@ -1026,13 +1026,15 @@ Accelerometer.prototype.watchOrientation = function(successCallback, errorCallba
 	    alert("watchOrientation off");
 	};
     }
-    
-    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
-    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
+
+//    alert(navigator.accelerometer);
+//     alert("calling getCurrentOrientation");
+//     navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
+//     var frequency = (options != undefined)? options.frequency : 100;
+//     navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
+     var frequency = (options != undefined)? options.frequency : 100;
     var id = setInterval(function() {
-	navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
+ 	navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
     }, frequency);
 
     this.orientListeners.push(id);
