@@ -25,9 +25,9 @@
 
 (define view (list (js-div '((id "background")))))
 
-(define (on-draw w) view)
+(define (draw-html w) view)
 
-(define (on-draw-css w)
+(define (draw-css w)
   (list (list "background" 
 	      (list "background-color" 
 		    (format "rgb(~a, ~a, ~a)"
