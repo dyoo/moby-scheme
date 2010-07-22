@@ -829,7 +829,7 @@ function Geolocation() {
 	}
 	else {
 	    if (this.lastPosition.latitude !== lat ||
-		this.lastPostiion.longitude !== lng) {
+		this.lastPosition.longitude !== lng) {
 		this.lastPosition = { latitude : lat, longitude: lng };
 		this.listeners[key].success(lat, lng);
 	    }
