@@ -1,4 +1,4 @@
-
+#|
 (provide on-map-drag!
          on-map-click!
          on-map-dblclick!
@@ -9,8 +9,9 @@
          make-effect:map:marker
          make-effect:map:pan
          make-effect:map:clear
-         make-effect:script)
-
+         make-effect:script
+         make-effect:reverse-geocode)
+|#
 
 
 (define document (js-get-named-object "document"))
@@ -18,9 +19,9 @@
 (define getElementsByTagName (js-get-field document "getElementsByTagName"))
 (define jsworld (js-get-named-object "jsworld"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;GOOGLE-MAPS STUFF
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;GOOGLE-MAPS LIBRARY
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (list->js-array l)
   (scheme->prim-js (list->vector l)))
@@ -63,11 +64,20 @@
                                                                                                   (scheme->prim-js lng))
                                                                                           (scheme->prim-js zoom))
                                                                                  (js-call (js-get-field mymap "setUIToDefault") mymap)
+                                                                                 (js-call (js-get-field mymap "disableDoubleClickZoom") mymap) ;GET RID OF THIS LATER
                                                                                  (js-set-field! dom "gmap" mymap))))))
                                        (js-call load google (scheme->prim-js "maps") (scheme->prim-js "2.x") callback)))))))]
       
       
       (phase2))))
+
+(define (GLatLng lat lng)
+  (js-new (js-get-named-object "GLatLng") (scheme->prim-js lat) (scheme->prim-js lng)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;GOOGLE MAP CONSTRUCTOR
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;gmap: number number number list-of (css-sexp) -> dom-sexp
 ;gmap acts as the constructor for creating a Google Map
@@ -80,13 +90,16 @@
       (loadGoogleMaps lat lng zoom dom)
       dom)))
 
-
 (require-permission google-map "PERMISSION:INTERNET")
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;GMAP BIG-BANG EVENT HANDLERS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (define (on-map-drag! map-dom world-updater effect-updater)
@@ -176,13 +189,12 @@
          (world-with-effects (effect-updater w (prim-js->scheme lat) (prim-js->scheme lng))
                              (world-updater w (prim-js->scheme lat) (prim-js->scheme lng))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;GMAP EFFECTS - DEFINE-VALUES, EFFECT TYPES
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;GMAP EFFECTS + REVERSE-GEOCODING and SCRIPT CALLS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-values (effect:map make-effect:map effect:map? effect:map-accessor effect:map-mutator)
   (make-effect-type 'effect:map 
                     #f 
@@ -216,10 +228,7 @@
                     2
                     (lambda (map-dom lat lng) 
                       (local [(define mymap (js-get-field map-dom "gmap"))]
-                        (js-call (js-get-field mymap "setCenter") mymap (js-new
-                                                                         (js-get-named-object "GLatLng")
-                                                                         (scheme->prim-js lat)
-                                                                         (scheme->prim-js lng)))))
+                        (js-call (js-get-field mymap "setCenter") mymap (GLatLng lat lng))))
                     '()
                     (lambda (map-dom lat lng name)
                       (if (and 
@@ -234,11 +243,7 @@
                     2
                     (lambda (map-dom lat lng)
                       (local [(define mymap (js-get-field map-dom "gmap"))]
-                        (js-call (js-get-field mymap "panTo") mymap (js-new
-                                                                     (js-get-named-object "GLatLng")
-                                                                     (scheme->prim-js lat)
-                                                                     
-                                                                     (scheme->prim-js lng)))))
+                        (js-call (js-get-field mymap "panTo") mymap (GLatLng lat lng))))
                     '()
                     (lambda (map-dom lat lng name)
                       (if (and 
@@ -256,6 +261,17 @@
                         (js-call (js-get-field mymap "clearOverlays") mymap )))
                     '()))
 
+(define-values (effect:reverse-geocode make-effect:reverse-geocode effect:reverse-geocode? effect:reverse-geocode-accessor effect:reverse-geocode-mutator)
+  (make-effect-type 'effect:reverse-geocode
+                    #f
+                    3
+                    (lambda (lat lng response)
+                      (local [(define geocoder (js-new (js-get-named-object "GClientGeocoder")))]
+                        (js-call (js-get-field geocoder "getLocations") geocoder (GLatLng lat lng) response))) 
+                    '(2)
+                    (lambda (lat lng response name) ;add the actual guard
+                      (values lat lng response))))
+
 
 ;make variable arity so no text has to be specified!!
 (define-values (effect:map:marker make-effect:map:marker effect:map:marker? effect:map:marker-accessor effect:map:marker-mutator)
@@ -266,9 +282,7 @@
                       (local [(define mymap (js-get-field map-dom "gmap"))
                               (define marker (js-new 
                                               (js-get-named-object "GMarker") 
-                                              (js-new (js-get-named-object "GLatLng") 
-                                                      (scheme->prim-js lat) 
-                                                      (scheme->prim-js lng))))]
+                                              (GLatLng lat lng)))]
                         (begin
                           (js-call
                            (js-get-field (js-get-named-object "GEvent") "addListener")
@@ -289,10 +303,6 @@
                            (string? text))
                           (values map-dom lat lng text)
                           (error name "expected type <number> as 2nd and 3rd argument and <string> as 4th argument, given: ~s ~s ~s" lat lng text)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;SCRIPT EFFECT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (define (my-string-join elts delim) 
   (local [(define s
@@ -346,6 +356,11 @@
                                  "expected type <string> as 1st argument, <list-of (list-of strings)> as 2nd argument, and <procedure> as 3rd argument: given ~s ~s ~s"
                                  url
                                  params
-                                 response)))))
+                                 response))))) ;add more stringent guards
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
 
