@@ -448,6 +448,16 @@
                                (bf 'js-button 1)
                                (bf 'js-button! 2)
                                (bf 'js-input 2)
+
+			       (bf 'empty-page 0)
+			       (make-binding:function 'place-on-page
+						      module-path
+						      4
+						      false
+						      (list)
+						      false)
+
+
                                (make-binding:function 'js-img module-path 1 true 
                                                       (list PERMISSION:INTERNET) 
                                                       false)
