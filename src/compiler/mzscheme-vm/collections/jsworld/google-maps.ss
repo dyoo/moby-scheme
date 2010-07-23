@@ -1,4 +1,4 @@
-#|
+
 (provide on-map-drag!
          on-map-click!
          on-map-dblclick!
@@ -11,7 +11,7 @@
          make-effect:map:clear
          make-effect:script
          make-effect:reverse-geocode)
-|#
+
 
 
 (define document (js-get-named-object "document"))
