@@ -4,7 +4,6 @@
 
 (require jsworld/phonegap)
 
-
 ;; The world is a color.
 (define initial-world (make-color 0 0 0))
 
@@ -20,9 +19,7 @@
 (define (scale n domain-bound)
   (inexact->exact (floor (* (/ n domain-bound) 255))))
 
-
 ;; User interface.
-
 (define view (list (js-div '((id "background")))))
 
 (define (draw-html w) view)

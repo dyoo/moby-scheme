@@ -145,7 +145,8 @@
 
 
 (define (on-location-change! world-updater effect-updater)
-  (let ([geolocation (js-new (js-get-named-object "Geolocation"))])
+  (let ([geolocation (js-get-field (js-get-named-object "navigator")
+				   "phonegap_geo")])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field geolocation "watchPosition")
                                   geolocation
