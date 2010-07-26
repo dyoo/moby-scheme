@@ -14,11 +14,7 @@
 (require "../rbtree.ss")
 (require (prefix-in binding: "../../collects/moby/runtime/binding.ss"))
 
-#;(require "labeled-translation.ss")
 
-#;(require "../collects/moby/runtime/binding.ss")
-#;(require "../collects/moby/runtime/error-struct.ss")
-#;(require "../collects/moby/runtime/arity-struct.ss")
 
 (require "../helpers.ss"
          

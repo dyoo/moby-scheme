@@ -91,26 +91,11 @@
                                (first desugared-rest+pinfo))
                        (second desugared-rest+pinfo)))]))]
     
-    (processing-loop (reorder-tests-to-end a-program empty empty)
-                     a-pinfo)))
+    (processing-loop a-program a-pinfo)))
 
 
 
-;; reorder-tests-to-end: program (listof program-element) (listof program-element) -> program
-;; Helper to reorder the test case special forms to the end of the program.
-(define (reorder-tests-to-end a-program program/rev tests/rev)
-  (cond
-    [(empty? a-program)
-     (append (reverse program/rev) (reverse tests/rev))]
-    [(test-case? (first a-program))
-     (reorder-tests-to-end (rest a-program) 
-                           program/rev
-                           (cons (first a-program)
-                                 tests/rev))]
-    [else
-     (reorder-tests-to-end (rest a-program)
-                           (cons (first a-program) program/rev)
-                           tests/rev)]))
+
 
 ;; desugar-program-element: program-element pinfo -> (list (listof program-element) pinfo)
 (define (desugar-program-element an-element a-pinfo)
