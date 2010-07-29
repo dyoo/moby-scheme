@@ -138,6 +138,8 @@
                      ;; Lists
                      (append 0 true)
                      (assq 2)                 ;; *
+                     (assv 2)                 ;; *
+                     (assoc 2)                 ;; *
                      (caaar 1)
                      (caadr 1)
                      (caar 1)
