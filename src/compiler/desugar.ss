@@ -513,11 +513,9 @@
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
     
     ;; Check for list of identifiers 
-    (when (not (list? (stx-e (second (stx-e expr)))))
-      (raise (make-moby-error (stx-loc expr)
-                              (make-moby-error-type:expected-list-of-identifiers 
+    (check-list-of-identifiers! (second (stx-e expr))
                                (first (stx-e expr))
-                               (second (stx-e expr))))))
+                               (stx-loc expr))
     (check-duplicate-identifiers! (stx-e (second (stx-e expr))))
     
     (local [(define lambda-symbol-stx (first (stx-e expr)))
@@ -530,6 +528,17 @@
                         (stx-loc expr))
             ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
             (second desugared-body+pinfo)))))
+
+
+
+;; check-list-of-identifiers!: stx stx loc -> void
+(define (check-list-of-identifiers! thing who loc)
+  (when (not (list? (stx-e thing)))
+    (raise (make-moby-error loc
+                            (make-moby-error-type:expected-list-of-identifiers 
+                             who
+                             thing)))))
+
 
 
 ;; desugar-when: expr pinfo -> (list expr pinfo)
@@ -843,6 +852,12 @@
                                        '(let ([x 3]
                                               [y 4])
                                           (+ x y))))
+    (check-syntax-application-arity-at-least! a-stx 2
+                                              (lambda (a-stx)
+                                                '(let ([x 3]
+                                                       [y 4])
+                                                   (+ x y))))
+    (check-list-of-key-value-pairs! (second (stx-e a-stx)))
     (local [(define clauses-stx (second (stx-e a-stx)))
             (define body-stx (third (stx-e a-stx)))
             (define ids (map (lambda (clause)
@@ -868,6 +883,29 @@
                pinfo))))))
 
 
+;; check-list-of-key-value-pairs!: stx -> void
+(define (check-list-of-key-value-pairs! stx)
+  (cond
+    [(not (list? (stx-e stx)))
+     (raise (make-moby-error (stx-loc stx)
+                             (make-moby-error-type:generic-syntactic-error 
+                              (format "Expected sequence of key value pairs, but received ~s" (stx->datum stx))
+                              empty)))]
+    [else
+     (for-each (lambda (maybe-kv-stx)
+                 (cond [(or (not (list? (stx-e maybe-kv-stx)))
+                            (not (= (length (stx-e maybe-kv-stx)) 2))
+                            (not (symbol? (stx-e (first (stx-e maybe-kv-stx))))))
+                        (raise (make-moby-error (stx-loc maybe-kv-stx)
+                             (make-moby-error-type:generic-syntactic-error 
+                              (format "Expected a key/value pair, but received ~s" (stx->datum maybe-kv-stx))
+                              empty)))]
+                       [else
+                        (void)]))
+               (stx-e stx))]))
+
+
+
 ;; desugar-let*: expr-stx -> expr-stx
 ;; Desugars let* into a nested bunch of let expressions.
 (define (desugar-let* a-stx pinfo)
@@ -876,6 +914,12 @@
                                        '(let* ([x 3]
                                                [y 4])
                                           (+ x y))))
+    (check-syntax-application-arity-at-least! a-stx 2 
+                                              (lambda (a-stx)
+                                                '(let* ([x 3]
+                                                        [y 4])
+                                                   (+ x y))))
+    (check-list-of-key-value-pairs! (second (stx-e a-stx)))
     (local [(define clauses-stx (second (stx-e a-stx)))
             (define body-stx (third (stx-e a-stx)))
             
@@ -907,6 +951,15 @@
                                                           1
                                                           (* x (f (- x 1)))))])
                                           (f 3))))
+    (check-syntax-application-arity-at-least! a-stx 
+                                              2
+                                              (lambda (a-stx)
+                                                '(letrec ([f (lambda (x) 
+                                                               (if (= x 0)
+                                                                   1
+                                                                   (* x (f (- x 1)))))])
+                                                   (f 3))))
+    (check-list-of-key-value-pairs! (second (stx-e a-stx)))
     (local [(define clauses-stx (second (stx-e a-stx)))
             (define body-stx (third (stx-e a-stx)))
             (define define-clauses
