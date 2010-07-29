@@ -380,6 +380,9 @@
                      (effect? 1 false)
                      (world-with-effects 2 false)
                      ;(coerce-world-handler 1 false)
+		     (make-render-effect-type 4 true)
+		     (render-effect-type? 1)
+		     (render-effect? 1)
                      
                      (values 0 true)
                      (sleep 0 true)
