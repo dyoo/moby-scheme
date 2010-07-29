@@ -288,8 +288,13 @@
     (check-syntax-application! expr (lambda (expr)
                                       '(local [(define (f x) (* x x))]
                                          (+ (f 3) (f 4)))))
+    (check-syntax-application-arity-at-least! expr 2
+                                              (lambda (expr)
+                                                '(local [(define (f x) (* x x))]
+                                                   (+ (f 3) (f 4)))))
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
-    (local:check-all-definitions! (stx-e (second (stx-e expr))))
+    (local:check-all-definitions! (stx-e (second (stx-e expr)))
+                                  (stx-loc (second (stx-e expr))))
     (local [(define local-symbol-stx (first (stx-e expr)))
             (define defns (stx-e (second (stx-e expr))))
             (define body (third (stx-e expr)))
@@ -307,20 +312,33 @@
                               (pinfo-env pinfo))))))
 
 
-(define (local:check-all-definitions! defns)
-  (cond
-    [(empty? defns)
-     (void)]
-    [(defn? (first defns))
-     (local:check-all-definitions! (rest defns))]
-    [else
-     (raise (make-moby-error (stx-loc (first defns))
-                             (make-moby-error-type:generic-syntactic-error
-                              (format "local expects only definitions, but ~s is not a definition"
-                                      (stx->datum (first defns)))
-                              (list))))]))
+(define (local:check-all-definitions! defns a-loc)
+  (local [(define (raise-error-not-a-list an-stx a-loc)
+            (raise (make-moby-error a-loc
+                                    (make-moby-error-type:generic-syntactic-error
+                                     (format "local expects only definitions, but hasn't received a collection of them and instead received ~s."
+                                             an-stx)
+                                             
+                                     (list)))))
 
-
+          (define (raise-error an-stx a-loc)
+            (raise (make-moby-error a-loc
+                                    (make-moby-error-type:generic-syntactic-error
+                                     (format "local expects only definitions, but ~s is not a definition"
+                                             (stx->datum an-stx))
+                                     (list)))))]
+    (cond
+      [(not (list? defns))
+       (raise-error-not-a-list defns a-loc)]
+      [(empty? defns)
+       (void)]
+      [(defn? (first defns))
+       (local:check-all-definitions! (rest defns) a-loc)]
+      [else
+       (raise-error (first defns)
+                    (stx-loc (first defns)))])))
+  
+  
 
 ;; desugar-application: expr pinfo -> (list expr pinfo)
 ;; Desugars function application.
@@ -762,6 +780,18 @@
      (raise (make-moby-error (stx-loc expr)
                              (make-moby-error-type:unsupported-expression-form expr)))]))
 
+
+;; check-syntax-application-arity!: expression number (stx -> void) -> void
+;; Make sure the syntax application has at least the following number of arguments. 
+(define (check-syntax-application-arity-at-least! expr expected-arity on-failure)
+  (cond
+    [(> (length (stx-e expr)) expected-arity)
+     (void)]
+    [else
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:syntax-not-applied
+                              expr
+                              (on-failure expr))))]))
 
 ;; make-cond-exhausted-expression: loc -> stx
 (define (make-cond-exhausted-expression a-loc)
