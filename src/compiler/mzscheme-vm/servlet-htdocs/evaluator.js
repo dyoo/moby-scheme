@@ -3,7 +3,6 @@
 //
 // Evaluator(options)
 //     options: { write: dom -> void,
-//                writeError: exn -> void,
 //                compilationServletUrl: string,
 //                scriptCompilationServletUrl: string}
 //
@@ -51,6 +50,85 @@ var Evaluator = (function() {
 
     var DEFAULT_COMPILATION_SERVLET_URL = "/servlets/standalone.ss";
 
+
+    var Evaluator = function(options) {
+	var that = this;
+
+	if (options.write) {
+	    this.write = options.write;
+	} else {
+	    this.write = function(dom) {
+	    };
+	}
+
+	if (options.compilationServletUrl) {
+	    this.compilationServletUrl = options.compilationServletUrl;
+	} else {
+	    this.compilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
+	}
+
+	if (options.scriptCompilationServletUrl) {
+	    this.scriptCompilationServletUrl = options.scriptCompilationServletUrl;
+	} else {
+	    this.scriptCompilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
+	}
+
+	if (options.transformDom) {
+	    this.transformDom = options.transformDom;
+	} else {
+	    this.transformDom = function(dom) {
+		if (helpers.isLocationDom(dom)) {
+		    dom = rewriteLocationDom(dom);
+		}
+		return dom;
+	    }
+	}
+
+
+
+	this.aState = new state.State();
+
+	this.aState.setPrintHook(function(thing) {
+	    var dom = types.toDomNode(thing);
+	    dom = that.transformDom(dom);
+	    that.write(dom);
+	    helpers.maybeCallAfterAttach(dom);
+	});
+		
+	this.aState.setDisplayHook(function(aStr) {
+	    var dom = document.createElement("span");
+            dom.style["white-space"] = "pre";	
+	    var node = document.createTextNode(aStr);
+	    dom.appendChild(node);
+	    dom = that.transformDom(dom);
+	    that.write(dom);	
+	    helpers.maybeCallAfterAttach(dom);
+	});
+	
+	this.aState.setToplevelNodeHook(function() {
+	    // KLUDGE: special hook to support jsworld.
+	    return that.makeToplevelNode();
+	});
+    };
+
+
+    // Toplevel nodes are constructed for world programs.
+    Evaluator.prototype.makeToplevelNode = function() {
+	var innerDom = document.createElement("div");
+	var dom = document.createElement("div");
+	dom.appendChild(innerDom);
+	this.write(dom);	
+	helpers.maybeCallAfterAttach(dom);
+	return innerDom;
+    };
+
+
+    Evaluator.prototype.requestBreak = function() {
+	this.aState.requestBreak();
+    };
+
+
+
     var rewriteLocationDom = function(dom) {
 	var newDom = document.createElement("span");
 	var children = dom.children;
@@ -77,71 +155,6 @@ var Evaluator = (function() {
     };
 
 
-    var Evaluator = function(options) {
-	var that = this;
-
-	if (options.write) {
-	    this.write = options.write;
-	} else {
-	    this.write = function(dom) {
-	    };
-	}
-
-	if (options.compilationServletUrl) {
-	    this.compilationServletUrl = options.compilationServletUrl;
-	} else {
-	    this.compilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
-	}
-
-	if (options.scriptCompilationServletUrl) {
-	    this.scriptCompilationServletUrl = options.scriptCompilationServletUrl;
-	} else {
-	    this.scriptCompilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
-	}
-
-
-
-	this.aState = new state.State();
-
-	this.aState.setPrintHook(function(thing) {
-	    var dom = types.toDomNode(thing);
-	    if (helpers.isLocationDom(dom)) {
-		dom = rewriteLocationDom(dom);
-	    }
-	    that.write(dom);
-	    helpers.maybeCallAfterAttach(dom);
-	});
-		
-	this.aState.setDisplayHook(function(aStr) {
-	    var dom = document.createElement("span");
-            dom.style["white-space"] = "pre";	
-	    var node = document.createTextNode(aStr);
-	    dom.appendChild(node);
-	    that.write(dom);	
-	    helpers.maybeCallAfterAttach(dom);
-	});
-	
-	this.aState.setToplevelNodeHook(function() {
-	    // KLUDGE: special hook to support jsworld.
-	    return that.makeToplevelNode();
-	});
-    };
-
-
-    // Toplevel nodes are constructed for world programs.
-    Evaluator.prototype.makeToplevelNode = function() {
-	var innerDom = document.createElement("div");
-	var dom = document.createElement("div");
-	dom.appendChild(innerDom);
-	this.write(dom);	
-	helpers.maybeCallAfterAttach(dom);
-	return innerDom;
-    };
-
-
-    Evaluator.prototype.requestBreak = function() {
-	this.aState.requestBreak();
-    };
 
 
     var encodeScriptParameters = function(programName, code) {

@@ -201,7 +201,7 @@
                                  [else (make-world objects targets player projectiles bg score title timer)]))
                              ))))
       (js-big-bang world
-                   (on-tick .1 update-world)
+                   (on-tick update-world .1)
                    (on-redraw draw-world)
                    (on-key keypress*)))))
 
