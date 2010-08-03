@@ -3,7 +3,6 @@
 //
 // Evaluator(options)
 //     options: { write: dom -> void,
-//                writeError: exn -> void,
 //                compilationServletUrl: string,
 //                scriptCompilationServletUrl: string}
 //
@@ -74,21 +73,34 @@ var Evaluator = (function() {
 	    this.scriptCompilationServletUrl = DEFAULT_COMPILATION_SERVLET_URL;
 	}
 
+	if (options.transformDom) {
+	    this.transformDom = options.transformDom;
+	} else {
+	    this.transformDom = function(dom) {
+		if (helpers.isLocationDom(dom)) {
+		    dom = rewriteLocationDom(dom);
+		}
+		return dom;
+	    }
+	}
+
 
 
 	this.aState = new state.State();
 
 	this.aState.setPrintHook(function(thing) {
 	    var dom = types.toDomNode(thing);
-	    that.write(dom);	
+	    dom = that.transformDom(dom);
+	    that.write(dom);
 	    helpers.maybeCallAfterAttach(dom);
 	});
 		
-	this.aState.setDisplayHook(function(thing) {
+	this.aState.setDisplayHook(function(aStr) {
 	    var dom = document.createElement("span");
             dom.style["white-space"] = "pre";	
-	    var node = document.createTextNode(thing);
+	    var node = document.createTextNode(aStr);
 	    dom.appendChild(node);
+	    dom = that.transformDom(dom);
 	    that.write(dom);	
 	    helpers.maybeCallAfterAttach(dom);
 	});
@@ -114,6 +126,35 @@ var Evaluator = (function() {
     Evaluator.prototype.requestBreak = function() {
 	this.aState.requestBreak();
     };
+
+
+
+    var rewriteLocationDom = function(dom) {
+	var newDom = document.createElement("span");
+	var children = dom.children;
+	var line, column, id;
+	for (var i = 0; i < children.length; i++) {
+	    if (children[i]['class'] === 'location-id') {
+		id = children[i].textContent;
+	    }
+	    if (children[i]['class'] === 'location-offset') {
+		// ignore for now
+	    }
+	    if (children[i]['class'] === 'location-line') {
+		line = children[i].textContent;
+	    }
+	    if (children[i]['class'] === 'location-column') {
+		column = children[i].textContent;
+	    }
+	    if (children[i]['class'] === 'location-span') {
+		// ignore for now
+	    }
+	}
+	newDom.appendChild(document.createTextNode('at line: ' + line + ', column: ' + column + ', in ' + id));
+	return newDom;
+    };
+
+
 
 
     var encodeScriptParameters = function(programName, code) {
