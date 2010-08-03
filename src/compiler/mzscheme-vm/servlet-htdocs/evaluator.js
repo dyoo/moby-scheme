@@ -51,6 +51,31 @@ var Evaluator = (function() {
 
     var DEFAULT_COMPILATION_SERVLET_URL = "/servlets/standalone.ss";
 
+    var rewriteLocationDom = function(dom) {
+	var newDom = document.createElement("span");
+	var children = dom.children;
+	var line, column, id;
+	for (var i = 0; i < children.length; i++) {
+	    if (children[i]['class'] === 'location-id') {
+		id = children[i].textContent;
+	    }
+	    if (children[i]['class'] === 'location-offset') {
+		// ignore for now
+	    }
+	    if (children[i]['class'] === 'location-line') {
+		line = children[i].textContent;
+	    }
+	    if (children[i]['class'] === 'location-column') {
+		column = children[i].textContent;
+	    }
+	    if (children[i]['class'] === 'location-span') {
+		// ignore for now
+	    }
+	}
+	newDom.appendChild(document.createTextNode('at line: ' + line + ', column: ' + column + ', in ' + id));
+	return newDom;
+    };
+
 
     var Evaluator = function(options) {
 	var that = this;
@@ -80,14 +105,17 @@ var Evaluator = (function() {
 
 	this.aState.setPrintHook(function(thing) {
 	    var dom = types.toDomNode(thing);
-	    that.write(dom);	
+	    if (helpers.isLocationDom(dom)) {
+		dom = rewriteLocationDom(dom);
+	    }
+	    that.write(dom);
 	    helpers.maybeCallAfterAttach(dom);
 	});
 		
-	this.aState.setDisplayHook(function(thing) {
+	this.aState.setDisplayHook(function(aStr) {
 	    var dom = document.createElement("span");
             dom.style["white-space"] = "pre";	
-	    var node = document.createTextNode(thing);
+	    var node = document.createTextNode(aStr);
 	    dom.appendChild(node);
 	    that.write(dom);	
 	    helpers.maybeCallAfterAttach(dom);
