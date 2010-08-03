@@ -183,7 +183,7 @@
                   [permission->string
                    (permission? . -> . string?)]
                   [string->permission
-                   (permission? . -> . string?)]
+                   (string? . -> . permission?)]
                   
                   [permission->android-permissions 
                    (permission? . -> . (listof string?))])

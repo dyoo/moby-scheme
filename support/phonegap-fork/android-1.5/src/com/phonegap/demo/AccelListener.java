@@ -179,15 +179,11 @@ public class AccelListener implements SensorListener, LifecycleService {
     // LifecycleService implementations
 
 
-    public void onPause() {}
-
-    public void onResume() {}
-
-    public void onStop() {
+    public void onPause() {
 	sensorManager.unregisterListener(this);
     }
 
-    public void onRestart() {
+    public void onResume() {
 	sensorManager.registerListener(this,
 				       SensorManager.SENSOR_ACCELEROMETER,
 				       SensorManager.SENSOR_DELAY_GAME);
@@ -196,8 +192,23 @@ public class AccelListener implements SensorListener, LifecycleService {
 				       SensorManager.SENSOR_DELAY_GAME);
     }
 
+    public void onRestart() {
+// 	sensorManager.registerListener(this,
+// 				       SensorManager.SENSOR_ACCELEROMETER,
+// 				       SensorManager.SENSOR_DELAY_GAME);
+// 	sensorManager.registerListener(this,
+// 				       SensorManager.SENSOR_ORIENTATION,
+// 				       SensorManager.SENSOR_DELAY_GAME);
+    }
+
+
+    public void onStop() {
+// 	sensorManager.unregisterListener(this);
+    }
+
+ 
     public void onDestroy() {
-	sensorManager.unregisterListener(this);
+// 	sensorManager.unregisterListener(this);
     }
 
 }

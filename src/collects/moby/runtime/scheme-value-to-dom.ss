@@ -157,12 +157,16 @@
                (begin
                  `(span ((class "SchemeValue-List"))
                         (span ((class "SchemeValue-List.lparen")) "(")
-                        ,@(separate-with-spaces (cons 
-                                                 `(span ((class "SchemeValue-List.keyword")) "list")
-                                                 (map (lambda (x)
-                                                        `(span ((class "SchemeValue-List.item"))
-                                                               ,(->dom x)))
-                                                      val)))
+                        ,@(separate-with-spaces (map (lambda (x)
+                                                       `(span ((class "SchemeValue-List.item"))
+                                                              ,(->dom x)))
+                                                     val))
+                        #;,@(separate-with-spaces (cons 
+                                                   `(span ((class "SchemeValue-List.keyword")) "list")
+                                                   (map (lambda (x)
+                                                          `(span ((class "SchemeValue-List.item"))
+                                                                 ,(->dom x)))
+                                                        val)))
                         (span ((class "SchemeValue-List.rparen")) ")")))]
 
               [(vector? val)

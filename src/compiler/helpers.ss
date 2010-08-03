@@ -4,7 +4,7 @@
 (require "../collects/moby/runtime/stx.ss")
 (require "../collects/moby/runtime/error-struct.ss")
 
-;; A program is a (listof (or/c defn? expr? library-require?))
+;; A program is a (listof (or/c defn? expr? library-require? provide-statement? require-permission?))
 
 (define (list? datum)
   (or (empty? datum)
@@ -90,7 +90,8 @@
                  (or (defn? x)
                      (expression? x)
                      (library-require? x)
-                     (provide-statement? x)))
+                     (provide-statement? x)
+                     (require-permission? x)))
                datum)))
 
 
@@ -99,7 +100,8 @@
 (define (expression? an-expr)
   (and (not (defn? an-expr))
        (not (library-require? an-expr))
-       (not (provide-statement? an-expr))))
+       (not (provide-statement? an-expr))
+       (not (require-permission? an-expr))))
 
 
 ;; defn?: stx -> boolean
@@ -120,6 +122,11 @@
 (define (provide-statement? an-sexp)
   (stx-begins-with? an-sexp 'provide))
 
+
+;; require-permission?: stx -> boolean
+;; Produces true if the syntax looks like a permission-requirement.
+(define (require-permission? an-sexp)
+  (stx-begins-with? an-sexp 'require-permission))
 
 
 ;; string-join: (listof string) string -> string
@@ -470,6 +477,7 @@
                   [expression? (any/c . -> . boolean?)]
                   [defn? (any/c . -> . boolean?)]
                   [test-case? (any/c . -> . boolean?)]
+                  [require-permission? (any/c . -> . boolean?)]
                   [library-require? (any/c . -> . boolean?)]
                   [provide-statement? (any/c . -> . boolean?)]
                   [take ((listof any/c) number? . -> . (listof any/c))]

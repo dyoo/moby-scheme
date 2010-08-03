@@ -1,4 +1,7 @@
 #lang s-exp "../moby-lang.ss"
+
+(require jsworld/phonegap)
+
 ;; Rolling out of time
 ;;
 ;; Roll the blue ball onto the red target:
@@ -157,7 +160,7 @@
 
 
 (js-big-bang initial-world
-             (on-tick 1/20 tick)
+             (on-tick tick 1/20)
              (on-tilt tilt)
              
              (on-redraw render)

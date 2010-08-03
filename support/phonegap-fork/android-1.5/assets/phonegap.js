@@ -343,79 +343,6 @@ File.prototype.write = function(file) {
 if (typeof navigator.file == "undefined") navigator.file = new File();
 
 
-/**
-     * This class provides access to device GPS data.
-     * @constructor
-     */
-function Geolocation() {
-    /**
-    	 * The last known GPS position.
-    	 */
-    this.lastPosition = {latitude: 0, longitude: 0};
-
-    this.listeners = [];
-}
-
-/**
-     * Asynchronously aquires the current position.
-     * @param {Function} successCallback The function to call when the position
-     * data is available
-     * @param {Function} errorCallback The function to call when there is an error 
-     * getting the position data.
-     * @param {PositionOptions} options The options for getting the position data
-     * such as timeout.
-     */
-Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-    // If the position is available then call success
-    // If the position is not available then call error
-}
-
-
-
-// getDistanceBetween: number number number number -> number
-// Returns the distance in meters between the two latitude/longitude pairs.
-Geolocation.prototype.getDistanceBetween = function(lat1, long1, lat2, long2) {
-    return Geo.getDistanceBetween(lat1, long1, lat2, long2);
-}
-
-
-/**
-     * Asynchronously aquires the position repeatedly at a given interval.
-     * @param {Function} successCallback The function to call each time the position
-     * data is available
-     * @param {Function} errorCallback The function to call when there is an error 
-     * getting the position data.
-     * @param {PositionOptions} options The options for getting the position data
-     * such as timeout and the frequency of the watch.
-     */
-Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
-    // Invoke the appropriate callback with a new Position object every time the implementation 
-    // determines that the position of the hosting device has changed. 
-    
-    this.getCurrentPosition(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 10000;
-    
-    var that = this;
-    return setInterval(function() {
-    	that.getCurrentPosition(successCallback, errorCallback, options);
-    	//navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
-    }, frequency);
-}
-
-
-/**
-     * Clears the specified position watch.
-     * @param {String} watchId The ID of the watch returned from #watchPosition.
-     */
-Geolocation.prototype.clearWatch = function(watchId) {
-    clearInterval(watchId);
-}
-
-navigator.phonegap_geo = new Geolocation();
-if (typeof navigator.geolocation == "undefined") {
-    navigator.geolocation = navigator.phonegap_geo;
-}
-
 
 
 /**
@@ -728,103 +655,200 @@ Audio.FLAG_REMOVE_SOUND_AND_VIBRATE = 8;
 Audio.FLAG_VIBRATE = 16;
 
 
+
+
 /**
+     * This class provides access to device GPS data.
+     * @constructor
+     */
+function Geolocation() {
+    /**
+    	 * The last known GPS position.
+    	 */
+    this.lastPosition = {latitude: 0, longitude: 0};
+    this.listeners = {};
+}
+
+
+(function() {
+
+
+    /**
  * Since we can't guarantee that we will have the most recent, we just try our best!
  *
  * Also, the API doesn't specify which version is the best version of the API
  */
 
-Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options)
-{
-    Geolocation.global_success = successCallback;
-    Geolocation.fail = errorCallback;
-    Geo.getCurrentLocation();
-}
+    // /**
+    //      * Asynchronously aquires the current position.
+    //      * @param {Function} successCallback The function to call when the position
+    //      * data is available
+    //      * @param {Function} errorCallback The function to call when there is an error 
+    //      * getting the position data.
+    //      * @param {PositionOptions} options The options for getting the position data
+    //      * such as timeout.
+    //      */
+    // Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
+    //     // If the position is available then call success
+    //     // If the position is not available then call error
+    // }
 
-// Run the global callback
-Geolocation.gotCurrentPosition = function() {
-    var lat = Args.get("gpsLat");
-    var lng = Args.get("gpsLng");
-    //  Console.println("Got position " + lat + ", " + lng);
+
+
+    // getDistanceBetween: number number number number -> number
+    // Returns the distance in meters between the two latitude/longitude pairs.
+    Geolocation.prototype.getDistanceBetween = function(lat1, long1, lat2, long2) {
+	return Geo.getDistanceBetween(lat1, long1, lat2, long2);
+    }
+
+
+    // /**
+    //      * Asynchronously aquires the position repeatedly at a given interval.
+    //      * @param {Function} successCallback The function to call each time the position
+    //      * data is available
+    //      * @param {Function} errorCallback The function to call when there is an error 
+    //      * getting the position data.
+    //      * @param {PositionOptions} options The options for getting the position data
+    //      * such as timeout and the frequency of the watch.
+    //      */
+    // Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options) {
+    //     // Invoke the appropriate callback with a new Position object every time the implementation 
+    //     // determines that the position of the hosting device has changed. 
     
-    if (typeof lat == "undefined" || lat == null
-        || typeof lng == "undefined" ||  lng == null)
-    {
-	this.fail();
-    }
-    else
-    {
-	p = {};
-	p.latitude = lat;
-	p.longitude = lng;
-	this.global_success(p);
-    }
-}
+    //     this.getCurrentPosition(successCallback, errorCallback, options);
+    //     var frequency = (options != undefined)? options.frequency : 10000;
+    
+    //     var that = this;
+    //     return setInterval(function() {
+    //     	that.getCurrentPosition(successCallback, errorCallback, options);
+    //     	//navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+    //     }, frequency);
+    // }
 
 
-/*
+
+
+    // /**
+    //      * Clears the specified position watch.
+    //      * @param {String} watchId The ID of the watch returned from #watchPosition.
+    //      */
+    // Geolocation.prototype.clearWatch = function(watchId) {
+    //     clearInterval(watchId);
+    // }
+
+
+
+    navigator.phonegap_geo = new Geolocation();
+    if (typeof navigator.geolocation == "undefined") {
+	navigator.geolocation = navigator.phonegap_geo;
+    }
+
+
+
+    Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options)
+    {
+	Geolocation.global_success = successCallback;
+	Geolocation.fail = errorCallback;
+	Geo.getCurrentLocation();
+    }
+
+    // Run the global callback
+    Geolocation.gotCurrentPosition = function() {
+	var lat = parseFloat(Args.get("gpsLat"));
+	var lng = parseFloat(Args.get("gpsLng"));
+	//  Console.println("Got position " + lat + ", " + lng);
+	
+	if (typeof lat == "undefined" || lat == null
+            || typeof lng == "undefined" ||  lng == null)
+	{
+	    this.fail();
+	}
+	else
+	{
+	    this.global_success(lat, lng);
+	}
+    }
+
+
+    /*
  * This turns on the GeoLocator class, which has two listeners.
  * The listeners have their own timeouts, and run independently of this process
  * In this case, we return the key to the watch hash
  */
 
-Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options)
-{
-    var frequency = (options != undefined)? (options.frequency || 10000) : 10000;
+    var keyGensym = 0;
+    var makeKey = function() {
+	keyGensym++;
+	return "watch" + keyGensym;
+    };
 
-    //    Console.println("options.frequency = " + ((options != undefined)? options.frequency : 10000));
-
-    if (!this.listeners)
+    Geolocation.prototype.watchPosition = function(successCallback, errorCallback, options)
     {
-    	Console.println("Geoloc making listeners list in watchPosition");
-    	this.listeners = [];
+	var frequency = (options != undefined)? (options.frequency || 10000) : 10000;
+
+	//    Console.println("options.frequency = " + ((options != undefined)? options.frequency : 10000));
+
+	if (!this.listeners)
+	{
+    	    this.listeners = {};
+	}
+
+	var key = makeKey();
+	this.listeners[key] = 
+	    {"success" : successCallback, "fail" : errorCallback };
+	
+	//    Console.logd("Geoloc watchPosition", "Starting to watch position. key " + key + ", freq " + frequency);
+
+	// TODO: Get the names of the method and pass them as strings to the Java.
+	return Geo.start(frequency, key);
     }
 
-    var key = this.listeners.push( {"success" : successCallback, "fail" : errorCallback }) - 1;
-    
-    //    Console.logd("Geoloc watchPosition", "Starting to watch position. key " + key + ", freq " + frequency);
 
-    // TODO: Get the names of the method and pass them as strings to the Java.
-    return Geo.start(frequency, key);
-}
-
-/*
+    /*
  * Retrieve and stop this listener from listening to the GPS
  *
  */
-Geolocation.prototype.success = function(key, lat, lng)
-{
-    var key = Args.get("gpsId");
-    var lat = Args.get("gpsLat");
-    var lng = Args.get("gpsLng");
+    Geolocation.prototype.success = function() {
+	var key = (Args.get("gpsId").toString() + '');
+	var lat = parseFloat(Args.get("gpsLat").toString());
+	var lng = parseFloat(Args.get("gpsLng").toString());
 
-    //    Console.println("Success for finding location " + lat + ", " + lng + " with key " + key);
-    //    Console.println("typeof this.listeners = " + (typeof this.listeners));
+	//    Console.println("Success for finding location " + lat + ", " + lng + " with key " + key);
+	//    Console.println("typeof this.listeners = " + (typeof this.listeners));
 
-    if (typeof key == "undefined" || key == null) {
-        Console.logd("PhoneGap", "Geolocation key undefined in Geolocation.success");
-    }
-    else if (lat == null || lng == null) {
+	if (typeof(key) == "undefined" || key == null) {
+            Console.logd("PhoneGap", "Geolocation key undefined in Geolocation.success");
+	}
+
+	if (! this.listeners[key]) { 
+	    return; 
+	}
+
+	else if (lat === null || lng === null) {
             this.listeners[key].fail();
+	}
+	else {
+	    if (this.lastPosition.latitude !== lat ||
+		this.lastPosition.longitude !== lng) {
+		this.lastPosition = { latitude : lat, longitude: lng };
+		this.listeners[key].success(lat, lng);
+	    }
+	}
     }
-    else {
-        p = {};
-        p.latitude = lat;
-        p.longitude = lng;
-        this.lastPosition = p;
-        this.listeners[key].success(p);
+
+    Geolocation.prototype.fail = function(key)
+    {
+	this.listeners[key].fail();
     }
-}
 
-Geolocation.prototype.fail = function(key)
-{
-    this.listeners[key].fail();
-}
+    Geolocation.prototype.clearWatch = function(watchId)
+    {
+	Geo.stop(watchId);
+	delete this.listeners[key];
+    }
 
-Geolocation.prototype.clearWatch = function(watchId)
-{
-    Geo.stop(watchId);
-}
+})();
+
 
 /* Identical to the iPhone, except we have to create this in the JS */
 /*
@@ -996,8 +1020,8 @@ Accelerometer.prototype.getCurrentOrientation = function(successCallback, errorC
     //    Console.println("getting current orientation");
     
     var orient = new Orientation( Accel.getAzimuth(), Accel.getPitch(), Accel.getRoll() );
-    Accelerometer.lastOrienetation = orient;
-    successCallback(orient);
+    Accelerometer.lastOrientation = orient;
+    successCallback(Accel.getAzimuth(), Accel.getPitch(), Accel.getRoll());
 }
 
 //Accelerometer.base_method = Accelerometer.prototype.watchAcceleration
@@ -1020,16 +1044,30 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 //Accelerometer.base_orient_method = Accelerometer.prototype.watchOrientation;
 Accelerometer.prototype.watchOrientation = function(successCallback, errorCallback, options)
 {
-    Accel.start();
-    
-    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
-    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
+    if (typeof Accel === 'undefined' || typeof(navigator.accelerometer) === 'undefined') {
+	alert("No accelerometer found");
+	return function() {
+	    alert("watchOrientation off");
+	};
+    }
 
+    var frequency = (options != undefined)? options.frequency : 150;
+    var lastAzimuth, lastPitch, lastRoll;
+    var onSuccess = function(a, p, r) {
+	if (a !== lastAzimuth ||
+	    p !== lastPitch ||
+	    r !== lastRoll) {
+	    lastAzimuth = a;
+	    lastPitch = p;
+	    lastRoll = r;
+	    successCallback(a, p, r);
+	}
+    };
     var id = setInterval(function() {
-	navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
+ 	navigator.accelerometer.getCurrentOrientation(
+	    onSuccess, errorCallback, options);
     }, frequency);
+
     this.orientListeners.push(id);
     
     var that = this;
@@ -1043,7 +1081,7 @@ Accelerometer.clearTypeWatch = function(list, watchId) {
     	list.splice(index, 1);
 
     if (navigator.accelerometer.allListenersEmpty()) {
-    	Console.println("Stopping accel");
+    	//Console.println("Stopping accel");
     	Accel.onStop();
     }
 }
@@ -1051,7 +1089,7 @@ Accelerometer.clearTypeWatch = function(list, watchId) {
 
 
 Accelerometer.prototype.clearAllWatches = function() {
-    Console.println("clearAllWatches");
+    //Console.println("clearAllWatches");
 
     // clear the shake listeners
     this.shakeListeners = {};

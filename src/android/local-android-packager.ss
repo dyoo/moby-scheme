@@ -19,6 +19,7 @@
          "../program-resources.ss")
 
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
+(define-runtime-path phonegap.js "../../support/phonegap-fork/android-1.5/assets/phonegap.js")
 
 (define-runtime-path icon-path "support/icons/icon.png")
 (define-runtime-path support-path "support/js")
@@ -164,8 +165,11 @@
               (build-path dest-dir "index.html"))
   
   (copy-file* (build-path evaluator-path)
-             (build-path dest-dir "evaluator.js"))
+              (build-path dest-dir "evaluator.js"))
 
+  (copy-file* (build-path phonegap.js)
+              (build-path dest-dir "phonegap.js"))
+      
   ;; Write out a fresh copy of the support library.
   (call-with-output-file (build-path dest-dir "support.js")
     (lambda (op)
@@ -312,7 +316,7 @@
 (define (get-permission-js-array perms) 
   (string-append "["
                  (string-join (map (lambda (x)
-                                     (format "plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS['string->permission'](~s)" (permission->string x)))
+                                     (format "~s" (permission->string x)))
                                    perms)
                               ", ")
                  "]"))

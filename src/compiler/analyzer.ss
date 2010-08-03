@@ -4,6 +4,7 @@
 (require "pinfo.ss")
 (require "helpers.ss")
 (require "rbtree.ss")
+(require "../collects/moby/runtime/permission-struct.ss")
 (require "../collects/moby/runtime/binding.ss")
 (require "../collects/moby/runtime/stx.ss")
 (require "../collects/moby/runtime/error-struct.ss")
@@ -28,6 +29,8 @@
             (program-analyze-collect-definitions a-program pinfo))
           (define pinfo-2
             (program-analyze-collect-provides a-program pinfo-1))]
+    ;; FIXME: we need to walk all the require-permissions and mark
+    ;; bindings with the appropriate ones.
     (program-analyze-uses a-program pinfo-2)))
 
 
@@ -48,7 +51,14 @@
                  [(provide-statement? an-element)
                   pinfo]
                  [(expression? an-element)
-                  pinfo]))
+                  pinfo]
+                 
+                 ;; HACK!  Shriram says this is wrong!
+                 [(require-permission? an-element)
+                  (pinfo-accumulate-declared-permission
+                   (stx-e (second (stx-e an-element)))
+                   (string->permission (stx->datum (third (stx-e an-element))))
+                   pinfo)]))
          pinfo
          a-program))
 
@@ -67,6 +77,8 @@
                  [(provide-statement? an-element)
                   (collect-provided-names (rest (stx-e an-element)) pinfo)]
                  [(expression? an-element)
+                  pinfo]
+                 [(require-permission? an-element)
                   pinfo]))
          pinfo
          a-program))
@@ -89,7 +101,9 @@
                  [(expression? an-element)
                   (expression-analyze-uses an-element
                                            pinfo 
-                                           (pinfo-env pinfo))]))
+                                           (pinfo-env pinfo))]
+                 [(require-permission? an-element)
+                  pinfo]))
          pinfo
          a-program))
 

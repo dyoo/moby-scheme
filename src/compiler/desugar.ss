@@ -91,26 +91,11 @@
                                (first desugared-rest+pinfo))
                        (second desugared-rest+pinfo)))]))]
     
-    (processing-loop (reorder-tests-to-end a-program empty empty)
-                     a-pinfo)))
+    (processing-loop a-program a-pinfo)))
 
 
 
-;; reorder-tests-to-end: program (listof program-element) (listof program-element) -> program
-;; Helper to reorder the test case special forms to the end of the program.
-(define (reorder-tests-to-end a-program program/rev tests/rev)
-  (cond
-    [(empty? a-program)
-     (append (reverse program/rev) (reverse tests/rev))]
-    [(test-case? (first a-program))
-     (reorder-tests-to-end (rest a-program) 
-                           program/rev
-                           (cons (first a-program)
-                                 tests/rev))]
-    [else
-     (reorder-tests-to-end (rest a-program)
-                           (cons (first a-program) program/rev)
-                           tests/rev)]))
+
 
 ;; desugar-program-element: program-element pinfo -> (list (listof program-element) pinfo)
 (define (desugar-program-element an-element a-pinfo)
@@ -118,6 +103,8 @@
     [(defn? an-element)
      (desugar-defn an-element a-pinfo)]
     [(library-require? an-element)
+     (list (list an-element) a-pinfo)]
+    [(require-permission? an-element)
      (list (list an-element) a-pinfo)]
     [(provide-statement? an-element)
      (list (list an-element) a-pinfo)]
@@ -301,8 +288,13 @@
     (check-syntax-application! expr (lambda (expr)
                                       '(local [(define (f x) (* x x))]
                                          (+ (f 3) (f 4)))))
+    (check-syntax-application-arity-at-least! expr 2
+                                              (lambda (expr)
+                                                '(local [(define (f x) (* x x))]
+                                                   (+ (f 3) (f 4)))))
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
-    (local:check-all-definitions! (stx-e (second (stx-e expr))))
+    (local:check-all-definitions! (stx-e (second (stx-e expr)))
+                                  (stx-loc (second (stx-e expr))))
     (local [(define local-symbol-stx (first (stx-e expr)))
             (define defns (stx-e (second (stx-e expr))))
             (define body (third (stx-e expr)))
@@ -320,20 +312,33 @@
                               (pinfo-env pinfo))))))
 
 
-(define (local:check-all-definitions! defns)
-  (cond
-    [(empty? defns)
-     (void)]
-    [(defn? (first defns))
-     (local:check-all-definitions! (rest defns))]
-    [else
-     (raise (make-moby-error (stx-loc (first defns))
-                             (make-moby-error-type:generic-syntactic-error
-                              (format "local expects only definitions, but ~s is not a definition"
-                                      (stx->datum (first defns)))
-                              (list))))]))
+(define (local:check-all-definitions! defns a-loc)
+  (local [(define (raise-error-not-a-list an-stx a-loc)
+            (raise (make-moby-error a-loc
+                                    (make-moby-error-type:generic-syntactic-error
+                                     (format "local expects only definitions, but hasn't received a collection of them and instead received ~s."
+                                             an-stx)
+                                             
+                                     (list)))))
 
-
+          (define (raise-error an-stx a-loc)
+            (raise (make-moby-error a-loc
+                                    (make-moby-error-type:generic-syntactic-error
+                                     (format "local expects only definitions, but ~s is not a definition"
+                                             (stx->datum an-stx))
+                                     (list)))))]
+    (cond
+      [(not (list? defns))
+       (raise-error-not-a-list defns a-loc)]
+      [(empty? defns)
+       (void)]
+      [(defn? (first defns))
+       (local:check-all-definitions! (rest defns) a-loc)]
+      [else
+       (raise-error (first defns)
+                    (stx-loc (first defns)))])))
+  
+  
 
 ;; desugar-application: expr pinfo -> (list expr pinfo)
 ;; Desugars function application.
@@ -508,11 +513,9 @@
     (check-single-body-stx! (rest (rest (stx-e expr))) expr)
     
     ;; Check for list of identifiers 
-    (when (not (list? (stx-e (second (stx-e expr)))))
-      (raise (make-moby-error (stx-loc expr)
-                              (make-moby-error-type:expected-list-of-identifiers 
+    (check-list-of-identifiers! (second (stx-e expr))
                                (first (stx-e expr))
-                               (second (stx-e expr))))))
+                               (stx-loc expr))
     (check-duplicate-identifiers! (stx-e (second (stx-e expr))))
     
     (local [(define lambda-symbol-stx (first (stx-e expr)))
@@ -525,6 +528,17 @@
                         (stx-loc expr))
             ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
             (second desugared-body+pinfo)))))
+
+
+
+;; check-list-of-identifiers!: stx stx loc -> void
+(define (check-list-of-identifiers! thing who loc)
+  (when (not (list? (stx-e thing)))
+    (raise (make-moby-error loc
+                            (make-moby-error-type:expected-list-of-identifiers 
+                             who
+                             thing)))))
+
 
 
 ;; desugar-when: expr pinfo -> (list expr pinfo)
@@ -776,6 +790,18 @@
                              (make-moby-error-type:unsupported-expression-form expr)))]))
 
 
+;; check-syntax-application-arity!: expression number (stx -> void) -> void
+;; Make sure the syntax application has at least the following number of arguments. 
+(define (check-syntax-application-arity-at-least! expr expected-arity on-failure)
+  (cond
+    [(> (length (stx-e expr)) expected-arity)
+     (void)]
+    [else
+     (raise (make-moby-error (stx-loc expr)
+                             (make-moby-error-type:syntax-not-applied
+                              expr
+                              (on-failure expr))))]))
+
 ;; make-cond-exhausted-expression: loc -> stx
 (define (make-cond-exhausted-expression a-loc)
   (tag-application-operator/module
@@ -826,6 +852,12 @@
                                        '(let ([x 3]
                                               [y 4])
                                           (+ x y))))
+    (check-syntax-application-arity-at-least! a-stx 2
+                                              (lambda (a-stx)
+                                                '(let ([x 3]
+                                                       [y 4])
+                                                   (+ x y))))
+    (check-list-of-key-value-pairs! (second (stx-e a-stx)))
     (local [(define clauses-stx (second (stx-e a-stx)))
             (define body-stx (third (stx-e a-stx)))
             (define ids (map (lambda (clause)
@@ -851,6 +883,29 @@
                pinfo))))))
 
 
+;; check-list-of-key-value-pairs!: stx -> void
+(define (check-list-of-key-value-pairs! stx)
+  (cond
+    [(not (list? (stx-e stx)))
+     (raise (make-moby-error (stx-loc stx)
+                             (make-moby-error-type:generic-syntactic-error 
+                              (format "Expected sequence of key value pairs, but received ~s" (stx->datum stx))
+                              empty)))]
+    [else
+     (for-each (lambda (maybe-kv-stx)
+                 (cond [(or (not (list? (stx-e maybe-kv-stx)))
+                            (not (= (length (stx-e maybe-kv-stx)) 2))
+                            (not (symbol? (stx-e (first (stx-e maybe-kv-stx))))))
+                        (raise (make-moby-error (stx-loc maybe-kv-stx)
+                             (make-moby-error-type:generic-syntactic-error 
+                              (format "Expected a key/value pair, but received ~s" (stx->datum maybe-kv-stx))
+                              empty)))]
+                       [else
+                        (void)]))
+               (stx-e stx))]))
+
+
+
 ;; desugar-let*: expr-stx -> expr-stx
 ;; Desugars let* into a nested bunch of let expressions.
 (define (desugar-let* a-stx pinfo)
@@ -859,6 +914,12 @@
                                        '(let* ([x 3]
                                                [y 4])
                                           (+ x y))))
+    (check-syntax-application-arity-at-least! a-stx 2 
+                                              (lambda (a-stx)
+                                                '(let* ([x 3]
+                                                        [y 4])
+                                                   (+ x y))))
+    (check-list-of-key-value-pairs! (second (stx-e a-stx)))
     (local [(define clauses-stx (second (stx-e a-stx)))
             (define body-stx (third (stx-e a-stx)))
             
@@ -890,6 +951,15 @@
                                                           1
                                                           (* x (f (- x 1)))))])
                                           (f 3))))
+    (check-syntax-application-arity-at-least! a-stx 
+                                              2
+                                              (lambda (a-stx)
+                                                '(letrec ([f (lambda (x) 
+                                                               (if (= x 0)
+                                                                   1
+                                                                   (* x (f (- x 1)))))])
+                                                   (f 3))))
+    (check-list-of-key-value-pairs! (second (stx-e a-stx)))
     (local [(define clauses-stx (second (stx-e a-stx)))
             (define body-stx (third (stx-e a-stx)))
             (define define-clauses
