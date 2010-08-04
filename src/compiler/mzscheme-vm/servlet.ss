@@ -134,6 +134,7 @@
 
 (serve/servlet start 
                #:port 8000
+               #:servlet-path "/servlets/standalone.ss"
                #:extra-files-paths (list htdocs compat)
                #:launch-browser? #f
                #:listen-ip #f)
