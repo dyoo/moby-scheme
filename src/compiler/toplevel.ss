@@ -18,6 +18,7 @@
                      eof
                      pi
                      e
+                     ;effect:do-nothing
 		     js-undefined
 		     js-null)))
           
@@ -378,6 +379,11 @@
                      (js-make-hash 0 true)
                      
                      (make-world-config 2 true)
+                     (make-bb-info 2 false)
+                     (bb-info? 1 false)
+                     (bb-info-change-world 1 false)
+                     (bb-info-toplevel-node 1 false)
+                     
                      (make-effect-type 4 true)
                      (effect? 1 false)
                      (world-with-effects 2 false)
@@ -386,10 +392,23 @@
 		     (render-effect-type? 1)
 		     (render-effect? 1)
                      
+                     ;(make-effect:do-nothing 0 false)
+                     ;(effect:do-nothing? 1 false)
+                     
+                     (make-render-effect-type 4 true)
+                     ;(render-effect-name 1 false)
+                     ;(render-effect-dom-node 1 false)
+                     ;(render-effect-effects 1 false)
+                     ;(render-effect? 1 false)
+                     
                      (values 0 true)
                      (sleep 0 true)
+                     (current-inexact-milliseconds 0 false)
                      
                      (make-exn 2 false)
+                     (exn-message 1 false)
+                     (exn-continuation-marks 1 false)
+                     
                      
                      
                      )))]
