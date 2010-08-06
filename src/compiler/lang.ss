@@ -6,7 +6,7 @@
 ;; bootstrap things.
 
 (require (prefix-in base: scheme/base)
-         scheme/contract
+         (prefix-in contract: scheme/contract)
          lang/htdp-advanced
          (for-syntax scheme/base)
          "../collects/moby/runtime/stx.ss"
@@ -15,30 +15,7 @@
          "../collects/moby/runtime/dom-helpers.ss")
 
 
-(provide (except-out (all-from-out lang/htdp-advanced)
-                     define-struct
-                     define
-                     quote
-                     quasiquote
-                     unquote
-                     unquote-splicing
-                     let
-                     letrec
-                     let*
-                     image?
-                     image=?
-                     set!
-                     not
-                     
-                     map
-                     foldl
-                     foldr
-                     for-each
-                     andmap
-                     ormap
-                     
-                     error
-                     ))
+
 
 
 (define-syntax (my-define-struct stx)
@@ -150,6 +127,45 @@
 (define (my-hash-ref a-hash key default-val)
   (base:hash-ref a-hash key default-val))
 
+
+
+
+(provide (except-out (all-from-out lang/htdp-advanced)
+                     define-struct
+                     define
+                     quote
+                     quasiquote
+                     unquote
+                     unquote-splicing
+                     let
+                     letrec
+                     let*
+                     image?
+                     image=?
+                     set!
+                     not
+                     
+                     map
+                     foldl
+                     foldr
+                     for-each
+                     andmap
+                     ormap
+                     
+                     error
+                     
+                     make-hash
+                     make-hasheq
+                     hash?
+                     hash-set!
+                     hash-remove!
+                     hash-map
+                     hash-for-each
+                     hash-ref                     
+                     ->
+                     ))
+
+
 ;; The following primitives will need support in the runtime,
 ;; or be handled specially by the preprocessor.
 (provide (rename-out (base:provide provide)
@@ -170,12 +186,39 @@
                      (base:for-each for-each)
                      (base:error error)
                      (my-raise raise)
+
+                     ;; The rest of these primitives will be implemented for the kernel.
+                     ;; Hash stuff
+                     ;; FIXME: the hash in javascript only accepts strings as keys.
+                     ;; We should use contracts here.
+                     ;; disabled: using internal rbtree in the compiler now.
+                     ;;hash-set hash-ref hash-remove make-immutable-hasheq hash-map
+                     (base:make-hash make-hash)
+                     (base:make-hasheq make-hasheq)
+                     (base:hash? hash?)
+                     (base:hash-set! hash-set!)
+                     (base:hash-remove! hash-remove!)
+                     (base:hash-map hash-map)
+                     (base:hash-for-each hash-for-each)
+                     (my-hash-ref hash-ref)
+
+                     
+                     
+         
+                     ;; Contract-related stuff: the following will be erased on 
+                     ;; javascript bootstrapping time.
+                     (contract:list/c list/c)
+                     (contract:or/c or/c)
+                     (contract:false/c false/c)
+                     (contract:natural-number/c natural-number/c)
+                     (contract:provide/contract provide/contract)
+                     (contract:any/c any/c)
+                     (contract:listof listof)
+                     (contract:-> ->)
                      )
 
          
-         ;; Contract-related stuff: the following will be erased on 
-         ;; javascript bootstrapping time.
-         provide/contract -> any/c listof list/c or/c false/c natural-number/c hash?
+         hash?
 
          begin
          void
@@ -199,16 +242,6 @@
          list*
          
          
-         ;; The rest of these primitives will be implemented for the kernel.
-         ;; Hash stuff
-         ;; FIXME: the hash in javascript only accepts strings as keys.
-         ;; We should use contracts here.
-         ;; disabled: using internal rbtree in the compiler now.
-         ;;hash-set hash-ref hash-remove make-immutable-hasheq hash-map
-	 make-hash
-         make-hasheq
-	 hash? hash-set! hash-remove! hash-map hash-for-each
-	 (rename-out (my-hash-ref hash-ref))
          
          ;; To support include and require
          #;open-input-stx

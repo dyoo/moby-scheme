@@ -1,11 +1,11 @@
 #lang scheme/base
 
 (require (only-in scheme/list empty? empty first rest)
-         scheme/runtime-path
-         scheme/path
-         scheme/port
-         scheme/file
-         scheme/local
+         (only-in scheme/runtime-path define-runtime-path)
+         (only-in scheme/path find-relative-path normalize-path path-only)
+         (only-in scheme/port copy-port)
+         (only-in scheme/file file->bytes make-directory*)
+         (only-in scheme/local local)
          (only-in scheme/list second)
          "compile-helpers.ss"
          "compile-helpers-with-images.ss"
@@ -19,7 +19,7 @@
          "compiler/pinfo.ss"
          "compiler/modules.ss")
 
-(require (for-syntax (only-in scheme/base build-path #%app)))
+(require (for-syntax (only-in scheme/base build-path #%app #%datum)))
 
 ;; Bootstrap the runtime components of Moby, as well as the
 ;; Scheme->Javascript compiler in support/js/compiler.js.

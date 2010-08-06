@@ -1,13 +1,12 @@
 #lang scheme/base
 
-(require scheme/gui/base
-         scheme/file
-         scheme/class
-         scheme/contract
-         scheme/local
+(require (only-in scheme/gui/base open-input-text-editor text%)
+         (only-in scheme/file make-directory*)
+         (only-in scheme/class new send is-a?/c)
+         (only-in scheme/contract provide/contract -> ->* or/c false/c listof)
+         (only-in scheme/local local)
          "collects/moby/runtime/stx.ss"
          "stx-helpers.ss"
-         "compile-helpers.ss"
          "program-resources.ss"
          "image-lift.ss")
 

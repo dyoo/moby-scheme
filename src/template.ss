@@ -23,11 +23,23 @@
 ;;
 ;; should produce "Hello Danny".
 (define (fill-template a-template mappings)
-  (regexp-replace* #px"\\<\\<([-A-Za-z]+)\\>\\>" 
-                   a-template
-                   (lambda (_ hole-name)
-                     (stringify
-                      (hash-ref mappings hole-name)))))
+  (let ([pattern #px"\\<\\<([-A-Za-z]+)\\>\\>"])
+    (cond
+      [(regexp-match pattern a-template)
+       =>
+       (lambda (a-match)
+         ;; I want to use regexp-replace*, but there's a bug in
+         ;; Racket 5.0 that prevents me from doing so: the type
+         ;; signature of regexp-replace* is incompatible with
+         ;; previous versions of plt-scheme.
+         (fill-template (regexp-replace pattern
+                                        a-template
+                                        (lambda (_ hole-name)
+                                          (stringify
+                                           (hash-ref mappings hole-name))))
+                        mappings))]
+      [else
+       a-template])))
 
 
 ;; stringify: X -> string
