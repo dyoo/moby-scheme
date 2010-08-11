@@ -5,7 +5,7 @@
 #;(define mred-launcher-libraries (list "src/moby.ss"))
 #;(define mred-launcher-names (list "moby"))
 (define requires (list (list "mred")))
-(define required-core-version "4.2")
+(define required-core-version "5.0.1")
 
 (define tools (list (list "src/tool.ss")))
 

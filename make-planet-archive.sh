@@ -12,7 +12,7 @@ cd $OLDDIR/tmp/moby
 rm -rf sandbox
 
 cd $OLDDIR/tmp/moby/src
-mred bootstrap-js-compiler.ss
+gracket bootstrap-js-compiler.ss
 
 cd $OLDDIR/tmp
 

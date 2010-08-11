@@ -9,6 +9,7 @@
          scheme/contract
          lang/htdp-advanced
          (for-syntax scheme/base)
+	 "moby-failure.ss"
          "../collects/moby/runtime/stx.ss"
          "../collects/moby/runtime/error-struct.ss"
          "../collects/moby/runtime/error-struct-to-dom.ss"
@@ -112,7 +113,6 @@
                            a-path-string)))
 
 
-(base:define-struct (moby-failure exn:fail) (val))
 
 
 

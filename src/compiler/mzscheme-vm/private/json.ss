@@ -7,6 +7,18 @@
 ;; I'm just including it here to avoid what appears to be a PLaneT 
 ;; issue when trying to compile the documentation.
 
+#|
+
+#\null
+boolean?
+string?
+(or integer? inexact-real?)
+(listof jsexpr?)
+(hasheqof symbol? jsexpr?)
+
+|#
+
+
 
 
 (require (only-in scheme/base [read scheme:read] [write scheme:write]))

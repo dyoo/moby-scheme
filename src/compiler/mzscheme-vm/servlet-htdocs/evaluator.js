@@ -160,6 +160,7 @@ var Evaluator = (function() {
     var encodeScriptParameters = function(programName, code) {
 	return encodeUrlParameters({ 'name': programName,
 				     'program': code,
+				     'compiler-version' : '1',
 				     'callback': 'Evaluator.compilation_success_callback__',
 				     'on-error': 'Evaluator.compilation_failure_callback__'});
     };
@@ -212,7 +213,8 @@ var Evaluator = (function() {
 							   onDone, onDoneError) {
 	var that = this;
 	var params = encodeUrlParameters({'name': programName,
-					  'program': code });
+					  'program': code,
+					  'compiler-version' : '1'});
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 	    if (xhr.readyState == 4) {
@@ -378,9 +380,38 @@ var Evaluator = (function() {
     };
     
 
+    // The type of errorValue is either
+    //
+    // A string, or
+    //
+    // A structure of the form { type: "exn:fail:read",
+    //                           message: string,
+    //                           srclocs: [srcloc]}
+    //
+    // where each srcloc is of the form
+    // { type: "srcloc",
+    //   source: string
+    //   line: number,
+    //   column: number,
+    //   position: number,
+    //   span: number
+    // }
 
-    Evaluator.prototype._onCompilationFailure = function(errorMessage, onDoneError) {
-	onDoneError(new Error(errorMessage));
+    Evaluator.prototype._onCompilationFailure = function(errorValue, onDoneError) {
+	if (typeof(errorValue) === 'string') {
+	    onDoneError(new Error(errorValue));
+	} else if (typeof(errorValue) === 'object') {
+	    onDoneError(convertErrorValue(errorValue));
+	} else {
+	    onDoneError(new Error(errorValue));
+	}
+    };
+
+    var convertErrorValue = function(errorValue) {
+	if (errorValue.type && errorValue.type === 'exn:fail:read') {
+	    return new Error(errorValue.message);
+	}
+	return new Error(errorValue + '');
     };
 
 
