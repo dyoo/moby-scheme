@@ -478,13 +478,13 @@
 ;; Loc->dom-sexp: loc -> sexp
 ;; Given a location, produce a dom representation of that location.
 (define (Loc->dom-sexp a-loc)
-  `(span ((class "Location")
+  `(span ((class "location-reference")
           (style "display:none"))
-         (span ((class "Location.offset")) ,(number->string (Loc-offset a-loc)))
-         (span ((class "Location.line")) ,(number->string (Loc-line a-loc)))
-         (span ((class "Location.column")) ,(number->string (Loc-column a-loc)))
-         (span ((class "Location.span")) ,(number->string (Loc-span a-loc)))
-         (span ((class "Location.id")) ,(Loc-id a-loc))))
+         (span ((class "location-offset")) ,(number->string (Loc-offset a-loc)))
+         (span ((class "location-line")) ,(number->string (Loc-line a-loc)))
+         (span ((class "location-column")) ,(number->string (Loc-column a-loc)))
+         (span ((class "location-span")) ,(number->string (Loc-span a-loc)))
+         (span ((class "location-id")) ,(Loc-id a-loc))))
          
 
 
