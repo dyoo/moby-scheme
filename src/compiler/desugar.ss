@@ -39,7 +39,6 @@
                   an-id
                   a-binding)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; make-default-syntax-env: -> syntax-env
@@ -1086,11 +1085,12 @@
                                                        make-moby-error-type:unquote-splicing-too-many-elements)
                                                       (second (stx-e s)))]
                                                    [else
-                                                    (make-moby-error 
-                                                     (stx-loc a-stx)
-                                                     (make-moby-error-type:generic-syntactic-error
-                                                      "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
-                                                      (list)))])]
+                                                    (raise
+                                                     (make-moby-error 
+                                                      (stx-loc a-stx)
+                                                      (make-moby-error-type:generic-syntactic-error
+                                                       "misuse of ,@ or unquote-splicing within a quasiquoting backquote" 
+                                                       (list))))])]
                                                 
                                                 [else
                                                  (list 'list (handle-quoted s depth))]))

@@ -445,15 +445,17 @@
 (define (check-single-body-stx! stxs original-stx)
   (cond
     [(empty? stxs)
-     (make-moby-error (stx-loc original-stx)
-                      (make-moby-error-type:generic-syntactic-error
-                       "I expected a single body in this expression, but I didn't find any."
-                       (list)))]
+     (raise
+      (make-moby-error (stx-loc original-stx)
+                       (make-moby-error-type:generic-syntactic-error
+                        "I expected a single body in this expression, but I didn't find any."
+                        (list))))]
     [(not (empty? (rest stxs)))
-     (make-moby-error (stx-loc original-stx)
-                      (make-moby-error-type:generic-syntactic-error
-                       "I expected a single body in this expression, but I found more than one."
-                       (list)))]
+     (raise
+      (make-moby-error (stx-loc original-stx)
+                       (make-moby-error-type:generic-syntactic-error
+                        "I expected a single body in this expression, but I found more than one."
+                        (list))))]
     [else
      (void)]))
 
