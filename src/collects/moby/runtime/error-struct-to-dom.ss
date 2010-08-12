@@ -487,6 +487,19 @@
          (span ((class "location-id")) ,(Loc-id a-loc))))
          
 
+;; separate-with-br-elements: (listof dom) -> (listof dom)
+;; Splice in br elements between each dom.
+(define (separate-with-br-elements doms)
+  (cond
+    [(empty? doms)
+     empty]
+    [(empty? (rest doms))
+     (list (first doms))]
+    [else
+     (cons (first doms)
+           '(br ())
+           (separate-with-br-elements (rest doms)))]))
+
 
 ;; ordinal-ending: natural-number -> string
 ;; Produces the ordinal ending of a number.  For example, 1 => st, 4 => th.

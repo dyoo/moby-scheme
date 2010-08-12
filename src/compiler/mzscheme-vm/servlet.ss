@@ -130,10 +130,9 @@
                              (first translated-srclocs))
                          (make-moby-error-type:generic-read-error
                           (exn-message an-exn)
-                          translated-srclocs))))
-     #;(make-hash `(("type" . "exn:fail:read")
-                    ("message" . ,(exn-message an-exn))
-                    ("srclocs" . ,(map srcloc->jsexpr (exn:fail:read-srclocs an-exn)))))]
+                          (if (empty? translated-srclocs) 
+                              empty
+                              (rest translated-srclocs))))))]
     
     [(moby-failure? an-exn)
      (on-moby-failure-val (moby-failure-val an-exn))]

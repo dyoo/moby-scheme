@@ -135,19 +135,19 @@ var Evaluator = (function() {
 	var children = dom.children;
 	var line, column, id;
 	for (var i = 0; i < children.length; i++) {
-	    if (children[i]['class'] === 'location-id') {
+	    if (children[i]['className'] === 'location-id') {
 		id = children[i].textContent;
 	    }
-	    if (children[i]['class'] === 'location-offset') {
+	    if (children[i]['className'] === 'location-offset') {
 		// ignore for now
 	    }
-	    if (children[i]['class'] === 'location-line') {
+	    if (children[i]['className'] === 'location-line') {
 		line = children[i].textContent;
 	    }
-	    if (children[i]['class'] === 'location-column') {
+	    if (children[i]['className'] === 'location-column') {
 		column = children[i].textContent;
 	    }
-	    if (children[i]['class'] === 'location-span') {
+	    if (children[i]['className'] === 'location-span') {
 		// ignore for now
 	    }
 	}
