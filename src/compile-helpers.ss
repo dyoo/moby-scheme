@@ -20,6 +20,20 @@
 
 
 
+;; read-syntaxes: input-port #:name symbol -> (listof stx)
+(define (read-syntaxes in #:name name)
+  (port-count-lines! in)
+  (parameterize ([read-accept-reader #t]
+                 [read-decimal-as-inexact #f])
+    (map syntax->stx
+         (let loop ()
+           (let ([stx (read-syntax name in)])
+             (cond
+               [(eof-object? stx)
+                '()]
+               [else
+                (cons stx (loop))]))))))
+
 
 ;; parse-string-as-program: string -> program
 ;; Given a text, returns a program as well.
@@ -144,6 +158,7 @@
 
 
 (provide/contract
+ [read-syntaxes (input-port? #:name any/c . -> . (listof stx?))]
  [parse-string-as-program ((string?) (string?) . ->* .  (listof stx?))]
  [get-permissions (pinfo? . -> . (listof permission?))]
  [run-ant-build.xml (path? string? . -> . any)]
