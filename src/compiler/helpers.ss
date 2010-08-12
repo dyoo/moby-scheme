@@ -455,7 +455,7 @@
       (make-moby-error (stx-loc original-stx)
                        (make-moby-error-type:generic-syntactic-error
                         "I expected a single body in this expression, but I found more than one."
-                        (list))))]
+                        (map stx-loc (rest stxs)))))]
     [else
      (void)]))
 
