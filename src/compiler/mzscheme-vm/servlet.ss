@@ -9,7 +9,9 @@
          "compile.ss"
          "private/json.ss"
          "../moby-failure.ss"
+         "../../collects/moby/runtime/error-struct.ss"
          "../../collects/moby/runtime/error-struct-to-dom.ss"
+         "../../collects/moby/runtime/stx.ss"
          "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 (define-runtime-path htdocs "servlet-htdocs")
@@ -110,16 +112,32 @@
 ;; Given an exception, tries to get back a jsexpr-structured value that can be passed back to
 ;; the user.
 (define (exn->json-structured-output an-exn)
+  (define (on-moby-failure-val failure-val)
+    (make-hash `(("type" . "moby-failure")
+                 ("dom-message" . 
+                                ,(dom->jsexpr 
+                                  (error-struct->dom-sexp failure-val #f))))))
   (cond
     [(exn:fail:read? an-exn)
-     (make-hash `(("type" . "exn:fail:read")
-                  ("message" . ,(exn-message an-exn))
-                  ("srclocs" . ,(map srcloc->jsexpr (exn:fail:read-srclocs an-exn)))))]
+     (let ([translated-srclocs 
+            (map srcloc->Loc (exn:fail:read-srclocs an-exn))])
+       (on-moby-failure-val
+        (make-moby-error (if (empty? translated-srclocs)
+                             ;; Defensive: translated-srclocs should not be empty, but
+                             ;; if read doesn't give us any useful location to point to,
+                             ;; we'd better not die here.
+                             (make-Loc 0 1 0 0 "")
+                             (first translated-srclocs))
+                         (make-moby-error-type:generic-read-error
+                          (exn-message an-exn)
+                          translated-srclocs))))
+     #;(make-hash `(("type" . "exn:fail:read")
+                    ("message" . ,(exn-message an-exn))
+                    ("srclocs" . ,(map srcloc->jsexpr (exn:fail:read-srclocs an-exn)))))]
+    
     [(moby-failure? an-exn)
-     (make-hash `(("type" . "moby-failure")
-                  ("dom-message" . 
-                                 ,(dom->jsexpr 
-                                   (error-struct->dom-sexp (moby-failure-val an-exn) #f)))))]
+     (on-moby-failure-val (moby-failure-val an-exn))]
+    
     [else
      (exn-message an-exn)]))
 
@@ -140,15 +158,15 @@
 
 
 
-;; srcloc->jsexp: srcloc -> jsexp
-;; Converts a source location (as stored in exceptions) into a structured json-compatible value.
-(define (srcloc->jsexpr a-srcloc)
-  (make-hash `((type . "srcloc")
-               (source . ,(format "~a" (srcloc-source a-srcloc)))
-               (line . ,(srcloc-line a-srcloc))
-               (column . ,(srcloc-column a-srcloc))
-               (position . ,(srcloc-position a-srcloc))
-               (span . ,(srcloc-span a-srcloc)))))
+;; srcloc->Loc: srcloc -> jsexp
+;; Converts a source location (as stored in exceptions) into one that we can
+;; store in error structure values.
+(define (srcloc->Loc a-srcloc)
+  (make-Loc (srcloc-position a-srcloc)
+            (srcloc-line a-srcloc)
+            (srcloc-column a-srcloc)
+            (srcloc-span a-srcloc)
+            (format "~a" (srcloc-source a-srcloc))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

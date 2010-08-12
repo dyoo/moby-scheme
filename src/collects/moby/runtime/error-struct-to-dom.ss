@@ -463,7 +463,15 @@
                      ,(moby-error-type:generic-syntactic-error-reason error-type))
                (span ((class "Error-GenericSyntacticError.otherLocations"))
                      ,@(map Loc->dom-sexp 
-                            (moby-error-type:generic-syntactic-error-other-locations error-type))))]))))
+                            (moby-error-type:generic-syntactic-error-other-locations error-type))))]
+       
+       [(moby-error-type:generic-read-error? error-type)
+        `(span ((class "Error-GenericReadError"))
+               (span ((class "Error.reason"))
+                     ,(moby-error-type:generic-read-error-message error-type))
+               (span ((class "Error-GenericReadError.locations"))
+                     ,@(map Loc->dom-sexp
+                            (moby-error-type:generic-read-error-locations error-type))))]))))
   
 
 

@@ -94,6 +94,8 @@
 ;; the errors.
 (define-struct moby-error-type:generic-syntactic-error (reason other-locations))
 
+(define-struct moby-error-type:generic-read-error (message locations))
+
 
 
 
@@ -156,7 +158,8 @@
       (moby-error-type:type-mismatch? x)
       (moby-error-type:index-out-of-bounds? x)
       (moby-error-type:generic-runtime-error? x)
-      (moby-error-type:generic-syntactic-error? x)))
+      (moby-error-type:generic-syntactic-error? x)
+      (moby-error-type:generic-read-error? x)))
 
 
 
@@ -221,6 +224,7 @@
  [struct moby-error-type:unrecognized-lexical-token ([token symbol?])]
  [struct moby-error-type:unsupported-lexical-token ([token symbol?])]
  [struct moby-error-type:unsupported-expression-form ([expr stx?])]
+ 
  
  [struct moby-error-type:unclosed-parentheses ([opener symbol?]
                                                [closer symbol?])]
@@ -310,6 +314,12 @@
  [struct moby-error-type:generic-runtime-error ([reason string?])]
  [struct moby-error-type:generic-syntactic-error ([reason string?]
                                                   [other-locations (listof Loc?)])]
+ 
+
+ [struct moby-error-type:generic-read-error ([message string?]
+                                             [locations (listof Loc?)])]
+ 
+ 
  
  
  [moby-expected? (any/c . -> . boolean?)]
