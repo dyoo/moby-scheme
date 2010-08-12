@@ -3,10 +3,13 @@
 (require web-server/servlet
          web-server/servlet-env
          scheme/runtime-path
+         scheme/match
+         scheme/list
          "write-support.ss"
          "compile.ss"
          "private/json.ss"
          "../moby-failure.ss"
+         "../../collects/moby/runtime/error-struct-to-dom.ss"
          "../../../support/externals/mzscheme-vm/src/sexp.ss")
 
 (define-runtime-path htdocs "servlet-htdocs")
@@ -113,9 +116,28 @@
                   ("message" . ,(exn-message an-exn))
                   ("srclocs" . ,(map srcloc->jsexpr (exn:fail:read-srclocs an-exn)))))]
     [(moby-failure? an-exn)
-     (exn-message an-exn)]
+     (make-hash `(("type" . "moby-failure")
+                  ("dom-message" . 
+                                 ,(dom->jsexpr 
+                                   (error-struct->dom-sexp (moby-failure-val an-exn) #f)))))]
     [else
      (exn-message an-exn)]))
+
+
+;; dom->jsexpr: dom -> jsexpr
+;; Translate a dom structure to one that can pass through.  The dom is treated as a nested list.
+(define (dom->jsexpr a-dom)
+  (match a-dom
+    [(list head-name attribs body ...)
+     `(,(symbol->string head-name)
+       ,(map (lambda (k+v)
+               (list (symbol->string (first k+v))
+                     (second k+v))) 
+             attribs)
+       ,@(map dom->jsexpr body))]
+    [else
+     a-dom]))
+
 
 
 ;; srcloc->jsexp: srcloc -> jsexp

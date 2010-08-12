@@ -112,6 +112,7 @@ var Evaluator = (function() {
     };
 
 
+
     // Toplevel nodes are constructed for world programs.
     Evaluator.prototype.makeToplevelNode = function() {
 	var innerDom = document.createElement("div");
@@ -314,7 +315,10 @@ var Evaluator = (function() {
 
 
     Evaluator.prototype.getMessageFromExn = function(exn) {
-	if (types.isSchemeError(exn)) {
+	if (typeof(exn) === 'undefined') {
+	    // We should never get here
+	    return 'internal undefined error';
+	} else if (types.isSchemeError(exn)) {
 	    var errorValue = exn.val;
 	    if (types.isExn(errorValue)) {
 		return types.exnMessage(errorValue);
@@ -323,6 +327,8 @@ var Evaluator = (function() {
 	    }
 	} else if (types.isInternalError(exn)) {
 	    return exn.val + '';
+	} else if (exn.nodeType) {
+	    return exn;
 	} else {
 	    return exn.message;
 	}
@@ -334,51 +340,10 @@ var Evaluator = (function() {
 							 onDoneSuccess,
 							 onDoneFail) {
 	this.executeCompiledProgram(compiledBytecode, onDoneSuccess, onDoneFail);
-
-// 	var onFail = function(exn) {
-// 	    // Under google-chrome, this will produce a nice error stack
-// 	    // trace that we can deal with.
-// 	    if (typeof(console) !== 'undefined' && console.log &&
-// 		exn && exn.stack) {
-// 		console.log(exn.stack);
-// 	    }
-	    
-// 	    if (types.isSchemeError(exn)) {
-// 		var errorValue = exn.val;
-// 		if (types.isExn(errorValue)) {
-// 		    that._reportError(types.exnMessage(errorValue) + '');
-// 		    if (types.exnContMarks(errorValue)) {
-// 			var contMarkSet = types.exnContMarks(errorValue);
-// 			var stackTrace = contMarkSet.ref(types.symbol("moby-stack-record-continuation-mark-key"));
-// 			// KLUDGE: the first element in the stack trace
-// 			// is weird because it's due to the print-values
-// 			// introduced by a macro.
-// 			stackTrace.shift();
-			
-// 			for (var i = stackTrace.length - 1; 
-// 			     i >= 0; i--) {
-// 			    var callRecord = stackTrace[i];
-// 			    var id = callRecord.ref(0);
-// 			    var offset = callRecord.ref(1);
-// 			    var line = callRecord.ref(2);
-// 			    var column = callRecord.ref(3);
-// 			    var span = callRecord.ref(4);
-// 			    that._reportError("    in " + id + 
-// 					      ", at: line " + line + 
-// 					      ", column " + column + 
-// 					      ", span " + span); 
-// 			}
-// 		    }
-// 		} else {
-// 		    that._reportError(exn+'');
-// 		}
-// 	    } else {
-// 		that._reportError(exn+'');
-// 	    }
-// 	    onDoneSuccess();
-// 	};
     };
     
+
+
 
     // The type of errorValue is either
     //
@@ -401,17 +366,49 @@ var Evaluator = (function() {
 	if (typeof(errorValue) === 'string') {
 	    onDoneError(new Error(errorValue));
 	} else if (typeof(errorValue) === 'object') {
-	    onDoneError(convertErrorValue(errorValue));
+	    onDoneError(this._convertErrorValue(errorValue));
 	} else {
 	    onDoneError(new Error(errorValue));
 	}
     };
 
-    var convertErrorValue = function(errorValue) {
+
+    Evaluator.prototype._convertErrorValue = function(errorValue) {
 	if (errorValue.type && errorValue.type === 'exn:fail:read') {
 	    return new Error(errorValue.message);
+	} else if (errorValue.type && errorValue.type === 'moby-failure') {
+	    return this._convertDomSexpr(errorValue['dom-message']);
 	}
 	return new Error(errorValue + '');
+    };
+
+
+
+    // convertDomSexpr: dom-sexpr -> dom-sexpr
+    // Converts the s-expression (array) representation of a dom element.
+    Evaluator.prototype._convertDomSexpr = function(domSexpr) {
+	if (typeof(domSexpr) === 'number' ||
+	    typeof(domSexpr) === 'string') {
+	    var aSpan = document.createElement('span');
+	    aSpan.appendChild(document.createTextNode(domSexpr + ''));
+	    return aSpan;
+	} else if (typeof (domSexpr) === 'object') {
+	    var anElt = document.createElement(domSexpr[0]);
+	    var attrs = domSexpr[1];
+	    for (var i = 0 ; i < attrs.length; i++) {
+		anElt[attrs[i][0]] = attrs[i][1]; 
+	    }	    
+	    var children = domSexpr.splice(2);
+	    for (var i = 0; i < children.length; i++) {
+		anElt.appendChild(this._convertDomSexpr(children[i]));
+	    }
+	    // Note: we're calling transformDom here as a hook to allow
+	    // the editor to rewrite any location doms as anchors to 
+	    // interact with the editor.
+	    return this.transformDom(anElt);
+	} else {
+	    return domSexpr;
+	}
     };
 
 
