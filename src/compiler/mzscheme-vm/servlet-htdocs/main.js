@@ -47,9 +47,15 @@ var reportError = function(exn) {
 	console.log(exn.stack);
     }
 
+
     var domElt = document.createElement('div');
     domElt.style['color'] = 'red';
-    domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
+
+    if (exn.domMessage) {
+	domElt.appendChild(exn.domMessage);
+    } else {
+	domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
+    }
 
     var stacktrace = evaluator.getTraceFromExn(exn);
     for (var i = 0; i < stacktrace.length; i++) {

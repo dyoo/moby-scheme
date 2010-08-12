@@ -377,9 +377,16 @@ var Evaluator = (function() {
 	if (errorValue.type && errorValue.type === 'exn:fail:read') {
 	    return new Error(errorValue.message);
 	} else if (errorValue.type && errorValue.type === 'moby-failure') {
-	    return this._convertDomSexpr(errorValue['dom-message']);
+	    var domMessage = this._convertDomSexpr(errorValue['dom-message']);
+	    return new ErrorWithDomMessage(domMessage);
 	}
 	return new Error(errorValue + '');
+    };
+
+
+    var ErrorWithDomMessage = function(domMessage) {
+	this.message = domMessage.textContent || domMessage.innerText;
+	this.domMessage = domMessage;
     };
 
 
@@ -396,7 +403,13 @@ var Evaluator = (function() {
 	    var anElt = document.createElement(domSexpr[0]);
 	    var attrs = domSexpr[1];
 	    for (var i = 0 ; i < attrs.length; i++) {
-		anElt[attrs[i][0]] = attrs[i][1]; 
+		if (attrs[i][0] === 'style') {
+		    anElt.style.cssText = attrs[i][1];
+		} else if (attrs[i][0] === 'class') {
+		    anElt.className = attrs[i][1];
+		} else {
+		    anElt[attrs[i][0]] = attrs[i][1]; 
+		}
 	    }	    
 	    var children = domSexpr.splice(2);
 	    for (var i = 0; i < children.length; i++) {
