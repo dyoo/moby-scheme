@@ -145,16 +145,16 @@
             "moby/world-handlers")]
     (make-module-binding 'world-config
                          module-path
-                         (list (bf 'on-tick module-path 1 true)
-                               (bf 'on-tick! module-path 2 true)
+                         (list #;(bf 'on-tick module-path 1 true)
+                               #;(bf 'on-tick! module-path 2 true)
                                #;(bf 'on-mouse module-path 1 false)
                                #;(bf 'on-mouse! module-path 2 false)
                                
                                
                                (bf 'initial-effect module-path 1 false)
                                
-                               (bf 'on-key module-path 1 false)
-                               (bf 'on-key! module-path 2 false)
+                               #;(bf 'on-key module-path 1 false)
+                               #;(bf 'on-key! module-path 2 false)
                                
                                #;(bf 'on-announce module-path 1 false)
                                #;(bf 'on-announce! module-path 2 false)
