@@ -19,6 +19,9 @@
   "../../../support/externals/mzscheme-vm/lib/compat")
 
 
+(define default-pinfo (get-default-base-pinfo))
+
+
 ;; make-port-response: (values response/incremental output-port)
 ;; Creates a response that's coupled to an output-port: whatever you
 ;; write into the output will be pushed into the response.
@@ -80,7 +83,9 @@
   (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
     (fprintf output-port "~a((" 
              (extract-binding/single 'callback (request-bindings request)))
-    (compile/port program-input-port output-port #:name program-name)
+    (compile/port program-input-port output-port 
+                  #:name program-name
+                  #:pinfo default-pinfo)
     (fprintf output-port "));\n")
     (close-output-port output-port)
     response))
@@ -173,7 +178,9 @@
 (define (handle-response request program-name program-input-port)
   (let-values  ([(response output-port) (make-port-response #:mime-type #"text/plain")])
     (display "(" output-port)
-    (compile/port program-input-port output-port #:name program-name)
+    (compile/port program-input-port output-port 
+                  #:name program-name
+                  #:pinfo default-pinfo)
     (display ")" output-port)
     (close-output-port output-port)
     response))

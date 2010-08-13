@@ -1,3 +1,6 @@
 [submodule "support/externals/mzscheme-vm"]
 	path = support/externals/mzscheme-vm
 	url = git://github.com/dyoo/mzscheme-vm.git
+[submodule "support/externals/Google-Maps-Library"]
+	path = support/externals/Google-Maps-Library
+	url = http://github.com/snewman91/Google-Maps-Library.git

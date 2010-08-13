@@ -6,7 +6,6 @@
 ;; TODO: automatically generate the bootstrap-teachpack code.
 
 
-
 (require scheme/runtime-path
          scheme/port
          scheme/contract
@@ -22,10 +21,23 @@
 (define-runtime-path collections-path "collections")
 
 
+;; Scott's work is on a different git repository.  We'll just incorporate his library
+;; in the collections.
+(define-runtime-path google-maps-external-path 
+  "../../../support/externals/Google-Maps-Library/google-maps-library")
+(let ([maps-path (build-path collections-path "jsworld" "google-maps.ss")])
+  (when (file-exists? google-maps-external-path)
+    (when (file-exists? maps-path)
+      (delete-file maps-path))
+    (copy-file google-maps-external-path maps-path)))
+
+
+
 ;; cat-to-port: path output-port -> void
 ;; Write out contents of path to output port.
 (define (cat-to-port a-path out-port)
   (call-with-input-file a-path (lambda (ip) (copy-port ip out-port))))
+
 
 ;; write-platform-libraries: string output-port -> void
 ;; Writes out the platform-specific libraries out to the given output port.
