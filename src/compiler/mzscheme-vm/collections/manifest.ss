@@ -31,7 +31,11 @@
 
         (make-collection-reference 
          'jsworld/phonegap 
-         (build-path self "jsworld" "phonegap.ss"))))
+         (build-path self "jsworld" "phonegap.ss"))
+        
+        (make-collection-reference
+         'jsworld/base
+         (build-path self "jsworld" "base.ss"))))
 
 
 (provide/contract [struct collection-reference ([name module-name?]
