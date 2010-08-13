@@ -93,6 +93,7 @@
 
 ;; handle-json-exception-response: exn -> response
 (define (handle-json-exception-response request exn)
+  ;(raise exn)
   (case (compiler-version request)
     [(0)
      (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
@@ -188,6 +189,7 @@
 
 ;; handle-exception-response: exn -> response
 (define (handle-exception-response request exn)
+  ;(raise exn)
   (case (compiler-version request)
     [(0)
      (make-response/full 500 

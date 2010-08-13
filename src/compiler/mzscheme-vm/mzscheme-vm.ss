@@ -270,6 +270,9 @@
              (define body (third (stx-e expr)))]
        (compile-lambda-expression empty args body env a-pinfo))]
     
+    [(stx-begins-with? expr 'case-lambda)
+     (let ([clauses (rest (stx-e expr))])
+       (compile-case-lambda-expression clauses env a-pinfo))]
     
     ;; (local ([define ...] ...) body)
     [(stx-begins-with? expr 'local)
@@ -430,6 +433,28 @@
                             0
                             compiled-body)
             pinfo-1)))
+
+
+;; compile-case-lambda-expression: (listof stx) env pinfo -> (values case-lam pinfo)
+(define (compile-case-lambda-expression clauses env pinfo)
+  (let* ([name empty]
+         [compiled-lams/rev+pinfo
+          (foldl (lambda (a-clause compiled-lams+pinfo)
+             (let*-values ([(compiled-lams) (first compiled-lams+pinfo)]
+                           [(pinfo) (second compiled-lams+pinfo)]
+
+                           [(args) (stx-e (first (stx-e a-clause)))]
+                           [(body) (second (stx-e a-clause))]
+                           [(next-compiled-lam pinfo) 
+                            (compile-lambda-expression name args body env pinfo)])
+               (list (cons next-compiled-lam compiled-lams)
+                     pinfo)))
+           (list empty pinfo)
+           clauses)])
+    (values (bcode:make-case-lam name
+                                 (reverse (first compiled-lams/rev+pinfo)))
+            (second compiled-lams/rev+pinfo))))
+
 
 
 ;; get-closure-vector-and-env: (listof symbol) (listof symbol) env -> (values (vectorof number) env) 

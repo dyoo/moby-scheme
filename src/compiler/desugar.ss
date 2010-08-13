@@ -66,6 +66,7 @@
                (list 'when desugar-when)
                (list 'unless desugar-unless)
                (list 'lambda desugar-lambda)
+               (list 'case-lambda desugar-case-lambda)
                (list 'quote desugar-quote))))
 
 
@@ -291,7 +292,8 @@
                                               (lambda (expr)
                                                 '(local [(define (f x) (* x x))]
                                                    (+ (f 3) (f 4)))))
-    (check-single-body-stx! (rest (rest (stx-e expr))) expr)
+    (check-single-body-stx! (rest (rest (stx-e expr))) 
+                            (stx-loc expr))
     (local:check-all-definitions! (stx-e (second (stx-e expr)))
                                   (stx-loc (second (stx-e expr))))
     (local [(define local-symbol-stx (first (stx-e expr)))
@@ -508,25 +510,87 @@
     (when (> (length (stx-e expr)) 3)
       (raise (make-moby-error (stx-loc expr)
                               (make-moby-error-type:lambda-too-many-elements))))
-    ;; Check number of elements in the lambda
-    (check-single-body-stx! (rest (rest (stx-e expr))) expr)
     
-    ;; Check for list of identifiers 
-    (check-list-of-identifiers! (second (stx-e expr))
-                               (first (stx-e expr))
-                               (stx-loc expr))
-    (check-duplicate-identifiers! (stx-e (second (stx-e expr))))
-    
-    (local [(define lambda-symbol-stx (first (stx-e expr)))
-            (define args (second (stx-e expr)))
-            (define body (third (stx-e expr)))
-            (define desugared-body+pinfo (desugar-expression body pinfo))]
-      (list (datum->stx #f (list lambda-symbol-stx
-                                 args
-                                 (first desugared-body+pinfo))
-                        (stx-loc expr))
-            ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
-            (second desugared-body+pinfo)))))
+    (let ([who (first (stx-e expr))]
+          [formals (second (stx-e expr))]
+          [body (rest (rest (stx-e expr)))])
+      (begin
+        (check-lambda-structure! formals body who (stx-loc expr))
+        (local [(define lambda-symbol-stx (first (stx-e expr)))
+                (define args (second (stx-e expr)))
+                (define body (third (stx-e expr)))
+                (define desugared-body+pinfo (desugar-expression body pinfo))]
+          (list (datum->stx #f (list lambda-symbol-stx
+                                     args
+                                     (first desugared-body+pinfo))
+                            (stx-loc expr))
+                ;; FIXME: I should extend the pinfo with the identifiers in the arguments.
+                (second desugared-body+pinfo)))))))
+
+
+;; check-lambda-structure!: stx (listof stx?) stx loc -> void
+(define (check-lambda-structure! formals body who a-loc)
+  (begin
+    ;; Check for the structure of the formal identifiers.
+    (check-list-of-identifiers! formals who a-loc)
+    (check-duplicate-identifiers! (stx-e formals))
+
+    ;; Check number of elements in the lambda's body.  Currently restricted to a single
+    ;; expression.
+    (check-single-body-stx! body a-loc)))
+
+
+;; desugar-case-lambda: expr pinfo -> (list expr pinfo)
+(define (desugar-case-lambda expr pinfo)
+  (begin
+    (check-syntax-application! expr
+                               (lambda (expr)
+                                 `(case-lambda [(x) (list 'i-see-one-argument: x)]
+                                               [(x y) (list 'i-see-two-arguments: x y)])))
+    (let ([who (first (stx-e expr))]
+          [clauses (rest (stx-e expr))])
+      ;; Check that all clauses are lists
+      (begin
+        (for-each (lambda (a-clause)
+                    (check-clause-structure! a-clause who (stx-loc expr)))
+                  clauses)
+        (let ([desugared-clauses/rev+pinfo
+               (foldl (lambda (a-clause desugared-clauses/rev+pinfo)
+                        (let* ([desugared-clauses (first desugared-clauses/rev+pinfo)]
+                               [pinfo (second desugared-clauses/rev+pinfo)]
+                               [desugared-clause-body+pinfo
+                                (desugar-expressions (rest (stx-e a-clause)) pinfo)])
+                          (list (cons (datum->stx #f
+                                                  `(,(first (stx-e a-clause))
+                                                    ,@(first desugared-clause-body+pinfo))
+                                                  (stx-loc a-clause))
+                                      (first desugared-clauses/rev+pinfo))
+                                (second desugared-clause-body+pinfo))))
+                      (list empty pinfo)
+                      clauses)])
+          (list (datum->stx #f 
+                            (cons who (reverse (first desugared-clauses/rev+pinfo)))
+                            (stx-loc expr))
+                (second desugared-clauses/rev+pinfo)))))))
+
+
+;; check-clause-structure: stx stx a-loc -> void
+;; Check that each clause is of the form [formals body ...]
+(define (check-clause-structure! a-clause who a-loc)
+  (begin
+    ;; FIXME: check for the list structure of the clause, and make sure it's at least
+    ;; one element long. 
+    (when (or (not (list? (stx-e a-clause)))
+              (< (length (stx-e a-clause)) 1))
+      (raise (make-moby-error a-loc
+                              (make-moby-error-type:malformed-clause who (stx-loc a-clause)))))
+    ;; check the lambda structure of its formals and body
+    (let ([formals (first (stx-e a-clause))]
+          [body (rest (stx-e a-clause))])
+      (check-lambda-structure! formals body who a-loc))))
+
+
+
 
 
 
@@ -872,7 +936,8 @@
                                    body-stx)
                           (stx-loc a-stx)))]    
       (begin
-        (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+        (check-single-body-stx! (rest (rest (stx-e a-stx))) 
+                                (stx-loc a-stx))
         (check-duplicate-identifiers! (map (lambda (a-clause)
                                              (first (stx-e a-clause)))
                                            (stx-e clauses-stx)))      
@@ -934,7 +999,8 @@
                                       (loop (rest clauses)))
                              (stx-loc (first clauses)))]))]    
       (begin
-        (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+        (check-single-body-stx! (rest (rest (stx-e a-stx))) 
+                                (stx-loc a-stx))
         (desugar-expression/expr+pinfo 
          (list (loop (stx-e clauses-stx))
                pinfo))))))
@@ -969,7 +1035,8 @@
                                    (stx-loc a-clause))))
                    (stx-e clauses-stx)))]
       (begin
-        (check-single-body-stx! (rest (rest (stx-e a-stx))) a-stx)
+        (check-single-body-stx! (rest (rest (stx-e a-stx))) 
+                                (stx-loc a-stx))
         (check-duplicate-identifiers! (map (lambda (a-clause) (first (stx-e a-clause)))
                                            (stx-e clauses-stx)))
         (desugar-expression/expr+pinfo 

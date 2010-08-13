@@ -441,18 +441,18 @@
 
 
 
-;; check-single-body-stx!: (listof stx) stx -> void
-(define (check-single-body-stx! stxs original-stx)
+;; check-single-body-stx!: (listof stx) loc -> void
+(define (check-single-body-stx! stxs a-loc)
   (cond
     [(empty? stxs)
      (raise
-      (make-moby-error (stx-loc original-stx)
+      (make-moby-error a-loc
                        (make-moby-error-type:generic-syntactic-error
                         "I expected a single body in this expression, but I didn't find any."
                         (list))))]
     [(not (empty? (rest stxs)))
      (raise
-      (make-moby-error (stx-loc original-stx)
+      (make-moby-error a-loc
                        (make-moby-error-type:generic-syntactic-error
                         "I expected a single body in this expression, but I found more than one."
                         (map stx-loc (rest stxs)))))]
@@ -494,7 +494,7 @@
                   
                   [check-duplicate-identifiers! ((listof stx?)  . -> . any)]
                   
-                  [check-single-body-stx! ((listof stx?) stx? . -> . any)]
+                  [check-single-body-stx! ((listof stx?) Loc? . -> . any)]
                   [case-analyze-definition (stx? 
                                             (symbol-stx? (listof symbol-stx?) stx? . -> . any)
                                             (symbol-stx? any/c . -> . any)

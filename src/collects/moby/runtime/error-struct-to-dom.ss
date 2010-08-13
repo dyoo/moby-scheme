@@ -288,6 +288,19 @@
                "Inside a lambda, I expect to see a list of arguments and a single body, "
                "but I don't see both of these.")]
        
+       
+       [(moby-error-type:malformed-clause? error-type)
+        `(span ((class "Error-MalformedClause"))
+               ,(scheme-value->dom-sexp 
+                 (moby-error-type:malformed-clause-who error-type) maybe-dom-parameters)
+               " expected to see a clause."
+               
+               (span ((class "Error-MalformedClause.clauseLocation")
+                      (style "display:none"))
+                     ,(Loc->dom-sexp     
+                       (moby-error-type:malformed-clause-clause-location error-type))))]
+
+       
        [(moby-error-type:lambda-too-many-elements? error-type)
         `(span ((class "Error-LambdaTooManyElements"))
                "Inside a lambda, I expect to see a list of arguments and a single body, "

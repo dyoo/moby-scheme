@@ -341,6 +341,14 @@
              (define body (third (stx-e an-expression)))]
        (lambda-expression-analyze-uses args body pinfo))]
     
+    [(stx-begins-with? an-expression 'case-lambda)
+     (foldl (lambda (clause pinfo)
+              (let ([args (stx-e (first (stx-e clause)))]
+                    [body (second (stx-e clause))])
+                (lambda-expression-analyze-uses args body pinfo)))
+            pinfo
+            (rest (stx-e an-expression)))]
+
     ;; Numbers
     [(number? (stx-e an-expression))
      pinfo]
