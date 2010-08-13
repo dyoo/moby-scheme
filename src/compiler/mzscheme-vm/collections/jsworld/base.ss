@@ -31,21 +31,36 @@
 (define (on-tick world-updater interval-seconds)
   (local [(define interval (* interval-seconds 1000))
           (define ticking (box #f))
-          (define (set-tick run-tick)
-            (js-call (js-get-global-value "setTimeout")
+          (define next-tick-id (box #f))
+
+          ;; unschedule-tick!: -> void
+          (define (unschedule-tick!)
+            (js-call (js-get-global-value "clearTimeout")
                      #f
-                     (procedure->void-js-fun run-tick)
-                     (scheme->prim-js interval)))
+                     (scheme->prim-js (unbox next-tick-id))))
+          
+          (define (schedule-tick run-tick)
+            (set-box! next-tick-id
+                     (prim-js->scheme 
+                      (js-call (js-get-global-value "setTimeout")
+                               #f
+                               (procedure->void-js-fun run-tick)
+                               (scheme->prim-js interval)))))
+
           (define (ticker a-bb-info)
             (lambda ()
               (if (unbox ticking)
-                  (begin ((bb-info-change-world a-bb-info) world-updater)
-                         (set-tick (ticker a-bb-info)))
+                  (begin 
+                         ((bb-info-change-world a-bb-info) world-updater)
+                         (schedule-tick (ticker a-bb-info)))
                   (void))))]
     (make-world-config (lambda (a-bb-info)
                          (begin (set-box! ticking #t)
-                                (set-tick (ticker a-bb-info))))
-                       (lambda (junk) (set-box! ticking #f)))))
+                                (schedule-tick (ticker a-bb-info))))
+                       (lambda (junk) 
+                         (begin
+                           (unschedule-tick!)
+                           (set-box! ticking #f))))))
 
 
 (define (prevent-default e)
