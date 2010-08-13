@@ -244,7 +244,9 @@ var Evaluator = (function() {
 	    onDoneFail(e);
 	    return;
 	}
-	interpret.run(this.aState, onDoneSuccess, onDoneFail);
+	this.aState.onSuccess = onDoneSuccess;
+	this.aState.onFail = onDoneFail;
+	interpret.run(this.aState);
     };
 
 
