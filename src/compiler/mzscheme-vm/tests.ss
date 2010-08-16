@@ -30,16 +30,28 @@
      #'(add-test* #'e1 #'e2)]))
 
 
-
+(add-test (let ([x ((lambda ()
+                      (case-lambda 
+                        [(x) (list x)]
+                        [(x y) (list y x)]
+                        [(x y z) (list z x y)])))])
+            (list (x 3)
+                  (x 3 4)
+                  (x 1 2 3)))
+          
+          '((3) (4 3) (3 1 2)))
 
 
 (add-test (let ([x (case-lambda 
                      [(x) (list x)]
-                     [(x y) (list y x)])])
+                     [(x y) (list y x)]
+                     [(x y z) (list z x y)])])
             (list (x 3)
-                  (x 3 4)))
+                  (x 3 4)
+                  (x 1 2 3)))
           
-          '((3) (4 3)))
+          '((3) (4 3) (3 1 2)))
+
 
 (add-test (let ([x (case-lambda 
                      [() (list 'empty-accepted)])])

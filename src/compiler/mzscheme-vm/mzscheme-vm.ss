@@ -784,9 +784,9 @@
                                         (let ([args (first (stx-e a-clause))]
                                               [body (second (stx-e a-clause))])
                                           (loop body (foldl (lambda (id env)
-                                                              (env-push-local env id))
+                                                              (env-push-local env (stx-e id)))
                                                             env
-                                                            (reverse args)))))
+                                                            (reverse (stx-e args))))))
                                       clauses)))]
                        
                        
