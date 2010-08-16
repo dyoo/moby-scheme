@@ -36,7 +36,9 @@
 
 ;; compile-and-serve: (listof stx) -> void
 ;; Generate a web site that compiles and evaluates the program.
-(define (compile-and-serve source-code [program-name "unknown"])
+(define (compile-and-serve source-code 
+                           [program-name "unknown"]
+                           #:launch-browser-to-program? (launch-browser-to-program? #f))
   (let ([source-dir (current-directory)])
     (with-temporary-directory
      (lambda (dir)
@@ -130,13 +132,18 @@
                        (let ([port (tcp-listen portno 4 #t #f)])
                          (tcp-close port)
                          portno)))])
-             (serve/servlet dispatcher
-                            #:port portno
-                            #:listen-ip #f
-                            #:servlet-path "/choose"
-                            #:servlet-regexp
-                            #rx"(^/networkProxy)|(^/choose)|(^/generate-apk)|(^/generate-js-zip)"
-                            #:extra-files-paths (list javascript-support dir)))))))))
+             (if launch-browser-to-program?
+                 (serve/servlet dispatcher
+                                #:port portno
+                                #:listen-ip #f
+                                #:extra-files-paths (list javascript-support dir))
+                 (serve/servlet dispatcher
+                                #:port portno
+                                #:listen-ip #f
+                                #:servlet-path "/choose"
+                                #:servlet-regexp
+                                #rx"(^/networkProxy)|(^/choose)|(^/generate-apk)|(^/generate-js-zip)"
+                                #:extra-files-paths (list javascript-support dir))))))))))
 
 
 
@@ -146,4 +153,7 @@
 
 
 
-(provide/contract [compile-and-serve (((listof stx?)) (string?) . ->* . any)])
+(provide/contract [compile-and-serve (((listof stx?)) 
+                                      (string? 
+                                       #:launch-browser-to-program? boolean?) 
+                                      . ->* . any)])

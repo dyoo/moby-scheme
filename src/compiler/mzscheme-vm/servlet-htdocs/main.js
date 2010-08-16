@@ -54,7 +54,11 @@ var reportError = function(exn) {
     if (exn.domMessage) {
 	domElt.appendChild(exn.domMessage);
     } else {
-	domElt.appendChild(document.createTextNode(evaluator.getMessageFromExn(exn)+""));
+	var msg = evaluator.getMessageFromExn(exn);
+	if (typeof(msg) === 'string') {
+	    msg = document.createTextNode(msg);
+	}
+	domElt.appendChild(msg);
     }
 
     var stacktrace = evaluator.getTraceFromExn(exn);

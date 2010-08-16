@@ -316,6 +316,8 @@ var Evaluator = (function() {
     };
 
 
+
+    // getMessageFromExn: exn -> (or string dom)
     Evaluator.prototype.getMessageFromExn = function(exn) {
 	if (typeof(exn) === 'undefined') {
 	    // We should never get here

@@ -270,6 +270,7 @@
              (define body (third (stx-e expr)))]
        (compile-lambda-expression empty args body env a-pinfo))]
     
+    ;; (case-lambda [clause] ...)
     [(stx-begins-with? expr 'case-lambda)
      (let ([clauses (rest (stx-e expr))])
        (compile-case-lambda-expression clauses env a-pinfo))]
@@ -774,6 +775,19 @@
                                               (env-push-local env id))
                                             env
                                             (reverse args))))]
+                       
+                       ;; (case-lambda [clause] ...)
+                       [(stx-begins-with? expr 'case-lambda)
+                        (let ([clauses (rest (stx-e expr))])
+                          (apply append
+                                 (map (lambda (a-clause)
+                                        (let ([args (first (stx-e a-clause))]
+                                              [body (second (stx-e a-clause))])
+                                          (loop body (foldl (lambda (id env)
+                                                              (env-push-local env id))
+                                                            env
+                                                            (reverse args)))))
+                                      clauses)))]
                        
                        
                        ;; Quoted datums
