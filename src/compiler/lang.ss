@@ -129,41 +129,261 @@
 
 
 
+;; Bindings from advanced student that we want to expose:
+(provide 
+ ;; special forms:
+ lambda
+ #%app
+ begin
+ begin0
+ case
+ when
+ unless     
+ let
+ let*
+ letrec
+         
+            
+ 
+ 
+ ;; primitives        
+ <
+ <=
+ =
+ >
+ >=
+ abs
+ acos
+ add1
+ angle
+ asin
+ atan
+ ceiling
+ complex?
+ conjugate
+ cos
+ cosh
+ current-seconds
+ denominator
+ e
+ even?
+ exact->inexact
+ exact?
+ exp
+ expt
+ floor
+ gcd
+ imag-part
+ inexact->exact
+ inexact?
+ integer->char
+ integer-sqrt
+ integer?
+ lcm
+ log
+ magnitude
+ make-polar
+ make-rectangular
+ max
+ min
+ modulo
+ negative?
+ number->string
+ number?
+ numerator
+ odd?
+ pi
+ positive?
+ quotient
+ random
+ rational?
+ real-part
+ real?
+ remainder
+ round
+ sgn
+ sin
+ sinh
+ sqr
+ sqrt
+ sub1
+ tan
+ zero?
+ boolean=?
+ boolean?
+ false?
+ ;; not
+ symbol->string
+ symbol=?
+ symbol?
+ append
+ ;; assoc
+ assq
+ caaar
+ caadr
+ caar
+ cadar
+ cadddr
+ caddr
+ cadr
+ car
+ cdaar
+ cdadr
+ cdar
+ cddar
+ cdddr
+ cddr
+ cdr
+ cons
+ cons?
+ eighth
+ empty?
+ fifth
+ first
+ fourth
+ length
+ list
+ list*
+ list-ref
+ list?
+ ;; make-list
+ member
+ memq
+ memv
+ null
+ null?
+ pair?
+ remove
+ rest
+ reverse
+ second
+ seventh
+ sixth
+ third
+ make-posn
+ posn-x
+ posn-y
+ posn?
+ ;;         set-posn-x!
+ ;;         set-posn-y!
+ char->integer
+ char-alphabetic?
+ char-ci<=?
+ char-ci<?
+ char-ci=?
+ char-ci>=?
+ char-ci>?
+ char-downcase
+ char-lower-case?
+ char-numeric?
+ char-upcase
+ char-upper-case?
+ char-whitespace?
+ char<=?
+ char<?
+ char=?
+ char>=?
+ char>?
+ char?
+ explode
+ format
+ implode
+ int->string
+ list->string
+ make-string
+ replicate
+ string
+ ;; string->int
+ string->list
+ string->number
+ string->symbol
+ string-alphabetic?
+ string-append
+ string-ci<=?
+ string-ci<?
+ string-ci=?
+ string-ci>=?
+ string-ci>?
+ string-copy
+ string-ith
+ string-length
+ string-lower-case?
+ string-numeric?
+ string-ref
+ string-upper-case?
+ string-whitespace?
+ string<=?
+ string<?
+ string=?
+ string>=?
+ string>?
+ string?
+ substring
+ ;; image=?
+ ;; image?
+ =~
+ ;; current-milliseconds
+ eof
+ eof-object?
+ eq?
+ equal?
+ equal~?
+ eqv?
+ ;; error
+ ;; exit
+ ;; force
+ ;; gensym
+ identity
+ ;; promise?
+ ;; sleep
+ struct?
+ void
+ ;; void?
+ *
+ +
+ -
+ /
+ ;; andmap
+ apply
+ argmax
+ argmin
+ build-list
+ build-string
+ compose
+ filter
+ ;; foldl
+ ;; foldr
+ for-each
+ map
+ memf
+ ;; ormap
+ procedure?
+ quicksort
+ sort
+ ;; display
+ ;; newline
+ ;; pretty-print
+ ;; print
+ printf
+ ;; read
+ ;; with-input-from-file
+ ;; with-input-from-string
+ ;; with-output-to-file
+ ;; with-output-to-string
+ ;; write
+ build-vector
+ make-vector
+ vector
+ vector-length
+ vector-ref
+ vector-set!
+ vector?
+ box
+ box?
+ set-box!
+ unbox
+ )
 
-(provide (except-out (all-from-out lang/htdp-advanced)
-                     define-struct
-                     define
-                     quote
-                     quasiquote
-                     unquote
-                     unquote-splicing
-                     let
-                     letrec
-                     let*
-                     image?
-                     image=?
-                     set!
-                     not
-                     
-                     map
-                     foldl
-                     foldr
-                     for-each
-                     andmap
-                     ormap
-                     
-                     error
-                     
-                     make-hash
-                     make-hasheq
-                     hash?
-                     hash-set!
-                     hash-remove!
-                     hash-map
-                     hash-for-each
-                     hash-ref                     
-                     ->
-                     ))
 
 
 ;; The following primitives will need support in the runtime,
@@ -217,40 +437,10 @@
                      (contract:-> ->)
                      )
 
-         
-         hash?
-
-         begin
-         void
-         
-         build-vector
-         make-vector
-         vector
-         vector-length
-         vector-ref
-         vector-set!
-         vector?
-         
-         case
-         
-         let let* letrec
-         
-         
-         
-         ;; WORKAROUND: For some reason, list* isn't in ASL as of 4.2.2.
-         ;; We may need to use version-case if this changes in some new version of DrScheme.
-         list*
-         
-         
-         
+    
          ;; To support include and require
          #;open-input-stx
-         
+     
          ;; syntax-error
-
-
-
-	 printf
-
          ;path->string normalize-path path? resolve-module-path build-path
          )

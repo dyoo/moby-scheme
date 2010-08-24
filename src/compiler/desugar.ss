@@ -118,6 +118,8 @@
      (desugar-defn an-element a-pinfo)]
     [(library-require? an-element)
      (list (list an-element) a-pinfo)]
+    [(stx-begins-with? an-element 'include)
+     (desugar-include an-element a-pinfo)]
     [(provide-statement? an-element)
      (list (list an-element) a-pinfo)]
     [(test-case? an-element)
@@ -128,6 +130,29 @@
      (local [(define expr+pinfo (desugar-expression an-element a-pinfo))]
        (list (list (first expr+pinfo))
              (second expr+pinfo)))]))
+
+
+
+;; desugar-include: stx pinfo -> (list (listof stx) pinfo)
+(define (desugar-include include-expr pinfo)
+  (cond
+   [(not (= (length (stx-e include-expr)) 2))
+    (syntax-error "Usage: (include file-path), where file-path is a string." 
+		  include-expr)]
+   [(not (string? (stx-e (second (stx-e include-expr)))))
+    (syntax-error "file-path must be a string" (second (stx-e include-expr)))]
+   [else
+    
+    (local [(define file-path (stx-e (second (stx-e include-expr))))
+	    (define stxs (open-input-stx file-path))]
+	   (cond 
+	    [(and (= (length stxs) 1)
+		  (stx-begins-with? (first stxs) 'module))
+	     ;; If's it's a module, skip over
+	     (desugar-program (rest (rest (rest (stx-e (first stxs)))))
+			      pinfo)]
+	    [else
+	     (desugar-program stxs pinfo)]))]))
 
 
 
