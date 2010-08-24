@@ -339,6 +339,8 @@
                      ;; Checking for undefined
                      (undefined? 1)
                      
+                     (open-input-stx 1)
+                     
                      )))]
     core-env))
 

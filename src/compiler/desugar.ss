@@ -137,10 +137,19 @@
 (define (desugar-include include-expr pinfo)
   (cond
    [(not (= (length (stx-e include-expr)) 2))
-    (syntax-error "Usage: (include file-path), where file-path is a string." 
-		  include-expr)]
+    
+     (raise (make-moby-error 
+                 (stx-loc include-expr)
+                 (make-moby-error-type:generic-syntactic-error
+                  "Usage: (include file-path), where file-path is a string." 
+                  (list))))]
+
    [(not (string? (stx-e (second (stx-e include-expr)))))
-    (syntax-error "file-path must be a string" (second (stx-e include-expr)))]
+    (raise (make-moby-error 
+                 (stx-loc include-expr)
+                 (make-moby-error-type:generic-syntactic-error
+                  "file-path must be a string"
+                  (list))))]
    [else
     
     (local [(define file-path (stx-e (second (stx-e include-expr))))

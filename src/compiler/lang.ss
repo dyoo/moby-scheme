@@ -9,6 +9,8 @@
          (prefix-in contract: scheme/contract)
          lang/htdp-advanced
          (for-syntax scheme/base)
+         scheme/class
+         scheme/gui/base
          "../collects/moby/runtime/stx.ss"
          "../collects/moby/runtime/error-struct.ss"
          "../collects/moby/runtime/error-struct-to-dom.ss"
@@ -44,7 +46,7 @@
 
 ;; BIG HACK.
 ;; open-input-stx: string -> (listof stx)
-#;(define (open-input-stx a-path-string)
+(define (open-input-stx a-path-string)
   (local [;; open-beginner-program: path-string -> text%
           ;; Opens up the beginner-level program.
           (define (open-beginner-program path)
@@ -132,18 +134,24 @@
 ;; Bindings from advanced student that we want to expose:
 (provide 
  ;; special forms:
- lambda
  #%app
+ #%module-begin
+ #%datum
+ require
+ cond else
+ if
+ lambda
  begin
  begin0
  case
  when
  unless     
+ local
  let
  let*
  letrec
-         
-            
+ and
+ or
  
  
  ;; primitives        
@@ -211,6 +219,8 @@
  zero?
  boolean=?
  boolean?
+ true
+ false
  false?
  ;; not
  symbol->string
@@ -237,6 +247,7 @@
  cons
  cons?
  eighth
+ empty
  empty?
  fifth
  first
@@ -420,6 +431,7 @@
                      (base:hash-remove! hash-remove!)
                      (base:hash-map hash-map)
                      (base:hash-for-each hash-for-each)
+
                      (my-hash-ref hash-ref)
 
                      
@@ -437,10 +449,11 @@
                      (contract:-> ->)
                      )
 
-    
-         ;; To support include and require
-         #;open-input-stx
+
+         
+         ;; To support include
+         open-input-stx
      
-         ;; syntax-error
+
          ;path->string normalize-path path? resolve-module-path build-path
          )

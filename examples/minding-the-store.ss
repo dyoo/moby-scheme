@@ -412,6 +412,6 @@
 
 
 (js-big-bang initial-world
-             (on-tick* 30 ignore beep-if-near)
+             (on-tick! 30 ignore beep-if-near)
              (on-location-change update-location)
              (on-draw draw draw-css))
