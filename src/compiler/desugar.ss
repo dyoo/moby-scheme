@@ -136,32 +136,42 @@
 ;; desugar-include: stx pinfo -> (list (listof stx) pinfo)
 (define (desugar-include include-expr pinfo)
   (cond
-   [(not (= (length (stx-e include-expr)) 2))
-    
+    [(not (= (length (stx-e include-expr)) 2))
+     
      (raise (make-moby-error 
-                 (stx-loc include-expr)
-                 (make-moby-error-type:generic-syntactic-error
-                  "Usage: (include file-path), where file-path is a string." 
-                  (list))))]
-
-   [(not (string? (stx-e (second (stx-e include-expr)))))
-    (raise (make-moby-error 
-                 (stx-loc include-expr)
-                 (make-moby-error-type:generic-syntactic-error
-                  "file-path must be a string"
-                  (list))))]
-   [else
+             (stx-loc include-expr)
+             (make-moby-error-type:generic-syntactic-error
+              "Usage: (include file-path), where file-path is a string." 
+              (list))))]
     
-    (local [(define file-path (stx-e (second (stx-e include-expr))))
-	    (define stxs (open-input-stx file-path))]
-	   (cond 
-	    [(and (= (length stxs) 1)
-		  (stx-begins-with? (first stxs) 'module))
-	     ;; If's it's a module, skip over
-	     (desugar-program (rest (rest (rest (stx-e (first stxs)))))
-			      pinfo)]
-	    [else
-	     (desugar-program stxs pinfo)]))]))
+    [(not (string? (stx-e (second (stx-e include-expr)))))
+     (raise (make-moby-error 
+             (stx-loc include-expr)
+             (make-moby-error-type:generic-syntactic-error
+              "file-path must be a string"
+              (list))))]
+    [else
+     
+     (local [(define file-path (stx-e (second (stx-e include-expr))))
+             (define stxs (open-input-stx file-path))
+             (define (maybe-unwrap-module-begin stxs)
+               (cond
+                 [(and (= 1 (length stxs))
+                       (pair? (stx-e (first stxs)))
+                       (symbol=? (stx-e (first (stx-e (first stxs))))
+                                 '#%module-begin))
+                  (rest (stx-e (first stxs)))]
+                 [else
+                  stxs]))]
+       (cond 
+         [(and (= (length stxs) 1)
+               (stx-begins-with? (first stxs) 'module))
+          ;; If's it's a module, skip over to the body
+          (desugar-program (maybe-unwrap-module-begin
+                            (rest (rest (rest (stx-e (first stxs))))))
+                           pinfo)]
+         [else
+          (desugar-program stxs pinfo)]))]))
 
 
 

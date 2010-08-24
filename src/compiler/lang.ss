@@ -11,6 +11,7 @@
          (for-syntax scheme/base)
          scheme/class
          scheme/gui/base
+         "../stx-helpers.ss"
          "../collects/moby/runtime/stx.ss"
          "../collects/moby/runtime/error-struct.ss"
          "../collects/moby/runtime/error-struct-to-dom.ss"
@@ -56,7 +57,7 @@
           
           ;; syntax->stx: syntax -> stx
           ;; Go from Scheme's syntax objects to our own.
-          (define (syntax->stx a-syntax)
+          #;(define (syntax->stx a-syntax)
             (cond
               [(pair? (syntax-e a-syntax))
                (let ([elts
@@ -64,29 +65,33 @@
                  (datum->stx elts
                              (make-Loc (syntax-position a-syntax)
                                        (syntax-line a-syntax)
+                                       (syntax-column a-syntax)
                                        (syntax-span a-syntax)
                                        (format "~a" (syntax-source a-syntax)))))]
               [else
                (datum->stx (syntax-e a-syntax)
                            (make-Loc (syntax-position a-syntax)
                                      (syntax-line a-syntax)
+                                     (syntax-column a-syntax)
                                      (syntax-span a-syntax)
                                      (format "~a" (syntax-source a-syntax))))]))
           
           ; parse-text-as-program: text -> program
           ;; Given a text, returns a program as well.
           (define (parse-text-as-program a-text source-name)
-            (let* ([ip (open-input-text-editor a-text)])
-              (begin
-              (port-count-lines! ip)
-              (parameterize ([read-accept-reader #t]
-                             [read-decimal-as-inexact #f])
-                (let loop ()
-                  (let ([stx (read-syntax source-name ip)])
-                    (cond [(not (eof-object? stx))
-                           (cons (syntax->stx stx) (loop))]
-                          [else
-                           empty])))))))]
+            (begin
+              (let* ([ip (open-input-text-editor a-text)])
+                (begin
+                  (port-count-lines! ip)
+                  (parameterize ([read-accept-reader #t]
+                                 [read-decimal-as-inexact #f])
+                    (let loop ()
+                      (let ([stx (read-syntax source-name ip)])
+                        (begin 
+                          (cond [(not (eof-object? stx))
+                                 (cons (syntax->stx stx) (loop))]
+                                [else
+                                 empty])))))))))]
     (parse-text-as-program (open-beginner-program a-path-string)
                            a-path-string)))
 
