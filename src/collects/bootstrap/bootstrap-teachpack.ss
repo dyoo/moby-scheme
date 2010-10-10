@@ -16,7 +16,7 @@
                                                            background objectImgs targetImgs playerImg projectileImg
                                                            direction
                                                            update-player update-target update-object update-projectile
-                                                           collide? in-domain?))
+                                                           collide? offscreen?))
 
 ;;
 ;;SETTINGS 
@@ -92,8 +92,8 @@
 
 ; move-all : (Being list) (Number Number -> Being/Number) (Being->Boolean) -> (Being list)
 ; update every Being in a list according to a 'move' function
-(define (move-all beings move in-domain?)
-  (map (lambda (b) (if (in-domain? (being-x b) (being-y b)) (move b) (reset b))) beings))
+(define (move-all beings move offscreen?)
+  (map (lambda (b) (if (offscreen? (being-x b) (being-y b)) (reset b) (move b))) beings))
 
 ; keypress : World Key (Player String -> Player) -> World
 ; if the key is a direction, reutrn a new world with the moved player
@@ -143,7 +143,7 @@
                background objectImgs targetImgs playerImg projectileImg
                direction
                update-player* update-target* update-object* update-projectile*
-               collide*? in-domain*?)
+               collide*? offscreen*?)
   (begin
     (set! PROJECTILE-IMG projectileImg)
     (set! TITLE-COLOR title-color)
@@ -167,7 +167,7 @@
                                                        (being-costume p)))]
                             [else (lambda (p k) (make-being (update-player* (being-x p) (being-y p) k)
                                                             (being-costume p)))]))
-           (in-domain? (if (= (procedure-arity in-domain*?) 1) (lambda (x y) (in-domain*? x)) in-domain*?))
+           (offscreen? (if (= (procedure-arity offscreen*?) 1) (lambda (x y) (offscreen*? x)) offscreen*?))
            (collide? (lambda (b1 b2) (collide*? (being-x b1) (being-y b1) (being-x b2) (being-y b2))))
            (world (make-world objects targets player projectiles
                               (put-pinhole background 0 0)
@@ -179,9 +179,9 @@
                            (begin 
                              (set! score (world-score w))
                              (let* ((objects (move-all (check-collision (world-objects w) (world-projectiles w) collide?)
-                                                       update-object in-domain?))
-                                    (targets (move-all (world-targets w) update-target in-domain?))
-                                    (projectiles (move-all (world-projectiles w) update-projectile in-domain?))
+                                                       update-object offscreen?))
+                                    (targets (move-all (world-targets w) update-target offscreen?))
+                                    (projectiles (move-all (world-projectiles w) update-projectile offscreen?))
                                     (score (world-score w))
                                     (player (world-player w))
                                     (bg (world-bg w))
@@ -248,7 +248,6 @@
          (local-expand (syntax/loc stx (check-expect x ...))
                        (syntax-local-context)
                        (kernel-form-identifier-list)))]))
-
 
 
 
