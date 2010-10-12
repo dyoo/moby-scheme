@@ -8,6 +8,7 @@
          racket/list
          (only-in xml xexpr->string)
          
+         "../../support/externals/mzscheme-vm/src/module-record.rkt"
          "../../support/externals/mzscheme-vm/src/compile-moby-module.rkt"
          "../../support/externals/mzscheme-vm/src/write-module-records.rkt"
          "../../support/externals/mzscheme-vm/src/write-runtime.rkt"
@@ -20,8 +21,9 @@
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
 (define-runtime-path icon-path "../../support/icons/icon.png")
 (define-runtime-path javascript-support-path "../../support/js")
-(define-runtime-path javascript-main-template "../../support/js/main.js.template")
 
+(define-runtime-path javascript-main.js "../../support/externals/mzscheme-vm/support/main.js")
+(define-runtime-path javascript-evaluator.js "../../support/externals/mzscheme-vm/support/evaluator.js")
 
 ;; build-android-package: string path -> bytes
 (define (build-android-package program-name program-path)
@@ -67,18 +69,24 @@
   
 
   (let ([module-records (get-compiled-modules program-path)])    
+    ;; Start writing the Javascript directories.
+    (make-javascript-directories dest)
+    
     ;; Write out the Javascript-translated program.
-    (write-program.js module-records (build-path dest "assets"))
+    (write-program.js program-path module-records (build-path dest "assets"))
 
     
     ;; Write out the phonegap support file to assets, where it can be packaged.
     (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
-                            (build-path dest "assets" "runtime" "phonegap.js"))
+                            (build-path dest "assets" "phonegap.js"))
 
-
+    (copy-or-overwrite-file javascript-evaluator.js (build-path dest "assets" "evaluator.js"))
+    (copy-or-overwrite-file javascript-main.js (build-path dest "assets" "main.js"))
+    
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
       (lambda (op)
+        (fprintf op "sdk.dir=~a~n" (path->string (current-android-sdk-path)))
         (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
       #:exists 'replace)
     
@@ -189,15 +197,18 @@
 (define (get-android-manifest #:name name
                               #:package package
                               #:activity-class activity-class
-                              #:permissions (permissions '()))
+                              #:permissions (permissions '())
+                              #:version-code (version-code "1")
+                              #:version-name (version-name "1.0.0"))
   (let ([AndroidManifest.xml
          `(manifest 
            ((xmlns:android "http://schemas.android.com/apk/res/android")
             (package ,package)
-            (android:versionCode "1")
-            (android:versionName "1.0.0"))
+            (android:versionCode ,version-code)
+            (android:versionName ,version-name))
            
-           (uses-sdk ((android:minSdkVersion "2")))
+           ;; Building for Android 1.5.
+           (uses-sdk ((android:minSdkVersion "3")))
            
            ,@(map (lambda (p)
                     `(uses-permission ((android:name ,p))))
@@ -258,30 +269,13 @@
     (error 'moby "The output directory (~s) must not be a subdirectory of ~s."
            (path->string (normalize-path dest-dir))
            (path->string (normalize-path javascript-support-path))))
-  
-  
-  (for ([subpath (list "css" "runtime")])
+  (for ([subpath (list "css")])
     (copy-directory/files* (build-path javascript-support-path subpath) 
-                           (build-path dest-dir subpath)))
-  
-  ;; delete redundant files in the runtime
-  (delete-redundant-files-already-in-the-compressed-runtime (build-path dest-dir "runtime"))
+                           (build-path dest-dir "assets" subpath)))
+ 
+  (copy-or-overwrite-file (build-path javascript-support-path "index.html")
+                          (build-path dest-dir "assets" "index.html")))
 
-  (for ([file (list "index.html" "main.js.template")])
-    (when (file-exists? (build-path dest-dir file))
-      (delete-file (build-path dest-dir file)))
-    (copy-file (build-path javascript-support-path file)
-               (build-path dest-dir file))))
-
-
-(define (delete-redundant-files-already-in-the-compressed-runtime runtime-path)
-  (delete-file (build-path runtime-path "whole-runtime.js"))
-  (delete-file (build-path runtime-path "compiler.js"))
-  (delete-file (build-path runtime-path "compressed-compiler.js"))
-  (call-with-input-file (build-path runtime-path "MANIFEST")
-                    (lambda (ip)
-                      (for ([line (in-lines ip)])
-                        (delete-file (build-path runtime-path line))))))
 
 
 
@@ -297,15 +291,24 @@
 
 
 
-;; compile-program-to-javascript: module-records path-string -> void
+;; write-program.js: module-records path-string -> void
 ;; Write out the module records to program.js
-(define (write-program.js module-records dest-dir)
-  (make-javascript-directories dest-dir)
-    (call-with-output-file (build-path dest-dir "program.js")
-      (lambda (op)
-        (write-module-records module-records op)))
-
+(define (write-program.js a-path module-records dest-dir)
+  (call-with-output-file (build-path dest-dir "program.js")
+    (lambda (op)
+      (write-module-records module-records op)
       
+      (for ([r module-records])
+        (cond
+          [(string=? (path->string (module-record-path r))
+                     (if (string? a-path) a-path (path->string a-path)))
+           (fprintf op "var programModuleName = ~s;\n\n" 
+                    (symbol->string (module-record-name r)))]
+          [else
+           (void)])))
+    #:exists 'replace)
+  
+  
   
   
   #;(program/resources-write-resources! program/resources dest-dir)

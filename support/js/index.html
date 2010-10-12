@@ -1,63 +1,13 @@
 <html>
 <head>
-
-  <!-- Under IE8, excanvas doesn't work unless we get into IE7 standards mode.  Argh. -->
-  <meta http-equiv="X-UA-Compatible" content="IE=7" />
-  
-  <!-- Google closure base library.  -->
-  <script src="runtime/base.js"></script>
-
-<!--[if lt IE 8]>
-    <script src="runtime/compat/IE8.js" type="text/javascript"></script>
-    <script src="runtime/compat/ie7-squish.js" type="text/javascript"></script>
-<![endif]-->
-
-<!--[if IE]>
-    <script src="runtime/compat/excanvas.js" type="text/javascript"></script>
-    <script src="runtime/compat/ie-fixes.js" type="text/javascript"></script>
-<![endif]-->
-
-  <script src="runtime/compat/canvas-text/canvas.text.js"></script>
-  <script src="runtime/compat/canvas-text/faces/optimer-normal-normal.js"></script>
-
-  <script src="runtime/compat/XMLHttpRequest.js" type="text/javascript"></script>
-
-
-
-
-  <!-- Phonegap may or may not be present.  If it is, use it. -->
-  <script type="text/javascript" charset="utf-8" src="runtime/phonegap.js"></script> 
-
-
-
-<script type="text/javascript" charset="utf-8" src="runtime/compressed-runtime.js"></script>
-<!-- <script type="text/javascript" charset="utf-8" src="runtime/whole-runtime.js"></script> -->
-
-
-
-<!-- FIXME: this should be conditionally imported based on what's being used. -->
-<script type="text/javascript" charset="utf-8" src="runtime/collects/bootstrap-teachpack.js"></script>
-<script type="text/javascript" charset="utf-8" src="runtime/collects/cage-teachpack.js"></script>
-<script type="text/javascript" charset="utf-8" src="runtime/collects/function-teachpack.js"></script>
-
-
-
+  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script> 
+  <script type="text/javascript" charset="utf-8" src="runtime.js"></script>
+  <script type="text/javascript" charset="utf-8" src="evaluator.js"></script>
+  <script type="text/javascript" charset="utf-8" src="program.js"></script>
   <script type="text/javascript" charset="utf-8" src="main.js"></script>
-
 </head>
 
-
-
-<body id="body" onload="main.onload();"
-                onunload="main.onunload();">
-
-<div style="border-style: solid; border-width: thin">
-  <div id="jsworld-div"></div>
-</div>
-
-<input type="button" value="Run again"
-       onclick="main.runAgain()"
-       style="display:none;">
-
+<body onload="evaluator.setGasLimit(100); mainPageLoad();">
+  <div id="history"></div>
 </body>
 </html>

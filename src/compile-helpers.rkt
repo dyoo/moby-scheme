@@ -75,7 +75,7 @@
 
 
 
-;; run-ant-build.xml: path string -> void
+;; run-ant-build.xml: path-string string -> void
 ;; Runs ant to build the program in the destination directory.
 ;; Assumes the build file is called "build.xml" at the top of the directory.
 (define (run-ant-build.xml dest-dir target)
@@ -150,7 +150,7 @@
 (provide/contract
  #;[parse-string-as-program ((string?) (string?) . ->* .  (listof stx?))]
  #;[get-permissions (pinfo? . -> . (listof permission?))]
- [run-ant-build.xml (path? string? . -> . any)]
+ [run-ant-build.xml (path-string? string? . -> . any)]
  [yui-compress (bytes? . -> . bytes?)]
  [google-closure-compile ((bytes?) (#:aggressive? boolean?) . ->* . bytes?)]                  
  )
