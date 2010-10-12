@@ -1,21 +1,22 @@
-#lang racket/base
-(require racket/string
-         racket/file
-         racket/runtime-path
-         racket/port
-         racket/path
-         racket/contract
-         racket/list
+#lang scheme/base
+(require scheme/string
+         scheme/file
+         scheme/runtime-path
+         scheme/port
+         scheme/path
+         scheme/contract
+         scheme/list
          (only-in xml xexpr->string)
-         
-         "../../support/externals/mzscheme-vm/src/compile-moby-module.rkt"
-         "../../support/externals/mzscheme-vm/src/write-module-records.rkt"
-         "../../support/externals/mzscheme-vm/src/write-runtime.rkt"
-         
-         "../config.rkt" 
-         "../utils.rkt"
-         "../compile-helpers.rkt"
-         )
+         "../compile-helpers.ss"
+         "../collects/moby/runtime/permission-struct.ss"
+         "../compiler/pinfo.ss"
+         (only-in "../compiler/helpers.ss" program?)
+         (prefix-in javascript: "../compiler/beginner-to-javascript.ss")
+         (only-in "../compiler/helpers.ss" identifier->munged-java-identifier)
+         "../utils.ss"
+         "../template.ss"
+         "../config.ss"
+         "../program-resources.ss")
 
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
 (define-runtime-path icon-path "../../support/icons/icon.png")
@@ -23,13 +24,13 @@
 (define-runtime-path javascript-main-template "../../support/js/main.js.template")
 
 
-;; build-android-package: string path -> bytes
-(define (build-android-package program-name program-path)
+;; build-android-package: string program/resources -> bytes
+(define (build-android-package program-name program/resources)
   (with-temporary-directory
    (lambda (dir)
-     (let ([dest (simplify-path (build-path dir program-path))])
+     (let ([dest (simplify-path (build-path dir program-name))])
        (build-android-package-in-path program-name
-                                      program-path
+                                      program/resources
                                       dest)
               
        (get-file-bytes 
@@ -41,7 +42,7 @@
 
 ;; FIXME: name must be cleaned up: it must not have any non-alphanumeric/whitespace, or
 ;; else bad things happen.
-(define (build-android-package-in-path name program-path dest) 
+(define (build-android-package-in-path name program/resources dest) 
   (unless (file-exists? (current-ant-bin-path))
     (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
@@ -50,66 +51,37 @@
            "The Android SDK could not be found."))
   
   (make-directory* dest)
-  
-  ;; write out phonegap source files so they're included in the compilation.
   (copy-directory/files* phonegap-path dest)
-  
-  ;; Write out the icon
-  (make-directory* (build-path dest "res" "drawable"))
-  (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
-
-  
-  ;; Write out the support runtime.
-  (call-with-output-file (build-path dest "assets" "runtime.js")
-    (lambda (op)
-      (write-runtime "browser" op))
-    #:exists 'replace)
-  
-
-  (let ([module-records (get-compiled-modules program-path)])    
-    ;; Write out the Javascript-translated program.
-    (write-program.js module-records (build-path dest "assets"))
-
+  (let* ([normal-name (normalize-name name)]
+         [classname (upper-camel-case normal-name)]
+         [package (string-append "plt.moby." classname)]
+         [compiled-program         
+          (write-main.js&resources program/resources
+                                   name
+                                   (build-path dest "assets"))])
     
-    ;; Write out the phonegap support file to assets, where it can be packaged.
+    ;; Write out the icon
+    (make-directory* (build-path dest "res" "drawable"))
+    (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
+    
     (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
                             (build-path dest "assets" "runtime" "phonegap.js"))
-
-
+    
+    ;; Put in the customized manifest.
+    (write-android-manifest (build-path dest "AndroidManifest.xml")
+                            #:name name
+                            #:package package
+                            #:activity-class (string-append package "." classname)
+                            #:permissions (apply append 
+                                                 (map permission->android-permissions
+                                                      (pinfo-permissions 
+                                                       (javascript:compiled-program-pinfo compiled-program)))))
+    
     ;; Write out local properties so that the build system knows how to compile
     (call-with-output-file (build-path dest "local.properties")
       (lambda (op)
         (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
       #:exists 'replace)
-    
-    
-    ;; Write out the Java class stubs.
-    (write-java-class-stubs name dest))
-    
-  
-  
-  ;; Finally, write out the defaults.properties so that ant can build
-  ;; Run ant debug.
-  (run-ant-build.xml dest "debug"))
-
-
-;; write-java-class-stubs: string path -> void
-;; Write out the java-related files that we'll need to compile the package.
-(define (write-java-class-stubs name dest)
-  (let* ([normal-name (normalize-name name)]
-         [classname (upper-camel-case normal-name)]
-         [package (string-append "plt.moby." classname)])
-    
-    ;; Put in the customized AndroidMainfest.xml.
-    (write-android-manifest 
-     (build-path dest "AndroidManifest.xml")
-     #:name name
-     #:package package
-     #:activity-class (string-append package "." classname)
-     #:permissions '() #;(apply append 
-                                (map permission->android-permissions
-                                     (pinfo-permissions 
-                                      (javascript:compiled-program-pinfo compiled-program)))))
     
     ;; HACKS!
     ;; Fix build.xml so it refers to our application.
@@ -138,8 +110,7 @@
            [middleware 
             (regexp-replace #rx"package com.phonegap.demo;\n" 
                             middleware
-                            (string->bytes/utf-8 
-                             (format "package plt.moby.~a;\nimport com.phonegap.demo.*;\n" classname)))]
+                            (string->bytes/utf-8 (format "package plt.moby.~a;\nimport com.phonegap.demo.*;\n" classname)))]
            [middleware 
             (regexp-replace #rx"DroidGap" 
                             middleware
@@ -148,12 +119,14 @@
         (lambda (op)
           (write-bytes middleware op))
         #:exists 'replace)
-      (delete-file (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java")))))
+      (delete-file (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java")))
+    
+    
+    ;; Write out the defaults.properties so that ant can build
+    ;; Run ant debug.
+    (run-ant-build.xml dest "debug")))
 
 
-  
-  
-  
 
 ;; normalize-name: string -> string
 ;; Translate a name so it doesn't screw with Java conventions.
@@ -165,6 +138,32 @@
        (string-append "_" a-name)]
       [else
        a-name])))
+
+
+
+
+;; compile-program-to-javascript: platform program/resources string path-string -> compiled-program
+;; Consumes a text, an application name, destination directory, and produces an application.
+;; The text buffer is assumed to contain a beginner-level program that uses only the world
+;; teachpack.  We need to consume a text because we must first lift up all the images
+;; as resources.
+(define (write-main.js&resources program/resources name dest-dir)
+  (log-info (format "Compiling ~a to ~s" name dest-dir))
+  (make-javascript-directories dest-dir)
+  (program/resources-write-resources! program/resources dest-dir)
+  (let*-values ([(program)
+                 (program/resources-program program/resources)]
+                [(compiled-program)
+                 (do-compilation program)])
+    (call-with-output-file (build-path dest-dir "main.js")
+      (lambda (op)
+        (copy-port (open-input-string 
+                    (compiled-program->main.js compiled-program))
+                   op))
+      #:exists 'replace)
+    (delete-file (build-path dest-dir "main.js.template"))
+    compiled-program))
+
 
 
 
@@ -286,46 +285,45 @@
 
 
 
-;; get-compiled-modules: path -> (listof module-record)
-;; Given the path of the main program, produce the transitive set of compiled module records.
-(define (get-compiled-modules program-path)
-  (let*-values ([(a-path) (normalize-path program-path)]
-                [(base-dir file dir?) (split-path a-path)]
-                [(module-records) (compile-moby-modules a-path)])
-    module-records))
+(define (do-compilation program)
+  (javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+
+
+;; get-permission-js-array: (listof permission) -> string
+(define (get-permission-js-array perms) 
+  (string-append "["
+                 (string-join (map (lambda (x)
+                                     (format "plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS['string->permission'](~s)" (permission->string x)))
+                                   perms)
+                              ", ")
+                 "]"))
 
 
 
+;; compiled-program->main.js: compiled-program -> string
+(define (compiled-program->main.js compiled-program)
+  (let*-values ([(defns pinfo)
+                 (values (javascript:compiled-program-defns compiled-program)
+                         (javascript:compiled-program-pinfo compiled-program))]
+                [(output-port) (open-output-string)]
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-DEFINITIONS defns)
+                  (IMAGES (string-append "[" "]"))
+                  (PROGRAM-TOPLEVEL-EXPRESSIONS
+                   (javascript:compiled-program-toplevel-exprs
+                    compiled-program))
+                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+    (fill-template-port (open-input-file javascript-main-template)
+                        output-port
+                        mappings)
+    (get-output-string output-port)))
 
-;; compile-program-to-javascript: module-records path-string -> void
-;; Write out the module records to program.js
-(define (write-program.js module-records dest-dir)
-  (make-javascript-directories dest-dir)
-    (call-with-output-file (build-path dest-dir "program.js")
-      (lambda (op)
-        (write-module-records module-records op)))
-
-      
-  
-  
-  #;(program/resources-write-resources! program/resources dest-dir)
-  #;(let*-values ([(program)
-                 (program/resources-program program/resources)]
-                [(compiled-program)
-                 (do-compilation program)])
-    (call-with-output-file (build-path dest-dir "main.js")
-      (lambda (op)
-        (copy-port (open-input-string 
-                    (compiled-program->main.js compiled-program))
-                   op))
-      #:exists 'replace)
-    (delete-file (build-path dest-dir "main.js.template"))
-    compiled-program))
 
 
 
 
 (provide/contract [build-android-package 
-                   (string? path-string? . -> . bytes?)]
+                   (string? program/resources? . -> . bytes?)]
                   [build-android-package-in-path
-                   (string? path-string? path-string? . -> . any)])
+                   (string? program/resources? path-string? . -> . any)])
