@@ -6,10 +6,10 @@
          racket/list
          (only-in xml xexpr->string)
          
-         "../../support/externals/mzscheme-vm/src/module-record.rkt"
-         "../../support/externals/mzscheme-vm/src/compile-moby-module.rkt"
-         "../../support/externals/mzscheme-vm/src/write-module-records.rkt"
-         "../../support/externals/mzscheme-vm/src/write-runtime.rkt"
+         (planet dyoo/js-vm/private/module-record)
+         (planet dyoo/js-vm/private/compile-moby-module)
+         (planet dyoo/js-vm/private/write-module-records)
+         (planet dyoo/js-vm/private/write-runtime)
          
          "../config.rkt" 
          "../utils.rkt"
