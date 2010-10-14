@@ -20,10 +20,21 @@
 (define-runtime-path icon-path "../../support/icons/icon.png")
 (define-runtime-path javascript-support-path "../../support/js")
 
-(define-runtime-path javascript-main.js "../../support/externals/mzscheme-vm/support/main.js")
-(define-runtime-path javascript-evaluator.js "../../support/externals/mzscheme-vm/support/evaluator.js")
+;; FIXME
+;; FIXME
+;; FIXME
+;; Must figure out way to get at these files.  They're no longer at the
+;; runtime path here.
+
+#;(define-runtime-path javascript-main.js 
+  "../../support/externals/mzscheme-vm/support/main.js")
+#;(define-runtime-path javascript-evaluator.js 
+  "../../support/externals/mzscheme-vm/support/evaluator.js")
+
 
 ;; build-android-package: string path -> bytes
+;; Builds the android package with the given program name and path, producing
+;; its apk contents as bytes.
 (define (build-android-package program-name program-path)
   (with-temporary-directory
    (lambda (dir)
