@@ -18,7 +18,7 @@
 
 #;(define primary-file "moby-lang.ss")
 
-(define scribblings 
+#;(define scribblings 
   '(("manual.scrbl" ())))
 
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "

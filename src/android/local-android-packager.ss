@@ -1,8 +1,6 @@
 #lang racket/base
-(require racket/string
-         racket/file
+(require racket/file
          racket/runtime-path
-         racket/port
          racket/path
          racket/contract
          racket/list
@@ -41,9 +39,13 @@
                            dest)))))))
 
 
-;; FIXME: name must be cleaned up: it must not have any non-alphanumeric/whitespace, or
-;; else bad things happen.
+;; build-android-package-in-path: string path path -> void
+;; Builds the android package and produces the binary within the path/bin.
 (define (build-android-package-in-path name program-path dest) 
+  (prepare-android-package-src-structure name program-path dest)
+  ;; Write out the defaults.properties so that ant can build
+  ;; Run ant debug.
+
   (unless (file-exists? (current-ant-bin-path))
     (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
@@ -51,6 +53,28 @@
     (error 'build-android-package-in-path
            "The Android SDK could not be found."))
   
+  ;; Write out local properties so that the build system knows how to compile
+  (write-local.properties dest)
+  
+  (run-ant-build.xml dest "debug"))
+
+
+;; write-local.properties: path -> void
+;; Write out the prerequisite local.properties file that the android ant build
+;; system uses to find Android.
+(define (write-local.properties dest)
+  (call-with-output-file (build-path dest "local.properties")
+    (lambda (op)
+      (fprintf op "sdk.dir=~a~n" (path->string (current-android-sdk-path)))
+      (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
+    #:exists 'replace))
+  
+
+
+
+;; prepare-android-package-src-structure: string path path -> void
+;; Prepares the directory structure we need to compile the package.
+(define (prepare-android-package-src-structure name program-path dest)  
   (make-directory* dest)
   
   ;; write out phonegap source files so they're included in the compilation.
@@ -82,23 +106,9 @@
 
     (copy-or-overwrite-file javascript-evaluator.js (build-path dest "assets" "evaluator.js"))
     (copy-or-overwrite-file javascript-main.js (build-path dest "assets" "main.js"))
-    
-    ;; Write out local properties so that the build system knows how to compile
-    (call-with-output-file (build-path dest "local.properties")
-      (lambda (op)
-        (fprintf op "sdk.dir=~a~n" (path->string (current-android-sdk-path)))
-        (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
-      #:exists 'replace)
-    
-    
+        
     ;; Write out the Java class stubs.
-    (write-java-class-stubs name dest))
-    
-  
-  
-  ;; Finally, write out the defaults.properties so that ant can build
-  ;; Run ant debug.
-  (run-ant-build.xml dest "debug"))
+    (write-java-class-stubs name dest)))
 
 
 ;; write-java-class-stubs: string path -> void
@@ -331,4 +341,12 @@
 (provide/contract [build-android-package 
                    (string? path-string? . -> . bytes?)]
                   [build-android-package-in-path
-                   (string? path-string? path-string? . -> . any)])
+                   (string? path-string? path-string? . -> . any)]
+
+                  ;; These two will be used when the compiler isn't present on the local
+                  ;; machine: we can still delegate the actual compilation off to a 
+                  ;; separate compilation server.
+                  [prepare-android-package-src-structure
+                   (string? path-string? path-string? . -> . any)]
+                  [write-local.properties
+                   (path-string? . -> . any)])
