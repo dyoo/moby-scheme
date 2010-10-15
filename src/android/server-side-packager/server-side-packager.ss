@@ -1,30 +1,30 @@
-#lang scheme/base
+#lang racket/base
 
-(require scheme/runtime-path
-         scheme/cmdline
-         scheme/class
-         scheme/list
+(require racket/runtime-path
+         racket/cmdline
+         racket/port
          web-server/servlet
          web-server/servlet-env
-         net/uri-codec
          xml
-         "logger.ss"
-         "../../collects/moby/runtime/stx.ss"
-         "../../resource.ss"
-         "../../program-resources.ss"
-         "../local-android-packager.ss"
-         "../helpers.ss")
+         "logger.ss")
 
 ;; This is a servlet that compiles packages to Android.
-
+;;
 ;; Expected input: a program.
 ;;
+;; Parameters: none.
+;; POST data should be:
+;; An s-expression describing the input, followed by bytes representing the assets in zip format.
+;;
+;; example:
+;; POST whose data is:
+;; '(name "My sample program)
+;; <bytes for a zip file>
+;;
 ;; Expected output: the android package.
+;;
 ;; Should throw an error page.  If error during compilation, should include the domified
 ;; error structure.
-;;
-;; FIXME: add support for image resources
-;; FIXME: add support for gzipping.
 
 
 (define-runtime-path HTDOCS-PATH "htdocs")
@@ -37,15 +37,27 @@
   (with-handlers ([exn:fail?
                    (lambda (exn)
                      (handle-unexpected-error exn))])
-    (let* ([bindings (get-bindings req)]
-           [name (parse-program-name bindings)]
-           [program/resources (parse-program/resources bindings)])
-      (write-to-access-log! req program/resources)
-      (cond
-        [(and name program/resources)
-         (make-package-response name (build-android-package name program/resources))]
-        [else
-         (error-no-program)]))))
+    (let-values ([(metadata asset-zip-bytes) (parse-request req)])
+      (write-to-access-log! req asset-zip-bytes)
+      ;; within temporary directory
+      (dynamic-wind (lambda ()
+                      ;; create zip file in the temporary directory
+                      (void))
+                    (lambda ()
+                      ;; create the build structure
+                      ;; unzip contents of assets
+                      ;; build the package
+                      ;; read the package bytes
+                      (cond
+                        [(and metadata asset-zip-bytes)
+                         #;(make-package-response name 
+                                                  (build-android-package name program/resources))]
+                        [else
+                         (error-no-program)]))
+                      (void))
+                    (lambda ()
+                      ;; delete the temporary directory
+                      (void)))))
 
 
 ;; write-to-access-log!: request program/resources -> void
@@ -59,50 +71,20 @@
                    '()))))
 
 
-
-;; get-bindings: request -> bindings
-;; Return the bindings we get from the request.
-;; Note that this call might be expensive since we're doing a gunzip-bytes.
-(define (get-bindings req)
-  (form-urlencoded->alist 
-   (bytes->string/utf-8
-    (request-post-data/raw req)
-    #;(gunzip-bytes (request-post-data/raw req)))))
-
-
-
-;; parse-name: bindings -> string
-;; Extracts the name from the request
-(define (parse-program-name bindings)
-  (extract-binding/single 'name bindings))
+;; parse-request: request -> (values (or/c #f s-exp) (or/c #f bytes))
+(define (parse-request req)
+  (let ([post-bytes (request-post-data/raw req)])
+    (cond
+      [post-bytes 
+       (let ([ip (open-input-bytes post-bytes)]
+             [op (open-output-bytes)])
+         (let ([metadata (read ip)])
+           (copy-port ip op)
+           (values metadata (get-output-bytes op))))]
+      [else
+       (values #f #f)])))
 
 
-;; parse-program/resources: bindings -> (or/c program/resource #f)
-;; Try to parse the program and its resources, or return false otherwise.
-(define (parse-program/resources bindings)
-  (let ([name (parse-program-name bindings)])
-    (cond      
-      [(and name (exists-binding? 'program-stx bindings))
-       (let ([program-stx (extract-binding/single 'program-stx bindings)])
-         (make-program/resources (sexp->program 
-                                  (read (open-input-string program-stx)))
-                                 (parse-resources bindings)))]
-      
-      [else #f])))
-
-
-;; parse-resources: bindings -> (listof resource<%>)
-(define (parse-resources bindings)
-  (cond [(exists-binding? 'resource bindings)
-         (map (lambda (val)
-                (let ([name&bytes (read (open-input-string val))])
-                  (log-debug (format "Reading resource ~s" (first name&bytes)))
-                  (new named-bytes-resource% 
-                       [name (first name&bytes)]
-                       [bytes (second name&bytes)])))
-              (extract-bindings 'resource bindings))]
-        [else
-         empty]))
 
 
 
@@ -173,7 +155,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define PORT (make-parameter 8080))
+(define PORT (make-parameter 8888))
 (define LOGFILE-PATH (make-parameter (build-path (current-directory) "access.log")))
 (command-line #:once-each 
               [("-p" "--port") port "Use port for web server"

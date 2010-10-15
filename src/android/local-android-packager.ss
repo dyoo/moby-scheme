@@ -26,9 +26,9 @@
 ;; Must figure out way to get at these files.  They're no longer at the
 ;; runtime path here.
 
-#;(define-runtime-path javascript-main.js 
+(define-runtime-path javascript-main.js 
   "../../support/externals/mzscheme-vm/support/main.js")
-#;(define-runtime-path javascript-evaluator.js 
+(define-runtime-path javascript-evaluator.js 
   "../../support/externals/mzscheme-vm/support/evaluator.js")
 
 
@@ -91,35 +91,44 @@
   ;; write out phonegap source files so they're included in the compilation.
   (copy-directory/files* phonegap-path dest)
   
-  ;; Write out the icon
-  (make-directory* (build-path dest "res" "drawable"))
-  (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png"))
-
+  ;; Write out the Java class stubs for the build, customizing the phonegap sources
+  ;; for this particular application.
+  (write-java-class-stubs name dest)
   
+  ;; Write out the icon.
+  (write-icon dest)
+  
+  ;; Write out assets
+  (write-assets name program-path dest))
+
+
+(define (write-icon dest)
+  (make-directory* (build-path dest "res" "drawable"))
+  (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png")))
+  
+
+(define (write-assets name program-path dest)
+  ;; Start writing the Javascript-related content.
+  (make-javascript-directories dest)
+
   ;; Write out the support runtime.
   (call-with-output-file (build-path dest "assets" "runtime.js")
     (lambda (op)
       (write-runtime "browser" op))
     #:exists 'replace)
   
-
-  (let ([module-records (get-compiled-modules program-path)])    
-    ;; Start writing the Javascript directories.
-    (make-javascript-directories dest)
-    
+  
+  ;; Write out the phonegap support file to assets, where it can be packaged.
+  (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
+                          (build-path dest "assets" "phonegap.js"))
+  
+  (copy-or-overwrite-file javascript-evaluator.js (build-path dest "assets" "evaluator.js"))
+  (copy-or-overwrite-file javascript-main.js (build-path dest "assets" "main.js"))
+  
+  (let ([module-records (get-compiled-modules program-path)])        
     ;; Write out the Javascript-translated program.
-    (write-program.js program-path module-records (build-path dest "assets"))
+    (write-program.js program-path module-records (build-path dest "assets"))))
 
-    
-    ;; Write out the phonegap support file to assets, where it can be packaged.
-    (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
-                            (build-path dest "assets" "phonegap.js"))
-
-    (copy-or-overwrite-file javascript-evaluator.js (build-path dest "assets" "evaluator.js"))
-    (copy-or-overwrite-file javascript-main.js (build-path dest "assets" "main.js"))
-        
-    ;; Write out the Java class stubs.
-    (write-java-class-stubs name dest)))
 
 
 ;; write-java-class-stubs: string path -> void
@@ -281,6 +290,7 @@
 
 
 ;; make-javascript-directories: path -> void
+;; Writes out content into assets.
 (define (make-javascript-directories dest-dir)
   (make-directory* dest-dir)
   
