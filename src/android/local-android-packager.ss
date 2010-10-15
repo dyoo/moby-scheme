@@ -76,8 +76,10 @@
 (define (write-local.properties dest)
   (call-with-output-file (build-path dest "local.properties")
     (lambda (op)
-      (fprintf op "sdk.dir=~a~n" (path->string (current-android-sdk-path)))
-      (fprintf op "sdk-location=~a~n" (path->string (current-android-sdk-path))))
+      (fprintf op "sdk.dir=~a~n" 
+               (path->string (current-android-sdk-path)))
+      (fprintf op "sdk-location=~a~n" 
+               (path->string (current-android-sdk-path))))
     #:exists 'replace))
   
 
@@ -91,25 +93,33 @@
   ;; write out phonegap source files so they're included in the compilation.
   (copy-directory/files* phonegap-path dest)
   
-  ;; Write out the Java class stubs for the build, customizing the phonegap sources
-  ;; for this particular application.
+  ;; Write out the Java class stubs for the build,
+  ;; customizing the phonegap sources for this particular application.
   (write-java-class-stubs name dest)
-  
   ;; Write out the icon.
   (write-icon dest)
-  
   ;; Write out assets
   (write-assets name program-path dest))
 
 
+;; write-icon: path -> void
+;; Write out the res/drawable icon image resource.
 (define (write-icon dest)
   (make-directory* (build-path dest "res" "drawable"))
-  (copy-or-overwrite-file icon-path (build-path dest "res" "drawable" "icon.png")))
+  (copy-or-overwrite-file icon-path 
+                          (build-path dest "res" "drawable" "icon.png")))
   
 
+;; write-assets: string path path -> void
+;; Write out the assets subdirectory into dest.
 (define (write-assets name program-path dest)
-  ;; Start writing the Javascript-related content.
-  (make-javascript-directories dest)
+  (make-directory* (build-path dest "assets"))
+  ;; write out index.html
+  (copy-or-overwrite-file (build-path javascript-support-path "index.html")
+                          (build-path dest "assets" "index.html"))
+  
+  ;; write out the support javascript files (main.js, evaluator.js)
+  (copy-support-js-files (build-path dest "assets"))
 
   ;; Write out the support runtime.
   (call-with-output-file (build-path dest "assets" "runtime.js")
@@ -117,17 +127,15 @@
       (write-runtime "browser" op))
     #:exists 'replace)
   
-  
-  ;; Write out the phonegap support file to assets, where it can be packaged.
+  ;; Write out the phonegap support file to assets,
+  ;; where it can be packaged.
   (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
                           (build-path dest "assets" "phonegap.js"))
   
-  (copy-or-overwrite-file javascript-evaluator.js (build-path dest "assets" "evaluator.js"))
-  (copy-or-overwrite-file javascript-main.js (build-path dest "assets" "main.js"))
-  
   (let ([module-records (get-compiled-modules program-path)])        
     ;; Write out the Javascript-translated program.
-    (write-program.js program-path module-records (build-path dest "assets"))))
+    (write-program.js program-path module-records 
+                      (build-path dest "assets"))))
 
 
 
@@ -144,10 +152,11 @@
      #:name name
      #:package package
      #:activity-class (string-append package "." classname)
-     #:permissions '() #;(apply append 
-                                (map permission->android-permissions
-                                     (pinfo-permissions 
-                                      (javascript:compiled-program-pinfo compiled-program)))))
+     #:permissions '()
+     #;(apply append 
+              (map permission->android-permissions
+                   (pinfo-permissions 
+                    (javascript:compiled-program-pinfo compiled-program)))))
     
     ;; HACKS!
     ;; Fix build.xml so it refers to our application.
@@ -160,10 +169,12 @@
         #:exists 'replace))
     
     ;; Write out a customized strings.xml
-    (let* ([strings-xml-bytes (get-file-bytes (build-path dest "res" "values" "strings.xml"))]
-           [strings-xml-bytes (regexp-replace #rx"DroidGap"
-                                              strings-xml-bytes
-                                              (string->bytes/utf-8 (xexpr->string name)))])
+    (let* ([strings-xml-bytes 
+            (get-file-bytes (build-path dest "res" "values" "strings.xml"))]
+           [strings-xml-bytes 
+            (regexp-replace #rx"DroidGap"
+                            strings-xml-bytes
+                            (string->bytes/utf-8 (xexpr->string name)))])
       ;; FIXME: don't use regular expressions here!
       (call-with-output-file (build-path dest "res" "values" "strings.xml")
         (lambda (op) (write-bytes strings-xml-bytes op))
@@ -172,21 +183,27 @@
     ;; Rename DroidGap to the application name.
     (make-directory* (build-path dest "src" "plt" "moby" classname))
     (let* ([middleware 
-            (get-file-bytes (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java"))]
+            (get-file-bytes 
+             (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java"))]
            [middleware 
-            (regexp-replace #rx"package com.phonegap.demo;\n" 
-                            middleware
-                            (string->bytes/utf-8 
-                             (format "package plt.moby.~a;\nimport com.phonegap.demo.*;\n" classname)))]
+            (regexp-replace 
+             #rx"package com.phonegap.demo;\n" 
+             middleware
+             (string->bytes/utf-8 
+              (format "package plt.moby.~a;\nimport com.phonegap.demo.*;\n"
+                      classname)))]
            [middleware 
             (regexp-replace #rx"DroidGap" 
                             middleware
                             (string->bytes/utf-8 classname))])
-      (call-with-output-file (build-path dest "src" "plt" "moby" classname (format "~a.java" classname))
+      (call-with-output-file (build-path dest "src" "plt" "moby" 
+                                         classname 
+                                         (format "~a.java" classname))
         (lambda (op)
           (write-bytes middleware op))
         #:exists 'replace)
-      (delete-file (build-path dest "src" "com" "phonegap" "demo" "DroidGap.java")))))
+      (delete-file (build-path dest "src" "com" "phonegap" "demo"
+                               "DroidGap.java")))))
 
 
   
@@ -264,7 +281,8 @@
                        (android:configChanges
                         "keyboardHidden|orientation"))
                       (action ((android:name "android.intent.action.PICK")))
-                      (category ((android:name "android.intent.category.DEFAULT"))))))])
+                      (category ((android:name
+                                  "android.intent.category.DEFAULT"))))))])
     
     (xexpr->string AndroidManifest.xml)))
 
@@ -280,7 +298,8 @@
                        (path->string a-dir))
              #t]
             [else
-             (let ([new-subdir (normalize-path (simplify-path (build-path a-dir 'up)))])
+             (let ([new-subdir (normalize-path (simplify-path 
+                                                (build-path a-dir 'up)))])
                (cond [(string=? (path->string new-subdir)
                                 (path->string a-dir))
                       #f]
@@ -291,7 +310,7 @@
 
 ;; make-javascript-directories: path -> void
 ;; Writes out content into assets.
-(define (make-javascript-directories dest-dir)
+#;(define (make-javascript-directories dest-dir)
   (make-directory* dest-dir)
   
   ;; Paranoid check: if dest-dir is a subdirectory of
@@ -304,8 +323,7 @@
     (copy-directory/files* (build-path javascript-support-path subpath) 
                            (build-path dest-dir "assets" subpath)))
  
-  (copy-or-overwrite-file (build-path javascript-support-path "index.html")
-                          (build-path dest-dir "assets" "index.html")))
+  )
 
 
 
