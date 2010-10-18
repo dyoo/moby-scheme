@@ -290,44 +290,6 @@
 
 
 
-;; subdirectory-of?: boolean
-;; Is a-dir a subdirectory of parent-dir?
-(define (subdirectory-of? parent-dir -a-dir)
-  (let ([parent-dir (normalize-path parent-dir)])
-    (let loop ([a-dir (normalize-path -a-dir)])
-      (cond [(string=? (path->string parent-dir)
-                       (path->string a-dir))
-             #t]
-            [else
-             (let ([new-subdir (normalize-path (simplify-path 
-                                                (build-path a-dir 'up)))])
-               (cond [(string=? (path->string new-subdir)
-                                (path->string a-dir))
-                      #f]
-                     [else
-                      (loop new-subdir)]))]))))
-
-
-
-;; make-javascript-directories: path -> void
-;; Writes out content into assets.
-#;(define (make-javascript-directories dest-dir)
-  (make-directory* dest-dir)
-  
-  ;; Paranoid check: if dest-dir is a subdirectory of
-  ;; javascript-support-path, we are in trouble!
-  (when (subdirectory-of? javascript-support-path dest-dir)
-    (error 'moby "The output directory (~s) must not be a subdirectory of ~s."
-           (path->string (normalize-path dest-dir))
-           (path->string (normalize-path javascript-support-path))))
-  (for ([subpath (list "css")])
-    (copy-directory/files* (build-path javascript-support-path subpath) 
-                           (build-path dest-dir "assets" subpath)))
- 
-  )
-
-
-
 
 
 ;; get-compiled-modules: path -> (listof module-record)
@@ -356,24 +318,7 @@
                     (symbol->string (module-record-name r)))]
           [else
            (void)])))
-    #:exists 'replace)
-  
-  
-  
-  
-  #;(program/resources-write-resources! program/resources dest-dir)
-  #;(let*-values ([(program)
-                 (program/resources-program program/resources)]
-                [(compiled-program)
-                 (do-compilation program)])
-    (call-with-output-file (build-path dest-dir "main.js")
-      (lambda (op)
-        (copy-port (open-input-string 
-                    (compiled-program->main.js compiled-program))
-                   op))
-      #:exists 'replace)
-    (delete-file (build-path dest-dir "main.js.template"))
-    compiled-program))
+    #:exists 'replace))
 
 
 
