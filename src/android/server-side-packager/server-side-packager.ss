@@ -37,32 +37,39 @@
   (with-handlers ([exn:fail?
                    (lambda (exn)
                      (handle-unexpected-error exn))])
-    (let-values ([(metadata asset-zip-bytes) (parse-request req)])
-      (write-to-access-log! req asset-zip-bytes)
+    (let-values ([(metadata asset-zip-bytes) 
+                  (parse-request req)])
+      #;(write-to-access-log! req asset-zip-bytes)
+      
       ;; within temporary directory
-      (dynamic-wind (lambda ()
-                      ;; create zip file in the temporary directory
-                      (void))
-                    (lambda ()
-                      ;; create the build structure
-                      ;; unzip contents of assets
-                      ;; build the package
-                      ;; read the package bytes
-                      (cond
-                        [(and metadata asset-zip-bytes)
-                         #;(make-package-response name 
-                                                  (build-android-package name program/resources))]
-                        [else
-                         (error-no-program)]))
-                      (void))
-                    (lambda ()
-                      ;; delete the temporary directory
-                      (void)))))
+      (let ([tmpdir
+             (make-temporary-file "mztmp~a" 'directory #f)])
+      
+        (dynamic-wind (lambda ()
+                        ;; create zip file in the temporary directory
+                        (void))
+                      (lambda ()
+                        ;; create the build structure
+                        ;; unzip contents of assets
+                        ;; build the package
+                        ;; read the package bytes
+                        (cond
+                          [(and metadata asset-zip-bytes)
+                           (make-package-response metadata
+                            (build-android-package metadata
+                                                   program/resources))]
+                          [else
+                           (error-no-program)]))
+                      
+                      (lambda ()
+                        (delete-directory/files
+                         tmpdir)))))))
 
 
 ;; write-to-access-log!: request program/resources -> void
 (define (write-to-access-log! req program/resources)
-  (when (current-access-logger)
+  (void)
+  #;(when (current-access-logger)
     (with-handlers ([void (lambda (exn)
                            (write (exn-message exn) (current-error-port)))])
       (logger-add! (current-access-logger)
@@ -92,7 +99,7 @@
 ;; Produces the proper HTTP response for the android package.
 ;; Headers also include the filename in the content-disposition field, so the
 ;; user gets a useful file name.
-(define (make-package-response program-name package-bytes)
+(define (make-package-response metadata package-bytes)
   (make-response/full
      200
      #"OK"(current-seconds)
@@ -100,9 +107,15 @@
      (list (make-header #"content-disposition"
                         (string->bytes/utf-8 
                          (format "attachment; filename=~a.apk" 
-                                 (normalize-name-as-filename program-name)))))
+                                 (normalize-name-as-filename 
+                                  (metadata-name metadata))))))
      (list package-bytes)))
     
+
+;; metadata-name: metadata -> string
+;; Gets the name given in the metadata.
+(define (metadata-name a-metadata)
+  (second (assoc 'name a-metadata)))
 
 
 
@@ -170,5 +183,4 @@
                #:listen-ip #f
                #:port (PORT)
                #:extra-files-paths (list HTDOCS-PATH)                 
-               #:servlet-regexp (regexp
-                                 "^.*$"  #;"^/package/.*$"))
+               #:servlet-regexp (regexp "^/package$"))

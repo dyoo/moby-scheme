@@ -20,7 +20,7 @@
 ;; then tries to use the web service.
 (define (build-android-package program-name program-path)
   (cond
-    [(local-android-ready?)
+    #;[(local-android-ready?)
      (local:build-android-package program-name program-path)]
     [else
      (remote:build-android-package program-name program-path)]))
