@@ -53,10 +53,12 @@
 ;; build-android-package-in-path: string path path -> void
 ;; Builds the android package and produces the binary within the path/bin.
 (define (build-android-package-in-path name program-path dest) 
+  ;; Prepares the non-assets android package structure.
   (prepare-android-package-src-structure name program-path dest)
-  ;; Write out the defaults.properties so that ant can build
-  ;; Run ant debug.
 
+  ;; Write out assets.
+  (write-assets name program-path (build-path dest "assets"))
+  
   (unless (file-exists? (current-ant-bin-path))
     (error 'build-android-package-in-path
            "The Apache ant binary appears to be missing from the current PATH."))
@@ -97,9 +99,7 @@
   ;; customizing the phonegap sources for this particular application.
   (write-java-class-stubs name dest)
   ;; Write out the icon.
-  (write-icon dest)
-  ;; Write out assets
-  (write-assets name program-path dest))
+  (write-icon dest))
 
 
 ;; write-icon: path -> void
@@ -111,18 +111,18 @@
   
 
 ;; write-assets: string path path -> void
-;; Write out the assets subdirectory into dest.
-(define (write-assets name program-path dest)
-  (make-directory* (build-path dest "assets"))
-  ;; write out index.html
+;; Write out the assets subdirectory.
+(define (write-assets name program-path assets-path)
+  (make-directory* assets-path)
+  ;; Write out index.html
   (copy-or-overwrite-file (build-path javascript-support-path "index.html")
-                          (build-path dest "assets" "index.html"))
+                          (build-path assets-path "index.html"))
   
-  ;; write out the support javascript files (main.js, evaluator.js)
-  (copy-support-js-files (build-path dest "assets"))
+  ;; Write out the support javascript files (main.js, evaluator.js)
+  (copy-support-js-files assets-path)
 
   ;; Write out the support runtime.
-  (call-with-output-file (build-path dest "assets" "runtime.js")
+  (call-with-output-file (build-path assets-path "runtime.js")
     (lambda (op)
       (write-runtime "browser" op))
     #:exists 'replace)
@@ -130,12 +130,12 @@
   ;; Write out the phonegap support file to assets,
   ;; where it can be packaged.
   (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
-                          (build-path dest "assets" "phonegap.js"))
+                          (build-path assets-path "phonegap.js"))
   
   (let ([module-records (get-compiled-modules program-path)])        
-    ;; Write out the Javascript-translated program.
+    ;; Finally, write out the Javascript-translated program.
     (write-program.js program-path module-records 
-                      (build-path dest "assets"))))
+                      assets-path)))
 
 
 
@@ -382,10 +382,15 @@
                   [build-android-package-in-path
                    (string? path-string? path-string? . -> . any)]
 
-                  ;; These two will be used when the compiler isn't present on the local
-                  ;; machine: we can still delegate the actual compilation off to a 
+                  ;; The following will be used when the compiler
+                  ;; isn't present on the local machine: we can 
+                  ;; still delegate the actual compilation off to a 
                   ;; separate compilation server.
                   [prepare-android-package-src-structure
                    (string? path-string? path-string? . -> . any)]
+                  
                   [write-local.properties
-                   (path-string? . -> . any)])
+                   (path-string? . -> . any)]
+
+                  [write-assets
+                   (string? path? path? . -> . any)])

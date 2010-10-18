@@ -6,10 +6,10 @@
          scheme/list
          net/url
          net/uri-codec
-         "../../compiler/version.ss"
-         "../../collects/moby/runtime/stx.ss"
-         "../../program-resources.ss"
-         "../helpers.ss")
+         #;"../../compiler/version.ss"
+         #;"../../collects/moby/runtime/stx.ss"
+         #;"../../program-resources.ss"
+         #;"../helpers.ss")
 
 (define current-server-url (make-parameter #;"http://localhost:8080/package/"
                                            "http://go.cs.brown.edu/package/"))
@@ -53,18 +53,18 @@
   (string->number (second (regexp-match #px"^[^\\s]+\\s([^\\s]+)" response-headers))))
 
 
-;; encode-parameters-in-data: string program/resources -> bytes
+;; encode-parameters-in-data: string path -> bytes
 ;; Encodes the parameters we need to pass in to get a program.
 ;; TODO: GZIP the data, as soon as the web server can support it.
-(define (encode-parameters-in-data name program/resources)
+(define (encode-parameters-in-data name program-path)
   (string->bytes/utf-8
    (alist->form-urlencoded 
-    (list* (cons 'name name)
-           (cons 'compiler-version VERSION)
-           (cons 'program-stx
+    (list* #;(cons 'name name)
+           #;(cons 'compiler-version VERSION)
+           #;(cons 'program-stx
                  (format "~s" (program->sexp 
                                (program/resources-program program/resources))))
-           (map (lambda (a-resource)
+           #;(map (lambda (a-resource)
                   (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
                   (cons 'resource (format "~s"
                                           (list (send a-resource get-name)
@@ -73,4 +73,4 @@
 
 
 (provide/contract [build-android-package
-                   (string? program/resources? . -> . bytes?)])
+                   (string? path? . -> . bytes?)])
