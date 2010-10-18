@@ -56,8 +56,12 @@
   ;; Prepares the non-assets android package structure.
   (prepare-android-package-src-structure name program-path dest)
 
+  ;; Write out local properties so that the build system knows how to compile
+  (write-local.properties dest)
+
   ;; Write out assets.
   (write-assets name program-path (build-path dest "assets"))
+  
   
   (unless (file-exists? (current-ant-bin-path))
     (error 'build-android-package-in-path
@@ -65,10 +69,7 @@
   (unless (directory-exists? (current-android-sdk-path))
     (error 'build-android-package-in-path
            "The Android SDK could not be found."))
-  
-  ;; Write out local properties so that the build system knows how to compile
-  (write-local.properties dest)
-  
+
   (run-ant-build.xml dest "debug"))
 
 
