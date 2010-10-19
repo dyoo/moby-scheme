@@ -5,6 +5,8 @@
          racket/list
          racket/file
          net/url
+         
+         (prefix-in js-vm: (planet dyoo/js-vm/private/compile-moby-module))
          (prefix-in lap: "../local-android-packager.ss")
          (planet dyoo/pack-directory:1/pack-directory))
 
@@ -55,19 +57,21 @@
 ;; Encodes the parameters we need to pass in to get a program.
 ;; TODO: GZIP the data, as soon as the web server can support it.
 (define (encode-parameters-in-data name program-path)
-  (let* ([tmpdir (make-temporary-file "mztmp~a" 'directory #f)]
+  (let* ([module-records (js-vm:compile-moby-modules program-path)]
+         [tmpdir (make-temporary-file "mztmp~a" 'directory #f)]
          [packed-dir-bytes
           (dynamic-wind
            (lambda () (void))
            (lambda ()
-             (lap:write-assets name program-path tmpdir)
+             (lap:write-assets name module-records tmpdir)
              (parameterize ([current-directory tmpdir])
                (pack-current-directory)))
            (lambda ()
              (delete-directory/files tmpdir)))])
-
     (let ([op (open-output-bytes)])
-      (write `((name ,name)) op)
+      (write `((name ,name)
+               (permissions ,(lap:module-records-android-permissions module-records))) 
+             op)
       (write-bytes packed-dir-bytes op)
       (get-output-bytes op))))
   

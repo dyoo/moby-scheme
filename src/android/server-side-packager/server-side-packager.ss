@@ -63,7 +63,9 @@
                            ;; Lots of file system stuff here.
                            ;; Creates the basic structure,
                            (lap:prepare-android-package-src-structure 
-                            (metadata-name metadata) tmpdir)
+                            (metadata-name metadata)
+                            (metadata-permissions metadata)
+                            tmpdir)
                            ;; sets up compilation parameters,
                            (lap:write-local.properties tmpdir)
                            ;; and customizes the assets by what's been provided
@@ -134,8 +136,14 @@
 ;; metadata-name: metadata -> string
 ;; Gets the name given in the metadata.
 (define (metadata-name a-metadata)
+  ;; FIXME: do pattern matching here to check.
   (second (assoc 'name a-metadata)))
 
+
+;; metadata-permissions: metadata -> (listof string)
+(define (metadata-permissions a-metadata)
+  ;; FIXME: do pattern matching here to check.
+  (rest (assoc 'permissions a-metadata)))
 
 
 ;; normalize-name-as-filename: string -> string

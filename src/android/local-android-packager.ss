@@ -11,10 +11,11 @@
          (planet dyoo/js-vm/private/write-module-records)
          (planet dyoo/js-vm/private/write-runtime)
          
+         "android-permission.rkt"
          "../config.rkt" 
          "../utils.rkt"
-         "../compile-helpers.rkt"
-         )
+         "../compile-helpers.rkt")
+
 
 (define-runtime-path phonegap-path "../../support/phonegap-fork/android-1.5")
 (define-runtime-path icon-path "../../support/icons/icon.png")
@@ -50,24 +51,26 @@
 ;; build-android-package-in-path: string path path -> void
 ;; Builds the android package and produces the binary within the path/bin.
 (define (build-android-package-in-path name program-path dest) 
-  ;; Prepares the non-assets android package structure.
-  (prepare-android-package-src-structure name dest)
-
-  ;; Write out local properties so that the build system knows how to compile
-  (write-local.properties dest)
-
-  ;; Write out assets.
-  (write-assets name program-path (build-path dest "assets"))
-  
-  
-  (unless (file-exists? (current-ant-bin-path))
-    (error 'build-android-package-in-path
-           "The Apache ant binary appears to be missing from the current PATH."))
-  (unless (directory-exists? (current-android-sdk-path))
-    (error 'build-android-package-in-path
-           "The Android SDK could not be found."))
-
-  (run-ant-build.xml dest "debug"))
+  (let ([module-records (get-compiled-modules program-path)])        
+    ;; Prepares the non-assets android package structure.
+    (prepare-android-package-src-structure name
+                                           (module-records-android-permissions module-records)
+                                           dest)
+    
+    ;; Write out assets.
+    (write-assets name program-path module-records (build-path dest "assets"))
+    
+    ;; Write out local properties so that the build system knows how to compile
+    (write-local.properties dest)
+    
+    (unless (file-exists? (current-ant-bin-path))
+      (error 'build-android-package-in-path
+             "The Apache ant binary appears to be missing from the current PATH."))
+    (unless (directory-exists? (current-android-sdk-path))
+      (error 'build-android-package-in-path
+             "The Android SDK could not be found."))
+    
+    (run-ant-build.xml dest "debug")))
 
 
 ;; write-local.properties: path -> void
@@ -85,9 +88,9 @@
 
 
 
-;; prepare-android-package-src-structure: string path -> void
+;; prepare-android-package-src-structure: string (listof string) path -> void
 ;; Prepares the directory structure we need to compile the package.
-(define (prepare-android-package-src-structure name dest)  
+(define (prepare-android-package-src-structure name android-permissions dest)  
   (make-directory* dest)
   
   ;; write out phonegap source files so they're included in the compilation.
@@ -95,9 +98,24 @@
   
   ;; Write out the Java class stubs for the build,
   ;; customizing the phonegap sources for this particular application.
-  (write-java-class-stubs name dest)
+  (write-java-class-stubs name android-permissions dest)
   ;; Write out the icon.
   (write-icon dest))
+
+
+;; module-records-android-permissions: (listof module-record) -> (listof string)
+;; Consumes a list of modules, and produces a list of the android permissions we need.
+(define (module-records-android-permissions module-records)
+  (let ([ht (make-hash)])
+    (for ([a-record (in-list module-records)])
+      (for ([a-permission (module-record-permissions a-record)])
+        (for ([translated-permission 
+               (permission->android-permissions a-permission (lambda () empty))])
+          (hash-set! ht translated-permission #t))))
+    (for/list ([k (in-hash-keys ht)])
+      k)))
+
+
 
 
 ;; write-icon: path -> void
@@ -108,9 +126,9 @@
                           (build-path dest "res" "drawable" "icon.png")))
   
 
-;; write-assets: string path path -> void
+;; write-assets: string path (listof module-record) path -> void
 ;; Write out the assets subdirectory.
-(define (write-assets name program-path assets-path)
+(define (write-assets name program-path module-records assets-path)
   (make-directory* assets-path)
   ;; Write out index.html
   (copy-or-overwrite-file (build-path javascript-support-path "index.html")
@@ -130,16 +148,15 @@
   (copy-or-overwrite-file (build-path phonegap-path "assets" "phonegap.js") 
                           (build-path assets-path "phonegap.js"))
   
-  (let ([module-records (get-compiled-modules program-path)])        
-    ;; Finally, write out the Javascript-translated program.
-    (write-program.js program-path module-records 
-                      assets-path)))
+
+  ;; Finally, write out the Javascript-translated program.
+  (write-program.js program-path module-records assets-path))
 
 
 
-;; write-java-class-stubs: string path -> void
+;; write-java-class-stubs: string (listof string) path -> void
 ;; Write out the java-related files that we'll need to compile the package.
-(define (write-java-class-stubs name dest)
+(define (write-java-class-stubs name android-permissions dest)
   (let* ([normal-name (normalize-name name)]
          [classname (upper-camel-case normal-name)]
          [package (string-append "plt.moby." classname)])
@@ -150,11 +167,7 @@
      #:name name
      #:package package
      #:activity-class (string-append package "." classname)
-     #:permissions '()
-     #;(apply append 
-              (map permission->android-permissions
-                   (pinfo-permissions 
-                    (javascript:compiled-program-pinfo compiled-program)))))
+     #:permissions android-permissions)
     
     ;; HACKS!
     ;; Fix build.xml so it refers to our application.
@@ -332,14 +345,19 @@
                   
                   
                   [prepare-android-package-src-structure
-                   (string? path-string? . -> . any)]
+                   (string? (listof string?) path-string? . -> . any)]
                   
+                  [write-assets
+                   (string? path? (listof module-record?) path? . -> . any)]
+
                   [write-local.properties
                    (path-string? . -> . any)]
 
-                  [write-assets
-                   (string? path? path? . -> . any)]
                   
                   [get-apk-in-dest
                    (path? . -> . bytes?)]
+                  
+                  
+                  [module-records-android-permissions
+                   ((listof module-record?) . -> . (listof string?))]
                   )
