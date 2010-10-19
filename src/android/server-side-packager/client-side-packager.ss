@@ -99,7 +99,8 @@
        (let ([result (with-path-f tempdir)])
          (let-values ([(inp outp) (make-pipe)])
            (parameterize ([current-directory tempdir])
-             (zip->output (pathlist-closure (build-path 'same)) outp)
+             (zip->output (pathlist-closure (list (build-path 'same)))
+                          outp)
              (close-output-port outp)
              (values inp result)))))
      

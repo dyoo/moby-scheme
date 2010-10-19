@@ -20,17 +20,6 @@
 (define-runtime-path icon-path "../../support/icons/icon.png")
 (define-runtime-path javascript-support-path "../../support/js")
 
-;; FIXME
-;; FIXME
-;; FIXME
-;; Must figure out way to get at these files.  They're no longer at the
-;; runtime path here.
-
-(define-runtime-path javascript-main.js 
-  "../../support/externals/mzscheme-vm/support/main.js")
-(define-runtime-path javascript-evaluator.js 
-  "../../support/externals/mzscheme-vm/support/evaluator.js")
-
 
 ;; build-android-package: string path -> bytes
 ;; Builds the android package with the given program name and path, producing
@@ -43,11 +32,20 @@
                                       program-path
                                       dest)
               
-       (get-file-bytes 
-        (first (find-files (lambda (a-path)
-                             (equal? (filename-extension a-path)
-                                     #"apk"))
-                           dest)))))))
+       (get-apk-in-dest dest)))))
+
+
+
+;; get-apk-in-dest: directory -> bytes
+;; Searches for the first file somewhere in the directory that's named ".apk".
+(define (get-apk-in-dest dest)
+  (get-file-bytes 
+   (first (find-files (lambda (a-path)
+                        (equal? (filename-extension a-path)
+                                #"apk"))
+                      dest))))
+
+
 
 
 ;; build-android-package-in-path: string path path -> void
@@ -332,6 +330,8 @@
                   ;; isn't present on the local machine: we can 
                   ;; still delegate the actual compilation off to a 
                   ;; separate compilation server.
+                  
+                  
                   [prepare-android-package-src-structure
                    (string? path-string? path-string? . -> . any)]
                   
@@ -339,4 +339,8 @@
                    (path-string? . -> . any)]
 
                   [write-assets
-                   (string? path? path? . -> . any)])
+                   (string? path? path? . -> . any)]
+                  
+                  [get-apk-in-dest
+                   (path? . -> . bytes?)]
+                  )

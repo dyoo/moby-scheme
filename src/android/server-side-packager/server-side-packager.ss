@@ -3,10 +3,15 @@
 (require racket/runtime-path
          racket/cmdline
          racket/port
+         racket/file
+         racket/list
          web-server/servlet
          web-server/servlet-env
          xml
-         "logger.ss")
+         "logger.ss"
+         "../../compile-helpers.ss"
+         (prefix-in lap: "../local-android-packager.ss")
+         (planet dyoo/pack-directory:1/pack-directory))
 
 ;; This is a servlet that compiles packages to Android.
 ;;
@@ -39,7 +44,7 @@
                      (handle-unexpected-error exn))])
     (let-values ([(metadata asset-zip-bytes) 
                   (parse-request req)])
-      #;(write-to-access-log! req asset-zip-bytes)
+      (write-to-access-log! req asset-zip-bytes)
       
       ;; within temporary directory
       (let ([tmpdir
@@ -55,27 +60,39 @@
                         ;; read the package bytes
                         (cond
                           [(and metadata asset-zip-bytes)
-                           (make-package-response metadata
-                            (build-android-package metadata
-                                                   program/resources))]
+                           ;; Lots of file system stuff here.
+                           ;; Creates the basic structure,
+                           (lap:prepare-android-package-src-structure tmpdir)
+                           ;; sets up compilation parameters,
+                           (lap:write-local.properties tmpdir)
+                           ;; and customizes the assets by what's been provided
+                           ;; by the client.
+                           (parameterize ([current-directory 
+                                           (build-path tmpdir "assets")])
+                             (unpack-into-current-directory asset-zip-bytes))
+
+                           (run-ant-build.xml tmpdir "debug")
+                           
+                           (let ([apk-bytes (lap:get-apk-in-dest tmpdir)])
+                             (make-package-response metadata
+                                                    apk-bytes))]
                           [else
                            (error-no-program)]))
                       
                       (lambda ()
-                        (delete-directory/files
-                         tmpdir)))))))
+                        (delete-directory/files tmpdir)))))))
 
 
 ;; write-to-access-log!: request program/resources -> void
 (define (write-to-access-log! req program/resources)
   (void)
   #;(when (current-access-logger)
-    (with-handlers ([void (lambda (exn)
-                           (write (exn-message exn) (current-error-port)))])
-      (logger-add! (current-access-logger)
-                   (request-client-ip req)
-                   program/resources
-                   '()))))
+      (with-handlers ([void (lambda (exn)
+                              (write (exn-message exn) (current-error-port)))])
+        (logger-add! (current-access-logger)
+                     (request-client-ip req)
+                     program/resources
+                     '()))))
 
 
 ;; parse-request: request -> (values (or/c #f s-exp) (or/c #f bytes))
