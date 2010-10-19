@@ -4,12 +4,12 @@
          racket/port
          racket/list
          racket/file
-         file/zip
          net/url
-         (prefix-in lap: "../local-android-packager.ss"))
+         (prefix-in lap: "../local-android-packager.ss")
+         (planet dyoo/pack-directory:1/pack-directory))
 
 (define current-server-url (make-parameter 
-                            "http://localhost:8888/package/"
+                            "http://localhost:8888/package"
                             #;"http://go.cs.brown.edu:8888/package/"))
 
 
@@ -55,57 +55,40 @@
 ;; Encodes the parameters we need to pass in to get a program.
 ;; TODO: GZIP the data, as soon as the web server can support it.
 (define (encode-parameters-in-data name program-path)
-  (let-values ([(zip-port _) (call-with-temporary-directory->zip
-                              (lambda (tempdir)
-                                (lap:write-assets name
-                                                  program-path 
-                                                  tempdir)))])
+  (let* ([tmpdir (make-temporary-file "mztmp~a" 'directory #f)]
+         [packed-dir-bytes
+          (dynamic-wind
+           (lambda () (void))
+           (lambda ()
+             (lap:write-assets name program-path tmpdir)
+             (parameterize ([current-directory tmpdir])
+               (pack-current-directory)))
+           (lambda ()
+             (delete-directory/files tmpdir)))])
+
     (let ([op (open-output-bytes)])
       (write `((name ,name)) op)
-      (copy-port zip-port op)
-      (get-output-bytes op)))
+      (write-bytes packed-dir-bytes op)
+      (get-output-bytes op))))
   
-  #;(string->bytes/utf-8
-     (alist->form-urlencoded 
-      (list* #;(cons 'name name)
-             #;(cons 'compiler-version VERSION)
-             #;(cons 'program-stx
-                     (format "~s" (program->sexp 
-                                   (program/resources-program program/resources))))
-             #;(map (lambda (a-resource)
-                      (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
-                      (cons 'resource (format "~s"
-                                              (list (send a-resource get-name)
-                                                    (send a-resource get-bytes)))))
-                    (program/resources-resources program/resources))))))
+#;(string->bytes/utf-8
+   (alist->form-urlencoded 
+    (list* #;(cons 'name name)
+           #;(cons 'compiler-version VERSION)
+           #;(cons 'program-stx
+                   (format "~s" (program->sexp 
+                                 (program/resources-program program/resources))))
+           #;(map (lambda (a-resource)
+                    (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
+                    (cons 'resource (format "~s"
+                                            (list (send a-resource get-name)
+                                                  (send a-resource get-bytes)))))
+                  (program/resources-resources program/resources)))))
 
 
 
 
 
-
-
-;; call-with-temporary-directory->zip: string (path -> X) -> (values input-port X)
-(define (call-with-temporary-directory->zip with-path-f)  
-  (let* ([tempdir
-          (make-temporary-file "mztmp~a" 'directory #f)])
-    
-    (dynamic-wind
-     
-     (lambda ()
-       (void))
-     
-     (lambda ()
-       (let ([result (with-path-f tempdir)])
-         (let-values ([(inp outp) (make-pipe)])
-           (parameterize ([current-directory tempdir])
-             (zip->output (pathlist-closure (list (build-path 'same)))
-                          outp)
-             (close-output-port outp)
-             (values inp result)))))
-     
-     (lambda ()
-       (delete-directory/files tempdir)))))
 
 
 

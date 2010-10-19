@@ -52,7 +52,7 @@
 ;; Builds the android package and produces the binary within the path/bin.
 (define (build-android-package-in-path name program-path dest) 
   ;; Prepares the non-assets android package structure.
-  (prepare-android-package-src-structure name program-path dest)
+  (prepare-android-package-src-structure name dest)
 
   ;; Write out local properties so that the build system knows how to compile
   (write-local.properties dest)
@@ -86,9 +86,9 @@
 
 
 
-;; prepare-android-package-src-structure: string path path -> void
+;; prepare-android-package-src-structure: string path -> void
 ;; Prepares the directory structure we need to compile the package.
-(define (prepare-android-package-src-structure name program-path dest)  
+(define (prepare-android-package-src-structure name dest)  
   (make-directory* dest)
   
   ;; write out phonegap source files so they're included in the compilation.
@@ -333,7 +333,7 @@
                   
                   
                   [prepare-android-package-src-structure
-                   (string? path-string? path-string? . -> . any)]
+                   (string? path-string? . -> . any)]
                   
                   [write-local.properties
                    (path-string? . -> . any)]

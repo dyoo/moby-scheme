@@ -62,14 +62,16 @@
                           [(and metadata asset-zip-bytes)
                            ;; Lots of file system stuff here.
                            ;; Creates the basic structure,
-                           (lap:prepare-android-package-src-structure tmpdir)
+                           (lap:prepare-android-package-src-structure 
+                            (metadata-name metadata) tmpdir)
                            ;; sets up compilation parameters,
                            (lap:write-local.properties tmpdir)
                            ;; and customizes the assets by what's been provided
                            ;; by the client.
                            (parameterize ([current-directory 
                                            (build-path tmpdir "assets")])
-                             (unpack-into-current-directory asset-zip-bytes))
+                             (unpack-into-current-directory asset-zip-bytes
+                                                            #:exists 'replace))
 
                            (run-ant-build.xml tmpdir "debug")
                            
