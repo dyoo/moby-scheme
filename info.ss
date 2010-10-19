@@ -4,7 +4,7 @@
 ;; Temporarily disabling the command-line launcher.
 (define required-core-version "5.0.1")
 
-#;(define tools (list (list "src/tool.ss")))
+(define tools (list (list "src/tool.ss")))
 
 (define compile-omit-paths (list "doc"
                                  "examples"
@@ -16,12 +16,7 @@
 (define categories '(devtools))
 (define repositories '("4.x"))
 
-#;(define primary-file "moby-lang.ss")
-
-#;(define scribblings 
-  '(("manual.scrbl" ())))
+(define version "3.0")
 
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for both web browsers and mobile smartphones."))
-
-(define release-notes '("New architecture."))

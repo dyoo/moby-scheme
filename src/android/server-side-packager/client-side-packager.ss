@@ -9,8 +9,8 @@
          (planet dyoo/pack-directory:1/pack-directory))
 
 (define current-server-url (make-parameter 
-                            "http://localhost:8888/package"
-                            #;"http://go.cs.brown.edu:8888/package/"))
+                            #;"http://localhost:8888/package"
+                            "http://go.cs.brown.edu:8888/package"))
 
 
 ;; build-android-package: string program-path -> bytes
