@@ -71,26 +71,6 @@
       (write-bytes packed-dir-bytes op)
       (get-output-bytes op))))
   
-#;(string->bytes/utf-8
-   (alist->form-urlencoded 
-    (list* #;(cons 'name name)
-           #;(cons 'compiler-version VERSION)
-           #;(cons 'program-stx
-                   (format "~s" (program->sexp 
-                                 (program/resources-program program/resources))))
-           #;(map (lambda (a-resource)
-                    (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
-                    (cons 'resource (format "~s"
-                                            (list (send a-resource get-name)
-                                                  (send a-resource get-bytes)))))
-                  (program/resources-resources program/resources)))))
-
-
-
-
-
-
-
 
 
 
