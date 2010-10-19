@@ -4,7 +4,8 @@
 ;; Temporarily disabling the command-line launcher.
 (define required-core-version "5.0.1")
 
-(define tools (list (list "src/tool.ss")))
+(define drracket-name "moby")
+(define drracket-tools (list (list "src/tool.rkt")))
 
 (define compile-omit-paths (list "doc"
                                  "examples"

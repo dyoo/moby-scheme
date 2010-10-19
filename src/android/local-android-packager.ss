@@ -27,12 +27,11 @@
 (define (build-android-package program-name program-path)
   (with-temporary-directory
    (lambda (dir)
-     (let ([dest (simplify-path (build-path dir program-path))])
-       (build-android-package-in-path program-name
-                                      program-path
-                                      dest)
-              
-       (get-apk-in-dest dest)))))
+     (build-android-package-in-path program-name
+                                    program-path
+                                    dir)
+     
+     (get-apk-in-dest dir))))
 
 
 

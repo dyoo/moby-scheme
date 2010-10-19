@@ -111,5 +111,5 @@
          (new separator-menu-item% [parent racket-menu])
          (new menu-item% 
               [parent racket-menu]
-              [label "Create Javascript Package"]
+              [label "Create Phone Package"]
               [callback click!]))))))
