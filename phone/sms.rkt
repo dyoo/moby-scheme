@@ -26,8 +26,7 @@
                        (lambda (w sender-js-str msg-js-str)
                          (let ([sender (prim-js->scheme sender-js-str)]
                                [msg (prim-js->scheme msg-js-str)])
-                         (world-with-effects (effect-updater w sender msg)
-                                             (world-updater w sender msg)))))))
+                         (world-with-effects (effect-updater w sender msg)))))))
 
 
 
@@ -42,5 +41,3 @@
                          (let ([sender (prim-js->scheme sender-js-str)]
                                [msg (prim-js->scheme msg-js-str)])
                          (world-updater w sender msg))))))
-
-

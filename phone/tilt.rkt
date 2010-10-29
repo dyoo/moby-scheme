@@ -108,12 +108,20 @@
 
 
 (define (on-tilt world-updater)
-  (let ([accelerometer (js-new (js-get-global-value "Accelerometer"))])
+  (printf "at on-tilt\n")
+  (let* ([navigator (js-get-global-value "navigator")]
+	 [accelerometer (js-get-field navigator "accelerometer")] 
+	 #;(js-new (js-get-global-value "Accelerometer")))
     (make-world-config (lambda (success error)
+                         (printf "about to initialize watchOrientation.\n")
+			 (printf "Accelerometer=~s\n" accelerometer)
+                         (printf "watchOrientation=~s\n"
+				 (js-get-field accelerometer "watchOrientation"))
                          (js-call (js-get-field accelerometer "watchOrientation")
                                   accelerometer
                                   success
-                                  error))
+                                  error)
+			 (printf "watchOrientation initialized\n"))
                        (lambda (shutdown-f) (js-call shutdown-f #f))
                        (lambda (w js-azimuth js-pitch js-roll)
                          (let ([azimuth (prim-js->scheme js-azimuth)]

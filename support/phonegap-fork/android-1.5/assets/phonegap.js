@@ -1020,6 +1020,8 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 //Accelerometer.base_orient_method = Accelerometer.prototype.watchOrientation;
 Accelerometer.prototype.watchOrientation = function(successCallback, errorCallback, options)
 {
+    alert('in watchorientation');
+
     Accel.start();
     
     navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
