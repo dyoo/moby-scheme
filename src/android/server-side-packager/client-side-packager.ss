@@ -6,7 +6,7 @@
          racket/file
          net/url
          
-         (prefix-in js-vm: (planet dyoo/js-vm/private/compile-moby-module))
+         (prefix-in js-vm: (planet dyoo/js-vm:1:3/private/compile-moby-module))
          (prefix-in lap: "../local-android-packager.ss")
          (planet dyoo/pack-directory:1/pack-directory))
 

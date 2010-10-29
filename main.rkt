@@ -2,19 +2,29 @@
 
 (require racket/path
          racket/contract
-         (planet dyoo/js-vm:1/private/misc)
-         (planet dyoo/js-vm:1/private/log-port)
+         (prefix-in js-vm: (planet dyoo/js-vm:1:3/main))
+         (planet dyoo/js-vm:1:3/private/misc)
+         (planet dyoo/js-vm:1:3/private/log-port)
          "src/android/android-packager.ss")
 
 
 (provide/contract 
- [create-android-phone-package (path-string? path-string? . -> . void)])
+ [create-android-phone-package (path-string? path-string? . -> . any)]
+ [run-in-browser (path-string? . -> . any)])
+
 
 ;; make-package-name: path -> string
 (define (make-package-name a-path)
   (let-values ([(base name dir?)
                 (split-path a-path)])
     (remove-filename-extension name)))
+
+
+
+;; At the moment, reuse js-vm's run-in-browser.  We may need to do some extra
+;; work to add mock classes for cell-phone functionality.
+(define run-in-browser js-vm:run-in-browser)
+
 
 
 ;; create-android-phone-package: path-string path-string -> void

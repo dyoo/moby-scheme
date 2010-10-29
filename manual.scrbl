@@ -1,37 +1,9 @@
 #lang scribble/manual
 
-@(require (planet cce/scheme:6:0/scribble))
-@(require (for-syntax (planet cce/scheme:6:0/scribble)))
-
-@(require (for-syntax scheme/base))
-@(define-syntax (mobyblock stx)
-   (syntax-case stx ()
-     [(header body ...)
-      (let* ([source-name (syntax-source #'header)]
-             [line (syntax-line #'header)]
-             [column 0]
-             [position (syntax-position #'header)]
-             [planet-symbol 'planet]
-             [moby-symbol (this-package-version-symbol)]
-             [planet-symbol-length (string-length (symbol->string planet-symbol))]
-             [moby-symbol-length (string-length (symbol->string moby-symbol))])
-        (with-syntax ([planet-mod (datum->syntax #f 'planet (list source-name
-                                                                  line 
-                                                                  column 
-                                                                  position 
-                                                                  (string-length
-                                                                   (symbol->string planet-symbol))))]
-                      [lang (datum->syntax #f moby-symbol (list source-name 
-                                                                 line 
-                                                                 (+ column planet-symbol-length 1)
-                                                                 (+ position planet-symbol-length 1) 
-                                                                 moby-symbol-length))])
-          (syntax/loc stx
-            (schememod planet-mod lang
-                       body ...))))]))
-
-
-@(require (for-label (this-package-in src/moby-lang)))
+@(require unstable/scribble
+          (for-syntax scheme/base)
+          (for-label (planet dyoo/moby:3))
+          (for-label (planet dyoo/js-vm/lang/wescheme)))
 
 @title{Moby: the Moby Scheme Compiler}
 
@@ -48,41 +20,50 @@ Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
 his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]{The Moby Scheme Compiler for Smartphones}.
 
     
+@section{Quick Start}
 
+Let's create a simple application that rapidly shows a counter.
+Create a file @filepath{counter.rkt} in the Module language with the
+following content:
 
-    
-@section{Running Moby from DrScheme}
-
-
-To use Moby from DrScheme, create a file in the Module language, and
-at the top of your program, include the following language line:
-
-@mobyblock[
-]
-
-followed by the program.  For example, running the program:
-
-@mobyblock[
+@racketmod[planet dyoo/js-vm:1:3
 (define initial-world 0)
-(js-big-bang initial-world (on-tick 1 add1))
+(big-bang initial-world (on-tick add1))
 ]
 
-will invoke a web browser, which should show the
-running program on a web page.  Because @scheme[on-tick] is used, 
-as every second passes, the runtime sends a tick stimulus to the program.  
-The page should also provide links to download packages
-of the compiled program.
+
+This program can be executed in Racket, although evaluation will halt on the
+big-bang 
+because @racket[on-tick] and @racket[big-bang] are functions that
+require a Javascript web context.
+
+
+To create an Android apk package, we use @racket[create-android-phone-package].
+Create a file called @filepath{build-counter.rkt} with the following content:
+@racketmod[planet #,(this-package-version-symbol)
+(create-android-phone-package "counter.rkt" "counter.apk")                  
+]
+Running this will take @filepath{counter.rkt} and compile it to an Android package
+that can be installed.
+
+
+For testing, the function @racket[run-in-browser] can be used to provide a mock environment:
+@racketmod[planet #,(this-package-version-symbol)
+(run-in-browser "counter.rkt")
+]
+This will bring up a web server and a browser window with the running program.
 
 
 
-These programs run on the user's web browser; they can also dynamically
+Because Moby programs use the web, they can dynamically
 generate DOM trees and style them with CSS, as in the examples below.
 
-The following example renders the world as a paragraph of text, styled
-with a font-size of 30.  It uses @scheme[draw-html] and @scheme[draw-css]
+The following example @filepath{example-1.rkt} 
+renders the world as a paragraph of text, styled
+with a font-size of 30.  It uses @scheme[draw-page] and @scheme[draw-css]
 to draw the web page.
 
-@(mobyblock
+@racketmod[planet dyoo/js-vm:1:3
 (define initial-world 0)
   
 (define (draw-html w)
@@ -91,10 +72,11 @@ to draw the web page.
 
 (define (draw-css w)
   '(("myPara" ("font-size" "30"))))
-
   
-(js-big-bang initial-world
-             (on-draw draw-html draw-css)))
+(big-bang initial-world
+          (to-draw-page draw-html draw-css))]
+
+
 
 
 The next example shows an image and an input text field.  As with the
@@ -102,7 +84,7 @@ previous example, it uses @scheme[draw-html] and @scheme[draw-css] to
 construct the web page, and every time the world changes, the runtime environment
 reacts by re-drawing the web page.
 
-@mobyblock[
+@racketblock[
 (define (form-value w)
   (format "~a" w))
 
@@ -128,9 +110,42 @@ reacts by re-drawing the web page.
 
 
 
+@section{Running and packaging Android programs}
+
+@defmodule/this-package[main]
+@defproc[(create-android-phone-package [input-file path-string?]
+                                       [output-apk path-string?]) void]{
+Creates an Android phone package.}
+
+                                                                       
+@defproc[(run-in-browser [input-file path-string?]) void]{
+Runs the given @racket[input-file] in a context that provides mocks for
+phone-specific behavior.}
+            
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                       
 
 @section{The Moby World API}
-@(declare-exporting/this-package [src/moby-lang] [])
+@;@(declare-exporting/this-package [src/moby-lang] [])
   
 
 @defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
@@ -163,7 +178,7 @@ that tree's styling.
 For simple applications, @scheme[on-redraw] is sufficient to draw a scene onto the display.
 The following program shows a ball falling down a scene.
 
-@(mobyblock
+@(racketblock
 (define WIDTH 320)
 (define HEIGHT 480)
 (define RADIUS 15)
@@ -195,7 +210,7 @@ When the world should be stopped --- when @scheme[stop?] applied to the world
 produces @scheme[true] --- then the @scheme[js-big-bang] terminates.
 
 The program:
-@(mobyblock
+@(racketblock
 (define (at-ten x)
   (>= x 10))
 
@@ -256,7 +271,7 @@ Constructs a paragraph element.}
 Constructs a button.  When the button is pressed, the world is updated through @scheme[world-update-f].
 
 The following example counts how many times a button has been clicked.
-@(mobyblock
+@(racketblock
 (define (press w)
   (add1 w))
 
@@ -303,7 +318,7 @@ representing the checked status of the element will be passed to it.
 
 The example below has a single text input form element, which allows the user to enter
 some value.
-@(mobyblock
+@(racketblock
 (define (refresh w form-val)
   form-val)
 
@@ -325,7 +340,7 @@ some value.
 
 
 The example below uses a checkbox to select among three elements:
-@(mobyblock
+@(racketblock
 (define (make-ingredient-checkbox-sexp ingredient)
   (local [(define (on-check w v)
             (cond
@@ -370,7 +385,7 @@ option is selected, the @scheme[world-update-f] function is called to
 get the new world.
 
 The example below has a select with five elements.
-@(mobyblock
+@(racketblock
 (define (select-house w an-option)
   an-option)
 
