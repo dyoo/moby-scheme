@@ -20,6 +20,7 @@ Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
 his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]{The Moby Scheme Compiler for Smartphones}.
 
     
+
 @section{Quick Start}
 
 Let's create a simple application that rapidly shows a counter.
@@ -40,7 +41,8 @@ require a Javascript web context.
 
 To create an Android apk package, we use @racket[create-android-phone-package].
 Create a file called @filepath{build-counter.rkt} with the following content:
-@racketmod[planet #,(this-package-version-symbol)
+@racketmod[racket
+(require (planet #,(this-package-version-symbol)))
 (create-android-phone-package "counter.rkt" "counter.apk")                  
 ]
 Running this will take @filepath{counter.rkt} and compile it to an Android package
@@ -48,8 +50,10 @@ that can be installed.
 
 
 For testing, the function @racket[run-in-browser] can be used to provide a mock environment:
-@racketmod[planet #,(this-package-version-symbol)
+@racketmod[racket
+(require (planet #,(this-package-version-symbol)))
 (run-in-browser "counter.rkt")
+(read-line)
 ]
 This will bring up a web server and a browser window with the running program.
 
@@ -123,7 +127,6 @@ Runs the given @racket[input-file] in a context that provides mocks for
 phone-specific behavior.}
             
  
-
 
 
 
