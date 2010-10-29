@@ -3,7 +3,10 @@
 @(require unstable/scribble
           (for-label (only-in racket/base planet))
           (for-label (planet dyoo/moby:3))
-          (for-label (planet dyoo/js-vm/lang/wescheme)))
+
+	  (for-label (planet dyoo/moby:3/phone/location))
+          (for-label (planet dyoo/moby:3/phone/tilt))
+          (for-label (planet dyoo/moby:3/phone/sms)))
 
 @title{Moby: the Moby Scheme Compiler}
 
@@ -116,6 +119,67 @@ reacts by re-drawing the web page.
 
 
 
+
+
+
+
+The last example is a phone mood ring called @filepath{mood-ring.rkt}:
+it shows a single DIV whose background color is controlled by the
+phone's orientation.
+
+
+@racketmod[planet #,(this-package-version-symbol)
+(require #,(schememodname/this-package phone/tilt))
+
+@code:comment{The world is a color.}
+(define initial-world (make-color 0 0 0))
+
+@code:comment{tilt: world number number number -> world}
+@code:comment{Tilting the phone adjusts the color.}
+(define (tilt w azimuth pitch roll)
+  (make-color (scale azimuth 360)
+	      (scale (+ pitch 90) 180)
+	      (scale (+ roll 90) 180)))
+
+@code:comment{scale-azimuth: number -> number}
+@code:comment{Take a number going from 0-360 and scale it to a number between 0-255}
+(define (scale n domain-bound)
+  (inexact->exact (floor (* (/ n domain-bound) 255))))
+
+@code:comment{User interface.}
+(define view (list (js-div '((id "background")))))
+
+(define (draw-html w) view)
+
+(define (draw-css w)
+  (list (list "background" 
+	      (list "background-color" 
+		    (format "rgb(~a, ~a, ~a)"
+			    (color-red w)
+			    (color-green w)
+			    (color-blue w)))
+	      (list "width" "100%")
+	      (list "height" "100%"))))
+
+
+
+(big-bang initial-world
+	  (on-tilt tilt)
+	  (to-draw-page draw-html draw-css))
+
+]
+Again, to package the program, we use @racket[create-android-phone-package].
+@racketmod[racket
+(require #,(schememodname/this-package))
+(create-android-phone-package "mood-ring.rkt" "mood.apk")
+]
+
+
+
+
+
+
+
 @section{Running and packaging Android programs}
 
 @defmodule/this-package[]
@@ -153,10 +217,22 @@ Creates an Android phone package.}
                                                                        
 
 @section{API}
-@;@(declare-exporting/this-package [src/moby-lang] [])
+
   
 The language bindings of Moby language come from the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
 PLaneT package; please refer to the documentation of @emph{js-vm}.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
