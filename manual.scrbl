@@ -23,7 +23,7 @@ his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]
 
 @section{Quick Start}
 
-Let's create a simple application that rapidly shows a counter.
+Let's create a simple application that rapidly shows an incrementing counter.
 Create a file @filepath{counter.rkt} in the Module language with the
 following content:
 
@@ -49,7 +49,8 @@ Running this will take @filepath{counter.rkt} and compile it to an Android packa
 that can be installed.
 
 
-For testing, the function @racket[run-in-browser] can be used to provide a mock environment:
+For testing, the function @racket[run-in-browser] can be used to provide a mock
+environment that runs in your web browser:
 @racketmod[racket
 (require (planet #,(this-package-version-symbol)))
 (run-in-browser "counter.rkt")
@@ -88,7 +89,7 @@ previous example, it uses @scheme[draw-html] and @scheme[draw-css] to
 construct the web page, and every time the world changes, the runtime environment
 reacts by re-drawing the web page.
 
-@racketblock[
+@racketmod[planet dyoo/js-vm:1:3
 (define (form-value w)
   (format "~a" w))
 
@@ -96,7 +97,7 @@ reacts by re-drawing the web page.
   (string->number v))
 
 (define elt
-  (js-input "text" update-form-value))
+  (js-input "text" update-form-value '()))
 
 (define (draw-html w)
   (list (js-div)
@@ -108,15 +109,15 @@ reacts by re-drawing the web page.
 (define (draw-css w)
   '(("aPara" ("font-size" "50px"))))
 
-(js-big-bang 0
-             (on-draw draw-html draw-css))]
+(big-bang 0
+             (to-draw-page draw-html draw-css))]
 
 
 
 
 @section{Running and packaging Android programs}
 
-@defmodule/this-package[main]
+@defmodule/this-package[]
 @defproc[(create-android-phone-package [input-file path-string?]
                                        [output-apk path-string?]) void]{
 Creates an Android phone package.}
