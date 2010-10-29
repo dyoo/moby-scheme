@@ -5,7 +5,10 @@
 (define required-core-version "5.0.1")
 
 (define drracket-name "moby")
-(define drracket-tools (list (list "src/tool.rkt")))
+#;(define drracket-tools (list (list "src/tool.rkt")))
+
+(define primary-file "main.rkt")
+(define can-be-loaded-with 'all)
 
 (define compile-omit-paths (list "doc"
                                  "examples"
@@ -20,4 +23,4 @@
 (define version "3.0")
 
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
-                "for both web browsers and mobile smartphones."))
+                "for mobile smartphones."))

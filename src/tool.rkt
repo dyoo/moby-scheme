@@ -19,7 +19,25 @@
 
 
 ;; make-reasonable-package-name: path -> string
-;; Tries to pick a reasonable default for the zip file name.
+;; Tries to pick a reasonable default fo(parameterize ([current-log-port notify-port])
+                       (with-handlers
+                           ([exn:fail? 
+                             (lambda (exn)
+                               (fprintf notify-port
+                                        "An internal error occurred during compilation: ~a\n"
+                                        (exn-message exn))
+                               (raise exn))])
+                         
+                         (call-with-output-file output-file
+                             (lambda (op) 
+                               (fprintf notify-port 
+                                        "Writing package to file ~a...\n" output-file)
+                               (write-bytes (build-android-package 
+                                             (make-package-name output-file)
+                                             a-filename)
+                                            op))
+                             #:exists 'replace)
+                         (fprintf notify-port "Done!\n")))r the zip file name.
 (define (make-reasonable-package-name a-path)
   (let-values ([(base name dir?)
                 (split-path a-path)])
@@ -45,7 +63,25 @@
     (define (phase2) (void))
 
 
-    
+    (parameterize ([current-log-port notify-port])
+                       (with-handlers
+                           ([exn:fail? 
+                             (lambda (exn)
+                               (fprintf notify-port
+                                        "An internal error occurred during compilation: ~a\n"
+                                        (exn-message exn))
+                               (raise exn))])
+                         
+                         (call-with-output-file output-file
+                             (lambda (op) 
+                               (fprintf notify-port 
+                                        "Writing package to file ~a...\n" output-file)
+                               (write-bytes (build-android-package 
+                                             (make-package-name output-file)
+                                             a-filename)
+                                            op))
+                             #:exists 'replace)
+                         (fprintf notify-port "Done!\n")))
     ;; unit-frame<%>: interface
     ;; Just a helper interface used for the mixin below.
     (define unit-frame<%> (class->interface drracket:unit:frame%))
