@@ -201,6 +201,46 @@ Creates an Android phone package.}
 
 
 
+@section{Phone API}
+
+@subsection{Location (GPS)}
+@defmodule/this-package[phone/location]
+
+@defproc[(on-location-change [world-updater (world [latitude number] [longitude number] -> world)]) handler]{Constructs a world handler that watches for changes in the phone's geographic location.
+}
+
+
+
+@subsection{SMS Messaging}
+@defmodule/this-package[phone/sms]
+
+
+@defproc[(on-sms-receive [world-updater (world [sender string] [message string] -> world)]) handler]{
+Constructs a world handler that watches for incoming SMS messages.}
+
+
+
+
+@subsection{Motion sensors and tilt}
+@defmodule/this-package[phone/tilt]
+
+@defproc[(on-acceleration  [world-updater (world [x number] [y number] [z number] -> world)]) handler]{
+Constructs a world handler that watches acceleration updates.}
+
+@defproc[(on-shake [world-updater (world -> world)]) handler]{
+Constructs a world handler that watches shake events; if the phone is
+shaken, the world-updater will fire off.}
+
+
+@defproc[(on-tilt [world-updater (world [azimuth number] [pitch number] [roll number] -> world)]) handler]{Constructs a world handler that watches changes in orientation.}
+
+
+
+
+
+
+
+
 
 
 
