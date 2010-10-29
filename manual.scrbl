@@ -1,7 +1,7 @@
 #lang scribble/manual
 
 @(require unstable/scribble
-          (for-syntax scheme/base)
+          (for-label (only-in racket/base planet))
           (for-label (planet dyoo/moby:3))
           (for-label (planet dyoo/js-vm/lang/wescheme)))
 
@@ -27,7 +27,7 @@ Let's create a simple application that rapidly shows an incrementing counter.
 Create a file @filepath{counter.rkt} in the Module language with the
 following content:
 
-@racketmod[planet dyoo/js-vm:1:3
+@racketmod[planet #,(this-package-version-symbol)
 (define initial-world 0)
 (big-bang initial-world (on-tick add1))
 ]
@@ -39,6 +39,16 @@ because @racket[on-tick] and @racket[big-bang] are functions that
 require a Javascript web context.
 
 
+For testing, the function @racket[run-in-browser] can be used to provide a mock
+environment that runs in your web browser:
+@racketmod[racket
+(require (planet #,(this-package-version-symbol)))
+(run-in-browser "counter.rkt")
+(read-line)
+]
+This will bring up a web server and a browser window with the running program.
+
+
 To create an Android apk package, we use @racket[create-android-phone-package].
 Create a file called @filepath{build-counter.rkt} with the following content:
 @racketmod[racket
@@ -48,15 +58,6 @@ Create a file called @filepath{build-counter.rkt} with the following content:
 Running this will take @filepath{counter.rkt} and compile it to an Android package
 that can be installed.
 
-
-For testing, the function @racket[run-in-browser] can be used to provide a mock
-environment that runs in your web browser:
-@racketmod[racket
-(require (planet #,(this-package-version-symbol)))
-(run-in-browser "counter.rkt")
-(read-line)
-]
-This will bring up a web server and a browser window with the running program.
 
 
 
@@ -118,14 +119,17 @@ reacts by re-drawing the web page.
 @section{Running and packaging Android programs}
 
 @defmodule/this-package[]
-@defproc[(create-android-phone-package [input-file path-string?]
-                                       [output-apk path-string?]) void]{
-Creates an Android phone package.}
 
                                                                        
 @defproc[(run-in-browser [input-file path-string?]) void]{
 Runs the given @racket[input-file] in a context that provides mocks for
 phone-specific behavior.}
+
+
+@defproc[(create-android-phone-package [input-file path-string?]
+                                       [output-apk path-string?]) void]{
+Creates an Android phone package.}
+
             
  
 
@@ -148,9 +152,14 @@ phone-specific behavior.}
 
                                                                        
 
-@section{The Moby World API}
+@section{API}
 @;@(declare-exporting/this-package [src/moby-lang] [])
   
+The language bindings of Moby language come from the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
+PLaneT package; please refer to the documentation of @emph{js-vm}.
+
+
+
 
 @defproc[(js-big-bang (a-world world) (handlers handler?) ...) void]{
 A Moby program starts a reactive computation with @scheme[js-big-bang].
