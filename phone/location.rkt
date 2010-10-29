@@ -5,6 +5,9 @@
 (require (planet dyoo/js-vm:1:3/jsworld/jsworld))
 
 
+(require "in-phone.rkt")
+
+
 (provide on-location-change!
 	 on-location-change)
 

@@ -4,6 +4,8 @@
 (require (planet dyoo/js-vm:1:3/ffi/ffi))
 (require (planet dyoo/js-vm:1:3/jsworld/jsworld))
 
+(require "in-phone.rkt")
+
 (provide on-acceleration!
 	 on-acceleration
          on-shake!
@@ -14,6 +16,9 @@
 
 (require-permission "PERMISSION:TILT"
 		    "PERMISSION:SHAKE")
+
+
+
 
 (define (on-acceleration! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-global-value "phonegap") "Accelerometer"))])
