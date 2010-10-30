@@ -17,6 +17,8 @@
                                  "support"
 	                         "tmp"))
 
+(define scribblings '(("manual.scrbl")))
+
 (define categories '(devtools))
 (define repositories '("4.x"))
 
