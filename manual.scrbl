@@ -62,6 +62,13 @@ Create a file called @filepath{build-counter.rkt} with the following content:
 Running this will take @filepath{counter.rkt} and compile it to an Android package
 that can be installed.
 
+Both
+@racket[run-in-browser] and @racket[create-android-phone-package]
+should be also accessible through DrRacket's @emph{Racket} menu as
+@emph{Run Javascript in Browser} and @emph{Create Phone Package},
+respectively.
+
+
 
 
 
