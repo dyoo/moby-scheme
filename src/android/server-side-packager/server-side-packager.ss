@@ -39,7 +39,7 @@
 
 ;; start: request -> response
 (define (start req)
-  (with-handlers ([exn:fail?
+  (with-handlers (#;[exn:fail?
                    (lambda (exn)
                      (handle-unexpected-error exn))])
     (let-values ([(metadata asset-zip-bytes) 
@@ -143,7 +143,7 @@
 ;; metadata-permissions: metadata -> (listof string)
 (define (metadata-permissions a-metadata)
   ;; FIXME: do pattern matching here to check.
-  (rest (assoc 'permissions a-metadata)))
+  (second (assoc 'permissions a-metadata)))
 
 
 ;; normalize-name-as-filename: string -> string
