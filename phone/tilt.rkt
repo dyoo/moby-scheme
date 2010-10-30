@@ -5,6 +5,8 @@
 (require (planet dyoo/js-vm:1:3/jsworld/jsworld))
 
 (require "in-phone.rkt")
+(require "mock-tilt-setup.rkt")
+
 
 (provide ;on-acceleration!
 	 on-acceleration
@@ -19,7 +21,51 @@
 
 
 
-(define (on-acceleration world-updater)
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mocks
+
+(define (mock-on-acceleration world-updater)
+  (make-world-config (lambda (on-acc)
+                       (mock-acceleration-setup on-acc))
+                     (lambda (shutdown-f)
+                       (shutdown-f))
+                     (lambda (w x y z)
+                       (world-updater w 
+                                      (prim-js->scheme x)
+                                      (prim-js->scheme y)
+                                      (prim-js->scheme z)))))
+
+
+(define (mock-on-tilt world-updater)
+  (make-world-config (lambda (on-acc)
+                       (mock-tilt-setup on-acc))
+                     (lambda (shutdown-f)
+                       (shutdown-f))
+                     (lambda (w x y z)
+                       (world-updater w 
+                                      (prim-js->scheme x)
+                                      (prim-js->scheme y)
+                                      (prim-js->scheme z)))))
+
+(define (mock-on-shake world-updater)
+  (make-world-config (lambda (on-acc)
+                       (mock-shake-setup on-acc))
+                     (lambda (shutdown-f)
+                       (shutdown-f))
+                     (lambda (w)
+                       (world-updater w))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define (phonegap-on-acceleration world-updater)
   (let ([accelerometer (get-accelerometer)])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchAcceleration")
@@ -36,7 +82,10 @@
                          (error 'on-acceleration "an error occured with the accelerometer")))))
 
 
-(define (on-tilt world-updater)
+
+
+
+(define (phonegap-on-tilt world-updater)
   (let ([accelerometer (get-accelerometer)])
     (make-world-config (lambda (on-change)
 			 (let ([shutdown-f
@@ -59,7 +108,7 @@
 
 
 
-(define (on-shake world-updater)
+(define (phonegap-on-shake world-updater)
   (let ([accelerometer (get-accelerometer)])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchShake")
@@ -143,5 +192,25 @@
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
+;; adapt: (world-updater -> world-config) (world-updater -> world-config) -> (world-updater -> world-config)
+;; Does the run-time check to see which implementation of a world updater is
+;; appropriate.
+(define (adapt mock-impl phone-impl)
+  (lambda (world-updater)
+    (cond
+      [(running-in-phone-context?)
+       (phone-impl world-updater)]
+      [else
+       (mock-impl world-updater)])))
+
+
+
+;; Here are the provided bindings.
+
+(define on-acceleration (adapt mock-on-acceleration phonegap-on-acceleration))
+(define on-tilt (adapt mock-on-tilt phonegap-on-tilt))
+(define on-shake (adapt mock-on-shake phonegap-on-shake))

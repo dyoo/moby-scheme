@@ -1,3 +1,10 @@
+// Creates mocks for the acceleration, tilt, and shake.
+
+
+// FIXME: all of these mocks look the same.  We need
+// a nice library to produce these mocks faster.
+
+
 
 // on setup, create a form attached to the document body
 EXPORTS['mock-tilt-setup'] = 
@@ -6,7 +13,8 @@ EXPORTS['mock-tilt-setup'] =
 	false, false,
 	function(onNewTilt) {
 	    var mockTiltSetter = document.createElement("div");
-	    
+
+
 	    var xInput = document.createElement("input");
 	    xInput.type = "text";
 
@@ -15,7 +23,7 @@ EXPORTS['mock-tilt-setup'] =
 
 	    var zInput = document.createElement("input");
 	    zInput.type = "text";
-	    
+	    	    
 	    var submitButton = document.createElement("input");
 	    submitButton.type = "button";
 	    submitButton.value = "send tilt";
@@ -33,8 +41,9 @@ EXPORTS['mock-tilt-setup'] =
 	    mockTiltSetter.style.border = "1pt solid black";
 	    mockTiltSetter.appendChild(
 		document.createTextNode("mock tilt setter"));
-	    mockTiltSetter.appendChild(latInput);
-	    mockTiltSetter.appendChild(latOutput);
+	    mockTiltSetter.appendChild(xInput);
+	    mockTiltSetter.appendChild(yInput);
+	    mockTiltSetter.appendChild(zInput);
 	    mockTiltSetter.appendChild(submitButton);
 
 	    document.body.appendChild(mockTiltSetter);
@@ -47,6 +56,7 @@ EXPORTS['mock-tilt-setup'] =
 					  document.body.removeChild(
 					      mockTiltSetter);
 				      });
+
 	    return shutdownThunk;
 	});
 
@@ -86,8 +96,9 @@ EXPORTS['mock-acceleration-setup'] =
 	    mockTiltSetter.style.border = "1pt solid black";
 	    mockTiltSetter.appendChild(
 		document.createTextNode("mock acceleration setter"));
-	    mockTiltSetter.appendChild(latInput);
-	    mockTiltSetter.appendChild(latOutput);
+	    mockTiltSetter.appendChild(xInput);
+	    mockTiltSetter.appendChild(yInput);
+	    mockTiltSetter.appendChild(zInput);
 	    mockTiltSetter.appendChild(submitButton);
 
 	    document.body.appendChild(mockTiltSetter);
