@@ -12,9 +12,6 @@ cd $OLDDIR/tmp/moby
 rm -rf sandbox
 
 
-cd $OLDDIR/tmp/moby/src
-mred bootstrap-js-compiler.ss
-
 cd $OLDDIR/tmp
 
 planet unlink dyoo moby.plt $MAJOR $MINOR
