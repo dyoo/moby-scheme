@@ -12,11 +12,11 @@
 
 @section{What is Moby?}
 
-Moby is a project from the PLT Scheme team.  The Moby compiler
+Moby is a project from the @hyperlink["http://racket-lang.org/people.html"]{PLT} team.  The Moby compiler
 consumes Advanced Student Language (ASL) programs that use @link["http://world.cs.brown.edu/"]{World}
 primitives, and produces applications for mobile platforms.  The
 current prototype supports desktop browsers and smartphones.
-Our long-term goal is to make Scheme the premiere reactive scripting
+Our long-term goal is to make Racket the premiere reactive scripting
 language for mobile phones.
 
 Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
@@ -72,7 +72,7 @@ Because Moby programs use the web, they can dynamically
 generate DOM trees and style them with CSS, as in the examples below.
 
 The next example renders the world as a paragraph of text, styled
-with a font-size of 30.  It uses @scheme[draw-page] and @scheme[draw-css]
+with a font-size of 30.  It uses @racket[draw-page] and @racket[draw-css]
 to draw the web page.
 
 @racketmod[planet #,(this-package-version-symbol)
@@ -92,7 +92,7 @@ to draw the web page.
 
 
 The next example shows an image and an input text field.  As with the
-previous example, it uses @scheme[draw-html] and @scheme[draw-css] to
+previous example, it uses @racket[draw-html] and @racket[draw-css] to
 construct the web page, and every time the world changes, the runtime environment
 reacts by re-drawing the web page.
 
