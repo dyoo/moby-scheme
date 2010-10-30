@@ -987,50 +987,64 @@ Accelerometer.prototype.gotShaken = function() {
 Accelerometer.prototype.getCurrentAcceleration = function(successCallback, errorCallback, options) {
     //    Console.println("getting current acceleration");
     
-    var accel = new Acceleration( Accel.getX(), Accel.getY(), Accel.getZ() );
+    var accel = 
+	new Acceleration( Accel.getX(), Accel.getY(), Accel.getZ() );
     Accelerometer.lastAcceleration = accel;
     successCallback(accel);
 }
 
 Accelerometer.prototype.getCurrentOrientation = function(successCallback, errorCallback, options) {
-    //    Console.println("getting current orientation");
+    //Console.println("getting current orientation");
     
-    var orient = new Orientation( Accel.getAzimuth(), Accel.getPitch(), Accel.getRoll() );
-    Accelerometer.lastOrienetation = orient;
-    successCallback(orient);
+    var orient = new Orientation( Accel.getAzimuth(),
+				  Accel.getPitch(),
+				  Accel.getRoll() );
+    Accelerometer.lastOrientation = orient;
+    //Console.println("going to get back " + orient.azimuth + ", " + orient.pitch + " " + orient.roll);
+    successCallback(orient.azimuth, 
+ 		    orient.pitch,
+ 		    orient.roll);
 }
 
 //Accelerometer.base_method = Accelerometer.prototype.watchAcceleration
-Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallback, options)
+Accelerometer.prototype.watchAcceleration = function(successCallback,
+						     errorCallback,
+						     options)
 {
     Accel.start();
 
-    navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
+    // navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
 
+    var frequency = (options != undefined)? options.frequency : 100;
     var id = setInterval(function() {
-    	navigator.accelerometer.getCurrentAcceleration(successCallback, errorCallback, options);
+    	navigator.accelerometer.getCurrentAcceleration(
+	    successCallback, 
+	    errorCallback, 
+	    options);
     }, frequency);
     this.accelListeners.push(id);
     
     var that = this;
-    return function () {Accelerometer.clearTypeWatch(that.accelListeners, id);};
+    return function () {
+	Accelerometer.clearTypeWatch(that.accelListeners, id);
+    };
 }
 
 //Accelerometer.base_orient_method = Accelerometer.prototype.watchOrientation;
 Accelerometer.prototype.watchOrientation = function(successCallback, errorCallback, options)
 {
-    alert('in watchorientation');
+    if (! successCallback) {
+	throw new Error("missing parameter successCallback");
+    }
 
     Accel.start();
     
-    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
-    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
-    var frequency = (options != undefined)? options.frequency : 100;
+//    navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
 
+    var frequency = (options != undefined)? options.frequency : 100;
     var id = setInterval(function() {
-	navigator.accelerometer.getCurrentOrientation(successCallback, errorCallback, options);
+ 	navigator.accelerometer.getCurrentOrientation(
+	    successCallback, errorCallback, options);
     }, frequency);
     this.orientListeners.push(id);
     
@@ -1141,3 +1155,5 @@ DialogPickers.prototype.notifyPlaylistCanceled = function() {
 if (typeof navigator.dialogPickers == 'undefined') {
     navigator.dialogPickers = new DialogPickers();
 }
+
+
