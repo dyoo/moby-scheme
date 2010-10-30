@@ -43,6 +43,5 @@ EXPORTS['mock-location-setup'] =
 					  document.body.removeChild(
 					      mockLocationSetter);
 				      });
-	    console.log('finishing setup');
 	    return shutdownThunk;
 	});

@@ -19,6 +19,61 @@
 
 
 
+(define (on-acceleration world-updater)
+  (let ([accelerometer (get-accelerometer)])
+    (make-world-config (lambda (success error)
+                         (js-call (js-get-field accelerometer "watchAcceleration")
+                                  accelerometer
+                                  success
+                                  error))
+                       (lambda (shutdown-f) (js-call shutdown-f #f))
+                       (lambda (w js-x js-y js-z)
+                         (let ([x (prim-js->scheme js-x)]
+                               [y (prim-js->scheme js-y)]
+                               [z (prim-js->scheme js-z)])
+                           (world-updater w x y z)))
+                       (lambda (w e)
+                         (error 'on-acceleration "an error occured with the accelerometer")))))
+
+
+(define (on-tilt world-updater)
+  (let ([accelerometer (get-accelerometer)])
+    (make-world-config (lambda (on-change)
+			 (let ([shutdown-f
+				(js-call (js-get-field 
+					  accelerometer
+					  "watchOrientation")
+					 accelerometer
+					 on-change)])
+			   shutdown-f))
+
+                       (lambda (shutdown-f)
+			 (js-call shutdown-f #f))
+
+		       ;; on-change
+                       (lambda (w js-azimuth js-pitch js-roll)
+                         (let ([azimuth (prim-js->scheme js-azimuth)]
+                               [pitch (prim-js->scheme js-pitch)]
+                               [roll (prim-js->scheme js-roll)])
+                           (world-updater w azimuth pitch roll))))))
+
+
+
+(define (on-shake world-updater)
+  (let ([accelerometer (get-accelerometer)])
+    (make-world-config (lambda (success error)
+                         (js-call (js-get-field accelerometer "watchShake")
+                                  accelerometer
+                                  success
+                                  error))
+                       (lambda (shutdown-f) (js-call shutdown-f #f))
+                       world-updater
+                       (lambda (w e)
+                         (error 'on-shake "an error occured with the accelerometer")))))
+
+
+
+
 ;; get-accelerometer: -> js-value
 ;; Gets the accelerometer object.
 (define (get-accelerometer)
@@ -48,21 +103,6 @@
 
 
 
-(define (on-acceleration world-updater)
-  (let ([accelerometer (get-accelerometer)])
-    (make-world-config (lambda (success error)
-                         (js-call (js-get-field accelerometer "watchAcceleration")
-                                  accelerometer
-                                  success
-                                  error))
-                       (lambda (shutdown-f) (js-call shutdown-f #f))
-                       (lambda (w js-x js-y js-z)
-                         (let ([x (prim-js->scheme js-x)]
-                               [y (prim-js->scheme js-y)]
-                               [z (prim-js->scheme js-z)])
-                           (world-updater w x y z)))
-                       (lambda (w e)
-                         (error 'on-acceleration "an error occured with the accelerometer")))))
 
 
 
@@ -82,19 +122,6 @@
 
 
                      
-
-(define (on-shake world-updater)
-  (let ([accelerometer (get-accelerometer)])
-    (make-world-config (lambda (success error)
-                         (js-call (js-get-field accelerometer "watchShake")
-                                  accelerometer
-                                  success
-                                  error))
-                       (lambda (shutdown-f) (js-call shutdown-f #f))
-                       world-updater
-                       (lambda (w e)
-                         (error 'on-shake "an error occured with the accelerometer")))))
-
 
 #;(define (on-tilt! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-global-value "Accelerometer"))])
@@ -118,24 +145,3 @@
 
 
 
-
-(define (on-tilt world-updater)
-  (let ([accelerometer (get-accelerometer)])
-    (make-world-config (lambda (on-change)
-			 (let ([shutdown-f
-				(js-call (js-get-field 
-					  accelerometer
-					  "watchOrientation")
-					 accelerometer
-					 on-change)])
-			   shutdown-f))
-
-                       (lambda (shutdown-f)
-			 (js-call shutdown-f #f))
-
-		       ;; on-change
-                       (lambda (w js-azimuth js-pitch js-roll)
-                         (let ([azimuth (prim-js->scheme js-azimuth)]
-                               [pitch (prim-js->scheme js-pitch)]
-                               [roll (prim-js->scheme js-roll)])
-                           (world-updater w azimuth pitch roll))))))
