@@ -118,6 +118,19 @@ reacts by re-drawing the web page.
 
 
 
+We can also use phone-specific features, such as geolocation.
+
+@racketmod[planet #,(this-package-version-symbol)
+(require #,(schememodname/this-package phone/location))
+
+(define (make-message lat lng)
+  (format "I think I am at: ~s ~s" lat lng))
+
+(big-bang "initial state"
+	  (on-location-change make-message))]
+
+
+
 
 
 

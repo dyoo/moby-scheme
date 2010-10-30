@@ -392,9 +392,9 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
     // Invoke the appropriate callback with a new Position object every time the implementation 
     // determines that the position of the hosting device has changed. 
     
-    this.getCurrentPosition(successCallback, errorCallback, options);
+    //this.getCurrentPosition(successCallback, errorCallback, options);
+
     var frequency = (options != undefined)? options.frequency : 10000;
-    
     var that = this;
     return setInterval(function() {
     	that.getCurrentPosition(successCallback, errorCallback, options);
@@ -757,7 +757,7 @@ Geolocation.gotCurrentPosition = function() {
 	p = {};
 	p.latitude = lat;
 	p.longitude = lng;
-	this.global_success(p);
+	this.global_success(lat, lng);
     }
 }
 

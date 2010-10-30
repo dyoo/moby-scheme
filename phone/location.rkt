@@ -8,16 +8,23 @@
 (require "in-phone.rkt")
 
 
-(provide on-location-change!
+(provide #;on-location-change!
 	 on-location-change)
 
 
 (require-permission "PERMISSION:LOCATION")
 
 
-(define (on-location-change! world-updater effect-updater)
-  (let ([geolocation (js-get-field (js-get-global-value "navigator")
-				   "phonegap_geo")])
+
+;; get-geo: -> js-value
+;; Gets the geolocation structure.
+(define (get-geo)
+  (js-get-field (js-get-global-value "navigator")
+		"phonegap_geo"))
+
+
+#;(define (on-location-change! world-updater effect-updater)
+  (let ([geolocation (get-geo)])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field geolocation "watchPosition")
                                   geolocation
@@ -36,8 +43,7 @@
 
 
 (define (on-location-change world-updater)
-  (let ([geolocation (js-get-field (js-get-global-value "navigator")
-				   "phonegap_geo")])
+  (let ([geolocation (get-geo)])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field geolocation "watchPosition")
                                   geolocation
