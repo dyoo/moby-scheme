@@ -7,7 +7,7 @@
 ;; Produces true if we're running in the context of a phonegap-supporting
 ;; environment.
 (define (running-in-phone-context?)
-  (not (js-undefined? (js-get-global-value "phonegap"))))
+  (not (js-undefined? (js-get-global-value "Device"))))
 
 
 (provide running-in-phone-context?)
