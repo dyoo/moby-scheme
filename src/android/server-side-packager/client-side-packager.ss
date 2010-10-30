@@ -63,7 +63,7 @@
           (dynamic-wind
            (lambda () (void))
            (lambda ()
-             (lap:write-assets name module-records tmpdir)
+             (lap:write-assets program-path module-records tmpdir)
              (parameterize ([current-directory tmpdir])
                (pack-current-directory)))
            (lambda ()

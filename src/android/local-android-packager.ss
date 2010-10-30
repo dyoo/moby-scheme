@@ -58,7 +58,7 @@
                                            dest)
     
     ;; Write out assets.
-    (write-assets name program-path module-records (build-path dest "assets"))
+    (write-assets program-path module-records (build-path dest "assets"))
     
     ;; Write out local properties so that the build system knows how to compile
     (write-local.properties dest)
@@ -126,9 +126,9 @@
                           (build-path dest "res" "drawable" "icon.png")))
   
 
-;; write-assets: string path (listof module-record) path -> void
+;; write-assets: path (listof module-record) path -> void
 ;; Write out the assets subdirectory.
-(define (write-assets name program-path module-records assets-path)
+(define (write-assets  program-path module-records assets-path)
   (make-directory* assets-path)
   ;; Write out index.html
   (copy-or-overwrite-file (build-path javascript-support-path "index.html")
@@ -348,7 +348,7 @@
                    (string? (listof string?) path-string? . -> . any)]
                   
                   [write-assets
-                   (string? path? (listof module-record?) path? . -> . any)]
+                   (path? (listof module-record?) path? . -> . any)]
 
                   [write-local.properties
                    (path-string? . -> . any)]
