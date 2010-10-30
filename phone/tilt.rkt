@@ -1,8 +1,8 @@
-#lang planet dyoo/js-vm:1:3/base
+#lang planet dyoo/js-vm:1:4/base
 
-(require (planet dyoo/js-vm:1:3/permissions/require-permission))
-(require (planet dyoo/js-vm:1:3/ffi/ffi))
-(require (planet dyoo/js-vm:1:3/jsworld/jsworld))
+(require (planet dyoo/js-vm:1:4/permissions/require-permission))
+(require (planet dyoo/js-vm:1:4/ffi/ffi))
+(require (planet dyoo/js-vm:1:4/jsworld/jsworld))
 
 (require "in-phone.rkt")
 (require "mock-tilt-setup.rkt")
