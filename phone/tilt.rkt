@@ -6,11 +6,11 @@
 
 (require "in-phone.rkt")
 
-(provide on-acceleration!
+(provide ;on-acceleration!
 	 on-acceleration
-         on-shake!
+         ;on-shake!
          on-shake
-	 on-tilt!
+	 ;on-tilt!
 	 on-tilt)
 
 
@@ -19,8 +19,16 @@
 
 
 
+;; get-accelerometer: -> js-value
+;; Gets the accelerometer object.
+(define (get-accelerometer)
+  (let ([navigator (js-get-global-value "navigator")])
+    (js-get-field navigator "accelerometer")))
+    
 
-(define (on-acceleration! world-updater effect-updater)
+
+
+#;(define (on-acceleration! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-global-value "phonegap") "Accelerometer"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchAcceleration")
@@ -41,7 +49,7 @@
 
 
 (define (on-acceleration world-updater)
-  (let ([accelerometer (js-new (js-get-field (js-get-global-value "phonegap") "Accelerometer"))])
+  (let ([accelerometer (get-accelerometer)])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchAcceleration")
                                   accelerometer
@@ -58,7 +66,7 @@
 
 
 
-(define (on-shake! world-updater effect-updater)
+#;(define (on-shake! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-field (js-get-global-value "phonegap") "Accelerometer"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchShake")
@@ -76,7 +84,7 @@
                      
 
 (define (on-shake world-updater)
-  (let ([accelerometer (js-new (js-get-field (js-get-global-value "phonegap") "Accelerometer"))])
+  (let ([accelerometer (get-accelerometer)])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchShake")
                                   accelerometer
@@ -88,7 +96,7 @@
                          (error 'on-shake "an error occured with the accelerometer")))))
 
 
-(define (on-tilt! world-updater effect-updater)
+#;(define (on-tilt! world-updater effect-updater)
   (let ([accelerometer (js-new (js-get-global-value "Accelerometer"))])
     (make-world-config (lambda (success error)
                          (js-call (js-get-field accelerometer "watchOrientation")
@@ -107,28 +115,27 @@
 
 
 
+
+
+
+
 (define (on-tilt world-updater)
-  (let* ([navigator (js-get-global-value "navigator")]
-	 [accelerometer (js-get-field navigator "accelerometer")])
-    (make-world-config (lambda (on-change #;error)
-                         (js-call (js-get-field accelerometer "watchOrientation")
-				  accelerometer
-                                  on-change
-                                  #;error)
-			 (printf "watchOrientation on\n"))
+  (let ([accelerometer (get-accelerometer)])
+    (make-world-config (lambda (on-change)
+			 (let ([shutdown-f
+				(js-call (js-get-field 
+					  accelerometer
+					  "watchOrientation")
+					 accelerometer
+					 on-change)])
+			   shutdown-f))
 
                        (lambda (shutdown-f)
-			 (void)
-			 #;(js-call shutdown-f #f))
+			 (js-call shutdown-f #f))
 
 		       ;; on-change
                        (lambda (w js-azimuth js-pitch js-roll)
-			 (printf "in update callback\n")
                          (let ([azimuth (prim-js->scheme js-azimuth)]
                                [pitch (prim-js->scheme js-pitch)]
                                [roll (prim-js->scheme js-roll)])
-                           (world-updater w azimuth pitch roll)))
-
-                       #;(lambda (w e)
-                         (error 'on-tilt "an error occured with the accelerometer")))))
-
+                           (world-updater w azimuth pitch roll))))))

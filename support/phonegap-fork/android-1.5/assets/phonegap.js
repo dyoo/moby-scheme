@@ -990,7 +990,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
     var accel = 
 	new Acceleration( Accel.getX(), Accel.getY(), Accel.getZ() );
     Accelerometer.lastAcceleration = accel;
-    successCallback(accel);
+    successCallback(accel.x, accel.y, accel.z);
 }
 
 Accelerometer.prototype.getCurrentOrientation = function(successCallback, errorCallback, options) {
