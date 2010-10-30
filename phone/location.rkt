@@ -53,6 +53,8 @@
                                              geolocation
                                              id))
                        (lambda (w lat lng)
-                         (world-updater w (prim-js->scheme lat) (prim-js->scheme lng)))
+                         (world-updater w
+			  		(prim-js->scheme lat)
+					(prim-js->scheme lng)))
                        (lambda (w e)
                          (error 'on-location-change "an error occurred with accessing GPS locations")))))

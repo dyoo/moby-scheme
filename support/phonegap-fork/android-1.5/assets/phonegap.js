@@ -747,8 +747,8 @@ Geolocation.gotCurrentPosition = function() {
     var lng = Args.get("gpsLng");
     //  Console.println("Got position " + lat + ", " + lng);
     
-    if (typeof lat == "undefined" || lat == null
-        || typeof lng == "undefined" ||  lng == null)
+    if (typeof lat === "undefined" || lat === null
+        || typeof lng === "undefined" ||  lng === null)
     {
 	this.fail();
     }
@@ -812,7 +812,8 @@ Geolocation.prototype.success = function(key, lat, lng)
         p.latitude = lat;
         p.longitude = lng;
         this.lastPosition = p;
-        this.listeners[key].success(p);
+        this.listeners[key].success(parseFloat(lat+''), 
+				    parseFloat(lng+''));
     }
 }
 
