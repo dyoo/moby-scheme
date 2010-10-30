@@ -41,7 +41,7 @@
 		     (lambda (shutdown-thunk)
 		       (shutdown-thunk))
 		     (lambda (w lat lng)
-		       (world-updater w 
+                       (world-updater w 
 				      (prim-js->scheme lat)
 				      (prim-js->scheme lng)))))
 

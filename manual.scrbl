@@ -130,7 +130,7 @@ The following program shows the current location.
 @racketmod[planet #,(this-package-version-symbol)
 (require #,(schememodname/this-package phone/location))
 
-(define (make-message lat lng)
+(define (make-message w lat lng)
   (format "I think I am at: ~s ~s" lat lng))
 
 (big-bang "initial state"

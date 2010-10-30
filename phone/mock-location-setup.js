@@ -3,8 +3,8 @@
 EXPORTS['mock-location-setup'] = 
     new types.PrimProc(
 	"mock-location-setup", 1,
-	false, true,
-	function(aState, onNewLocation) {
+	false, false,
+	function(onNewLocation) {
 	    var mockLocationSetter = document.createElement("div");
 	    
 	    var latInput = document.createElement("input");
@@ -19,20 +19,16 @@ EXPORTS['mock-location-setup'] =
 	    submitButton.onclick = function() {
 		setTimeout(
 		    function() {
-			console.log("calling");
-			console.log(onNewLocation);
-			interpret.call(aState,
-				       onNewLocation,
-				       [parseFloat(latInput.value),
-					parseFloat(latOutput.value)],
-				       function() {},
-				       function() {},
-				       "mock-location-setup");
+			onNewLocation.val(parseFloat(latInput.value),
+					  parseFloat(latOutput.value))
 		    },
-		    0)
+		    0);
 		return false;
 	    };
 
+	    mockLocationSetter.style.border = "1pt solid black";
+	    mockLocationSetter.appendChild(
+		document.createTextNode("mock location setter"));
 	    mockLocationSetter.appendChild(latInput);
 	    mockLocationSetter.appendChild(latOutput);
 	    mockLocationSetter.appendChild(submitButton);
