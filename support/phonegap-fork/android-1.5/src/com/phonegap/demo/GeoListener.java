@@ -53,10 +53,18 @@ public class GeoListener {
     }
 	
 
-    void stop()
-    {
+    void stop() {
 	providerListener.stop();
     }
+
+    void pause() {
+	providerListener.pause();
+    }
+
+    void resume() {
+	providerListener.resume();
+    }
+    
 
     public Location getCurrentLocation() {
 	return providerListener.getLocation();

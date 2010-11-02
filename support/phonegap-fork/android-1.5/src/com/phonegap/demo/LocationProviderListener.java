@@ -36,28 +36,38 @@ public class LocationProviderListener implements LocationListener {
 	private LocationManager mLocMan;
 	private static final String LOG_TAG = "PhoneGap";
 	private GeoListener owner;
+    int interval;
 	
 	public LocationProviderListener(Context ctx, int interval, GeoListener m)
 	{
 		Log.d("LocationProviderListener", 
 		      "Making new LocationProviderListener with interval " +
 		      interval + "milliseconds");
-		owner = m;
-		mLocMan = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+		this.owner = m;
+		this.mLocMan = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+		this.interval = interval;
 
-		Criteria c = new Criteria();
-		c.setCostAllowed(false);
-		List<String> providers = mLocMan.getProviders(c, true);
-		for (String provider : providers) {
-		    mLocMan.requestLocationUpdates(provider, interval, 0, this);
-		    if (cLoc == null) {
-			cLoc = mLocMan.getLastKnownLocation(provider);
-		    }
-		}
 
+		requestUpdates();
 		Log.d("GpsListener", "Listener created");
 	}
 	
+
+    // Request updates to the provider
+    private void requestUpdates() {
+	Criteria c = new Criteria();
+	c.setCostAllowed(false);
+	List<String> providers = mLocMan.getProviders(c, true);
+	for (String provider : providers) {
+	    mLocMan.requestLocationUpdates(provider, this.interval, 0, this);
+	    if (cLoc == null) {
+		cLoc = mLocMan.getLastKnownLocation(provider);
+	    }
+	}
+    }
+
+
+
 	public Location getLocation()
 	{
 		return cLoc;
@@ -106,5 +116,14 @@ public class LocationProviderListener implements LocationListener {
 	{
 		mLocMan.removeUpdates(this);
 	}
+
+
+    public void pause() {
+	mLocMan.removeUpdates(this);
+    }
+
+    public void resume() {
+	this.requestUpdates();
+    }
 	
 }

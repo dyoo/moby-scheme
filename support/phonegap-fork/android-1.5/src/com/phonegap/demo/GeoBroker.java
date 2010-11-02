@@ -68,10 +68,16 @@ public class GeoBroker implements LifecycleService {
 
     // LifecycleService implementations
 
-    public void onPause() {}
+    public void onPause() {
+	for ( GeoListener geo : geoListeners.values() ) {
+	    geo.pause();
+	}
+    }
 
     public void onResume() {
-	// FILL ME IN
+	for ( GeoListener geo : geoListeners.values() ) {
+	    geo.resume();
+	}
     }
 
     public void onStop() {
