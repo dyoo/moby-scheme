@@ -592,8 +592,8 @@ Sms.prototype.addListener = function(listener) {
 // The middleware will call this function, assigning appropriate values
 // into the Args.
 Sms.prototype.onReceiveSms = function() {
-    var sender = "" + Args.get("sender");
-    var message = "" + Args.get("message");
+    var sender = Args.get("sender").toString();
+    var message = Args.get("message").toString();
     for (var i = 0; i < this.listeners.length; i++) {
 	(this.listeners[i])(sender, message);
     }
@@ -676,7 +676,7 @@ Audio.prototype.stopAllMusic = function() {
 }
 
 Audio.prototype.musicFinished = function() {
-    var file = Args.get("finishedMusicFile");
+    var file = Args.get("finishedMusicFile").toString();
     //    Console.println("In musicFinshed for " + file);
     //    Console.println("typeof this.callbacks[file] = " + typeof this.callbacks[file]);
 
@@ -743,8 +743,8 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
 
 // Run the global callback
 Geolocation.gotCurrentPosition = function() {
-    var lat = Args.get("gpsLat");
-    var lng = Args.get("gpsLng");
+    var lat = parseFloat(Args.get("gpsLat").toString());
+    var lng = parseFloat(Args.get("gpsLng").toString());
     //  Console.println("Got position " + lat + ", " + lng);
     
     if (typeof lat === "undefined" || lat === null
@@ -794,9 +794,10 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
  */
 Geolocation.prototype.success = function(key, lat, lng)
 {
-    var key = Args.get("gpsId");
-    var lat = Args.get("gpsLat");
-    var lng = Args.get("gpsLng");
+    //Console.println("Geolocation.success");
+    var key = Args.get("gpsId").toString();
+    var lat = parseFloat(Args.get("gpsLat").toString());
+    var lng = parseFloat(Args.get("gpsLng").toString());
 
     //    Console.println("Success for finding location " + lat + ", " + lng + " with key " + key);
     //    Console.println("typeof this.listeners = " + (typeof this.listeners));
@@ -812,8 +813,7 @@ Geolocation.prototype.success = function(key, lat, lng)
         p.latitude = lat;
         p.longitude = lng;
         this.lastPosition = p;
-        this.listeners[key].success(parseFloat(lat+''), 
-				    parseFloat(lng+''));
+        this.listeners[key].success(lat, lng);
     }
 }
 
@@ -960,7 +960,7 @@ Accelerometer.prototype.gotShaken = function() {
     var shakenUIDs = Args.get("shakeIDs");
 
     for (var i = 0; i < shakenUIDs.size(); i++) {
-	var callback = this.shakeListeners[shakenUIDs.get(i)];
+	var callback = this.shakeListeners[shakenUIDs.get(i).toString()];
 
 	if (typeof callback != "undefined") {
 	    callback.success();
