@@ -2,9 +2,9 @@
 
 (require racket/path
          racket/contract
-         (prefix-in js-vm: (planet dyoo/js-vm:1:4/main))
-         (planet dyoo/js-vm:1:4/private/misc)
-         (planet dyoo/js-vm:1:4/private/log-port)
+         (prefix-in js-vm: (planet dyoo/js-vm:1:5/main))
+         (planet dyoo/js-vm:1:5/private/misc)
+         (planet dyoo/js-vm:1:5/private/log-port)
          "src/android/android-packager.ss")
 
 

@@ -1,7 +1,7 @@
-#lang planet dyoo/js-vm:1:4/js-impl
+#lang planet dyoo/js-vm:1:5/js-impl
 
 (require-js "mock-location-setup.js")
-(require (planet dyoo/js-vm:1:4/ffi/ffi))
+(require (planet dyoo/js-vm:1:5/ffi/ffi))
 
 
 

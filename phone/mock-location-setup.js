@@ -25,7 +25,7 @@ EXPORTS['mock-location-setup'] =
 		    0);
 		return false;
 	    };
-
+	    
 	    mockLocationSetter.style.border = "1pt solid black";
 	    mockLocationSetter.appendChild(
 		document.createTextNode("mock location setter"));

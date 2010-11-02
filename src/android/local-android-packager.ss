@@ -6,10 +6,10 @@
          racket/list
          (only-in xml xexpr->string)
          
-         (planet dyoo/js-vm:1:4/private/module-record)
-         (planet dyoo/js-vm:1:4/private/compile-moby-module)
-         (planet dyoo/js-vm:1:4/private/write-module-records)
-         (planet dyoo/js-vm:1:4/private/write-runtime)
+         (planet dyoo/js-vm:1:5/private/module-record)
+         (planet dyoo/js-vm:1:5/private/compile-moby-module)
+         (planet dyoo/js-vm:1:5/private/write-module-records)
+         (planet dyoo/js-vm:1:5/private/write-runtime)
          
          "android-permission.rkt"
          "../config.rkt" 

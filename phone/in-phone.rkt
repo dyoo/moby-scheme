@@ -1,6 +1,6 @@
-#lang planet dyoo/js-vm:1:4/base
+#lang planet dyoo/js-vm:1:5/base
 
-(require (planet dyoo/js-vm:1:4/ffi/ffi))
+(require (planet dyoo/js-vm:1:5/ffi/ffi))
 
 
 ;; running-in-phone-context?

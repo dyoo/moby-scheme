@@ -6,9 +6,9 @@
          framework
          drracket/tool
          
-         (planet dyoo/js-vm:1:4/private/misc)
-         (planet dyoo/js-vm:1:4/private/notification-window)
-         (planet dyoo/js-vm:1:4/private/log-port)
+         (planet dyoo/js-vm:1:5/private/misc)
+         (planet dyoo/js-vm:1:5/private/notification-window)
+         (planet dyoo/js-vm:1:5/private/log-port)
          "android/android-packager.ss")
 
 ;; This tool adds a "Create Phone Package" button to the Racket menu.
