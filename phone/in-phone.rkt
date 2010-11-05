@@ -1,6 +1,6 @@
-#lang planet dyoo/js-vm:1:5/base
+#lang s-exp "../js-vm/base.rkt"
 
-(require (planet dyoo/js-vm:1:5/ffi/ffi))
+(require "../js-vm/ffi/ffi")
 
 
 ;; running-in-phone-context?

@@ -1,7 +1,7 @@
-#lang planet dyoo/js-vm:1:5/js-impl
+#lang s-exp "../js-vm/js-impl.rkt"
 
 (require-js "mock-tilt-setup.js")
-(require (planet dyoo/js-vm:1:5/ffi/ffi))
+(require "../js-vm/ffi/ffi.rkt")
 
 
 ;; mock-acceleration-setup: (world number number number -> world) -> js-shutdown-function
