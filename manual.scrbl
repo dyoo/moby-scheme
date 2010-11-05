@@ -22,7 +22,9 @@ language for mobile phones.
 Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
 his talk @link["http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/"]{The Moby Scheme Compiler for Smartphones}.
 
-    
+Moby requires Racket 5.0.1.
+
+
 
 @section{Quick Start}
 

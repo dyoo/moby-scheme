@@ -1,4 +1,4 @@
-#lang planet dyoo/js-vm:1:5/base
+#lang s-exp "../js-vm/base.rkt"
 
-(require (planet dyoo/js-vm:1:5/lang/wescheme))
-(provide (all-from-out (planet dyoo/js-vm:1:5/lang/wescheme)))
+(require "../js-vm/wescheme.rkt")
+(provide (all-from-out "../js-vm/wescheme.rkt"))
