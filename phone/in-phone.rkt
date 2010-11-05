@@ -1,6 +1,6 @@
 #lang s-exp "../js-vm/base.rkt"
 
-(require "../js-vm/ffi/ffi")
+(require "../js-vm/ffi/ffi.rkt")
 
 
 ;; running-in-phone-context?

@@ -1,8 +1,8 @@
-#lang planet dyoo/js-vm:1:5/base
+#lang s-exp "../js-vm/base.rkt"
 
-(require (planet dyoo/js-vm:1:5/permissions/require-permission))
-(require (planet dyoo/js-vm:1:5/ffi/ffi))
-(require (planet dyoo/js-vm:1:5/jsworld/jsworld))
+(require "../js-vm/permissions/require-permission.rkt")
+(require "../js-vm/ffi/ffi.rkt")
+(require "../js-vm/jsworld/jsworld.rkt")
 
 
 (require "in-phone.rkt"
