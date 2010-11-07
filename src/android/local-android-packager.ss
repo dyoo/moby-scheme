@@ -128,11 +128,10 @@
 
 ;; write-assets: path (listof module-record) path -> void
 ;; Write out the assets subdirectory.
-(define (write-assets  program-path module-records assets-path)
+(define (write-assets program-path module-records assets-path)
   (make-directory* assets-path)
   ;; Write out index.html
-  (copy-or-overwrite-file (build-path javascript-support-path "index.html")
-                          (build-path assets-path "index.html"))
+  (write-index.html module-records (build-path assets-path "index.html"))
   
   ;; Write out the support javascript files (main.js, evaluator.js)
   (copy-support-js-files assets-path)
@@ -151,6 +150,37 @@
 
   ;; Finally, write out the Javascript-translated program.
   (write-program.js program-path module-records assets-path))
+
+
+(define (write-index.html module-records index.html-path)
+  (call-with-output-file index.html-path
+    (lambda (op)
+      (let ([header
+             #<<EOF
+<html>
+<head>
+  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script> 
+  <script type="text/javascript" charset="utf-8" src="runtime.js"></script>
+  <script type="text/javascript" charset="utf-8" src="evaluator.js"></script>
+EOF
+             ]
+            [footer
+             #<<EOF
+  <script type="text/javascript" charset="utf-8" src="main.js"></script>
+</head>
+
+<body onload="evaluator.setGasLimit(100); mainPageLoad();">
+  <div id="history"></div>
+</body>
+</html>
+EOF
+             ])
+        (display header op)
+        (for ([i (in-range (length module-records))])
+          (fprintf "<script type=\"text/javascript\" charset=\"utf-8\" src=\"module~a.js\"></script>\n" i)
+        (display footer op))))
+    #:exists 'replace))
+
 
 
 
@@ -316,10 +346,15 @@
 ;; write-program.js: module-records path-string -> void
 ;; Write out the module records to program.js
 (define (write-program.js a-path module-records dest-dir)
+  (for ([r module-records])
+    (call-with-output-file (build-path dest-dir "module~a.js")
+      (lambda (op)
+        (fprintf "MODULES[~a] = ~a\n" 
+                 (symbol->string (module-record-name r))
+                 (encode-module-record r)))))
+
   (call-with-output-file (build-path dest-dir "program.js")
-    (lambda (op)
-      (write-module-records module-records op)
-      
+    (lambda (op)     
       (for ([r module-records])
         (cond
           [(string=? (path->string (module-record-path r))
