@@ -254,9 +254,15 @@ shaken, the world-updater will fire off.}
 
 
 
+@subsection{Internet access}
+@defmodule/this-package[phone/internet]
+
+This module does not provide any bindings, but is meant to notify
+@racket[create-android-phone-package] if a program needs permission to
+access the internet.  If your program is using @racket[image-url] or
+@racket[js-img], add a @racket[require] to this module.
 
 
-                                                                       
 
 @section{API}
 
