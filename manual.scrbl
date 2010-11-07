@@ -8,7 +8,7 @@
           (for-label (planet dyoo/moby:3/phone/tilt))
           (for-label (planet dyoo/moby:3/phone/sms)))
 
-@title{Moby: the Moby Scheme Compiler}
+@title{Moby: Racket for Mobile Phones}
 
 @section{What is Moby?}
 
@@ -109,7 +109,7 @@ reacts by re-drawing the web page.
 
 (define (draw-html w)
   (list (js-div)
-        (list (js-img "http://plt-scheme.org/logo.png"))
+        (list (js-img "http://racket-lang.org/logo.png"))
         (list elt)
         (list (js-p '(("id" "aPara")))
               (list (js-text (format "~a" w))))))

@@ -1,5 +1,5 @@
 #lang setup/infotab
-(define name "The Moby Scheme Compiler")
+(define name "Moby")
 
 ;; Temporarily disabling the command-line launcher.
 (define required-core-version "5.0.1")
