@@ -15,7 +15,7 @@
 Moby is a project from the @hyperlink["http://racket-lang.org/people.html"]{PLT} team.  The Moby compiler
 consumes Advanced Student Language (ASL) programs that use @link["http://world.cs.brown.edu/"]{World}
 primitives, and produces applications for mobile platforms.  The
-current prototype supports desktop browsers and smartphones.
+current prototype supports web browsers and smartphones.
 Our long-term goal is to make Racket the premiere reactive scripting
 language for mobile phones.
 
@@ -297,6 +297,7 @@ Here is an example that shows the status of all three sensors:
   
 The language bindings of Moby language come from the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
 PLaneT package; please refer to the documentation of @emph{js-vm}.
+#;@other-doc[(planet dyoo/js-vm)]
 
 
 
@@ -326,8 +327,7 @@ Constructs a world handler that watches for incoming SMS messages.}
 Constructs a world handler that watches acceleration updates.}
 
 @defproc[(on-shake [world-updater (world -> world)]) handler]{
-Constructs a world handler that watches shake events; if the phone is
-shaken, the world-updater will fire off.}
+Constructs a world handler that watches if the phone is shaked.}
 
 
 @defproc[(on-tilt [world-updater (world [azimuth number] [pitch number] [roll number] -> world)]) handler]{Constructs a world handler that watches changes in orientation.}
