@@ -28,9 +28,9 @@ Moby requires Racket 5.0.1.
 
 @section{Quick Start}
 
-Let's create a simple application that rapidly shows an incrementing counter.
-Create a file @filepath{counter.rkt} in the Module language with the
-following content:
+Let's create a simple application that shows a rapidly incrementing
+counter.  Create a file @filepath{counter.rkt} in the Module language
+with the following content:
 
 @racketmod[planet #,(this-package-version-symbol)
 (define initial-world 0)
@@ -38,11 +38,11 @@ following content:
 ]
 
 
-Note that this program's in a separate language that provides
+Note that this program is in a separate language that provides
 extra functions like @racket[big-bang].  This program can be
 executed in Racket, although evaluation will halt on the
 @racket[big-bang]  because it's a function that
-requires a Javascript web context.
+requires a Javascript context.
 
 
 For testing, the function @racket[run-in-browser] can be used to provide a mock
@@ -60,8 +60,8 @@ Create a file called @filepath{build-counter.rkt} with the following content:
 (require (planet #,(this-package-version-symbol)))
 (create-android-phone-package "counter.rkt" "counter.apk")                  
 ]
-Running this will take @filepath{counter.rkt} and compile it to an Android package
-that can be installed.
+Running this will take @filepath{counter.rkt} and compile it to an Android package @filepath{counter.apk}.
+
 
 
 
@@ -219,6 +219,14 @@ Creates an Android phone package.}
 
 @section{Phone API}
 
+
+  
+The language bindings of Moby language come from the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
+PLaneT package; please refer to the documentation of @emph{js-vm}.
+
+
+
+
 @subsection{Location (GPS)}
 @defmodule/this-package[phone/location]
 
@@ -262,10 +270,4 @@ access the internet.  If your program is using @racket[image-url] or
 @racket[js-img], add a @racket[require] to this module.
 
 
-
-@section{API}
-
-  
-The language bindings of Moby language come from the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
-PLaneT package; please refer to the documentation of @emph{js-vm}.
 
