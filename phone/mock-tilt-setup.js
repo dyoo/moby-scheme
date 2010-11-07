@@ -23,7 +23,7 @@ EXPORTS['mock-tilt-setup'] =
 
 	    var zInput = document.createElement("input");
 	    zInput.type = "text";
-	    	    
+
 	    var submitButton = document.createElement("input");
 	    submitButton.type = "button";
 	    submitButton.value = "send tilt";
