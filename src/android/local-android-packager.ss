@@ -162,10 +162,12 @@
   <script type="text/javascript" charset="utf-8" src="phonegap.js"></script> 
   <script type="text/javascript" charset="utf-8" src="runtime.js"></script>
   <script type="text/javascript" charset="utf-8" src="evaluator.js"></script>
+
 EOF
              ]
             [footer
              #<<EOF
+  <script type="text/javascript" charset="utf-8" src="program.js"></script>
   <script type="text/javascript" charset="utf-8" src="main.js"></script>
 </head>
 
@@ -173,12 +175,13 @@ EOF
   <div id="history"></div>
 </body>
 </html>
+
 EOF
              ])
         (display header op)
         (for ([i (in-range (length module-records))])
-          (fprintf "<script type=\"text/javascript\" charset=\"utf-8\" src=\"module~a.js\"></script>\n" i)
-        (display footer op))))
+          (fprintf op "<script type=\"text/javascript\" charset=\"utf-8\" src=\"module~a.js\"></script>\n" i))
+        (display footer op)))
     #:exists 'replace))
 
 
@@ -346,12 +349,17 @@ EOF
 ;; write-program.js: module-records path-string -> void
 ;; Write out the module records to program.js
 (define (write-program.js a-path module-records dest-dir)
-  (for ([r module-records])
-    (call-with-output-file (build-path dest-dir "module~a.js")
+  (for ([r module-records]
+        [i (in-naturals)])
+    (call-with-output-file (build-path dest-dir 
+                                       (format "module~a.js"
+                                               i))
       (lambda (op)
-        (fprintf "MODULES[~a] = ~a\n" 
+        (fprintf op
+                 "MODULES[~s] = ~a\n" 
                  (symbol->string (module-record-name r))
-                 (encode-module-record r)))))
+                 (encode-module-record r)))
+      #:exists 'replace))
 
   (call-with-output-file (build-path dest-dir "program.js")
     (lambda (op)     
