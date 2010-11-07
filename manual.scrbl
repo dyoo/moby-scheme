@@ -28,6 +28,51 @@ Moby requires Racket 5.0.1.
 
 @section{Quick Start}
 
+To start off, let's make sure Moby has installed correctly.
+Create a file @filepath{ancestors.rkt} with the following
+content:
+@racketmod[planet #,(this-package-version-symbol)
+;; Example from HTDP 14.1
+;; 
+
+(define-struct child (father mother name date eyes))
+
+;; Oldest Generation:
+(define Carl (make-child empty empty 'Carl 1926 'green))
+(define Bettina (make-child empty empty 'Bettina 1926 'green))
+
+;; Middle Generation:
+(define Adam (make-child Carl Bettina 'Adam 1950 'yellow))
+(define Dave (make-child Carl Bettina 'Dave 1955 'black))
+(define Eva (make-child Carl Bettina 'Eva 1965 'blue))
+(define Fred (make-child empty empty 'Fred 1966 'pink))
+
+;; Youngest Generation: 
+(define Gustav (make-child Fred Eva 'Gustav 1988 'brown))
+
+;; blue-eyed-ancestor? : ftn  ->  boolean
+;; to determine whether a-ftree contains a child
+;; structure with 'blue in the eyes field
+;; version 1: using a nested cond-expression
+(define (blue-eyed-ancestor? a-ftree)
+  (cond
+    [(empty? a-ftree) false]
+    [else (cond
+            [(symbol=? (child-eyes a-ftree) 'blue) true]
+            [(blue-eyed-ancestor? (child-father a-ftree)) true]
+            [(blue-eyed-ancestor? (child-mother a-ftree)) true]
+            [else false])]))
+
+
+(check-expect (blue-eyed-ancestor? Carl) false)
+(check-expect (blue-eyed-ancestor? Gustav) true)
+]
+
+Run this program.  If this is the first time that a Moby program has
+been run, a PLaneT installation of Moby will be done; installation
+takes a few minutes, so please be patient.
+
+
 Let's create a simple application that shows a rapidly incrementing
 counter.  Create a file @filepath{counter.rkt} in the Module language
 with the following content:
@@ -38,15 +83,11 @@ with the following content:
 ]
 
 
-Note that this program is in a separate language that provides
-extra functions like @racket[big-bang].  This program can be
-executed in Racket, although evaluation will halt on the
-@racket[big-bang]  because it's a function that
-requires a Javascript context.
+This program can be partially executed in Racket, but evaluation will
+halt on the @racket[big-bang] because it's a function that requires a
+Javascript context.  For testing, the function @racket[run-in-browser]
+can be used to provide a Javascript environment in your web browser:
 
-
-For testing, the function @racket[run-in-browser] can be used to provide a mock
-environment in your web browser:
 @racketmod[racket
 (require (planet #,(this-package-version-symbol)))
 (run-in-browser "counter.rkt")
@@ -54,8 +95,12 @@ environment in your web browser:
 This will bring up a web server and a browser window with the running program.
 
 
-To create an Android apk package, you can use @racket[create-android-phone-package].
-Create a file called @filepath{build-counter.rkt} with the following content:
+
+Moby programs can be be translated to Android phone packages.  To
+create an Android apk package, you can use
+@racket[create-android-phone-package].  Create a file called
+@filepath{build-counter.rkt} with the following content:
+
 @racketmod[racket
 (require (planet #,(this-package-version-symbol)))
 (create-android-phone-package "counter.rkt" "counter.apk")                  
@@ -66,15 +111,12 @@ Running this will take @filepath{counter.rkt} and compile it to an Android packa
 
 
 
-
-
-
 Because Moby programs use the web, they can dynamically
 generate DOM trees and style them with CSS, as in the examples below.
 
-The next example renders the world as a paragraph of text, styled
-with a font-size of 30.  It uses @racket[draw-page] and @racket[draw-css]
-to draw the web page.
+This example renders the world as a paragraph of text, styled with a
+font-size of 30.  It uses @racket[draw-page] and @racket[draw-css] to
+draw the web page.
 
 @racketmod[planet #,(this-package-version-symbol)
 (define initial-world 0)
@@ -213,6 +255,43 @@ Creates an Android phone package.}
             
  
 
+Here is an example that shows the status of all three sensors:
+
+@racketmod[planet #,(this-package-version-symbol)
+(require #,(schememodname/this-package phone/tilt))
+(require #,(schememodname/this-package phone/location))
+
+(define-struct gps (lat lng))
+(define-struct tilt (a p r))
+(define-struct accel (x y z))
+
+(define-struct sensors (gps tilt accel))
+
+(define (update-gps w lat lng)
+  (make-sensors (make-gps lat lng)
+		(sensors-tilt w)
+		(sensors-accel w)))
+
+
+(define (update-tilt w a p r)
+  (make-sensors (sensors-gps w)
+		(make-tilt a p r)
+		(sensors-accel w)))
+
+(define (update-accel w x y z)
+  (make-sensors (sensors-gps w)
+		(sensors-tilt w)
+		(make-accel x y z)))
+
+
+(big-bang (make-sensors (make-gps "loading" "loading")
+			(make-tilt "loading" "loading" "loading")
+			(make-accel "loading" "loading" "loading"))
+         (on-location-change update-gps)
+         (on-tilt update-tilt)
+         (on-acceleration update-accel))
+]
+
 
 
 
@@ -257,6 +336,12 @@ shaken, the world-updater will fire off.}
 
 
 @defproc[(on-tilt [world-updater (world [azimuth number] [pitch number] [roll number] -> world)]) handler]{Constructs a world handler that watches changes in orientation.}
+
+
+
+
+
+
 
 
 
