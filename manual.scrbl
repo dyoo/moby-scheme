@@ -50,7 +50,6 @@ environment in your web browser:
 @racketmod[racket
 (require (planet #,(this-package-version-symbol)))
 (run-in-browser "counter.rkt")
-(read-line)
 ]
 This will bring up a web server and a browser window with the running program.
 
