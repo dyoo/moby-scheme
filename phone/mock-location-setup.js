@@ -20,7 +20,7 @@ EXPORTS['mock-location-setup'] =
 		setTimeout(
 		    function() {
 			onNewLocation.val(parseFloat(latInput.value),
-					  parseFloat(latOutput.value))
+					  parseFloat(latOutput.value));
 		    },
 		    0);
 		return false;
