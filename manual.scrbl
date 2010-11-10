@@ -31,14 +31,14 @@ Moby requires Racket 5.0.1.
 
 Let's see if Moby has been installed on your system.  Run the following simple program.
 @racketmod[planet #,(this-package-version-symbol)
-"hello world"
-true
-(define (f x) (* x x))
-
-(check-expect (f 42) 1764)
-
-(check-expect (map f '(1 2 3 4 5))
-              (list 1 4 9 16 25))
+           "hello world"
+           true
+           (define (f x) (* x x))
+           
+           (check-expect (f 42) 1764)
+           
+           (check-expect (map f '(1 2 3 4 5))
+                         (list 1 4 9 16 25))
 ]
 
 On the very first run of this program, Racket may pause as it installs
@@ -60,7 +60,7 @@ Module language with this content:
 
 This program can be partially executed in Racket, but evaluation will
 halt on the @racket[big-bang] because it's a function that requires a
-Javascript context.  For testing, the function @racket[run-in-browser]
+Javascript context.  The function @racket[run-in-browser]
 can be used to provide a Javascript environment in your web browser:
 
 @racketmod[racket
@@ -145,6 +145,13 @@ reacts by re-drawing the web page.
            (big-bang 0
                      (to-draw-page draw-html draw-css))]
 
+One subtle point about this program is that @racket[elt] is constructed at the toplevel
+so that the element persists from one call of @racket[draw-html] to the next.
+If @racket[elt] were inlined into @racket[draw-html]'s definition, then the text field
+would be cleared with every world update.
+
+
+
 
 We can also use phone-specific features, such as geolocation.
 The following program shows the current location.
@@ -156,8 +163,12 @@ The following program shows the current location.
            
            (big-bang "initial state"
                      (on-location-change make-message))]
-Note that it requires @racket[phone/location], one of the
-modules provided by this package.
+
+Note that the program requires @racket[phone/location], one of the
+modules provided by this package.  If this program is evaluated with
+@racket[run-in-browser], the browser environment will provide a
+control at the bottom of the page to allow the user to inject
+artificial GPS positions for testing.
 
 
 
@@ -226,16 +237,29 @@ Again, to package the program, we use @racket[create-android-phone-package].
 
                                                                        
 @defproc[(run-in-browser [input-file path-string?]) void]{
-Runs the given @racket[input-file] in a context that provides mocks for
-phone-specific behavior.}
+Runs the given @racket[input-file] in a Javascript context.}
 
 
 @defproc[(create-android-phone-package [input-file path-string?]
                                        [output-apk path-string?]) void]{
 Creates an Android phone package.}
 
-            
- 
+
+@section{Phone API}
+
+The functions in this section provide access to features on a
+smartphone.  In order to make testing easier, if these functions are
+used outside of a phone, Moby will inject \emph{mocks} that allow the
+user to simulate phone events.
+
+
+  
+The other language bindings of Moby language are provided by the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
+PLaneT package; please refer to the documentation of @emph{js-vm}:
+@other-doc['(planet dyoo/js-vm)]
+
+
+
 
 Here is an example that shows the status of all three sensors:
 
@@ -253,8 +277,7 @@ Here is an example that shows the status of all three sensors:
              (make-sensors (make-gps lat lng)
                            (sensors-tilt w)
                            (sensors-accel w)))
-           
-           
+                      
            (define (update-tilt w a p r)
              (make-sensors (sensors-gps w)
                            (make-tilt a p r)
@@ -265,26 +288,12 @@ Here is an example that shows the status of all three sensors:
                            (sensors-tilt w)
                            (make-accel x y z)))
            
-           
            (big-bang (make-sensors (make-gps "loading" "loading")
                                    (make-tilt "loading" "loading" "loading")
                                    (make-accel "loading" "loading" "loading"))
                      (on-location-change update-gps)
                      (on-tilt update-tilt)
                      (on-acceleration update-accel))]
-
-
-
-
-
-@section{Phone API}
-
-
-  
-The language bindings of Moby language come from the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
-PLaneT package; please refer to the documentation of @emph{js-vm}.
-#;@other-doc[(planet dyoo/js-vm)]
-
 
 
 
@@ -313,16 +322,10 @@ Constructs a world handler that watches for incoming SMS messages.}
 Constructs a world handler that watches acceleration updates.}
 
 @defproc[(on-shake [world-updater (world -> world)]) handler]{
-Constructs a world handler that watches if the phone is shaked.}
+Constructs a world handler that watches the phone for shakes.}
 
 
 @defproc[(on-tilt [world-updater (world [azimuth number] [pitch number] [roll number] -> world)]) handler]{Constructs a world handler that watches changes in orientation.}
-
-
-
-
-
-
 
 
 
