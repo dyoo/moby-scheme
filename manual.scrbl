@@ -28,9 +28,29 @@ Moby requires Racket 5.0.1.
 
 @section{Quick Start}
 
-Let's create a simple application that rapidly shows an incrementing counter.
-Create a file @filepath{counter.rkt} in the Module language with the
-following content:
+
+Let's see if Moby has been installed on your system.  Run the following simple program.
+@racketmod[planet #,(this-package-version-symbol)
+"hello world"
+true
+(define (f x) (* x x))
+
+(check-expect (f 42) 1764)
+
+(check-expect (map f '(1 2 3 4 5))
+              (list 1 4 9 16 25))
+]
+
+On the very first run of this program, Racket may pause as it installs
+the Moby PLaneT package and generates its documentation.  Expect to wait a
+few minutes for the installation to complete.
+
+
+Moby programs can run in DrRacket as long as they don't use any
+Javascript-specific functions.  Let's create a simple application that
+does use a Javascript context.  The following example shows a rapidly
+incrementing counter.  Create a file @filepath{counter.rkt} in the
+Module language with this content:
 
 @racketmod[planet #,(this-package-version-symbol)
 (define initial-world 0)
@@ -38,11 +58,10 @@ following content:
 ]
 
 
-Note that this program's in a separate language that provides
-extra functions like @racket[big-bang].  This program can be
-executed in Racket, although evaluation will halt on the
-@racket[big-bang]  because it's a function that
-requires a Javascript web context.
+Note that this program is in a separate language that provides extra
+functions like @racket[big-bang].  This program can be executed in
+Racket, but evaluation will halt on the @racket[big-bang] because
+it's a function that requires a Javascript web context.
 
 
 For testing, the function @racket[run-in-browser] can be used to provide a mock
@@ -50,7 +69,6 @@ environment in your web browser:
 @racketmod[racket
 (require (planet #,(this-package-version-symbol)))
 (run-in-browser "counter.rkt")
-(read-line)
 ]
 This will bring up a web server and a browser window with the running program.
 
@@ -63,6 +81,9 @@ Create a file called @filepath{build-counter.rkt} with the following content:
 ]
 Running this will take @filepath{counter.rkt} and compile it to an Android package
 that can be installed.
+
+(As a warning, package generation may take about 30 seconds to complete.)
+
 
 
 
@@ -99,6 +120,7 @@ construct the web page, and every time the world changes, the runtime environmen
 reacts by re-drawing the web page.
 
 @racketmod[planet #,(this-package-version-symbol)
+
 (define (form-value w)
   (format "~a" w))
 
@@ -118,7 +140,7 @@ reacts by re-drawing the web page.
 (define (draw-css w)
   '(("aPara" ("font-size" "50px"))))
 
-(big-bang 0
+(big-bang false
              (to-draw-page draw-html draw-css))]
 
 

@@ -44,6 +44,7 @@
       (call-with-output-file output-file
         (lambda (op) 
           (log-info (format "Writing package to file ~a...\n" output-file))
+          (log-info (format "This may take up to a minute.  Pleaes wait...\n" output-file))
           (write-bytes (build-android-package 
                         (make-package-name output-file)
                         a-filename)
