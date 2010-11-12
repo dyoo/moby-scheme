@@ -93,7 +93,8 @@ generate DOM trees and style them with CSS, as in the examples below.
 
 This example renders the world as a paragraph of text, styled with a
 font-size of 30.  It uses @racket[draw-page] and @racket[draw-css] to
-draw the web page.
+draw the web page.  The background color of the paragraph changes
+as the world reacts to the clock tick.
 
 @racketmod[planet #,(this-package-version-symbol)
 
