@@ -250,7 +250,7 @@ Creates an Android phone package.}
 
 The functions in this section provide access to features on a
 smartphone.  In order to make testing easier, if these functions are
-used outside of a phone, Moby will inject \emph{mocks} that allow the
+used outside of a phone, Moby will inject @emph{mocks} that allow the
 user to simulate phone events.
 
 
