@@ -143,7 +143,7 @@ reacts by re-drawing the web page.
            (define (draw-css w)
              '(("aPara" ("font-size" "50px"))))
            
-           (big-bang 0
+           (big-bang false
                      (to-draw-page draw-html draw-css))]
 
 One subtle point about this program is that @racket[elt] is constructed at the toplevel
