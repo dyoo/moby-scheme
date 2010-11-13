@@ -22,7 +22,7 @@
 (define categories '(devtools))
 (define repositories '("4.x"))
 
-(define version "3.4")
+(define version "3.5")
 
 (define blurb '("Provides a compiler from Advanced Student Language+world to Javascript "
                 "for mobile smartphones."))
