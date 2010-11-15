@@ -167,9 +167,9 @@
                                                        (being-costume p)))]
                             [else (lambda (p k) (make-being (update-player* (being-x p) (being-y p) k)
                                                             (being-costume p)))]))
-           (offscreen? (lambda (b) (if (= (procedure-arity offscreen?*?) 1)
-                                       (offscreen?*? (being-x b))
-                                       (offscreen?*? (being-x b) (being-y b)))))
+           (offscreen? (lambda (b) (if (= (procedure-arity offscreen*?) 1)
+                                       (offscreen*? (being-x b))
+                                       (offscreen*? (being-x b) (being-y b)))))
            (collide? (lambda (b1 b2) (collide*? (being-x b1) (being-y b1) (being-x b2) (being-y b2))))
            (world (make-world objects targets player projectiles
                               (put-pinhole background 0 0)
