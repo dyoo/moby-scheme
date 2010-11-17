@@ -171,7 +171,7 @@ EOF
   <script type="text/javascript" charset="utf-8" src="main.js"></script>
 </head>
 
-<body onload="mainPageLoad({gasLimit: 100});">
+<body onload="mainPageLoad({gasLimit: 1000});">
   <div id="history"></div>
 </body>
 </html>
