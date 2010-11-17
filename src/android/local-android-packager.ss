@@ -311,6 +311,7 @@ EOF
             
             (activity ((android:name ,activity-class)
                        (android:label ,name)
+		       (android:screenOrientation "portrait")
                        (android:configChanges
                         "keyboardHidden|orientation"))
                       (intent-filter 

@@ -112,8 +112,11 @@ public class DroidGap extends Activity {
 
     @Override
 	public void onConfigurationChanged(Configuration newConfig) {
-	//don't reload the current page when the orientation is changed
+	// Con't reload the current page when the orientation is changed
+	// In fact, ignore the new configuration.
+	//
 	super.onConfigurationChanged(newConfig);
+
     } 
     
     private void bindBrowser(WebView appView)
