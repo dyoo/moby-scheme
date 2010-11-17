@@ -171,7 +171,7 @@ EOF
   <script type="text/javascript" charset="utf-8" src="main.js"></script>
 </head>
 
-<body onload="evaluator.setGasLimit(100); mainPageLoad();">
+<body onload="mainPageLoad({gasLimit: 100});">
   <div id="history"></div>
 </body>
 </html>
