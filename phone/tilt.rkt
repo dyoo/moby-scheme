@@ -37,21 +37,22 @@
                        (shutdown-f))
                      (lambda (w x y z)
                        (world-updater w 
-                                      (prim-js->scheme x)
-                                      (prim-js->scheme y)
-                                      (prim-js->scheme z)))))
+                                      (prim-js->racket x)
+                                      (prim-js->racket y)
+                                      (prim-js->racket z)))))
 
 
-(define (mock-on-tilt world-updater)
+(define (mock-on-tilt world-updater delay)
   (make-world-config (lambda (on-acc)
-                       (mock-tilt-setup on-acc))
-                     (lambda (shutdown-f)
-                       (shutdown-f))
-                     (lambda (w x y z)
-                       (world-updater w 
-                                      (prim-js->scheme x)
-                                      (prim-js->scheme y)
-                                      (prim-js->scheme z)))))
+		       (mock-tilt-setup on-acc))
+		     (lambda (shutdown-f)
+		       (shutdown-f))
+		     (lambda (w x y z)
+		       (world-updater w 
+				      (prim-js->racket x)
+				      (prim-js->racket y)
+				      (prim-js->racket z)))))
+
 
 (define (mock-on-shake world-updater)
   (make-world-config (lambda (on-acc)
@@ -74,9 +75,9 @@
                                   error))
                        (lambda (shutdown-f) (js-call shutdown-f #f))
                        (lambda (w js-x js-y js-z)
-                         (let ([x (prim-js->scheme js-x)]
-                               [y (prim-js->scheme js-y)]
-                               [z (prim-js->scheme js-z)])
+                         (let ([x (prim-js->racket js-x)]
+                               [y (prim-js->racket js-y)]
+                               [z (prim-js->racket js-z)])
                            (world-updater w x y z)))
                        (lambda (w e)
                          (error 'on-acceleration "an error occured with the accelerometer")))))
@@ -85,15 +86,22 @@
 
 
 
-(define (phonegap-on-tilt world-updater)
-  (let ([accelerometer (get-accelerometer)])
+(define (phonegap-on-tilt world-updater delay)
+  (let ([accelerometer (get-accelerometer)]
+	[options (js-make-hash)])
+    (js-set-field! options
+		   "frequency"
+		   (racket->prim-js (* delay 1000)))
     (make-world-config (lambda (on-change)
 			 (let ([shutdown-f
 				(js-call (js-get-field 
 					  accelerometer
 					  "watchOrientation")
 					 accelerometer
-					 on-change)])
+					 on-change
+					 js-undefined
+					 options
+					 )])
 			   shutdown-f))
 
                        (lambda (shutdown-f)
@@ -101,9 +109,9 @@
 
 		       ;; on-change
                        (lambda (w js-azimuth js-pitch js-roll)
-                         (let ([azimuth (prim-js->scheme js-azimuth)]
-                               [pitch (prim-js->scheme js-pitch)]
-                               [roll (prim-js->scheme js-roll)])
+                         (let ([azimuth (prim-js->racket js-azimuth)]
+                               [pitch (prim-js->racket js-pitch)]
+                               [roll (prim-js->racket js-roll)])
                            (world-updater w azimuth pitch roll))))))
 
 
@@ -141,9 +149,9 @@
                                   error))
                        (lambda (shutdown-f) (js-call shutdown-f #f))
                        (lambda (w js-x js-y js-z)
-                         (let ([x (prim-js->scheme js-x)]
-                               [y (prim-js->scheme js-y)]
-                               [z (prim-js->scheme js-z)])
+                         (let ([x (prim-js->racket js-x)]
+                               [y (prim-js->racket js-y)]
+                               [z (prim-js->racket js-z)])
                            (world-with-effects (effect-updater w x y z)
                                                (world-updater w x y z))))
                        (lambda (w e)
@@ -181,9 +189,9 @@
                                   error))
                        (lambda (shutdown-f) (js-call shutdown-f #f))
                        (lambda (w js-azimuth js-pitch js-roll)
-                         (let ([azimuth (prim-js->scheme js-azimuth)]
-                               [pitch (prim-js->scheme js-pitch)]
-                               [roll (prim-js->scheme js-roll)])
+                         (let ([azimuth (prim-js->racket js-azimuth)]
+                               [pitch (prim-js->racket js-pitch)]
+                               [roll (prim-js->racket js-roll)])
                            (world-with-effects (effect-updater w azimuth pitch roll)
                                                (world-updater w azimuth pitch roll))))
                        (lambda (w e)
@@ -212,5 +220,15 @@
 ;; Here are the provided bindings.
 
 (define on-acceleration (adapt mock-on-acceleration phonegap-on-acceleration))
-(define on-tilt (adapt mock-on-tilt phonegap-on-tilt))
+
+
+(define on-tilt
+  (case-lambda
+   [(world-updater) (on-tilt world-updater 1)]
+   [(world-updater delay)
+    (cond [(running-in-phone-context?)
+	   (phonegap-on-tilt world-updater delay)]
+	  [else
+	   (mock-on-tilt world-updater delay)])]))
+
 (define on-shake (adapt mock-on-shake phonegap-on-shake))
