@@ -326,7 +326,7 @@ Constructs a world handler that watches acceleration updates.}
 Constructs a world handler that watches the phone for shakes.}
 
 
-@defproc[(on-tilt [world-updater (world [azimuth number] [pitch number] [roll number] -> world)]) handler]{Constructs a world handler that watches changes in orientation.}
+@defproc[(on-tilt [world-updater (world [azimuth number] [pitch number] [roll number] -> world)] [delay-in-seconds real? 1]) handler]{Constructs a world handler that watches changes in orientation.  The rate of tilt events can be controlled by adjusting @racket[delay-in-seconds].}
 
 
 
