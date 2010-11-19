@@ -30,7 +30,7 @@
   (case-lambda [(world-updater delay)
                 (cond
                   [(running-in-phone-context?)
-                   (phonegap-on-location-change world-updater)]
+                   (phonegap-on-location-change world-updater delay)]
                   [else
                    (mock-on-location-change world-updater)])]
                [(world-updater)

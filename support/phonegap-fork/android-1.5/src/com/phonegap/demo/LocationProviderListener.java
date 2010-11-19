@@ -57,6 +57,7 @@ public class LocationProviderListener implements LocationListener {
     private void requestUpdates() {
 	Criteria c = new Criteria();
 	c.setCostAllowed(false);
+	c.setAccuracy(Criteria.ACCURACY_FINE);
 	String provider = mLocMan.getBestProvider(c, true);
 	Log.d(LOG_TAG, "requestLocationUpdates with " + this.interval + " milliseconds");
 	mLocMan.requestLocationUpdates(provider, this.interval, 0, this);
