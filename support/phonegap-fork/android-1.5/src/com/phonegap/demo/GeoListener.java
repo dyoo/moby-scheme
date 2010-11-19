@@ -28,22 +28,19 @@ public class GeoListener {
 	
     void success(Location loc)
     {
-	arguments.put("gpsLat", loc.getLatitude());
-	arguments.put("gpsLng", loc.getLongitude());
 	/*
 	 * We only need to figure out what we do when we succeed!
 	 */
-	if(!id.equals("global"))
-	    {
-		arguments.put("gpsId", id);
-		mAppView.loadUrl("javascript:navigator.phonegap_geo.success()");
-	    }
-	else
-	    {
-			
-		mAppView.loadUrl("javascript:Geolocation.gotCurrentPosition()");
-		this.stop();
-	    }
+	if(!id.equals("global")) {
+	    mAppView.loadUrl("javascript:navigator.phonegap_geo.success(" + 
+			     id + ", " 
+			     + loc.getLatitude() + ", " 
+			     + loc.getLongitude() + ")");
+	} else {
+	    mAppView.loadUrl("javascript:Geolocation.gotCurrentPosition("+
+			     + loc.getLatitude() + ", " 
+			     + loc.getLongitude() + ")");
+	}
     }
 	
     void fail()
