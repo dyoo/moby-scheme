@@ -432,15 +432,11 @@ if (typeof navigator.file == "undefined") navigator.file = new File();
 						   errorCallback,
 						   options) {
 	var frequency = (options != undefined) ? (options.frequency || 10000) : 10000;
-	if (!this.listeners) {
-    	    Console.println("Geoloc making listeners list in watchPosition");
-    	    this.listeners = {};
-	}
 	var key = makeListenerId();
 	this.listeners[key] = 
 	    {"success" : successCallback, "fail" : errorCallback };
 	
-	//    Console.logd("Geoloc watchPosition", "Starting to watch position. key " + key + ", freq " + frequency);
+	Console.println("Geoloc watchPosition: starting to watch position. key " + key + ", freq " + frequency);
 	return Geo.start(frequency, key);
     };
 
@@ -477,11 +473,9 @@ if (typeof navigator.file == "undefined") navigator.file = new File();
 
 	if (typeof key == "undefined" || key == null) {
             Console.logd("PhoneGap", "Geolocation key undefined in Geolocation.success");
-	}
-	else if (lat == null || lng == null) {
+	} else if (lat == null || lng == null) {
             this.listeners[key].fail();
-	}
-	else {
+	} else {
             p = {};
             p.latitude = lat;
             p.longitude = lng;

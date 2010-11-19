@@ -32,8 +32,8 @@ public class GeoListener {
 	 * We only need to figure out what we do when we succeed!
 	 */
 	if(!id.equals("global")) {
-	    mAppView.loadUrl("javascript:navigator.phonegap_geo.success(" + 
-			     id + ", " 
+	    mAppView.loadUrl("javascript:navigator.phonegap_geo.success(\"" + 
+			     id + "\", " 
 			     + loc.getLatitude() + ", " 
 			     + loc.getLongitude() + ")");
 	} else {
