@@ -42,7 +42,7 @@ public class LocationProviderListener implements LocationListener {
 	{
 		Log.d("LocationProviderListener", 
 		      "Making new LocationProviderListener with interval " +
-		      interval + "milliseconds");
+		      interval + " milliseconds");
 		this.owner = m;
 		this.mLocMan = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 		this.interval = interval;
@@ -57,65 +57,67 @@ public class LocationProviderListener implements LocationListener {
     private void requestUpdates() {
 	Criteria c = new Criteria();
 	c.setCostAllowed(false);
-	List<String> providers = mLocMan.getProviders(c, true);
-	for (String provider : providers) {
-	    mLocMan.requestLocationUpdates(provider, this.interval, 0, this);
-	    if (cLoc == null) {
-		cLoc = mLocMan.getLastKnownLocation(provider);
-	    }
+	String provider = mLocMan.getBestProvider(c, true);
+	Log.d(LOG_TAG, "requestLocationUpdates with " + this.interval + " milliseconds");
+	mLocMan.requestLocationUpdates(provider, this.interval, 0, this);
+	if (cLoc == null) {
+	    cLoc = mLocMan.getLastKnownLocation(provider);
 	}
+// 	List<String> providers = mLocMan.getProviders(c, true);
+// 	for (String provider : providers) {
+// 	}
     }
 
 
 
-	public Location getLocation()
-	{
-		return cLoc;
-	}
+    public Location getLocation()
+    {
+	return cLoc;
+    }
 	
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-		Log.d(LOG_TAG, "The provider " + provider + " is disabled");
-	}
+    public void onProviderDisabled(String provider) {
+	// TODO Auto-generated method stub
+	Log.d(LOG_TAG, "The provider " + provider + " is disabled");
+    }
 
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		Log.d(LOG_TAG, "The provider "+ provider + " is enabled");
-	}
-
-
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		Log.d(LOG_TAG, "The status of the provider " + provider + " has changed");
-		if(status == 0)
-		{
-			Log.d(LOG_TAG, provider + " is OUT OF SERVICE");
-		}
-		else if(status == 1)
-		{
-			Log.d(LOG_TAG, provider + " is TEMPORARILY_UNAVAILABLE");
-		}
-		else
-		{
-			Log.d(LOG_TAG, provider + " is Available");
-		}
-	}
+    public void onProviderEnabled(String provider) {
+	// TODO Auto-generated method stub
+	Log.d(LOG_TAG, "The provider "+ provider + " is enabled");
+    }
 
 
-	public void onLocationChanged(Location location) {
-		Log.d(LOG_TAG, "The location has been updated!");
-		cLoc = location;
-		owner.success(location);
-	}
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+	// TODO Auto-generated method stub
+	Log.d(LOG_TAG, "The status of the provider " + provider + " has changed");
+	if(status == 0)
+	    {
+		Log.d(LOG_TAG, provider + " is OUT OF SERVICE");
+	    }
+	else if(status == 1)
+	    {
+		Log.d(LOG_TAG, provider + " is TEMPORARILY_UNAVAILABLE");
+	    }
+	else
+	    {
+		Log.d(LOG_TAG, provider + " is Available");
+	    }
+    }
 
-	public boolean hasLocation() {
-		return (cLoc != null);
-	}
 
-	public void stop()
-	{
-		mLocMan.removeUpdates(this);
-	}
+    public void onLocationChanged(Location location) {
+	Log.d(LOG_TAG, "The location has been updated!");
+	cLoc = location;
+	owner.success(location);
+    }
+
+    public boolean hasLocation() {
+	return (cLoc != null);
+    }
+
+    public void stop()
+    {
+	mLocMan.removeUpdates(this);
+    }
 
 
     public void pause() {

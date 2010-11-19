@@ -16,14 +16,13 @@ public class GeoListener {
 
     int interval;
 	
-    GeoListener(String i, Context ctx, int time, WebView appView, ArgTable args)
-    {
-	id = i;
-	interval = time;
-	mCtx = ctx;
-	providerListener = new LocationProviderListener(mCtx, interval, this);
-	mAppView = appView;
-	arguments = args;
+    GeoListener(String i, Context ctx, int time, WebView appView, ArgTable args) {
+	this.id = i;
+	this.interval = time;
+	this.mCtx = ctx;
+	this.providerListener = new LocationProviderListener(mCtx, interval, this);
+	this.mAppView = appView;
+	this.arguments = args;
     }
 	
     void success(Location loc)

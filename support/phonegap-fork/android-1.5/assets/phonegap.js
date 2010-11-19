@@ -431,7 +431,7 @@ if (typeof navigator.file == "undefined") navigator.file = new File();
     Geolocation.prototype.watchPosition = function(successCallback, 
 						   errorCallback,
 						   options) {
-	var frequency = (options != undefined) ? (options.frequency || 10000) : 10000;
+	var frequency = (options != undefined) ? (options.frequency ||  60000) : 60000;
 	var key = makeListenerId();
 	this.listeners[key] = 
 	    {"success" : successCallback, "fail" : errorCallback };

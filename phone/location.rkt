@@ -26,13 +26,16 @@
 
 
 
-(define (on-location-change world-updater)
-  (cond
-   [(running-in-phone-context?)
-    (phonegap-on-location-change world-updater)]
-   [else
-    (mock-on-location-change world-updater)]))
-    
+(define on-location-change 
+  (case-lambda [(world-updater delay)
+                (cond
+                  [(running-in-phone-context?)
+                   (phonegap-on-location-change world-updater)]
+                  [else
+                   (mock-on-location-change world-updater)])]
+               [(world-updater)
+                (on-location-change world-updater 60)]))
+
 
 
 (define (mock-on-location-change world-updater)
@@ -48,13 +51,19 @@
 
 
 
-(define (phonegap-on-location-change world-updater)
-  (let ([geolocation (get-geo)])
+(define (phonegap-on-location-change world-updater delay)
+  (let ([geolocation (get-geo)]
+    	[options (js-make-hash)])
+    (js-set-field! options
+		   "frequency"
+		   (racket->prim-js (* delay 1000)))
+    
     (make-world-config (lambda (success error)
                          (js-call (js-get-field geolocation "watchPosition")
                                   geolocation
                                   success
-                                  error))
+                                  error
+                                  options))
                        (lambda (id) (js-call (js-get-field geolocation "clearWatch")
                                              geolocation
                                              id))
