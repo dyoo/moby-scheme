@@ -1,6 +1,6 @@
-#lang planet dyoo/js-vm:1:=10/base
-(require (prefix-in base: (planet dyoo/js-vm:1:=10/lang/base)))
-(base:require (planet dyoo/js-vm:1:=10/lang/js-impl/js-impl))
-(base:provide (base:all-from-out (planet dyoo/js-vm:1:=10/lang/js-impl/js-impl)))
+#lang planet dyoo/js-vm:1:=11/base
+(require (prefix-in base: (planet dyoo/js-vm:1:=11/lang/base)))
+(base:require (planet dyoo/js-vm:1:=11/lang/js-impl/js-impl))
+(base:provide (base:all-from-out (planet dyoo/js-vm:1:=11/lang/js-impl/js-impl)))
 
 
