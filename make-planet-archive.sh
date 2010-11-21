@@ -1,6 +1,6 @@
 #!/bin/bash
 MAJOR=3  # `perl -ne 'if (/define MAJOR \"(.*)\"/) { print $1} ' src/compiler/version.ss`
-MINOR=8  #`perl -ne 'if (/define MINOR \"(.*)\"/) { print $1} ' src/compiler/version.ss`
+MINOR=9  #`perl -ne 'if (/define MINOR \"(.*)\"/) { print $1} ' src/compiler/version.ss`
 
 
 OLDDIR=`pwd`
