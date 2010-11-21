@@ -1,4 +1,4 @@
-#lang planet dyoo/js-vm:1:=11/base
+#lang planet dyoo/js-vm:1:=12/base
 
-(require (planet dyoo/js-vm:1:=11/private/notification-window))
-(provide (all-from-out (planet dyoo/js-vm:1:=11/private/notification-window)))
+(require (planet dyoo/js-vm:1:=12/private/notification-window))
+(provide (all-from-out (planet dyoo/js-vm:1:=12/private/notification-window)))

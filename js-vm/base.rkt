@@ -1,4 +1,4 @@
-#lang planet dyoo/js-vm:1:=11/base
+#lang planet dyoo/js-vm:1:=12/base
 
-(require (planet dyoo/js-vm:1:=11/lang/base))
-(provide (all-from-out (planet dyoo/js-vm:1:=11/lang/base)))
+(require (planet dyoo/js-vm:1:=12/lang/base))
+(provide (all-from-out (planet dyoo/js-vm:1:=12/lang/base)))

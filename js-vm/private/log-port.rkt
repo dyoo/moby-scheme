@@ -1,4 +1,4 @@
-#lang planet dyoo/js-vm:1:=11/base
+#lang planet dyoo/js-vm:1:=12/base
 
-(require (planet dyoo/js-vm:1:=11/private/log-port))
-(provide (all-from-out (planet dyoo/js-vm:1:=11/private/log-port)))
+(require (planet dyoo/js-vm:1:=12/private/log-port))
+(provide (all-from-out (planet dyoo/js-vm:1:=12/private/log-port)))

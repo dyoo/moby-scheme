@@ -23,5 +23,5 @@
   (let ([b (file->bytes f)])
     (call-with-output-file f
       (lambda (op)
-	(write-bytes (change-version b) op))
+	(write-bytes (change-version b from to) op))
       #:exists 'replace)))
