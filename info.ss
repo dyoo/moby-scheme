@@ -29,4 +29,11 @@
 
 
 (define release-notes
-  '())
+  '((p "Changes"
+       (ul
+	
+	(li "Jsworld has relaxed constraints on attribute values.  Attribute values can now be strings or booleans.  An additional type check will raise an error if a non-string, non-boolean is given.")
+	(li "Fixed bug: world widgets would have their contents erroneously deleted under certain situations.")
+	
+	(li "Removed whitespace PRE styling on js-text nodes.")
+	(li "Fixed low level bug: generated packages could be larger because they contained multiply copies of a module.")))))
