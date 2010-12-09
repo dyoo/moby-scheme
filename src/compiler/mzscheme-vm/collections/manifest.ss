@@ -20,7 +20,11 @@
         (make-collection-reference
          'bootstrap/cage-teachpack
          (build-path self "bootstrap" "cage-teachpack-translated.ss"))
-        
+      
+	(make-collection-reference
+	 'bootstrap/bootstrap-gtp-teachpack
+	 (build-path self "bootstrap" "bootstrap-gtp-teachpack.ss"))
+  
 	(make-collection-reference
          'bootstrap/autos-teachpack
          (build-path self "bootstrap" "autos.ss"))
