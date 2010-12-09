@@ -355,8 +355,8 @@
                       update-player* update-target* update-danger*
                       collide*? onscreen*?)
   (begin
-    (set! (unbox TITLE-COLOR) title-color)
-    (set! (unbox BACKGROUND) background)
+    (set-box! TITLE-COLOR title-color)
+    (set-box! BACKGROUND background)
     (let* ((player (make-being (make-posn (/ WIDTH 2) (/ HEIGHT 2)) 
 			       playerImg "center"))
            (targetImgs (if (list? targetImgs) targetImgs (list targetImgs)))
@@ -418,7 +418,7 @@
                            (begin 
 
 			     ;; export it so students can read and act on it:
-                             (set! (unbox score) (world-score w))
+                             (set-box! score (world-score w))
 
                              (let* ((dangers
 				     (move-all (world-dangers w) update-danger
@@ -448,9 +448,9 @@
                                  [else (make-world dangers targets player bg 
 						   score title timer)]))
                              ))))
-      (big-bang world
+      (js-big-bang world
                 (on-tick update-world .1)
-                (on-draw draw-world)
+                (on-redraw draw-world)
                 (on-key keypress*)))))
 
 
