@@ -437,12 +437,12 @@
 					      score title (- timer 10))]
                                  [(check-collision player dangers collide?)
                                   (begin
-                                    (play-sound "hit.wav" true)
+                                    #;(play-sound "hit.wav" true)
                                     (make-world dangers targets player bg 
 						(- score 50) title 100))]
                                  [(check-collision player targets collide?)
                                   (begin
-                                    (play-sound "score.wav" true)
+                                    #;(play-sound "score.wav" true)
                                     (make-world dangers targets player bg 
 						(+ score 20) title 100))]
                                  [else (make-world dangers targets player bg 
