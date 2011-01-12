@@ -222,50 +222,79 @@
 (define (make-world-module module-path)
   (local [;; bf: symbol path number boolean string -> binding:function
           ;; Helper function.
-          (define (bf name module-path arity vararity?)
-            (make-binding:function name module-path arity vararity? empty false))]
+          (define (bf name)
+            (make-binding:constant name module-path empty))]
     (make-module-binding 'world
                          module-path
                          (append (module-binding-bindings world-handlers-module)
                                  (module-binding-bindings world-effects-module)
-                                 (list (bf 'big-bang module-path 3 true)
+                                 (map bf '(key=?
+					   
+					   big-bang
                                        
-                                       ;; Images
-                                       (bf 'image? module-path 1 false)
-                                       (bf 'image=? module-path 2 false)
-                                       
-                                       (bf 'make-color module-path 3 false)
-                                       (bf 'color-red module-path 1 false)
-                                       (bf 'color-green module-path 1 false)
-                                       (bf 'color-blue module-path 1 false)
-                                       
-                                       (bf 'empty-scene module-path 2 false)
-                                       (bf 'place-image module-path 4 false)
-                                       
-                                       (bf 'put-pinhole module-path 3 false)
-                                       
-                                       (bf 'circle module-path 3 false)
-                                       
-                                       (bf 'star module-path 5 false)
-                                       
-                                       (bf 'nw:rectangle module-path 4 false)
-                                       (bf 'rectangle module-path 4 false)
-                                       (bf 'triangle module-path 3 false)
-                                       (bf 'ellipse module-path 4 false)
-                                       (bf 'line module-path 3 false)
-                                       
-                                       (bf 'overlay module-path 2 true)
-                                       (bf 'overlay/xy module-path 4 false)
-                                       (bf 'underlay module-path 2 true)
-                                       (bf 'underlay/xy module-path 4 false)
-                                       
-                                       (bf 'key=? module-path 2 false)
-                                       (bf 'text module-path 3 false)
-                                       (bf 'open-image-url module-path 1 false)
-                                       (bf 'image-width module-path 1 false)
-                                       (bf 'image-height module-path 1 false)
-                                       (bf 'image-rotate module-path 2 false)
-                                       )))))
+					   make-color
+					   color-red
+					   color-green
+					   color-blue
+					   empty-scene
+					   scene-+line
+					   place-image
+					   place-image/align
+					   put-pinhole
+					   circle
+					   star
+					   radial-star
+					   star-polygon
+					   nw:rectangle
+					   rectangle
+					   regular-polygon
+					   rhombus
+					   square
+					   triangle
+					   right-triangle
+					   isosceles-triangle
+					   ellipse
+					   line
+					   add-line
+					   overlay
+					   overlay/xy
+					   overlay/align
+					   underlay
+					   underlay/xy
+					   underlay/align
+					   beside
+					   beside/align
+					   above
+					   above/align
+					   rotate
+					   scale
+					   scale/xy
+					   crop
+					   frame
+					   flip-horizontal
+					   flip-vertical
+					   text
+					   text/font
+					   video-url
+					   image-url
+					   open-image-url
+					   image?
+					   image=?
+					   image-width
+					   image-height
+					   
+					   image->color-list
+					   color-list->image
+					   
+					   image-baseline
+					   mode?
+					   image-color?
+					   x-place?
+					   y-place?
+					   angle?
+					   side-count?
+					   step-count?
+					   ))))))
 
 
 ;; world teachpack bindings
