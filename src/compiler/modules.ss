@@ -237,7 +237,7 @@
 					   color-green
 					   color-blue
 					   empty-scene
-					   scene-+line
+					   scene+line
 					   place-image
 					   place-image/align
 					   put-pinhole
