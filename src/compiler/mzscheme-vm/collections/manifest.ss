@@ -35,7 +35,15 @@
 
         (make-collection-reference 
          'jsworld/phonegap 
-         (build-path self "jsworld" "phonegap.ss"))))
+         (build-path self "jsworld" "phonegap.ss"))
+
+
+	(make-collection-reference
+	 'bootstrap2011/bootstrap-teachpack
+	 (build-path self "bootstrap2011" "bootstrap-teachpack.ss"))
+
+
+))
 
 
 (provide/contract [struct collection-reference ([name module-name?]
