@@ -49,7 +49,10 @@
 	(make-collection-reference
 	 'bootstrap2011/function-teachpack
 	 (build-path self "bootstrap2011" "function-teachpack.ss"))
-))
+
+	(make-collection-reference
+	 'bootstrap2011/bootstrap-common
+	 (build-path self "bootstrap2011" "bootstrap-common.ss"))))
 
 
 (provide/contract [struct collection-reference ([name module-name?]
