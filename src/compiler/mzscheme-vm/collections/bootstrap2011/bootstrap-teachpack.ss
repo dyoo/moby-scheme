@@ -364,7 +364,7 @@
                                  [else (make-world dangers projectiles targets player bg 
 						   score title timer)]))
                              ))))
-      (js-big-bang world
+      (big-bang world
                 (stop-when (lambda (w) (= (world-timer w) -1)))
                 (on-tick update-world .1)
                 (on-redraw draw-world)

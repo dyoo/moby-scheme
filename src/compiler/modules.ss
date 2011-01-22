@@ -276,6 +276,7 @@
 					   text
 					   text/font
 					   video-url
+					   bitmap
 					   image-url
 					   open-image-url
 					   image?
@@ -461,6 +462,14 @@
                                 true
                                 empty
                                 false)
+			       (make-binding:function 
+                                'big-bang
+                                module-path
+                                1
+                                true
+                                empty
+                                false)
+                               
                                (make-binding:function 'js-text 
                                                       module-path 
                                                       1 

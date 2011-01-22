@@ -42,6 +42,9 @@
 	 'bootstrap2011/bootstrap-teachpack
 	 (build-path self "bootstrap2011" "bootstrap-teachpack.ss"))
 
+	(make-collection-reference
+	 'bootstrap2011/cage-teachpack
+	 (build-path self "bootstrap2011" "cage-teachpack.ss"))
 
 ))
 
