@@ -111,8 +111,9 @@
     (begin
       (set-box! *player-x* (posn-x (being-posn (world-player w))))
       (set-box! *player-y* (posn-y (being-posn (world-player w))))
-      (overlay/align "middle" "top" (text/font score-string 18 (unbox TITLE-COLOR) #f 'default 'italic 'bold '#t) 
-		     (foldl draw-being (unbox BACKGROUND) all-beings)))))
+      (place-image (text/font score-string 18 (unbox TITLE-COLOR) #f 'default 'italic 'bold '#t)
+         (quotient (image-width (unbox BACKGROUND)) 2) 20 
+         (foldl draw-being (unbox BACKGROUND) all-beings)))))
 
 (define example-world
   (make-world
