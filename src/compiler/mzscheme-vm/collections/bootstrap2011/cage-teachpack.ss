@@ -48,13 +48,15 @@
                          scene)))
          (draw-text 
           (lambda (w scene)
-            (overlay/align "middle" "top" 
+            (place-image
              (text 
               (string-append "x-coordinate: " 
                              (number->string (world-x w))
                              "   y-coordinate: "
                              (number->string (world-y w)))
               14 'black)
+	     (quotient (image-width scene) 2)
+	     0
              scene))))
     (draw-butterfly w 
                     (draw-text w (empty-scene WIDTH HEIGHT)))))
