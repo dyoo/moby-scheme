@@ -276,7 +276,7 @@
 					   text
 					   text/font
 					   video-url
-					   bitmap
+					   bitmap/url
 					   image-url
 					   open-image-url
 					   image?
