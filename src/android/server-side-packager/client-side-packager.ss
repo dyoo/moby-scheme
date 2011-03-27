@@ -70,16 +70,25 @@
   (string->number (second (regexp-match #px"^[^\\s]+\\s([^\\s]+)" response-headers))))
 
 
+(define (unique-strings strs)
+  (define ht (make-hash))
+  (for-each (lambda (s) (hash-set! ht s #t)) strs)
+  (hash-map ht (lambda (k v) k)))
+
+
 ;; encode-parameters-in-data: string program/resources -> bytes
 ;; Encodes the parameters we need to pass in to get a program.
 (define (encode-parameters-in-data name program/resources)
-  (let* ([program
-          (program/resources-program program/resources)]
-         [compiled-program
-          (do-compilation program)]
-         [android-permissions
-          (map permission->string (pinfo-permissions pinfo))])
-    
+  (let*-values ([(program)
+                 (program/resources-program program/resources)]
+                [(compiled-program)
+                 (do-compilation program)]
+                [(defns pinfo)
+                 (values (javascript:compiled-program-defns compiled-program)
+                         (javascript:compiled-program-pinfo compiled-program))]
+                
+                [(android-permissions)
+                 (unique-strings (apply append (map permission->android-permissions (pinfo-permissions pinfo))))])
     
     (string->bytes/utf-8
      (alist->form-urlencoded 
