@@ -9,8 +9,6 @@
          net/url
          net/uri-codec
          "../../program-resources.ss"
-         
-         
          "../../collects/moby/runtime/permission-struct.ss"
          "../../compiler/pinfo.ss"
          (only-in "../../compiler/helpers.ss" program?)
@@ -18,7 +16,8 @@
          (only-in "../../compiler/helpers.ss" identifier->munged-java-identifier)
          "../../template.ss"
          "../../resource.ss"
-         "../../program-resources.ss")
+         "../../program-resources.ss"
+         "../../preferences.ss")
 
 
 
@@ -27,8 +26,12 @@
 (define-runtime-path javascript-main-template "../../../support/js/main.js.template")
 
 
+
 ;; This parameter controls which URL's used to connect to the web service.
-(define current-server-url (make-parameter "http://localhost:8080/" #;"http://go.cs.brown.edu/package/"))
+(define current-server-url 
+  (lambda ()
+    (get-remote-apk-builder)))
+
 
 
 
@@ -187,5 +190,4 @@
 
 
 (provide/contract [build-android-package
-                   (string? program/resources? . -> . bytes?)]
-                  [current-server-url parameter?])
+                   (string? program/resources? . -> . bytes?)])
