@@ -11,8 +11,11 @@
          "../../program-resources.ss"
          "../helpers.ss")
 
-(define current-server-url (make-parameter #;"http://localhost:8080/package/"
-                                           "http://go.cs.brown.edu/package/"))
+
+
+
+(define current-server-url (make-parameter "http://localhost:8080/"
+                                           #;"http://go.cs.brown.edu/package/"))
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -55,22 +58,83 @@
 
 ;; encode-parameters-in-data: string program/resources -> bytes
 ;; Encodes the parameters we need to pass in to get a program.
-;; TODO: GZIP the data, as soon as the web server can support it.
 (define (encode-parameters-in-data name program/resources)
+  (let* ([program
+          (program/resources-program program/resources)]
+         [compiled-program
+          (do-compilation program)]
+         [android-permissions
+          (map permission->string (pinfo-permissions pinfo))])
+    
+  
   (string->bytes/utf-8
    (alist->form-urlencoded 
-    (list* (cons 'name name)
-           (cons 'compiler-version VERSION)
-           (cons 'program-stx
-                 (format "~s" (program->sexp 
-                               (program/resources-program program/resources))))
-           (map (lambda (a-resource)
-                  (log-debug (format "Sending resource ~s~n" (send a-resource get-name)))
-                  (cons 'resource (format "~s"
-                                          (list (send a-resource get-name)
-                                                (send a-resource get-bytes)))))
-                (program/resources-resources program/resources))))))
+    ;; FIXME: we need to encode the following:
+    
+    ;; The compiled program (its path)
+    
+    ;; The permissions
+    
+    ;; The other resources in program/resources
+
+    ;; The index.html
+    
+    (append (list
+             ;; Compiler type: moby2
+             (cons 't "moby2")
+             
+             ;; program name
+             (cons 'n name))
+            
+            ;; The list of android permissions.            
+            (map (lambda (permission)
+                   (cons 'ps permission))
+                 android-permissions)
+
+            ;; The main.js program itself:
+            (list 
+             (cons 'r (format "~s"
+                              (list 'resource 
+                                    "main.js"
+                                    (string->bytes/utf-8
+                                     (compiled-program->main.js compiled-program))))))
+               
+            ;; The set of its additional resources.
+            (map (lambda (a-resource)
+                   (cons 'r (format "~s"
+                                    (list 'resource
+                                          (format "~a" (send a-resource get-name))
+                                          (send a-resource get-bytes)))))
+                 (program/resources-resources program/resources))
+            
+            ;; The runtime, index.html, and other ancillary files.
+            
+            
+            
+            )))))
+
+
+
+;; compiled-program->main.js: compiled-program -> string
+(define (compiled-program->main.js compiled-program)
+  (let*-values ([(defns pinfo)
+                 (values (javascript:compiled-program-defns compiled-program)
+                         (javascript:compiled-program-pinfo compiled-program))]
+                [(output-port) (open-output-string)]
+                [(mappings) 
+                 (build-mappings 
+                  (PROGRAM-DEFINITIONS defns)
+                  (IMAGES (string-append "[" "]"))
+                  (PROGRAM-TOPLEVEL-EXPRESSIONS
+                   (javascript:compiled-program-toplevel-exprs
+                    compiled-program))
+                  (PERMISSIONS (get-permission-js-array (pinfo-permissions pinfo))))])
+    (fill-template-port (open-input-file javascript-main-template)
+                        output-port
+                        mappings)
+    (get-output-string output-port)))
 
 
 (provide/contract [build-android-package
-                   (string? program/resources? . -> . bytes?)])
+                   (string? program/resources? . -> . bytes?)]
+                  [current-server-url parameter?])
