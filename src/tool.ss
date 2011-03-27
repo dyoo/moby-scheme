@@ -17,7 +17,7 @@
     
   (define (phase1) 
     ;; Add a configuration for moby:remote-apk-builder.
-    (preferences:add-panel "Moby"
+    (preferences:add-panel "Moby 2"
                            (lambda (parent-panel)
                              (define this-panel (new vertical-panel% [parent parent-panel]))
     
