@@ -4,18 +4,32 @@
          scheme/port
          scheme/class
          scheme/list
+         scheme/string
+         scheme/runtime-path
          net/url
          net/uri-codec
-         "../../compiler/version.ss"
-         "../../collects/moby/runtime/stx.ss"
          "../../program-resources.ss"
-         "../helpers.ss")
+         
+         
+         "../../collects/moby/runtime/permission-struct.ss"
+         "../../compiler/pinfo.ss"
+         (only-in "../../compiler/helpers.ss" program?)
+         (prefix-in javascript: "../../compiler/beginner-to-javascript.ss")
+         (only-in "../../compiler/helpers.ss" identifier->munged-java-identifier)
+         "../../template.ss"
+         "../../resource.ss"
+         "../../program-resources.ss")
 
 
 
+(define-runtime-path phonegap-path "../../../support/phonegap-fork/android-1.5/assets/phonegap.js")
+(define-runtime-path javascript-support-path "../../../support/js")
+(define-runtime-path javascript-main-template "../../../support/js/main.js.template")
 
-(define current-server-url (make-parameter "http://localhost:8080/"
-                                           #;"http://go.cs.brown.edu/package/"))
+
+;; This parameter controls which URL's used to connect to the web service.
+(define current-server-url (make-parameter "http://localhost:8080/" #;"http://go.cs.brown.edu/package/"))
+
 
 
 ;; build-android-package: string program/resources -> bytes
@@ -66,52 +80,80 @@
          [android-permissions
           (map permission->string (pinfo-permissions pinfo))])
     
-  
-  (string->bytes/utf-8
-   (alist->form-urlencoded 
-    ;; FIXME: we need to encode the following:
     
-    ;; The compiled program (its path)
-    
-    ;; The permissions
-    
-    ;; The other resources in program/resources
-
-    ;; The index.html
-    
-    (append (list
-             ;; Compiler type: moby2
-             (cons 't "moby2")
-             
-             ;; program name
-             (cons 'n name))
-            
-            ;; The list of android permissions.            
-            (map (lambda (permission)
-                   (cons 'ps permission))
-                 android-permissions)
-
-            ;; The main.js program itself:
-            (list 
-             (cons 'r (format "~s"
-                              (list 'resource 
-                                    "main.js"
-                                    (string->bytes/utf-8
-                                     (compiled-program->main.js compiled-program))))))
+    (string->bytes/utf-8
+     (alist->form-urlencoded 
+      ;; FIXME: we need to encode the following:
+      
+      ;; The compiled program (its path)
+      
+      ;; The permissions
+      
+      ;; The other resources in program/resources
+      
+      ;; The index.html
+      
+      (append (list
+               ;; Compiler type: moby2
+               (cons 't "moby2")
                
-            ;; The set of its additional resources.
-            (map (lambda (a-resource)
-                   (cons 'r (format "~s"
-                                    (list 'resource
-                                          (format "~a" (send a-resource get-name))
-                                          (send a-resource get-bytes)))))
-                 (program/resources-resources program/resources))
-            
-            ;; The runtime, index.html, and other ancillary files.
-            
-            
-            
-            )))))
+               ;; program name
+               (cons 'n name))
+              
+              ;; The list of android permissions.            
+              (map (lambda (permission)
+                     (cons 'ps permission))
+                   android-permissions)
+              
+              ;; The main.js program itself:
+              (list 
+               (cons 'r (format "~s"
+                                (list 'resource 
+                                      "main.js"
+                                      (string->bytes/utf-8
+                                       (compiled-program->main.js compiled-program))))))
+              
+              ;; The set of its additional resources.
+              (map (lambda (a-resource)
+                     (cons 'r (format "~s"
+                                      (list 'resource
+                                            (format "~a" (send a-resource get-name))
+                                            (send a-resource get-bytes)))))
+                   (append (program/resources-resources program/resources)
+                           
+                           (collect-directory-resources 
+                            (build-path javascript-support-path "runtime/compat") "runtime/compat")
+                           
+                           (list (path->resource 
+                                  (build-path javascript-support-path "index.html")
+                                  "index.html")
+                                 
+                                 (path->resource 
+                                  (build-path javascript-support-path "runtime/compressed-runtime.js")
+                                  "runtime/compressed-runtime.js")
+                                 
+                                 (path->resource phonegap-path "runtime/phonegap.js")))))))))
+
+(define (path->resource a-path name)
+  (new named-bytes-resource% 
+       [name name]
+       [bytes (call-with-input-file* a-path port->bytes)]))
+
+
+;; do-compilation: program -> compiled-program
+(define (do-compilation program)
+  (javascript:program->compiled-program/pinfo program (get-base-pinfo 'moby)))
+
+
+;; get-permission-js-array: (listof permission) -> string
+(define (get-permission-js-array perms) 
+  (string-append "["
+                 (string-join (map (lambda (x)
+                                     (format "plt.Kernel.invokeModule('moby/runtime/permission-struct').EXPORTS['string->permission'](~s)" (permission->string x)))
+                                   perms)
+                              ", ")
+                 "]"))
+
 
 
 
