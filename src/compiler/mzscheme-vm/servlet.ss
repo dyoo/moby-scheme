@@ -82,7 +82,7 @@
   (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")]
                [(compiled-program-port) (open-output-bytes)])
     (let ([pinfo (compile/port program-input-port compiled-program-port #:name program-name)])
-      (fprintf output-port "~a((~a));" 
+      (fprintf output-port "~a(~a);" 
                (extract-binding/single 'callback (request-bindings request))
                (format-output (get-output-bytes compiled-program-port)
                               pinfo
@@ -107,8 +107,9 @@
        (get-output-bytes op))]
 
     [else
-     ;; Raw version just spits the output bytecode.
-     output-bytecode]))
+     (format "(~a)"
+	     ;; Raw version just spits the output bytecode.
+	     output-bytecode)]))
 
 
 (define (get-android-permissions pinfo)
@@ -206,11 +207,8 @@
 (define (handle-response request program-name program-input-port)
   (let-values  ([(response output-port) (make-port-response #:mime-type #"text/plain")]
                 [(program-output-port) (open-output-bytes)])
-    (let ([pinfo (compile/port program-input-port program-output-port #:name program-name)])
-    
-      (display "(" output-port)
+    (let ([pinfo (compile/port program-input-port program-output-port #:name program-name)])    
       (display (format-output (get-output-bytes program-output-port) pinfo request) output-port)
-      (display ")" output-port)
       (close-output-port output-port)
       response)))
 
