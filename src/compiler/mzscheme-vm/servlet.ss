@@ -9,6 +9,8 @@
          "compile.ss"
          "private/json.ss"
          "../moby-failure.ss"
+         "../pinfo.ss"
+         "../../collects/moby/runtime/permission-struct.ss"
          "../../collects/moby/runtime/error-struct.ss"
          "../../collects/moby/runtime/error-struct-to-dom.ss"
          "../../collects/moby/runtime/stx.ss"
@@ -77,13 +79,44 @@
 
 ;; handle-json-response: -> response
 (define (handle-json-response request program-name program-input-port)
-  (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
-    (fprintf output-port "~a((" 
-             (extract-binding/single 'callback (request-bindings request)))
-    (compile/port program-input-port output-port #:name program-name)
-    (fprintf output-port "));\n")
-    (close-output-port output-port)
-    response))
+  (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")]
+               [(compiled-program-port) (open-output-bytes)])
+    (let ([pinfo (compile/port program-input-port compiled-program-port #:name program-name)])
+      (fprintf output-port "~a((~a));" 
+               (extract-binding/single 'callback (request-bindings request))
+               (format-output (get-output-bytes compiled-program-port)
+                              pinfo
+                              request))
+      (close-output-port output-port)
+      response)))
+
+
+;; format-output: bytes pinfo request -> bytes
+;; Print out output.  If in json format, output is in the form:
+;; { 'bytecode' : string,
+;;   'permissions' : arrayof string }
+;;
+;; Otherwise, just returns the bytecode.
+(define (format-output output-bytecode pinfo request)
+  (cond
+    [(wants-json-output? request)
+     (let ([op (open-output-bytes)])
+       (write-json (make-hash `((bytecode . ,(bytes->string/utf-8 output-bytecode))
+                                (permissions . ,(get-android-permissions pinfo))))
+                   op)
+       (get-output-bytes op))]
+
+    [else
+     ;; Raw version just spits the output bytecode.
+     output-bytecode]))
+
+
+(define (get-android-permissions pinfo)
+ (apply append 
+        (map permission->android-permissions
+             (pinfo-permissions pinfo))))
+              
+             
 
 
 ;; handle-json-exception-response: exn -> response
@@ -171,14 +204,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; non jsonp stuff: use with xmlhttprequest
 (define (handle-response request program-name program-input-port)
-  (let-values  ([(response output-port) (make-port-response #:mime-type #"text/plain")])
-    (display "(" output-port)
-    (compile/port program-input-port output-port #:name program-name)
-    (display ")" output-port)
-    (close-output-port output-port)
-    response))
+  (let-values  ([(response output-port) (make-port-response #:mime-type #"text/plain")]
+                [(program-output-port) (open-output-bytes)])
+    (let ([pinfo (compile/port program-input-port program-output-port #:name program-name)])
+    
+      (display "(" output-port)
+      (display (format-output (get-output-bytes program-output-port) pinfo request) output-port)
+      (display ")" output-port)
+      (close-output-port output-port)
+      response)))
 
 
+
+;; wants-json-output?: request -> boolean
+;; Produces true if the client wants json output.
+;; json output is allowed to generate both the bytecode
+;; and permissions strings
+(define (wants-json-output? req)
+  (let ([bindings (request-bindings req)])
+    (and (exists-binding? 'format bindings)
+         (string=? (extract-binding/single 'format bindings)
+                   "json"))))
+        
+        
 ;; handle-exception-response: exn -> response
 (define (handle-exception-response request exn)
   (case (compiler-version request)

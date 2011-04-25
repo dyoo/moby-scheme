@@ -19,7 +19,7 @@
 (define HEIGHT 600)
 (define IMAGE0 (empty-scene WIDTH HEIGHT))
 
-(define source (bitmap/url "http://wescheme.org/images/teachpacks2011/rocket.png"))
+(define source (bitmap/url "http://www.wescheme.org/images/teachpacks2011/rocket.png"))
 (define ROCKET (put-pinhole source (/ (image-width source) 2) (image-height source)))
 
 ;; -----------------------------------------------------------------------------
