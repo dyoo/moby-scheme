@@ -73,7 +73,7 @@
               (line 0 dy color)
               px (- cy (/ dy 2))
               (place-image
-               (text (n->s ((unbox *distance*) px cx py cy)) 12 color)
+               (text (n->s ((unbox *distance*) px py cx cy)) 12 color)
                (- cx (/ dx 2)) (- cy (/ dy 2))
                (place-image
                 (line dx dy color)
