@@ -223,8 +223,14 @@
   (local [;; bf: symbol path number boolean string -> binding:function
           ;; Helper function.
           (define (bf name)
-            (make-binding:constant name module-path empty))]
-    (make-module-binding 'world
+            (make-binding:constant name module-path 
+                                   (if (member name '(video-url
+                                                      bitmap/url
+                                                      image-url
+                                                      open-image-url))
+                                       (list PERMISSION:INTERNET)
+                                       empty)))]
+   (make-module-binding 'world
                          module-path
                          (append (module-binding-bindings world-handlers-module)
                                  (module-binding-bindings world-effects-module)
@@ -275,10 +281,10 @@
 					   flip-vertical
 					   text
 					   text/font
-					   video-url
-					   bitmap/url
-					   image-url
-					   open-image-url
+					   video-url  ;; needs network
+					   bitmap/url ;; needs network
+					   image-url  ;; needs network
+					   open-image-url  ;; needs network
 					   image?
 					   image=?
 					   image-width
