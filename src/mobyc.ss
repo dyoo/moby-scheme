@@ -37,7 +37,7 @@ EOF
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define current-platform (make-parameter "node"))
+(define current-platform (make-parameter "browser"))
 
 ;; output-name: path -> path
 (define (output-name a-path)
