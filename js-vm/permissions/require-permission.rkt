@@ -1,4 +1,4 @@
-#lang planet dyoo/js-vm:1:=12/base
+#lang planet dyoo/js-vm:1:=13/base
 
-(require (planet dyoo/js-vm:1:=12/permissions/require-permission))
-(provide (all-from-out (planet dyoo/js-vm:1:=12/permissions/require-permission)))
+(require (planet dyoo/js-vm:1:=13/permissions/require-permission))
+(provide (all-from-out (planet dyoo/js-vm:1:=13/permissions/require-permission)))
