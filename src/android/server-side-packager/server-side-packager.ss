@@ -121,16 +121,18 @@
 ;; Headers also include the filename in the content-disposition field, so the
 ;; user gets a useful file name.
 (define (make-package-response metadata package-bytes)
-  (make-response/full
+  (response
      200
-     #"OK"(current-seconds)
+     #"OK"
+     (current-seconds)
      #"application/vnd.android.package-archive"
      (list (make-header #"content-disposition"
                         (string->bytes/utf-8 
                          (format "attachment; filename=~a.apk" 
                                  (normalize-name-as-filename 
                                   (metadata-name metadata))))))
-     (list package-bytes)))
+     (lambda (op)
+       (write-bytes package-bytes op))))
     
 
 ;; metadata-name: metadata -> string
@@ -160,36 +162,40 @@
 
 ;; error-no-program: -> response
 (define (error-no-program)
-  (make-response/full
-     400
-     #"Bad Request"
-     (current-seconds)
-     #"text/html"
-     (list)
-     (list (string->bytes/utf-8 
-            (xexpr->string 
-             `(html (head (title error))
-                    (body
-                     "The expected program is missing from the request.")))))))
+  (response
+   400
+   #"Bad Request"
+   (current-seconds)
+   #"text/html"
+   (list)
+   (lambda (op)
+     (write-bytes (string->bytes/utf-8 
+                   (xexpr->string 
+                    `(html (head (title error))
+                           (body
+                            "The expected program is missing from the request."))))
+                  op))))
 
 
 ;; handle-unexpected-error: exn:fail -> response
 (define (handle-unexpected-error exn)
-   (make-response/full
-     400
-     #"Bad Request"
-     (current-seconds)
-     #"text/html"
-     (list)
-     (list (string->bytes/utf-8 
-            (xexpr->string 
-             `(html (head (title error))
-                    (body
-                     "Moby was unable to build your program due to an unexpected error.\n"
-                     (br)
-                     "Please contact the Moby developers, and include the following content:\n"
-                     (br)
-                     ,(exn-message exn))))))))
+  (response
+   400
+   #"Bad Request"
+   (current-seconds)
+   #"text/html"
+   (list)
+   (lambda (op)
+     (write-bytes (string->bytes/utf-8 
+                   (xexpr->string 
+                    `(html (head (title error))
+                           (body
+                            "Moby was unable to build your program due to an unexpected error.\n"
+                            (br)
+                            "Please contact the Moby developers, and include the following content:\n"
+                            (br)
+                            ,(exn-message exn)))))
+                  op))))
 
 
 
