@@ -257,7 +257,7 @@ user to simulate phone events.
 
   
 The other language bindings of Moby language are provided by the  @hyperlink["http://planet.racket-lang.org/display.ss?package=js-vm.plt&owner=dyoo"]{js-vm}
-PLaneT package; please refer to the documentation of @racketmodlink[(planet dyoo/js-vm)]{js-vm}.
+PLaneT package; please refer to the documentation of js-vm.
 
 
 
