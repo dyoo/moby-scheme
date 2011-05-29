@@ -1,6 +1,7 @@
 #lang scribble/manual
 
-@(require unstable/scribble
+@(require planet/version
+          planet/scribble
           (for-label (only-in racket/base planet))
           (for-label (planet dyoo/moby:3))
 
@@ -157,7 +158,7 @@ would be cleared with every world update.
 We can also use phone-specific features, such as geolocation.
 The following program shows the current location.
 @racketmod[planet #,(this-package-version-symbol)
-           (require #,(schememodname/this-package phone/location))
+           (require #,(racketmodname/this-package phone/location))
            
            (define (make-message w lat lng)
              (format "I think I am at: ~s ~s" lat lng))
@@ -181,7 +182,7 @@ phone's orientation; it uses @racket[phone/tilt] to get at the
 orientation of the phone, and arbitrarily maps it to a color.
 
 @racketmod[planet #,(this-package-version-symbol)
-           (require #,(schememodname/this-package phone/tilt))
+           (require #,(racketmodname/this-package phone/tilt))
 
            @code:comment{The world is a color.}
            (define initial-world (make-color 0 0 0))
@@ -222,7 +223,7 @@ orientation of the phone, and arbitrarily maps it to a color.
 Again, to package the program, we use @racket[create-android-phone-package].
 
 @racketmod[racket
-           (require #,(schememodname/this-package))
+           (require #,(racketmodname/this-package main))
            (create-android-phone-package "mood-ring.rkt" "mood.apk")
 ]
 
@@ -234,7 +235,7 @@ Again, to package the program, we use @racket[create-android-phone-package].
 
 @section{Running and packaging Android programs}
 
-@defmodule/this-package[]
+@defmodule/this-package[main]
 
                                                                        
 @defproc[(run-in-browser [input-file path-string?]) void]{
@@ -265,8 +266,8 @@ PLaneT package; please refer to the documentation of @emph{js-vm}:
 Here is an example that shows the status of all three sensors:
 
 @racketmod[planet #,(this-package-version-symbol)
-           (require #,(schememodname/this-package phone/tilt))
-           (require #,(schememodname/this-package phone/location))
+           (require #,(racketmodname/this-package phone/tilt))
+           (require #,(racketmodname/this-package phone/location))
            
            (define-struct gps (lat lng))
            (define-struct tilt (a p r))
