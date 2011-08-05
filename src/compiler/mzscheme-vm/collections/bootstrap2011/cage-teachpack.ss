@@ -11,8 +11,8 @@
 
 (provide start)
 
-(define WIDTH  400)
-(define HEIGHT 200)
+(define WIDTH  640)
+(define HEIGHT 480)
 
 (define butterfly (bitmap/url "http://www.wescheme.org/images/teachpacks2011/butterfly.png"))
 
