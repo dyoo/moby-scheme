@@ -63,9 +63,12 @@
 
 
 (define (start onscreen?)
-  (let* ((update (lambda (w k) 
-                   (if (onscreen? (world-x (move w k)) 
-                                  (world-y (move w k))) 
+  (let* ((onscreen?* (if (= (procedure-arity onscreen?) 2) 
+                        onscreen?
+                        (lambda (x y) (onscreen? x))))
+         (update (lambda (w k) 
+                   (if (onscreen?* (world-x (move w k)) 
+                                   (world-y (move w k))) 
                        (move w k)
                        w))))
     (big-bang (make-world (/ WIDTH 2) (/ HEIGHT 2))
