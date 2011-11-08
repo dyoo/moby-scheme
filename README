@@ -2,28 +2,7 @@ Moby
 ------
 Danny Yoo (dyoo@cs.wpi.edu)
 
+Moby have been deprecated in favor of the Whalesong project.  Please
+take a look at that instead.
 
-----------------------------------------------------------------------
-
-What is Moby?
-
-Moby is a project from the PLT Scheme team.  The Moby compiler
-consumes Advanced Student Language (ASL) programs that use World[1]
-primitives, and produces applications for mobile platforms.  The
-current prototype supports desktop browsers and smartphones.  Our
-long-term goal is to make Scheme the premiere reactive scripting
-language for mobile phones.
-
-Shriram Krishnamurthi presented the ideas behind Moby at ILC 2009 in
-his talk "The Moby Scheme Compiler for Smartphones"[2].
-
-The documentation for Moby can be found on PLaneT:
-
-    http://planet.plt-scheme.org/display.ss?package=moby.plt&owner=dyoo
-
-
-
-
-[1] http://world.cs.brown.edu/
-
-[2] http://www.cs.brown.edu/~sk/Publications/Talks/Moby-Bootstrap/
+    http://hashcollision.org/whalesong/
