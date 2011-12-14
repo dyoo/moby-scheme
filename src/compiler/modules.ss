@@ -209,6 +209,8 @@
                                
                                ;; old style
                                (bf 'on-redraw module-path 1 false)
+                               ;; new-style
+                               (bf 'to-draw module-path 1 false)
                                
                                ;; Supports both draw and css
                                (bf 'on-draw module-path 2 false)
