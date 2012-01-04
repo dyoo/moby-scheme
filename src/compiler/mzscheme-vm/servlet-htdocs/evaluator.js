@@ -111,6 +111,10 @@ var Evaluator = (function() {
 	});
     };
 
+    Evaluator.prototype.setImageProxy = function(proxy) {
+	this.aState.setImageProxyHook(proxy);
+    };
+
 
 
     // Toplevel nodes are constructed for world programs.
