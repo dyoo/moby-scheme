@@ -1,5 +1,7 @@
 #lang s-exp "lang.ss"
 
+(define pair? cons?)
+
 (require "rbtree.ss")
 (require "helpers.ss")
 (require "../collects/moby/runtime/stx.ss")

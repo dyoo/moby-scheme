@@ -7,7 +7,7 @@
 
 (require (prefix-in base: scheme/base)
          scheme/contract
-         lang/htdp-advanced
+         (except-in lang/htdp-advanced -> hash-ref)
          (for-syntax scheme/base)
 	 "moby-failure.ss"
          "../collects/moby/runtime/stx.ss"

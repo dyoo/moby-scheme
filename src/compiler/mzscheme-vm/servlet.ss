@@ -28,15 +28,16 @@
                             #:headers (headers '()))
   (let-values ([(in out) (make-pipe)]
                [(CHUNK-SIZE) 1024])
-    (values (make-response/incremental
-             200 #"OK" (current-seconds)
+    (values (response
+             200 #"OK"
+             (current-seconds)
              mime-type
              headers
-             (lambda (output-response)
+             (lambda (op)
                (let loop ()
                  (let ([some-bytes (read-bytes CHUNK-SIZE in)])
                    (unless (eof-object? some-bytes)
-                     (output-response some-bytes)
+                     (write-bytes some-bytes op)
                      (loop))))))
             out)))
 
@@ -229,20 +230,20 @@
 (define (handle-exception-response request exn)
   (case (compiler-version request)
     [(0)
-     (make-response/full 500 
-                         #"Internal Server Error"
-                         (current-seconds)
-                         #"application/octet-stream"
-                         (list)
-                         (list (string->bytes/utf-8 (exn-message exn))))]
+     (response/full 500 
+                    #"Internal Server Error"
+                    (current-seconds)
+                    #"application/octet-stream"
+                    (list)
+                    (list (string->bytes/utf-8 (exn-message exn))))]
     [(1)
-     (make-response/full 500 
-                         #"Internal Server Error"
-                         (current-seconds)
-                         #"application/octet-stream"
-                         (list)
-                         (list (string->bytes/utf-8 
-                                (jsexpr->json (exn->json-structured-output exn)))))]))
+     (response/full 500 
+                    #"Internal Server Error"
+                    (current-seconds)
+                    #"application/octet-stream"
+                    (list)
+                    (list (string->bytes/utf-8 
+                           (jsexpr->json (exn->json-structured-output exn)))))]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

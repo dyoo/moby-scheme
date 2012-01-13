@@ -4,6 +4,8 @@
 (require "../collects/moby/runtime/stx.ss")
 (require "../collects/moby/runtime/error-struct.ss")
 
+(define pair? cons?)
+
 ;; A program is a (listof (or/c defn? expr? library-require? provide-statement? require-permission?))
 
 (define (list? datum)

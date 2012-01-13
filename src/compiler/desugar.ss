@@ -1,5 +1,7 @@
 #lang s-exp "lang.ss"
 
+(define pair? cons?)
+
 (require "helpers.ss")
 (require "pinfo.ss")
 (require "env.ss")
