@@ -495,8 +495,8 @@
                                (bf 'js-button! 2)
                                (bf 'js-input 2)
 
-			       (bf 'empty-page 0)
-			       (make-binding:function 'place-on-page
+			       #;(bf 'empty-page 0)
+			       #;(make-binding:function 'place-on-page
 						      module-path
 						      4
 						      false
