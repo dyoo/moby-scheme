@@ -5,6 +5,7 @@
          scheme/runtime-path
          scheme/match
          scheme/list
+         racket/cmdline
          "write-support.ss"
          "compile.ss"
          "private/json.ss"
@@ -283,8 +284,14 @@
   #:exists 'replace)
 
 
+(define port 8000)
+(void (command-line #:program "servlet"
+                    #:once-each
+                    [("-p" "--port") p "Port (default 8000)" (set! port (string->number p))]))
+
+
 (serve/servlet start 
-               #:port 8000
+               #:port port
                #:servlet-path "/servlets/standalone.ss"
                #:extra-files-paths (list htdocs compat)
                #:launch-browser? #f
