@@ -81,7 +81,7 @@
 
 ;; handle-json-response: -> response
 (define (handle-json-response request program-name program-input-port)
-  (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")]
+  (let-values ([(response output-port) (make-port-response #:mime-type #"text/javascript")]
                [(compiled-program-port) (open-output-bytes)])
     (let ([pinfo (compile/port program-input-port compiled-program-port #:name program-name)])
       (fprintf output-port "~a(~a);" 
@@ -126,7 +126,7 @@
 (define (handle-json-exception-response request exn)
   (case (compiler-version request)
     [(0)
-     (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
+     (let-values ([(response output-port) (make-port-response #:mime-type #"text/javascript")])
        (let ([payload
               (format "~a(~a);\n" (extract-binding/single 'on-error (request-bindings request))
                       (sexp->js (exn-message exn)))])
@@ -134,7 +134,7 @@
          (close-output-port output-port)
          response))]
     [(1)
-     (let-values ([(response output-port) (make-port-response #:mime-type #"text/plain")])
+     (let-values ([(response output-port) (make-port-response #:mime-type #"text/javascript")])
        (let ([payload
               (format "~a(~a);\n" (extract-binding/single 'on-error (request-bindings request))
                       (jsexpr->json (exn->json-structured-output exn)))])
