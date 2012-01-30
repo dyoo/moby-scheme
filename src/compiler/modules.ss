@@ -298,6 +298,7 @@
 					   image-baseline
 					   mode?
 					   image-color?
+                                           name->color
 					   x-place?
 					   y-place?
 					   angle?
