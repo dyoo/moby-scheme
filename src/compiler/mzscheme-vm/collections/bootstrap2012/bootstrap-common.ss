@@ -241,3 +241,4 @@
 
 (define (on-blue img)
   (overlay img (rectangle (image-width img) (image-height img) "solid" "blue")))
+

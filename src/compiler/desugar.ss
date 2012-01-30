@@ -68,6 +68,7 @@
                (list 'when desugar-when)
                (list 'unless desugar-unless)
                (list 'lambda desugar-lambda)
+               (list 'λ desugar-lambda)
                (list 'quote desugar-quote))))
 
 
@@ -523,7 +524,9 @@
             (define args (second (stx-e expr)))
             (define body (third (stx-e expr)))
             (define desugared-body+pinfo (desugar-expression body pinfo))]
-      (list (datum->stx #f (list lambda-symbol-stx
+      (list (datum->stx #f (list (datum->stx (stx-context lambda-symbol-stx)
+                                             'lambda
+                                             (stx-loc lambda-symbol-stx))
                                  args
                                  (first desugared-body+pinfo))
                         (stx-loc expr))

@@ -165,13 +165,14 @@
                               (make-posn (* (spacing) -1) (random HEIGHT))))))
     (make-being random-posn (being-costume being))))
 
-(define (make-game/proc title title-color background 
-                        dangerImgs update-danger 
-                        targetImgs update-target 
-                        playerImg update-player 
-                        projectileImgs update-projectile 
-                        distances-color line-length distance 
-                        collide onscreen)
+
+(define (make-game title title-color background 
+                   dangerImgs update-danger 
+                   targetImgs update-target 
+                   playerImg update-player 
+                   projectileImgs update-projectile 
+                   distances-color line-length distance 
+                   collide onscreen)
   (list title title-color background 
         dangerImgs update-danger 
         targetImgs update-target 
@@ -179,6 +180,8 @@
         projectileImgs update-projectile 
         distances-color line-length distance 
         collide onscreen))
+
+
 
 (define (play game) (apply animate/proc game))
 
@@ -551,3 +554,13 @@
 
 (define (on-blue img)
   (overlay img (rectangle (image-width img) (image-height img) "solid" "blue")))
+
+(define (flatten x)
+  (cond
+    [(pair? x)
+     (append (flatten (car x))
+             (flatten (cdr x)))]
+    [(null? x)
+     '()]
+    [else
+     (list x)]))
