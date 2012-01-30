@@ -166,6 +166,7 @@
                      (list-ref 2)
                      (remove 2)
                      (member 2)
+                     (member? 2)
                      (memq 2)
                      (memv 2)
                      (null? 1)

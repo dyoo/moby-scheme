@@ -236,7 +236,7 @@
    a))
 
 (define (in? a b)
-  (if (list? a) (subset? a b) (member a b)))
+  (if (list? a) (subset? a b) (if (eq? (member a b) #f) #f #t)))
 
 
 (define (on-blue img)
