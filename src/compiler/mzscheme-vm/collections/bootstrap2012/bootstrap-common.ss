@@ -6,16 +6,16 @@
           ;; warn
           number->image string->image boolean->string boolean->image put-image overlay-at
           clipart/url color->alpha)
-  
+
 ;; warn : any* -> any, and a side effect.
 ;; display all arguments and return the last one.
-;(define (warn . args)
-;(begin
-;  (map display args)
-;  (newline)
-;  (last args)))
-  
-  ;; type : any -> String
+                                        ;(define (warn . args)
+                                        ;(begin
+                                        ;  (map display args)
+                                        ;  (newline)
+                                        ;  (last args)))
+
+;; type : any -> String
 (define (type obj)
   (cond
    [(procedure? obj) "Function"]
@@ -32,10 +32,10 @@
 
 
 ;;; color-object->color-struct Color% -> Color
-;(define (color-object->color-struct c)
-;  (if ((is-a?/c color%) c)
-;      (make-color (send c red) (send c green) (send c blue) 255)
-;      c))
+                                        ;(define (color-object->color-struct c)
+                                        ;  (if ((is-a?/c color%) c)
+                                        ;      (make-color (send c red) (send c green) (send c blue) 255)
+                                        ;      c))
 
 ;; color-near? : Color Color Number -> Boolean
 ;; Is the first color within tolerance of the second?
@@ -58,14 +58,18 @@
 ;; find-color : String/Color -> Color
 ;; If the given color is expressed as a string or a color% object, turn it 
 ;; into a color struct, otherwise use it as is.
-;(define (find-color color-name)
-;  (color-object->color-struct
-;   (if (string? color-name)
-;       (send the-color-database find-color color-name)
-;       color-name)))
+                                        ;(define (find-color color-name)
+                                        ;  (color-object->color-struct
+                                        ;   (if (string? color-name)
+                                        ;       (send the-color-database find-color color-name)
+                                        ;       color-name)))
 
-(define find-color name->color)
-
+(define (find-color x)
+  (cond
+   [(string? x)
+    (name->color x)]
+   [else
+    x]))
 
 
 (define (imgvec-location x y w h)
@@ -74,7 +78,7 @@
 (define (imgvec-adjacent-points imgvec loc width height)
   (let ((x (remainder loc width))
         (y (floor (/ loc width)))
-        (loc (λ(x y) (imgvec-location x y width height))))
+        (loc (lambda (x y) (imgvec-location x y width height))))
     (append
      (if (< 0 x) (list (loc (- x 1) y)) '())
      (if (< 0 y) (list (loc x (- y 1))) '())
@@ -85,21 +89,25 @@
   (let ((queue (list (imgvec-location start-x start-y width height)))
         (seen (make-hash))
         (good '()))
-    (let loop ()
-      (when (not (empty? queue))
-        (let ((it (car queue)))
-          (set! queue (cdr queue))
-          (when (not (hash-ref seen it #f))
-            (begin
-              (hash-set! seen it #t)
-              (set! good (cons it good))
-              (set! queue 
-                    (append queue
-                            (filter (λ(loc) 
-                                      (color-near? (vector-ref imgvec loc) start-color tolerance))
-                                    (imgvec-adjacent-points imgvec it width height))))))
-          (loop))))
-    good))
+    (begin
+      (letrec ([loop
+                (lambda ()
+                  (when (not (empty? queue))
+                    (let ((it (car queue)))
+                      (begin
+                        (set! queue (cdr queue))
+                        (when (not (hash-ref seen it #f))
+                          (begin
+                            (hash-set! seen it #t)
+                            (set! good (cons it good))
+                            (set! queue 
+                                  (append queue
+                                          (filter (lambda (loc) 
+                                                    (color-near? (vector-ref imgvec loc) start-color tolerance))
+                                                  (imgvec-adjacent-points imgvec it width height))))))
+                        (loop)))))])
+        (loop))
+      good)))
 
 (define (fill-from-point! img start-x start-y source-color destination-color tolerance dust-size)
   (let* ((v (list->vector (image->color-list img)))
@@ -109,10 +117,11 @@
                 (find-color source-color)
                 (vector-ref v (imgvec-location start-x start-y width height))))
          (d (find-color destination-color)))
-    (when (not (color=? c d))
-      (for-each (λ(loc) (vector-set! v loc d))
-                (color-connected-points v width height start-x start-y c tolerance)))
-    (color-list->bitmap (vector->list v) width height)))
+    (begin
+      (when (not (color=? c d))
+        (for-each (lambda (loc) (vector-set! v loc d))
+                  (color-connected-points v width height start-x start-y c tolerance)))
+      (color-list->bitmap (vector->list v) width height))))
 
 (define (transparent-from-corner img tolerance)
   (fill-from-point! img 0 0 #f (make-color 0 0 0 0) tolerance 0))
@@ -161,68 +170,74 @@
 
 
 
+;; boolean->string : Boolean -> String
+;; convert the given boolean to a string.
+(define (boolean->string b)
+  (if b "true" "false"))
+
+;; boolean->image : Boolean -> Image
+;; convert a boolean into an image of its string representation.
+(define (boolean->image b)
+  (string->image (boolean->string b)))
 
 
 
+;; string->image : String -> Image
+;; convert the given string to an image.
+(define (string->image s)
+  (text s 14 'black))
+
+;; number->image : Number -> Image
+;; convert the given number to an image.
+(define (number->image n)
+  (string->image (number->string n)))
 
 
+;; overlay-at : Image Number Number Image -> Image
+;; Place the foreground on the background at x y 
+;; (in positive-y point space) relative to the center
+(define (overlay-at background x y foreground)
+  (overlay/xy background x (- 0 y) foreground))
+
+;; put-image : Image Number Number Image -> Image
+;; Place the foreground on the background at x y
+;; (in positive-y point space) relative to the lower left
+(define (put-image foreground x y background)
+  (place-image foreground x (- (image-height background) y) background))
+
+                                        ; sq : Number -> Number
+(define (sq x) (* x x))
+;; sine : Degrees -> Number
+;; For a right triangle with non-right angle x in degrees,
+;; find the ratio of the length of the opposite leg to the 
+;; length of the hypotenuse.      sin = opposite / hypotenuse
+(define (sine x) (sin (* x (/ pi 180))))
+;; cosine : Degrees -> Number
+;; For a right triangle with non-right angle x in degrees,
+;; find the ratio of the length of the adjacent leg to the 
+;; length of the hypotenuse.      cos = adjacent / hypotenuse
+(define (cosine x) (cos (* x (/ pi 180))))
+;; tangent : Degrees -> Number
+;; For a right triangle with non-right angle x in degrees,
+;; find the ratio of the length of the opposite leg to the
+;; length of the adjacent leg.    tan = opposite / adjacent
+(define (tangent x) (tan (* x (/ pi 180))))
+
+;; pick : List -> Element
+;; pick a random element from the list
+(define (pick lst)
+  (list-ref lst (random (length lst))))
+
+;; subset? : List List -> Boolean
+;; return true if list a is a (proper or improper) subset of b
+(define (subset? a b) 
+  (andmap
+   (lambda (ele) (member ele b))
+   a))
+
+(define (in? a b)
+  (if (list? a) (subset? a b) (member a b)))
 
 
-
-
-  ;; string->image : String -> Image
-  ;; convert the given string to an image.
-  (define (string->image s)
-    (text s 14 'black))
-  
-  ;; number->image : Number -> Image
-  ;; convert the given number to an image.
-  (define (number->image n)
-    (string->image (number->string n)))
-
-  ;; overlay-at : Image Number Number Image -> Image
-  ;; Place the foreground on the background at x y 
-  ;; (in positive-y point space) relative to the center
-  (define (overlay-at background x y foreground)
-    (overlay/xy background x (- 0 y) foreground))
-
-  ;; put-image : Image Number Number Image -> Image
-  ;; Place the foreground on the background at x y
-  ;; (in positive-y point space) relative to the lower left
-  (define (put-image foreground x y background)
-    (place-image foreground x (- (image-height background) y) background))
-
-  ; sq : Number -> Number
-  (define (sq x) (* x x))
-  ;; sine : Degrees -> Number
-  ;; For a right triangle with non-right angle x in degrees,
-  ;; find the ratio of the length of the opposite leg to the 
-  ;; length of the hypotenuse.      sin = opposite / hypotenuse
-  (define (sine x) (sin (* x (/ pi 180))))
-  ;; cosine : Degrees -> Number
-  ;; For a right triangle with non-right angle x in degrees,
-  ;; find the ratio of the length of the adjacent leg to the 
-  ;; length of the hypotenuse.      cos = adjacent / hypotenuse
-  (define (cosine x) (cos (* x (/ pi 180))))
-  ;; tangent : Degrees -> Number
-  ;; For a right triangle with non-right angle x in degrees,
-  ;; find the ratio of the length of the opposite leg to the
-  ;; length of the adjacent leg.    tan = opposite / adjacent
-  (define (tangent x) (tan (* x (/ pi 180))))
-
-  ;; pick : List -> Element
-  ;; pick a random element from the list
-  (define (pick lst)
-    (list-ref lst (random (length lst))))
-  
-  ;; subset? : List List -> Boolean
-  ;; return true if list a is a (proper or improper) subset of b
-  (define (subset? a b) 
-    (andmap
-     (lambda (ele) (member ele b))
-     a))
-  
-  (define (in? a b)
-    (if (list? a) (subset? a b) (member a b)))
-  
-
+(define (on-blue img)
+  (overlay img (rectangle (image-width img) (image-height img) "solid" "blue")))

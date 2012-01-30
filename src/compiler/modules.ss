@@ -244,6 +244,7 @@
 					   color-red
 					   color-green
 					   color-blue
+                                           color-alpha
 					   empty-scene
 					   scene+line
 					   place-image
@@ -294,6 +295,7 @@
 					   
 					   image->color-list
 					   color-list->image
+                                           color-list->bitmap
 					   
 					   image-baseline
 					   mode?
