@@ -49,3 +49,39 @@
 
 (check-expect (image? (boolean->image true)) #t)
 (check-expect (image? (boolean->image false))#t)
+
+
+"should be a circle bottom left:"
+(put-image (circle 20 'solid 'green) 0 0 (empty-scene 100 100))
+(check-expect (image? (put-image (circle 20 'solid 'green) 0 0 (empty-scene 100 100)))
+              #t)
+
+"should be a circle bottom right:"
+(put-image (circle 20 'solid 'green) 100 0 (empty-scene 100 100))
+(check-expect (image? (put-image (circle 20 'solid 'green) 0 0 (empty-scene 100 100)))
+              #t)
+
+"should be a circle top left:"
+(put-image (circle 20 'solid 'green) 0 100 (empty-scene 100 100))
+(check-expect (image? (put-image (circle 20 'solid 'green) 0 0 (empty-scene 100 100)))
+              #t)
+
+"should be a circle top right:"
+(put-image (circle 20 'solid 'green) 100 100 (empty-scene 100 100))
+(check-expect (image? (put-image (circle 20 'solid 'green) 0 0 (empty-scene 100 100)))
+              #t)
+
+
+
+"should be a circle bottom left:"
+(overlay-at (circle 20 'solid 'green) 0 0 (empty-scene 100 100))
+(check-expect (image? (overlay-at (circle 20 'solid 'green) 0 0 (empty-scene 100 100)))
+              #t)
+
+
+"should be a man on a circle, transparency preserved"
+;; NOTE: this is currently broken.  https://github.com/dyoo/WeScheme/issues/47
+(define p (bitmap/url "http://localhost:8000/run.png"))
+(overlay (color-list->bitmap (image->color-list p) (image-width p) (image-height p)) (circle 30 'solid 'blue))
+
+

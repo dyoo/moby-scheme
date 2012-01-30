@@ -14,7 +14,7 @@
 (define WIDTH  640)
 (define HEIGHT 480)
 
-(define butterfly (bitmap/url "http://www.wescheme.org/images/teachpacks2011/butterfly.png"))
+(define butterfly (bitmap/url "http://www.wescheme.org/images/teachpacks2012/butterfly.png"))
 
 ; a make-world is a (Number Number)
 ; each world has an x and y coordinate
