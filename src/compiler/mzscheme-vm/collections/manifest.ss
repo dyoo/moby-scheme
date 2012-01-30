@@ -38,21 +38,35 @@
          (build-path self "jsworld" "phonegap.ss"))
 
 
+        ;; Bootstrap 2011
 	(make-collection-reference
 	 'bootstrap2011/bootstrap-teachpack
 	 (build-path self "bootstrap2011" "bootstrap-teachpack.ss"))
-
 	(make-collection-reference
 	 'bootstrap2011/cage-teachpack
 	 (build-path self "bootstrap2011" "cage-teachpack.ss"))
-
 	(make-collection-reference
 	 'bootstrap2011/function-teachpack
 	 (build-path self "bootstrap2011" "function-teachpack.ss"))
-
 	(make-collection-reference
 	 'bootstrap2011/bootstrap-common
-	 (build-path self "bootstrap2011" "bootstrap-common.ss"))))
+	 (build-path self "bootstrap2011" "bootstrap-common.ss"))
+
+
+
+        ;; Bootstrap 2012
+        (make-collection-reference
+	 'bootstrap2012/bootstrap-teachpack
+	 (build-path self "bootstrap2012" "bootstrap-teachpack.ss"))
+	(make-collection-reference
+	 'bootstrap2012/cage-teachpack
+	 (build-path self "bootstrap2012" "cage-teachpack.ss"))
+	(make-collection-reference
+	 'bootstrap2012/function-teachpack
+	 (build-path self "bootstrap2012" "function-teachpack.ss"))
+	(make-collection-reference
+	 'bootstrap2012/bootstrap-common
+	 (build-path self "bootstrap2012" "bootstrap-common.ss"))))
 
 
 (provide/contract [struct collection-reference ([name module-name?]

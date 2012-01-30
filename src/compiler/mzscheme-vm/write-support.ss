@@ -12,7 +12,6 @@
          scheme/contract
          scheme/string
          "../../collects/moby/runtime/binding.ss"
-         "../rbtree.ss"
          "../pinfo.ss"
          "collections/manifest.ss"
          "compile.ss")
