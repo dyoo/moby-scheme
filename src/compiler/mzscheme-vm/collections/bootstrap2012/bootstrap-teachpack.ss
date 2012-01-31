@@ -134,7 +134,7 @@
 
       (set-box! *score* (world-score w))
       (if (<= (world-score w) 0)
-          (bitmap/url "http:www.wescheme.org/images/teachpacks2012/gameover.png")
+          (bitmap/url "http://www.wescheme.org/images/teachpacks2012/gameover.png")
           (place-image (text/font score-string 18 (unbox TITLE-COLOR) #f 'default 'italic 'bold '#t)
                        (quotient (image-width (unbox BACKGROUND)) 2) 20 
                        (foldl draw-being (unbox BACKGROUND) all-beings))))))
