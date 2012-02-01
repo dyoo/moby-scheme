@@ -6,6 +6,7 @@
          scheme/match
          scheme/list
          racket/cmdline
+         racket/path
          "write-support.ss"
          "compile.ss"
          "private/json.ss"
