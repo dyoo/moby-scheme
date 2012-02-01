@@ -11,6 +11,8 @@
          scheme/port
          scheme/contract
          scheme/string
+         racket/file
+         racket/path
          "../../collects/moby/runtime/binding.ss"
          "../pinfo.ss"
          "collections/manifest.ss"
@@ -68,7 +70,7 @@
      (define the-module-path (apply build-path base-path
                                     (regexp-split #px"/"
                                                   (string-append
-                                                   (collection-reference-name a-collection-reference)
+                                                   (symbol->string (collection-reference-name a-collection-reference))
                                                    ".js"))))
      (make-directory* (path-only the-module-path))
      (call-with-output-file the-module-path
@@ -76,7 +78,7 @@
          (write-single-collection (collection-reference-name a-collection-reference)
                                   (collection-reference-path a-collection-reference)
                                   out-port))
-       #:exists? 'replace)))
+       #:exists 'replace)))
 
 
 ;; write-collection: symbol path output-port -> void
