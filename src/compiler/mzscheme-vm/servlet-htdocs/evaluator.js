@@ -112,6 +112,10 @@ var Evaluator = (function() {
 
 
         this.aState.hooks.dynamicModuleLoader = function(aName, onSuccess, onFail) {
+            that.dynamicModuleLoader(aName, onSuccess, onFail);
+        };
+
+        this.dynamicModuleLoader = function(aName, onSuccess, onFail) {
             loadScript(that.rootLibraryPath + "/" + aName + ".js",
                        onSuccess,
                        onFail);
@@ -126,6 +130,10 @@ var Evaluator = (function() {
 
     Evaluator.prototype.setRootLibraryPath = function(path) {
         this.rootLibraryPath = path;
+    };
+
+    Evaluator.prototype.setDynamicModuleLoader = function(loader) {
+        this.dynamicModuleLoader = loader;
     };
 
 
