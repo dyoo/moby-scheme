@@ -278,10 +278,13 @@
 
 
 ;; Also, write out the collections
-(call-with-output-file (build-path htdocs "collections.js")
-  (lambda (op)
-    (write-collections op))
-  #:exists 'replace)
+(unless (directory-exists? (build-path htdocs "collects"))
+  (make-directory (build-path htdocs "collects")))
+(write-collections/dir (build-path htdocs "collects"))
+;;(call-with-output-file (build-path htdocs "collections.js")
+;;  (lambda (op)
+;;    (write-collections op))
+;;  #:exists 'replace)
 
 
 (define port 8000)

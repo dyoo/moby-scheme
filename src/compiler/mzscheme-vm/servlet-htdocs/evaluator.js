@@ -109,12 +109,24 @@ var Evaluator = (function() {
 	    // KLUDGE: special hook to support jsworld.
 	    return that.makeToplevelNode();
 	});
+
+
+        this.aState.hooks.dynamicModuleLoader = function(aName, onSuccess, onFail) {
+            loadScript(that.rootLibraryPath + "/" + aName + ".js",
+                       onSuccess,
+                       onFail);
+        };
+
+        this.rootLibraryPath = "/collects";
     };
 
     Evaluator.prototype.setImageProxy = function(proxy) {
 	this.aState.setImageProxyHook(proxy);
     };
 
+    Evaluator.prototype.setRootLibraryPath = function(path) {
+        this.rootLibraryPath = path;
+    };
 
 
     // Toplevel nodes are constructed for world programs.
@@ -447,7 +459,7 @@ var Evaluator = (function() {
 	* @url      http://design-noir.de/webdev/JS/loadScript/
     */
 
-    var loadScript = function(url, callback) {
+    var loadScript = function(url, callback, onError) {
 	var f = arguments.callee;
 	if (!("queue" in f))
 	    f.queue = {};
@@ -474,6 +486,11 @@ var Evaluator = (function() {
 	    while (work.length)
 		work.shift()();
 	};
+        script.onerror = function() {
+	    script.onreadystatechange = script.onload = null;
+	    document.getElementsByTagName("head")[0].removeChild(script);
+            onError();
+        };
 	script.src = url;
 	document.getElementsByTagName("head")[0].appendChild(script);
     }

@@ -4,6 +4,7 @@ var evaluator = new Evaluator(
       compilationServletUrl: "/servlets/standalone.ss",
       scriptCompilationServletUrl: "/servlets/standalone.ss"
     });
+evaluator.setRootLibraryPath("/collects");
 
 
 

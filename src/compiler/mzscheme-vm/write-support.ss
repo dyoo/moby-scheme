@@ -21,6 +21,8 @@
 (define-runtime-path collections-path "collections")
 
 
+
+
 ;; cat-to-port: path output-port -> void
 ;; Write out contents of path to output port.
 (define (cat-to-port a-path out-port)
@@ -49,17 +51,32 @@
 ;; Collection writing
 
 
-
 (define (write-collections out-port)
   ;; FIXME: figure out better way to do this besides assigning toplevel
   ;; variable COLLECTIONS.
   ;;
   ;; FIXME: write exported bindings out so the compiler knows about them.
-  (fprintf out-port "var COLLECTIONS = {};\n")
   (for ([a-collection-reference (in-list known-collections)])
     (write-single-collection (collection-reference-name a-collection-reference)
                              (collection-reference-path a-collection-reference)
                              out-port)))
+
+
+(define (write-collections/dir base-path)
+  ;; FIXME: write exported bindings out so the compiler knows about them.  
+  (for ([a-collection-reference (in-list known-collections)])
+     (define the-module-path (apply build-path base-path
+                                    (regexp-split #px"/"
+                                                  (string-append
+                                                   (collection-reference-name a-collection-reference)
+                                                   ".js"))))
+     (make-directory* (path-only the-module-path))
+     (call-with-output-file the-module-path
+       (lambda (out-port)
+         (write-single-collection (collection-reference-name a-collection-reference)
+                                  (collection-reference-path a-collection-reference)
+                                  out-port))
+       #:exists? 'replace)))
 
 
 ;; write-collection: symbol path output-port -> void
@@ -68,7 +85,8 @@
 ;; bytecode: bytecode
 ;; provides: arrayof string
 (define (write-single-collection module-name source-path out-port)
-  (fprintf out-port "COLLECTIONS[~s] = { 'name': ~s, "
+  (fprintf out-port "window.COLLECTIONS = window.COLLECTIONS || {};\n")
+  (fprintf out-port "window.COLLECTIONS[~s] = { 'name': ~s, "
            (symbol->string module-name)
            (symbol->string module-name))
   (call-with-input-file source-path 
@@ -85,4 +103,5 @@
 
 
 (provide/contract [write-support (string? output-port? . -> . any)]
-                  [write-collections (output-port? . -> . any)])
+                  [write-collections (output-port? . -> . any)]
+                  [write-collections/dir (path? . -> . any)])
