@@ -80,7 +80,6 @@
 
 
 "should be a man on a circle, transparency preserved"
-;; NOTE: this is currently broken.  https://github.com/dyoo/WeScheme/issues/47
 (define p (bitmap/url "http://localhost:8000/run.png"))
 (overlay (color-list->bitmap (image->color-list p) (image-width p) (image-height p)) (circle 30 'solid 'blue))
 
