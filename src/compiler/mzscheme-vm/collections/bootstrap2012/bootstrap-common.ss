@@ -86,28 +86,28 @@
      (if (< y (- height 1)) (list (loc x (+ y 1))) '()))))
 
 (define (color-connected-points imgvec width height start-x start-y start-color tolerance)
-  (let ((queue (list (imgvec-location start-x start-y width height)))
+  (let ((queue (box (list (imgvec-location start-x start-y width height))))
         (seen (make-hash))
-        (good '()))
+        (good (box '())))
     (begin
       (letrec ([loop
                 (lambda ()
-                  (when (not (empty? queue))
-                    (let ((it (car queue)))
+                  (when (not (empty? (unbox queue)))
+                    (let ((it (car (unbox queue))))
                       (begin
-                        (set! queue (cdr queue))
+                        (set-box! queue (cdr (unbox queue)))
                         (when (not (hash-ref seen it #f))
                           (begin
                             (hash-set! seen it #t)
-                            (set! good (cons it good))
-                            (set! queue 
-                                  (append queue
+                            (set-box! good (cons it (unbox good)))
+                            (set-box! queue 
+                                  (append (unbox queue)
                                           (filter (lambda (loc) 
                                                     (color-near? (vector-ref imgvec loc) start-color tolerance))
                                                   (imgvec-adjacent-points imgvec it width height))))))
                         (loop)))))])
         (loop))
-      good)))
+      (unbox good))))
 
 (define (fill-from-point! img start-x start-y source-color destination-color tolerance dust-size)
   (let* ((v (list->vector (image->color-list img)))
