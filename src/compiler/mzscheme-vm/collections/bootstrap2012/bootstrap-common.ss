@@ -85,26 +85,72 @@
      (if (< x (- width 1)) (list (loc (+ x 1) y)) '())
      (if (< y (- height 1)) (list (loc x (+ y 1))) '()))))
 
+
+
+(define-struct cell (elt  ;; any
+                     rest ;; (U cell #f)
+                     ))
+
+(define-struct queue (first  ;; (U cell #f)
+                      last   ;; (U cell #f)
+                      ))
+
+;; new-queue: -> queue
+;; create a new, empty queue.
+(define (new-queue)
+  (make-queue (box #f) (box #f)))
+
+
+;; queue-empty?: queue -> boolean
+;; return true if the queue is empty.
+(define (queue-empty? a-queue)
+  (eq? (unbox (queue-first a-queue)) #f))
+   
+;; enqueue!: queue any -> void
+(define (enqueue! a-queue elt)
+  (cond
+    [(queue-empty? a-queue)
+     (let ([a-cell (make-cell (box elt) (box #f))])
+       (begin
+         (set-box! (queue-first a-queue) a-cell)
+         (set-box! (queue-last a-queue) a-cell)))]
+    [else
+     (let ([a-cell (make-cell (box elt) (box #f))])
+       (begin
+         (set-box! (cell-rest (unbox (queue-last a-queue))) a-cell)
+         (set-box! (queue-last a-queue) a-cell)))]))
+
+;; dequeue!: queue -> any
+(define (dequeue! a-queue)
+  (let ([result (unbox (cell-elt (unbox (queue-first a-queue))))])
+    (begin
+      (cond [(eq? (unbox (cell-rest (unbox (queue-first a-queue)))) #f)
+             (begin 
+               (set-box! (queue-first a-queue) #f)
+               (set-box! (queue-last a-queue) #f))]
+            [else
+             (set-box! (queue-first a-queue) (unbox (cell-rest (unbox (queue-first a-queue)))))])
+      result)))
+
 (define (color-connected-points imgvec width height start-x start-y start-color tolerance)
-  (let ((queue (box (list (imgvec-location start-x start-y width height))))
+  (let ((queue (new-queue))
         (seen (make-hash))
         (good (box '())))
     (begin
+      (enqueue! queue  (imgvec-location start-x start-y width height))
       (letrec ([loop
                 (lambda ()
-                  (when (not (empty? (unbox queue)))
-                    (let ((it (car (unbox queue))))
+                  (when (not (queue-empty? queue))
+                    (let ((it (dequeue! queue)))
                       (begin
-                        (set-box! queue (cdr (unbox queue)))
                         (when (not (hash-ref seen it #f))
                           (begin
                             (hash-set! seen it #t)
                             (set-box! good (cons it (unbox good)))
-                            (set-box! queue 
-                                  (append (unbox queue)
-                                          (filter (lambda (loc) 
-                                                    (color-near? (vector-ref imgvec loc) start-color tolerance))
-                                                  (imgvec-adjacent-points imgvec it width height))))))
+                            (for-each (lambda (x) (enqueue! queue x))
+                                      (filter (lambda (loc) 
+                                                (color-near? (vector-ref imgvec loc) start-color tolerance))
+                                              (imgvec-adjacent-points imgvec it width height)))))
                         (loop)))))])
         (loop))
       (unbox good))))
