@@ -731,15 +731,14 @@
                        ;; (and exprs ...)
                        [(stx-begins-with? expr 'and)
                         (apply append (map (lambda (x)
-                                             (loop x env)))
-                               (rest (stx-e expr)))]
+                                             (loop x env))
+                                           (rest (stx-e expr))))]
                        
                        ;; (or exprs ...)
                        [(stx-begins-with? expr 'or)
                         (apply append (map (lambda (x)
-                                             (loop x env)))
-                               (rest (stx-e expr)))]
-                       
+                                             (loop x env))
+                                           (rest (stx-e expr))))]
                        
                        ;; (lambda (args ...) body)
                        [(stx-begins-with? expr 'lambda)
