@@ -558,17 +558,17 @@
        (raise (make-moby-error (stx-loc expr)
                                (make-moby-error-type:when-no-body)))]
       [else
-       (local [(define test-stx (second (stx-e expr)))
-               (define desugared-body+pinfo (desugar-expressions (rest (stx-e expr)) pinfo))
+       (local [(define desugared-text&body+pinfo (desugar-expressions (rest (stx-e expr)) pinfo))
+               (define test-stx (first (first desugared-text&body+pinfo)))
                (define body-stx (datum->stx #f 
-                                            `(begin ,@(first desugared-body+pinfo))
+                                            `(begin ,@(rest (first desugared-text&body+pinfo)))
                                             (stx-loc expr)))]
          (list (datum->stx #f
                            `(if ,test-stx
                                 ,body-stx
                                 (void))
                            (stx-loc expr))
-               (second desugared-body+pinfo)))])))
+               (second desugared-text&body+pinfo)))])))
 
 
 ;; desugar-unless: expr pinfo -> (list expr pinfo)
