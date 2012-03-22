@@ -46,7 +46,7 @@ var main = {};
 	var interactionsDiv = document.body;
 	if (typeof thing === 'string' || typeof thing === 'number') {
 	    var dom = document.createElement('div');
-	    dom.style['white-space'] = 'pre';
+	    dom.style.whiteSpace = 'pre';
 	    dom.appendChild(document.createTextNode(thing + ''));
 	    interactionsDiv.appendChild(dom);
 	} else {
