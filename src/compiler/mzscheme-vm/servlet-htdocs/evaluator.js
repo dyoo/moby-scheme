@@ -95,11 +95,23 @@ var Evaluator = (function() {
 	    helpers.maybeCallAfterAttach(dom);
 	});
 		
+
 	this.aState.setDisplayHook(function(aStr) {
 	    var dom = document.createElement("span");
-            dom.style["white-space"] = "pre";	
-	    var node = document.createTextNode(aStr);
-	    dom.appendChild(node);
+            dom.style["white-space"] = "pre";
+	    dom.style["font-family"] = "monospace";
+            var chunks = aStr.split("\n");
+            if (chunks.length > 0) {
+                dom.appendChild(document.createTextNode(chunks[0]));
+            }
+            var newlineDiv;
+            var i;
+            for (i = 1; i < chunks.length; i++) {
+                newlineDiv = document.createElement("br");
+                newlineDiv.style.clear = 'left';
+                dom.appendChild(newlineDiv);
+                dom.appendChild(document.createTextNode(chunks[i]));
+            }
 	    dom = that.transformDom(dom);
 	    that.write(dom);	
 	    helpers.maybeCallAfterAttach(dom);
