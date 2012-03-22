@@ -98,8 +98,8 @@ var Evaluator = (function() {
 
 	this.aState.setDisplayHook(function(aStr) {
 	    var dom = document.createElement("span");
-            dom.style["white-space"] = "pre";
-	    dom.style["font-family"] = "monospace";
+            dom.style.whiteSpace = "pre";
+	    dom.style.fontFamily = "monospace";
             var chunks = aStr.split("\n");
             if (chunks.length > 0) {
                 dom.appendChild(document.createTextNode(chunks[0]));
