@@ -155,6 +155,9 @@
                                
                                (bf 'on-key module-path 1 false)
                                (bf 'on-key! module-path 2 false)
+
+                               (bf 'on-tap module-path 1 false)
+                               (bf 'on-tilt module-path 1 false)
                                
                                #;(bf 'on-announce module-path 1 false)
                                #;(bf 'on-announce! module-path 2 false)
