@@ -2,8 +2,8 @@
 	 on-acceleration
          on-shake!
          on-shake
-	 on-tilt!
-	 on-tilt
+;;	 on-tilt!
+;;	 on-tilt
 	 on-location-change!
 	 on-location-change
 	 on-sms-receive!
@@ -106,42 +106,42 @@
 (require-permission on-shake "PERMISSION:SHAKE") 
 
 
-(define (on-tilt! world-updater effect-updater)
-  (let ([accelerometer (js-new (js-get-named-object "Accelerometer"))])
-    (make-world-config (lambda (success error)
-                         (js-call (js-get-field accelerometer "watchOrientation")
-                                  accelerometer
-                                  success
-                                  error))
-                       (lambda (shutdown-f) (js-call shutdown-f #f))
-                       (lambda (w js-azimuth js-pitch js-roll)
-                         (let ([azimuth (prim-js->scheme js-azimuth)]
-                               [pitch (prim-js->scheme js-pitch)]
-                               [roll (prim-js->scheme js-roll)])
-                           (world-with-effects (effect-updater w azimuth pitch roll)
-                                               (world-updater w azimuth pitch roll))))
-                       (lambda (w e)
-                         (error 'on-tilt! "an error occured with the accelerometer")))))
-(require-permission on-tilt! "PERMISSION:TILT") 
+;; (define (on-tilt! world-updater effect-updater)
+;;   (let ([accelerometer (js-new (js-get-named-object "Accelerometer"))])
+;;     (make-world-config (lambda (success error)
+;;                          (js-call (js-get-field accelerometer "watchOrientation")
+;;                                   accelerometer
+;;                                   success
+;;                                   error))
+;;                        (lambda (shutdown-f) (js-call shutdown-f #f))
+;;                        (lambda (w js-azimuth js-pitch js-roll)
+;;                          (let ([azimuth (prim-js->scheme js-azimuth)]
+;;                                [pitch (prim-js->scheme js-pitch)]
+;;                                [roll (prim-js->scheme js-roll)])
+;;                            (world-with-effects (effect-updater w azimuth pitch roll)
+;;                                                (world-updater w azimuth pitch roll))))
+;;                        (lambda (w e)
+;;                          (error 'on-tilt! "an error occured with the accelerometer")))))
+;; (require-permission on-tilt! "PERMISSION:TILT") 
 
 
-(define (on-tilt world-updater)
-  (let ([accelerometer (js-new (js-get-named-object "Accelerometer"))])
-    (make-world-config (lambda (success error)
-                         (js-call (js-get-field accelerometer "watchOrientation")
-                                  accelerometer
-                                  success
-                                  error))
-                       (lambda (shutdown-f) (js-call shutdown-f #f))
-                       (lambda (w js-azimuth js-pitch js-roll)
-                         (let ([azimuth (prim-js->scheme js-azimuth)]
-                               [pitch (prim-js->scheme js-pitch)]
-                               [roll (prim-js->scheme js-roll)])
-                           (world-updater w azimuth pitch roll)))
-                       (lambda (w e)
-                         (error 'on-tilt "an error occured with the accelerometer")))))
+;; (define (on-tilt world-updater)
+;;   (let ([accelerometer (js-new (js-get-named-object "Accelerometer"))])
+;;     (make-world-config (lambda (success error)
+;;                          (js-call (js-get-field accelerometer "watchOrientation")
+;;                                   accelerometer
+;;                                   success
+;;                                   error))
+;;                        (lambda (shutdown-f) (js-call shutdown-f #f))
+;;                        (lambda (w js-azimuth js-pitch js-roll)
+;;                          (let ([azimuth (prim-js->scheme js-azimuth)]
+;;                                [pitch (prim-js->scheme js-pitch)]
+;;                                [roll (prim-js->scheme js-roll)])
+;;                            (world-updater w azimuth pitch roll)))
+;;                        (lambda (w e)
+;;                          (error 'on-tilt "an error occured with the accelerometer")))))
 
-(require-permission on-tilt "PERMISSION:TILT")
+;; (require-permission on-tilt "PERMISSION:TILT")
 
 
 (define (on-location-change! world-updater effect-updater)
