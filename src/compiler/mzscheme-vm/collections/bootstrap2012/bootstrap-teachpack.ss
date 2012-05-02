@@ -257,14 +257,14 @@
                                                     (world-shots w)))]
                          [else (world-with-player w (update-player (world-player w) key))])))
 
-           (tilt (lambda w x y)
-                 (cond
-                  [(> x TOLERANCE) (keypress w "right")]
-                  [(< x (* -1 TOLERANCE)) (keypress w "left")]
-                  [(> y TOLERANCE) (keypress w "up")]
-                  [(< x (* -1 TOLERANCE)) (keypress w "down")]
-                  [else w]))
-           (tap (lambda w x y) (keypress w " "))
+           (tilt (lambda (w x y)
+                   (cond
+                    [(> x TOLERANCE) (keypress w "right")]
+                    [(< x (* -1 TOLERANCE)) (keypress w "left")]
+                    [(> y TOLERANCE) (keypress w "up")]
+                    [(< x (* -1 TOLERANCE)) (keypress w "down")]
+                    [else w])))
+           (tap (lambda (w x y) (keypress w " ")))
             
            ; update-world : World -> World
            (update-world (λ (w) 
