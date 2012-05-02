@@ -28,6 +28,7 @@
 
 ; how tolerant are we of tilt events?
 (define TOLERANCE 15)
+(define -TOLERANCE (- TOLERANCE))
 
 ;fit-image-to: number number image -> image
 ;ensures the image is of size first number by second number, may crop the given image
@@ -260,9 +261,9 @@
            (tilt (lambda (w x y)
                    (cond
                     [(> x TOLERANCE) (keypress w "right")]
-                    [(< x (* -1 TOLERANCE)) (keypress w "left")]
-                    [(> y TOLERANCE) (keypress w "up")]
-                    [(< x (* -1 TOLERANCE)) (keypress w "down")]
+                    [(< x -TOLERANCE) (keypress w "left")]
+                    [(> y TOLERANCE) (keypress w "down")]
+                    [(< y -TOLERANCE) (keypress w "up")]
                     [else w])))
            (tap (lambda (w x y) (keypress w " ")))
             
