@@ -26,6 +26,8 @@
 (define *distance* (box (lambda(px cx py cy) 0)))
 (define *distances-color* (box ""))
 
+; how tolerant are we of tilt events?
+(define TOLERANCE 15)
 
 ;fit-image-to: number number image -> image
 ;ensures the image is of size first number by second number, may crop the given image
@@ -254,7 +256,16 @@
                           (world-with-shots w (cons (make-being (make-posn (unbox *player-x*) (unbox *player-y*)) projectileImg)
                                                     (world-shots w)))]
                          [else (world-with-player w (update-player (world-player w) key))])))
-           
+
+           (tilt (lambda w x y)
+                 (cond
+                  [(> x TOLERANCE) (keypress w "right")]
+                  [(< x (* -1 TOLERANCE)) (keypress w "left")]
+                  [(> y TOLERANCE) (keypress w "up")]
+                  [(< x (* -1 TOLERANCE)) (keypress w "down")]
+                  [else w]))
+           (tap (lambda w x y) (keypress w " "))
+            
            ; update-world : World -> World
            (update-world (λ (w) 
                            (let* ((player (world-player w))
@@ -296,7 +307,9 @@
                 (stop-when (lambda (w) (= (world-timer w) -1)))
                 (on-tick update-world .1)
                 (on-redraw draw-world)
-                (on-key keypress)))))
+                (on-key keypress)
+                (on-tilt tilt)
+                (on-tap tap)))))
 
 
 
