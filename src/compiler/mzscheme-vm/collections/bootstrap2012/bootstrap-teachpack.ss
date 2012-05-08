@@ -27,8 +27,11 @@
 (define *distances-color* (box ""))
 
 ; how tolerant are we of tilt events?
-(define TOLERANCE 15)
+(define TOLERANCE 20)
 (define -TOLERANCE (- TOLERANCE))
+
+;; People hold devices at a beta tilt of around 40 degrees.
+(define RESTING-TOP-DOWN-ORIENTATION 40)
 
 ;fit-image-to: number number image -> image
 ;ensures the image is of size first number by second number, may crop the given image
@@ -262,8 +265,8 @@
                    (cond
                     [(> x TOLERANCE) (keypress w "right")]
                     [(< x -TOLERANCE) (keypress w "left")]
-                    [(> y TOLERANCE) (keypress w "down")]
-                    [(< y -TOLERANCE) (keypress w "up")]
+                    [(> (- y RESTING-TOP-DOWN-ORIENTATION) TOLERANCE) (keypress w "down")]
+                    [(< (- y RESTING-TOP-DOWN-ORIENTATION) -TOLERANCE) (keypress w "up")]
                     [else w])))
            (tap (lambda (w x y) (keypress w " ")))
             
