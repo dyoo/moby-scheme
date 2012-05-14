@@ -312,7 +312,7 @@
                 (on-tick update-world .1)
                 (on-redraw draw-world)
                 (on-key keypress)
-                ;; (on-tilt tilt)
+                (on-tilt tilt)
                 (on-tap tap)))))
 
 
