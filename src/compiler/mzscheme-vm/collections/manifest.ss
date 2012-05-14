@@ -58,6 +58,9 @@
         (make-collection-reference
 	 'bootstrap2012/bootstrap-teachpack
 	 (build-path self "bootstrap2012" "bootstrap-teachpack.ss"))
+        (make-collection-reference
+	 'bootstrap2012/bootstrap-tilt-teachpack
+	 (build-path self "bootstrap2012" "bootstrap-tilt-teachpack.ss"))
 	(make-collection-reference
 	 'bootstrap2012/cage-teachpack
 	 (build-path self "bootstrap2012" "cage-teachpack.ss"))
